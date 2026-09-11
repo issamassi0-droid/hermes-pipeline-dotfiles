@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
-# setup.sh — Cabinet-Office System Setup
+# setup.sh — Cabinet-Office System Setup v2.0
 # Usage:
-#   bash setup.sh              # full setup (pull, merge, verify)
+#   bash setup.sh              # full setup (pull, merge, verify, import)
 #   bash setup.sh --pull       # pull latest changes only
-#   bash setup.sh --merge      # merge master → main locally
-#   bash setup.sh --fix-remote # fix remote HEAD to point to main
+#   bash setup.sh --merge      # merge origin/main → local
 #   bash setup.sh --verify     # verify system integrity
+#   bash setup.sh --import     # import all changes to local
+#   bash setup.sh --fix-remote # fix remote HEAD to point to main
+#   bash setup.sh --help       # show help
 
 set -eo pipefail
 
@@ -26,7 +28,6 @@ err() { echo -e "${RED}✗${NC} $1"; }
 fix_remote_head() {
     echo "--- Fixing remote HEAD → main ---"
     git remote set-head origin main 2>/dev/null || true
-    # Also update the default branch on remote
     git symbolic-ref refs/remotes/origin/HEAD refs/remotes/origin/main 2>/dev/null || true
     ok "Remote HEAD set to main"
 }
@@ -35,19 +36,6 @@ fix_remote_head() {
 pull_latest() {
     echo "--- Pulling latest changes ---"
     git fetch origin --prune 2>&1 | tail -3
-    
-    # If local branch is main and remote has master
-    if git branch -r | grep -q "origin/master" && git branch -r | grep -q "origin/main"; then
-        warn "Both master and remote/main exist — merging..."
-        
-        # Merge master into main if needed
-        git checkout main
-        git merge origin/master --no-edit 2>/dev/null || {
-            warn "Merge conflict — attempting rebase"
-            git merge --abort 2>/dev/null || true
-            git rebase origin/master 2>/dev/null || err "Rebase failed — manual intervention needed"
-        }
-    fi
     
     # Pull from origin/main
     git pull origin main --rebase 2>&1 | tail -3 || {
@@ -58,28 +46,22 @@ pull_latest() {
     ok "Pulled latest changes"
 }
 
-# ── Merge master → main ────────────────────────────────────────────
+# ── Merge origin/main → local ──────────────────────────────────────
 merge_branches() {
-    echo "--- Merging master → main ---"
-    git checkout main
+    echo "--- Merging origin/main → local ---"
+    git checkout main 2>/dev/null || git checkout -b main origin/main
     
-    # Fetch master
-    git fetch origin master 2>&1 | tail -2
+    # Fetch latest
+    git fetch origin main 2>&1 | tail -2
     
-    # Check if master has commits not in main
-    AHEAD=$(git rev-list --count main..origin/master 2>/dev/null || echo "0")
+    # Merge
+    git merge origin/main --no-edit 2>&1 | tail -5 || {
+        warn "Merge conflict — attempting rebase"
+        git merge --abort 2>/dev/null || true
+        git rebase origin/main 2>/dev/null || err "Rebase failed — manual intervention needed"
+    }
     
-    if [ "$AHEAD" -gt 0 ]; then
-        warn "master is $AHEAD commits ahead of main — merging..."
-        git merge origin/master --no-edit 2>&1 | tail -5
-        ok "Merged master → main"
-    else
-        ok "master is already up to date with main"
-    fi
-    
-    # Push merged main
-    git push origin main 2>&1 | tail -3
-    ok "Pushed merged main"
+    ok "Merged origin/main → local"
 }
 
 # ── Verify system ──────────────────────────────────────────────────
@@ -110,23 +92,73 @@ verify_system() {
         warn "Remote HEAD: $REMOTE_HEAD (should be main)"
     fi
     
-    # Check system files
-    for f in system/registry.json system/protocol.md system/cabinet-office.py system/bootstrap.sh; do
+    # Check all contracts (13 files)
+    CONTRACTS=(
+        "system/registry.json"
+        "system/protocol.md"
+        "system/routing.yaml"
+        "system/quality-charter.md"
+        "system/ledger-schema.json"
+        "system/evolution.md"
+        "system/constitutional.md"
+        "system/quality-metrics.md"
+        "system/escalation-criteria.md"
+        "system/architect-failover.md"
+        "system/system-health.md"
+        "system/model-gateway.md"
+        "system/model-registry.json"
+    )
+    
+    local contract_ok=0
+    local contract_fail=0
+    for f in "${CONTRACTS[@]}"; do
         if [ -f "$f" ]; then
-            ok "Found: $f"
+            ok "Contract: $f"
+            ((contract_ok++))
         else
-            err "Missing: $f"
+            err "Missing contract: $f"
+            ((contract_fail++))
         fi
     done
     
-    # Check scripts
-    for s in protocol-engine.py context-budget.py output-validator.py dedup-v2.py quality-assessment-v2.py escalation-system-health.py; do
-        if [ -f "system/scripts/$s" ]; then
+    # Check all scripts (10 files)
+    SCRIPTS=(
+        "system/scripts/protocol-engine.py"
+        "system/scripts/context-budget.py"
+        "system/scripts/architect-heartbeat.py"
+        "system/scripts/output-validator.py"
+        "system/scripts/dedup.py"
+        "system/scripts/dedup-v2.py"
+        "system/scripts/quality-assessment.py"
+        "system/scripts/quality-assessment-v2.py"
+        "system/scripts/escalation-system-health.py"
+        "system/scripts/validate-real-output.py"
+    )
+    
+    local script_ok=0
+    local script_fail=0
+    for s in "${SCRIPTS[@]}"; do
+        if [ -f "$s" ]; then
             ok "Script: $s"
+            ((script_ok++))
         else
             err "Missing script: $s"
+            ((script_fail++))
         fi
     done
+    
+    # Check CLI and bootstrap
+    if [ -f "system/cabinet-office.py" ]; then
+        ok "CLI: system/cabinet-office.py"
+    else
+        err "Missing CLI: system/cabinet-office.py"
+    fi
+    
+    if [ -f "system/bootstrap.sh" ]; then
+        ok "Bootstrap: system/bootstrap.sh"
+    else
+        err "Missing bootstrap: system/bootstrap.sh"
+    fi
     
     # Check profiles
     PROFILE_COUNT=$(ls -d profiles/*/ 2>/dev/null | wc -l)
@@ -136,15 +168,30 @@ verify_system() {
         warn "Profiles: $PROFILE_COUNT (expected 11)"
     fi
     
+    # Check reports
+    if [ -f "ObsidianVault/Articles/Cabinet-Office-System-Report-Ar.md" ]; then
+        ok "Arabic report"
+    else
+        warn "Missing Arabic report"
+    fi
+    
+    if [ -f "ObsidianVault/Articles/Cabinet-Office-System-Report-En.md" ]; then
+        ok "English report"
+    else
+        warn "Missing English report"
+    fi
+    
     echo ""
-    echo "--- Quick test ---"
-    python3 system/cabinet-office.py status 2>&1 | head -8
+    echo "--- Summary ---"
+    echo "Contracts: $contract_ok OK, $contract_fail missing"
+    echo "Scripts: $script_ok OK, $script_fail missing"
+    echo "Profiles: $PROFILE_COUNT agents"
 }
 
-# ── Import all changes (full sync) ─────────────────────────────────
+# ── Import all changes to local ────────────────────────────────────
 import_all() {
     echo "╔══════════════════════════════════════════╗"
-    echo "║  Cabinet-Office System Setup             ║"
+    echo "║  Cabinet-Office System Setup v2.0       ║"
     echo "╚══════════════════════════════════════════╝"
     echo ""
     
@@ -156,12 +203,27 @@ import_all() {
     pull_latest
     echo ""
     
-    # Step 3: Merge if needed
+    # Step 3: Merge
     merge_branches
     echo ""
     
-    # Step 4: Verify
+    # Step 4: Make scripts executable
+    echo "--- Making scripts executable ---"
+    chmod +x system/scripts/*.py 2>/dev/null || true
+    chmod +x system/scripts/*.sh 2>/dev/null || true
+    chmod +x system/cabinet-office.py 2>/dev/null || true
+    chmod +x system/bootstrap.sh 2>/dev/null || true
+    chmod +x system/model-gateway.sh 2>/dev/null || true
+    ok "Scripts executable"
+    echo ""
+    
+    # Step 5: Verify
     verify_system
+    echo ""
+    
+    # Step 6: Quick test
+    echo "--- Quick test ---"
+    python3 system/cabinet-office.py status 2>&1 | head -8
     echo ""
     
     ok "Setup complete!"
@@ -170,6 +232,7 @@ import_all() {
     echo "  python3 system/cabinet-office.py run \"task\" --tier tier_2"
     echo "  python3 system/cabinet-office.py status"
     echo "  python3 system/cabinet-office.py health"
+    echo "  python3 system/cabinet-office.py quality"
 }
 
 # ── Main ───────────────────────────────────────────────────────────
@@ -178,6 +241,21 @@ case "${1:-}" in
     --merge)      merge_branches ;;
     --fix-remote) fix_remote_head ;;
     --verify)     verify_system ;;
-    --help|-h)    echo "Usage: bash setup.sh [--pull|--merge|--fix-remote|--verify]" ;;
-    *)            import_all ;;
+    --import)     import_all ;;
+    --help|-h)
+        echo "Cabinet-Office System Setup v2.0"
+        echo ""
+        echo "Usage: bash setup.sh [option]"
+        echo ""
+        echo "Options:"
+        echo "  --pull       Pull latest changes from origin/main"
+        echo "  --merge      Merge origin/main into local branch"
+        echo "  --fix-remote Fix remote HEAD to point to main"
+        echo "  --verify     Verify system integrity"
+        echo "  --import     Full import (pull + merge + verify + test)"
+        echo "  --help       Show this help"
+        echo ""
+        echo "Without options: runs full import"
+        ;;
+    *) import_all ;;
 esac
