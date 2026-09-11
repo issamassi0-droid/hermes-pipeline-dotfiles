@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# setup.sh — Cabinet-Office System Setup v2.0
+# setup.sh — Cabinet-Office System Setup v3.0
 # Usage:
 #   bash setup.sh              # full setup (pull, merge, verify, import)
 #   bash setup.sh --pull       # pull latest changes only
@@ -121,7 +121,7 @@ verify_system() {
         fi
     done
     
-    # Check all scripts (10 files)
+    # Check all scripts (17 files — v3.0)
     SCRIPTS=(
         "system/scripts/protocol-engine.py"
         "system/scripts/context-budget.py"
@@ -133,6 +133,13 @@ verify_system() {
         "system/scripts/quality-assessment-v2.py"
         "system/scripts/escalation-system-health.py"
         "system/scripts/validate-real-output.py"
+        "system/scripts/circuit-breaker.py"
+        "system/scripts/watchdog.py"
+        "system/scripts/dynamic-router.py"
+        "system/scripts/cascade-router.py"
+        "system/scripts/quality-gate.py"
+        "system/scripts/self-learning.py"
+        "system/scripts/reliability-standards.py"
     )
     
     local script_ok=0
@@ -168,6 +175,14 @@ verify_system() {
         warn "Profiles: $PROFILE_COUNT (expected 11)"
     fi
     
+    # Check ledger
+    if [ -d "system/ledger" ]; then
+        LEDGER_FILES=$(find system/ledger -type f 2>/dev/null | wc -l)
+        ok "Ledger: $LEDGER_FILES files"
+    else
+        warn "Ledger directory missing"
+    fi
+    
     # Check reports
     if [ -f "ObsidianVault/Articles/Cabinet-Office-System-Report-Ar.md" ]; then
         ok "Arabic report"
@@ -186,12 +201,13 @@ verify_system() {
     echo "Contracts: $contract_ok OK, $contract_fail missing"
     echo "Scripts: $script_ok OK, $script_fail missing"
     echo "Profiles: $PROFILE_COUNT agents"
+    echo "Ledger: $LEDGER_FILES files"
 }
 
 # ── Import all changes to local ────────────────────────────────────
 import_all() {
     echo "╔══════════════════════════════════════════╗"
-    echo "║  Cabinet-Office System Setup v2.0       ║"
+    echo "║  Cabinet-Office System Setup v3.0       ║"
     echo "╚══════════════════════════════════════════╝"
     echo ""
     
@@ -233,6 +249,12 @@ import_all() {
     echo "  python3 system/cabinet-office.py status"
     echo "  python3 system/cabinet-office.py health"
     echo "  python3 system/cabinet-office.py quality"
+    echo ""
+    echo "New in v3.0:"
+    echo "  python3 system/cabinet-office.py reliability"
+    echo "  python3 system/cabinet-office.py learn"
+    echo "  python3 system/scripts/watchdog.py"
+    echo "  python3 system/scripts/reliability-standards.py"
 }
 
 # ── Main ───────────────────────────────────────────────────────────
@@ -243,7 +265,7 @@ case "${1:-}" in
     --verify)     verify_system ;;
     --import)     import_all ;;
     --help|-h)
-        echo "Cabinet-Office System Setup v2.0"
+        echo "Cabinet-Office System Setup v3.0"
         echo ""
         echo "Usage: bash setup.sh [option]"
         echo ""
