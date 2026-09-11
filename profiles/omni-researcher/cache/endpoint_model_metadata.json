@@ -1,6 +1,6 @@
 {
 "https://inference-api.nousresearch.com/v1":{
-"at":1789123090.9116042,
+"at":1789123812.2257009,
 "models":{
 "sakana/fugu-ultra-v2":{
 "name":"Sakana: Fugu Ultra v2",

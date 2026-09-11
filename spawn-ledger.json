@@ -39,16 +39,16 @@
     "profile": ""
   },
   {
-    "pid": 236044,
-    "create_time": 1789122758.52,
+    "pid": 274017,
+    "create_time": 1789123577.69,
     "purpose": "serve",
     "install": "bde2e21e79aa",
     "spawner_pid": 101244,
     "spawner_create": null,
-    "registered_at": 1789122761.2455907,
+    "registered_at": 1789123580.4359987,
     "argv": "/home/massi/.hermes/hermes-agent/hermes_cli/main.py serve --host 127.0.0.1 --port 0",
     "host": "127.0.0.1",
-    "port": 46373,
+    "port": 42691,
     "profile": ""
   }
 ]

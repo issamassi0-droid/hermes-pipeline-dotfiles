@@ -360,8 +360,8 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/delegate_tool_toolsets.py": [
-1789072356852642274,
-5489,
+1789120083864495694,
+5578,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/delegation_live_log.py": [
@@ -530,8 +530,8 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/managed_tool_gateway.py": [
-1789072376640343790,
-14729,
+1789120083865495679,
+16548,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/mcp_dashboard_oauth.py": [
@@ -580,8 +580,8 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/mcp_tool_config.py": [
-1789072356864642090,
-15898,
+1789120083865495679,
+16167,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/mcp_tool_content.py": [
@@ -765,8 +765,8 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/send_message_senders.py": [
-1789072356869642014,
-34982,
+1789120083865495679,
+36769,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/send_message_targets.py": [
@@ -815,8 +815,8 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skill_manager_tool.py": [
-1789072376648343671,
-44894,
+1789120083866495664,
+45431,
 true
 ],
 "/home/massi/.hermes/hermes-agent/tools/skill_provenance.py": [
@@ -825,8 +825,8 @@ true
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skill_usage.py": [
-1789072376648343671,
-36245,
+1789120083866495664,
+37010,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skillevaluator_scan.py": [
@@ -865,13 +865,13 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skills_hub_models.py": [
-1789072356872641968,
-14518,
+1789120083866495664,
+14607,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skills_hub_official.py": [
-1789072356872641968,
-18828,
+1789120083866495664,
+19336,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skills_hub_search.py": [
@@ -910,8 +910,8 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skills_sync_client_wire.py": [
-1789072356873641953,
-17289,
+1789120083866495664,
+17305,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skills_sync_optional.py": [
@@ -920,8 +920,8 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/skills_tool.py": [
-1789072376650343641,
-37268,
+1789120083866495664,
+38670,
 true
 ],
 "/home/massi/.hermes/hermes-agent/tools/skills_tool_dedup.py": [
@@ -1000,8 +1000,8 @@ false
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/terminal_tool_sudo.py": [
-1789072356875641922,
-22210,
+1789120083866495664,
+21968,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/thread_context.py": [
@@ -1030,8 +1030,8 @@ false
 true
 ],
 "/home/massi/.hermes/hermes-agent/tools/tool_backend_helpers.py": [
-1789072376651343626,
-12319,
+1789120083867495648,
+12345,
 false
 ],
 "/home/massi/.hermes/hermes-agent/tools/tool_output_limits.py": [
@@ -1223,6 +1223,16 @@ false
 1789072376656343552,
 8873,
 false
+],
+"/home/massi/.hermes/hermes-agent/tools/wisdom_notifications.py": [
+1789120083867495648,
+15017,
+false
+],
+"/home/massi/.hermes/hermes-agent/tools/wisdom_tool.py": [
+1789120083867495648,
+9557,
+true
 ],
 "/home/massi/.hermes/hermes-agent/tools/working_diff.py": [
 1789072376656343552,

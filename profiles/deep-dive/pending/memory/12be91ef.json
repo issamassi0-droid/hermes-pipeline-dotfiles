@@ -1,0 +1,14 @@
+{
+  "id": "12be91ef",
+  "subsystem": "memory",
+  "action": "replace",
+  "summary": "background review consolidation (replace on user): - replace: User prefers warm, muted, low-blue color schemes for eye comfort — drives all theme/shader choices. Actively customizes jinxnet.inkmode Om",
+  "origin": "background_review",
+  "created_at": 1789123337.5014353,
+  "payload": {
+    "action": "replace",
+    "target": "user",
+    "content": "User customizes Omarchy ink mode plugin (jinxnet.inkmode), pushes to github.com/issamassi0-droid/omarchy-ink-mode. Prefers muted warm palette, low-blue for eye comfort. Installs LLM proxies in ~/.local/share/llm-proxy. Technically sophisticated, notices mode similarity.",
+    "old_text": "User prefers warm, muted, low-blue color schemes for eye comfort — drives all theme/shader choices. Actively customizes jinxnet.inkmode Omarchy plugin (shaders, modes, parameters) and pushes modifications to https://github.com/issamassi0-droid/omarchy-ink-mode.git. Values professional-grade visual differentiation between modes; notices when modes look too similar."
+  }
+}
