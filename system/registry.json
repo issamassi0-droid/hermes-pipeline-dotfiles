@@ -1,6 +1,6 @@
 {
   "$schema": "https://hermes.dev/schemas/system-registry.v1.json",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "created": "2026-09-11T00:00:00+01:00",
   "generated_by": "deep-dive",
   "hermes_version": "0.21.1",
@@ -11,7 +11,7 @@
     {
       "name": "architect",
       "handle": "@architect",
-      "role": "orchestrator",
+      "role": "Orchestrator",
       "ministry": "Cabinet Office",
       "entrypoint": true,
       "tiers_served": [
@@ -64,12 +64,15 @@
         "todo_list",
         "session_search",
         "cronjob_manage"
-      ]
+      ],
+      "technical_name": "orchestrator-agent",
+      "functional_name": "Orchestrator",
+      "display_name": "المُنسّق"
     },
     {
       "name": "omni-researcher",
       "handle": "@omni-researcher",
-      "role": "researcher",
+      "role": "Multi-Source Researcher",
       "ministry": "Ministry of Intelligence",
       "entrypoint": false,
       "tiers_served": [
@@ -105,12 +108,15 @@
         "read_file",
         "terminal",
         "message_agent"
-      ]
+      ],
+      "technical_name": "research-agent-multi",
+      "functional_name": "Multi-Source Researcher",
+      "display_name": "الباحث"
     },
     {
       "name": "deep-dive",
       "handle": "@deep-dive",
-      "role": "video_researcher",
+      "role": "YouTube Researcher",
       "ministry": "Ministry of Intelligence",
       "entrypoint": false,
       "tiers_served": [
@@ -146,12 +152,15 @@
         "read_file",
         "terminal",
         "message_agent"
-      ]
+      ],
+      "technical_name": "research-agent-youtube",
+      "functional_name": "YouTube Researcher",
+      "display_name": "باحث يوتيوب"
     },
     {
       "name": "strategist",
       "handle": "@strategist",
-      "role": "strategist",
+      "role": "Strategist",
       "ministry": "Ministry of Strategy",
       "entrypoint": false,
       "tiers_served": [
@@ -190,12 +199,15 @@
         "read_file",
         "write_file",
         "message_agent"
-      ]
+      ],
+      "technical_name": "strategy-agent",
+      "functional_name": "Strategist",
+      "display_name": "الاستراتيجي"
     },
     {
       "name": "draft-writer",
       "handle": "@draft-writer",
-      "role": "writer",
+      "role": "Drafter",
       "ministry": "Ministry of Composition",
       "entrypoint": false,
       "tiers_served": [
@@ -228,12 +240,15 @@
         "write_file",
         "terminal",
         "message_agent"
-      ]
+      ],
+      "technical_name": "drafting-agent",
+      "functional_name": "Drafter",
+      "display_name": "الكاتب"
     },
     {
       "name": "editor-qa",
       "handle": "@editor-qa",
-      "role": "verifier",
+      "role": "QA Auditor",
       "ministry": "Inspector General",
       "entrypoint": false,
       "tiers_served": [
@@ -272,12 +287,15 @@
         "write_file",
         "terminal",
         "message_agent"
-      ]
+      ],
+      "technical_name": "qa-agent",
+      "functional_name": "QA Auditor",
+      "display_name": "المدقق"
     },
     {
       "name": "publisher",
       "handle": "@publisher",
-      "role": "distributor",
+      "role": "Distributor",
       "ministry": "Ministry of Distribution",
       "entrypoint": false,
       "tiers_served": [
@@ -311,12 +329,15 @@
         "write_file",
         "terminal",
         "message_agent"
-      ]
+      ],
+      "technical_name": "distribution-agent",
+      "functional_name": "Distributor",
+      "display_name": "الناشر"
     },
     {
       "name": "analytics",
       "handle": "@analytics",
-      "role": "feedback",
+      "role": "Analyst",
       "ministry": "Ministry of Statistics",
       "entrypoint": false,
       "tiers_served": [
@@ -352,12 +373,15 @@
         "terminal",
         "message_agent",
         "session_search"
-      ]
+      ],
+      "technical_name": "analytics-agent",
+      "functional_name": "Analyst",
+      "display_name": "المحلّل"
     },
     {
       "name": "bot-maker",
       "handle": "@bot-maker",
-      "role": "meta_agent",
+      "role": "Agent Factory",
       "ministry": "Ministry of Genesis",
       "entrypoint": true,
       "tiers_served": [
@@ -387,12 +411,15 @@
         "terminal",
         "message_agent",
         "skill_manage"
-      ]
+      ],
+      "technical_name": "agent-factory",
+      "functional_name": "Agent Factory",
+      "display_name": "صانع الوكلاء"
     },
     {
       "name": "omarchy",
       "handle": "@omarchy",
-      "role": "system_ops",
+      "role": "System Operator",
       "ministry": "Ministry of Infrastructure",
       "entrypoint": true,
       "tiers_served": [
@@ -420,12 +447,15 @@
         "write_file",
         "message_agent",
         "browser_exec"
-      ]
+      ],
+      "technical_name": "system-operator",
+      "functional_name": "System Operator",
+      "display_name": "مشغّل النظام"
     },
     {
       "name": "scout",
       "handle": "@scout",
-      "role": "watchman",
+      "role": "Source Monitor",
       "ministry": "Ministry of Intelligence",
       "entrypoint": false,
       "tiers_served": [
@@ -448,7 +478,10 @@
       "tools": [
         "web_search"
       ],
-      "scout": true
+      "scout": true,
+      "technical_name": "source-monitor",
+      "functional_name": "Source Monitor",
+      "display_name": "الراصد"
     }
   ],
   "pipeline": {
@@ -524,7 +557,7 @@
   "scout_pattern": {
     "description": "Lightweight background agent monitoring external sources continuously.",
     "trigger": "cron or scheduled",
-    "cost": "minimal \u2014 one web_search per cycle",
+    "cost": "minimal — one web_search per cycle",
     "behavior": [
       "Run web_search on keywords",
       "Post `proposal` to architect if match",
@@ -619,7 +652,7 @@
     "selection_logic": "Load registry.json first (always). Then load priority_order up to min(window_profile.max_contracts, tier_overrides.max_contracts). tier_overrides.force are always included."
   },
   "contracts": {
-    "description": "All system contracts \u2014 both core and supplementary.",
+    "description": "All system contracts — both core and supplementary.",
     "core": [
       "registry.json",
       "protocol.md",
@@ -635,7 +668,8 @@
       "architect-failover.md",
       "system-health.md",
       "model-gateway.md",
-      "model-registry.json"
+      "model-registry.json",
+      "naming-convention.md"
     ],
     "scripts": [
       "model-gateway.sh",
@@ -657,6 +691,11 @@
       "version": "1.2.0",
       "date": "2026-09-11",
       "changes": "Model Gateway layer: dynamic selection, caching, fallback"
+    },
+    {
+      "version": "1.7.0",
+      "date": "2026-09-11",
+      "changes": "Three-layer naming convention (technical, functional, display)"
     }
   ]
 }

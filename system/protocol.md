@@ -4,6 +4,13 @@ The rules for how agents in the Cabinet-Office system talk to each other. Everyt
 
 ---
 
+```naming
+All agent identifiers in this document use **technical names** (see naming-convention.md).
+- Technical: `orchestrator-agent` (file names, APIs)
+- Functional: Orchestrator (reports, diagrams)
+- Display: المُنسّق (user chat)
+```
+
 ## 1. The Envelope
 
 Every inter-agent message MUST start with this header, on its own lines:
@@ -28,13 +35,13 @@ No prose before the header. No prose after `---END---`. If an agent needs to add
 | Situation | Sender | Recipient | Payload type |
 |---|---|---|---|
 | Pipeline handoff (next stage ready) | any | next stage | `handoff` |
-| Blocked — needs decision | any | `architect` | `blocker` |
-| Factual contradiction found | `editor-qa` | `draft-writer` | `revision_request` |
-| Counter-evidence gap | `strategist` | `omni-researcher` | `clarification_request` |
-| Video-heavy topic, no coverage | `omni-researcher` | `deep-dive` | `video_request` |
-| Performance data ready | `analytics` | `omni-researcher`, `strategist` | `hypothesis_update` |
-| New agent provisioned | `bot-maker` | `architect` | `registry_notice` |
-| Tier escalation needed | any | `architect` | `escalation` |
+| Blocked — needs decision | any | `orchestrator-agent` | `blocker` |
+| Factual contradiction found | `qa-agent` | `drafting-agent` | `revision_request` |
+| Counter-evidence gap | `strategy-agent` | `research-agent-multi` | `clarification_request` |
+| Video-heavy topic, no coverage | `research-agent-multi` | `research-agent-youtube` | `video_request` |
+| Performance data ready | `analytics-agent` | `research-agent-multi`, `strategy-agent` | `hypothesis_update` |
+| New agent provisioned | `agent-factory` | `orchestrator-agent` | `registry_notice` |
+| Tier escalation needed | any | `orchestrator-agent` | `escalation` |
 
 **Rule:** Message ONE clearly relevant agent. Never fan out "just in case."
 
