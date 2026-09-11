@@ -1,0 +1,37 @@
+# Security: never commit secrets, tokens, or private data
+*.key
+*.pem
+*.env
+config.yaml
+auth.json
+secrets/
+vault/
+*.secret
+credentials/
+token*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+*.egg
+
+# OS
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+
+# Local dev
+.idea/
+.vscode/
+*.local
+# Nested repo — don't commit
+hermes-agent/

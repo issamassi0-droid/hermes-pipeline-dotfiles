@@ -1,0 +1,13 @@
+description: YouTube knowledge companion — searches YouTube, reads transcripts, synthesizes
+  experiences, recommends best videos for deep knowledge.
+description_auto: false
+ui_meta:
+  hermes-bots:
+    shape: blobatar
+    imageKind: photo
+    title: Deep Dive
+    created: 1788878000000
+    color: hsl(28 60% 50%)
+    custom: true
+_ui_meta_revisions:
+  hermes-bots: 2

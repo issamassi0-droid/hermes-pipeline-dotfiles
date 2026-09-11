@@ -1,0 +1,536 @@
+{
+  "mission_id": "ai-coding-assistants-senior-devs-2026",
+  "topic": "Latest Trends in AI Coding Assistants for Senior Developers",
+  "researched_at": "2026-09-11T15:30:00Z",
+  "search_queries_executed": 8,
+  "sources_retrieved": 22,
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "Claude Code has become the most adopted AI coding tool at work, used by 39% of professional developers worldwide as of mid-2026, double the adoption of GitHub Copilot (21%) which lost its leadership position after leading since 2023.",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "JetBrains Developer Ecosystem Survey 2026",
+          "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026/",
+          "type": "official_survey",
+          "tier": 1,
+          "sample_size": "15,000+ professional developers",
+          "methodology": "Large-scale, globally representative, localized into 8 languages, statistically reweighted by region/employment/experience"
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Senior developers are adopting Claude Code at higher rates than juniors; Sonar Source State of Code 2026 (n=1,149) notes senior devs tend to rely on proven tools like Copilot while juniors adopt newer agents like Cursor faster"
+    },
+    {
+      "id": "C2",
+      "claim": "90% of professional developers use AI coding agents weekly at work (68% daily), but only 29% trust AI-generated code — a gap that is widening as adoption grows.",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "JetBrains Developer Ecosystem Survey 2026",
+          "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026/",
+          "type": "official_survey",
+          "tier": 1
+        },
+        {
+          "name": "Stack Overflow Developer Survey 2025",
+          "url": "https://survey.stackoverflow.co/",
+          "type": "official_survey",
+          "tier": 1
+        },
+        {
+          "name": "Augment Code / ETH Zurich research",
+          "url": "https://x.com/augmentcode/status/2031020977422012760",
+          "type": "social_media_citation",
+          "tier": 3,
+          "note": "ETH Zurich paper found context files reduce task success rates vs no context while increasing inference cost by 20%"
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Senior devs report lower trust; they over-specify instructions (200-line AGENTS.md files) because they don't trust agents to infer context — which paradoxically makes agents perform worse"
+    },
+    {
+      "id": "C3",
+      "claim": "The productivity gains of AI coding assistants are heavily contested: developers feel 20-24% faster but objective studies show they are 19% slower when review cycles are included. The bottleneck has shifted from code creation to code verification.",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "METR Study (2025)",
+          "url": "https://metr.org/Early_2025_AI_Experienced_OS_Devs_Study.pdf",
+          "type": "academic_study",
+          "tier": 1
+        },
+        {
+          "name": "JetBrains HAX Team — 2-year telemetry study (ICSE 2026)",
+          "url": "https://blog.jetbrains.com/research/2026/04/ai-impact-developer-workflows/",
+          "type": "academic_study",
+          "tier": 1,
+          "sample_size": "800 developers, 151M logged events over 24 months"
+        },
+        {
+          "name": "LinearB analysis via @stretchcloud on X",
+          "url": "https://x.com/stretchcloud/status/2096943063637909566",
+          "type": "social_media_citation",
+          "tier": 3,
+          "note": "8.1M PRs across 4,800 orgs: AI-assisted devs merge 98% more PRs but PR review time is up 91%; agentic PRs wait 5.3x longer (1,055 vs 201 min)"
+        },
+        {
+          "name": "Sonar Source State of Code 2026",
+          "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
+          "type": "official_survey",
+          "tier": 1,
+          "sample_size": "1,149 developers"
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Senior devs bear the brunt of the review bottleneck — they review larger PRs, must catch AI-introduced architectural drift, and report higher cognitive load from verifying unfamiliar AI-generated code"
+    },
+    {
+      "id": "C4",
+      "claim": "The market is bifurcating into two complementary workflows: in-IDE assistants (Cursor/Copilot) for daily editing and terminal agents (Claude Code/Codex) for large refactors and complex multi-file work. Most teams end up combining both.",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "Scrimba — Best AI Coding Assistants 2026",
+          "url": "http://scrimba.com/articles/best-ai-coding-assistants-2026",
+          "type": "industry_comparison",
+          "tier": 2
+        },
+        {
+          "name": "Easton Dev — AI Coding Tools Landscape 2026",
+          "url": "https://eastondev.com/blog/en/posts/ai/ai-coding-tools-panorama-2026",
+          "type": "industry_analysis",
+          "tier": 2
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Senior devs increasingly operate at Level 3 (directing, not writing) — they review outcomes rather than lines, write specifications rather than implementations, and use agents as force multipliers for their architectural decisions"
+    },
+    {
+      "id": "C5",
+      "claim": "MCP (Model Context Protocol) has emerged as the de facto interoperability standard with 10,000+ active servers and 97M monthly SDK downloads as of early 2026, donated to Linux Foundation governance in December 2025. It enables one server to serve all major AI platforms (Claude, ChatGPT, Cursor, VS Code, Replit).",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "ACM Transactions on Software Engineering — MCP Landscape study",
+          "url": "https://dl.acm.org/doi/10.1145/3796519",
+          "type": "academic_study",
+          "tier": 1
+        },
+        {
+          "name": "arXiv — Bridging Protocol and Production: MCP design patterns",
+          "url": "https://arxiv.org/html/2603.13417v1",
+          "type": "academic_study",
+          "tier": 1
+        },
+        {
+          "name": "Thoughtworks Technology Radar 2025",
+          "url": "https://www.thoughtworks.com/en-us/insights/blog/generative-ai/model-context-protocol-mcp-impact-2025",
+          "type": "industry_radar",
+          "tier": 2
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "MCP lets senior devs connect agents to their existing toolchain (databases, observability, internal tools) without per-platform adapter code — critical for enterprise environments where custom integration is the norm"
+    },
+    {
+      "id": "C6",
+      "claim": "AI coding agents are generating 42-54% of all code in 2026 (up from 6% in 2023), and this share is predicted to grow by over half again by 2027. Less-experienced developers estimate 45% of their committed code is AI-assisted vs 40% for senior devs.",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "Sonar Source State of Code 2026",
+          "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
+          "type": "official_survey",
+          "tier": 1
+        },
+        {
+          "name": "State of AI 2026 (stateofai.dev)",
+          "url": "https://2026.stateofai.dev/en-US",
+          "type": "community_survey",
+          "tier": 2,
+          "sample_size": "7,258 developers"
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Senior devs are more conservative with AI-generated code volume; they use AI more selectively for boilerplate/scaffolding (70% of tasks) while retaining control over edge cases, security, and architecture (the remaining 30% where systems succeed or fail)"
+    },
+    {
+      "id": "C7",
+      "claim": "Cursor has transitioned from a VS Code fork to a standalone agentic IDE with its own models (Composer 2.5 at $0.50/M input tokens, Sonic for Tab), Background Agent for cloud-hosted async work, BugBot for PR review, and a JetBrains plugin — while its adoption has slightly declined (18% → 12%) in favor of Claude Code.",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "Cursor Pricing Page",
+          "url": "https://cursor.com/pricing",
+          "type": "official_product",
+          "tier": 1
+        },
+        {
+          "name": "Cursor Composer 2.5 documentation",
+          "url": "https://cursor.com/composer",
+          "type": "official_product",
+          "tier": 1
+        },
+        {
+          "name": "DeployHQ — Cursor 2026 Guide",
+          "url": "https://www.deployhq.com/guides/cursor",
+          "type": "industry_guide",
+          "tier": 2
+        },
+        {
+          "name": "JetBrains AI Coding Agent Adoption Trends (mid-2026)",
+          "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026/",
+          "type": "official_survey",
+          "tier": 1
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Cursor's Composer 1/2.5 models are cheaper alternatives to frontier Claude/GPT, cutting spend 40-60% for routine refactors. Senior devs benefit from Background Agent (async PR creation from GitHub issues) and BugBot (automated PR review)"
+    },
+    {
+      "id": "C8",
+      "claim": "Open-source alternatives (Cline, OpenCode, VT Code) are gaining traction with 7% adoption for OpenCode (42% mindshare despite no big company backing) and growing multi-editor support — driven by BYO key model flexibility and local model support via Ollama/LM Studio.",
+      "confidence": "medium",
+      "supporting_sources": [
+        {
+          "name": "JetBrains Developer Ecosystem Survey 2026",
+          "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026/",
+          "type": "official_survey",
+          "tier": 1
+        },
+        {
+          "name": "Scrimba — Best AI Coding Assistants 2026",
+          "url": "http://scrimba.com/articles/best-ai-coding-assistants-2026",
+          "type": "industry_comparison",
+          "tier": 2
+        },
+        {
+          "name": "HN — VT Code Rust-based terminal agent",
+          "url": "https://news.ycombinator.com/item?id=45565389",
+          "type": "community_discussion",
+          "tier": 3
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Senior devs in cost-sensitive environments use Cline/BYO key to route through cheaper providers or local models, avoiding per-seat SaaS costs — important for the user's profile (old laptop, no budget for paid services)"
+    },
+    {
+      "id": "C9",
+      "claim": "'Loop engineering' is replacing single-prompt coding: developers design iterative cycles where AI agents plan, code, test, and self-correct autonomously. Combined with tools like Beads/OKF Agent Memory, this pushes agents beyond the 3-4k line context limit where they typically lose the forest for the trees.",
+      "confidence": "medium",
+      "supporting_sources": [
+        {
+          "name": "X/Twitter — Developers Shift to Loop Engineering (Boris Cherny, Anthropic)",
+          "url": "https://x.com/i/trending/2063869701080437219",
+          "type": "social_media_analysis",
+          "tier": 3
+        },
+        {
+          "name": "HN — OKF Agent Memory",
+          "url": "https://news.ycombinator.com/item?id=49581249",
+          "type": "community_discussion",
+          "tier": 3
+        },
+        {
+          "name": "HN — Cortex (module-based context)",
+          "url": "https://news.ycombinator.com/item?id=49578425",
+          "type": "community_discussion",
+          "tier": 3
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Loop engineering is a senior-dev pattern — it requires knowing how to decompose problems into agent-friendly steps, design feedback loops (test → fix → re-test), and maintain architectural coherence across iterations"
+    },
+    {
+      "id": "C10",
+      "claim": "The AI coding market is approaching $5-6B annually (Cursor $1B+, Replit targeting $1B in 2026, Lovable $120M, plus Copilot/Claude enterprise), with investors pricing in $15-20B in aggregate revenue within 3-4 years. Cursor hit $1B+ revenue with 50K business accounts and 1M+ individual subscribers.",
+      "confidence": "medium",
+      "supporting_sources": [
+        {
+          "name": "X/Twitter — Aakash Gupta market analysis",
+          "url": "https://x.com/aakashgupta/status/2021444766978683354",
+          "type": "social_media_analysis",
+          "tier": 3
+        },
+        {
+          "name": "Scrimba — market data",
+          "url": "http://scrimba.com/articles/best-ai-coding-assistants-2026",
+          "type": "industry_comparison",
+          "tier": 2
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Enterprise adoption validates the tools but also drives pricing shifts (Cursor credits, Copilot AI Credits June 2026) that affect senior dev tooling budgets"
+    },
+    {
+      "id": "C11",
+      "claim": "Developers report AI tools as most effective for documentation (70% effective), test generation (59%), and code review (52%) — but 43% of AI-generated code changes still require manual debugging in production even after passing QA.",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "Sonar Source State of Code 2026",
+          "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
+          "type": "official_survey",
+          "tier": 1
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "Senior devs focus AI use on high-value, well-defined tasks (docs, tests, review) rather than open-ended feature creation where debugging risk is highest"
+    },
+    {
+      "id": "C12",
+      "claim": "AI coding assistants redistribute developer workflows invisibly: telemetry data from 800 devs over 2 years shows AI users type 600 more characters/month, delete code 10x more often, switch contexts more, and paste more external code — yet perceive little change.",
+      "confidence": "high",
+      "supporting_sources": [
+        {
+          "name": "JetBrains HAX Team study at ICSE 2026",
+          "url": "https://blog.jetbrains.com/research/2026/04/ai-impact-developer-workflows/",
+          "type": "academic_study",
+          "tier": 1,
+          "note": "Mixed-methods: 151M logged events + survey + interviews. Key finding: 'AI redistributes and reshapes workflows in ways that elude their own perceptions'"
+        }
+      ],
+      "contradictions": null,
+      "senior_dev_relevance": "The perception/reality gap is more dangerous for senior devs who rely on intuition to judge code quality — if AI shifts editing/review patterns without awareness, architectural coherence degrades silently"
+    }
+  ],
+  "gaps": [
+    {
+      "gap": "Limited longitudinal research beyond 2 years",
+      "description": "Most studies cover 2023-2026 only; we have no 5+ year data on whether AI coding produces maintainable systems or technical debt at scale",
+      "impact": "Senior devs building multi-year systems are flying blind on long-term maintenance implications"
+    },
+    {
+      "gap": "Team-level productivity metrics",
+      "description": "Nearly all studies measure individual developer output, not team velocity, incident rates, or business outcome metrics",
+      "impact": "Engineering leaders lack evidence for org-wide AI adoption decisions"
+    },
+    {
+      "gap": "Security and compliance in regulated industries",
+      "description": "While MCP toxic flow analysis exists, there's little published research on HIPAA/SOX/FedRAMP-compliant AI coding workflows",
+      "impact": "Senior devs in healthcare/finance/government have minimal guidance"
+    },
+    {
+      "gap": "Non-English-speaking developer populations",
+      "description": "JetBrains survey is localized to 8 languages, but global South developers (Africa, Southeast Asia, Latin America) are underrepresented in most surveys",
+      "impact": "Tool recommendations may not generalize across all developer populations"
+    },
+    {
+      "gap": "Women and non-binary developer experiences",
+      "description": "Major surveys don't disaggregate AI adoption/impact by gender identity",
+      "impact": "Missing equity dimension of AI tooling"
+    },
+    {
+      "gap": "Specific language/ecosystem performance",
+      "description": "HN discussions reveal Claude Code/Codex are 'terrible with C++' and Rust work is inconsistent, but systematic per-language benchmarks are scarce",
+      "impact": "Senior devs in systems programming, embedded, or niche languages lack reliable AI tool guidance"
+    }
+  ],
+  "credibility_summary": {
+    "tier_1_official_academic": 8,
+    "tier_2_industry_analysis": 7,
+    "tier_3_social_community": 7,
+    "total_sources": 22,
+    "overall_confidence": "high",
+    "key_studies": [
+      "JetBrains Developer Ecosystem Survey 2026 (n=15K, official)",
+      "Sonar Source State of Code 2026 (n=1,149, official)",
+      "Stack Overflow Developer Survey 2025 (official)",
+      "METR Study 2025 (academic)",
+      "JetBrains HAX 2-year telemetry study ICSE 2026 (academic)",
+      "ACM MCP Landscape paper (academic)"
+    ]
+  },
+  "trends_identified": [
+    "Market leadership shift: Copilot → Claude Code (39% adoption, fastest-growing)",
+    "Productivity paradox: 84% adoption but only 29% trust; felt speed vs actual speed gap",
+    "Review bottleneck: AI-assisted PRs wait 5.3x longer; 43% need prod debugging post-QA",
+    "Bimodal workflow: IDE assistant (Cursor) + terminal agent (Claude Code) as standard combo",
+    "MCP standardization: 10K+ servers, 97M monthly downloads, Linux Foundation governance",
+    "Loop engineering: iterative agent cycles replacing single-prompt coding",
+    "Context engineering crisis: AGENTS.md files ballooning to 20K tokens, reducing agent performance",
+    "Open-source momentum: OpenCode (7% adoption, 42% mindshare) and BYO key alternatives",
+    "Vendor model wars: Cursor Composer 2.5, Anthropic Claude Opus 5, OpenAI Codex, Google Antigravity",
+    "Verification economy: static analysis usage growing from 60% to 68% expected in 2 years"
+  ],
+  "sources_list": [
+    {
+      "id": "S1",
+      "name": "JetBrains Developer Ecosystem Survey 2026 — AI Coding Agent Adoption Trends",
+      "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026/",
+      "tier": 1,
+      "type": "official_survey",
+      "contribution": "Primary data on Claude Code 39% adoption, Copilot decline to 21%, Cursor 12%, 90% weekly use"
+    },
+    {
+      "id": "S2",
+      "name": "JetBrains HAX Team — AI Impact on Developer Workflows (ICSE 2026)",
+      "url": "https://blog.jetbrains.com/research/2026/04/ai-impact-developer-workflows/",
+      "tier": 1,
+      "type": "academic_study",
+      "contribution": "2-year telemetry study showing perception/reality gap in AI productivity"
+    },
+    {
+      "id": "S3",
+      "name": "JetBrains Developer Ecosystem Survey 2025 — Coding in Age of AI",
+      "url": "https://blog.jetbrains.com/research/2025/10/state-of-developer-ecosystem-2025/",
+      "tier": 1,
+      "type": "official_survey",
+      "contribution": "85% AI usage, 62% adoption, top 5 concerns about AI quality"
+    },
+    {
+      "id": "S4",
+      "name": "Sonar Source State of Code Developer Survey 2026",
+      "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
+      "tier": 1,
+      "type": "official_survey",
+      "contribution": "42% AI-generated code, 57% security concern, 70% static analysis usage"
+    },
+    {
+      "id": "S5",
+      "name": "Stack Overflow Developer Survey 2025",
+      "url": "https://survey.stackoverflow.co/",
+      "tier": 1,
+      "type": "official_survey",
+      "contribution": "84% AI usage, 29% trust (down from 40%), Claude Code 40.8% agent adoption"
+    },
+    {
+      "id": "S6",
+      "name": "METR Study — Early 2025 AI Experienced OS Devs",
+      "url": "https://metr.org/Early_2025_AI_Experienced_OS_Devs_Study.pdf",
+      "tier": 1,
+      "type": "academic_study",
+      "contribution": "Developers 19% slower with AI despite feeling 24% faster"
+    },
+    {
+      "id": "S7",
+      "name": "arXiv — Beyond the Commit: Developer Perspectives (ICSE 2026)",
+      "url": "https://arxiv.org/abs/2602.03593",
+      "tier": 1,
+      "type": "academic_study",
+      "contribution": "BNY Mellon survey n=2,989; six productivity factors including technical expertise and ownership"
+    },
+    {
+      "id": "S8",
+      "name": "ACM Transactions on Software Engineering — MCP Landscape & Security",
+      "url": "https://dl.acm.org/doi/10.1145/3796519",
+      "tier": 1,
+      "type": "academic_study",
+      "contribution": "MCP security threats and ecosystem analysis"
+    },
+    {
+      "id": "S9",
+      "name": "arXiv — Bridging Protocol and Production: MCP Design Patterns",
+      "url": "https://arxiv.org/html/2603.13417v1",
+      "tier": 1,
+      "type": "academic_study",
+      "contribution": "10K+ MCP servers, 97M SDK downloads, production deployment patterns"
+    },
+    {
+      "id": "S10",
+      "name": "Scrimba — Best AI Coding Assistants 2026",
+      "url": "http://scrimba.com/articles/best-ai-coding-assistants-2026",
+      "tier": 2,
+      "type": "industry_comparison",
+      "contribution": "Tool comparison: Cursor vs Copilot vs Claude Code vs Cline vs Cody vs Windsurf"
+    },
+    {
+      "id": "S11",
+      "name": "Easton Dev — AI Coding Tools Landscape 2026",
+      "url": "https://eastondev.com/blog/en/posts/ai/ai-coding-tools-panorama-2026",
+      "tier": 2,
+      "type": "industry_analysis",
+      "contribution": "Three-category taxonomy: AI IDE, Code Assistants, Terminal Agents"
+    },
+    {
+      "id": "S12",
+      "name": "Qodo — Cline vs Cursor comparison",
+      "url": "https://www.qodo.ai/blog/cline-vs-cursor",
+      "tier": 2,
+      "type": "industry_comparison",
+      "contribution": "Cline multi-editor expansion (May 2026), enterprise fit comparison"
+    },
+    {
+      "id": "S13",
+      "name": "DeployHQ — Cursor 2026 Guide",
+      "url": "https://www.deployhq.com/guides/cursor",
+      "tier": 2,
+      "type": "industry_guide",
+      "contribution": "Cursor evolution: Composer 2.5, Background Agent, BugBot, Sonic model, pricing tiers"
+    },
+    {
+      "id": "S14",
+      "name": "Cursor Pricing Page",
+      "url": "https://cursor.com/pricing",
+      "tier": 1,
+      "type": "official_product",
+      "contribution": "Current pricing: Free/Pro $20/Pro+ $60/Ultra $200/Business/Enterprise"
+    },
+    {
+      "id": "S15",
+      "name": "Cursor Composer Documentation",
+      "url": "https://cursor.com/composer",
+      "tier": 1,
+      "type": "official_product",
+      "contribution": "Composer 2.5 pricing, fast mode, agent tools"
+    },
+    {
+      "id": "S16",
+      "name": "Thoughtworks Technology Radar — MCP Impact 2025",
+      "url": "https://www.thoughtworks.com/en-us/insights/blog/generative-ai/model-context-protocol-mcp-impact-2025",
+      "tier": 2,
+      "type": "industry_radar",
+      "contribution": "MCP mainstream adoption, context engineering, anchoring technique"
+    },
+    {
+      "id": "S17",
+      "name": "State of AI 2026",
+      "url": "https://2026.stateofai.dev/en-US",
+      "tier": 2,
+      "type": "community_survey",
+      "contribution": "54% AI-generated code share (up from 28% in 2025), constant-use doubling"
+    },
+    {
+      "id": "S18",
+      "name": "X/Twitter — Johnny West analysis (2026-09-04)",
+      "url": "https://x.com/JohnnyWestLive/status/2095901135512940578",
+      "tier": 3,
+      "type": "social_media_analysis",
+      "contribution": "OpenAI Codex agents' Last Exam 59.3%, Anthropic discipline analysis"
+    },
+    {
+      "id": "S19",
+      "name": "X/Twitter — Tibo analysis on METR study",
+      "url": "https://x.com/tibo_maker/status/2026276723872936386",
+      "tier": 3,
+      "type": "social_media_analysis",
+      "contribution": "Level 1-4 AI collaboration model, 70/30 split on AI-effective vs human-only tasks"
+    },
+    {
+      "id": "S20",
+      "name": "X/Twitter — Augment Code on context file crisis",
+      "url": "https://x.com/augmentcode/status/2031020977422012702",
+      "tier": 3,
+      "type": "social_media_analysis",
+      "contribution": "ETH Zurich AGENTS.md research, copy-paste rule problem"
+    },
+    {
+      "id": "S21",
+      "name": "X/Twitter — Loop Engineering trend",
+      "url": "https://x.com/i/trending/2063869701080437219",
+      "tier": 3,
+      "type": "social_media_analysis",
+      "contribution": "Iterative cycles, Boris Cherny workflow, recursive loops"
+    },
+    {
+      "id": "S22",
+      "name": "HN — Cortex (module-based context)",
+      "url": "https://news.ycombinator.com/item?id=49578425",
+      "tier": 3,
+      "type": "community_discussion",
+      "contribution": "Post-vibe-coding tool addressing agent context at scale"
+    }
+  ]
+}

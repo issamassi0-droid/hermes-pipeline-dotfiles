@@ -1,0 +1,270 @@
+{
+  "stage": "strategy",
+  "agent": "strategist",
+  "mission_id": "research-ai-coding-assistants-senior-dev-2026",
+  "started_at": "2026-09-11T12:00:00Z",
+  "completed_at": "2026-09-11T12:20:00Z",
+  "status": "completed",
+  "confidence": 0.84,
+  "input_artifact": "/home/massi/.hermes/profiles/omni-researcher/system/ledger/research-ai-coding-assistants-senior-dev-2026/research.json",
+  "routing_ticket_ref": {
+    "tier": "2",
+    "stakes": "moderate",
+    "temporal_bounds": "Tech: <=6m",
+    "confidence_threshold": 0.85,
+    "research_credibility": 0.89,
+    "threshold_met": true
+  },
+
+  "triage_digest": {
+    "corpus_size": "23 sources, 8 claims, 2 resolved contradictions, 5 gaps",
+    "tier_profile": "12 T1 / 6 T2 / 5 T3 / 0 T4 — unusually strong evidence base for a tech-press topic",
+    "signal": [
+      "Adoption-trust inversion is the single most differentiated finding: 84% adoption [C1, T1, 3 convergent large-n surveys] vs 29% trust [C2, T1, 4 sources]. This is a paradox, not a statistic.",
+      "The perception-vs-measurement gap has RCT-grade backing [C4, T1]: METR -19%, DORA +21% non-significant, DX 10% wall. Three independent studies pointing at 'no measurable speedup for experienced devs'.",
+      "Senior skepticism is reframed as a *competence signal* [C3+T2 commentary], not luddism — this is the emotional core for the target audience.",
+      "Quality decay evidence is strong and concrete [C5, T1]: 45% OWASP, 8x duplication (GitClear)."
+    ],
+    "noise_and_thin_ice": [
+      "N1 [source-chain defect]: C4's three RCTs all resolve to ONE secondary URL (blakecrosley.com blog). The numbers match known primary findings, but Writer must cite METR/DORA/DX primaries, not the blog. Flagged for editor-qa retrace.",
+      "N2 [vendor bias]: Ox Security '68-73% security flaws' and IEEE '62% lack rate limiting' route through dev.to/pcables secondary links. Vendor-published, n=300 repos. Downgrade to directional claim or drop the 68-73% figure; keep Veracode 45% which is cleanly sourced.",
+      "N3 [sample size]: METR RCT n=16. Must be presented with n disclosed ('small but randomized') — not as settled fact.",
+      "N4 [tier ceiling]: C6 (tool market) and C7 (MCP/ACP) rest on Tier-2/3 sources incl. community blogs and pricing comparisons. Temporal risk is real: product positioning ages in weeks. Use as background texture, never as load-bearing claims.",
+      "N5 [audience mismatch]: Gap-1 — no data isolates staff+/principal engineers; 'senior' stats aggregate from ~5yrs. Avoid claiming 'principals feel X'.",
+      "N6 [recency]: AllAboutAI multi-survey via globenewswire is a promo-style aggregator; superseded by SO+JetBrains primaries. Do not cite."
+    ],
+    "dedup_note": "84%/29%/19% figures converge across surveys — strongest evidence in corpus; safe to lead with.",
+    "followup_needed": false,
+    "followup_rationale": "Gaps are framing constraints, not evidence holes. Article is sellable without clarification round; the 5 gaps are encoded as avoid_claims + one live-tracking box instead."
+  },
+
+  "angle_matrix": [
+    {
+      "id": "A1",
+      "title": "The Trust Gap Is a Feature, Not a Bug: Why Senior Engineers' Skepticism Is the Last Real Quality Gate",
+      "intent": "informational + identity resonance (senior dev audience)",
+      "novelty": 9,
+      "search_intent_fit": 9,
+      "taxonomy_fit": 9,
+      "evidence_backing": 9,
+      "contrarian_edge": "Deflates the 'resistance' narrative that offends the audience; inverts it into competence",
+      "score": 9.0,
+      "verdict": "CHOSEN"
+    },
+    {
+      "id": "A2",
+      "title": "The Adoption-Trust Paradox: Why You Use AI Tools You Don't Believe In",
+      "intent": "informational/analysis",
+      "novelty": 8,
+      "search_intent_fit": 7,
+      "taxonomy_fit": 8,
+      "evidence_backing": 9,
+      "contrarian_edge": "Moderate — explains rather than takes a side",
+      "score": 7.8,
+      "verdict": "runner-up; folded into A1 as section 2"
+    },
+    {
+      "id": "A3",
+      "title": "The Productivity Lie: RCTs Say AI Makes Seniors Slower",
+      "intent": "informational, clickbait-risk",
+      "novelty": 6,
+      "search_intent_fit": 7,
+      "taxonomy_fit": 7,
+      "evidence_backing": 7,
+      "contrarian_edge": "High but already saturated in tech press since METR publication",
+      "score": 7.0,
+      "verdict": "mid-section of A1, not the spine — headline territory is crowded"
+    },
+    {
+      "id": "A4",
+      "title": "From Autocomplete to Agents: 2026 Tool Landscape + MCP/ACP Stack",
+      "intent": "commercial/navigational",
+      "novelty": 4,
+      "search_intent_fit": 8,
+      "taxonomy_fit": 7,
+      "evidence_backing": 4,
+      "contrarian_edge": "none",
+      "score": 5.5,
+      "verdict": "shelved as spine (Tier-2/3 evidence, ages fast); survives as one background section + tool sidebar"
+    },
+    {
+      "id": "A5",
+      "title": "The Death of the Senior Developer",
+      "intent": "informational, ragebait",
+      "novelty": 3,
+      "search_intent_fit": 6,
+      "taxonomy_fit": 5,
+      "evidence_backing": 3,
+      "contrarian_edge": "fake — contradicted by own corpus (C8 argues role purification, not extinction)",
+      "score": 4.0,
+      "verdict": "rejected — would require narrative-first reasoning the evidence doesn't support"
+    }
+  ],
+
+  "chosen_angle": {
+    "id": "A1",
+    "working_h1": "Your AI Skepticism Is Calibrated: What 49,000 Developers and 3 RCTs Say About the Senior Engineer's Real Job",
+    "alt_h1": "The Trust Gap Is the Quality Gate: Why Senior Engineers Distrust AI Code — and Why the Data Says They're Right",
+    "thesis": "The collapse in senior-developer trust (2.6% highly trust) is not lagging adoption to be caught up with; it is the most accurate signal in the industry. RCTs confirm seniors' gut: measured productivity for experienced devs is flat-to-negative, and the senior's durable role is being re-priced from code author to verification architect and environment designer.",
+    "audience": "Senior/staff software engineers (5-15 yrs) who already use AI tools daily and feel quiet cognitive dissonance about it; secondarily engineering leaders deciding rollout policy.",
+    "rationale": "Highest composite on search intent (this audience is actively searching to resolve their dissonance), novelty (inverts the dominant 'seniors are resistant' frame), and evidence backing (every load-bearing section sits on Tier-1). Also converts the corpus's best asset — convergent paradox data — into narrative tension instead of a stats list."
+  },
+
+  "blueprint": {
+    "target_length_words": 2400,
+    "tone": "peer-to-peer authority: dry, precise, evidence-first, zero hype and zero doom. Speak as a senior engineer to senior engineers — allow one wry line per section, no exclamation marks, no 'revolutionary'.",
+    "argument_progression": "hook paradox -> own the emotional frame (calibrated skepticism) -> hard evidence (RCTs) -> cost evidence (quality decay) -> counterpoint (perception data + tool-side rebuttal) -> synthesis (role shift) -> practical protocol -> forward-looking box",
+    "sections": [
+      {
+        "n": 1,
+        "h2": "Everyone Uses Them. Almost Nobody Trusts Them.",
+        "purpose": "Cold-open on the paradox; establish stakes in 2 stats.",
+        "data_slots": [
+          {"slot": "84% adoption, up from 44% (2023)", "claim_ref": "C1", "cite": "Stack Overflow 2025, n=49,009", "tier": 1},
+          {"slot": "trust fell 40% -> 29%; only 3% highly trust; 46% actively distrust", "claim_ref": "C2", "cite": "Stack Overflow 2025 + SonarSource 2026", "tier": 1},
+          {"slot": "adoption-during-distrust mechanism: competitive pressure, not conviction", "claim_ref": "C2 contradiction resolution", "cite": "dossier contradictions[1]", "tier": 1}
+        ],
+        "words": 250
+      },
+      {
+        "n": 2,
+        "h2": "The 2.6% Club: Skepticism as a Competence Signal",
+        "purpose": "Thesis turn — name the audience's instinct as calibration, cite the experience gradient, define 'looks correct' as the core failure mode.",
+        "data_slots": [
+          {"slot": "senior engineers: 2.6% highly trust, 20% highly distrust; distrust correlates with experience level", "claim_ref": "C3", "cite": "Stack Overflow 2025 segmentation", "tier": 1, "note": "the 2.6/20 stat itself is T1; the interpretation is T2"},
+          {"slot": "pattern-matching against a personal failure library (why seniors see landmines juniors can't)", "claim_ref": "C3", "cite": "Ars Landg (T2)", "tier": 2},
+          {"slot": "'code that looks correct' + approval-seeking generation bias + cognitive debt", "claim_ref": "C3/C4 contradiction", "cite": "DEV.to (T3) — attribute as practitioner analysis, not data", "tier": 3}
+        ],
+        "words": 400
+      },
+      {
+        "n": 3,
+        "h2": "The 40-Point Gap: What RCTs Found When They Measured What Devs Felt",
+        "purpose": "Hard-evidence core. Perception (+20%) vs measurement (-19% seniors, +10% plateau).",
+        "data_slots": [
+          {"slot": "METR RCT: experienced devs 19% SLOWER on their own mature repos", "claim_ref": "C4", "cite": "METR — MUST cite primary, disclose n=16/246 issues, label 'small but randomized'", "tier": 1, "qa_flag": "N1: retrace from primary, dossier URL is secondary blog"},
+          {"slot": "Google DORA RCT: +21%, CI crossed zero — not significant", "claim_ref": "C4", "cite": "DORA primary", "tier": 1},
+          {"slot": "DX: 121k devs, plateau at ~10%, 26.9% of merges AI-authored", "claim_ref": "C4", "cite": "getdx.com primary", "tier": 1},
+          {"slot": "'vibes-based evaluation' / trust tax framing of the 39-40pt gap", "claim_ref": "C4", "cite": "InfoWorld (T2)", "tier": 2}
+        ],
+        "words": 450
+      },
+      {
+        "n": 4,
+        "h2": "The Invoice: What Unverified AI Code Costs the Codebase",
+        "purpose": "Make the risk concrete in codebase terms seniors own: vulns, duplication, review burden.",
+        "data_slots": [
+          {"slot": "45% of AI-generated code samples introduced OWASP Top 10 issues", "claim_ref": "C5", "cite": "Veracode GenAI Code Security Report", "tier": 1},
+          {"slot": "8x increase in duplicated code blocks >5 lines (2020-2024)", "claim_ref": "C5", "cite": "GitClear", "tier": 1},
+          {"slot": "38% of devs say reviewing AI code takes MORE effort than human code; only 48% always verify", "claim_ref": "C2/C5", "cite": "SonarSource 2026", "tier": 1}
+        ],
+        "words": 300
+      },
+      {
+        "n": 5,
+        "h2": "The Counterpoint: Slower Is Not the Whole Scoreboard",
+        "purpose": "Blindspot injection (Charter Art. IV) — steelman the optimists; prevent echo chamber; raise credibility with leadership readers.",
+        "data_slots": [
+          {"slot": "boilerplate/scaffolding gains: 15-55% on repetitive tasks (tool-specific claims)", "claim_ref": "C6", "cite": "DEV.to comparison (T3) — hedge explicitly as unaudited tool claims", "tier": 3},
+          {"slot": "juniors genuinely benefit; skill-transfer and learning-curve effects unknown", "claim_ref": "Gaps 2,5", "cite": "dossier gap-list — present as OPEN question, label [H]", "tier": null, "label": "[H] hypothesis — no longitudinal or junior-specific causal data"}
+        ],
+        "words": 250
+      },
+      {
+        "n": 6,
+        "h2": "From Writing Code to Owning the Gate",
+        "purpose": "Synthesis/payoff: the role re-prices toward verification architecture and environment design; seniors' skepticism becomes the product.",
+        "data_slots": [
+          {"slot": "AI output quality bounded by architecture quality x context clarity", "claim_ref": "C8", "cite": "DEV.to (T3) + InfoWorld (T2) — frame as emerging practitioner consensus, not finding", "tier": 2},
+          {"slot": "'verification is the new coding'; golden paths as mandatory", "claim_ref": "C8", "cite": "InfoWorld", "tier": 2},
+          {"slot": "context: tooling layer (agents over autocomplete) is what raised the verification burden", "claim_ref": "C6/C7", "cite": "background only, 2 sentences max, Tier-2/3 sources", "tier": 2, "note": "N4 temporal guard: name categories not product rankings"}
+        ],
+        "words": 400
+      },
+      {
+        "n": 7,
+        "h2": "A Skeptic's Protocol: Five Rules for Trusting AI Output Exactly as Much as the Evidence Allows",
+        "purpose": "Utility close — converts the article into a bookmarkable checklist derived from the corpus.",
+        "data_slots": [
+          {"slot": "rule derivations: verify last mile (C3), measure not vibe (C4), security gate OWASP classes (C5), golden paths/context (C8), treat agent output as unreviewed junior PR (C2/C8)", "claim_ref": "C2-C5, C8", "cite": "each rule one-line traceable to a labeled claim", "tier": 1}
+        ],
+        "words": 250
+      },
+      {
+        "n": 8,
+        "h2": "Box: What We Still Don't Know",
+        "purpose": "Disclosure box (Charter Art. II) — survives to publication; converts gaps into credibility.",
+        "data_slots": [
+          {"slot": "no longitudinal trust data; no staff+/principal isolation; no language/domain effectiveness data; autonomous-agent ROI unknown", "claim_ref": "Gaps 1,2,4,5", "cite": "dossier gaps", "tier": null, "label": "[X] explicit unknowns"}
+        ],
+        "words": 150
+      }
+    ],
+    "temporal_compliance": "All load-bearing sources within Tech<=6m as of 2026-09-11. GitClear window (2020-2024) is trend data, compliant. AllAboutAI (promo aggregator) dropped. SO-2026 survey is the designated refresh trigger for the box.",
+    "keyword_map": {
+      "primary": {"phrase": "AI coding assistants", "min": 4, "max": 7},
+      "secondary": [
+        {"phrase": "developer trust", "min": 2, "max": 4},
+        {"phrase": "senior engineers + AI", "min": 2, "max": 4},
+        {"phrase": "AI-generated code", "min": 3, "max": 5},
+        {"phrase": "code review / verification", "min": 3, "max": 6}
+      ],
+      "long_tail": ["adoption-trust paradox", "productivity paradox", "OWASP Top 10 AI code", "Model Context Protocol (incidental only)", "calibrated skepticism"],
+      "density_note": "~1.2% keyword load; no stuffing on 'AI coding tools' — vary with 'assistants', 'agents', 'copilots'. Never place primary phrase in H2s 2, 4, 5 (keep headings human)."
+    }
+  },
+
+  "handoff_to_draft_writer": {
+    "type": "handoff",
+    "mission_id": "research-ai-coding-assistants-senior-dev-2026",
+    "from_stage": "strategy",
+    "to_stage": "draft",
+    "artifact_path": "/home/massi/.hermes/system/ledger/research-ai-coding-assistants-senior-dev-2026/strategy.json",
+    "confidence": 0.84,
+    "next_action": "Execute blueprint per strategist_to_writer contract below.",
+    "writer_contract": {
+      "headings": [
+        "H1: Your AI Skepticism Is Calibrated: What 49,000 Developers and 3 RCTs Say About the Senior Engineer's Real Job",
+        "H2-1: Everyone Uses Them. Almost Nobody Trusts Them.",
+        "H2-2: The 2.6% Club: Skepticism as a Competence Signal",
+        "H2-3: The 40-Point Gap: What RCTs Found When They Measured What Devs Felt",
+        "H2-4: The Invoice: What Unverified AI Code Costs the Codebase",
+        "H2-5: The Counterpoint: Slower Is Not the Whole Scoreboard",
+        "H2-6: From Writing Code to Owning the Gate",
+        "H2-7: A Skeptic's Protocol: Five Rules for Trusting AI Output Exactly as Much as the Evidence Allows",
+        "H2-8 (box): What We Still Don't Know"
+      ],
+      "data_slots": {
+        "H2-1": ["84% adoption / 44% in 2023 [C1, SO-2025 n=49,009]", "trust 40%->29%, 3% highly trust [C2, SO-2025]", "adoption driven by competitive pressure [dossier contradiction 2]"],
+        "H2-2": ["seniors: 2.6% highly trust, 20% highly distrust [C3, SO-2025]", "failure-library pattern matching [C3, Ars Landg T2]", "'looks correct' failure mode [C3, DEV.to T3 — attribute as practitioner view]"],
+        "H2-3": ["METR: -19% experienced devs, n=16, CITE PRIMARY [C4]", "DORA: +21% not statistically significant, n=96 [C4]", "DX: 10% plateau, n=121k, 26.9% AI-authored merges [C4]", "40pt perception gap = 'vibes-based evaluation' [InfoWorld T2]"],
+        "H2-4": ["Veracode 45% OWASP Top 10 [C5]", "GitClear 8x duplication 2020-2024 [C5]", "SonarSource: 38% review takes more effort, 48% always verify [C2]"],
+        "H2-5": ["tool-claimed 15-55% repetitive-task gains [C6 T3 — hedge as unaudited vendor/community claims]", "junior-benefit & learning-curve effects unknown [Gaps 2,5 — label [H]]"],
+        "H2-6": ["quality <= architecture x context clarity [C8 T2/T3 — 'emerging consensus' framing]", "'verification is the new coding' [InfoWorld]", "agents-over-autocomplete as burden amplifier [C6/C7 — 2 sentences max, categories not product rankings]"],
+        "H2-7": ["5 rules, each traceable: C3 last-mile, C4 measure-not-vibe, C5 security gate, C8 golden paths, C2/C8 treat-as-unreviewed-PR"],
+        "H2-8": ["[X] no longitudinal trust data", "[X] no staff+/principal isolation", "[X] no language/domain effectiveness data", "[X] autonomous-agent ROI unknown"]
+      },
+      "keyword_map": {
+        "AI coding assistants": [4, 7],
+        "developer trust": [2, 4],
+        "senior engineers + AI": [2, 4],
+        "AI-generated code": [3, 5],
+        "code review / verification": [3, 6],
+        "density": "~1.2%, primary phrase absent from H2-2/4/5"
+      },
+      "avoid_claims": [
+        "Do NOT cite '68-73% of AI code contains security flaws' (Ox Security) — vendor study, secondary sourcing, conflicts in magnitude with Veracode 45%.",
+        "Do NOT cite the IEEE '62% lack rate limiting' figure — URL chain is pcables.com, unverifiable to primary.",
+        "Do NOT cite any AllAboutAI / globenewswire aggregate (91% growth, 97.5% company integration) — promo aggregator.",
+        "Do NOT state METR 19% without disclosing n=16 and 'small randomized study'.",
+        "Do NOT claim staff/principal engineers distrust more — data only segments 'senior' (~5+ yrs).",
+        "Do NOT rank tools (Cursor vs Copilot vs Windsurf) as fact — Tier-3 sources, fast temporal decay; use categories only.",
+        "Do NOT present MCP/ACP 'protocol war' as settled — Tier-2/3, 2 sentences max if used.",
+        "Do NOT imply AI makes juniors faster as measured fact — no RCT in dossier supports junior-specific speedup.",
+        "Do NOT reuse the dossier's blakecrosley.com URLs in final citations — retrace to METR/DORA/DX primaries."
+      ],
+      "style": "peer-to-peer, dry, evidence-first; one wry line per section max; no hype/doom; every stat gets an inline source mention; 2,400 words ±10%; [H]/[X] labels must survive into published text as explicit hedging.",
+      "qa_watch": "editor-qa: retrace N1 (RCT primaries) and N2 (Veracode chain) against originals per Charter Art. II — these are the two highest overstatement risks in the draft."
+    }
+  }
+}

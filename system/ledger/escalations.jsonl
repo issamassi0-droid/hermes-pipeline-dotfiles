@@ -1,0 +1,2 @@
+{"timestamp": "2026-09-11T01:03:18.980591+00:00", "mission_id": "mission-001", "trigger": "high_factual_error", "source": "editor-qa", "trigger_description": "Editor-QA factual_error_rate > 15%", "details": {"fer": 18.5}}
+{"timestamp": "2026-09-11T01:03:18.980666+00:00", "mission_id": "mission-002", "trigger": "publisher_action", "source": "publisher", "trigger_description": "Any Publisher action (external, irreversible by definition)", "details": {}}

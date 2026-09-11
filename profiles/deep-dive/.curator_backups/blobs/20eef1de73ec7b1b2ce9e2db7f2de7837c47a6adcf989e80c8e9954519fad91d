@@ -1,0 +1,133 @@
+---
+name: multi-agent-system-layer
+description: Add a shared contract layer to a multi-agent Hermes setup.
+---
+
+# Multi-Agent System Layer
+
+A Hermes install with several profiles and rich SOULs is still N independent agents until a
+shared contract layer ties them together. This skill is the procedure for building and
+maintaining that layer.
+
+## When this applies
+
+- "fill the gaps" / "make it one integrated system" / "maximally interactive"
+- add handoff between agents, a shared quality bar, a self-improvement loop
+- add restore-on-fresh-install (dotfiles / private repo) for the whole agent set
+- audit or repair an existing layer after profiles were added or renamed
+
+## Where the layer lives
+
+Neutral namespace at the Hermes root — **never inside a profile directory**, so no single
+profile owns it and profile resets cannot destroy it:
+
+```
+~/.hermes/system/
+```
+
+See `references/contract-files.md` for what each contract must contain and the minimal
+schema of each.
+
+## Procedure
+
+### 1. Inventory the agents first
+
+```bash
+ls -d ~/.hermes/profiles/*/ ; find ~/.hermes/profiles -maxdepth 2 -name SOUL.md
+```
+
+Read each `SOUL.md`. Record per profile: role, entrypoint-or-worker, which tiers it serves,
+what it produces, what it consumes. The inventory is the input to the registry — do not
+write the registry from guesswork.
+
+### 2. Write the contracts in dependency order
+
+Each file depends on the previous one. Writing out of order produces contradictions that
+agents will silently obey differently.
+
+1. `registry.json` — the master inventory + pipeline-per-tier + invariants
+2. `protocol.md` — the message envelope, payload types, reply semantics, message budget
+3. `ledger-schema.json` — per-mission ledger: one file per stage, ticket + coverage schemas
+4. `routing.yaml` — tiering rules, escalation signals, stakes floors, model/budget policy
+5. `quality-charter.md` — the system-wide, article-numbered quality contract
+6. `evolution.md` — collection → analysis → risk-classed amendment protocol
+
+Then the operational pair, which depends on all six:
+
+7. `bootstrap.sh` — `--status` / `--install` / `--restore`; zero non-core deps (`jq` optional)
+8. `status.html` — optional live surface; use the app's theme vars, never your own colors
+
+### 3. Wire the SOULs last, idempotently
+
+Each SOUL gets one `## System Layer` section naming the contracts it personally reads and
+the invariants it personally upholds — not a generic copy-paste blob.
+
+Bulk-append with a Python heredoc, not repeated `patch` calls:
+
+```python
+if "## System Layer" in text:
+    continue          # idempotency guard — re-runs must not double-append
+text.rstrip() + "\n\n---\n\n" + section
+```
+
+A per-agent `SECTIONS` dict (agent → its own paragraph) keeps the wiring honest and
+re-runnable.
+
+### 4. Log every write with before/after hashes
+
+```python
+hashlib.sha256(path.read_bytes()).hexdigest()
+```
+
+One row per file in `system/CHANGELOG.md`: id, timestamp, target, before-hash, after-hash,
+proposer, approver, summary. Without the before-hash there is no rollback path.
+
+### 5. Verify by running the bootstrap, not by reading files
+
+```bash
+bash ~/.hermes/system/bootstrap.sh --status
+```
+
+It must report all contracts present, all profiles found, and print the agent table.
+Only then report done.
+
+## Pitfalls
+
+- **SOUL edits do not apply to already-running sessions.** The current context was loaded
+  before the edit. Say so explicitly and tell the user each agent picks the change up on
+  its next load — otherwise the user tests immediately, sees no difference, and concludes
+  the work failed.
+- **Do not let a contract restate the environment.** Contracts carry policy (who may
+  escalate, what a handoff contains, what the quality floor is). Tool schemas, directory
+  maps, and command lists already load every session — duplicating them makes the contract
+  stale and contradicts reality after the first environment change.
+- **A rejection must be a first-class deliverable.** If the quality charter only rewards
+  approvals, the verifier rubber-stamps under pressure. State precision/recall as the
+  verifier's metric, not approval rate.
+- **Same-model verification is not verification.** For high or irreversible stakes, require
+  a different model family for the verifier than the writer, and make a match a hard refusal
+  rather than a warning.
+- **Never put secrets in the contracts.** Payloads, registry, and protocol are plaintext;
+  credentials go through env vars or the vault. A registry entry with an inline key is a
+  breach, not a shortcut.
+- **Bootstrap restore must copy the SOULs back too.** A restore that only reinstalls the
+  system layer leaves the agents unwired and the system silently half-broken.
+- **Freeze the constitutional layer explicitly.** Name what the evolution loop may NOT
+  change (refusal lines, the evidence-label set, the core canon) — otherwise the
+  self-improvement loop will eventually sand off exactly the constraints that make the
+  system trustworthy.
+- **All outputs go to the shared vault.** The user's ObsidianVault is the canonical
+  destination for all system outputs (papers, research, contracts, reports). Writing only
+  to `~/.hermes/system/` is incomplete — the user expects deliverables in the vault where
+  they can read and share them.
+- **Bilingual by default.** The user discusses in Arabic but expects deliverables
+  (research papers, documentation, contracts) in English. Always produce bilingual or
+  English deliverables unless the user explicitly requests Arabic.
+- **Patch-driven evolution.** When the user provides a patch document, implement it
+  immediately — do not summarize or discuss first. The user expects action, not narration.
+
+## Verification
+
+- `bash ~/.hermes/system/bootstrap.sh --status` — all contracts present, N/N profiles
+- every edited file has a CHANGELOG row with a real before/after hash
+- `grep -c '## System Layer' */SOUL.md` — exactly 1 per profile (catches double-append)

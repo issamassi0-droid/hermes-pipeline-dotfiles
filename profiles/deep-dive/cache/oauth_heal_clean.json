@@ -1,0 +1,44 @@
+{
+  "openai-codex": [
+    "/home/massi/.hermes/profiles/deep-dive/auth.json",
+    [
+      1789088476422792527,
+      5376
+    ],
+    null,
+    "/home/massi/.hermes/auth.json",
+    [
+      1789088753989541277,
+      10192
+    ],
+    null
+  ],
+  "xai-oauth": [
+    "/home/massi/.hermes/profiles/deep-dive/auth.json",
+    [
+      1789088476422792527,
+      5376
+    ],
+    null,
+    "/home/massi/.hermes/auth.json",
+    [
+      1789088753989541277,
+      10192
+    ],
+    null
+  ],
+  "anthropic": [
+    "/home/massi/.hermes/profiles/deep-dive/auth.json",
+    [
+      1789088476422792527,
+      5376
+    ],
+    null,
+    "/home/massi/.hermes/auth.json",
+    [
+      1789088753989541277,
+      10192
+    ],
+    null
+  ]
+}

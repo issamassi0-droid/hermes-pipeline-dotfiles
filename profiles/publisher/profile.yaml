@@ -1,0 +1,25 @@
+description: Publisher — final gatekeeper and distribution engine. Ingests polished
+  drafts, performs final formatting, routes to Obsidian vault by default or deploys
+  to live platforms (WordPress, Ghost, GitHub Pages) when configured. Frontmatter
+  injection, integrity checks.
+model: nemotron-3-ultra-free
+temperature: 0.2
+ui:
+  shape: square
+  color: hsl(220 50% 45%)
+  image_kind: generated
+  title: Publisher
+  custom: true
+skills:
+  - productivity/obsidian-2nd-brain
+  - productivity/docx
+  - grounded-citations
+ui_meta:
+  hermes-bots:
+    shape: circle
+    color: hsl(268 68% 58%)
+    imageKind: photo
+    title: ''
+    custom: true
+_ui_meta_revisions:
+  hermes-bots: 1

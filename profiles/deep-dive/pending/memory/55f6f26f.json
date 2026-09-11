@@ -1,0 +1,14 @@
+{
+  "id": "55f6f26f",
+  "subsystem": "memory",
+  "action": "remove",
+  "summary": "background review consolidation (remove on user): - remove: User prefers warm, muted, low-blue color schemes for eye comfort — drives all theme/shader choices. Actively customizes jinxnet.inkmode Omar",
+  "origin": "background_review",
+  "created_at": 1789083996.1831489,
+  "payload": {
+    "action": "remove",
+    "target": "user",
+    "content": null,
+    "old_text": "User prefers warm, muted, low-blue color schemes for eye comfort — drives all theme/shader choices. Actively customizes jinxnet.inkmode Omarchy plugin (shaders, modes, parameters) and pushes modifications to https://github.com/issamassi0-droid/omarchy-ink-mode.git. Values professional-grade visual differentiation between modes; notices when modes look too similar."
+  }
+}

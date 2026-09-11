@@ -1,0 +1,14 @@
+description: "Architect-Orchestrator — master intelligence of the multi-agent framework. Cabinet Office triage, dynamic tiering (4 tiers), blind-spot coverage matrix, dynamic re-tiering, stakes-floor verification, independent QA with different model family, Analytics feedback loop, temporal gate, token economy."
+model: "nemotron-3-ultra-free"
+temperature: 0.1
+ui:
+  shape: "star"
+  color: "hsl(30 60% 50%)"
+  image_kind: "generated"
+  title: "Architect"
+  custom: true
+skills:
+  - planning-and-task-breakdown
+  - constraint-driven-development
+  - git-workflow-and-versioning
+  - documentation-and-adrs

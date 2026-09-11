@@ -1,0 +1,54 @@
+[
+  {
+    "pid": 475323,
+    "create_time": 1789078803.21,
+    "purpose": "serve",
+    "install": "bde2e21e79aa",
+    "spawner_pid": 474573,
+    "spawner_create": null,
+    "registered_at": 1789078805.1510909,
+    "argv": "/home/massi/.hermes/hermes-agent/hermes_cli/main.py serve --host 127.0.0.1 --port 0",
+    "host": "127.0.0.1",
+    "port": 46327,
+    "profile": ""
+  },
+  {
+    "pid": 481351,
+    "create_time": 1789078905.71,
+    "purpose": "serve",
+    "install": "bde2e21e79aa",
+    "spawner_pid": 474573,
+    "spawner_create": null,
+    "registered_at": 1789078907.8715103,
+    "argv": "/home/massi/.hermes/hermes-agent/hermes_cli/main.py serve --host 127.0.0.1 --port 0",
+    "host": "127.0.0.1",
+    "port": 44455,
+    "profile": ""
+  },
+  {
+    "pid": 1077884,
+    "create_time": 1789089641.02,
+    "purpose": "serve",
+    "install": "bde2e21e79aa",
+    "spawner_pid": 474573,
+    "spawner_create": null,
+    "registered_at": 1789089643.272945,
+    "argv": "/home/massi/.hermes/hermes-agent/hermes_cli/main.py serve --host 127.0.0.1 --port 0",
+    "host": "127.0.0.1",
+    "port": 45841,
+    "profile": ""
+  },
+  {
+    "pid": 1077945,
+    "create_time": 1789089641.21,
+    "purpose": "serve",
+    "install": "bde2e21e79aa",
+    "spawner_pid": 474573,
+    "spawner_create": null,
+    "registered_at": 1789089643.501143,
+    "argv": "/home/massi/.hermes/hermes-agent/hermes_cli/main.py serve --host 127.0.0.1 --port 0",
+    "host": "127.0.0.1",
+    "port": 41381,
+    "profile": ""
+  }
+]

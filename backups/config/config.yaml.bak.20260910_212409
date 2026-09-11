@@ -1,0 +1,23 @@
+model:
+  default: auto
+  provider: custom
+  base_url: http://localhost:3001/v1
+  api_key: ${HERMES_FREELMAPI_KEY}
+
+custom_providers:
+  - name: FreeLLMAPI
+    base_url: http://localhost:3001/v1
+    key_env: HERMES_FREELMAPI_KEY
+    model: auto
+    models:
+      auto: {}
+      fusion: {}
+    models_discovered: false
+agent:
+  max_turns: 150
+display:
+  tool_progress: all
+  skin: omarchy
+_config_version: 33
+session_reset:
+  mode: none

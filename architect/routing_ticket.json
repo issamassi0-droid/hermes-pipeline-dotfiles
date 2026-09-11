@@ -1,0 +1,17 @@
+{
+  "domain": "content/publishing",
+  "stakes": "moderate",
+  "complexity": "multi-step-bounded",
+  "output_type": "artifact",
+  "latency": "can_wait",
+  "budget_hint": "medium",
+  "temporal_bounds": "Tech: ≤6m",
+  "tier": "standard",
+  "pipeline": [
+    "researcher",
+    "strategist",
+    "draft-writer",
+    "editor/qa",
+    "publisher"
+  ]
+}

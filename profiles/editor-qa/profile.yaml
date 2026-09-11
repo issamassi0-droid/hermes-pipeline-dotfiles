@@ -1,0 +1,25 @@
+description: Editor/QA — Inspector General. Independently verifies drafts against
+  Researcher's dossier and Strategist's brief. Claim-by-claim fact-checking, source-matching,
+  tone/brand compliance, logical-consistency, risk/liability flagging. Has reject/revise
+  authority. Runs on different model family than Writer for high-stakes content.
+model: claude-3-haiku
+temperature: 0.1
+ui:
+  shape: shield
+  color: hsl(0 65% 45%)
+  image_kind: generated
+  title: Editor/QA
+  custom: true
+skills:
+  - grounded-citations
+  - code-review-and-quality
+  - security-and-hardening
+ui_meta:
+  hermes-bots:
+    shape: triangle
+    color: hsl(328 68% 58%)
+    imageKind: photo
+    title: ''
+    custom: true
+_ui_meta_revisions:
+  hermes-bots: 1

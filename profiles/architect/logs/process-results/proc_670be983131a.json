@@ -1,0 +1,15 @@
+{
+  "id": "proc_670be983131a",
+  "command": "/home/massi/.hermes/hermes-agent/venv/bin/python /home/massi/.hermes/hermes-agent/tools/bot_mode_dm.py --run-delivery query-file /tmp/hermes-dm-1000/dm-hbrm3_77.txt --profile-home /home/massi/.hermes/profiles/publisher hermes -p publisher chat --in '~' -c 'Bot Chat' --create-if-missing -Q",
+  "cwd": "/home/massi/.hermes/hermes-agent",
+  "task_id": "host-local-session:20260908_221537_fe33e5",
+  "owner_task_id": "20260908_221537_fe33e5",
+  "session_key": "20260908_221537_fe33e5",
+  "parent_session_id": "20260908_221537_fe33e5",
+  "started_at": 1788905834.5035098,
+  "exit_code": -15,
+  "completion_reason": "exited",
+  "termination_source": "",
+  "notify_on_complete": true,
+  "output": ""
+}

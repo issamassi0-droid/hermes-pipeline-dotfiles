@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cabinet-Office — System Status</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    font: 13px/1.5 var(--app-font, ui-monospace, "SF Mono", Menlo, monospace);
+    color: var(--foreground);
+    background: transparent;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 8px;
+  }
+  h1 { font-size: 15px; font-weight: 600; margin: 0; letter-spacing: .02em; }
+  .sub { color: var(--muted-foreground); font-size: 11px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 8px;
+  }
+  .agent {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    background: color-mix(in srgb, var(--card) 60%, transparent);
+    cursor: pointer;
+    transition: border-color .12s ease, transform .12s ease;
+  }
+  .agent:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .agent .name {
+    font-weight: 600;
+    font-size: 12.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .agent .role { color: var(--muted-foreground); font-size: 10.5px; margin-top: 1px; }
+  .agent .meta { margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .pill {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+  }
+  .pill.t3 { border-color: var(--accent); color: var(--accent); }
+  .pill.entry { background: color-mix(in srgb, var(--accent) 20%, transparent); color: var(--foreground); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .dot.ok { background: #6a9a6a; }
+  .dot.warn { background: #b8934a; }
+  .legend { display: flex; gap: 14px; font-size: 11px; color: var(--muted-foreground); }
+  .legend span { display: inline-flex; align-items: center; gap: 5px; }
+  footer {
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+    font-size: 11px;
+    color: var(--muted-foreground);
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  footer b { color: var(--foreground); font-weight: 600; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Cabinet-Office — System Status</h1>
+    <div class="sub">10 agents · 4 tiers · 6 system contracts · registry v1.0.0</div>
+  </div>
+  <div class="legend">
+    <span><i class="dot ok"></i>SOUL present</span>
+    <span><i class="dot warn"></i>degraded</span>
+  </div>
+</header>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  <span><b>Pipeline</b> triage → research → strategy → draft → verify → publish → analyze</span>
+  <span><b>Quality floor</b> 0 unsupported claims · 100% traceability</span>
+  <span><b>Evolution</b> monthly · 50-mission trigger</span>
+</footer>
+
+<script>
+const AGENTS = [
+  { name: "architect",        role: "Orchestrator · Cabinet Office",        tiers: [0,1,2,3], entry: true  },
+  { name: "omni-researcher",  role: "Researcher · Multi-source sweep",       tiers: [1,2,3],   entry: false },
+  { name: "deep-dive",        role: "Video Researcher · YouTube synthesis",  tiers: [2,3],     entry: false },
+  { name: "strategist",       role: "Strategist · Angle + blueprint",        tiers: [2,3],     entry: false },
+  { name: "draft-writer",     role: "Writer · Prose + code",                 tiers: [2,3],     entry: false },
+  { name: "editor-qa",        role: "Verifier · Inspector General",          tiers: [2,3],     entry: false },
+  { name: "publisher",        role: "Distributor · Vault + platforms",       tiers: [1,2,3],   entry: false },
+  { name: "analytics",        role: "Feedback · Ministry of Statistics",     tiers: [2,3],     entry: false },
+  { name: "bot-maker",        role: "Meta · Ministry of Genesis",            tiers: [0,1,2,3], entry: true  },
+  { name: "omarchy",          role: "System Ops · Ministry of Infrastructure", tiers: [0,1],   entry: true  },
+];
+
+const grid = document.getElementById("grid");
+for (const a of AGENTS) {
+  const el = document.createElement("div");
+  el.className = "agent";
+  el.dataset.hermesSend = "status " + a.name;
+  el.innerHTML = `
+    <div class="name">
+      <span>@${a.name}</span>
+      <i class="dot ok" title="SOUL present"></i>
+    </div>
+    <div class="role">${a.role}</div>
+    <div class="meta">
+      ${a.tiers.map(t => `<span class="pill ${t === 3 ? 't3' : ''}">T${t}</span>`).join("")}
+      ${a.entry ? '<span class="pill entry">entrypoint</span>' : ''}
+    </div>
+  `;
+  grid.appendChild(el);
+}
+</script>
+</body>
+</html>

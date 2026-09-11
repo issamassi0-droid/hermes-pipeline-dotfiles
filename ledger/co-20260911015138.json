@@ -1,0 +1,35 @@
+{
+  "mission_id": "co-20260911015138",
+  "task": "\u0628\u062d\u062b \u0639\u0646 herdr agent",
+  "tier": "tier_2",
+  "started": "2026-09-11T00:51:38.261446+00:00",
+  "steps": [
+    {
+      "step": "context_budget",
+      "result": {
+        "error": "script not found: context-budget.py"
+      }
+    },
+    {
+      "step": "heartbeat",
+      "result": {
+        "error": "script not found: architect-heartbeat.py"
+      }
+    },
+    {
+      "step": "model_selection",
+      "result": {
+        "error": "script not found: model-gateway.sh"
+      }
+    }
+  ],
+  "status": "completed",
+  "completed": "2026-09-11T00:51:38.261565+00:00",
+  "agents_used": [
+    "omni-researcher",
+    "strategist",
+    "draft-writer",
+    "editor-qa",
+    "publisher"
+  ]
+}

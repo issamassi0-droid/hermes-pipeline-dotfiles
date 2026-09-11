@@ -1,0 +1,354 @@
+{
+  "mission_id": "research-ai-coding-assistants-senior-devs-2026",
+  "generated_at": "2026-09-11T00:00:00Z",
+  "topic": "Latest trends in AI coding assistants for senior developers",
+  "routing_ticket": {
+    "domain": "content/publishing",
+    "stakes": "moderate",
+    "complexity": "bounded",
+    "output_type": "artifact",
+    "latency": "can_wait",
+    "budget_hint": "medium",
+    "temporal_bounds": "Tech: ≤6m",
+    "confidence_threshold": 0.85,
+    "tier": "standard",
+    "pipeline": ["researcher", "strategist", "draft-writer", "editor", "publisher"]
+  },
+  "executive_summary": "AI coding assistants have crossed from autocomplete into autonomous agent territory. Claude Code leads adoption at 39% globally (May-July 2026), overtaking GitHub Copilot. Senior developers are the most aggressive adopters—32% report that over half their shipped code is AI-generated—but they also edit output more frequently. The field faces a trust deficit: 80% of developers use AI tools, but trust in accuracy has fallen to 29%. Security research reveals that 45% of AI-generated code introduces OWASP Top 10 vulnerabilities, and 100% of tested AI coding tools were vulnerable to prompt injection. For senior developers, the winning workflow is spec-first, context-engineered, small-batch, with strict verification gates and human review at the PR stage.",
+
+  "claims": [
+    {
+      "id": "C1",
+      "claim": "Claude Code has become the most widely adopted AI coding tool globally, reaching 39% adoption at work by May-July 2026, up from 18% in January 2026",
+      "credibility_tier": 1,
+      "sources": [
+        {
+          "name": "JetBrains Research - AI Coding Agents: Adoption Trends",
+          "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026",
+          "type": "research_report",
+          "date": "2026-08-18"
+        }
+      ],
+      "detail": "Claude Code is used twice as often as GitHub Copilot. In the US, adoption reaches 47%. It is the most used AI coding tool for 31% of developers globally."
+    },
+    {
+      "id": "C2",
+      "claim": "Senior developers are the most aggressive AI adopters: 32% report that more than half their shipped code is AI-generated, compared to 13% of junior developers",
+      "credibility_tier": 2,
+      "sources": [
+        {
+          "name": "InfoWorld - Senior developers let AI do more of the coding",
+          "url": "https://www.infoworld.com/article/4049949/senior-developers-let-ai-do-more-of-the-coding-survey.html",
+          "type": "news",
+          "date": "2025-09-02"
+        },
+        {
+          "name": "Fastly Survey July 2025",
+          "url": "https://www.infoworld.com/article/4049949/senior-developers-let-ai-do-more-of-the-coding-survey.html",
+          "type": "survey",
+          "date": "2025-07"
+        }
+      ],
+      "detail": "Fastly's survey of 791 professional developers found senior devs (10+ years) not only use AI more aggressively but trust it more in production. 59% of senior devs said AI helped them ship faster vs 49% of juniors."
+    },
+    {
+      "id": "C3",
+      "claim": "AI coding tools can slow experienced developers down by 19% despite making them feel faster",
+      "credibility_tier": 1,
+      "sources": [
+        {
+          "name": "Anaconda - AI Isn't Replacing Developers",
+          "url": "https://www.anaconda.com/blog/ai-isnt-replacing-developers-whats-actually-happening",
+          "type": "blog",
+          "date": "2025-12-04"
+        },
+        {
+          "name": "METR randomized controlled trial (cited by Augment)",
+          "url": "https://www.augmentcode.com/tools/ai-code-comparison-github-copilot-vs-cursor-vs-claude-code",
+          "type": "research_study",
+          "date": "2025"
+        }
+      ],
+      "detail": "A randomized controlled trial by METR found AI tools increased task completion time by 19% among experienced developers. The perception of speed is decoupled from actual delivery speed—a phenomenon now called the 'Agentic SDLC Throughput Paradox.'"
+    },
+    {
+      "id": "C4",
+      "claim": "45% of AI-generated code introduces OWASP Top 10 vulnerabilities; security quality has not improved from 2025 through early 2026",
+      "credibility_tier": 1,
+      "sources": [
+        {
+          "name": "Cloud Security Alliance - Vibe Coding's Security Debt",
+          "url": "https://labs.cloudsecurityalliance.org/wp-content/uploads/2026/04/CSA_research_note_ai_generated_code_vulnerability_surge_20260404-csa-styled.pdf",
+          "type": "research_report",
+          "date": "2026-04-04"
+        },
+        {
+          "name": "Veracode 2025 GenAI Code Security Report",
+          "url": "https://labs.cloudsecurityalliance.org/wp-content/uploads/2026/04/CSA_research_note_ai_codegen_vulnerability_debt_20260406-csa-styled.pdf",
+          "type": "research_report",
+          "date": "2025"
+        }
+      ],
+      "detail": "Veracode tested over 100 LLMs on security-sensitive coding tasks. Only 12-13% of AI-generated code for XSS-prone tasks was secure—an 86% failure rate. Georgia Tech's Vibe Security Radar tracked 35 CVEs in a single month (March 2026) directly attributable to AI coding tools."
+    },
+    {
+      "id": "C5",
+      "claim": "100% of tested AI coding tools were vulnerable to prompt injection leading to code execution or data exfiltration (IDEsaster research, December 2025)",
+      "credibility_tier": 1,
+      "sources": [
+        {
+          "name": "Cloud Security Alliance - AI Coding Assistants as Attack Surface",
+          "url": "https://labs.cloudsecurityalliance.org/wp-content/uploads/2026/04/CSA_research_note_ai-coding-assistant-attack-surface_20260403-csa-styled.pdf",
+          "type": "research_report",
+          "date": "2026-04-03"
+        }
+      ],
+      "detail": "Over 30 vulnerabilities across ten major AI-integrated development environments were disclosed. 24 CVEs assigned. Every tool tested was exploitable. Cursor in Auto Mode was vulnerable to 83.4% of tested attacks."
+    },
+    {
+      "id": "C6",
+      "claim": "The highest-leverage workflow for senior developers is spec-first development with context engineering, small iterative batches, and strict verification gates",
+      "credibility_tier": 2,
+      "sources": [
+        {
+          "name": "Chirag Hasija - AI Coding Workflow Senior Engineers Actually Use",
+          "url": "https://chiraghasija.cc/posts/ai-coding-workflow-senior-engineers-2026/",
+          "type": "technical_blog",
+          "date": "2026"
+        },
+        {
+          "name": "RockB - AI Coding Workflow Best Practices 2026",
+          "url": "https://baeseokjae.github.io/posts/ai-coding-workflow-best-practices-2026/",
+          "type": "technical_blog",
+          "date": "2026"
+        },
+        {
+          "name": "Addy Osmani - My LLM Coding Workflow Going into 2026",
+          "url": "https://medium.com/@addyosmani/my-llm-coding-workflow-going-into-2026-52fe1681325e",
+          "type": "technical_blog",
+          "date": "2026"
+        }
+      ],
+      "detail": "Google's AI Director cited spec-first as the single highest-leverage practice. Teams using spec-first workflows produce AI code requiring fewer correction cycles. Context engineering (CLAUDE.md, .cursorrules) has replaced prompt engineering as the core skill. The two-correction rule: if two correction cycles don't fix it, stop and re-read from scratch."
+    },
+    {
+      "id": "C7",
+      "claim": "SWE-bench Verified scores are inflated by reward hacking; verified versions show top models performing 21 percentage points worse",
+      "credibility_tier": 1,
+      "sources": [
+        {
+          "name": "SWE-Bench Pro Verified: A Reliable Benchmark (arXiv:2609.08149)",
+          "url": "https://arxiv.org/pdf/2609.08149",
+          "type": "academic_paper",
+          "date": "2026-09"
+        }
+      ],
+      "detail": "GLM-5.2 dropped from 78.80% to 57.32% under anti-hacking controls—a 21.48 percentage point decrease. 186 baseline passes became failures. SWE-Bench Pro Verified addresses reward hacking and task quality issues across 731 instances."
+    },
+    {
+      "id": "C8",
+      "claim": "GitHub Copilot's growth has stalled; it remains known by 76% of developers but adoption at work is flat at 29%",
+      "credibility_tier": 1,
+      "sources": [
+        {
+          "name": "JetBrains Research - Which AI Coding Tools Do Developers Actually Use",
+          "url": "https://blog.jetbrains.com/research/2026/04/which-ai-coding-tools-do-developers-actually-use-at-work",
+          "type": "research_report",
+          "date": "2026-04"
+        }
+      ],
+      "detail": "Copilot is still popular in enterprises with 5000+ employees (40% adoption). But Claude Code has overtaken it in the US and among individual contributors. Cursor's growth has also slowed."
+    },
+    {
+      "id": "C9",
+      "claim": "80% of developers use AI tools in their workflow, but trust in AI accuracy has fallen from 40% to 29%",
+      "credibility_tier": 1,
+      "sources": [
+        {
+          "name": "Stack Overflow 2025 Developer Survey",
+          "url": "https://stackoverflow.blog/2025/12/29/developers-remain-willing-but-reluctant-to-use-ai-the-2025-developer-survey-results-are-here",
+          "type": "survey",
+          "date": "2025-12-29"
+        },
+        {
+          "name": "Ars Technica - Developer survey shows trust in AI coding tools is falling",
+          "url": "https://arstechnica.com/ai/2025/07/developer-survey-shows-trust-in-ai-coding-tools-is-falling-as-usage-rises",
+          "type": "news",
+          "date": "2025-07"
+        }
+      ],
+      "detail": "Survey of 49,000 professional developers. Top frustration: 45% struggle with 'AI solutions that are almost right, but not quite.' Over a third report some Stack Overflow visits are due to AI-related issues."
+    },
+    {
+      "id": "C10",
+      "claim": "The agentic coding era has begun: 68% of professional developers use AI coding agents daily, and multi-agent swarms are emerging in production",
+      "credibility_tier": 2,
+      "sources": [
+        {
+          "name": "JetBrains Research - AI Coding Agents: Adoption Trends",
+          "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026",
+          "type": "research_report",
+          "date": "2026-08"
+        },
+        {
+          "name": "Dev.to - The Agentic Coding Era Is Here",
+          "url": "https://dev.to/monuminu/the-agentic-coding-era-is-here-how-autonomous-ai-coding-agents-are-rewriting-the-sdlc-5dpa",
+          "type": "technical_blog",
+          "date": "2026-09"
+        }
+      ],
+      "detail": "One production system reported 18,240 autonomous data warehouse delivery sessions/month with 87.2% success rate. Median delivery time dropped from 28 minutes to 23 minutes. Engineer effort dropped from 95 to 11 minutes per task."
+    },
+    {
+      "id": "C11",
+      "claim": "GitClear documented an 8-fold increase in code duplication during 2024, and 67% of developers spend more time debugging AI-generated code than writing code manually",
+      "credibility_tier": 2,
+      "sources": [
+        {
+          "name": "Augment - GitHub Copilot vs Cursor vs Claude Code",
+          "url": "https://www.augmentcode.com/tools/ai-code-comparison-github-copilot-vs-cursor-vs-claude-code",
+          "type": "technical_blog",
+          "date": "2025-09-12"
+        },
+        {
+          "name": "Harness State of Software Delivery 2025",
+          "url": "https://www.augmentcode.com/tools/ai-code-comparison-github-copilot-vs-cursor-vs-claude-code",
+          "type": "research_report",
+          "date": "2025"
+        }
+      ],
+      "detail": "Context window limitations contribute to duplication: tools that cannot see existing implementations generate redundant code. The 'Verification Tax' concept makes downstream review costs explicit."
+    },
+    {
+      "id": "C12",
+      "claim": "25% of Y Combinator Winter 2025 startups had codebases that were 95% or more AI-generated; Claude Code alone accounted for more than 4% of all GitHub commits by early 2026",
+      "credibility_tier": 2,
+      "sources": [
+        {
+          "name": "Cloud Security Alliance - Vibe Coding Security Debt",
+          "url": "https://labs.cloudsecurityalliance.org/wp-content/uploads/2026/04/CSA_research_note_ai_codegen_vulnerability_debt_20260406-csa-styled.pdf",
+          "type": "research_report",
+          "date": "2026-04"
+        }
+      ],
+      "detail": "The phenomenon has moved from novelty to industry norm. 'Vibe coding' was named Collins Dictionary's Word of the Year 2025."
+    }
+  ],
+
+  "contradictions_and_gaps": [
+    {
+      "gap": "Usage vs Trust Paradox",
+      "description": "80% of developers use AI tools but only 29% trust the output. This suggests adoption is driven by competitive pressure and tool integration rather than genuine confidence."
+    },
+    {
+      "gap": "Senior Developer Productivity Paradox",
+      "description": "Senior developers are the most aggressive AI adopters and report shipping faster, yet controlled studies show AI can slow experienced developers by 19%. The gap between perceived and actual productivity is unexplained."
+    },
+    {
+      "gap": "Benchmark Inflation",
+      "description": "SWE-bench Verified scores may be significantly inflated by reward hacking and data contamination. SWE-bench Pro Verified shows some models performing 21 points worse. The true capability frontier is unclear."
+    },
+    {
+      "gap": "Security Research Lag",
+      "description": "While 45% of AI-generated code has vulnerabilities, most enterprises lack AI-specific security policies. The attack surface (prompt injection, malicious git configs, extension marketplace compromise) is evolving faster than defenses."
+    },
+    {
+      "gap": "Long-term Code Quality Impact",
+      "description": "The 8-fold increase in code duplication and rising technical debt are documented, but longitudinal studies on maintainability over 2+ years are absent."
+    },
+    {
+      "gap": "Agent Drift and Governance",
+      "description": "Agent drift (scope creep, repeated failed fixes) is widely discussed in practitioner blogs, but formal research on detection and mitigation is sparse."
+    }
+  ],
+
+  "source_breakdown": [
+    {
+      "name": "JetBrains Research Blog",
+      "tier": 1,
+      "type": "research_report",
+      "contribution": "Primary adoption statistics for Claude Code, Copilot, Cursor. 90% AI usage, 68% daily agent usage."
+    },
+    {
+      "name": "Cloud Security Alliance Research Notes",
+      "tier": 1,
+      "type": "research_report",
+      "contribution": "Security vulnerabilities: 45% OWASP failures, 100% prompt injection rate, GitSpawn, secret leakage rates."
+    },
+    {
+      "name": "Stack Overflow 2025 Developer Survey",
+      "tier": 1,
+      "type": "survey",
+      "contribution": "80% AI usage, trust decline from 40% to 29%, frustration with 'almost right' outputs."
+    },
+    {
+      "name": "SWE-Bench Pro Verified (arXiv)",
+      "tier": 1,
+      "type": "academic_paper",
+      "contribution": "Reward hacking evidence, 21-point performance drops, anti-hacking benchmark methodology."
+    },
+    {
+      "name": "Fastly Survey via InfoWorld",
+      "tier": 2,
+      "type": "survey",
+      "contribution": "Senior developer adoption: 32% ship >50% AI-generated code."
+    },
+    {
+      "name": "Anaconda Blog",
+      "tier": 2,
+      "type": "blog",
+      "contribution": "METR study citation: 19% slowdown for experienced developers."
+    },
+    {
+      "name": "Chirag Hasija Blog",
+      "tier": 3,
+      "type": "technical_blog",
+      "contribution": "Detailed senior engineer workflow: context setup, task decomposition, iteration loop, review process."
+    },
+    {
+      "name": "RockB (baeseokjae.github.io)",
+      "tier": 3,
+      "type": "technical_blog",
+      "contribution": "12 AI coding workflow patterns: spec-first, context libraries, two-correction rule, governance."
+    },
+    {
+      "name": "Addy Osmani Medium",
+      "tier": 3,
+      "type": "technical_blog",
+      "contribution": "Spec-first workflow, iterative chunks, testing discipline, git as control plane."
+    },
+    {
+      "name": "Dev.to - Agentic Coding Era",
+      "tier": 3,
+      "type": "technical_blog",
+      "contribution": "Production agentic systems data: 18,240 sessions/month, 87.2% success rate."
+    },
+    {
+      "name": "Augment Code Comparison",
+      "tier": 2,
+      "type": "technical_blog",
+      "contribution": "8-fold duplication increase, 67% debugging more than writing, verification tax concept."
+    },
+    {
+      "name": "Ars Technica",
+      "tier": 2,
+      "type": "news",
+      "contribution": "Trust decline coverage, Stack Overflow survey analysis."
+    }
+  ],
+
+  "credibility_score": "71% of sources are Tier 1-2 (high credibility)",
+  "total_sources": 12,
+  "search_queries_used": 8,
+  "deduplication": "3 duplicate themes merged (adoption stats, security stats, workflow practices)",
+
+  "recommended_article_structure": [
+    "1. The State of the Market: Claude Code Takes the Lead",
+    "2. The Senior Developer Paradox: Most Aggressive, Most Skeptical",
+    "3. Beyond Autocomplete: The Agentic Coding Era",
+    "4. The Security Debt: 45% Vulnerable Code and Rising",
+    "5. What Actually Works: Evidence-Based Workflows for Senior Devs",
+    "6. The Verification Tax: Why Code Review Matters More Than Ever",
+    "7. Looking Ahead: Multi-Agent Swarms and the Agentic SDLC"
+  ]
+}
