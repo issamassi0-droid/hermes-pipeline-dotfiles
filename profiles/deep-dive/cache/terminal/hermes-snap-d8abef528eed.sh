@@ -17,8 +17,7 @@ declare -x FOREGROUND="#d1c8b0"
 declare -x GDK_BACKEND="wayland"
 declare -x GDK_SCALE="2"
 declare -x GIO_LAUNCHED_DESKTOP_FILE="/usr/share/applications/hermes-desktop.desktop"
-declare -x GIO_LAUNCHED_DESKTOP_FILE_PID="474573"
-declare -x GIT_PAGER="cat"
+declare -x GIO_LAUNCHED_DESKTOP_FILE_PID="1155412"
 declare -x GUM_CHOOSE_CURSOR_BACKGROUND="#141210"
 declare -x GUM_CHOOSE_CURSOR_FOREGROUND="#c4682a"
 declare -x GUM_CHOOSE_HEADER_BACKGROUND="#141210"
@@ -147,13 +146,13 @@ declare -x HERMES_MAX_ITERATIONS="150"
 declare -x HERMES_MEDIA_DELIVERY_STRICT="0"
 declare -x HERMES_MEDIA_TRUST_RECENT_FILES="1"
 declare -x HERMES_MEDIA_TRUST_RECENT_SECONDS="600"
-declare -x HERMES_PARENT_NONCE="8915c52b1a4cbbeb129cb119f8e8431c"
-declare -x HERMES_PARENT_PID="474573"
-declare -x HERMES_PARENT_START_MARKER="linux:2157070"
+declare -x HERMES_PARENT_NONCE="00c019b1964068e21c26b474ff22807f"
+declare -x HERMES_PARENT_PID="1155412"
+declare -x HERMES_PARENT_START_MARKER="linux:3389168"
 declare -x HERMES_QUIET="1"
 declare -x HERMES_REAL_HOME="/home/massi"
 declare -x HERMES_SERVE_HEADLESS="1"
-declare -x HERMES_SPAWN="v1:-:serve:474573:-"
+declare -x HERMES_SPAWN="v1:-:serve:1155412:-"
 declare -x HERMES_TURN_LEASE_TIMEOUT="5"
 declare -x HERMES_WEB_DIST="/home/massi/.hermes/hermes-agent/apps/desktop/release/linux-unpacked/resources/app.asar.unpacked/dist"
 declare -x HOME="/home/massi"
@@ -162,7 +161,7 @@ declare -x HYPRLAND_CMD="Hyprland --watchdog-fd 4"
 declare -x HYPRLAND_INSTANCE_SIGNATURE="efb50993780079460b0cbed1363e2166a2de1d9f_1789070039_1715099097"
 declare -x IMAGE_TOOLS_DEBUG="false"
 declare -x INPUT_METHOD="fcitx"
-declare -x INVOCATION_ID="d70e50a97a454b03b501c5db0e77cc2b"
+declare -x INVOCATION_ID="c737d92a423a4078856ad633a40cf8ea"
 declare -x JOURNAL_STREAM="10:428746"
 declare -x LANG="en_US.UTF-8"
 declare -x LANGUAGE
@@ -191,10 +190,9 @@ declare -x MOZ_ENABLE_WAYLAND="1"
 declare -x NOTIFY_SOCKET="/run/user/1000/systemd/notify"
 declare -x NO_AT_BRIDGE="1"
 declare -x NVD_BACKEND="direct"
-declare -x OLDPWD="/home/massi"
+declare -x OLDPWD
 declare -x OMARCHY_PATH="/usr/share/omarchy"
 declare -x OZONE_PLATFORM="wayland"
-declare -x PAGER="cat"
 declare -x PATH="/home/massi/.hermes/node/bin:/home/massi/.hermes/node:/home/massi/.hermes/hermes-agent/venv/bin:/home/massi/.local/share/mise/installs/codex/latest/bin:/home/massi/.local/share/mise/installs/gh/latest/gh_2.100.0_linux_amd64/bin:/home/massi/.local/share/mise/installs/go/1.27.1/bin:/home/massi/.local/share/mise/installs/node/26.8.1/bin:/home/massi/.local/share/mise/installs/opencode/latest:/home/massi/.local/share/mise/installs/python/latest/bin:/home/massi/.local/share/mise/installs/ruby/latest/bin:/home/massi/.local/share/mise/installs/uv/latest/.mise-bins:/home/massi/.local/share/mise/shims:/home/massi/.local/bin:/usr/share/omarchy/bin:/home/massi/.cargo/bin:/home/massi/.local/share/../bin:/usr/local/sbin:/usr/local/bin:/usr/bin:/usr/bin/site_perl:/usr/bin/vendor_perl:/usr/bin/core_perl:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/sbin:/sbin:/bin:/home/massi/.hermes/profiles/deep-dive/bin"
 declare -x PWD="/home/massi"
 declare -x PYTHONUTF8="1"
@@ -271,3 +269,36 @@ declare -x _JAVA_AWT_WM_NONREPARENTING="1"
 declare -x __GLX_VENDOR_LIBRARY_NAME="nvidia"
 declare -x _config_version="42"
 declare -x group_sessions_per_user="True"
+gawklibpath_append () 
+{ 
+    [ -z "$AWKLIBPATH" ] && AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`;
+    export AWKLIBPATH="$AWKLIBPATH:$*"
+}
+gawklibpath_default () 
+{ 
+    unset AWKLIBPATH;
+    export AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`
+}
+gawklibpath_prepend () 
+{ 
+    [ -z "$AWKLIBPATH" ] && AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`;
+    export AWKLIBPATH="$*:$AWKLIBPATH"
+}
+gawkpath_append () 
+{ 
+    [ -z "$AWKPATH" ] && AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`;
+    export AWKPATH="$AWKPATH:$*"
+}
+gawkpath_default () 
+{ 
+    unset AWKPATH;
+    export AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`
+}
+gawkpath_prepend () 
+{ 
+    [ -z "$AWKPATH" ] && AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`;
+    export AWKPATH="$*:$AWKPATH"
+}
+shopt -s expand_aliases
+set +e
+set +u

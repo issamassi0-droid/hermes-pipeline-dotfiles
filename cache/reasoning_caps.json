@@ -1,6 +1,6 @@
 {
 "https://inference-api.nousresearch.com/v1/models":{
-"ts":1789089660.0773368,
+"ts":1789091129.4135752,
 "caps":{
 "deepseek/deepseek-v4.1-flash":{
 "supports_reasoning":true,
@@ -2469,7 +2469,7 @@
 }
 },
 "https://openrouter.ai/api/v1/models":{
-"ts":1789089464.6236618,
+"ts":1789091094.3046336,
 "caps":{
 "inclusionai/ling-3.0-flash-vl:free":{
 "supports_reasoning":true,

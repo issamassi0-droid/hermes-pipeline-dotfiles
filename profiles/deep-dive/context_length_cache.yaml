@@ -1,3 +1,5 @@
 context_lengths:
   meituan/longcat-2.0:free@https://inference-api.nousresearch.com/v1: 1048576
   deepseek/deepseek-v4.1-flash@https://inference-api.nousresearch.com/v1: 1048576
+  nvidia/nemotron-3-super-120b-a12b@https://inference-api.nousresearch.com/v1: 262144
+  poolside/laguna-xs-2.1:free@https://inference-api.nousresearch.com/v1: 262144

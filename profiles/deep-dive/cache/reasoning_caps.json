@@ -1,6 +1,6 @@
 {
 "https://inference-api.nousresearch.com/v1/models":{
-"ts":1789090000.2676413,
+"ts":1789091137.872232,
 "caps":{
 "deepseek/deepseek-v4.1-flash":{
 "supports_reasoning":true,
