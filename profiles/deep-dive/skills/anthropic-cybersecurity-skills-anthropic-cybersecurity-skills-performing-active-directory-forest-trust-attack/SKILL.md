@@ -1,10 +1,10 @@
 ---
 name: performing-active-directory-forest-trust-attack
 description: Enumerate and audit Active Directory forest trust relationships using
-  Impacket for SID filtering analysis, trust key extraction, cross-forest SID history
-  abuse detection, and inter-realm Kerberos ticket assessment. Use when red-teaming
-  multi-forest AD environments or auditing forest trusts for cross-forest privilege
-  escalation and trust ticket forgery exposure.
+ Impacket for SID filtering analysis, trust key extraction, cross-forest SID history
+ abuse detection, and inter-realm Kerberos ticket assessment. Use when red-teaming
+ multi-forest AD environments or auditing forest trusts for cross-forest privilege
+ escalation and trust ticket forgery exposure.
 domain: cybersecurity
 subdomain: red-team
 tags:

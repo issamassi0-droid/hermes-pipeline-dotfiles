@@ -1,12 +1,12 @@
 ---
 name: performing-dynamic-analysis-with-any-run
 description: 'Perform interactive dynamic malware analysis using the ANY.RUN cloud sandbox
-  to detonate samples, observe real-time execution behavior, interact with malware prompts
-  such as dialogs and CAPTCHAs, and capture process trees, network traffic, and system
-  changes. Use when a suspicious file or URL needs live, interactive behavioral detonation
-  in a cloud sandbox rather than static analysis alone.
+ to detonate samples, observe real-time execution behavior, interact with malware prompts
+ such as dialogs and CAPTCHAs, and capture process trees, network traffic, and system
+ changes. Use when a suspicious file or URL needs live, interactive behavioral detonation
+ in a cloud sandbox rather than static analysis alone.
 
-  '
+ '
 domain: cybersecurity
 subdomain: malware-analysis
 tags:
@@ -66,33 +66,33 @@ Set up the ANY.RUN task with appropriate parameters:
 ```
 ANY.RUN Task Configuration:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━
-OS Selection:        Windows 10 x64 (recommended default)
-                     Windows 7 x64 (for legacy malware)
-                     Windows 11 x64 (for modern samples)
-Execution Time:      60 seconds (default) / 120-300 for slow-acting malware
-Network:             Connected (captures real C2 traffic)
-                     Residential Proxy (bypasses geo-blocking)
-Privacy:             Public (free tier) / Private (paid - not indexed)
-MITM Proxy:          Enable for HTTPS traffic decryption
-Fake Net:            Enable to simulate internet services if sample checks connectivity
+OS Selection: Windows 10 x64 (recommended default)
+ Windows 7 x64 (for legacy malware)
+ Windows 11 x64 (for modern samples)
+Execution Time: 60 seconds (default) / 120-300 for slow-acting malware
+Network: Connected (captures real C2 traffic)
+ Residential Proxy (bypasses geo-blocking)
+Privacy: Public (free tier) / Private (paid - not indexed)
+MITM Proxy: Enable for HTTPS traffic decryption
+Fake Net: Enable to simulate internet services if sample checks connectivity
 ```
 
 **API-based submission (paid tier):**
 ```bash
 # Submit file via ANY.RUN API
 curl -X POST "https://api.any.run/v1/analysis" \
-  -H "Authorization: API-Key $ANYRUN_API_KEY" \
-  -F "file=@suspect.exe" \
-  -F "env_os=windows" \
-  -F "env_version=10" \
-  -F "env_bitness=64" \
-  -F "opt_timeout=120" \
-  -F "opt_network_connect=true" \
-  -F "opt_privacy_type=bylink"
+ -H "Authorization: API-Key $ANYRUN_API_KEY" \
+ -F "file=@suspect.exe" \
+ -F "env_os=windows" \
+ -F "env_version=10" \
+ -F "env_bitness=64" \
+ -F "opt_timeout=120" \
+ -F "opt_network_connect=true" \
+ -F "opt_privacy_type=bylink"
 
 # Check task status
 curl "https://api.any.run/v1/analysis/$TASK_ID" \
-  -H "Authorization: API-Key $ANYRUN_API_KEY" | jq '.data.status'
+ -H "Authorization: API-Key $ANYRUN_API_KEY" | jq '.data.status'
 ```
 
 ### Step 2: Interact with Malware During Execution
@@ -102,13 +102,13 @@ Use the interactive session to trigger malware behavior:
 ```
 Interactive Actions During Analysis:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-1. Document Macros:   Click "Enable Content" / "Enable Editing" when prompted
+1. Document Macros: Click "Enable Content" / "Enable Editing" when prompted
 2. Installer Screens: Click through installation dialogs
-3. UAC Prompts:       Click "Yes" to allow elevation (observe privilege escalation)
+3. UAC Prompts: Click "Yes" to allow elevation (observe privilege escalation)
 4. Credential Harvests: Enter fake credentials to observe phishing behavior
-5. Browser Redirects:  Navigate to URLs if malware opens browser windows
-6. File Dialogs:       Select target files if malware presents file picker
-7. Timeout Extension:  Extend analysis time if malware has delayed execution
+5. Browser Redirects: Navigate to URLs if malware opens browser windows
+6. File Dialogs: Select target files if malware presents file picker
+7. Timeout Extension: Extend analysis time if malware has delayed execution
 ```
 
 ### Step 3: Analyze Process Tree
@@ -119,15 +119,15 @@ Review the complete process execution chain:
 Process Tree Analysis Points:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Parent-Child Relationships:
-  - WINWORD.EXE -> cmd.exe -> powershell.exe (macro execution chain)
-  - explorer.exe -> suspect.exe -> svchost.exe (process injection)
+ - WINWORD.EXE -> cmd.exe -> powershell.exe (macro execution chain)
+ - explorer.exe -> suspect.exe -> svchost.exe (process injection)
 
 Process Events to Note:
-  - Process creation with suspicious command-line arguments
-  - PowerShell with encoded commands (-enc / -encodedcommand)
-  - cmd.exe executing script files (.bat, .vbs, .js)
-  - Legitimate processes spawned from unusual parents
-  - Process termination (self-deletion behavior)
+ - Process creation with suspicious command-line arguments
+ - PowerShell with encoded commands (-enc / -encodedcommand)
+ - cmd.exe executing script files (.bat, .vbs, .js)
+ - Legitimate processes spawned from unusual parents
+ - Process termination (self-deletion behavior)
 ```
 
 ### Step 4: Review Network Activity
@@ -138,20 +138,20 @@ Examine DNS, HTTP/HTTPS, and TCP/UDP connections:
 ANY.RUN Network Panel Analysis:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DNS Requests:
-  - Domain resolutions with threat intelligence tags
-  - Fast-flux or DGA domain patterns
-  - DNS over HTTPS (DoH) detection
+ - Domain resolutions with threat intelligence tags
+ - Fast-flux or DGA domain patterns
+ - DNS over HTTPS (DoH) detection
 
 HTTP/HTTPS Traffic (with MITM enabled):
-  - Full request/response bodies for HTTP
-  - Decrypted HTTPS traffic showing C2 commands
-  - Downloaded payloads and their content types
-  - POST data containing exfiltrated information
+ - Full request/response bodies for HTTP
+ - Decrypted HTTPS traffic showing C2 commands
+ - Downloaded payloads and their content types
+ - POST data containing exfiltrated information
 
 Connection Map:
-  - Geographic visualization of C2 server locations
-  - Connection timeline showing beacon patterns
-  - Suricata alerts triggered on network traffic
+ - Geographic visualization of C2 server locations
+ - Connection timeline showing beacon patterns
+ - Suricata alerts triggered on network traffic
 ```
 
 ### Step 5: Examine IOCs and Threat Intelligence
@@ -161,17 +161,17 @@ Extract indicators and map to known threats:
 ```
 ANY.RUN IOC Categories:
 ━━━━━━━━━━━━━━━━━━━━━━
-Files:       Dropped files with hashes, YARA matches, VirusTotal results
-Network:     IPs, domains, URLs contacted during execution
-Registry:    Keys created/modified for persistence
-Processes:   Suspicious process names and command lines
-Mutex:       Named mutexes created (used for single-instance checking)
-Signatures:  Suricata rules triggered, behavioral signatures matched
+Files: Dropped files with hashes, YARA matches, VirusTotal results
+Network: IPs, domains, URLs contacted during execution
+Registry: Keys created/modified for persistence
+Processes: Suspicious process names and command lines
+Mutex: Named mutexes created (used for single-instance checking)
+Signatures: Suricata rules triggered, behavioral signatures matched
 
 MITRE ATT&CK Mapping:
-  - ANY.RUN automatically maps observed behaviors to ATT&CK techniques
-  - Review the ATT&CK matrix tab for technique coverage
-  - Export ATT&CK Navigator layer for reporting
+ - ANY.RUN automatically maps observed behaviors to ATT&CK techniques
+ - Review the ATT&CK matrix tab for technique coverage
+ - Export ATT&CK Navigator layer for reporting
 ```
 
 ### Step 6: Export Analysis Results
@@ -181,18 +181,18 @@ Download comprehensive reports and artifacts:
 ```bash
 # Download report via API
 curl "https://api.any.run/v1/analysis/$TASK_ID/report" \
-  -H "Authorization: API-Key $ANYRUN_API_KEY" \
-  -o report.json
+ -H "Authorization: API-Key $ANYRUN_API_KEY" \
+ -o report.json
 
 # Download PCAP
 curl "https://api.any.run/v1/analysis/$TASK_ID/pcap" \
-  -H "Authorization: API-Key $ANYRUN_API_KEY" \
-  -o capture.pcap
+ -H "Authorization: API-Key $ANYRUN_API_KEY" \
+ -o capture.pcap
 
 # Download dropped files
 curl "https://api.any.run/v1/analysis/$TASK_ID/files" \
-  -H "Authorization: API-Key $ANYRUN_API_KEY" \
-  -o dropped_files.zip
+ -H "Authorization: API-Key $ANYRUN_API_KEY" \
+ -o dropped_files.zip
 
 # Available exports from ANY.RUN web interface:
 # - HTML Report (shareable standalone page)
@@ -248,36 +248,36 @@ curl "https://api.any.run/v1/analysis/$TASK_ID/files" \
 ```
 ANY.RUN ANALYSIS REPORT
 =========================
-Task URL:         https://app.any.run/tasks/<task_id>
-Sample:           invoice_q3.docm
-SHA-256:          e3b0c44298fc1c149afbf4c8996fb924...
-Verdict:          MALICIOUS (Score: 95/100)
-Family:           Emotet
-Tags:             [trojan, banker, spam, macro]
+Task URL: https://app.any.run/tasks/<task_id>
+Sample: invoice_q3.docm
+SHA-256: e3b0c44298fc1c149afbf4c8996fb924...
+Verdict: MALICIOUS (Score: 95/100)
+Family: Emotet
+Tags: [trojan, banker, spam, macro]
 
 PROCESS TREE
 WINWORD.EXE (PID: 2184)
-  └── cmd.exe (PID: 3456) "/c powershell -enc JABXAG..."
-      └── powershell.exe (PID: 4012)
-          └── rundll32.exe (PID: 4568) "C:\Users\...\payload.dll,Control_RunDLL"
+ └── cmd.exe (PID: 3456) "/c powershell -enc JABXAG..."
+ └── powershell.exe (PID: 4012)
+ └── rundll32.exe (PID: 4568) "C:\Users\...\payload.dll,Control_RunDLL"
 
 NETWORK INDICATORS
-DNS:    update.emotet-c2[.]com -> 185.220.101.42
-HTTPS:  POST hxxps://185.220.101[.]42/wp-content/gate/ (C2 beacon)
-HTTP:   GET hxxp://compromised-site[.]com/invoice.dll (payload download)
+DNS: update.emotet-c2[.]com -> 185.220.101.42
+HTTPS: POST hxxps://185.220.101[.]42/wp-content/gate/ (C2 beacon)
+HTTP: GET hxxp://compromised-site[.]com/invoice.dll (payload download)
 
 SURICATA ALERTS
 [1:2028401] ET MALWARE Emotet CnC Beacon
 [1:2028402] ET MALWARE Win32/Emotet Activity
 
 MITRE ATT&CK TECHNIQUES
-T1566.001  Phishing: Spearphishing Attachment
-T1204.002  User Execution: Malicious File
-T1059.001  Command and Scripting Interpreter: PowerShell
-T1218.011  Rundll32 Execution
-T1071.001  Application Layer Protocol: Web Protocols
+T1566.001 Phishing: Spearphishing Attachment
+T1204.002 User Execution: Malicious File
+T1059.001 Command and Scripting Interpreter: PowerShell
+T1218.011 Rundll32 Execution
+T1071.001 Application Layer Protocol: Web Protocols
 
 DROPPED FILES
-payload.dll  SHA-256: abc123... Detection: 48/72 (VirusTotal)
-config.dat   SHA-256: def456... (encrypted configuration)
+payload.dll SHA-256: abc123... Detection: 48/72 (VirusTotal)
+config.dat SHA-256: def456... (encrypted configuration)
 ```

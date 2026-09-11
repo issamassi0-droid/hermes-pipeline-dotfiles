@@ -17,37 +17,37 @@ mitre_attack:
 - T1114
 - T1056.003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - reconnaissance
-  - resource-development
-  - positioning
-  techniques:
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
-  - id: T1557
-    name: Adversary-in-the-Middle
-    tactic: positioning
-    source: attack
-  - id: F1004
-    name: Access with Stolen Session Cookie
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - reconnaissance
+ - resource-development
+ - positioning
+ techniques:
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
+ - id: T1557
+ name: Adversary-in-the-Middle
+ tactic: positioning
+ source: attack
+ - id: F1004
+ name: Access with Stolen Session Cookie
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
 version: 1.0.0
 author: mahipal
 license: Apache-2.0
@@ -91,15 +91,15 @@ Evaluate the reported email to determine if it is malicious:
 ```
 Email Header Analysis Checklist:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Return-Path:     billing@spoofed-domain[.]com
-From:            "IT Support" <support@corp-lookalike[.]com>
-Reply-To:        attacker@gmail[.]com (different from From)
-SPF:             FAIL (sender IP not authorized for domain)
-DKIM:            FAIL (signature invalid)
-DMARC:           FAIL (policy: none - no enforcement)
-Received:        from mail.attacker-infra[.]net [45.33.x.x]
+Return-Path: billing@spoofed-domain[.]com
+From: "IT Support" <support@corp-lookalike[.]com>
+Reply-To: attacker@gmail[.]com (different from From)
+SPF: FAIL (sender IP not authorized for domain)
+DKIM: FAIL (signature invalid)
+DMARC: FAIL (policy: none - no enforcement)
+Received: from mail.attacker-infra[.]net [45.33.x.x]
 X-Originating-IP: 45.33.x.x
-Message-ID:      <random@attacker-infra.net>
+Message-ID: <random@attacker-infra.net>
 ```
 
 Classification criteria:
@@ -132,12 +132,12 @@ Identify all recipients and assess who interacted with the phishing email:
 ```
 Scope Assessment:
 ━━━━━━━━━━━━━━━━
-Total Recipients:     47 users
-Delivered to Inbox:   38 users (9 caught by email gateway)
-Opened Email:         24 users (email tracking pixel data)
-Clicked Link:         8 users (proxy/firewall logs)
-Entered Credentials:  3 users (phishing page submitted form data)
-Opened Attachment:    2 users (EDR process execution telemetry)
+Total Recipients: 47 users
+Delivered to Inbox: 38 users (9 caught by email gateway)
+Opened Email: 24 users (email tracking pixel data)
+Clicked Link: 8 users (proxy/firewall logs)
+Entered Credentials: 3 users (phishing page submitted form data)
+Opened Attachment: 2 users (EDR process execution telemetry)
 ```
 
 Search methods:
@@ -243,21 +243,21 @@ Strengthen defenses against similar phishing attacks:
 ```
 PHISHING INCIDENT RESPONSE REPORT
 ===================================
-Incident:          INC-2025-1602
-Date Reported:     2025-11-16T09:15:00Z
-Reported By:       jdoe@corp.example.com
-Classification:    Credential Phishing (AiTM)
+Incident: INC-2025-1602
+Date Reported: 2025-11-16T09:15:00Z
+Reported By: jdoe@corp.example.com
+Classification: Credential Phishing (AiTM)
 
 EMAIL ANALYSIS
-Subject:       "Action Required: MFA Re-enrollment"
-Sender:        it-support@corp-security[.]com (spoofed)
-SPF:           FAIL | DKIM: FAIL | DMARC: FAIL
-Phishing URL:  hxxps://compromised-site[.]com/ms365/login
+Subject: "Action Required: MFA Re-enrollment"
+Sender: it-support@corp-security[.]com (spoofed)
+SPF: FAIL | DKIM: FAIL | DMARC: FAIL
+Phishing URL: hxxps://compromised-site[.]com/ms365/login
 Phishing Type: Microsoft 365 AiTM credential harvester
 
 IMPACT ASSESSMENT
-Recipients:        47
-Clicked Link:      8
+Recipients: 47
+Clicked Link: 8
 Credentials Entered: 3 (confirmed via proxy POST data)
 
 CONTAINMENT ACTIONS
@@ -269,10 +269,10 @@ CONTAINMENT ACTIONS
 [x] OAuth app grants reviewed (no unauthorized grants found)
 
 IOCs EXTRACTED
-Domain:  corp-security[.]com
-URL:     hxxps://compromised-site[.]com/ms365/login
-IP:      104.21.x.x (Cloudflare-hosted)
-Sender:  it-support@corp-security[.]com
+Domain: corp-security[.]com
+URL: hxxps://compromised-site[.]com/ms365/login
+IP: 104.21.x.x (Cloudflare-hosted)
+Sender: it-support@corp-security[.]com
 
 RECOMMENDATIONS
 1. Implement DMARC enforcement (p=reject) for corp domain

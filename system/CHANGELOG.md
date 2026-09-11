@@ -89,5 +89,5 @@ Format: `id | timestamp | target | before-hash | after-hash | proposer | approve
 | 20260911-final | 2026-09-11T00:00:00+01:00 | system-wide | (pending) | deep-dive | user | All quality targets met: FER=0%, SVR=100%, Dedup=50% |
 
 <!-- batch: v1.8.0 patch 2026-09-11 by deep-dive — Sidebar bot naming + three-layer naming convention -->
-| 20260911-v180 | 2026-09-11T00:00:00+01:00 | profiles/*/profile.yaml | (v1.7) | (v1.8) | deep-dive | user | Updated bot names in Hermes sidebar — removed Ministry of... prefixes, added functional titles |
-| 20260911-v180b | 2026-09-11T00:00:00+01:00 | profiles/*/SOUL.md | (v1.7) | (v1.8) | deep-dive | user | Replaced Ministry references with functional names throughout |
+| 20260911-v180 | 2026-09-11T00:00:00+01:00 | profiles/*/profile.yaml | (v1.7) | (v1.8) | deep-dive | user | Updated bot names in Hermes sidebar — removed of... prefixes, added functional titles |
+| 20260911-v180b | 2026-09-11T00:00:00+01:00 | profiles/*/SOUL.md | (v1.7) | (v1.8) | deep-dive | user | Replaced references with functional names throughout |

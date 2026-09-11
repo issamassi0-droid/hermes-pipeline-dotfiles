@@ -60,11 +60,11 @@ Follow the one-question-at-a-time discipline from `interview-me`, with one chang
 
 ```
 Q1: Beyond the floor, which of these do you want enforced?
-    (a) Test coverage on new code
-    (b) Security scanning
-    (c) Performance budgets
-    (d) Accessibility
-    (e) Architecture boundaries
+ (a) Test coverage on new code
+ (b) Security scanning
+ (c) Performance budgets
+ (d) Accessibility
+ (e) Architecture boundaries
 GUESS: (a) and (b) — you have a test runner already and you're handling user input.
 DEFAULT if unsure: (a) and (b).
 Say what each pick costs: (c) and (d) need a running URL, (e) needs a rules file written.
@@ -171,11 +171,11 @@ Add each one to the project's own script so it's reproducible without an agent:
 
 ```json
 {
-  "scripts": {
-    "check:fast": "tsc --noEmit && eslint . && gitleaks detect --redact --no-banner",
-    "check:task": "npm run check:fast && vitest run --coverage",
-    "check:full": "npm run check:task && semgrep scan --config p/default && osv-scanner scan source -r ."
-  }
+ "scripts": {
+ "check:fast": "tsc --noEmit && eslint . && gitleaks detect --redact --no-banner",
+ "check:task": "npm run check:fast && vitest run --coverage",
+ "check:full": "npm run check:task && semgrep scan --config p/default && osv-scanner scan source -r ."
+ }
 }
 ```
 

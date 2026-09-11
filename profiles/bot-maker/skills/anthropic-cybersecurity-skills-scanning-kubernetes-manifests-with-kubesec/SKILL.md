@@ -1,13 +1,13 @@
 ---
 name: scanning-kubernetes-manifests-with-kubesec
 description: >-
-  Scores Kubernetes resource manifests with Kubesec to flag misconfiguration and
-  privilege-escalation risk before deployment, mapping each finding back to the
-  securityContext change that fixes it. Use when gating manifests in CI, reviewing YAML or a
-  rendered chart before it reaches a cluster, or explaining why a manifest scored negatively.
-  Keywords: Kubesec, manifest score, securityContext, readOnlyRootFilesystem, runAsNonRoot, CI
-  gate. Do not use for scanning built images for CVEs - use scanning-docker-images-with-trivy;
-  for admission-time enforcement use implementing-opa-gatekeeper-for-policy-enforcement.
+ Scores Kubernetes resource manifests with Kubesec to flag misconfiguration and
+ privilege-escalation risk before deployment, mapping each finding back to the
+ securityContext change that fixes it. Use when gating manifests in CI, reviewing YAML or a
+ rendered chart before it reaches a cluster, or explaining why a manifest scored negatively.
+ Keywords: Kubesec, manifest score, securityContext, readOnlyRootFilesystem, runAsNonRoot, CI
+ gate. Do not use for scanning built images for CVEs - use scanning-docker-images-with-trivy;
+ for admission-time enforcement use implementing-opa-gatekeeper-for-policy-enforcement.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -81,7 +81,7 @@ Kubesec assigns a score to each Kubernetes resource based on security checks:
 ```bash
 # Linux/macOS
 curl -sSL https://github.com/controlplaneio/kubesec/releases/latest/download/kubesec_linux_amd64.tar.gz | \
-  tar xz -C /usr/local/bin/ kubesec
+ tar xz -C /usr/local/bin/ kubesec
 
 # Verify installation
 kubesec version
@@ -122,49 +122,49 @@ cat pod.yaml | kubesec scan -
 
 ```json
 [
-  {
-    "object": "Pod/web-app.default",
-    "valid": true,
-    "fileName": "pod.yaml",
-    "message": "Passed with a score of 3 points",
-    "score": 3,
-    "scoring": {
-      "passed": [
-        {
-          "id": "ReadOnlyRootFilesystem",
-          "selector": "containers[] .securityContext .readOnlyRootFilesystem == true",
-          "reason": "An immutable root filesystem prevents applications from writing to their local disk",
-          "points": 1
-        },
-        {
-          "id": "RunAsNonRoot",
-          "selector": "containers[] .securityContext .runAsNonRoot == true",
-          "reason": "Force the running image to run as a non-root user",
-          "points": 1
-        },
-        {
-          "id": "LimitsCPU",
-          "selector": "containers[] .resources .limits .cpu",
-          "reason": "Enforcing CPU limits prevents DOS via resource exhaustion",
-          "points": 1
-        }
-      ],
-      "advise": [
-        {
-          "id": "ApparmorAny",
-          "selector": "metadata .annotations .\"container.apparmor.security.beta.kubernetes.io/nginx\"",
-          "reason": "Well defined AppArmor policies reduce the attack surface of the container",
-          "points": 3
-        },
-        {
-          "id": "ServiceAccountName",
-          "selector": ".spec .serviceAccountName",
-          "reason": "Service accounts restrict Kubernetes API access and should be configured",
-          "points": 3
-        }
-      ]
-    }
-  }
+ {
+ "object": "Pod/web-app.default",
+ "valid": true,
+ "fileName": "pod.yaml",
+ "message": "Passed with a score of 3 points",
+ "score": 3,
+ "scoring": {
+ "passed": [
+ {
+ "id": "ReadOnlyRootFilesystem",
+ "selector": "containers[] .securityContext .readOnlyRootFilesystem == true",
+ "reason": "An immutable root filesystem prevents applications from writing to their local disk",
+ "points": 1
+ },
+ {
+ "id": "RunAsNonRoot",
+ "selector": "containers[] .securityContext .runAsNonRoot == true",
+ "reason": "Force the running image to run as a non-root user",
+ "points": 1
+ },
+ {
+ "id": "LimitsCPU",
+ "selector": "containers[] .resources .limits .cpu",
+ "reason": "Enforcing CPU limits prevents DOS via resource exhaustion",
+ "points": 1
+ }
+ ],
+ "advise": [
+ {
+ "id": "ApparmorAny",
+ "selector": "metadata .annotations .\"container.apparmor.security.beta.kubernetes.io/nginx\"",
+ "reason": "Well defined AppArmor policies reduce the attack surface of the container",
+ "points": 3
+ },
+ {
+ "id": "ServiceAccountName",
+ "selector": ".spec .serviceAccountName",
+ "reason": "Service accounts restrict Kubernetes API access and should be configured",
+ "points": 3
+ }
+ ]
+ }
+ }
 ]
 ```
 
@@ -173,8 +173,8 @@ cat pod.yaml | kubesec scan -
 ```bash
 # Scan all YAML files in a directory
 for file in manifests/*.yaml; do
-  echo "=== Scanning $file ==="
-  kubesec scan "$file"
+ echo "=== Scanning $file ==="
+ kubesec scan "$file"
 done
 
 # Scan multi-document YAML
@@ -186,14 +186,14 @@ kubesec scan multi-resource.yaml
 ```bash
 # Scan via the public API
 curl -sSX POST --data-binary @deployment.yaml \
-  https://v2.kubesec.io/scan
+ https://v2.kubesec.io/scan
 
 # Run a local API server
 kubesec http --port 8080 &
 
 # Scan against local server
 curl -sSX POST --data-binary @deployment.yaml \
-  http://localhost:8080/scan
+ http://localhost:8080/scan
 ```
 
 ## CI/CD Integration
@@ -204,48 +204,48 @@ curl -sSX POST --data-binary @deployment.yaml \
 name: Kubesec Scan
 on: [pull_request]
 jobs:
-  kubesec:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install Kubesec
-        run: |
-          curl -sSL https://github.com/controlplaneio/kubesec/releases/latest/download/kubesec_linux_amd64.tar.gz | \
-            tar xz -C /usr/local/bin/ kubesec
-      - name: Scan Manifests
-        run: |
-          FAIL=0
-          for file in k8s/*.yaml; do
-            SCORE=$(kubesec scan "$file" | jq '.[0].score')
-            echo "$file: score=$SCORE"
-            if [ "$SCORE" -lt 0 ]; then
-              echo "FAIL: $file has critical issues (score: $SCORE)"
-              FAIL=1
-            fi
-          done
-          exit $FAIL
+ kubesec:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - name: Install Kubesec
+ run: |
+ curl -sSL https://github.com/controlplaneio/kubesec/releases/latest/download/kubesec_linux_amd64.tar.gz | \
+ tar xz -C /usr/local/bin/ kubesec
+ - name: Scan Manifests
+ run: |
+ FAIL=0
+ for file in k8s/*.yaml; do
+ SCORE=$(kubesec scan "$file" | jq '.[0].score')
+ echo "$file: score=$SCORE"
+ if [ "$SCORE" -lt 0 ]; then
+ echo "FAIL: $file has critical issues (score: $SCORE)"
+ FAIL=1
+ fi
+ done
+ exit $FAIL
 ```
 
 ### GitLab CI
 
 ```yaml
 kubesec-scan:
-  stage: security
-  image: kubesec/kubesec:v2
-  script:
-    - |
-      for file in k8s/*.yaml; do
-        kubesec scan "$file" > /tmp/result.json
-        SCORE=$(cat /tmp/result.json | jq '.[0].score')
-        if [ "$SCORE" -lt 0 ]; then
-          echo "CRITICAL: $file scored $SCORE"
-          cat /tmp/result.json | jq '.[0].scoring.critical'
-          exit 1
-        fi
-      done
-  artifacts:
-    paths:
-      - kubesec-results/
+ stage: security
+ image: kubesec/kubesec:v2
+ script:
+ - |
+ for file in k8s/*.yaml; do
+ kubesec scan "$file" > /tmp/result.json
+ SCORE=$(cat /tmp/result.json | jq '.[0].score')
+ if [ "$SCORE" -lt 0 ]; then
+ echo "CRITICAL: $file scored $SCORE"
+ cat /tmp/result.json | jq '.[0].scoring.critical'
+ exit 1
+ fi
+ done
+ artifacts:
+ paths:
+ - kubesec-results/
 ```
 
 ### Admission Webhook
@@ -256,26 +256,26 @@ Deploy Kubesec as a ValidatingWebhookConfiguration to reject insecure manifests 
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
-  name: kubesec-webhook
+ name: kubesec-webhook
 webhooks:
-  - name: kubesec.controlplane.io
-    rules:
-      - apiGroups: [""]
-        apiVersions: ["v1"]
-        operations: ["CREATE", "UPDATE"]
-        resources: ["pods"]
-      - apiGroups: ["apps"]
-        apiVersions: ["v1"]
-        operations: ["CREATE", "UPDATE"]
-        resources: ["deployments", "daemonsets", "statefulsets"]
-    clientConfig:
-      service:
-        name: kubesec-webhook
-        namespace: kube-system
-        path: /scan
-    failurePolicy: Fail
-    sideEffects: None
-    admissionReviewVersions: ["v1"]
+ - name: kubesec.controlplane.io
+ rules:
+ - apiGroups: [""]
+ apiVersions: ["v1"]
+ operations: ["CREATE", "UPDATE"]
+ resources: ["pods"]
+ - apiGroups: ["apps"]
+ apiVersions: ["v1"]
+ operations: ["CREATE", "UPDATE"]
+ resources: ["deployments", "daemonsets", "statefulsets"]
+ clientConfig:
+ service:
+ name: kubesec-webhook
+ namespace: kube-system
+ path: /scan
+ failurePolicy: Fail
+ sideEffects: None
+ admissionReviewVersions: ["v1"]
 ```
 
 ## Security Checks Reference

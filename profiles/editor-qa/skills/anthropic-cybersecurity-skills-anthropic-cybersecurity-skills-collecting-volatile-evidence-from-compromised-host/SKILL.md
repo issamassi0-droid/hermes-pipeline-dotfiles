@@ -97,17 +97,17 @@ cat /proc/net/udp > "$EVIDENCE_DIR/proc_net_udp.txt"
 arp -a > "$EVIDENCE_DIR/arp_cache.txt"
 
 # Routing table
-route print > "$EVIDENCE_DIR/routing_table.txt"  # Windows
-ip route show > "$EVIDENCE_DIR/routing_table.txt"  # Linux
+route print > "$EVIDENCE_DIR/routing_table.txt" # Windows
+ip route show > "$EVIDENCE_DIR/routing_table.txt" # Linux
 
 # DNS cache
-ipconfig /displaydns > "$EVIDENCE_DIR/dns_cache.txt"  # Windows
+ipconfig /displaydns > "$EVIDENCE_DIR/dns_cache.txt" # Windows
 # Linux: varies by resolver, check systemd-resolve or nscd
 systemd-resolve --statistics > "$EVIDENCE_DIR/dns_stats.txt" 2>/dev/null
 
 # Active firewall rules
-netsh advfirewall show allprofiles > "$EVIDENCE_DIR/firewall_rules.txt"  # Windows
-iptables -L -n -v > "$EVIDENCE_DIR/iptables_rules.txt"  # Linux
+netsh advfirewall show allprofiles > "$EVIDENCE_DIR/firewall_rules.txt" # Windows
+iptables -L -n -v > "$EVIDENCE_DIR/iptables_rules.txt" # Linux
 ```
 
 ### Step 4: Capture Running Processes
@@ -116,11 +116,11 @@ iptables -L -n -v > "$EVIDENCE_DIR/iptables_rules.txt"  # Linux
 tasklist /V /FO CSV > "$EVIDENCE_DIR/process_list_verbose.csv"
 wmic process list full > "$EVIDENCE_DIR/wmic_process_full.txt"
 Get-Process | Select-Object Id,ProcessName,Path,StartTime,CPU,WorkingSet |
-  Export-Csv "$EVIDENCE_DIR/ps_processes.csv" -NoTypeInformation
+ Export-Csv "$EVIDENCE_DIR/ps_processes.csv" -NoTypeInformation
 
 # Windows - Process with command line and parent
 wmic process get ProcessId,Name,CommandLine,ParentProcessId,ExecutablePath /FORMAT:CSV > \
-  "$EVIDENCE_DIR/process_commandlines.csv"
+ "$EVIDENCE_DIR/process_commandlines.csv"
 
 # Linux - Full process tree
 ps auxwwf > "$EVIDENCE_DIR/process_tree.txt"
@@ -132,13 +132,13 @@ cat /proc/*/cmdline 2>/dev/null | tr '\0' ' ' > "$EVIDENCE_DIR/proc_cmdline_all.
 listdlls.exe -accepteula > "$EVIDENCE_DIR/loaded_dlls.txt"
 # Linux
 for pid in $(ls /proc/ | grep -E '^[0-9]+$'); do
-  echo "=== PID $pid ===" >> "$EVIDENCE_DIR/proc_maps.txt"
-  cat "/proc/$pid/maps" 2>/dev/null >> "$EVIDENCE_DIR/proc_maps.txt"
+ echo "=== PID $pid ===" >> "$EVIDENCE_DIR/proc_maps.txt"
+ cat "/proc/$pid/maps" 2>/dev/null >> "$EVIDENCE_DIR/proc_maps.txt"
 done
 
 # Open file handles
-handle.exe -accepteula > "$EVIDENCE_DIR/open_handles.txt"  # Windows (Sysinternals)
-lsof > "$EVIDENCE_DIR/open_files.txt"  # Linux
+handle.exe -accepteula > "$EVIDENCE_DIR/open_handles.txt" # Windows (Sysinternals)
+lsof > "$EVIDENCE_DIR/open_files.txt" # Linux
 ```
 
 ### Step 5: Capture Logged-in Users and Sessions
@@ -161,21 +161,21 @@ cat /var/log/auth.log | tail -200 > "$EVIDENCE_DIR/recent_auth.txt" 2>/dev/null
 ```bash
 # System time (critical for timeline)
 date -u > "$EVIDENCE_DIR/system_time_utc.txt"
-w32tm /query /status > "$EVIDENCE_DIR/ntp_status.txt"  # Windows
-ntpq -p > "$EVIDENCE_DIR/ntp_status.txt"  # Linux
+w32tm /query /status > "$EVIDENCE_DIR/ntp_status.txt" # Windows
+ntpq -p > "$EVIDENCE_DIR/ntp_status.txt" # Linux
 
 # Environment variables
-set > "$EVIDENCE_DIR/environment_vars.txt"  # Windows
-env > "$EVIDENCE_DIR/environment_vars.txt"  # Linux
+set > "$EVIDENCE_DIR/environment_vars.txt" # Windows
+env > "$EVIDENCE_DIR/environment_vars.txt" # Linux
 
 # Scheduled tasks / Cron jobs
-schtasks /query /fo CSV /v > "$EVIDENCE_DIR/scheduled_tasks.csv"  # Windows
-crontab -l > "$EVIDENCE_DIR/crontab_current.txt" 2>/dev/null  # Linux
+schtasks /query /fo CSV /v > "$EVIDENCE_DIR/scheduled_tasks.csv" # Windows
+crontab -l > "$EVIDENCE_DIR/crontab_current.txt" 2>/dev/null # Linux
 ls -la /etc/cron.* > "$EVIDENCE_DIR/cron_dirs.txt" 2>/dev/null
 
 # Services
-sc queryex type=service state=all > "$EVIDENCE_DIR/services_all.txt"  # Windows
-systemctl list-units --type=service --all > "$EVIDENCE_DIR/systemd_services.txt"  # Linux
+sc queryex type=service state=all > "$EVIDENCE_DIR/services_all.txt" # Windows
+systemctl list-units --type=service --all > "$EVIDENCE_DIR/systemd_services.txt" # Linux
 
 # Windows Registry - key autostart locations
 reg export "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "$EVIDENCE_DIR/reg_run_hklm.reg" /y

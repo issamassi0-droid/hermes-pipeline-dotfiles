@@ -1,10 +1,10 @@
 ---
 name: performing-entitlement-review-with-sailpoint-iiq
 description: 'Runs entitlement review and access certification campaigns in SailPoint
-  IdentityIQ, covering manager certifications, targeted entitlement reviews, role-based
-  access validation, segregation-of-duties violation remediation, and automated
-  revocation workflows. Use when performing periodic user access recertification,
-  auditing SailPoint IIQ access governance, or investigating SOD violations.'
+ IdentityIQ, covering manager certifications, targeted entitlement reviews, role-based
+ access validation, segregation-of-duties violation remediation, and automated
+ revocation workflows. Use when performing periodic user access recertification,
+ auditing SailPoint IIQ access governance, or investigating SOD violations.'
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -28,33 +28,33 @@ mitre_attack:
 - T1556
 - T1098
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - defense-impairment
-  - resource-development
-  techniques:
-  - id: T1586
-    name: Compromise Accounts
-    tactic: resource-development
-    source: attack
-  - id: F1033
-    name: Insider Access Abuse
-    tactic: initial-access
-    source: f3
-  - id: F1005
-    name: Account Manipulation
-    tactic: positioning
-    source: f3
-  - id: F1005.002
-    name: 'Account Manipulation: Add Authorized User'
-    tactic: positioning
-    source: f3
-  - id: F1005.007
-    name: 'Account Manipulation: Enable Account Features'
-    tactic: defense-impairment
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - defense-impairment
+ - resource-development
+ techniques:
+ - id: T1586
+ name: Compromise Accounts
+ tactic: resource-development
+ source: attack
+ - id: F1033
+ name: Insider Access Abuse
+ tactic: initial-access
+ source: f3
+ - id: F1005
+ name: Account Manipulation
+ tactic: positioning
+ source: f3
+ - id: F1005.002
+ name: 'Account Manipulation: Add Authorized User'
+ tactic: positioning
+ source: f3
+ - id: F1005.007
+ name: 'Account Manipulation: Enable Account Features'
+ tactic: defense-impairment
+ source: f3
 ---
 
 # Performing Entitlement Review with SailPoint IdentityIQ
@@ -153,15 +153,15 @@ targetedCert.setApplicationNames(applicationNames);
 
 // Filter for privileged entitlements only
 String entitlementFilter = "entitlement.classification == \"Privileged\" " +
-    "|| entitlement.riskScore > 800 " +
-    "|| entitlement.name.contains(\"Admin\") " +
-    "|| entitlement.name.contains(\"Root\") " +
-    "|| entitlement.name.contains(\"DBA\")";
+ "|| entitlement.riskScore > 800 " +
+ "|| entitlement.name.contains(\"Admin\") " +
+ "|| entitlement.name.contains(\"Root\") " +
+ "|| entitlement.name.contains(\"DBA\")";
 targetedCert.setEntitlementFilter(entitlementFilter);
 
 // Assign application owners as certifiers
 targetedCert.setCertifierSelectionType(
-    CertificationDefinition.CertifierSelectionType.ApplicationOwner
+ CertificationDefinition.CertifierSelectionType.ApplicationOwner
 );
 
 // Configure approval workflow
@@ -190,9 +190,9 @@ Policy sodPolicy = new Policy();
 sodPolicy.setName("Financial SOD - AP/AR Conflict");
 sodPolicy.setType(Policy.TYPE_SOD);
 sodPolicy.setDescription("Prevents users from having both Accounts Payable " +
-    "and Accounts Receivable access simultaneously");
+ "and Accounts Receivable access simultaneously");
 sodPolicy.setViolationOwner(
-    context.getObjectByName(Identity.class, "compliance-team")
+ context.getObjectByName(Identity.class, "compliance-team")
 );
 
 // Define conflicting entitlements
@@ -242,52 +242,52 @@ remediationWorkflow.setType(Workflow.Type.CertificationRemediation);
 Step createPlan = new Step();
 createPlan.setName("Create Revocation Plan");
 createPlan.setScript(
-    "import sailpoint.object.ProvisioningPlan;\n" +
-    "import sailpoint.object.ProvisioningPlan.AccountRequest;\n" +
-    "import sailpoint.object.ProvisioningPlan.AttributeRequest;\n\n" +
-    "ProvisioningPlan plan = new ProvisioningPlan();\n" +
-    "plan.setIdentity(identity);\n" +
-    "AccountRequest acctReq = new AccountRequest();\n" +
-    "acctReq.setApplication(applicationName);\n" +
-    "acctReq.setOperation(AccountRequest.Operation.Modify);\n" +
-    "AttributeRequest attrReq = new AttributeRequest();\n" +
-    "attrReq.setName(entitlementAttribute);\n" +
-    "attrReq.setValue(entitlementValue);\n" +
-    "attrReq.setOperation(ProvisioningPlan.Operation.Remove);\n" +
-    "acctReq.add(attrReq);\n" +
-    "plan.add(acctReq);\n" +
-    "return plan;"
+ "import sailpoint.object.ProvisioningPlan;\n" +
+ "import sailpoint.object.ProvisioningPlan.AccountRequest;\n" +
+ "import sailpoint.object.ProvisioningPlan.AttributeRequest;\n\n" +
+ "ProvisioningPlan plan = new ProvisioningPlan();\n" +
+ "plan.setIdentity(identity);\n" +
+ "AccountRequest acctReq = new AccountRequest();\n" +
+ "acctReq.setApplication(applicationName);\n" +
+ "acctReq.setOperation(AccountRequest.Operation.Modify);\n" +
+ "AttributeRequest attrReq = new AttributeRequest();\n" +
+ "attrReq.setName(entitlementAttribute);\n" +
+ "attrReq.setValue(entitlementValue);\n" +
+ "attrReq.setOperation(ProvisioningPlan.Operation.Remove);\n" +
+ "acctReq.add(attrReq);\n" +
+ "plan.add(acctReq);\n" +
+ "return plan;"
 );
 
 // Step 2: Execute provisioning with retry logic
 Step executeProvisioning = new Step();
 executeProvisioning.setName("Execute Revocation");
 executeProvisioning.setScript(
-    "import sailpoint.api.Provisioner;\n" +
-    "Provisioner provisioner = new Provisioner(context);\n" +
-    "provisioner.setNoTriggers(false);\n" +
-    "ProvisioningResult result = provisioner.execute(plan);\n" +
-    "if (result.isCommitted()) {\n" +
-    "    auditEvent(\"Entitlement revoked successfully\", identity, plan);\n" +
-    "} else {\n" +
-    "    openWorkItem(\"Manual revocation required\", identity, plan);\n" +
-    "}"
+ "import sailpoint.api.Provisioner;\n" +
+ "Provisioner provisioner = new Provisioner(context);\n" +
+ "provisioner.setNoTriggers(false);\n" +
+ "ProvisioningResult result = provisioner.execute(plan);\n" +
+ "if (result.isCommitted()) {\n" +
+ " auditEvent(\"Entitlement revoked successfully\", identity, plan);\n" +
+ "} else {\n" +
+ " openWorkItem(\"Manual revocation required\", identity, plan);\n" +
+ "}"
 );
 
 // Step 3: Send notification to user and manager
 Step notification = new Step();
 notification.setName("Send Revocation Notification");
 notification.setScript(
-    "import sailpoint.tools.EmailTemplate;\n" +
-    "EmailTemplate template = context.getObjectByName(\n" +
-    "    EmailTemplate.class, \"Access Revocation Notification\");\n" +
-    "Map args = new HashMap();\n" +
-    "args.put(\"identityName\", identity.getDisplayName());\n" +
-    "args.put(\"applicationName\", applicationName);\n" +
-    "args.put(\"entitlementName\", entitlementValue);\n" +
-    "args.put(\"certifierName\", certifier.getDisplayName());\n" +
-    "args.put(\"revocationReason\", decisionReason);\n" +
-    "context.sendEmailNotification(template, args);"
+ "import sailpoint.tools.EmailTemplate;\n" +
+ "EmailTemplate template = context.getObjectByName(\n" +
+ " EmailTemplate.class, \"Access Revocation Notification\");\n" +
+ "Map args = new HashMap();\n" +
+ "args.put(\"identityName\", identity.getDisplayName());\n" +
+ "args.put(\"applicationName\", applicationName);\n" +
+ "args.put(\"entitlementName\", entitlementValue);\n" +
+ "args.put(\"certifierName\", certifier.getDisplayName());\n" +
+ "args.put(\"revocationReason\", decisionReason);\n" +
+ "context.sendEmailNotification(template, args);"
 );
 
 context.saveObject(remediationWorkflow);
@@ -310,47 +310,47 @@ qo.addFilter(Filter.eq("phase", Certification.Phase.Active));
 Iterator certIterator = context.search(Certification.class, qo);
 
 while (certIterator.hasNext()) {
-    Certification cert = certIterator.next();
+ Certification cert = certIterator.next();
 
-    System.out.println("Campaign: " + cert.getName());
-    System.out.println("  Type: " + cert.getType());
-    System.out.println("  Phase: " + cert.getPhase());
-    System.out.println("  Due Date: " + cert.getExpiration());
+ System.out.println("Campaign: " + cert.getName());
+ System.out.println(" Type: " + cert.getType());
+ System.out.println(" Phase: " + cert.getPhase());
+ System.out.println(" Due Date: " + cert.getExpiration());
 
-    // Get completion statistics
-    CertificationStats stats = cert.getStatistics();
-    int totalItems = stats.getTotalEntities();
-    int completedItems = stats.getCompletedEntities();
-    int pendingItems = totalItems - completedItems;
-    double completionPct = (completedItems * 100.0) / totalItems;
+ // Get completion statistics
+ CertificationStats stats = cert.getStatistics();
+ int totalItems = stats.getTotalEntities();
+ int completedItems = stats.getCompletedEntities();
+ int pendingItems = totalItems - completedItems;
+ double completionPct = (completedItems * 100.0) / totalItems;
 
-    System.out.println("  Total Items: " + totalItems);
-    System.out.println("  Completed: " + completedItems + " (" +
-        String.format("%.1f", completionPct) + "%)");
-    System.out.println("  Pending: " + pendingItems);
+ System.out.println(" Total Items: " + totalItems);
+ System.out.println(" Completed: " + completedItems + " (" +
+ String.format("%.1f", completionPct) + "%)");
+ System.out.println(" Pending: " + pendingItems);
 
-    // Decision breakdown
-    int approved = stats.getApprovedCount();
-    int revoked = stats.getRevokedCount();
-    int mitigated = stats.getMitigatedCount();
-    int delegated = stats.getDelegatedCount();
+ // Decision breakdown
+ int approved = stats.getApprovedCount();
+ int revoked = stats.getRevokedCount();
+ int mitigated = stats.getMitigatedCount();
+ int delegated = stats.getDelegatedCount();
 
-    System.out.println("  Decisions:");
-    System.out.println("    Approved: " + approved);
-    System.out.println("    Revoked: " + revoked);
-    System.out.println("    Mitigated: " + mitigated);
-    System.out.println("    Delegated: " + delegated);
+ System.out.println(" Decisions:");
+ System.out.println(" Approved: " + approved);
+ System.out.println(" Revoked: " + revoked);
+ System.out.println(" Mitigated: " + mitigated);
+ System.out.println(" Delegated: " + delegated);
 
-    // Identify overdue certifiers
-    List certifiers = cert.getCertifiers();
-    for (Object certObj : certifiers) {
-        CertificationEntity entity = (CertificationEntity) certObj;
-        if (!entity.isCompleted() && cert.isOverdue()) {
-            System.out.println("  [OVERDUE] Certifier: " +
-                entity.getCertifier().getDisplayName());
-        }
-    }
-    System.out.println();
+ // Identify overdue certifiers
+ List certifiers = cert.getCertifiers();
+ for (Object certObj : certifiers) {
+ CertificationEntity entity = (CertificationEntity) certObj;
+ if (!entity.isCompleted() && cert.isOverdue()) {
+ System.out.println(" [OVERDUE] Certifier: " +
+ entity.getCertifier().getDisplayName());
+ }
+ }
+ System.out.println();
 }
 ```
 
@@ -383,19 +383,19 @@ int totalDecisions = 0;
 int totalRevocations = 0;
 
 for (Certification cert : results) {
-    totalCampaigns++;
-    CertificationStats stats = cert.getStatistics();
+ totalCampaigns++;
+ CertificationStats stats = cert.getStatistics();
 
-    auditReport.append("Campaign: " + cert.getName() + "\n");
-    auditReport.append("  Certifier: " + cert.getCertifiers().size() + " reviewers\n");
-    auditReport.append("  Items Reviewed: " + stats.getTotalEntities() + "\n");
-    auditReport.append("  Approved: " + stats.getApprovedCount() + "\n");
-    auditReport.append("  Revoked: " + stats.getRevokedCount() + "\n");
-    auditReport.append("  Completed: " + cert.getSigned() + "\n");
-    auditReport.append("  Sign-off: " + (cert.isSignedOff() ? "YES" : "NO") + "\n\n");
+ auditReport.append("Campaign: " + cert.getName() + "\n");
+ auditReport.append(" Certifier: " + cert.getCertifiers().size() + " reviewers\n");
+ auditReport.append(" Items Reviewed: " + stats.getTotalEntities() + "\n");
+ auditReport.append(" Approved: " + stats.getApprovedCount() + "\n");
+ auditReport.append(" Revoked: " + stats.getRevokedCount() + "\n");
+ auditReport.append(" Completed: " + cert.getSigned() + "\n");
+ auditReport.append(" Sign-off: " + (cert.isSignedOff() ? "YES" : "NO") + "\n\n");
 
-    totalDecisions += stats.getTotalEntities();
-    totalRevocations += stats.getRevokedCount();
+ totalDecisions += stats.getTotalEntities();
+ totalRevocations += stats.getRevokedCount();
 }
 
 auditReport.append("SUMMARY\n");
@@ -403,7 +403,7 @@ auditReport.append("Total Campaigns: " + totalCampaigns + "\n");
 auditReport.append("Total Decisions: " + totalDecisions + "\n");
 auditReport.append("Total Revocations: " + totalRevocations + "\n");
 auditReport.append("Revocation Rate: " +
-    String.format("%.1f%%", (totalRevocations * 100.0) / totalDecisions));
+ String.format("%.1f%%", (totalRevocations * 100.0) / totalDecisions));
 
 System.out.println(auditReport.toString());
 ```
@@ -454,38 +454,38 @@ System.out.println(auditReport.toString());
 ```
 ACCESS CERTIFICATION CAMPAIGN REPORT
 =======================================
-Campaign:          Q1-2026 Manager Access Review
-Type:              Manager Certification
-Period:            2026-01-15 to 2026-02-14
-Status:            COMPLETED
+Campaign: Q1-2026 Manager Access Review
+Type: Manager Certification
+Period: 2026-01-15 to 2026-02-14
+Status: COMPLETED
 
 COVERAGE
-Identities Reviewed:    2,847
-Applications In Scope:  34
-Total Entitlements:     18,392
+Identities Reviewed: 2,847
+Applications In Scope: 34
+Total Entitlements: 18,392
 
 DECISION SUMMARY
-Approved:              16,841 (91.6%)
-Revoked:                1,203 (6.5%)
-Mitigated:                 198 (1.1%)
-Delegated:                 150 (0.8%)
+Approved: 16,841 (91.6%)
+Revoked: 1,203 (6.5%)
+Mitigated: 198 (1.1%)
+Delegated: 150 (0.8%)
 
 REVOCATION STATUS
-Provisioned:            1,089 / 1,203 (90.5%)
-Pending:                   87
-Failed:                    27 (manual work items created)
+Provisioned: 1,089 / 1,203 (90.5%)
+Pending: 87
+Failed: 27 (manual work items created)
 
 SOD VIOLATIONS
-Flagged:                   43
-Remediated:                31
-Compensating Controls:     12
+Flagged: 43
+Remediated: 31
+Compensating Controls: 12
 
 CERTIFIER COMPLIANCE
-On-Time Completion:     89.3%
-Required Escalation:    14 certifiers
-Average Review Time:    3.2 minutes per item
+On-Time Completion: 89.3%
+Required Escalation: 14 certifiers
+Average Review Time: 3.2 minutes per item
 
 SIGN-OFF
-Campaign Signed:        2026-02-14 by compliance-admin
-Audit Evidence:         Exported to /reports/Q1-2026-cert-evidence.pdf
+Campaign Signed: 2026-02-14 by compliance-admin
+Audit Evidence: Exported to /reports/Q1-2026-cert-evidence.pdf
 ```

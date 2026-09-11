@@ -1,12 +1,12 @@
 ---
 name: analyzing-windows-event-logs-in-splunk
 description: 'Analyzes Windows Security, System, and Sysmon event logs in Splunk to
-  detect authentication attacks, privilege escalation, persistence mechanisms, and
-  lateral movement using SPL queries mapped to MITRE ATT&CK techniques. Use when SOC
-  analysts need to investigate Windows-based threats, build detection queries, or
-  perform forensic timeline analysis of Windows endpoints and domain controllers.
+ detect authentication attacks, privilege escalation, persistence mechanisms, and
+ lateral movement using SPL queries mapped to MITRE ATT&CK techniques. Use when SOC
+ analysts need to investigate Windows-based threats, build detection queries, or
+ perform forensic timeline analysis of Windows endpoints and domain controllers.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -66,21 +66,21 @@ Use this skill when:
 ```spl
 index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
 | stats count, dc(TargetUserName) AS unique_users, values(TargetUserName) AS targeted_users
-  by src_ip, Logon_Type, Status
+ by src_ip, Logon_Type, Status
 | where count > 20
 | eval attack_type = case(
-    Logon_Type=3, "Network Brute Force",
-    Logon_Type=10, "RDP Brute Force",
-    Logon_Type=2, "Interactive Brute Force",
-    1=1, "Other"
-  )
+ Logon_Type=3, "Network Brute Force",
+ Logon_Type=10, "RDP Brute Force",
+ Logon_Type=2, "Interactive Brute Force",
+ 1=1, "Other"
+ )
 | eval status_meaning = case(
-    Status="0xc000006d", "Bad Username or Password",
-    Status="0xc000006a", "Incorrect Password (valid user)",
-    Status="0xc0000234", "Account Locked Out",
-    Status="0xc0000072", "Account Disabled",
-    1=1, Status
-  )
+ Status="0xc000006d", "Bad Username or Password",
+ Status="0xc000006a", "Incorrect Password (valid user)",
+ Status="0xc0000234", "Account Locked Out",
+ Status="0xc0000072", "Account Disabled",
+ 1=1, Status
+ )
 | sort - count
 | table src_ip, attack_type, status_meaning, count, unique_users, targeted_users
 ```
@@ -90,7 +90,7 @@ index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625
 index=wineventlog sourcetype="WinEventLog:Security" EventCode=4625 Logon_Type=3
 | bin _time span=10m
 | stats dc(TargetUserName) AS unique_users, count AS total_attempts,
-  values(TargetUserName) AS users_targeted by src_ip, _time
+ values(TargetUserName) AS users_targeted by src_ip, _time
 | where unique_users > 10 AND total_attempts < unique_users * 3
 | eval spray_confidence = if(unique_users > 25, "HIGH", "MEDIUM")
 ```
@@ -101,9 +101,9 @@ index=wineventlog sourcetype="WinEventLog:Security"
 (EventCode=4625 OR EventCode=4624) src_ip!="127.0.0.1"
 | sort _time
 | stats earliest(_time) AS first_seen, latest(_time) AS last_seen,
-  sum(eval(if(EventCode=4625,1,0))) AS failures,
-  sum(eval(if(EventCode=4624,1,0))) AS successes
-  by src_ip, TargetUserName, ComputerName
+ sum(eval(if(EventCode=4625,1,0))) AS failures,
+ sum(eval(if(EventCode=4624,1,0))) AS successes
+ by src_ip, TargetUserName, ComputerName
 | where failures > 10 AND successes > 0
 | eval time_to_success = round((last_seen - first_seen)/60, 1)
 | sort - failures
@@ -115,9 +115,9 @@ index=wineventlog sourcetype="WinEventLog:Security"
 ```spl
 index=wineventlog sourcetype="WinEventLog:Security" EventCode=4720
 | join TargetUserName type=left [
-    search index=wineventlog EventCode=4732 TargetUserName="Administrators"
-    | rename MemberName AS TargetUserName
-  ]
+ search index=wineventlog EventCode=4732 TargetUserName="Administrators"
+ | rename MemberName AS TargetUserName
+ ]
 | table _time, SubjectUserName, TargetUserName, ComputerName
 | eval alert = "New account created and added to Administrators group"
 ```
@@ -129,7 +129,7 @@ SubjectUserName!="SYSTEM" SubjectUserName!="LOCAL SERVICE" SubjectUserName!="NET
 | stats count, values(PrivilegeList) AS privileges by SubjectUserName, ComputerName
 | where count > 0
 | search privileges IN ("SeDebugPrivilege", "SeTcbPrivilege", "SeBackupPrivilege",
-  "SeRestorePrivilege", "SeAssignPrimaryTokenPrivilege")
+ "SeRestorePrivilege", "SeAssignPrimaryTokenPrivilege")
 ```
 
 **Token Manipulation Detection (T1134):**
@@ -146,8 +146,8 @@ GrantedAccess IN ("0x1010", "0x1038", "0x1fffff", "0x40")
 **Scheduled Task Creation (T1053.005):**
 ```spl
 index=wineventlog (sourcetype="WinEventLog:Security" EventCode=4698)
-  OR (sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
-      Image="*\\schtasks.exe")
+ OR (sourcetype="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+ Image="*\\schtasks.exe")
 | eval task_info = coalesce(TaskContent, CommandLine)
 | search task_info="*powershell*" OR task_info="*cmd*" OR task_info="*http*" OR task_info="*\\Temp\\*"
 | table _time, Computer, SubjectUserName, TaskName, task_info
@@ -157,10 +157,10 @@ index=wineventlog (sourcetype="WinEventLog:Security" EventCode=4698)
 ```spl
 index=sysmon EventCode=13
 TargetObject IN (
-  "*\\CurrentVersion\\Run\\*",
-  "*\\CurrentVersion\\RunOnce\\*",
-  "*\\CurrentVersion\\RunServices\\*",
-  "*\\Explorer\\Shell Folders\\*"
+ "*\\CurrentVersion\\Run\\*",
+ "*\\CurrentVersion\\RunOnce\\*",
+ "*\\CurrentVersion\\RunServices\\*",
+ "*\\Explorer\\Shell Folders\\*"
 )
 | stats count by Computer, Image, TargetObject, Details
 | where NOT match(Image, "(explorer\.exe|msiexec\.exe|setup\.exe)")
@@ -180,7 +180,7 @@ index=sysmon EventCode=20 OR EventCode=21
 ```spl
 index=wineventlog sourcetype="WinEventLog:Security" EventCode=4624 Logon_Type=3
 | stats dc(ComputerName) AS unique_destinations, values(ComputerName) AS targets
-  by src_ip, TargetUserName
+ by src_ip, TargetUserName
 | where unique_destinations > 3
 | sort - unique_destinations
 | table src_ip, TargetUserName, unique_destinations, targets
@@ -199,7 +199,7 @@ index=sysmon EventCode=1
 ```spl
 index=wineventlog sourcetype="WinEventLog:Security" EventCode=4624 Logon_Type=10
 | stats count, dc(ComputerName) AS rdp_targets, values(ComputerName) AS destinations
-  by src_ip, TargetUserName
+ by src_ip, TargetUserName
 | where rdp_targets > 2
 | sort - rdp_targets
 ```
@@ -212,16 +212,16 @@ Create comprehensive timeline for a compromised host:
 (index=wineventlog OR index=sysmon) Computer="WORKSTATION-042"
 earliest="2024-03-14T00:00:00" latest="2024-03-16T00:00:00"
 | eval event_description = case(
-    EventCode=4624, "Logon: ".TargetUserName." (Type ".Logon_Type.")",
-    EventCode=4625, "Failed Logon: ".TargetUserName,
-    EventCode=4688 OR (sourcetype="XmlWinEventLog:*Sysmon*" AND EventCode=1),
-      "Process: ".Image." CMD: ".CommandLine,
-    EventCode=4698, "Scheduled Task: ".TaskName,
-    EventCode=3, "Network: ".DestinationIp.":".DestinationPort,
-    EventCode=11, "File Created: ".TargetFilename,
-    EventCode=13, "Registry: ".TargetObject,
-    1=1, "Event ".EventCode
-  )
+ EventCode=4624, "Logon: ".TargetUserName." (Type ".Logon_Type.")",
+ EventCode=4625, "Failed Logon: ".TargetUserName,
+ EventCode=4688 OR (sourcetype="XmlWinEventLog:*Sysmon*" AND EventCode=1),
+ "Process: ".Image." CMD: ".CommandLine,
+ EventCode=4698, "Scheduled Task: ".TaskName,
+ EventCode=3, "Network: ".DestinationIp.":".DestinationPort,
+ EventCode=11, "File Created: ".TargetFilename,
+ EventCode=13, "Registry: ".TargetObject,
+ 1=1, "Event ".EventCode
+ )
 | sort _time
 | table _time, EventCode, event_description, User, src_ip
 ```
@@ -283,24 +283,24 @@ EventCode,Description,ATT_CK_Technique,Severity
 ```
 WINDOWS EVENT LOG ANALYSIS — HOST: WORKSTATION-042
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Period:     2024-03-14 to 2024-03-15
-Events:     12,847 total (Security: 9,231 | Sysmon: 3,616)
+Period: 2024-03-14 to 2024-03-15
+Events: 12,847 total (Security: 9,231 | Sysmon: 3,616)
 
 Authentication Summary:
-  Successful Logons (4624):    487 (Type 3: 312, Type 10: 45, Type 2: 130)
-  Failed Logons (4625):        847 (from 192.168.1.105 — BRUTE FORCE)
-  Explicit Creds (4648):       12
+ Successful Logons (4624): 487 (Type 3: 312, Type 10: 45, Type 2: 130)
+ Failed Logons (4625): 847 (from 192.168.1.105 — BRUTE FORCE)
+ Explicit Creds (4648): 12
 
 Suspicious Findings:
-  [HIGH]   847 failed logons followed by success at 14:35 from 192.168.1.105
-  [HIGH]   New user "backdoor_admin" created (4720) at 14:38
-  [HIGH]   User added to Administrators group (4732) at 14:38
-  [MEDIUM] schtasks.exe creating persistence task at 14:42
-  [MEDIUM] PowerShell encoded command execution at 14:45
+ [HIGH] 847 failed logons followed by success at 14:35 from 192.168.1.105
+ [HIGH] New user "backdoor_admin" created (4720) at 14:38
+ [HIGH] User added to Administrators group (4732) at 14:38
+ [MEDIUM] schtasks.exe creating persistence task at 14:42
+ [MEDIUM] PowerShell encoded command execution at 14:45
 
 ATT&CK Mapping:
-  T1110.001 — Password Guessing (847 failed logons)
-  T1136.001 — Local Account Creation (backdoor_admin)
-  T1053.005 — Scheduled Task (persistence)
-  T1059.001 — PowerShell (encoded execution)
+ T1110.001 — Password Guessing (847 failed logons)
+ T1136.001 — Local Account Creation (backdoor_admin)
+ T1053.005 — Scheduled Task (persistence)
+ T1059.001 — PowerShell (encoded execution)
 ```

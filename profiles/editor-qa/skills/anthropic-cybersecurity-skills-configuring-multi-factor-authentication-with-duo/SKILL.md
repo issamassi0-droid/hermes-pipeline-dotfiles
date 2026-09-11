@@ -1,10 +1,10 @@
 ---
 name: configuring-multi-factor-authentication-with-duo
 description: Deploys Cisco Duo multi-factor authentication across enterprise applications,
-  VPN, RDP, and SSH access points, covering Duo Authentication Proxy setup, adaptive
-  authentication policies, device trust assessment, and phishing-resistant WebAuthn/FIDO2
-  deployment aligned with NIST 800-63B AAL2/AAL3. Use when adding or hardening MFA
-  for remote access, VPN, or privileged logins with Duo.
+ VPN, RDP, and SSH access points, covering Duo Authentication Proxy setup, adaptive
+ authentication policies, device trust assessment, and phishing-resistant WebAuthn/FIDO2
+ deployment aligned with NIST 800-63B AAL2/AAL3. Use when adding or hardening MFA
+ for remote access, VPN, or privileged logins with Duo.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -107,13 +107,13 @@ Deploy Cisco Duo multi-factor authentication across enterprise applications, VPN
 ### Step 4: Adaptive Policy Configuration
 1. Create user groups (Standard, Privileged, Contractors)
 2. Configure per-group authentication policies:
-   - Standard: Duo Push allowed, remembered device 7 days
-   - Privileged: Verified Push required, no remembered device
-   - Contractors: WebAuthn required, no remembered device
+ - Standard: Duo Push allowed, remembered device 7 days
+ - Privileged: Verified Push required, no remembered device
+ - Contractors: WebAuthn required, no remembered device
 3. Configure device health policies:
-   - Require encrypted disk
-   - Block outdated OS versions
-   - Require firewall enabled
+ - Require encrypted disk
+ - Block outdated OS versions
+ - Require firewall enabled
 4. Set trusted network exceptions for corporate IPs
 
 ### Step 5: Phishing-Resistant MFA Deployment

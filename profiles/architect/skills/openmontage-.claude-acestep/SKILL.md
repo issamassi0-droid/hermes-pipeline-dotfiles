@@ -78,12 +78,12 @@ LYRICS
 
 # Generate the song
 python tools/music_gen.py \
-  --prompt "Upbeat indie rock anthem, male vocal, driving drums, electric guitar, studio polish" \
-  --lyrics "$(cat /tmp/lyrics.txt)" \
-  --duration 60 \
-  --bpm 128 \
-  --key "G Major" \
-  --output my_song.mp3
+ --prompt "Upbeat indie rock anthem, male vocal, driving drums, electric guitar, studio polish" \
+ --lyrics "$(cat /tmp/lyrics.txt)" \
+ --duration 60 \
+ --bpm 128 \
+ --key "G Major" \
+ --output my_song.mp3
 ```
 
 ### 3. Using a preset for video background

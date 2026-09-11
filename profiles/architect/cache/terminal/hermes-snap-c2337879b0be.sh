@@ -289,125 +289,125 @@ declare -x _config_version="41"
 declare -x group_sessions_per_user="True"
 __expand_tilde_by_ref () 
 { 
-    [[ -n ${1+set} ]] || return 0;
-    [[ $1 == REPLY ]] || local REPLY;
-    _comp_expand_tilde "${!1-}";
-    [[ $1 == REPLY ]] || printf -v "$1" "$REPLY"
+ [[ -n ${1+set} ]] || return 0;
+ [[ $1 == REPLY ]] || local REPLY;
+ _comp_expand_tilde "${!1-}";
+ [[ $1 == REPLY ]] || printf -v "$1" "$REPLY"
 }
 __load_completion () 
 { 
-    _comp_load "$@"
+ _comp_load "$@"
 }
 __ltrim_colon_completions () 
 { 
-    _comp_ltrim_colon_completions "$@"
+ _comp_ltrim_colon_completions "$@"
 }
 __parse_options () 
 { 
-    local -a _options=();
-    _comp_compgen_help__parse "$1";
-    printf '%s\n' "${_options[@]}"
+ local -a _options=();
+ _comp_compgen_help__parse "$1";
+ printf '%s\n' "${_options[@]}"
 }
 cd () 
 { 
-    builtin cd "$@" && ls
+ builtin cd "$@" && ls
 }
 dequote () 
 { 
-    local REPLY;
-    _comp_dequote "$1";
-    local rc=$?;
-    printf %s "$REPLY";
-    return $rc
+ local REPLY;
+ _comp_dequote "$1";
+ local rc=$?;
+ printf %s "$REPLY";
+ return $rc
 }
 ext () 
 { 
-    if [ -f "$1" ]; then
-        case "$1" in 
-            *.tar.bz2)
-                tar xvjf "$1"
-            ;;
-            *.tar.gz)
-                tar xvzf "$1"
-            ;;
-            *.zip)
-                unzip "$1"
-            ;;
-            *.tar.xz)
-                tar xvJf "$1"
-            ;;
-            *)
-                echo "Unknown archive format"
-            ;;
-        esac;
-    else
-        echo "File not found";
-    fi
+ if [ -f "$1" ]; then
+ case "$1" in 
+ *.tar.bz2)
+ tar xvjf "$1"
+ ;;
+ *.tar.gz)
+ tar xvzf "$1"
+ ;;
+ *.zip)
+ unzip "$1"
+ ;;
+ *.tar.xz)
+ tar xvJf "$1"
+ ;;
+ *)
+ echo "Unknown archive format"
+ ;;
+ esac;
+ else
+ echo "File not found";
+ fi
 }
 ff () 
 { 
-    find . -type f -name "*$1*" 2> /dev/null | head -20
+ find . -type f -name "*$1*" 2> /dev/null | head -20
 }
 gawklibpath_append () 
 { 
-    [ -z "$AWKLIBPATH" ] && AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`;
-    export AWKLIBPATH="$AWKLIBPATH:$*"
+ [ -z "$AWKLIBPATH" ] && AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`;
+ export AWKLIBPATH="$AWKLIBPATH:$*"
 }
 gawklibpath_default () 
 { 
-    unset AWKLIBPATH;
-    export AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`
+ unset AWKLIBPATH;
+ export AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`
 }
 gawklibpath_prepend () 
 { 
-    [ -z "$AWKLIBPATH" ] && AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`;
-    export AWKLIBPATH="$*:$AWKLIBPATH"
+ [ -z "$AWKLIBPATH" ] && AWKLIBPATH=`gawk 'BEGIN {print ENVIRON["AWKLIBPATH"]}'`;
+ export AWKLIBPATH="$*:$AWKLIBPATH"
 }
 gawkpath_append () 
 { 
-    [ -z "$AWKPATH" ] && AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`;
-    export AWKPATH="$AWKPATH:$*"
+ [ -z "$AWKPATH" ] && AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`;
+ export AWKPATH="$AWKPATH:$*"
 }
 gawkpath_default () 
 { 
-    unset AWKPATH;
-    export AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`
+ unset AWKPATH;
+ export AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`
 }
 gawkpath_prepend () 
 { 
-    [ -z "$AWKPATH" ] && AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`;
-    export AWKPATH="$*:$AWKPATH"
+ [ -z "$AWKPATH" ] && AWKPATH=`gawk 'BEGIN {print ENVIRON["AWKPATH"]}'`;
+ export AWKPATH="$*:$AWKPATH"
 }
 git_status () 
 { 
-    local branch;
-    branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/');
-    if [ -n "$branch" ]; then
-        echo -n "  $branch";
-    fi
+ local branch;
+ branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/\1/');
+ if [ -n "$branch" ]; then
+ echo -n "  $branch";
+ fi
 }
 mkcd () 
 { 
-    mkdir -p "$1" && cd "$1"
+ mkdir -p "$1" && cd "$1"
 }
 quote () 
 { 
-    local quoted=${1//\'/\'\\\'\'};
-    printf "'%s'" "$quoted"
+ local quoted=${1//\'/\'\\\'\'};
+ printf "'%s'" "$quoted"
 }
 quote_readline () 
 { 
-    local REPLY;
-    _comp_quote_compgen "$1";
-    printf %s "$REPLY"
+ local REPLY;
+ _comp_quote_compgen "$1";
+ printf %s "$REPLY"
 }
 set_poshcontext () 
 { 
-    return
+ return
 }
 uvinit () 
 { 
-    [ -d ".venv" ] || uv venv && source .venv/bin/activate
+ [ -d ".venv" ] || uv venv && source .venv/bin/activate
 }
 alias -- -='cd -'
 alias ..='cd ..'

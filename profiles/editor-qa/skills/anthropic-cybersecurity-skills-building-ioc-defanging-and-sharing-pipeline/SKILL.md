@@ -1,10 +1,10 @@
 ---
 name: building-ioc-defanging-and-sharing-pipeline
 description: Build an automated pipeline that ingests raw IOCs (URLs, IPs, domains,
-  emails), normalizes and deduplicates them, then produces defanged renderings for
-  safe human reading alongside canonical STIX 2.1 bundles distributed via TAXII servers,
-  MISP, or email reports. Use when preparing indicators of compromise for safe analyst
-  sharing or automating threat intel distribution to TAXII/MISP feeds.
+ emails), normalizes and deduplicates them, then produces defanged renderings for
+ safe human reading alongside canonical STIX 2.1 bundles distributed via TAXII servers,
+ MISP, or email reports. Use when preparing indicators of compromise for safe analyst
+ sharing or automating threat intel distribution to TAXII/MISP feeds.
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -77,72 +77,72 @@ from urllib.parse import urlparse, unquote
 from datetime import datetime
 
 class IOCExtractor:
-    """Extract and normalize IOCs from text."""
+ """Extract and normalize IOCs from text."""
 
-    PATTERNS = {
-        "ipv4": r'\b(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\b',
-        "domain": r'\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}\b',
-        "url": r'https?://[^\s<>"{}|\\^`\[\]]+',
-        "email": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
-        "md5": r'\b[a-fA-F0-9]{32}\b',
-        "sha1": r'\b[a-fA-F0-9]{40}\b',
-        "sha256": r'\b[a-fA-F0-9]{64}\b',
-    }
+ PATTERNS = {
+ "ipv4": r'\b(?:(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\.){3}(?:25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)\b',
+ "domain": r'\b(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}\b',
+ "url": r'https?://[^\s<>"{}|\\^`\[\]]+',
+ "email": r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b',
+ "md5": r'\b[a-fA-F0-9]{32}\b',
+ "sha1": r'\b[a-fA-F0-9]{40}\b',
+ "sha256": r'\b[a-fA-F0-9]{64}\b',
+ }
 
-    WHITELIST_DOMAINS = {
-        "google.com", "microsoft.com", "amazon.com", "github.com",
-        "cloudflare.com", "akamai.com", "example.com",
-    }
+ WHITELIST_DOMAINS = {
+ "google.com", "microsoft.com", "amazon.com", "github.com",
+ "cloudflare.com", "akamai.com", "example.com",
+ }
 
-    def extract_from_text(self, text):
-        """Extract all IOC types from free text."""
-        # Refang any already-defanged indicators first
-        text = self._refang(text)
-        iocs = {"ipv4": set(), "domain": set(), "url": set(),
-                "email": set(), "md5": set(), "sha1": set(), "sha256": set()}
+ def extract_from_text(self, text):
+ """Extract all IOC types from free text."""
+ # Refang any already-defanged indicators first
+ text = self._refang(text)
+ iocs = {"ipv4": set(), "domain": set(), "url": set(),
+ "email": set(), "md5": set(), "sha1": set(), "sha256": set()}
 
-        for ioc_type, pattern in self.PATTERNS.items():
-            matches = re.findall(pattern, text)
-            for match in matches:
-                normalized = self._normalize(match, ioc_type)
-                if normalized and not self._is_whitelisted(normalized, ioc_type):
-                    iocs[ioc_type].add(normalized)
+ for ioc_type, pattern in self.PATTERNS.items():
+ matches = re.findall(pattern, text)
+ for match in matches:
+ normalized = self._normalize(match, ioc_type)
+ if normalized and not self._is_whitelisted(normalized, ioc_type):
+ iocs[ioc_type].add(normalized)
 
-        # Remove domains that are part of URLs
-        url_domains = set()
-        for url in iocs["url"]:
-            parsed = urlparse(url)
-            url_domains.add(parsed.netloc)
-        iocs["domain"] -= url_domains
+ # Remove domains that are part of URLs
+ url_domains = set()
+ for url in iocs["url"]:
+ parsed = urlparse(url)
+ url_domains.add(parsed.netloc)
+ iocs["domain"] -= url_domains
 
-        total = sum(len(v) for v in iocs.values())
-        print(f"[+] Extracted {total} unique IOCs from text")
-        return {k: sorted(v) for k, v in iocs.items()}
+ total = sum(len(v) for v in iocs.values())
+ print(f"[+] Extracted {total} unique IOCs from text")
+ return {k: sorted(v) for k, v in iocs.items()}
 
-    def _refang(self, text):
-        """Convert defanged indicators back to active form."""
-        text = text.replace("hxxp://", "http://").replace("hxxps://", "https://")
-        text = text.replace("[.]", ".").replace("[@]", "@")
-        text = text.replace("[://]", "://").replace("(.)", ".")
-        return text
+ def _refang(self, text):
+ """Convert defanged indicators back to active form."""
+ text = text.replace("hxxp://", "http://").replace("hxxps://", "https://")
+ text = text.replace("[.]", ".").replace("[@]", "@")
+ text = text.replace("[://]", "://").replace("(.)", ".")
+ return text
 
-    def _normalize(self, value, ioc_type):
-        """Normalize an IOC value."""
-        value = value.strip().lower()
-        if ioc_type == "url":
-            value = unquote(value).rstrip("/")
-        elif ioc_type == "domain":
-            value = value.rstrip(".")
-        return value
+ def _normalize(self, value, ioc_type):
+ """Normalize an IOC value."""
+ value = value.strip().lower()
+ if ioc_type == "url":
+ value = unquote(value).rstrip("/")
+ elif ioc_type == "domain":
+ value = value.rstrip(".")
+ return value
 
-    def _is_whitelisted(self, value, ioc_type):
-        """Check if IOC is in whitelist."""
-        if ioc_type == "domain":
-            return value in self.WHITELIST_DOMAINS
-        if ioc_type == "url":
-            parsed = urlparse(value)
-            return parsed.netloc in self.WHITELIST_DOMAINS
-        return False
+ def _is_whitelisted(self, value, ioc_type):
+ """Check if IOC is in whitelist."""
+ if ioc_type == "domain":
+ return value in self.WHITELIST_DOMAINS
+ if ioc_type == "url":
+ parsed = urlparse(value)
+ return parsed.netloc in self.WHITELIST_DOMAINS
+ return False
 
 extractor = IOCExtractor()
 sample_text = """
@@ -158,50 +158,50 @@ iocs = extractor.extract_from_text(sample_text)
 
 ```python
 class IOCDefanger:
-    """Defang IOCs for safe sharing in reports and communications."""
+ """Defang IOCs for safe sharing in reports and communications."""
 
-    def defang_url(self, url):
-        return url.replace("http://", "hxxp://").replace("https://", "hxxps://").replace(".", "[.]")
+ def defang_url(self, url):
+ return url.replace("http://", "hxxp://").replace("https://", "hxxps://").replace(".", "[.]")
 
-    def defang_domain(self, domain):
-        return domain.replace(".", "[.]")
+ def defang_domain(self, domain):
+ return domain.replace(".", "[.]")
 
-    def defang_ip(self, ip):
-        return ip.replace(".", "[.]")
+ def defang_ip(self, ip):
+ return ip.replace(".", "[.]")
 
-    def defang_email(self, email):
-        return email.replace("@", "[@]").replace(".", "[.]")
+ def defang_email(self, email):
+ return email.replace("@", "[@]").replace(".", "[.]")
 
-    def defang_all(self, iocs):
-        """Defang all IOCs in a dictionary."""
-        defanged = {}
-        for ioc_type, values in iocs.items():
-            if ioc_type == "url":
-                defanged[ioc_type] = [self.defang_url(v) for v in values]
-            elif ioc_type == "domain":
-                defanged[ioc_type] = [self.defang_domain(v) for v in values]
-            elif ioc_type == "ipv4":
-                defanged[ioc_type] = [self.defang_ip(v) for v in values]
-            elif ioc_type == "email":
-                defanged[ioc_type] = [self.defang_email(v) for v in values]
-            else:
-                defanged[ioc_type] = values  # Hashes don't need defanging
-        return defanged
+ def defang_all(self, iocs):
+ """Defang all IOCs in a dictionary."""
+ defanged = {}
+ for ioc_type, values in iocs.items():
+ if ioc_type == "url":
+ defanged[ioc_type] = [self.defang_url(v) for v in values]
+ elif ioc_type == "domain":
+ defanged[ioc_type] = [self.defang_domain(v) for v in values]
+ elif ioc_type == "ipv4":
+ defanged[ioc_type] = [self.defang_ip(v) for v in values]
+ elif ioc_type == "email":
+ defanged[ioc_type] = [self.defang_email(v) for v in values]
+ else:
+ defanged[ioc_type] = values # Hashes don't need defanging
+ return defanged
 
-    def generate_sharing_report(self, iocs, defanged, report_name="IOC Report"):
-        """Generate a human-readable defanged IOC report."""
-        report = f"# {report_name}\n"
-        report += f"Generated: {datetime.now().isoformat()}\n\n"
+ def generate_sharing_report(self, iocs, defanged, report_name="IOC Report"):
+ """Generate a human-readable defanged IOC report."""
+ report = f"# {report_name}\n"
+ report += f"Generated: {datetime.now().isoformat()}\n\n"
 
-        for ioc_type in ["url", "domain", "ipv4", "email", "sha256", "sha1", "md5"]:
-            values = defanged.get(ioc_type, [])
-            if values:
-                report += f"## {ioc_type.upper()} ({len(values)})\n"
-                for v in values:
-                    report += f"- `{v}`\n"
-                report += "\n"
+ for ioc_type in ["url", "domain", "ipv4", "email", "sha256", "sha1", "md5"]:
+ values = defanged.get(ioc_type, [])
+ if values:
+ report += f"## {ioc_type.upper()} ({len(values)})\n"
+ for v in values:
+ report += f"- `{v}`\n"
+ report += "\n"
 
-        return report
+ return report
 
 defanger = IOCDefanger()
 defanged = defanger.defang_all(iocs)
@@ -216,68 +216,68 @@ from stix2 import Indicator, Bundle, TLP_WHITE, TLP_GREEN, TLP_AMBER
 from datetime import datetime
 
 class STIXConverter:
-    """Convert raw IOCs to STIX 2.1 Indicator objects."""
+ """Convert raw IOCs to STIX 2.1 Indicator objects."""
 
-    TLP_MAP = {"white": TLP_WHITE, "green": TLP_GREEN, "amber": TLP_AMBER}
+ TLP_MAP = {"white": TLP_WHITE, "green": TLP_GREEN, "amber": TLP_AMBER}
 
-    def iocs_to_stix(self, iocs, tlp="green", confidence=75):
-        """Convert IOC dictionary to STIX 2.1 bundle."""
-        stix_objects = []
-        marking = self.TLP_MAP.get(tlp, TLP_GREEN)
+ def iocs_to_stix(self, iocs, tlp="green", confidence=75):
+ """Convert IOC dictionary to STIX 2.1 bundle."""
+ stix_objects = []
+ marking = self.TLP_MAP.get(tlp, TLP_GREEN)
 
-        for ip in iocs.get("ipv4", []):
-            stix_objects.append(Indicator(
-                name=f"Malicious IP: {ip}",
-                pattern=f"[ipv4-addr:value = '{ip}']",
-                pattern_type="stix",
-                valid_from=datetime.now(),
-                indicator_types=["malicious-activity"],
-                confidence=confidence,
-                object_marking_refs=[marking],
-            ))
+ for ip in iocs.get("ipv4", []):
+ stix_objects.append(Indicator(
+ name=f"Malicious IP: {ip}",
+ pattern=f"[ipv4-addr:value = '{ip}']",
+ pattern_type="stix",
+ valid_from=datetime.now(),
+ indicator_types=["malicious-activity"],
+ confidence=confidence,
+ object_marking_refs=[marking],
+ ))
 
-        for domain in iocs.get("domain", []):
-            stix_objects.append(Indicator(
-                name=f"Malicious Domain: {domain}",
-                pattern=f"[domain-name:value = '{domain}']",
-                pattern_type="stix",
-                valid_from=datetime.now(),
-                indicator_types=["malicious-activity"],
-                confidence=confidence,
-                object_marking_refs=[marking],
-            ))
+ for domain in iocs.get("domain", []):
+ stix_objects.append(Indicator(
+ name=f"Malicious Domain: {domain}",
+ pattern=f"[domain-name:value = '{domain}']",
+ pattern_type="stix",
+ valid_from=datetime.now(),
+ indicator_types=["malicious-activity"],
+ confidence=confidence,
+ object_marking_refs=[marking],
+ ))
 
-        for url in iocs.get("url", []):
-            escaped = url.replace("'", "\\'")
-            stix_objects.append(Indicator(
-                name=f"Malicious URL: {url[:60]}",
-                pattern=f"[url:value = '{escaped}']",
-                pattern_type="stix",
-                valid_from=datetime.now(),
-                indicator_types=["malicious-activity"],
-                confidence=confidence,
-                object_marking_refs=[marking],
-            ))
+ for url in iocs.get("url", []):
+ escaped = url.replace("'", "\\'")
+ stix_objects.append(Indicator(
+ name=f"Malicious URL: {url[:60]}",
+ pattern=f"[url:value = '{escaped}']",
+ pattern_type="stix",
+ valid_from=datetime.now(),
+ indicator_types=["malicious-activity"],
+ confidence=confidence,
+ object_marking_refs=[marking],
+ ))
 
-        for sha256 in iocs.get("sha256", []):
-            stix_objects.append(Indicator(
-                name=f"Malicious File Hash: {sha256[:16]}...",
-                pattern=f"[file:hashes.'SHA-256' = '{sha256}']",
-                pattern_type="stix",
-                valid_from=datetime.now(),
-                indicator_types=["malicious-activity"],
-                confidence=confidence,
-                object_marking_refs=[marking],
-            ))
+ for sha256 in iocs.get("sha256", []):
+ stix_objects.append(Indicator(
+ name=f"Malicious File Hash: {sha256[:16]}...",
+ pattern=f"[file:hashes.'SHA-256' = '{sha256}']",
+ pattern_type="stix",
+ valid_from=datetime.now(),
+ indicator_types=["malicious-activity"],
+ confidence=confidence,
+ object_marking_refs=[marking],
+ ))
 
-        bundle = Bundle(objects=stix_objects)
-        print(f"[+] Created STIX bundle with {len(stix_objects)} indicators")
-        return bundle
+ bundle = Bundle(objects=stix_objects)
+ print(f"[+] Created STIX bundle with {len(stix_objects)} indicators")
+ return bundle
 
 converter = STIXConverter()
 stix_bundle = converter.iocs_to_stix(iocs, tlp="amber", confidence=80)
 with open("iocs_stix_bundle.json", "w") as f:
-    f.write(stix_bundle.serialize(pretty=True))
+ f.write(stix_bundle.serialize(pretty=True))
 ```
 
 ### Step 4: Distribute Through MISP and TAXII
@@ -287,77 +287,77 @@ import requests
 import json
 
 class IOCDistributor:
-    """Distribute IOCs through various channels."""
+ """Distribute IOCs through various channels."""
 
-    def push_to_misp(self, iocs, misp_url, misp_key, event_info):
-        """Push IOCs to MISP as a new event."""
-        headers = {
-            "Authorization": misp_key,
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        }
-        event = {
-            "Event": {
-                "info": event_info,
-                "distribution": "1",  # This community only
-                "threat_level_id": "2",  # Medium
-                "analysis": "2",  # Completed
-                "Attribute": [],
-            }
-        }
+ def push_to_misp(self, iocs, misp_url, misp_key, event_info):
+ """Push IOCs to MISP as a new event."""
+ headers = {
+ "Authorization": misp_key,
+ "Content-Type": "application/json",
+ "Accept": "application/json",
+ }
+ event = {
+ "Event": {
+ "info": event_info,
+ "distribution": "1", # This community only
+ "threat_level_id": "2", # Medium
+ "analysis": "2", # Completed
+ "Attribute": [],
+ }
+ }
 
-        type_mapping = {
-            "ipv4": "ip-dst",
-            "domain": "domain",
-            "url": "url",
-            "email": "email-src",
-            "md5": "md5",
-            "sha1": "sha1",
-            "sha256": "sha256",
-        }
+ type_mapping = {
+ "ipv4": "ip-dst",
+ "domain": "domain",
+ "url": "url",
+ "email": "email-src",
+ "md5": "md5",
+ "sha1": "sha1",
+ "sha256": "sha256",
+ }
 
-        for ioc_type, values in iocs.items():
-            misp_type = type_mapping.get(ioc_type)
-            if misp_type:
-                for value in values:
-                    event["Event"]["Attribute"].append({
-                        "type": misp_type,
-                        "value": value,
-                        "category": "Network activity" if ioc_type in ("ipv4", "domain", "url") else "Payload delivery",
-                        "to_ids": True,
-                    })
+ for ioc_type, values in iocs.items():
+ misp_type = type_mapping.get(ioc_type)
+ if misp_type:
+ for value in values:
+ event["Event"]["Attribute"].append({
+ "type": misp_type,
+ "value": value,
+ "category": "Network activity" if ioc_type in ("ipv4", "domain", "url") else "Payload delivery",
+ "to_ids": True,
+ })
 
-        resp = requests.post(
-            f"{misp_url}/events",
-            headers=headers,
-            json=event,
-            verify=not os.environ.get("SKIP_TLS_VERIFY", "").lower() == "true",  # Set SKIP_TLS_VERIFY=true for self-signed certs in lab environments
-        )
-        if resp.status_code == 200:
-            event_id = resp.json().get("Event", {}).get("id", "")
-            print(f"[+] MISP event created: {event_id}")
-            return event_id
-        else:
-            print(f"[-] MISP error: {resp.status_code} - {resp.text[:200]}")
-            return None
+ resp = requests.post(
+ f"{misp_url}/events",
+ headers=headers,
+ json=event,
+ verify=not os.environ.get("SKIP_TLS_VERIFY", "").lower() == "true", # Set SKIP_TLS_VERIFY=true for self-signed certs in lab environments
+ )
+ if resp.status_code == 200:
+ event_id = resp.json().get("Event", {}).get("id", "")
+ print(f"[+] MISP event created: {event_id}")
+ return event_id
+ else:
+ print(f"[-] MISP error: {resp.status_code} - {resp.text[:200]}")
+ return None
 
-    def push_to_taxii(self, stix_bundle, taxii_url, collection_id, username, password):
-        """Push STIX bundle to TAXII 2.1 collection."""
-        from taxii2client.v21 import Collection
-        collection = Collection(
-            f"{taxii_url}/collections/{collection_id}/",
-            user=username, password=password,
-        )
-        response = collection.add_objects(stix_bundle.serialize())
-        print(f"[+] TAXII: Published bundle, status: {response.status}")
-        return response
+ def push_to_taxii(self, stix_bundle, taxii_url, collection_id, username, password):
+ """Push STIX bundle to TAXII 2.1 collection."""
+ from taxii2client.v21 import Collection
+ collection = Collection(
+ f"{taxii_url}/collections/{collection_id}/",
+ user=username, password=password,
+ )
+ response = collection.add_objects(stix_bundle.serialize())
+ print(f"[+] TAXII: Published bundle, status: {response.status}")
+ return response
 
 distributor = IOCDistributor()
 distributor.push_to_misp(
-    iocs,
-    misp_url="https://misp.organization.com",
-    misp_key="YOUR_MISP_API_KEY",
-    event_info="Malware Campaign IOCs - 2025",
+ iocs,
+ misp_url="https://misp.organization.com",
+ misp_key="YOUR_MISP_API_KEY",
+ event_info="Malware Campaign IOCs - 2025",
 )
 ```
 

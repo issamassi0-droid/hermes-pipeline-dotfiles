@@ -1,13 +1,13 @@
 ---
 name: detecting-fileless-attacks-on-endpoints
 description: 'Detects fileless malware and in-memory attacks that execute entirely
-  in RAM without writing persistent files to disk, evading traditional antivirus.
-  Use when building detections for PowerShell-based attacks, reflective DLL injection,
-  WMI persistence, and registry-resident malware. Activates for requests involving
-  fileless malware detection, in-memory attacks, PowerShell exploitation, or living-off-the-land
-  techniques.
+ in RAM without writing persistent files to disk, evading traditional antivirus.
+ Use when building detections for PowerShell-based attacks, reflective DLL injection,
+ WMI persistence, and registry-resident malware. Activates for requests involving
+ fileless malware detection, in-memory attacks, PowerShell exploitation, or living-off-the-land
+ techniques.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -57,15 +57,15 @@ Use this skill when:
 ```powershell
 # Enable PowerShell Script Block Logging (GPO or registry)
 New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ScriptBlockLogging" `
-  -Name EnableScriptBlockLogging -Value 1 -PropertyType DWORD -Force
+ -Name EnableScriptBlockLogging -Value 1 -PropertyType DWORD -Force
 
 # Enable PowerShell Module Logging
 New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\ModuleLogging" `
-  -Name EnableModuleLogging -Value 1 -PropertyType DWORD -Force
+ -Name EnableModuleLogging -Value 1 -PropertyType DWORD -Force
 
 # Enable PowerShell Transcription
 New-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows\PowerShell\Transcription" `
-  -Name EnableTranscripting -Value 1 -PropertyType DWORD -Force
+ -Name EnableTranscripting -Value 1 -PropertyType DWORD -Force
 
 # Sysmon config for fileless detection (key events):
 # Event ID 1: Process creation (captures CommandLine)
@@ -120,16 +120,16 @@ DeviceEvents
 | where ActionType in ("CreateRemoteThreadApiCall", "NtAllocateVirtualMemoryApiCall")
 | where InitiatingProcessFileName !in ("MsMpEng.exe", "svchost.exe")
 | project Timestamp, DeviceName, ActionType, InitiatingProcessFileName,
-    InitiatingProcessCommandLine, FileName
+ InitiatingProcessCommandLine, FileName
 ```
 
 ### Step 4: Detect WMI-Based Persistence
 
 ```
 # Sysmon Event IDs 19/20/21 for WMI events
-EventID: 19  # WmiEventFilter activity detected
-EventID: 20  # WmiEventConsumer activity detected
-EventID: 21  # WmiEventConsumerToFilter activity detected
+EventID: 19 # WmiEventFilter activity detected
+EventID: 20 # WmiEventConsumer activity detected
+EventID: 21 # WmiEventConsumerToFilter activity detected
 
 # Any WMI event subscription creation is suspicious unless expected
 # Common malicious WMI persistence:

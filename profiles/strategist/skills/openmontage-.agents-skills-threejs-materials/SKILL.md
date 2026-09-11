@@ -12,9 +12,9 @@ import * as THREE from "three";
 
 // PBR material (recommended for realistic rendering)
 const material = new THREE.MeshStandardMaterial({
-  color: 0x00ff00,
-  roughness: 0.5,
-  metalness: 0.5,
+ color: 0x00ff00,
+ roughness: 0.5,
+ metalness: 0.5,
 });
 
 const mesh = new THREE.Mesh(geometry, material);
@@ -22,18 +22,18 @@ const mesh = new THREE.Mesh(geometry, material);
 
 ## Material Types Overview
 
-| Material             | Use Case                              | Lighting           |
+| Material | Use Case | Lighting |
 | -------------------- | ------------------------------------- | ------------------ |
-| MeshBasicMaterial    | Unlit, flat colors, wireframes        | No                 |
-| MeshLambertMaterial  | Matte surfaces, performance           | Yes (diffuse only) |
-| MeshPhongMaterial    | Shiny surfaces, specular highlights   | Yes                |
-| MeshStandardMaterial | PBR, realistic materials              | Yes (PBR)          |
-| MeshPhysicalMaterial | Advanced PBR, clearcoat, transmission | Yes (PBR+)         |
-| MeshToonMaterial     | Cel-shaded, cartoon look              | Yes (toon)         |
-| MeshNormalMaterial   | Debug normals                         | No                 |
-| MeshDepthMaterial    | Depth visualization                   | No                 |
-| ShaderMaterial       | Custom GLSL shaders                   | Custom             |
-| RawShaderMaterial    | Full shader control                   | Custom             |
+| MeshBasicMaterial | Unlit, flat colors, wireframes | No |
+| MeshLambertMaterial | Matte surfaces, performance | Yes (diffuse only) |
+| MeshPhongMaterial | Shiny surfaces, specular highlights | Yes |
+| MeshStandardMaterial | PBR, realistic materials | Yes (PBR) |
+| MeshPhysicalMaterial | Advanced PBR, clearcoat, transmission | Yes (PBR+) |
+| MeshToonMaterial | Cel-shaded, cartoon look | Yes (toon) |
+| MeshNormalMaterial | Debug normals | No |
+| MeshDepthMaterial | Depth visualization | No |
+| ShaderMaterial | Custom GLSL shaders | Custom |
+| RawShaderMaterial | Full shader control | Custom |
 
 ## MeshBasicMaterial
 
@@ -41,16 +41,16 @@ No lighting calculations. Fast, always visible.
 
 ```javascript
 const material = new THREE.MeshBasicMaterial({
-  color: 0xff0000,
-  transparent: true,
-  opacity: 0.5,
-  side: THREE.DoubleSide, // FrontSide, BackSide, DoubleSide
-  wireframe: false,
-  map: texture, // Color/diffuse texture
-  alphaMap: alphaTexture, // Transparency texture
-  envMap: envTexture, // Reflection texture
-  reflectivity: 1, // Env map intensity
-  fog: true, // Affected by scene fog
+ color: 0xff0000,
+ transparent: true,
+ opacity: 0.5,
+ side: THREE.DoubleSide, // FrontSide, BackSide, DoubleSide
+ wireframe: false,
+ map: texture, // Color/diffuse texture
+ alphaMap: alphaTexture, // Transparency texture
+ envMap: envTexture, // Reflection texture
+ reflectivity: 1, // Env map intensity
+ fog: true, // Affected by scene fog
 });
 ```
 
@@ -60,13 +60,13 @@ Diffuse-only lighting. Fast, no specular highlights.
 
 ```javascript
 const material = new THREE.MeshLambertMaterial({
-  color: 0x00ff00,
-  emissive: 0x111111, // Self-illumination color
-  emissiveIntensity: 1,
-  map: texture,
-  emissiveMap: emissiveTexture,
-  envMap: envTexture,
-  reflectivity: 0.5,
+ color: 0x00ff00,
+ emissive: 0x111111, // Self-illumination color
+ emissiveIntensity: 1,
+ map: texture,
+ emissiveMap: emissiveTexture,
+ envMap: envTexture,
+ reflectivity: 0.5,
 });
 ```
 
@@ -76,19 +76,19 @@ Specular highlights. Good for shiny, plastic-like surfaces.
 
 ```javascript
 const material = new THREE.MeshPhongMaterial({
-  color: 0x0000ff,
-  specular: 0xffffff, // Highlight color
-  shininess: 100, // Highlight sharpness (0-1000)
-  emissive: 0x000000,
-  flatShading: false, // Flat vs smooth shading
-  map: texture,
-  specularMap: specTexture, // Per-pixel shininess
-  normalMap: normalTexture,
-  normalScale: new THREE.Vector2(1, 1),
-  bumpMap: bumpTexture,
-  bumpScale: 1,
-  displacementMap: dispTexture,
-  displacementScale: 1,
+ color: 0x0000ff,
+ specular: 0xffffff, // Highlight color
+ shininess: 100, // Highlight sharpness (0-1000)
+ emissive: 0x000000,
+ flatShading: false, // Flat vs smooth shading
+ map: texture,
+ specularMap: specTexture, // Per-pixel shininess
+ normalMap: normalTexture,
+ normalScale: new THREE.Vector2(1, 1),
+ bumpMap: bumpTexture,
+ bumpScale: 1,
+ displacementMap: dispTexture,
+ displacementScale: 1,
 });
 ```
 
@@ -98,35 +98,35 @@ Physically-based rendering. Recommended for realistic results.
 
 ```javascript
 const material = new THREE.MeshStandardMaterial({
-  color: 0xffffff,
-  roughness: 0.5, // 0 = mirror, 1 = diffuse
-  metalness: 0.0, // 0 = dielectric, 1 = metal
+ color: 0xffffff,
+ roughness: 0.5, // 0 = mirror, 1 = diffuse
+ metalness: 0.0, // 0 = dielectric, 1 = metal
 
-  // Textures
-  map: colorTexture, // Albedo/base color
-  roughnessMap: roughTexture, // Per-pixel roughness
-  metalnessMap: metalTexture, // Per-pixel metalness
-  normalMap: normalTexture, // Surface detail
-  normalScale: new THREE.Vector2(1, 1),
-  aoMap: aoTexture, // Ambient occlusion (uses uv2!)
-  aoMapIntensity: 1,
-  displacementMap: dispTexture, // Vertex displacement
-  displacementScale: 0.1,
-  displacementBias: 0,
+ // Textures
+ map: colorTexture, // Albedo/base color
+ roughnessMap: roughTexture, // Per-pixel roughness
+ metalnessMap: metalTexture, // Per-pixel metalness
+ normalMap: normalTexture, // Surface detail
+ normalScale: new THREE.Vector2(1, 1),
+ aoMap: aoTexture, // Ambient occlusion (uses uv2!)
+ aoMapIntensity: 1,
+ displacementMap: dispTexture, // Vertex displacement
+ displacementScale: 0.1,
+ displacementBias: 0,
 
-  // Emissive
-  emissive: 0x000000,
-  emissiveIntensity: 1,
-  emissiveMap: emissiveTexture,
+ // Emissive
+ emissive: 0x000000,
+ emissiveIntensity: 1,
+ emissiveMap: emissiveTexture,
 
-  // Environment
-  envMap: envTexture,
-  envMapIntensity: 1,
+ // Environment
+ envMap: envTexture,
+ envMapIntensity: 1,
 
-  // Other
-  flatShading: false,
-  wireframe: false,
-  fog: true,
+ // Other
+ flatShading: false,
+ wireframe: false,
+ fog: true,
 });
 
 // Note: aoMap requires second UV channel
@@ -139,51 +139,51 @@ Extends MeshStandardMaterial with advanced features.
 
 ```javascript
 const material = new THREE.MeshPhysicalMaterial({
-  // All MeshStandardMaterial properties plus:
+ // All MeshStandardMaterial properties plus:
 
-  // Clearcoat (car paint, lacquer)
-  clearcoat: 1.0, // 0-1 clearcoat layer strength
-  clearcoatRoughness: 0.1,
-  clearcoatMap: ccTexture,
-  clearcoatRoughnessMap: ccrTexture,
-  clearcoatNormalMap: ccnTexture,
-  clearcoatNormalScale: new THREE.Vector2(1, 1),
+ // Clearcoat (car paint, lacquer)
+ clearcoat: 1.0, // 0-1 clearcoat layer strength
+ clearcoatRoughness: 0.1,
+ clearcoatMap: ccTexture,
+ clearcoatRoughnessMap: ccrTexture,
+ clearcoatNormalMap: ccnTexture,
+ clearcoatNormalScale: new THREE.Vector2(1, 1),
 
-  // Transmission (glass, water)
-  transmission: 1.0, // 0 = opaque, 1 = fully transparent
-  transmissionMap: transTexture,
-  thickness: 0.5, // Volume thickness for refraction
-  thicknessMap: thickTexture,
-  attenuationDistance: 1, // Absorption distance
-  attenuationColor: new THREE.Color(0xffffff),
+ // Transmission (glass, water)
+ transmission: 1.0, // 0 = opaque, 1 = fully transparent
+ transmissionMap: transTexture,
+ thickness: 0.5, // Volume thickness for refraction
+ thicknessMap: thickTexture,
+ attenuationDistance: 1, // Absorption distance
+ attenuationColor: new THREE.Color(0xffffff),
 
-  // Refraction
-  ior: 1.5, // Index of refraction (1-2.333)
+ // Refraction
+ ior: 1.5, // Index of refraction (1-2.333)
 
-  // Sheen (fabric, velvet)
-  sheen: 1.0,
-  sheenRoughness: 0.5,
-  sheenColor: new THREE.Color(0xffffff),
-  sheenColorMap: sheenTexture,
-  sheenRoughnessMap: sheenRoughTexture,
+ // Sheen (fabric, velvet)
+ sheen: 1.0,
+ sheenRoughness: 0.5,
+ sheenColor: new THREE.Color(0xffffff),
+ sheenColorMap: sheenTexture,
+ sheenRoughnessMap: sheenRoughTexture,
 
-  // Iridescence (soap bubbles, oil slicks)
-  iridescence: 1.0,
-  iridescenceIOR: 1.3,
-  iridescenceThicknessRange: [100, 400],
-  iridescenceMap: iridTexture,
-  iridescenceThicknessMap: iridThickTexture,
+ // Iridescence (soap bubbles, oil slicks)
+ iridescence: 1.0,
+ iridescenceIOR: 1.3,
+ iridescenceThicknessRange: [100, 400],
+ iridescenceMap: iridTexture,
+ iridescenceThicknessMap: iridThickTexture,
 
-  // Anisotropy (brushed metal)
-  anisotropy: 1.0,
-  anisotropyRotation: 0,
-  anisotropyMap: anisoTexture,
+ // Anisotropy (brushed metal)
+ anisotropy: 1.0,
+ anisotropyRotation: 0,
+ anisotropyMap: anisoTexture,
 
-  // Specular
-  specularIntensity: 1,
-  specularColor: new THREE.Color(0xffffff),
-  specularIntensityMap: specIntTexture,
-  specularColorMap: specColorTexture,
+ // Specular
+ specularIntensity: 1,
+ specularColor: new THREE.Color(0xffffff),
+ specularIntensityMap: specIntTexture,
+ specularColorMap: specColorTexture,
 });
 ```
 
@@ -191,13 +191,13 @@ const material = new THREE.MeshPhysicalMaterial({
 
 ```javascript
 const glass = new THREE.MeshPhysicalMaterial({
-  color: 0xffffff,
-  metalness: 0,
-  roughness: 0,
-  transmission: 1,
-  thickness: 0.5,
-  ior: 1.5,
-  envMapIntensity: 1,
+ color: 0xffffff,
+ metalness: 0,
+ roughness: 0,
+ transmission: 1,
+ thickness: 0.5,
+ ior: 1.5,
+ envMapIntensity: 1,
 });
 ```
 
@@ -205,11 +205,11 @@ const glass = new THREE.MeshPhysicalMaterial({
 
 ```javascript
 const carPaint = new THREE.MeshPhysicalMaterial({
-  color: 0xff0000,
-  metalness: 0.9,
-  roughness: 0.5,
-  clearcoat: 1,
-  clearcoatRoughness: 0.1,
+ color: 0xff0000,
+ metalness: 0.9,
+ roughness: 0.5,
+ clearcoat: 1,
+ clearcoatRoughness: 0.1,
 });
 ```
 
@@ -219,8 +219,8 @@ Cel-shaded cartoon look.
 
 ```javascript
 const material = new THREE.MeshToonMaterial({
-  color: 0x00ff00,
-  gradientMap: gradientTexture, // Optional: custom shading gradient
+ color: 0x00ff00,
+ gradientMap: gradientTexture, // Optional: custom shading gradient
 });
 
 // Create step gradient texture
@@ -237,8 +237,8 @@ Visualize surface normals. Useful for debugging.
 
 ```javascript
 const material = new THREE.MeshNormalMaterial({
-  flatShading: false,
-  wireframe: false,
+ flatShading: false,
+ wireframe: false,
 });
 ```
 
@@ -248,7 +248,7 @@ Render depth values. Used for shadow maps, DOF effects.
 
 ```javascript
 const material = new THREE.MeshDepthMaterial({
-  depthPacking: THREE.RGBADepthPacking,
+ depthPacking: THREE.RGBADepthPacking,
 });
 ```
 
@@ -258,14 +258,14 @@ For point clouds.
 
 ```javascript
 const material = new THREE.PointsMaterial({
-  color: 0xffffff,
-  size: 0.1,
-  sizeAttenuation: true, // Scale with distance
-  map: pointTexture,
-  alphaMap: alphaTexture,
-  transparent: true,
-  alphaTest: 0.5, // Discard pixels below threshold
-  vertexColors: true, // Use per-vertex colors
+ color: 0xffffff,
+ size: 0.1,
+ sizeAttenuation: true, // Scale with distance
+ map: pointTexture,
+ alphaMap: alphaTexture,
+ transparent: true,
+ alphaTest: 0.5, // Discard pixels below threshold
+ vertexColors: true, // Use per-vertex colors
 });
 
 const points = new THREE.Points(geometry, material);
@@ -276,18 +276,18 @@ const points = new THREE.Points(geometry, material);
 ```javascript
 // Solid lines
 const lineMaterial = new THREE.LineBasicMaterial({
-  color: 0xffffff,
-  linewidth: 1, // Note: >1 only works on some systems
-  linecap: "round",
-  linejoin: "round",
+ color: 0xffffff,
+ linewidth: 1, // Note: >1 only works on some systems
+ linecap: "round",
+ linejoin: "round",
 });
 
 // Dashed lines
 const dashedMaterial = new THREE.LineDashedMaterial({
-  color: 0xffffff,
-  dashSize: 0.5,
-  gapSize: 0.25,
-  scale: 1,
+ color: 0xffffff,
+ dashSize: 0.5,
+ gapSize: 0.25,
+ scale: 1,
 });
 
 // Required for dashed lines
@@ -301,35 +301,35 @@ Custom GLSL shaders with Three.js uniforms.
 
 ```javascript
 const material = new THREE.ShaderMaterial({
-  uniforms: {
-    time: { value: 0 },
-    color: { value: new THREE.Color(0xff0000) },
-    texture1: { value: texture },
-  },
-  vertexShader: `
-    varying vec2 vUv;
-    uniform float time;
+ uniforms: {
+ time: { value: 0 },
+ color: { value: new THREE.Color(0xff0000) },
+ texture1: { value: texture },
+ },
+ vertexShader: `
+ varying vec2 vUv;
+ uniform float time;
 
-    void main() {
-      vUv = uv;
-      vec3 pos = position;
-      pos.z += sin(pos.x * 10.0 + time) * 0.1;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-    }
-  `,
-  fragmentShader: `
-    varying vec2 vUv;
-    uniform vec3 color;
-    uniform sampler2D texture1;
+ void main() {
+ vUv = uv;
+ vec3 pos = position;
+ pos.z += sin(pos.x * 10.0 + time) * 0.1;
+ gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+ }
+ `,
+ fragmentShader: `
+ varying vec2 vUv;
+ uniform vec3 color;
+ uniform sampler2D texture1;
 
-    void main() {
-      // Use texture2D() for GLSL 1.0, texture() for GLSL 3.0 (glslVersion: THREE.GLSL3)
-      vec4 texColor = texture2D(texture1, vUv);
-      gl_FragColor = vec4(color * texColor.rgb, 1.0);
-    }
-  `,
-  transparent: true,
-  side: THREE.DoubleSide,
+ void main() {
+ // Use texture2D() for GLSL 1.0, texture() for GLSL 3.0 (glslVersion: THREE.GLSL3)
+ vec4 texColor = texture2D(texture1, vUv);
+ gl_FragColor = vec4(color * texColor.rgb, 1.0);
+ }
+ `,
+ transparent: true,
+ side: THREE.DoubleSide,
 });
 
 // Update uniform in animation loop
@@ -340,12 +340,12 @@ material.uniforms.time.value = clock.getElapsedTime();
 
 ```glsl
 // Vertex shader
-uniform mat4 modelMatrix;         // Object to world
-uniform mat4 modelViewMatrix;     // Object to camera
-uniform mat4 projectionMatrix;    // Camera projection
-uniform mat4 viewMatrix;          // World to camera
-uniform mat3 normalMatrix;        // For transforming normals
-uniform vec3 cameraPosition;      // Camera world position
+uniform mat4 modelMatrix; // Object to world
+uniform mat4 modelViewMatrix; // Object to camera
+uniform mat4 projectionMatrix; // Camera projection
+uniform mat4 viewMatrix; // World to camera
+uniform mat3 normalMatrix; // For transforming normals
+uniform vec3 cameraPosition; // Camera world position
 
 // Attributes
 attribute vec3 position;
@@ -359,27 +359,27 @@ Full control - no built-in uniforms/attributes.
 
 ```javascript
 const material = new THREE.RawShaderMaterial({
-  uniforms: {
-    projectionMatrix: { value: camera.projectionMatrix },
-    modelViewMatrix: { value: new THREE.Matrix4() },
-  },
-  vertexShader: `
-    precision highp float;
-    attribute vec3 position;
-    uniform mat4 projectionMatrix;
-    uniform mat4 modelViewMatrix;
+ uniforms: {
+ projectionMatrix: { value: camera.projectionMatrix },
+ modelViewMatrix: { value: new THREE.Matrix4() },
+ },
+ vertexShader: `
+ precision highp float;
+ attribute vec3 position;
+ uniform mat4 projectionMatrix;
+ uniform mat4 modelViewMatrix;
 
-    void main() {
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    precision highp float;
+ void main() {
+ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+ }
+ `,
+ fragmentShader: `
+ precision highp float;
 
-    void main() {
-      gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-    }
-  `,
+ void main() {
+ gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+ }
+ `,
 });
 ```
 
@@ -426,12 +426,12 @@ material.toneMapped = true;
 // Assign different materials to geometry groups
 const geometry = new THREE.BoxGeometry(1, 1, 1);
 const materials = [
-  new THREE.MeshBasicMaterial({ color: 0xff0000 }), // right
-  new THREE.MeshBasicMaterial({ color: 0x00ff00 }), // left
-  new THREE.MeshBasicMaterial({ color: 0x0000ff }), // top
-  new THREE.MeshBasicMaterial({ color: 0xffff00 }), // bottom
-  new THREE.MeshBasicMaterial({ color: 0xff00ff }), // front
-  new THREE.MeshBasicMaterial({ color: 0x00ffff }), // back
+ new THREE.MeshBasicMaterial({ color: 0xff0000 }), // right
+ new THREE.MeshBasicMaterial({ color: 0x00ff00 }), // left
+ new THREE.MeshBasicMaterial({ color: 0x0000ff }), // top
+ new THREE.MeshBasicMaterial({ color: 0xffff00 }), // bottom
+ new THREE.MeshBasicMaterial({ color: 0xff00ff }), // front
+ new THREE.MeshBasicMaterial({ color: 0x00ffff }), // back
 ];
 const mesh = new THREE.Mesh(geometry, materials);
 
@@ -447,12 +447,12 @@ geometry.addGroup(6, 6, 1);
 // Load cube texture
 const cubeLoader = new THREE.CubeTextureLoader();
 const envMap = cubeLoader.load([
-  "px.jpg",
-  "nx.jpg", // positive/negative X
-  "py.jpg",
-  "ny.jpg", // positive/negative Y
-  "pz.jpg",
-  "nz.jpg", // positive/negative Z
+ "px.jpg",
+ "nx.jpg", // positive/negative X
+ "py.jpg",
+ "ny.jpg", // positive/negative Y
+ "pz.jpg",
+ "nz.jpg", // positive/negative Z
 ]);
 
 // Apply to material
@@ -466,9 +466,9 @@ scene.environment = envMap;
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load("environment.hdr", (texture) => {
-  texture.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = texture;
-  scene.background = texture;
+ texture.mapping = THREE.EquirectangularReflectionMapping;
+ scene.environment = texture;
+ scene.background = texture;
 });
 ```
 
@@ -502,11 +502,11 @@ material.needsUpdate = true; // Only needed for some changes
 // Material pooling
 const materialCache = new Map();
 function getMaterial(color) {
-  const key = color.toString(16);
-  if (!materialCache.has(key)) {
-    materialCache.set(key, new THREE.MeshStandardMaterial({ color }));
-  }
-  return materialCache.get(key);
+ const key = color.toString(16);
+ if (!materialCache.has(key)) {
+ materialCache.set(key, new THREE.MeshStandardMaterial({ color }));
+ }
+ return materialCache.get(key);
 }
 
 // Dispose when done

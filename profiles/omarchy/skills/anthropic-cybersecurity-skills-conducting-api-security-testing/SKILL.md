@@ -1,14 +1,14 @@
 ---
 name: conducting-api-security-testing
 description: 'Conducts security testing of REST, GraphQL, and gRPC APIs to identify
-  vulnerabilities in authentication, authorization, rate limiting, input validation,
-  and business logic. The tester uses the OWASP API Security Top 10 as the testing
-  framework, combining Burp Suite interception with Postman collections and custom
-  scripts to test endpoint security at every privilege level. Activates for requests
-  involving API security testing, REST API pentest, GraphQL security assessment, or
-  API vulnerability testing.
+ vulnerabilities in authentication, authorization, rate limiting, input validation,
+ and business logic. The tester uses the OWASP API Security Top 10 as the testing
+ framework, combining Burp Suite interception with Postman collections and custom
+ scripts to test endpoint security at every privilege level. Activates for requests
+ involving API security testing, REST API pentest, GraphQL security assessment, or
+ API vulnerability testing.
 
-  '
+ '
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -61,9 +61,9 @@ Map the complete API attack surface:
 - **Import API documentation**: Load OpenAPI/Swagger specs into Postman or Burp Suite to catalog all endpoints, methods, parameters, and authentication requirements
 - **Reverse-engineer undocumented APIs**: Proxy the mobile app or web frontend through Burp Suite and exercise all features to capture API calls. Export the Burp sitemap as the baseline endpoint inventory.
 - **GraphQL introspection**: Send an introspection query to discover the full schema:
-  ```json
-  {"query": "{__schema{types{name,fields{name,args{name,type{name}}}}}}"}
-  ```
+ ```json
+ {"query": "{__schema{types{name,fields{name,args{name,type{name}}}}}}"}
+ ```
 - **Endpoint enumeration**: Fuzz for hidden API versions (`/api/v1/`, `/api/v2/`, `/api/internal/`), debug endpoints (`/api/debug`, `/api/health`, `/api/metrics`), and administrative endpoints
 - **Document authentication mechanisms**: Identify if the API uses API keys, OAuth 2.0 Bearer tokens, JWT, session cookies, or mutual TLS
 
@@ -72,11 +72,11 @@ Map the complete API attack surface:
 Test authentication mechanisms for weaknesses:
 
 - **JWT analysis**: Decode the JWT and inspect claims (sub, exp, iss, aud, role). Test:
-  - Algorithm confusion: Change `alg` to `none` and remove the signature
-  - Key confusion: Change `alg` from RS256 to HS256 and sign with the public key
-  - Weak secret: Brute-force the HMAC secret with `hashcat -m 16500 jwt.txt wordlist.txt`
-  - Token expiration: Verify tokens expire and cannot be used after expiration
-  - Claim tampering: Modify role, userId, or permission claims and re-sign
+ - Algorithm confusion: Change `alg` to `none` and remove the signature
+ - Key confusion: Change `alg` from RS256 to HS256 and sign with the public key
+ - Weak secret: Brute-force the HMAC secret with `hashcat -m 16500 jwt.txt wordlist.txt`
+ - Token expiration: Verify tokens expire and cannot be used after expiration
+ - Claim tampering: Modify role, userId, or permission claims and re-sign
 - **OAuth 2.0 testing**: Check for redirect_uri manipulation, authorization code reuse, token leakage in Referer headers, and missing state parameter (CSRF)
 - **API key security**: Test if API keys are validated per-endpoint, if revoked keys are immediately rejected, and if keys in query strings appear in access logs or analytics
 
@@ -85,18 +85,18 @@ Test authentication mechanisms for weaknesses:
 Test for Broken Object Level Authorization (BOLA) and Broken Function Level Authorization (BFLA):
 
 - **BOLA (IDOR) testing**: For every endpoint that returns user-specific data, replace the object identifier with another user's identifier:
-  - `GET /api/users/123/orders` -> `GET /api/users/456/orders`
-  - Test with numeric IDs, UUIDs, usernames, and email addresses
-  - Automate with Burp Autorize extension: configure it with two sessions (attacker and victim) and replay all requests
+ - `GET /api/users/123/orders` -> `GET /api/users/456/orders`
+ - Test with numeric IDs, UUIDs, usernames, and email addresses
+ - Automate with Burp Autorize extension: configure it with two sessions (attacker and victim) and replay all requests
 - **BFLA testing**: Using a low-privilege token, attempt to access administrative endpoints:
-  - `DELETE /api/users/456` (admin-only delete)
-  - `PUT /api/users/456/role` (role modification)
-  - `GET /api/admin/dashboard` (admin panel data)
+ - `DELETE /api/users/456` (admin-only delete)
+ - `PUT /api/users/456/role` (role modification)
+ - `GET /api/admin/dashboard` (admin panel data)
 - **Mass assignment**: Send additional JSON properties not shown in the documentation:
-  ```json
-  PUT /api/users/123
-  {"name": "Test", "role": "admin", "isVerified": true, "balance": 99999}
-  ```
+ ```json
+ PUT /api/users/123
+ {"name": "Test", "role": "admin", "isVerified": true, "balance": 99999}
+ ```
 - **HTTP method testing**: If GET works on an endpoint, try PUT, PATCH, DELETE, and OPTIONS to discover unprotected methods
 
 ### Step 4: Input Validation and Injection Testing
@@ -179,7 +179,7 @@ by substituting the accountId path parameter.
 **Proof of Concept**:
 1. Authenticate as User A (account ID: ACC-10045)
 2. Request: GET /api/v1/accounts/ACC-10046/transactions
-   Authorization: Bearer <User_A_token>
+ Authorization: Bearer <User_A_token>
 3. Response: 200 OK with User B's full transaction history
 
 **Impact**:
@@ -190,6 +190,6 @@ transaction descriptions.
 **Remediation**:
 Implement server-side authorization check that verifies the authenticated user
 owns the requested account before returning data:
-  const account = await Account.findById(accountId);
-  if (account.userId !== req.user.id) return res.status(403).json({error: "Forbidden"});
+ const account = await Account.findById(accountId);
+ if (account.userId !== req.user.id) return res.status(403).json({error: "Forbidden"});
 ```

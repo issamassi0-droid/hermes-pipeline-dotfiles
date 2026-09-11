@@ -39,7 +39,7 @@ A ---|label| B
 Avoid space-dash syntax which can cause incomplete renders:
 
 ```mermaid
-A -- label --> B   # May cause issues
+A -- label --> B # May cause issues
 ```
 
 ### Node Labels with Special Characters

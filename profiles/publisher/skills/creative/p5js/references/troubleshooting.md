@@ -19,8 +19,8 @@ Retina/HiDPI displays default to 2x or 3x density, multiplying pixel count by 4-
 
 ```javascript
 function setup() {
-  pixelDensity(1);        // force 1:1 — always do this first
-  createCanvas(1920, 1080);
+ pixelDensity(1); // force 1:1 — always do this first
+ createCanvas(1920, 1080);
 }
 ```
 
@@ -31,15 +31,15 @@ p5's `sin()`, `cos()`, `random()`, `min()`, `max()`, `abs()` are wrapper functio
 ```javascript
 // SLOW — p5 wrappers
 for (let p of particles) {
-  let a = sin(p.angle);
-  let d = dist(p.x, p.y, mx, my);
+ let a = sin(p.angle);
+ let d = dist(p.x, p.y, mx, my);
 }
 
 // FAST — native Math
 for (let p of particles) {
-  let a = Math.sin(p.angle);
-  let dx = p.x - mx, dy = p.y - my;
-  let dSq = dx * dx + dy * dy;  // skip sqrt entirely
+ let a = Math.sin(p.angle);
+ let dx = p.x - mx, dy = p.y - my;
+ let dSq = dx * dx + dy * dy; // skip sqrt entirely
 }
 ```
 
@@ -66,24 +66,24 @@ Common bottlenecks:
 ```javascript
 // BAD: 10000 individual circles
 for (let p of particles) {
-  ellipse(p.x, p.y, p.size);
+ ellipse(p.x, p.y, p.size);
 }
 
 // GOOD: single shape with vertices
 beginShape(POINTS);
 for (let p of particles) {
-  vertex(p.x, p.y);
+ vertex(p.x, p.y);
 }
 endShape();
 
 // BEST: direct pixel manipulation
 loadPixels();
 for (let p of particles) {
-  let idx = 4 * (floor(p.y) * width + floor(p.x));
-  pixels[idx] = p.r;
-  pixels[idx+1] = p.g;
-  pixels[idx+2] = p.b;
-  pixels[idx+3] = 255;
+ let idx = 4 * (floor(p.y) * width + floor(p.x));
+ pixels[idx] = p.r;
+ pixels[idx+1] = p.g;
+ pixels[idx+2] = p.b;
+ pixels[idx+3] = 255;
 }
 updatePixels();
 ```
@@ -91,75 +91,75 @@ updatePixels();
 **Spatial hashing for neighbor queries:**
 ```javascript
 class SpatialHash {
-  constructor(cellSize) {
-    this.cellSize = cellSize;
-    this.cells = new Map();
-  }
+ constructor(cellSize) {
+ this.cellSize = cellSize;
+ this.cells = new Map();
+ }
 
-  clear() { this.cells.clear(); }
+ clear() { this.cells.clear(); }
 
-  _key(x, y) {
-    return `${floor(x / this.cellSize)},${floor(y / this.cellSize)}`;
-  }
+ _key(x, y) {
+ return `${floor(x / this.cellSize)},${floor(y / this.cellSize)}`;
+ }
 
-  insert(obj) {
-    let key = this._key(obj.pos.x, obj.pos.y);
-    if (!this.cells.has(key)) this.cells.set(key, []);
-    this.cells.get(key).push(obj);
-  }
+ insert(obj) {
+ let key = this._key(obj.pos.x, obj.pos.y);
+ if (!this.cells.has(key)) this.cells.set(key, []);
+ this.cells.get(key).push(obj);
+ }
 
-  query(x, y, radius) {
-    let results = [];
-    let minCX = floor((x - radius) / this.cellSize);
-    let maxCX = floor((x + radius) / this.cellSize);
-    let minCY = floor((y - radius) / this.cellSize);
-    let maxCY = floor((y + radius) / this.cellSize);
+ query(x, y, radius) {
+ let results = [];
+ let minCX = floor((x - radius) / this.cellSize);
+ let maxCX = floor((x + radius) / this.cellSize);
+ let minCY = floor((y - radius) / this.cellSize);
+ let maxCY = floor((y + radius) / this.cellSize);
 
-    for (let cx = minCX; cx <= maxCX; cx++) {
-      for (let cy = minCY; cy <= maxCY; cy++) {
-        let key = `${cx},${cy}`;
-        let cell = this.cells.get(key);
-        if (cell) {
-          for (let obj of cell) {
-            if (dist(x, y, obj.pos.x, obj.pos.y) <= radius) {
-              results.push(obj);
-            }
-          }
-        }
-      }
-    }
-    return results;
-  }
+ for (let cx = minCX; cx <= maxCX; cx++) {
+ for (let cy = minCY; cy <= maxCY; cy++) {
+ let key = `${cx},${cy}`;
+ let cell = this.cells.get(key);
+ if (cell) {
+ for (let obj of cell) {
+ if (dist(x, y, obj.pos.x, obj.pos.y) <= radius) {
+ results.push(obj);
+ }
+ }
+ }
+ }
+ }
+ return results;
+ }
 }
 ```
 
 **Object pooling:**
 ```javascript
 class ParticlePool {
-  constructor(maxSize) {
-    this.pool = [];
-    this.active = [];
-    for (let i = 0; i < maxSize; i++) {
-      this.pool.push(new Particle(0, 0));
-    }
-  }
+ constructor(maxSize) {
+ this.pool = [];
+ this.active = [];
+ for (let i = 0; i < maxSize; i++) {
+ this.pool.push(new Particle(0, 0));
+ }
+ }
 
-  spawn(x, y) {
-    let p = this.pool.pop();
-    if (p) {
-      p.reset(x, y);
-      this.active.push(p);
-    }
-  }
+ spawn(x, y) {
+ let p = this.pool.pop();
+ if (p) {
+ p.reset(x, y);
+ this.active.push(p);
+ }
+ }
 
-  update() {
-    for (let i = this.active.length - 1; i >= 0; i--) {
-      this.active[i].update();
-      if (this.active[i].isDead()) {
-        this.pool.push(this.active.splice(i, 1)[0]);
-      }
-    }
-  }
+ update() {
+ for (let i = this.active.length - 1; i >= 0; i--) {
+ this.active[i].update();
+ if (this.active[i].isDead()) {
+ this.pool.push(this.active.splice(i, 1)[0]);
+ }
+ }
+ }
 }
 ```
 
@@ -167,7 +167,7 @@ class ParticlePool {
 ```javascript
 // Only update flow field every N frames
 if (frameCount % 5 === 0) {
-  flowField.update(frameCount * 0.001);
+ flowField.update(frameCount * 0.001);
 }
 ```
 
@@ -199,17 +199,17 @@ Pixel-level operations (`loadPixels()` loops) are the most expensive common patt
 
 **Solution: render at lower resolution, fill blocks:**
 ```javascript
-let step = 3;  // render 1/9 of pixels, fill 3x3 blocks
+let step = 3; // render 1/9 of pixels, fill 3x3 blocks
 loadPixels();
 for (let y = 0; y < H; y += step) {
-  for (let x = 0; x < W; x += step) {
-    let v = expensiveNoise(x, y);
-    for (let dy = 0; dy < step && y+dy < H; dy++)
-      for (let dx = 0; dx < step && x+dx < W; dx++) {
-        let i = 4 * ((y+dy) * W + (x+dx));
-        pixels[i] = v; pixels[i+1] = v; pixels[i+2] = v; pixels[i+3] = 255;
-      }
-  }
+ for (let x = 0; x < W; x += step) {
+ let v = expensiveNoise(x, y);
+ for (let dy = 0; dy < step && y+dy < H; dy++)
+ for (let dx = 0; dx < step && x+dx < W; dx++) {
+ let i = 4 * ((y+dy) * W + (x+dx));
+ pixels[i] = v; pixels[i+1] = v; pixels[i+2] = v; pixels[i+3] = 255;
+ }
+ }
 }
 updatePixels();
 ```
@@ -224,7 +224,7 @@ Step=2 gives 4x speedup. Step=3 gives 9x. Visible at 1080p but acceptable for vi
 blendMode(ADD);
 image(glowLayer, 0, 0);
 // WRONG: everything after this is ADD blended
-blendMode(BLEND);  // ALWAYS reset
+blendMode(BLEND); // ALWAYS reset
 ```
 
 ### 2. Creating objects in draw()
@@ -232,7 +232,7 @@ blendMode(BLEND);  // ALWAYS reset
 ```javascript
 // BAD: creates new font object every frame
 function draw() {
-  let f = loadFont('font.otf');  // NEVER load in draw()
+ let f = loadFont('font.otf'); // NEVER load in draw()
 }
 
 // GOOD: load in preload, use in draw
@@ -264,7 +264,7 @@ pop();
 line(10.5, 20.3, 100.7, 80.2);
 
 // CRISP: integer + 0.5 for 1px lines
-line(10.5, 20.5, 100.5, 80.5);  // on pixel boundary
+line(10.5, 20.5, 100.5, 80.5); // on pixel boundary
 ```
 
 ### 5. Pixel density confusion
@@ -272,7 +272,7 @@ line(10.5, 20.5, 100.5, 80.5);  // on pixel boundary
 ```javascript
 // WRONG: assuming pixel array matches canvas dimensions
 loadPixels();
-let idx = 4 * (y * width + x);  // wrong if pixelDensity > 1
+let idx = 4 * (y * width + x); // wrong if pixelDensity > 1
 
 // RIGHT: account for pixel density
 let d = pixelDensity();
@@ -287,10 +287,10 @@ let idx = 4 * ((y * d) * (width * d) + (x * d));
 ```javascript
 // In HSB mode, fill(255) is NOT white
 colorMode(HSB, 360, 100, 100);
-fill(255);  // This is hue=255, sat=100, bri=100 = vivid purple
+fill(255); // This is hue=255, sat=100, bri=100 = vivid purple
 
 // White in HSB:
-fill(0, 0, 100);  // any hue, 0 saturation, 100 brightness
+fill(0, 0, 100); // any hue, 0 saturation, 100 brightness
 
 // Black in HSB:
 fill(0, 0, 0);
@@ -301,12 +301,12 @@ fill(0, 0, 0);
 ```javascript
 // In WEBGL mode, (0,0) is CENTER, not top-left
 function draw() {
-  // This draws at the center, not the corner
-  rect(0, 0, 100, 100);
+ // This draws at the center, not the corner
+ rect(0, 0, 100, 100);
 
-  // For top-left behavior:
-  translate(-width/2, -height/2);
-  rect(0, 0, 100, 100);  // now at top-left
+ // For top-left behavior:
+ translate(-width/2, -height/2);
+ rect(0, 0, 100, 100); // now at top-left
 }
 ```
 
@@ -315,28 +315,28 @@ function draw() {
 ```javascript
 // BAD: memory leak — buffer never freed
 function draw() {
-  let temp = createGraphics(width, height);  // new buffer every frame!
-  // ...
+ let temp = createGraphics(width, height); // new buffer every frame!
+ // ...
 }
 
 // GOOD: create once, reuse
 let temp;
 function setup() {
-  temp = createGraphics(width, height);
+ temp = createGraphics(width, height);
 }
 function draw() {
-  temp.clear();
-  // ... reuse temp
+ temp.clear();
+ // ... reuse temp
 }
 
 // If you must create/destroy:
-temp.remove();  // explicitly free
+temp.remove(); // explicitly free
 ```
 
 ### 9. noise() returns 0-1, not -1 to 1
 
 ```javascript
-let n = noise(x);  // 0.0 to 1.0 (biased toward 0.5)
+let n = noise(x); // 0.0 to 1.0 (biased toward 0.5)
 
 // For -1 to 1 range:
 let n = noise(x) * 2 - 1;
@@ -350,20 +350,20 @@ let n = map(noise(x), 0, 1, -100, 100);
 ```javascript
 // BAD: saves a PNG every single frame
 function draw() {
-  // ... render ...
-  saveCanvas('output', 'png');  // DON'T DO THIS
+ // ... render ...
+ saveCanvas('output', 'png'); // DON'T DO THIS
 }
 
 // GOOD: save once via keyboard
 function keyPressed() {
-  if (key === 's') saveCanvas('output', 'png');
+ if (key === 's') saveCanvas('output', 'png');
 }
 
 // GOOD: save once after rendering static piece
 function draw() {
-  // ... render ...
-  saveCanvas('output', 'png');
-  noLoop();  // stop after saving
+ // ... render ...
+ saveCanvas('output', 'png');
+ noLoop(); // stop after saving
 }
 ```
 
@@ -372,12 +372,12 @@ function draw() {
 ```javascript
 // BAD: writes to DOM console every frame — massive overhead
 function draw() {
-  console.log(particles.length);  // 60 DOM writes/second
+ console.log(particles.length); // 60 DOM writes/second
 }
 
 // GOOD: log periodically or conditionally
 function draw() {
-  if (frameCount % 60 === 0) console.log('FPS:', frameRate().toFixed(1));
+ if (frameCount % 60 === 0) console.log('FPS:', frameRate().toFixed(1));
 }
 ```
 
@@ -386,15 +386,15 @@ function draw() {
 ```javascript
 // BAD: layout thrashing — 400-500x slower than canvas ops
 function draw() {
-  document.getElementById('counter').innerText = frameCount;
-  let el = document.querySelector('.info');  // DOM query per frame
+ document.getElementById('counter').innerText = frameCount;
+ let el = document.querySelector('.info'); // DOM query per frame
 }
 
 // GOOD: cache DOM refs, update infrequently
 let counterEl;
 function setup() { counterEl = document.getElementById('counter'); }
 function draw() {
-  if (frameCount % 30 === 0) counterEl.innerText = frameCount;
+ if (frameCount % 30 === 0) counterEl.innerText = frameCount;
 }
 ```
 
@@ -452,28 +452,28 @@ function setup() { createCanvas(800, 800); }
 // 1. Growing arrays
 let history = [];
 function draw() {
-  history.push(someData);  // grows forever
+ history.push(someData); // grows forever
 }
 // FIX: cap the array
 if (history.length > 1000) history.shift();
 
 // 2. Creating p5 objects in draw()
 function draw() {
-  let v = createVector(0, 0);  // allocation every frame
+ let v = createVector(0, 0); // allocation every frame
 }
 // FIX: reuse pre-allocated objects
 
 // 3. Unreleased graphics buffers
 let layers = [];
 function reset() {
-  for (let l of layers) l.remove();  // free old buffers
-  layers = [];
+ for (let l of layers) l.remove(); // free old buffers
+ layers = [];
 }
 
 // 4. Event listener accumulation
 function setup() {
-  // BAD: adds new listener every time setup runs
-  window.addEventListener('resize', handler);
+ // BAD: adds new listener every time setup runs
+ window.addEventListener('resize', handler);
 }
 // FIX: use p5's built-in windowResized()
 ```
@@ -485,15 +485,15 @@ function setup() {
 ```javascript
 // Log once (not every frame)
 if (frameCount === 1) {
-  console.log('Canvas:', width, 'x', height);
-  console.log('Pixel density:', pixelDensity());
-  console.log('Renderer:', drawingContext.constructor.name);
+ console.log('Canvas:', width, 'x', height);
+ console.log('Pixel density:', pixelDensity());
+ console.log('Renderer:', drawingContext.constructor.name);
 }
 
 // Log periodically
 if (frameCount % 60 === 0) {
-  console.log('FPS:', frameRate().toFixed(1));
-  console.log('Particles:', particles.length);
+ console.log('FPS:', frameRate().toFixed(1));
+ console.log('Particles:', particles.length);
 }
 ```
 
@@ -502,21 +502,21 @@ if (frameCount % 60 === 0) {
 ```javascript
 // Show frame rate
 function draw() {
-  // ... your sketch ...
-  if (CONFIG.debug) {
-    fill(255, 0, 0);
-    noStroke();
-    textSize(14);
-    textAlign(LEFT, TOP);
-    text('FPS: ' + frameRate().toFixed(1), 10, 10);
-    text('Particles: ' + particles.length, 10, 28);
-    text('Frame: ' + frameCount, 10, 46);
-  }
+ // ... your sketch ...
+ if (CONFIG.debug) {
+ fill(255, 0, 0);
+ noStroke();
+ textSize(14);
+ textAlign(LEFT, TOP);
+ text('FPS: ' + frameRate().toFixed(1), 10, 10);
+ text('Particles: ' + particles.length, 10, 28);
+ text('Frame: ' + frameCount, 10, 46);
+ }
 }
 
 // Toggle debug with 'd' key
 function keyPressed() {
-  if (key === 'd') CONFIG.debug = !CONFIG.debug;
+ if (key === 'd') CONFIG.debug = !CONFIG.debug;
 }
 ```
 
@@ -525,8 +525,8 @@ function keyPressed() {
 ```javascript
 // Comment out layers to find the slow one
 function draw() {
-  renderBackground();      // comment out to test
-  // renderParticles();    // this might be slow
-  // renderPostEffects();  // or this
+ renderBackground(); // comment out to test
+ // renderParticles(); // this might be slow
+ // renderPostEffects(); // or this
 }
 ```

@@ -1,12 +1,12 @@
 ---
 name: implementing-cloud-waf-rules
 description: 'Deploys and tunes Web Application Firewall rules on AWS WAF, Azure WAF,
-  and Cloudflare, covering managed rule sets, custom business-logic rules, rate limiting,
-  bot management, and false-positive reduction. Use when deploying new apps behind
-  a cloud WAF, when pentests reveal injection/XSS flaws, when facing bot or credential-stuffing
-  traffic, or when compliance (e.g. PCI-DSS) mandates a WAF.
+ and Cloudflare, covering managed rule sets, custom business-logic rules, rate limiting,
+ bot management, and false-positive reduction. Use when deploying new apps behind
+ a cloud WAF, when pentests reveal injection/XSS flaws, when facing bot or credential-stuffing
+ traffic, or when compliance (e.g. PCI-DSS) mandates a WAF.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -60,64 +60,64 @@ Enable cloud provider managed rule sets that cover OWASP Top 10 vulnerabilities.
 ```bash
 # AWS WAF: Create Web ACL with AWS Managed Rules
 aws wafv2 create-web-acl \
-  --name production-waf \
-  --scope REGIONAL \
-  --default-action '{"Allow": {}}' \
-  --visibility-config '{
-    "SampledRequestsEnabled": true,
-    "CloudWatchMetricsEnabled": true,
-    "MetricName": "production-waf"
-  }' \
-  --rules '[
-    {
-      "Name": "AWSManagedRulesCommonRuleSet",
-      "Priority": 1,
-      "Statement": {
-        "ManagedRuleGroupStatement": {
-          "VendorName": "AWS",
-          "Name": "AWSManagedRulesCommonRuleSet"
-        }
-      },
-      "OverrideAction": {"Count": {}},
-      "VisibilityConfig": {
-        "SampledRequestsEnabled": true,
-        "CloudWatchMetricsEnabled": true,
-        "MetricName": "CommonRuleSet"
-      }
-    },
-    {
-      "Name": "AWSManagedRulesSQLiRuleSet",
-      "Priority": 2,
-      "Statement": {
-        "ManagedRuleGroupStatement": {
-          "VendorName": "AWS",
-          "Name": "AWSManagedRulesSQLiRuleSet"
-        }
-      },
-      "OverrideAction": {"Count": {}},
-      "VisibilityConfig": {
-        "SampledRequestsEnabled": true,
-        "CloudWatchMetricsEnabled": true,
-        "MetricName": "SQLiRuleSet"
-      }
-    },
-    {
-      "Name": "AWSManagedRulesKnownBadInputsRuleSet",
-      "Priority": 3,
-      "Statement": {
-        "ManagedRuleGroupStatement": {
-          "VendorName": "AWS",
-          "Name": "AWSManagedRulesKnownBadInputsRuleSet"
-        }
-      },
-      "OverrideAction": {"Count": {}},
-      "VisibilityConfig": {
-        "SampledRequestsEnabled": true,
-        "CloudWatchMetricsEnabled": true,
-        "MetricName": "KnownBadInputs"
-      }
-    }
-  ]'
+ --name production-waf \
+ --scope REGIONAL \
+ --default-action '{"Allow": {}}' \
+ --visibility-config '{
+ "SampledRequestsEnabled": true,
+ "CloudWatchMetricsEnabled": true,
+ "MetricName": "production-waf"
+ }' \
+ --rules '[
+ {
+ "Name": "AWSManagedRulesCommonRuleSet",
+ "Priority": 1,
+ "Statement": {
+ "ManagedRuleGroupStatement": {
+ "VendorName": "AWS",
+ "Name": "AWSManagedRulesCommonRuleSet"
+ }
+ },
+ "OverrideAction": {"Count": {}},
+ "VisibilityConfig": {
+ "SampledRequestsEnabled": true,
+ "CloudWatchMetricsEnabled": true,
+ "MetricName": "CommonRuleSet"
+ }
+ },
+ {
+ "Name": "AWSManagedRulesSQLiRuleSet",
+ "Priority": 2,
+ "Statement": {
+ "ManagedRuleGroupStatement": {
+ "VendorName": "AWS",
+ "Name": "AWSManagedRulesSQLiRuleSet"
+ }
+ },
+ "OverrideAction": {"Count": {}},
+ "VisibilityConfig": {
+ "SampledRequestsEnabled": true,
+ "CloudWatchMetricsEnabled": true,
+ "MetricName": "SQLiRuleSet"
+ }
+ },
+ {
+ "Name": "AWSManagedRulesKnownBadInputsRuleSet",
+ "Priority": 3,
+ "Statement": {
+ "ManagedRuleGroupStatement": {
+ "VendorName": "AWS",
+ "Name": "AWSManagedRulesKnownBadInputsRuleSet"
+ }
+ },
+ "OverrideAction": {"Count": {}},
+ "VisibilityConfig": {
+ "SampledRequestsEnabled": true,
+ "CloudWatchMetricsEnabled": true,
+ "MetricName": "KnownBadInputs"
+ }
+ }
+ ]'
 ```
 
 ### Step 2: Create Custom Rate Limiting Rules
@@ -127,37 +127,37 @@ Deploy rate-based rules to protect login endpoints against brute force and crede
 ```bash
 # Rate limiting rule for login endpoint (100 requests per 5 minutes per IP)
 aws wafv2 update-web-acl \
-  --name production-waf \
-  --scope REGIONAL \
-  --id <web-acl-id> \
-  --lock-token <lock-token> \
-  --default-action '{"Allow": {}}' \
-  --rules '[
-    {
-      "Name": "RateLimitLogin",
-      "Priority": 0,
-      "Statement": {
-        "RateBasedStatement": {
-          "Limit": 100,
-          "AggregateKeyType": "IP",
-          "ScopeDownStatement": {
-            "ByteMatchStatement": {
-              "FieldToMatch": {"UriPath": {}},
-              "PositionalConstraint": "STARTS_WITH",
-              "SearchString": "/api/auth/login",
-              "TextTransformations": [{"Priority": 0, "Type": "LOWERCASE"}]
-            }
-          }
-        }
-      },
-      "Action": {"Block": {"CustomResponse": {"ResponseCode": 429}}},
-      "VisibilityConfig": {
-        "SampledRequestsEnabled": true,
-        "CloudWatchMetricsEnabled": true,
-        "MetricName": "RateLimitLogin"
-      }
-    }
-  ]'
+ --name production-waf \
+ --scope REGIONAL \
+ --id <web-acl-id> \
+ --lock-token <lock-token> \
+ --default-action '{"Allow": {}}' \
+ --rules '[
+ {
+ "Name": "RateLimitLogin",
+ "Priority": 0,
+ "Statement": {
+ "RateBasedStatement": {
+ "Limit": 100,
+ "AggregateKeyType": "IP",
+ "ScopeDownStatement": {
+ "ByteMatchStatement": {
+ "FieldToMatch": {"UriPath": {}},
+ "PositionalConstraint": "STARTS_WITH",
+ "SearchString": "/api/auth/login",
+ "TextTransformations": [{"Priority": 0, "Type": "LOWERCASE"}]
+ }
+ }
+ }
+ },
+ "Action": {"Block": {"CustomResponse": {"ResponseCode": 429}}},
+ "VisibilityConfig": {
+ "SampledRequestsEnabled": true,
+ "CloudWatchMetricsEnabled": true,
+ "MetricName": "RateLimitLogin"
+ }
+ }
+ ]'
 ```
 
 ### Step 3: Configure Geo-Blocking and IP Reputation
@@ -168,10 +168,10 @@ Block traffic from countries where the application has no legitimate users and l
 # AWS WAF: Geo-blocking rule
 # Block countries not in the allowed list
 aws wafv2 create-ip-set \
-  --name blocked-ips \
-  --scope REGIONAL \
-  --ip-address-version IPV4 \
-  --addresses "198.51.100.0/24" "203.0.113.0/24"
+ --name blocked-ips \
+ --scope REGIONAL \
+ --ip-address-version IPV4 \
+ --addresses "198.51.100.0/24" "203.0.113.0/24"
 
 # Add Amazon IP Reputation rule
 # AWSManagedRulesAmazonIpReputationList blocks IPs flagged by AWS threat intelligence
@@ -184,23 +184,23 @@ Analyze WAF logs in Count mode to identify legitimate requests being flagged. Cr
 ```bash
 # Enable WAF logging to S3
 aws wafv2 put-logging-configuration \
-  --logging-configuration '{
-    "ResourceArn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/production-waf/id",
-    "LogDestinationConfigs": ["arn:aws:s3:::waf-logs-bucket"],
-    "RedactedFields": [{"SingleHeader": {"Name": "authorization"}}]
-  }'
+ --logging-configuration '{
+ "ResourceArn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/production-waf/id",
+ "LogDestinationConfigs": ["arn:aws:s3:::waf-logs-bucket"],
+ "RedactedFields": [{"SingleHeader": {"Name": "authorization"}}]
+ }'
 
 # Query WAF logs with Athena to find false positives
 # Find rules triggered most frequently for legitimate traffic
 cat << 'EOF' > waf-analysis.sql
 SELECT
-  terminatingRuleId,
-  httpRequest.uri,
-  httpRequest.httpMethod,
-  COUNT(*) as block_count
+ terminatingRuleId,
+ httpRequest.uri,
+ httpRequest.httpMethod,
+ COUNT(*) as block_count
 FROM waf_logs
 WHERE action = 'BLOCK'
-  AND timestamp > date_add('day', -7, now())
+ AND timestamp > date_add('day', -7, now())
 GROUP BY terminatingRuleId, httpRequest.uri, httpRequest.httpMethod
 ORDER BY block_count DESC
 LIMIT 20
@@ -211,27 +211,27 @@ EOF
 # Exclude specific rule from managed rule set that causes false positives
 # Example: Exclude SizeRestrictions_BODY for file upload endpoint
 aws wafv2 update-web-acl \
-  --name production-waf \
-  --scope REGIONAL \
-  --id <web-acl-id> \
-  --lock-token <lock-token> \
-  --rules '[{
-    "Name": "AWSManagedRulesCommonRuleSet",
-    "Priority": 1,
-    "Statement": {
-      "ManagedRuleGroupStatement": {
-        "VendorName": "AWS",
-        "Name": "AWSManagedRulesCommonRuleSet",
-        "ExcludedRules": [{"Name": "SizeRestrictions_BODY"}]
-      }
-    },
-    "OverrideAction": {"None": {}},
-    "VisibilityConfig": {
-      "SampledRequestsEnabled": true,
-      "CloudWatchMetricsEnabled": true,
-      "MetricName": "CommonRuleSet"
-    }
-  }]'
+ --name production-waf \
+ --scope REGIONAL \
+ --id <web-acl-id> \
+ --lock-token <lock-token> \
+ --rules '[{
+ "Name": "AWSManagedRulesCommonRuleSet",
+ "Priority": 1,
+ "Statement": {
+ "ManagedRuleGroupStatement": {
+ "VendorName": "AWS",
+ "Name": "AWSManagedRulesCommonRuleSet",
+ "ExcludedRules": [{"Name": "SizeRestrictions_BODY"}]
+ }
+ },
+ "OverrideAction": {"None": {}},
+ "VisibilityConfig": {
+ "SampledRequestsEnabled": true,
+ "CloudWatchMetricsEnabled": true,
+ "MetricName": "CommonRuleSet"
+ }
+ }]'
 ```
 
 ### Step 5: Switch to Block Mode After Validation
@@ -292,28 +292,28 @@ Protected Resources: ALB (arn:aws:elasticloadbalancing:...)
 Report Date: 2025-02-23
 
 RULE CONFIGURATION:
-  [P0] RateLimitLogin          - BLOCK (100 req/5min/IP)
-  [P1] AWSManagedRulesCommon   - BLOCK (1 exclusion: SizeRestrictions_BODY)
-  [P2] AWSManagedRulesSQLi     - BLOCK
-  [P3] AWSManagedRulesKnownBad - BLOCK
-  [P4] AWSManagedRulesBotControl - COUNT (evaluation phase)
-  [P5] GeoBlockRule            - BLOCK (12 countries blocked)
+ [P0] RateLimitLogin - BLOCK (100 req/5min/IP)
+ [P1] AWSManagedRulesCommon - BLOCK (1 exclusion: SizeRestrictions_BODY)
+ [P2] AWSManagedRulesSQLi - BLOCK
+ [P3] AWSManagedRulesKnownBad - BLOCK
+ [P4] AWSManagedRulesBotControl - COUNT (evaluation phase)
+ [P5] GeoBlockRule - BLOCK (12 countries blocked)
 
 TRAFFIC ANALYSIS (Last 7 Days):
-  Total Requests:    2,847,293
-  Allowed:           2,791,456 (98.0%)
-  Blocked:              51,234 (1.8%)
-  Counted:               4,603 (0.2%)
+ Total Requests: 2,847,293
+ Allowed: 2,791,456 (98.0%)
+ Blocked: 51,234 (1.8%)
+ Counted: 4,603 (0.2%)
 
 TOP BLOCKED RULES:
-  RateLimitLogin:              23,456 blocks (45.8%)
-  SQLi Detection:               8,234 blocks (16.1%)
-  CommonRuleSet (XSS):          7,891 blocks (15.4%)
-  GeoBlockRule:                 6,543 blocks (12.8%)
-  KnownBadInputs:              5,110 blocks (10.0%)
+ RateLimitLogin: 23,456 blocks (45.8%)
+ SQLi Detection: 8,234 blocks (16.1%)
+ CommonRuleSet (XSS): 7,891 blocks (15.4%)
+ GeoBlockRule: 6,543 blocks (12.8%)
+ KnownBadInputs: 5,110 blocks (10.0%)
 
 FALSE POSITIVE ANALYSIS:
-  Reported False Positives: 3
-  Confirmed False Positives: 1 (SizeRestrictions_BODY for /api/upload)
-  Action Taken: Rule exclusion applied
+ Reported False Positives: 3
+ Confirmed False Positives: 1 (SizeRestrictions_BODY for /api/upload)
+ Action Taken: Rule exclusion applied
 ```

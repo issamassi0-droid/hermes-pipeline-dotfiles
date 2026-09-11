@@ -59,11 +59,11 @@ logger.info(`Payment ${id} failed for user ${userId} after ${n} retries`);
 
 // GOOD: stable event name + structured fields
 logger.warn({
-  event: 'payment_failed',
-  paymentId: id,
-  provider: 'stripe',
-  errorCode: err.code,
-  attempt: n,
+ event: 'payment_failed',
+ paymentId: id,
+ provider: 'stripe',
+ errorCode: err.code,
+ attempt: n,
 }, 'payment failed');
 ```
 
@@ -81,10 +81,10 @@ logger.warn({
 ```typescript
 // Express: child logger per request, ID propagated downstream
 app.use((req, res, next) => {
-  req.id = req.headers['x-request-id'] ?? crypto.randomUUID();
-  req.log = logger.child({ requestId: req.id });
-  res.setHeader('x-request-id', req.id);
-  next();
+ req.id = req.headers['x-request-id'] ?? crypto.randomUUID();
+ req.log = logger.child({ requestId: req.id });
+ res.setHeader('x-request-id', req.id);
+ next();
 });
 ```
 
@@ -100,18 +100,18 @@ As with tracing, the vendor-neutral path is the OpenTelemetry metrics API (same 
 import { Histogram } from 'prom-client';
 
 const httpDuration = new Histogram({
-  name: 'http_request_duration_seconds',
-  help: 'HTTP request duration',
-  labelNames: ['method', 'route', 'status_class'],  // '2xx', not '200'
-  buckets: [0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
+ name: 'http_request_duration_seconds',
+ help: 'HTTP request duration',
+ labelNames: ['method', 'route', 'status_class'], // '2xx', not '200'
+ buckets: [0.05, 0.1, 0.25, 0.5, 1, 2.5, 5],
 });
 ```
 
 **Cardinality is the failure mode.** Every unique label combination is a separate time series. Labels must come from small, fixed sets (route template, status class, provider name). Never use user IDs, raw URLs, error messages, or other unbounded values as labels — that belongs in logs and traces.
 
 ```
-OK as label:    route="/api/tasks/:id"   status_class="5xx"   provider="stripe"
-NEVER a label:  user_id, email, request_id, full URL, error message text
+OK as label: route="/api/tasks/:id" status_class="5xx" provider="stripe"
+NEVER a label: user_id, email, request_id, full URL, error message text
 ```
 
 Track averages never, percentiles always: an average hides the 1% of users having a terrible time. Use histograms and read p50/p95/p99.
@@ -126,8 +126,8 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 
 const sdk = new NodeSDK({
-  serviceName: 'checkout-service',
-  instrumentations: [getNodeAutoInstrumentations()],
+ serviceName: 'checkout-service',
+ instrumentations: [getNodeAutoInstrumentations()],
 });
 sdk.start();
 ```
@@ -139,10 +139,10 @@ Add manual spans only around meaningful internal units of work (e.g., `applyDisc
 Alert on **symptoms users feel**, not on causes:
 
 ```
-SYMPTOM (page-worthy):           CAUSE (dashboard, not a page):
-error rate > 1% for 5 min        CPU at 85%
-p99 latency > 2s                 one pod restarted
-queue age > 10 min               disk at 70%
+SYMPTOM (page-worthy): CAUSE (dashboard, not a page):
+error rate > 1% for 5 min CPU at 85%
+p99 latency > 2s one pod restarted
+queue age > 10 min disk at 70%
 ```
 
 Cause-based alerts fire when nothing is wrong and miss failures you didn't predict. Symptom-based alerts fire exactly when users are hurt, regardless of the cause.

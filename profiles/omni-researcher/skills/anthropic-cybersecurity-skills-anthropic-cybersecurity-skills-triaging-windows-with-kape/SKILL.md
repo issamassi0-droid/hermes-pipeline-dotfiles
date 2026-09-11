@@ -1,11 +1,11 @@
 ---
 name: triaging-windows-with-kape
 description: Runs KAPE (Kroll Artifact Parser and Extractor) to collect targeted
-  forensic artifacts (registry hives, $MFT, event logs, prefetch, browser data)
-  via Targets and parse them with Modules wrapping Eric Zimmerman's EZ Tools (PECmd,
-  MFTECmd, RECmd). Use during early incident containment/triage when full disk
-  imaging is impractical but a defensible, parseable Windows artifact set is needed
-  quickly, including at-scale remote collection.
+ forensic artifacts (registry hives, $MFT, event logs, prefetch, browser data)
+ via Targets and parse them with Modules wrapping Eric Zimmerman's EZ Tools (PECmd,
+ MFTECmd, RECmd). Use during early incident containment/triage when full disk
+ imaging is impractical but a defensible, parseable Windows artifact set is needed
+ quickly, including at-scale remote collection.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -51,13 +51,13 @@ KAPE ships with both a CLI (`kape.exe`) and a GUI front end (`gkape.exe`). Becau
 - Download KAPE from the official source (free, registration required): https://www.kroll.com/kape
 - Administrator privileges (required for raw volume access and VSS).
 - Update Targets, Modules, and the bundled binaries:
-  ```cmd
-  REM From the KAPE directory, sync community Targets/Modules from GitHub
-  kape.exe --sync
+ ```cmd
+ REM From the KAPE directory, sync community Targets/Modules from GitHub
+ kape.exe --sync
 
-  REM Download/update the EZ Tools binaries that Modules invoke
-  Get-KAPEUpdate.ps1
-  ```
+ REM Download/update the EZ Tools binaries that Modules invoke
+ Get-KAPEUpdate.ps1
+ ```
 - A clean, write-protected destination (external drive or network share) separate from the evidence source.
 
 ## Objectives
@@ -99,47 +99,47 @@ kape.exe --mlist
 Targets require the three switches `--tsource`, `--target`, and `--tdest`. `--tflush` clears the destination first. Use a compound target such as `KapeTriage` for a fast, broad pull.
 ```cmd
 kape.exe --tsource C: ^
-         --target KapeTriage ^
-         --tdest E:\kape_out\HOST01\tdest ^
-         --tflush
+ --target KapeTriage ^
+ --tdest E:\kape_out\HOST01\tdest ^
+ --tflush
 ```
 
 ### 4. Include Volume Shadow Copies
 Add `--vss` to also process every VSS snapshot on the source volume, recovering historical artifact states.
 ```cmd
 kape.exe --tsource C: ^
-         --target !SANS_Triage ^
-         --tdest E:\kape_out\HOST01\tdest ^
-         --vss --tflush
+ --target !SANS_Triage ^
+ --tdest E:\kape_out\HOST01\tdest ^
+ --vss --tflush
 ```
 
 ### 5. Package the collection as a container with hashing
 `--vhdx` (or `--zip`) wraps the output into a single mountable/transportable container. `--vhdx` takes a base name (an identifier), NOT a filename. KAPE writes a console log and copy log you should retain.
 ```cmd
 kape.exe --tsource C: ^
-         --target KapeTriage ^
-         --tdest E:\kape_out\HOST01\tdest ^
-         --vhdx HOST01 --tflush --gui
+ --target KapeTriage ^
+ --tdest E:\kape_out\HOST01\tdest ^
+ --vhdx HOST01 --tflush --gui
 ```
 
 ### 6. Process the collection with Modules
 Modules require `--module` and `--mdest`. Point `--msource` at the collected target output and run `!EZParser` to parse everything into CSV/JSON.
 ```cmd
 kape.exe --msource E:\kape_out\HOST01\tdest\C ^
-         --mdest E:\kape_out\HOST01\mdest ^
-         --module !EZParser ^
-         --mflush
+ --mdest E:\kape_out\HOST01\mdest ^
+ --module !EZParser ^
+ --mflush
 ```
 
 ### 7. One-shot collect + parse
 You can collect and process in a single invocation by supplying both Target and Module switches.
 ```cmd
 kape.exe --tsource C: ^
-         --target KapeTriage ^
-         --tdest E:\kape_out\HOST01\tdest ^
-         --mdest E:\kape_out\HOST01\mdest ^
-         --module !EZParser ^
-         --tflush --mflush --vss
+ --target KapeTriage ^
+ --tdest E:\kape_out\HOST01\tdest ^
+ --mdest E:\kape_out\HOST01\mdest ^
+ --module !EZParser ^
+ --tflush --mflush --vss
 ```
 
 ### 8. Build a batch-mode `_kape.cli` for fleet deployment

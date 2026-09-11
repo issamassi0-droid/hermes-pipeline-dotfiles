@@ -1,10 +1,10 @@
 ---
 name: test-driven-development
 description: |
-  Write failing test first, then minimal code to pass. Red-Green-Refactor cycle.
-  Use when: implementing features, fixing bugs, refactoring code.
-  Triggers: "implement", "add feature", "fix bug", "tdd", "test first",
-  "write tests", "test-driven".
+ Write failing test first, then minimal code to pass. Red-Green-Refactor cycle.
+ Use when: implementing features, fixing bugs, refactoring code.
+ Triggers: "implement", "add feature", "fix bug", "tdd", "test first",
+ "write tests", "test-driven".
 ---
 
 # Test-Driven Development (TDD)
@@ -29,8 +29,8 @@ Write one minimal test showing what should happen.
 
 ```typescript
 test('rejects empty email', async () => {
-  const result = await submitForm({ email: '' });
-  expect(result.error).toBe('Email required');
+ const result = await submitForm({ email: '' });
+ expect(result.error).toBe('Email required');
 });
 ```
 
@@ -58,10 +58,10 @@ Write simplest code to pass the test.
 
 ```typescript
 function submitForm(data: FormData) {
-  if (!data.email?.trim()) {
-    return { error: 'Email required' };
-  }
-  // ...
+ if (!data.email?.trim()) {
+ return { error: 'Email required' };
+ }
+ // ...
 }
 ```
 

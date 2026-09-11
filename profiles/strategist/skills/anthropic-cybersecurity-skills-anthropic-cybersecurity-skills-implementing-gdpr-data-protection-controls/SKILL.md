@@ -94,13 +94,13 @@ The regulation requires organizations to implement measures appropriate to the r
 
 ### Phase 1: Data Mapping and Assessment (Weeks 1-6)
 1. Create comprehensive data inventory:
-   - What personal data is collected
-   - From whom (data subjects)
-   - Why (purposes and lawful bases)
-   - Where it's stored (systems, locations, countries)
-   - Who has access (internal and external)
-   - How long it's retained
-   - What security measures protect it
+ - What personal data is collected
+ - From whom (data subjects)
+ - Why (purposes and lawful bases)
+ - Where it's stored (systems, locations, countries)
+ - Who has access (internal and external)
+ - How long it's retained
+ - What security measures protect it
 2. Document Records of Processing Activities (ROPA) per Article 30
 3. Identify lawful basis for each processing activity
 4. Map cross-border data transfers and transfer mechanisms
@@ -115,33 +115,33 @@ The regulation requires organizations to implement measures appropriate to the r
 
 ### Phase 3: Technical Controls Implementation (Weeks 11-24)
 1. **Encryption**:
-   - Data at rest: AES-256 for databases, file systems, backups
-   - Data in transit: TLS 1.2+ for all personal data transfers
-   - Key management: secure key storage and rotation procedures
+ - Data at rest: AES-256 for databases, file systems, backups
+ - Data in transit: TLS 1.2+ for all personal data transfers
+ - Key management: secure key storage and rotation procedures
 2. **Pseudonymization**:
-   - Implement tokenization for sensitive identifiers
-   - Separate pseudonymization keys from data stores
+ - Implement tokenization for sensitive identifiers
+ - Separate pseudonymization keys from data stores
 3. **Access Controls**:
-   - Role-based access control (RBAC) for personal data
-   - Principle of least privilege
-   - MFA for systems processing personal data
-   - Regular access reviews
+ - Role-based access control (RBAC) for personal data
+ - Principle of least privilege
+ - MFA for systems processing personal data
+ - Regular access reviews
 4. **Data Minimization**:
-   - Implement data collection limits at application layer
-   - Default privacy settings (data protection by default)
-   - Automated data retention enforcement
+ - Implement data collection limits at application layer
+ - Default privacy settings (data protection by default)
+ - Automated data retention enforcement
 5. **Erasure and Portability**:
-   - Build data deletion workflows across all systems
-   - Implement data export in machine-readable formats (JSON, CSV)
-   - Cascade deletion to backups and archives
+ - Build data deletion workflows across all systems
+ - Implement data export in machine-readable formats (JSON, CSV)
+ - Cascade deletion to backups and archives
 6. **Consent Management**:
-   - Implement granular consent collection mechanisms
-   - Consent withdrawal functionality
-   - Consent audit trail and versioning
+ - Implement granular consent collection mechanisms
+ - Consent withdrawal functionality
+ - Consent audit trail and versioning
 7. **Breach Detection**:
-   - SIEM for personal data access monitoring
-   - Data loss prevention (DLP) controls
-   - Anomalous access detection
+ - SIEM for personal data access monitoring
+ - Data loss prevention (DLP) controls
+ - Anomalous access detection
 
 ### Phase 4: Organizational Controls (Weeks 11-24)
 1. Appoint Data Protection Officer (DPO) if required

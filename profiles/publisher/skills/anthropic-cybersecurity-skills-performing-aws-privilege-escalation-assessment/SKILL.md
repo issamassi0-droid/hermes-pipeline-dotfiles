@@ -1,10 +1,10 @@
 ---
 name: performing-aws-privilege-escalation-assessment
 description: 'Performing authorized privilege escalation assessments in AWS environments
-  to identify IAM misconfigurations that allow users or roles to elevate their permissions
-  using Pacu, CloudFox, Principal Mapper, and manual IAM policy analysis techniques.
+ to identify IAM misconfigurations that allow users or roles to elevate their permissions
+ using Pacu, CloudFox, Principal Mapper, and manual IAM policy analysis techniques.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -68,17 +68,17 @@ aws iam list-attached-user-policies --user-name test-user
 # Get group memberships and group policies
 aws iam list-groups-for-user --user-name test-user
 for group in $(aws iam list-groups-for-user --user-name test-user --query 'Groups[*].GroupName' --output text); do
-  echo "=== Group: $group ==="
-  aws iam list-group-policies --group-name "$group"
-  aws iam list-attached-group-policies --group-name "$group"
+ echo "=== Group: $group ==="
+ aws iam list-group-policies --group-name "$group"
+ aws iam list-attached-group-policies --group-name "$group"
 done
 
 # Simulate specific API calls to map effective permissions
 aws iam simulate-principal-policy \
-  --policy-source-arn arn:aws:iam::ACCOUNT:user/test-user \
-  --action-names iam:CreateUser iam:AttachUserPolicy iam:PassRole \
-    lambda:CreateFunction ec2:RunInstances sts:AssumeRole \
-  --query 'EvaluationResults[*].[EvalActionName,EvalDecision]' --output table
+ --policy-source-arn arn:aws:iam::ACCOUNT:user/test-user \
+ --action-names iam:CreateUser iam:AttachUserPolicy iam:PassRole \
+ lambda:CreateFunction ec2:RunInstances sts:AssumeRole \
+ --query 'EvaluationResults[*].[EvalActionName,EvalDecision]' --output table
 ```
 
 ### Step 2: Scan for Privilege Escalation Paths with Pacu
@@ -142,35 +142,35 @@ Evaluate cross-account trust policies for misconfigured role assumptions that al
 ```bash
 # List all roles and their trust policies
 aws iam list-roles --query 'Roles[*].[RoleName,Arn]' --output text | while read name arn; do
-  trust=$(aws iam get-role --role-name "$name" --query 'Role.AssumeRolePolicyDocument' --output json 2>/dev/null)
-  # Check for wildcards or broad trust
-  echo "$trust" | python3 -c "
+ trust=$(aws iam get-role --role-name "$name" --query 'Role.AssumeRolePolicyDocument' --output json 2>/dev/null)
+ # Check for wildcards or broad trust
+ echo "$trust" | python3 -c "
 import json, sys
 doc = json.load(sys.stdin)
 for stmt in doc.get('Statement', []):
-    principal = stmt.get('Principal', {})
-    condition = stmt.get('Condition', {})
-    if isinstance(principal, dict):
-        aws_princ = principal.get('AWS', '')
-    else:
-        aws_princ = principal
-    if '*' in str(aws_princ) or 'root' in str(aws_princ):
-        has_external_id = 'sts:ExternalId' in str(condition)
-        has_mfa = 'aws:MultiFactorAuthPresent' in str(condition)
-        print(f'ROLE: $name')
-        print(f'  Principal: {aws_princ}')
-        print(f'  ExternalId required: {has_external_id}')
-        print(f'  MFA required: {has_mfa}')
-        if not has_external_id and not has_mfa:
-            print(f'  WARNING: No ExternalId or MFA condition - confused deputy risk')
+ principal = stmt.get('Principal', {})
+ condition = stmt.get('Condition', {})
+ if isinstance(principal, dict):
+ aws_princ = principal.get('AWS', '')
+ else:
+ aws_princ = principal
+ if '*' in str(aws_princ) or 'root' in str(aws_princ):
+ has_external_id = 'sts:ExternalId' in str(condition)
+ has_mfa = 'aws:MultiFactorAuthPresent' in str(condition)
+ print(f'ROLE: $name')
+ print(f' Principal: {aws_princ}')
+ print(f' ExternalId required: {has_external_id}')
+ print(f' MFA required: {has_mfa}')
+ if not has_external_id and not has_mfa:
+ print(f' WARNING: No ExternalId or MFA condition - confused deputy risk')
 " 2>/dev/null
 done
 
 # Test role assumption
 aws sts assume-role \
-  --role-arn arn:aws:iam::TARGET_ACCOUNT:role/CrossAccountRole \
-  --role-session-name privesc-test \
-  --duration-seconds 900
+ --role-arn arn:aws:iam::TARGET_ACCOUNT:role/CrossAccountRole \
+ --role-session-name privesc-test \
+ --duration-seconds 900
 ```
 
 ### Step 5: Enumerate CloudFox Attack Paths
@@ -185,9 +185,9 @@ cloudfox aws --profile target-account all-checks -o ./cloudfox-output/
 cloudfox aws --profile target-account permissions
 cloudfox aws --profile target-account role-trusts
 cloudfox aws --profile target-account access-keys
-cloudfox aws --profile target-account env-vars  # Lambda environment variables with secrets
-cloudfox aws --profile target-account instances  # EC2 with instance profiles
-cloudfox aws --profile target-account endpoints  # Exposed services
+cloudfox aws --profile target-account env-vars # Lambda environment variables with secrets
+cloudfox aws --profile target-account instances # EC2 with instance profiles
+cloudfox aws --profile target-account endpoints # Exposed services
 ```
 
 ### Step 6: Document Findings and Remediation
@@ -266,24 +266,24 @@ Authorization: Signed by CISO, engagement #PT-2026-014
 ESCALATION PATHS DISCOVERED: 4
 
 [PRIVESC-001] iam:CreatePolicyVersion -> Admin
-  Severity: CRITICAL
-  Starting Permission: iam:CreatePolicyVersion on policy/dev-policy
-  Escalation: Created policy version 6 with Action:* Resource:*
-  Time to Exploit: < 2 minutes
-  Remediation: Remove iam:CreatePolicyVersion, apply permission boundary
+ Severity: CRITICAL
+ Starting Permission: iam:CreatePolicyVersion on policy/dev-policy
+ Escalation: Created policy version 6 with Action:* Resource:*
+ Time to Exploit: < 2 minutes
+ Remediation: Remove iam:CreatePolicyVersion, apply permission boundary
 
 [PRIVESC-002] iam:PassRole + lambda:CreateFunction -> LambdaAdminRole
-  Severity: CRITICAL
-  Starting Permission: iam:PassRole, lambda:CreateFunction
-  Escalation: Created Lambda function with AdminRole, invoked to get admin credentials
-  Time to Exploit: < 5 minutes
-  Remediation: Restrict iam:PassRole to specific role ARNs with condition key
+ Severity: CRITICAL
+ Starting Permission: iam:PassRole, lambda:CreateFunction
+ Escalation: Created Lambda function with AdminRole, invoked to get admin credentials
+ Time to Exploit: < 5 minutes
+ Remediation: Restrict iam:PassRole to specific role ARNs with condition key
 
 [PRIVESC-003] sts:AssumeRole -> Cross-Account Admin
-  Severity: HIGH
-  Starting Permission: sts:AssumeRole on arn:aws:iam::987654321098:role/SharedRole
-  Escalation: Role trust policy allows any principal in source account
-  Remediation: Add sts:ExternalId condition and restrict Principal to specific roles
+ Severity: HIGH
+ Starting Permission: sts:AssumeRole on arn:aws:iam::987654321098:role/SharedRole
+ Escalation: Role trust policy allows any principal in source account
+ Remediation: Add sts:ExternalId condition and restrict Principal to specific roles
 
 TOTAL ESCALATION PATHS: 4 (2 Critical, 1 High, 1 Medium)
 PERMISSION BOUNDARIES IN PLACE: 0 / 47 IAM principals

@@ -1,10 +1,10 @@
 ---
 name: performing-indicator-lifecycle-management
 description: Tracks IOCs through discovery, enrichment/validation (VirusTotal, Shodan,
-  passive DNS), deployment to SIEM/IDS watchlists, hit-rate and false-positive monitoring,
-  confidence-score decay, and automated expiration using MISP/OpenCTI and STIX. Use
-  when building or maintaining a threat intelligence indicator lifecycle process,
-  aging out stale IOCs, or reducing analyst fatigue from low-quality indicators.
+ passive DNS), deployment to SIEM/IDS watchlists, hit-rate and false-positive monitoring,
+ confidence-score decay, and automated expiration using MISP/OpenCTI and STIX. Use
+ when building or maintaining a threat intelligence indicator lifecycle process,
+ aging out stale IOCs, or reducing analyst fatigue from low-quality indicators.
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -79,58 +79,58 @@ from datetime import datetime, timedelta
 from enum import Enum
 
 class IOCState(Enum):
-    DISCOVERED = "discovered"
-    VALIDATED = "validated"
-    ENRICHED = "enriched"
-    DEPLOYED = "deployed"
-    MONITORING = "monitoring"
-    UNDER_REVIEW = "under_review"
-    RETIRED = "retired"
+ DISCOVERED = "discovered"
+ VALIDATED = "validated"
+ ENRICHED = "enriched"
+ DEPLOYED = "deployed"
+ MONITORING = "monitoring"
+ UNDER_REVIEW = "under_review"
+ RETIRED = "retired"
 
 class IOCLifecycle:
-    def __init__(self, ioc_type, value, source, initial_confidence=50):
-        self.ioc_type = ioc_type
-        self.value = value
-        self.source = source
-        self.confidence = initial_confidence
-        self.state = IOCState.DISCOVERED
-        self.created = datetime.utcnow()
-        self.last_updated = datetime.utcnow()
-        self.last_seen = None
-        self.hit_count = 0
-        self.false_positive_count = 0
-        self.history = [{"state": "discovered", "timestamp": self.created.isoformat()}]
+ def __init__(self, ioc_type, value, source, initial_confidence=50):
+ self.ioc_type = ioc_type
+ self.value = value
+ self.source = source
+ self.confidence = initial_confidence
+ self.state = IOCState.DISCOVERED
+ self.created = datetime.utcnow()
+ self.last_updated = datetime.utcnow()
+ self.last_seen = None
+ self.hit_count = 0
+ self.false_positive_count = 0
+ self.history = [{"state": "discovered", "timestamp": self.created.isoformat()}]
 
-    def transition(self, new_state: IOCState, reason=""):
-        self.state = new_state
-        self.last_updated = datetime.utcnow()
-        self.history.append({
-            "state": new_state.value,
-            "timestamp": self.last_updated.isoformat(),
-            "reason": reason,
-        })
+ def transition(self, new_state: IOCState, reason=""):
+ self.state = new_state
+ self.last_updated = datetime.utcnow()
+ self.history.append({
+ "state": new_state.value,
+ "timestamp": self.last_updated.isoformat(),
+ "reason": reason,
+ })
 
-    def apply_decay(self):
-        """Apply confidence decay based on IOC type half-life."""
-        half_lives = {"ip": 30, "domain": 90, "hash": 365, "url": 60}
-        half_life = half_lives.get(self.ioc_type, 90)
-        age_days = (datetime.utcnow() - self.created).days
-        decay_factor = 0.5 ** (age_days / half_life)
-        self.confidence = max(0, int(self.confidence * decay_factor))
+ def apply_decay(self):
+ """Apply confidence decay based on IOC type half-life."""
+ half_lives = {"ip": 30, "domain": 90, "hash": 365, "url": 60}
+ half_life = half_lives.get(self.ioc_type, 90)
+ age_days = (datetime.utcnow() - self.created).days
+ decay_factor = 0.5 ** (age_days / half_life)
+ self.confidence = max(0, int(self.confidence * decay_factor))
 
-    def record_hit(self, is_true_positive=True):
-        self.hit_count += 1
-        self.last_seen = datetime.utcnow()
-        if not is_true_positive:
-            self.false_positive_count += 1
-            if self.false_positive_count > 3:
-                self.transition(IOCState.UNDER_REVIEW, "Excessive false positives")
+ def record_hit(self, is_true_positive=True):
+ self.hit_count += 1
+ self.last_seen = datetime.utcnow()
+ if not is_true_positive:
+ self.false_positive_count += 1
+ if self.false_positive_count > 3:
+ self.transition(IOCState.UNDER_REVIEW, "Excessive false positives")
 
-    def should_retire(self):
-        max_ages = {"ip": 90, "domain": 180, "hash": 730, "url": 120}
-        max_age = max_ages.get(self.ioc_type, 180)
-        age_days = (datetime.utcnow() - self.created).days
-        return age_days > max_age and self.hit_count == 0
+ def should_retire(self):
+ max_ages = {"ip": 90, "domain": 180, "hash": 730, "url": 120}
+ max_age = max_ages.get(self.ioc_type, 180)
+ age_days = (datetime.utcnow() - self.created).days
+ return age_days > max_age and self.hit_count == 0
 ```
 
 ## Validation Criteria

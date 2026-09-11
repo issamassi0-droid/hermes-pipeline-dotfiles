@@ -49,15 +49,15 @@ This skill covers producing standards-compliant SBOMs, correlating them with vul
 ## Prerequisites
 
 - Install Syft and Grype (official install scripts):
-  ```bash
-  curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
-  curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
-  ```
+ ```bash
+ curl -sSfL https://raw.githubusercontent.com/anchore/syft/main/install.sh | sh -s -- -b /usr/local/bin
+ curl -sSfL https://raw.githubusercontent.com/anchore/grype/main/install.sh | sh -s -- -b /usr/local/bin
+ ```
 - Install Cosign for signing/attestation:
-  ```bash
-  # via Go, or download a release from https://github.com/sigstore/cosign/releases
-  go install github.com/sigstore/cosign/v2/cmd/cosign@latest
-  ```
+ ```bash
+ # via Go, or download a release from https://github.com/sigstore/cosign/releases
+ go install github.com/sigstore/cosign/v2/cmd/cosign@latest
+ ```
 - Access to the target images/source and (for signing) a registry plus keys or keyless OIDC.
 
 ## Objectives
@@ -93,9 +93,9 @@ syft dir:. -o spdx-json=app.spdx.json
 Produce both standards in a single pass for different consumers.
 ```bash
 syft myorg/app:1.4.2 \
-  -o cyclonedx-json=app.cdx.json \
-  -o spdx-json=app.spdx.json \
-  -o table
+ -o cyclonedx-json=app.cdx.json \
+ -o spdx-json=app.spdx.json \
+ -o table
 ```
 
 ### 4. Scan the SBOM for vulnerabilities with Grype
@@ -127,15 +127,15 @@ Cosign records the SBOM as a signed, in-toto attestation alongside the image in 
 ```bash
 # Key-based signing
 cosign attest --key cosign.key \
-  --predicate app.spdx.json \
-  --type spdxjson \
-  myorg/app:1.4.2
+ --predicate app.spdx.json \
+ --type spdxjson \
+ myorg/app:1.4.2
 
 # Keyless (Sigstore OIDC / Fulcio + Rekor)
 COSIGN_EXPERIMENTAL=1 cosign attest \
-  --predicate app.cdx.json \
-  --type cyclonedx \
-  myorg/app:1.4.2
+ --predicate app.cdx.json \
+ --type cyclonedx \
+ myorg/app:1.4.2
 ```
 
 ### 7. Verify the attestation downstream
@@ -148,7 +148,7 @@ cosign verify-attestation --key cosign.pub --type spdxjson myorg/app:1.4.2
 Pull the attested SBOM from the registry and re-run Grype as part of continuous monitoring.
 ```bash
 cosign download attestation myorg/app:1.4.2 \
-  | jq -r '.payload' | base64 -d | jq '.predicate' > pulled.spdx.json
+ | jq -r '.payload' | base64 -d | jq '.predicate' > pulled.spdx.json
 grype sbom:pulled.spdx.json -o table
 ```
 

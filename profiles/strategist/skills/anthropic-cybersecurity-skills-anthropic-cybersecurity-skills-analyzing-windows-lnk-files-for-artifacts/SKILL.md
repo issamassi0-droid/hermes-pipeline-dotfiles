@@ -1,9 +1,9 @@
 ---
 name: analyzing-windows-lnk-files-for-artifacts
 description: Parse Windows LNK shortcut files to extract target paths, MAC timestamps,
-  volume serial numbers, and machine identifiers for forensic timeline reconstruction.
-  Use when investigating recently-accessed files, tracking removable media or network
-  paths referenced by shortcuts, or building a DFIR timeline from LNK artifacts.
+ volume serial numbers, and machine identifiers for forensic timeline reconstruction.
+ Use when investigating recently-accessed files, tracking removable media or network
+ paths referenced by shortcuts, or building a DFIR timeline from LNK artifacts.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -56,24 +56,24 @@ mkdir -p /cases/case-2024-001/lnk/{recent,desktop,startup,custom}
 
 # Copy Recent items LNK files (primary source)
 cp /mnt/evidence/Users/*/AppData/Roaming/Microsoft/Windows/Recent/*.lnk \
-   /cases/case-2024-001/lnk/recent/ 2>/dev/null
+ /cases/case-2024-001/lnk/recent/ 2>/dev/null
 
 # Copy automatic destinations (Jump Lists)
 cp /mnt/evidence/Users/*/AppData/Roaming/Microsoft/Windows/Recent/AutomaticDestinations/*.automaticDestinations-ms \
-   /cases/case-2024-001/lnk/recent/ 2>/dev/null
+ /cases/case-2024-001/lnk/recent/ 2>/dev/null
 
 # Copy custom destinations (pinned Jump List items)
 cp /mnt/evidence/Users/*/AppData/Roaming/Microsoft/Windows/Recent/CustomDestinations/*.customDestinations-ms \
-   /cases/case-2024-001/lnk/custom/ 2>/dev/null
+ /cases/case-2024-001/lnk/custom/ 2>/dev/null
 
 # Copy Desktop shortcuts
 cp /mnt/evidence/Users/*/Desktop/*.lnk /cases/case-2024-001/lnk/desktop/ 2>/dev/null
 
 # Copy Startup folder shortcuts (persistence)
 cp /mnt/evidence/Users/*/AppData/Roaming/Microsoft/Windows/Start\ Menu/Programs/Startup/*.lnk \
-   /cases/case-2024-001/lnk/startup/ 2>/dev/null
+ /cases/case-2024-001/lnk/startup/ 2>/dev/null
 cp "/mnt/evidence/ProgramData/Microsoft/Windows/Start Menu/Programs/Startup"/*.lnk \
-   /cases/case-2024-001/lnk/startup/ 2>/dev/null
+ /cases/case-2024-001/lnk/startup/ 2>/dev/null
 
 # Find all LNK files on the system
 find /mnt/evidence/ -name "*.lnk" -type f 2>/dev/null > /cases/case-2024-001/lnk/all_lnk_locations.txt
@@ -124,81 +124,81 @@ lnk_dir = '/cases/case-2024-001/lnk/recent/'
 results = []
 
 for filename in sorted(os.listdir(lnk_dir)):
-    if not filename.lower().endswith('.lnk'):
-        continue
+ if not filename.lower().endswith('.lnk'):
+ continue
 
-    filepath = os.path.join(lnk_dir, filename)
-    try:
-        with open(filepath, 'rb') as f:
-            lnk = LnkParse3.lnk_file(f)
-            info = lnk.get_json()
+ filepath = os.path.join(lnk_dir, filename)
+ try:
+ with open(filepath, 'rb') as f:
+ lnk = LnkParse3.lnk_file(f)
+ info = lnk.get_json()
 
-            parsed = {
-                'lnk_file': filename,
-                'target_path': '',
-                'working_dir': '',
-                'arguments': '',
-                'target_created': '',
-                'target_modified': '',
-                'target_accessed': '',
-                'file_size': '',
-                'drive_type': '',
-                'volume_serial': '',
-                'volume_label': '',
-                'machine_id': '',
-                'mac_address': '',
-            }
+ parsed = {
+ 'lnk_file': filename,
+ 'target_path': '',
+ 'working_dir': '',
+ 'arguments': '',
+ 'target_created': '',
+ 'target_modified': '',
+ 'target_accessed': '',
+ 'file_size': '',
+ 'drive_type': '',
+ 'volume_serial': '',
+ 'volume_label': '',
+ 'machine_id': '',
+ 'mac_address': '',
+ }
 
-            # Extract header timestamps
-            header = info.get('header', {})
-            parsed['target_created'] = str(header.get('creation_time', ''))
-            parsed['target_modified'] = str(header.get('modified_time', ''))
-            parsed['target_accessed'] = str(header.get('accessed_time', ''))
-            parsed['file_size'] = str(header.get('file_size', ''))
+ # Extract header timestamps
+ header = info.get('header', {})
+ parsed['target_created'] = str(header.get('creation_time', ''))
+ parsed['target_modified'] = str(header.get('modified_time', ''))
+ parsed['target_accessed'] = str(header.get('accessed_time', ''))
+ parsed['file_size'] = str(header.get('file_size', ''))
 
-            # Extract link info
-            link_info = info.get('link_info', {})
-            if link_info:
-                local_path = link_info.get('local_base_path', '')
-                network_path = link_info.get('common_network_relative_link', {}).get('net_name', '')
-                parsed['target_path'] = local_path or network_path
+ # Extract link info
+ link_info = info.get('link_info', {})
+ if link_info:
+ local_path = link_info.get('local_base_path', '')
+ network_path = link_info.get('common_network_relative_link', {}).get('net_name', '')
+ parsed['target_path'] = local_path or network_path
 
-                vol_info = link_info.get('volume_id', {})
-                if vol_info:
-                    parsed['drive_type'] = str(vol_info.get('drive_type', ''))
-                    parsed['volume_serial'] = str(vol_info.get('drive_serial_number', ''))
-                    parsed['volume_label'] = str(vol_info.get('volume_label', ''))
+ vol_info = link_info.get('volume_id', {})
+ if vol_info:
+ parsed['drive_type'] = str(vol_info.get('drive_type', ''))
+ parsed['volume_serial'] = str(vol_info.get('drive_serial_number', ''))
+ parsed['volume_label'] = str(vol_info.get('volume_label', ''))
 
-            # Extract string data
-            string_data = info.get('string_data', {})
-            parsed['working_dir'] = str(string_data.get('working_dir', ''))
-            parsed['arguments'] = str(string_data.get('command_line_arguments', ''))
+ # Extract string data
+ string_data = info.get('string_data', {})
+ parsed['working_dir'] = str(string_data.get('working_dir', ''))
+ parsed['arguments'] = str(string_data.get('command_line_arguments', ''))
 
-            # Extract tracker data (machine ID and MAC)
-            extra = info.get('extra', {})
-            tracker = extra.get('DISTRIBUTED_LINK_TRACKER_BLOCK', {})
-            if tracker:
-                parsed['machine_id'] = str(tracker.get('machine_id', ''))
-                parsed['mac_address'] = str(tracker.get('mac_address', ''))
+ # Extract tracker data (machine ID and MAC)
+ extra = info.get('extra', {})
+ tracker = extra.get('DISTRIBUTED_LINK_TRACKER_BLOCK', {})
+ if tracker:
+ parsed['machine_id'] = str(tracker.get('machine_id', ''))
+ parsed['mac_address'] = str(tracker.get('mac_address', ''))
 
-            results.append(parsed)
+ results.append(parsed)
 
-            # Print summary
-            print(f"\n{filename}")
-            print(f"  Target: {parsed['target_path']}")
-            print(f"  Modified: {parsed['target_modified']}")
-            print(f"  Drive: {parsed['drive_type']} (Serial: {parsed['volume_serial']})")
-            if parsed['machine_id']:
-                print(f"  Machine: {parsed['machine_id']}")
+ # Print summary
+ print(f"\n{filename}")
+ print(f" Target: {parsed['target_path']}")
+ print(f" Modified: {parsed['target_modified']}")
+ print(f" Drive: {parsed['drive_type']} (Serial: {parsed['volume_serial']})")
+ if parsed['machine_id']:
+ print(f" Machine: {parsed['machine_id']}")
 
-    except Exception as e:
-        print(f"  Error parsing {filename}: {e}")
+ except Exception as e:
+ print(f" Error parsing {filename}: {e}")
 
 # Write results to CSV
 with open('/cases/case-2024-001/analysis/lnk_analysis.csv', 'w', newline='') as f:
-    writer = csv.DictWriter(f, fieldnames=results[0].keys() if results else [])
-    writer.writeheader()
-    writer.writerows(results)
+ writer = csv.DictWriter(f, fieldnames=results[0].keys() if results else [])
+ writer.writeheader()
+ writer.writerows(results)
 
 print(f"\n\nTotal LNK files parsed: {len(results)}")
 PYEOF
@@ -212,49 +212,49 @@ python3 << 'PYEOF'
 import csv
 
 with open('/cases/case-2024-001/analysis/lnk_analysis.csv') as f:
-    reader = csv.DictReader(f)
+ reader = csv.DictReader(f)
 
-    print("=== FILES ACCESSED FROM REMOVABLE MEDIA ===\n")
-    removable = []
-    network = []
+ print("=== FILES ACCESSED FROM REMOVABLE MEDIA ===\n")
+ removable = []
+ network = []
 
-    for row in reader:
-        if 'DRIVE_REMOVABLE' in row.get('drive_type', '').upper() or \
-           'removable' in row.get('drive_type', '').lower():
-            removable.append(row)
-            print(f"  {row['target_modified']} | {row['target_path']} | Vol: {row['volume_serial']}")
+ for row in reader:
+ if 'DRIVE_REMOVABLE' in row.get('drive_type', '').upper() or \
+ 'removable' in row.get('drive_type', '').lower():
+ removable.append(row)
+ print(f" {row['target_modified']} | {row['target_path']} | Vol: {row['volume_serial']}")
 
-        if 'network' in row.get('drive_type', '').lower() or \
-           row.get('target_path', '').startswith('\\\\'):
-            network.append(row)
+ if 'network' in row.get('drive_type', '').lower() or \
+ row.get('target_path', '').startswith('\\\\'):
+ network.append(row)
 
-    print(f"\n=== FILES ACCESSED FROM NETWORK SHARES ===\n")
-    for row in network:
-        print(f"  {row['target_modified']} | {row['target_path']}")
+ print(f"\n=== FILES ACCESSED FROM NETWORK SHARES ===\n")
+ for row in network:
+ print(f" {row['target_modified']} | {row['target_path']}")
 
-    print(f"\nRemovable media files: {len(removable)}")
-    print(f"Network share files: {len(network)}")
+ print(f"\nRemovable media files: {len(removable)}")
+ print(f"Network share files: {len(network)}")
 
-    # Check for unique machines (tracker data)
-    machines = set()
-    for row in [*removable, *network]:
-        if row.get('machine_id'):
-            machines.add(row['machine_id'])
-    if machines:
-        print(f"\nMachine IDs found: {machines}")
+ # Check for unique machines (tracker data)
+ machines = set()
+ for row in [*removable, *network]:
+ if row.get('machine_id'):
+ machines.add(row['machine_id'])
+ if machines:
+ print(f"\nMachine IDs found: {machines}")
 PYEOF
 
 # Check Startup folder LNK files for persistence
 echo "=== STARTUP FOLDER SHORTCUTS (PERSISTENCE) ===" > /cases/case-2024-001/analysis/startup_persistence.txt
 for lnk in /cases/case-2024-001/lnk/startup/*.lnk; do
-    python3 -c "
+ python3 -c "
 import LnkParse3
 with open('$lnk', 'rb') as f:
-    lnk = LnkParse3.lnk_file(f)
-    info = lnk.get_json()
-    target = info.get('link_info', {}).get('local_base_path', 'Unknown')
-    args = info.get('string_data', {}).get('command_line_arguments', '')
-    print(f'  $(basename $lnk): {target} {args}')
+ lnk = LnkParse3.lnk_file(f)
+ info = lnk.get_json()
+ target = info.get('link_info', {}).get('local_base_path', 'Unknown')
+ args = info.get('string_data', {}).get('command_line_arguments', '')
+ print(f' $(basename $lnk): {target} {args}')
 " >> /cases/case-2024-001/analysis/startup_persistence.txt 2>/dev/null
 done
 ```
@@ -303,27 +303,27 @@ Extract all Recent folder LNK files, build chronological list of documents acces
 
 ```
 LNK File Analysis Summary:
-  User Profile: suspect_user
-  Total LNK Files: 234 (Recent: 198, Desktop: 23, Startup: 5, Other: 8)
+ User Profile: suspect_user
+ Total LNK Files: 234 (Recent: 198, Desktop: 23, Startup: 5, Other: 8)
 
-  File Access Statistics:
-    Local drive (C:):    156 files
-    Removable media:     23 files (3 unique volume serials)
-    Network shares:      15 files (\\server01, \\fileserver)
-    Other drives:        4 files
+ File Access Statistics:
+ Local drive (C:): 156 files
+ Removable media: 23 files (3 unique volume serials)
+ Network shares: 15 files (\\server01, \\fileserver)
+ Other drives: 4 files
 
-  Machine IDs Found: DESKTOP-ABC123, LAPTOP-XYZ789
-  MAC Addresses: AA:BB:CC:DD:EE:FF, 11:22:33:44:55:66
+ Machine IDs Found: DESKTOP-ABC123, LAPTOP-XYZ789
+ MAC Addresses: AA:BB:CC:DD:EE:FF, 11:22:33:44:55:66
 
-  Removable Media Access:
-    Volume Serial 1234-ABCD:
-      2024-01-15 14:32 - E:\Confidential\financial_report.xlsx
-      2024-01-15 14:45 - E:\Confidential\customer_database.csv
-      2024-01-15 15:00 - E:\Projects\source_code.zip
+ Removable Media Access:
+ Volume Serial 1234-ABCD:
+ 2024-01-15 14:32 - E:\Confidential\financial_report.xlsx
+ 2024-01-15 14:45 - E:\Confidential\customer_database.csv
+ 2024-01-15 15:00 - E:\Projects\source_code.zip
 
-  Startup Persistence:
-    updater.lnk -> C:\ProgramData\svc\updater.exe (SUSPICIOUS)
-    OneDrive.lnk -> C:\Users\...\OneDrive.exe (Legitimate)
+ Startup Persistence:
+ updater.lnk -> C:\ProgramData\svc\updater.exe (SUSPICIOUS)
+ OneDrive.lnk -> C:\Users\...\OneDrive.exe (Legitimate)
 
-  Timeline: /cases/case-2024-001/analysis/lnk_analysis.csv
+ Timeline: /cases/case-2024-001/analysis/lnk_analysis.csv
 ```

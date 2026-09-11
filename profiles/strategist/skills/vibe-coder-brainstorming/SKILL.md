@@ -1,10 +1,10 @@
 ---
 name: brainstorming
 description: |
-  Refine ideas into detailed designs through Socratic dialogue.
-  Use when: user has rough idea, needs to clarify requirements, explore approaches.
-  Triggers: "brainstorm", "discuss idea", "I'm thinking about", "what if",
-  "help me think through", "explore options", "/brainstorm".
+ Refine ideas into detailed designs through Socratic dialogue.
+ Use when: user has rough idea, needs to clarify requirements, explore approaches.
+ Triggers: "brainstorm", "discuss idea", "I'm thinking about", "what if",
+ "help me think through", "explore options", "/brainstorm".
 ---
 
 # Brainstorming Ideas Into Designs

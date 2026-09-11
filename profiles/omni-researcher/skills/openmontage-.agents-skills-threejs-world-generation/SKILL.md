@@ -68,13 +68,13 @@ For production, first call `threejs_asset_catalog` to install rights-safe catalo
 from tools.graphics.threejs_world import ThreeJSWorld
 
 result = ThreeJSWorld().execute({
-    "operation": "build",
-    "world_spec": world_spec,
-    "output_path": "projects/<id>/hyperframes",
-    "duration_seconds": 60,
-    "render_mode": "cinematic",
-    "quality_tier": "production",
-    "asset_catalog_paths": ["projects/<id>/assets/3d/catalogs/kenney-nature-kit"],
+ "operation": "build",
+ "world_spec": world_spec,
+ "output_path": "projects/<id>/hyperframes",
+ "duration_seconds": 60,
+ "render_mode": "cinematic",
+ "quality_tier": "production",
+ "asset_catalog_paths": ["projects/<id>/assets/3d/catalogs/kenney-nature-kit"],
 })
 ```
 

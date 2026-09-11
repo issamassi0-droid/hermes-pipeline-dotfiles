@@ -1,15 +1,15 @@
 ---
 name: avatar-video
 description: |
-  Create AI avatar videos with precise control over avatars, voices, scripts, scenes, and backgrounds using HeyGen's v2 API. Use when: (1) Choosing a specific avatar and voice for a video, (2) Writing exact scripts for an avatar to speak, (3) Building multi-scene videos with different backgrounds per scene, (4) Creating transparent WebM videos for compositing, (5) Using talking photos as video presenters, (6) Integrating HeyGen avatars with Remotion, (7) Batch video generation with exact specs, (8) Brand-consistent production videos with precise control.
+ Create AI avatar videos with precise control over avatars, voices, scripts, scenes, and backgrounds using HeyGen's v2 API. Use when: (1) Choosing a specific avatar and voice for a video, (2) Writing exact scripts for an avatar to speak, (3) Building multi-scene videos with different backgrounds per scene, (4) Creating transparent WebM videos for compositing, (5) Using talking photos as video presenters, (6) Integrating HeyGen avatars with Remotion, (7) Batch video generation with exact specs, (8) Brand-consistent production videos with precise control.
 homepage: https://docs.heygen.com/reference/create-a-video
 allowed-tools: mcp__heygen__*
 metadata:
-  openclaw:
-    requires:
-      env:
-        - HEYGEN_API_KEY
-    primaryEnv: HEYGEN_API_KEY
+ openclaw:
+ requires:
+ env:
+ - HEYGEN_API_KEY
+ primaryEnv: HEYGEN_API_KEY
 ---
 
 # Avatar Video
@@ -22,7 +22,7 @@ All requests require the `X-Api-Key` header. Set the `HEYGEN_API_KEY` environmen
 
 ```bash
 curl -X GET "https://api.heygen.com/v2/avatars" \
-  -H "X-Api-Key: $HEYGEN_API_KEY"
+ -H "X-Api-Key: $HEYGEN_API_KEY"
 ```
 
 ## Tool Selection

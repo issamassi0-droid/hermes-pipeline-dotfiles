@@ -6,9 +6,9 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Research, Arxiv, Papers, Academic, Science, API]
-    related_skills: [pdf]
+ hermes:
+ tags: [Research, Arxiv, Papers, Academic, Science, API]
+ related_skills: [pdf]
 ---
 
 # arXiv Research
@@ -42,18 +42,18 @@ import sys, xml.etree.ElementTree as ET
 ns = {'a': 'http://www.w3.org/2005/Atom'}
 root = ET.parse(sys.stdin).getroot()
 for i, entry in enumerate(root.findall('a:entry', ns)):
-    title = entry.find('a:title', ns).text.strip().replace('\n', ' ')
-    arxiv_id = entry.find('a:id', ns).text.strip().split('/abs/')[-1]
-    published = entry.find('a:published', ns).text[:10]
-    authors = ', '.join(a.find('a:name', ns).text for a in entry.findall('a:author', ns))
-    summary = entry.find('a:summary', ns).text.strip()[:200]
-    cats = ', '.join(c.get('term') for c in entry.findall('a:category', ns))
-    print(f'{i+1}. [{arxiv_id}] {title}')
-    print(f'   Authors: {authors}')
-    print(f'   Published: {published} | Categories: {cats}')
-    print(f'   Abstract: {summary}...')
-    print(f'   PDF: https://arxiv.org/pdf/{arxiv_id}')
-    print()
+ title = entry.find('a:title', ns).text.strip().replace('\n', ' ')
+ arxiv_id = entry.find('a:id', ns).text.strip().split('/abs/')[-1]
+ published = entry.find('a:published', ns).text[:10]
+ authors = ', '.join(a.find('a:name', ns).text for a in entry.findall('a:author', ns))
+ summary = entry.find('a:summary', ns).text.strip()[:200]
+ cats = ', '.join(c.get('term') for c in entry.findall('a:category', ns))
+ print(f'{i+1}. [{arxiv_id}] {title}')
+ print(f' Authors: {authors}')
+ print(f' Published: {published} | Categories: {cats}')
+ print(f' Abstract: {summary}...')
+ print(f' PDF: https://arxiv.org/pdf/{arxiv_id}')
+ print()
 "
 ```
 
@@ -131,13 +131,13 @@ cat = entry.find('arxiv:primary_category', ns)
 primary = cat.get('term') if cat is not None else 'cs.LG'
 last_name = entry.find('a:author', ns).find('a:name', ns).text.split()[-1]
 print(f'@article{{{last_name}{year}_{raw_id.replace(\".\", \"\")},')
-print(f'  title     = {{{title}}},')
-print(f'  author    = {{{authors}}},')
-print(f'  year      = {{{year}}},')
-print(f'  eprint    = {{{raw_id}}},')
-print(f'  archivePrefix = {{arXiv}},')
-print(f'  primaryClass  = {{{primary}}},')
-print(f'  url       = {{https://arxiv.org/abs/{raw_id}}}')
+print(f' title = {{{title}}},')
+print(f' author = {{{authors}}},')
+print(f' year = {{{year}}},')
+print(f' eprint = {{{raw_id}}},')
+print(f' archivePrefix = {{arXiv}},')
+print(f' primaryClass = {{{primary}}},')
+print(f' url = {{https://arxiv.org/abs/{raw_id}}}')
 print('}')
 "
 ```
@@ -225,8 +225,8 @@ curl -s "https://api.semanticscholar.org/graph/v1/paper/search?query=GRPO+reinfo
 
 ```bash
 curl -s -X POST "https://api.semanticscholar.org/recommendations/v1/papers/" \
-  -H "Content-Type: application/json" \
-  -d '{"positivePaperIds": ["arXiv:2402.03300"], "negativePaperIds": []}' | python -m json.tool
+ -H "Content-Type: application/json" \
+ -d '{"positivePaperIds": ["arXiv:2402.03300"], "negativePaperIds": []}' | python -m json.tool
 ```
 
 ### Author profile

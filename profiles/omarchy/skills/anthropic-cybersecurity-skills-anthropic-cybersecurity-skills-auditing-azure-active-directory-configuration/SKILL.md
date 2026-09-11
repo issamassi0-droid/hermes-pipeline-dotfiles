@@ -1,11 +1,11 @@
 ---
 name: auditing-azure-active-directory-configuration
 description: 'Auditing Microsoft Entra ID (Azure Active Directory) configuration to
-  identify risky authentication policies, overly permissive role assignments, stale
-  accounts, conditional access gaps, and guest user risks using AzureAD PowerShell,
-  Microsoft Graph API, and ScoutSuite.
+ identify risky authentication policies, overly permissive role assignments, stale
+ accounts, conditional access gaps, and guest user risks using AzureAD PowerShell,
+ Microsoft Graph API, and ScoutSuite.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -72,8 +72,8 @@ Get-MgPolicyAuthenticationMethodPolicy | ConvertTo-Json -Depth 5
 
 # Check legacy authentication status via Conditional Access
 Get-MgIdentityConditionalAccessPolicy | Where-Object {
-    $_.Conditions.ClientAppTypes -contains "exchangeActiveSync" -or
-    $_.Conditions.ClientAppTypes -contains "other"
+ $_.Conditions.ClientAppTypes -contains "exchangeActiveSync" -or
+ $_.Conditions.ClientAppTypes -contains "other"
 } | Select-Object DisplayName, State
 ```
 
@@ -84,25 +84,25 @@ Review directory role assignments to identify over-privileged users, permanent a
 ```bash
 # List all Global Administrator assignments
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/directoryRoles/filterByIds" \
-  --body '{"ids":["62e90394-69f5-4237-9190-012177145e10"]}' | \
-  az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/directoryRoles?filter=displayName eq 'Global Administrator'" \
-  --query "value[0].id" -o tsv
+ --url "https://graph.microsoft.com/v1.0/directoryRoles/filterByIds" \
+ --body '{"ids":["62e90394-69f5-4237-9190-012177145e10"]}' | \
+ az rest --method GET \
+ --url "https://graph.microsoft.com/v1.0/directoryRoles?filter=displayName eq 'Global Administrator'" \
+ --query "value[0].id" -o tsv
 
 # List all privileged role assignments using Graph API
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignments?\$expand=principal" \
-  --query "value[*].{Role:roleDefinitionId, Principal:principal.displayName, PrincipalType:principal.@odata.type}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignments?\$expand=principal" \
+ --query "value[*].{Role:roleDefinitionId, Principal:principal.displayName, PrincipalType:principal.@odata.type}" \
+ -o table
 
 # Check for users with multiple admin roles
 az ad user list --query "[].{UPN:userPrincipalName, DisplayName:displayName}" -o table
 
 # List service principals with admin role assignments
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignments?\$filter=principalOrganizationId eq 'TENANT_ID'" \
-  -o json
+ --url "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignments?\$filter=principalOrganizationId eq 'TENANT_ID'" \
+ -o json
 ```
 
 ### Step 3: Review Conditional Access Policies
@@ -112,25 +112,25 @@ Audit conditional access policies for coverage gaps, particularly around MFA enf
 ```powershell
 # List all Conditional Access policies
 Get-MgIdentityConditionalAccessPolicy | Select-Object DisplayName, State, @{
-    N='GrantControls'; E={$_.GrantControls.BuiltInControls -join ', '}
+ N='GrantControls'; E={$_.GrantControls.BuiltInControls -join ', '}
 } | Format-Table -AutoSize
 
 # Identify policies in report-only mode (not enforced)
 Get-MgIdentityConditionalAccessPolicy | Where-Object {$_.State -eq "enabledForReportingButNotEnforced"} |
-    Select-Object DisplayName
+ Select-Object DisplayName
 
 # Check MFA enforcement coverage
 Get-MgIdentityConditionalAccessPolicy | Where-Object {
-    $_.GrantControls.BuiltInControls -contains "mfa"
+ $_.GrantControls.BuiltInControls -contains "mfa"
 } | Select-Object DisplayName, State, @{
-    N='Users'; E={$_.Conditions.Users.IncludeUsers -join ', '}
+ N='Users'; E={$_.Conditions.Users.IncludeUsers -join ', '}
 }
 
 # Find policies that exclude groups (potential bypass)
 Get-MgIdentityConditionalAccessPolicy | Where-Object {
-    $_.Conditions.Users.ExcludeGroups.Count -gt 0
+ $_.Conditions.Users.ExcludeGroups.Count -gt 0
 } | Select-Object DisplayName, @{
-    N='ExcludedGroups'; E={$_.Conditions.Users.ExcludeGroups -join ', '}
+ N='ExcludedGroups'; E={$_.Conditions.Users.ExcludeGroups -join ', '}
 }
 ```
 
@@ -144,20 +144,20 @@ az ad user list --query "[?signInActivity.lastSignInDateTime < '2025-11-25T00:00
 
 # List all guest users
 az ad user list --filter "userType eq 'Guest'" \
-  --query "[].{UPN:userPrincipalName, DisplayName:displayName, CreatedDate:createdDateTime}" \
-  -o table
+ --query "[].{UPN:userPrincipalName, DisplayName:displayName, CreatedDate:createdDateTime}" \
+ -o table
 
 # Find guest users with privileged roles
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignments?\$expand=principal" \
-  --query "value[?principal.userType=='Guest'].{Role:roleDefinitionId,Guest:principal.userPrincipalName}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignments?\$expand=principal" \
+ --query "value[?principal.userType=='Guest'].{Role:roleDefinitionId,Guest:principal.userPrincipalName}" \
+ -o table
 
 # Check for accounts with disabled MFA
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/reports/authenticationMethods/userRegistrationDetails" \
-  --query "value[?!isMfaRegistered].{UPN:userPrincipalName,MfaRegistered:isMfaRegistered}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/reports/authenticationMethods/userRegistrationDetails" \
+ --query "value[?!isMfaRegistered].{UPN:userPrincipalName,MfaRegistered:isMfaRegistered}" \
+ -o table
 ```
 
 ### Step 5: Analyze Sign-In Logs for Risky Activity
@@ -167,21 +167,21 @@ Review sign-in logs to identify anomalous authentication patterns, failed MFA ch
 ```bash
 # Get risky sign-ins from last 7 days
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=riskLevelDuringSignIn ne 'none' and createdDateTime ge 2026-02-16T00:00:00Z" \
-  --query "value[*].{User:userPrincipalName,Risk:riskLevelDuringSignIn,IP:ipAddress,App:appDisplayName,Status:status.errorCode}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=riskLevelDuringSignIn ne 'none' and createdDateTime ge 2026-02-16T00:00:00Z" \
+ --query "value[*].{User:userPrincipalName,Risk:riskLevelDuringSignIn,IP:ipAddress,App:appDisplayName,Status:status.errorCode}" \
+ -o table
 
 # Get sign-ins from unfamiliar locations
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=riskEventTypes_v2/any(r:r eq 'unfamiliarFeatures')" \
-  --query "value[*].{User:userPrincipalName,Location:location.city,IP:ipAddress}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=riskEventTypes_v2/any(r:r eq 'unfamiliarFeatures')" \
+ --query "value[*].{User:userPrincipalName,Location:location.city,IP:ipAddress}" \
+ -o table
 
 # Check for legacy authentication sign-ins
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=clientAppUsed ne 'Browser' and clientAppUsed ne 'Mobile Apps and Desktop clients'" \
-  --query "value[*].{User:userPrincipalName,ClientApp:clientAppUsed,Status:status.errorCode}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=clientAppUsed ne 'Browser' and clientAppUsed ne 'Mobile Apps and Desktop clients'" \
+ --query "value[*].{User:userPrincipalName,ClientApp:clientAppUsed,Status:status.errorCode}" \
+ -o table
 ```
 
 ### Step 6: Run ScoutSuite Automated Assessment
@@ -191,8 +191,8 @@ Execute ScoutSuite for comprehensive automated checks across the Azure tenant co
 ```bash
 # Run ScoutSuite against Azure
 python3 -m ScoutSuite azure --cli \
-  --report-dir ./scoutsuite-azure-report \
-  --all-subscriptions
+ --report-dir ./scoutsuite-azure-report \
+ --all-subscriptions
 
 # Review the generated HTML report
 open ./scoutsuite-azure-report/azure-report.html
@@ -245,31 +245,31 @@ Audit Date: 2026-02-23
 License: Azure AD Premium P2
 
 IDENTITY CONFIGURATION:
-  Security Defaults: Disabled (Conditional Access in use)
-  Conditional Access Policies: 12 (8 enforced, 3 report-only, 1 disabled)
-  Legacy Auth Blocked: Partial (blocked for admins only)
+ Security Defaults: Disabled (Conditional Access in use)
+ Conditional Access Policies: 12 (8 enforced, 3 report-only, 1 disabled)
+ Legacy Auth Blocked: Partial (blocked for admins only)
 
 PRIVILEGED ACCESS:
-  Global Administrators:              8 (recommended: <= 4)
-  Permanent admin assignments:        6 (no PIM activation required)
-  Service principals with admin:      3
-  Guest users with privileged roles:  2
+ Global Administrators: 8 (recommended: <= 4)
+ Permanent admin assignments: 6 (no PIM activation required)
+ Service principals with admin: 3
+ Guest users with privileged roles: 2
 
 ACCOUNT HYGIENE:
-  Total users:                        1,247
-  Stale accounts (90+ days):          89
-  Guest users:                        234
-  Users without MFA registered:       156
+ Total users: 1,247
+ Stale accounts (90+ days): 89
+ Guest users: 234
+ Users without MFA registered: 156
 
 SIGN-IN RISK:
-  Risky sign-ins (last 30 days):      34
-  Legacy auth sign-ins (last 7 days): 67
-  Impossible travel detections:        5
-  Unfamiliar location sign-ins:       12
+ Risky sign-ins (last 30 days): 34
+ Legacy auth sign-ins (last 7 days): 67
+ Impossible travel detections: 5
+ Unfamiliar location sign-ins: 12
 
 CRITICAL FINDINGS:
-  1. 8 Global Administrators with permanent assignments (use PIM)
-  2. Legacy authentication not blocked for non-admin users
-  3. 156 users without MFA registration
-  4. 2 guest users with Privileged Role Administrator role
+ 1. 8 Global Administrators with permanent assignments (use PIM)
+ 2. Legacy authentication not blocked for non-admin users
+ 3. 156 users without MFA registration
+ 4. 2 guest users with Privileged Role Administrator role
 ```

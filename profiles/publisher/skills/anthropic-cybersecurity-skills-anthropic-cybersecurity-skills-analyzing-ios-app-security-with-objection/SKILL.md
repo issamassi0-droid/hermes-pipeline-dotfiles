@@ -1,9 +1,9 @@
 ---
 name: analyzing-ios-app-security-with-objection
 description: >-
-  Runtime iOS app security testing with Objection (Frida): inspect keychain and
-  filesystem data, explore app internals at runtime, and validate/bypass
-  client-side protections during authorized mobile assessments.
+ Runtime iOS app security testing with Objection (Frida): inspect keychain and
+ filesystem data, explore app internals at runtime, and validate/bypass
+ client-side protections during authorized mobile assessments.
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -67,7 +67,7 @@ Use this skill when:
 ssh root@<device_ip> "/usr/sbin/frida-server -D"
 
 # Verify Frida connectivity
-frida-ps -U  # List processes on USB-connected device
+frida-ps -U # List processes on USB-connected device
 ```
 
 **For non-jailbroken devices (authorized testing):**
@@ -99,7 +99,7 @@ ios keychain dump
 
 # List files in app sandbox
 ios plist cat Info.plist
-env  # Show app environment paths
+env # Show app environment paths
 
 # Inspect NSUserDefaults for sensitive data
 ios nsuserdefaults get

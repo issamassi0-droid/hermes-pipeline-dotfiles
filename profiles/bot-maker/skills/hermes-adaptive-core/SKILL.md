@@ -15,26 +15,26 @@ Every skill module within the directory must export a `__skill_metadata__` dicti
 
 ```python
 __skill_metadata__ = {
-    "id": "pandas_data_pipeline_engine",
-    "macro_cluster": "python_automation_agent",
-    "micro_entity": "pandas_data_pipeline_engine",
-    "keywords": [
-        "pandas",
-        "exchange",
-        "matching_algorithm",
-        "staff_transfer",
-        "csv"
-    ],
-    "priority": 10,
-    "timeout_seconds": 3.0
+ "id": "pandas_data_pipeline_engine",
+ "macro_cluster": "python_automation_agent",
+ "micro_entity": "pandas_data_pipeline_engine",
+ "keywords": [
+ "pandas",
+ "exchange",
+ "matching_algorithm",
+ "staff_transfer",
+ "csv"
+ ],
+ "priority": 10,
+ "timeout_seconds": 3.0
 }
 
 async def execute(payload: dict) -> dict:
-    """
-    Skill entry point called by IsolatedSkillExecutor.
-    """
-    # Core processing logic
-    return {"status": "completed", "output": payload}
+ """
+ Skill entry point called by IsolatedSkillExecutor.
+ """
+ # Core processing logic
+ return {"status": "completed", "output": payload}
 ```
 
 ---

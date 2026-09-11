@@ -1,10 +1,10 @@
 ---
 name: code-review
 description: |
-  Code review workflow and best practices.
-  Use when: reviewing PRs, receiving feedback, or preparing code for review.
-  Triggers: "code review", "review", "pr review", "pull request",
-  "feedback", "review changes".
+ Code review workflow and best practices.
+ Use when: reviewing PRs, receiving feedback, or preparing code for review.
+ Triggers: "code review", "review", "pr review", "pull request",
+ "feedback", "review changes".
 ---
 
 # Code Review

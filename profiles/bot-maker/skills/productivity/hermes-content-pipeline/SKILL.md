@@ -10,7 +10,7 @@ This skill guides building a fully automated, multi-agent content pipeline using
 
 ## Overview
 
-Create a pipeline that takes a mission brief, runs through Cabinet Office triage (Architect), then sequentially executes: Researcher → Strategist → Writer → Editor/QA → Publisher → Analytics. The pipeline respects token budgets, temporal freshness, immediate local Obsidian saves, and free model constraints.
+Create a pipeline that takes a mission brief, runs through triage (Architect), then sequentially executes: Researcher → Strategist → Writer → Editor/QA → Publisher → Analytics. The pipeline respects token budgets, temporal freshness, immediate local Obsidian saves, and free model constraints.
 
 ## Prerequisites
 
@@ -121,8 +121,8 @@ alias piporch='~/.local/bin/pipeline-orchestrator'
 - Hermes documentation: https://hermes-agent.nousresearch.com/docs
 - `hermes profile` commands: `hermes profile create`, `hermes profile list`
 - SOUL.md template: see the system prompt for the Bot Template.
-- Cabinet Office meta-architecture: see attached files for triage and tiering.
-- Ministry of Bots architecture: for checkpoint-before-action patterns.
+- meta-architecture: see attached files for triage and tiering.
+- architecture: for checkpoint-before-action patterns.
 
 ---
 *This skill was born from building a complete content pipeline for user issamassi0-droid on 2026-09-09.

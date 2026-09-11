@@ -1,11 +1,11 @@
 ---
 name: detecting-lateral-movement-with-zeek
 description: 'Detect lateral movement in network traffic using Zeek (formerly Bro)
-  log analysis. Parses conn.log, smb_mapping.log, smb_files.log, dce_rpc.log, kerberos.log,
-  and ntlm.log to identify SMB file transfers, NTLM account spray activity, remote
-  service execution, and anomalous internal connections.
+ log analysis. Parses conn.log, smb_mapping.log, smb_files.log, dce_rpc.log, kerberos.log,
+ and ntlm.log to identify SMB file transfers, NTLM account spray activity, remote
+ service execution, and anomalous internal connections.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -85,18 +85,18 @@ Identify connections between internal hosts on lateral-movement-associated ports
 ```bash
 # Extract SMB connections (port 445) between internal hosts
 zeek-cut ts id.orig_h id.orig_p id.resp_h id.resp_p proto service duration orig_bytes resp_bytes \
-  < /opt/zeek/logs/current/conn.log \
-  | awk '$5 == 445 && $7 == "smb"'
+ < /opt/zeek/logs/current/conn.log \
+ | awk '$5 == 445 && $7 == "smb"'
 
 # Extract DCE/RPC connections (port 135)
 zeek-cut ts id.orig_h id.resp_h id.resp_p service \
-  < /opt/zeek/logs/current/conn.log \
-  | awk '$4 == 135'
+ < /opt/zeek/logs/current/conn.log \
+ | awk '$4 == 135'
 
 # Extract WinRM connections (port 5985/5986)
 zeek-cut ts id.orig_h id.resp_h id.resp_p service \
-  < /opt/zeek/logs/current/conn.log \
-  | awk '$4 == 5985 || $4 == 5986'
+ < /opt/zeek/logs/current/conn.log \
+ | awk '$4 == 5985 || $4 == 5986'
 ```
 
 ### Step 3: Analyze SMB Admin Share Access
@@ -106,13 +106,13 @@ Detect access to administrative shares (C$, ADMIN$, IPC$) which is the primary v
 ```bash
 # Check smb_mapping.log for admin share access
 zeek-cut ts id.orig_h id.resp_h path share_type \
-  < /opt/zeek/logs/current/smb_mapping.log \
-  | grep -iE '(C\$|ADMIN\$|IPC\$)'
+ < /opt/zeek/logs/current/smb_mapping.log \
+ | grep -iE '(C\$|ADMIN\$|IPC\$)'
 
 # Check smb_files.log for file writes to admin shares
 zeek-cut ts id.orig_h id.resp_h action path name size \
-  < /opt/zeek/logs/current/smb_files.log \
-  | grep -i 'SMB::FILE_WRITE'
+ < /opt/zeek/logs/current/smb_files.log \
+ | grep -i 'SMB::FILE_WRITE'
 ```
 
 Deploy the following Zeek script to generate `notice.log` alerts on admin share access:
@@ -122,14 +122,14 @@ Deploy the following Zeek script to generate `notice.log` alerts on admin share 
 @load base/frameworks/notice
 
 redef enum Notice::Type += {
-    Admin_Share_Access
+ Admin_Share_Access
 };
 
 event smb1_tree_connect_andx_request(c: connection, hdr: SMB1::Header, path: string, service: string) {
-    if ( /\$/ in path )
-        NOTICE([$note=Admin_Share_Access,
-                $msg=fmt("Admin share access: %s -> %s (%s)", c$id$orig_h, c$id$resp_h, path),
-                $conn=c]);
+ if ( /\$/ in path )
+ NOTICE([$note=Admin_Share_Access,
+ $msg=fmt("Admin share access: %s -> %s (%s)", c$id$orig_h, c$id$resp_h, path),
+ $conn=c]);
 }
 ```
 
@@ -140,8 +140,8 @@ Monitor for remote service creation and scheduled task registration via DCE/RPC:
 ```bash
 # Look for service control manager operations (PsExec pattern)
 zeek-cut ts id.orig_h id.resp_h endpoint operation \
-  < /opt/zeek/logs/current/dce_rpc.log \
-  | grep -iE '(svcctl|atsvc|ITaskSchedulerService)'
+ < /opt/zeek/logs/current/dce_rpc.log \
+ | grep -iE '(svcctl|atsvc|ITaskSchedulerService)'
 ```
 
 ### Step 5: Detect NTLM Account Spray
@@ -154,17 +154,17 @@ signature of credential spraying tools like CrackMapExec:
 ```bash
 # Extract NTLM authentications
 zeek-cut ts id.orig_h id.resp_h username domainname server_nb_computer_name success \
-  < /opt/zeek/logs/current/ntlm.log
+ < /opt/zeek/logs/current/ntlm.log
 
 # Failed NTLM authentications (brute force or credential testing)
 zeek-cut ts id.orig_h id.resp_h username success \
-  < /opt/zeek/logs/current/ntlm.log \
-  | awk '$5 == "F"'
+ < /opt/zeek/logs/current/ntlm.log \
+ | awk '$5 == "F"'
 
 # Sort by timestamp for timeline analysis
 zeek-cut ts id.orig_h id.resp_h username success \
-  < /opt/zeek/logs/current/ntlm.log \
-  | sort -k1,1
+ < /opt/zeek/logs/current/ntlm.log \
+ | sort -k1,1
 ```
 
 Deploy the following Zeek script to generate `notice.log` alerts when a single
@@ -175,23 +175,23 @@ account touches more hosts than the threshold in a rolling window:
 @load base/frameworks/notice
 
 redef enum Notice::Type += {
-    NTLM_Account_Spray
+ NTLM_Account_Spray
 };
 
 global ntlm_tracker: table[string] of set[addr] &create_expire=5min;
 const spray_threshold = 3 &redef;
 
 event ntlm_log(rec: NTLM::Info) {
-    if ( ! rec?$username || rec$username == "-" )
-        return;
-    if ( rec$username !in ntlm_tracker )
-        ntlm_tracker[rec$username] = set();
-    add ntlm_tracker[rec$username][rec$id$resp_h];
-    if ( |ntlm_tracker[rec$username]| >= spray_threshold )
-        NOTICE([$note=NTLM_Account_Spray,
-                $msg=fmt("NTLM account spray: %s -> %d hosts", rec$username, |ntlm_tracker[rec$username]|),
-                $sub=rec$username,
-                $conn=rec$id]);
+ if ( ! rec?$username || rec$username == "-" )
+ return;
+ if ( rec$username !in ntlm_tracker )
+ ntlm_tracker[rec$username] = set();
+ add ntlm_tracker[rec$username][rec$id$resp_h];
+ if ( |ntlm_tracker[rec$username]| >= spray_threshold )
+ NOTICE([$note=NTLM_Account_Spray,
+ $msg=fmt("NTLM account spray: %s -> %d hosts", rec$username, |ntlm_tracker[rec$username]|),
+ $sub=rec$username,
+ $conn=rec$id]);
 }
 ```
 
@@ -201,7 +201,7 @@ Use the provided agent.py for comprehensive lateral movement detection:
 
 ```bash
 python3 agent.py /opt/zeek/logs/current/
-python3 agent.py /opt/zeek/logs/2026-03-18/  # Analyze a specific date
+python3 agent.py /opt/zeek/logs/2026-03-18/ # Analyze a specific date
 ```
 
 ## Verification

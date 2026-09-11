@@ -16,29 +16,29 @@ Customizes the `io.github.sh3nron.aura-blur` plugin to control blur effects on O
 
 3. **Edit the quality profile**: Modify `~/.config/hypr/gradual-blur.lua` to disable blur and enable shadow:
 
-   ```lua
-   -- Quality profile — reduced to simple shadow (no blur).
-   hl.config({
-     decoration = {
-       blur = {
-         enabled = false,
-         size = 0,
-         passes = 0,
-         noise = 0.0,
-         brightness = 1.0,
-         contrast = 1.0,
-         vibrancy = 0.0,
-         new_optimizations = false,
-       },
-       shadow = {
-         enabled = true,
-         range = 10,
-         render_power = 5,
-         color = "rgba(20, 18, 15, 0.55)",
-       },
-     },
-   })
-   ```
+ ```lua
+ -- Quality profile — reduced to simple shadow (no blur).
+ hl.config({
+ decoration = {
+ blur = {
+ enabled = false,
+ size = 0,
+ passes = 0,
+ noise = 0.0,
+ brightness = 1.0,
+ contrast = 1.0,
+ vibrancy = 0.0,
+ new_optimizations = false,
+ },
+ shadow = {
+ enabled = true,
+ range = 10,
+ render_power = 5,
+ color = "rgba(20, 18, 15, 0.55)",
+ },
+ },
+ })
+ ```
 
 4. **Align looknfeel.lua**: Ensure `~/.config/hypr/looknfeel.lua` uses the same shadow parameters (`range=10`, `render_power=5`, `color="rgba(20,18,15,0.55)"`) for consistent styling across all decorations.
 

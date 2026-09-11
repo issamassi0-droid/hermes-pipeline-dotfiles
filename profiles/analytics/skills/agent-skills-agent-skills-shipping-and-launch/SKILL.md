@@ -83,8 +83,8 @@ Ship behind feature flags to decouple deployment from release:
 const flags = await getFeatureFlags(userId);
 
 if (flags.taskSharing) {
-  // New feature: task sharing
-  return <TaskSharingPanel task={task} />;
+ // New feature: task sharing
+ return <TaskSharingPanel task={task} />;
 }
 
 // Default: existing behavior
@@ -94,11 +94,11 @@ return null;
 **Feature flag lifecycle:**
 
 ```
-1. DEPLOY with flag OFF     → Code is in production but inactive
-2. ENABLE for team/beta     → Internal testing in production environment
-3. GRADUAL ROLLOUT          → 5% → 25% → 50% → 100% of users
-4. MONITOR at each stage    → Watch error rates, performance, user feedback
-5. CLEAN UP                 → Remove flag and dead code path after full rollout
+1. DEPLOY with flag OFF → Code is in production but inactive
+2. ENABLE for team/beta → Internal testing in production environment
+3. GRADUAL ROLLOUT → 5% → 25% → 50% → 100% of users
+4. MONITOR at each stage → Watch error rates, performance, user feedback
+5. CLEAN UP → Remove flag and dead code path after full rollout
 ```
 
 **Rules:**
@@ -113,30 +113,30 @@ return null;
 
 ```
 1. DEPLOY to staging
-   └── Full test suite in staging environment
-   └── Manual smoke test of critical flows
+ └── Full test suite in staging environment
+ └── Manual smoke test of critical flows
 
 2. DEPLOY to production (feature flag OFF)
-   └── Verify deployment succeeded (health check)
-   └── Check error monitoring (no new errors)
+ └── Verify deployment succeeded (health check)
+ └── Check error monitoring (no new errors)
 
 3. ENABLE for team (flag ON for internal users)
-   └── Team uses the feature in production
-   └── 24-hour monitoring window
+ └── Team uses the feature in production
+ └── 24-hour monitoring window
 
 4. CANARY rollout (flag ON for 5% of users)
-   └── Monitor error rates, latency, user behavior
-   └── Compare metrics: canary vs. baseline
-   └── 24-48 hour monitoring window
-   └── Advance only if all thresholds pass (see table below)
+ └── Monitor error rates, latency, user behavior
+ └── Compare metrics: canary vs. baseline
+ └── 24-48 hour monitoring window
+ └── Advance only if all thresholds pass (see table below)
 
 5. GRADUAL increase (25% -> 50% -> 100%)
-   └── Same monitoring at each step
-   └── Ability to roll back to previous percentage at any point
+ └── Same monitoring at each step
+ └── Ability to roll back to previous percentage at any point
 
 6. FULL rollout (flag ON for all users)
-   └── Monitor for 1 week
-   └── Clean up feature flag
+ └── Monitor for 1 week
+ └── Clean up feature flag
 ```
 
 ### Rollout Decision Thresholds
@@ -190,35 +190,35 @@ Client metrics:
 ```typescript
 // Set up error boundary with reporting
 class ErrorBoundary extends React.Component {
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Report to error tracking service
-    reportError(error, {
-      componentStack: info.componentStack,
-      userId: getCurrentUser()?.id,
-      page: window.location.pathname,
-    });
-  }
+ componentDidCatch(error: Error, info: React.ErrorInfo) {
+ // Report to error tracking service
+ reportError(error, {
+ componentStack: info.componentStack,
+ userId: getCurrentUser()?.id,
+ page: window.location.pathname,
+ });
+ }
 
-  render() {
-    if (this.state.hasError) {
-      return <ErrorFallback onRetry={() => this.setState({ hasError: false })} />;
-    }
-    return this.props.children;
-  }
+ render() {
+ if (this.state.hasError) {
+ return <ErrorFallback onRetry={() => this.setState({ hasError: false })} />;
+ }
+ return this.props.children;
+ }
 }
 
 // Server-side error reporting
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  reportError(err, {
-    method: req.method,
-    url: req.url,
-    userId: req.user?.id,
-  });
+ reportError(err, {
+ method: req.method,
+ url: req.url,
+ userId: req.user?.id,
+ });
 
-  // Don't expose internals to users
-  res.status(500).json({
-    error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
-  });
+ // Don't expose internals to users
+ res.status(500).json({
+ error: { code: 'INTERNAL_ERROR', message: 'Something went wrong' },
+ });
 });
 ```
 
@@ -249,7 +249,7 @@ Every deployment needs a rollback plan before it happens:
 
 ### Rollback Steps
 1. Disable feature flag (if applicable)
-   OR
+ OR
 1. Deploy previous version: `git revert <commit> && git push`
 2. Verify rollback: health check, error monitoring
 3. Communicate: notify team of rollback

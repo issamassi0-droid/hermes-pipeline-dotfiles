@@ -1,9 +1,9 @@
 ---
 name: configuring-microsegmentation-for-zero-trust
 description: Configures microsegmentation policies to enforce least-privilege workload-to-workload
-  access using tools such as VMware NSX, Illumio, and Calico, preventing lateral
-  movement in zero trust architectures. Use when designing or implementing network
-  microsegmentation as part of a zero trust architecture aligned with NIST SP 800-207.
+ access using tools such as VMware NSX, Illumio, and Calico, preventing lateral
+ movement in zero trust architectures. Use when designing or implementing network
+ microsegmentation as part of a zero trust architecture aligned with NIST SP 800-207.
 domain: cybersecurity
 subdomain: zero-trust-architecture
 tags:
@@ -70,15 +70,15 @@ This skill covers designing microsegmentation policies using workload identity, 
 ### Enforcement Points
 
 ```
-Traditional Segmentation        Microsegmentation
-┌─────────────────┐            ┌──────────────────────┐
-│  VLAN 10        │            │  Workload A ←policy→ │
-│  ┌───┐ ┌───┐   │            │  Workload B ←policy→ │
-│  │ A │ │ B │   │            │  Workload C ←policy→ │
-│  └───┘ └───┘   │            │  Workload D ←policy→ │
-│  (trust each    │            │  (zero trust between  │
-│   other)        │            │   every pair)         │
-└─────────────────┘            └──────────────────────┘
+Traditional Segmentation Microsegmentation
+┌─────────────────┐ ┌──────────────────────┐
+│ VLAN 10 │ │ Workload A ←policy→ │
+│ ┌───┐ ┌───┐ │ │ Workload B ←policy→ │
+│ │ A │ │ B │ │ │ Workload C ←policy→ │
+│ └───┘ └───┘ │ │ Workload D ←policy→ │
+│ (trust each │ │ (zero trust between │
+│ other) │ │ every pair) │
+└─────────────────┘ └──────────────────────┘
 ```
 
 ## Key Concepts
@@ -100,62 +100,62 @@ Isolate critical applications (PCI cardholder data environment, SWIFT financial 
 ### Phase 1: Discovery and Mapping
 
 1. **Deploy Visibility Agents**
-   - Install lightweight agents on all workloads (servers, VMs, containers)
-   - Configure agents to report real-time traffic telemetry to the management console
-   - Allow 2-4 weeks of traffic collection to build a comprehensive flow map
+ - Install lightweight agents on all workloads (servers, VMs, containers)
+ - Configure agents to report real-time traffic telemetry to the management console
+ - Allow 2-4 weeks of traffic collection to build a comprehensive flow map
 
 2. **Build Application Dependency Map**
-   - Review auto-discovered communication flows in the management console
-   - Identify application tiers: web servers, app servers, databases, middleware
-   - Map legitimate communication paths and flag unexpected connections
-   - Document data flows for compliance scope (PCI, HIPAA)
+ - Review auto-discovered communication flows in the management console
+ - Identify application tiers: web servers, app servers, databases, middleware
+ - Map legitimate communication paths and flag unexpected connections
+ - Document data flows for compliance scope (PCI, HIPAA)
 
 3. **Assign Labels**
-   - Create a labeling taxonomy: Role (web, app, db), Application (ERP, CRM), Environment (prod, dev, staging), Location (dc1, aws-east)
-   - Apply labels to all workloads via the management console or API
-   - Validate label accuracy against CMDB and application owner input
+ - Create a labeling taxonomy: Role (web, app, db), Application (ERP, CRM), Environment (prod, dev, staging), Location (dc1, aws-east)
+ - Apply labels to all workloads via the management console or API
+ - Validate label accuracy against CMDB and application owner input
 
 ### Phase 2: Policy Design
 
 4. **Define Segmentation Zones**
-   - Environment isolation: Production cannot communicate with Development
-   - Tier isolation: Database tier only accepts connections from application tier
-   - Application ring-fencing: PCI applications isolated from non-PCI workloads
-   - Administrative access: Jump servers are the only management path
+ - Environment isolation: Production cannot communicate with Development
+ - Tier isolation: Database tier only accepts connections from application tier
+ - Application ring-fencing: PCI applications isolated from non-PCI workloads
+ - Administrative access: Jump servers are the only management path
 
 5. **Create Allow-List Policies**
-   - For each application, define explicit allow rules for required communication
-   - Use label-based rules rather than IP-based where possible
-   - Include process-level restrictions where supported (e.g., only httpd on port 443)
-   - Set default-deny for all unlisted communication
+ - For each application, define explicit allow rules for required communication
+ - Use label-based rules rather than IP-based where possible
+ - Include process-level restrictions where supported (e.g., only httpd on port 443)
+ - Set default-deny for all unlisted communication
 
 6. **Model Policies in Test Mode**
-   - Enable policies in visibility/test mode (do not enforce)
-   - Monitor for would-be blocked legitimate traffic
-   - Refine policies based on test results over 1-2 weeks
-   - Get application owner sign-off before enforcement
+ - Enable policies in visibility/test mode (do not enforce)
+ - Monitor for would-be blocked legitimate traffic
+ - Refine policies based on test results over 1-2 weeks
+ - Get application owner sign-off before enforcement
 
 ### Phase 3: Enforcement
 
 7. **Enforce Incrementally**
-   - Start with the most isolated, lowest-risk application
-   - Switch policy from test mode to enforce mode
-   - Monitor for application issues in the first 24-48 hours
-   - Proceed to next application after validation
+ - Start with the most isolated, lowest-risk application
+ - Switch policy from test mode to enforce mode
+ - Monitor for application issues in the first 24-48 hours
+ - Proceed to next application after validation
 
 8. **Validate Segmentation**
-   - Run penetration tests attempting lateral movement between segments
-   - Verify that blocked traffic generates alerts in the management console
-   - Test emergency override procedures (break-glass)
-   - Document enforcement status for each application zone
+ - Run penetration tests attempting lateral movement between segments
+ - Verify that blocked traffic generates alerts in the management console
+ - Test emergency override procedures (break-glass)
+ - Document enforcement status for each application zone
 
 ### Phase 4: Operational Maintenance
 
 9. **Ongoing Policy Management**
-   - Integrate with CI/CD: auto-label new workloads from deployment pipelines
-   - Review policy violations weekly and investigate anomalies
-   - Update policies when applications change or new services deploy
-   - Perform quarterly segmentation effectiveness reviews
+ - Integrate with CI/CD: auto-label new workloads from deployment pipelines
+ - Review policy violations weekly and investigate anomalies
+ - Update policies when applications change or new services deploy
+ - Perform quarterly segmentation effectiveness reviews
 
 ## Validation Checklist
 

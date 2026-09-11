@@ -1,10 +1,10 @@
 ---
 name: performing-file-carving-with-foremost
 description: Recovers files from disk images and unallocated space using Foremost's
-  header-footer signature carving, extracting evidence independent of the file system's
-  state. Use during digital forensics investigations to carve deleted or fragmented
-  files, such as documents, images, and archives, from raw disk images or unallocated
-  space.
+ header-footer signature carving, extracting evidence independent of the file system's
+ state. Use during digital forensics investigations to carve deleted or fragmented
+ files, such as documents, images, and archives, from raw disk images or unallocated
+ space.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -73,14 +73,14 @@ cp /etc/foremost.conf /cases/case-2024-001/custom_foremost.conf
 # Add custom file signatures
 cat << 'EOF' >> /cases/case-2024-001/custom_foremost.conf
 # Custom additions for investigation
-# Format: extension  case_sensitive  max_size  header  footer
-    docx    y    10000000    \x50\x4b\x03\x04    \x50\x4b\x05\x06
-    xlsx    y    10000000    \x50\x4b\x03\x04    \x50\x4b\x05\x06
-    pptx    y    10000000    \x50\x4b\x03\x04    \x50\x4b\x05\x06
-    sqlite  y    50000000    \x53\x51\x4c\x69\x74\x65\x20\x66\x6f\x72\x6d\x61\x74
-    pst     y    500000000   \x21\x42\x44\x4e
-    eml     y    1000000     \x46\x72\x6f\x6d\x3a    \x0d\x0a\x0d\x0a
-    evtx    y    50000000    \x45\x6c\x66\x46\x69\x6c\x65
+# Format: extension case_sensitive max_size header footer
+ docx y 10000000 \x50\x4b\x03\x04 \x50\x4b\x05\x06
+ xlsx y 10000000 \x50\x4b\x03\x04 \x50\x4b\x05\x06
+ pptx y 10000000 \x50\x4b\x03\x04 \x50\x4b\x05\x06
+ sqlite y 50000000 \x53\x51\x4c\x69\x74\x65\x20\x66\x6f\x72\x6d\x61\x74
+ pst y 500000000 \x21\x42\x44\x4e
+ eml y 1000000 \x46\x72\x6f\x6d\x3a \x0d\x0a\x0d\x0a
+ evtx y 50000000 \x45\x6c\x66\x46\x69\x6c\x65
 EOF
 ```
 
@@ -89,18 +89,18 @@ EOF
 ```bash
 # Basic carving of all supported file types
 foremost -t all \
-   -i /cases/case-2024-001/images/evidence.dd \
-   -o /cases/case-2024-001/carved/foremost_all/
+ -i /cases/case-2024-001/images/evidence.dd \
+ -o /cases/case-2024-001/carved/foremost_all/
 
 # Carve only specific file types
 foremost -t jpg,png,pdf,doc,xls,zip \
-   -i /cases/case-2024-001/images/evidence.dd \
-   -o /cases/case-2024-001/carved/foremost_targeted/
+ -i /cases/case-2024-001/images/evidence.dd \
+ -o /cases/case-2024-001/carved/foremost_targeted/
 
 # Use custom configuration
 foremost -c /cases/case-2024-001/custom_foremost.conf \
-   -i /cases/case-2024-001/images/evidence.dd \
-   -o /cases/case-2024-001/carved/foremost_custom/
+ -i /cases/case-2024-001/images/evidence.dd \
+ -o /cases/case-2024-001/carved/foremost_custom/
 
 # Carve from a specific partition offset
 # First, find partitions
@@ -108,21 +108,21 @@ mmls /cases/case-2024-001/images/evidence.dd
 # Then carve from unallocated space only
 # Extract unallocated space with blkls
 blkls -o 2048 /cases/case-2024-001/images/evidence.dd \
-   > /cases/case-2024-001/unallocated.dd
+ > /cases/case-2024-001/unallocated.dd
 
 foremost -t all \
-   -i /cases/case-2024-001/unallocated.dd \
-   -o /cases/case-2024-001/carved/foremost_unalloc/
+ -i /cases/case-2024-001/unallocated.dd \
+ -o /cases/case-2024-001/carved/foremost_unalloc/
 
 # Verbose mode for detailed progress
 foremost -v -t all \
-   -i /cases/case-2024-001/images/evidence.dd \
-   -o /cases/case-2024-001/carved/foremost_verbose/ 2>&1 | \
-   tee /cases/case-2024-001/carved/foremost_log.txt
+ -i /cases/case-2024-001/images/evidence.dd \
+ -o /cases/case-2024-001/carved/foremost_verbose/ 2>&1 | \
+ tee /cases/case-2024-001/carved/foremost_log.txt
 
 # Indirect mode (process standard input)
 dd if=/cases/case-2024-001/images/evidence.dd bs=512 skip=2048 | \
-   foremost -t jpg,pdf -o /cases/case-2024-001/carved/foremost_pipe/
+ foremost -t jpg,pdf -o /cases/case-2024-001/carved/foremost_pipe/
 ```
 
 ### Step 3: Use Scalpel for High-Performance Carving
@@ -137,13 +137,13 @@ cp /etc/scalpel/scalpel.conf /cases/case-2024-001/scalpel.conf
 
 # Run Scalpel
 scalpel -c /cases/case-2024-001/scalpel.conf \
-   -o /cases/case-2024-001/carved/scalpel/ \
-   /cases/case-2024-001/images/evidence.dd
+ -o /cases/case-2024-001/carved/scalpel/ \
+ /cases/case-2024-001/images/evidence.dd
 
 # Scalpel with file size limits
 # Edit scalpel.conf to set appropriate max sizes:
-# jpg  y  5000000  \xff\xd8\xff  \xff\xd9
-# pdf  y  20000000 %PDF  %%EOF
+# jpg y 5000000 \xff\xd8\xff \xff\xd9
+# pdf y 20000000 %PDF %%EOF
 ```
 
 ### Step 4: Process and Validate Carved Files
@@ -167,50 +167,50 @@ carved_dir = '/cases/case-2024-001/carved/foremost_all/'
 stats = defaultdict(lambda: {'total': 0, 'valid': 0, 'invalid': 0, 'size': 0})
 
 for subdir in os.listdir(carved_dir):
-    subdir_path = os.path.join(carved_dir, subdir)
-    if not os.path.isdir(subdir_path) or subdir == 'audit.txt':
-        continue
+ subdir_path = os.path.join(carved_dir, subdir)
+ if not os.path.isdir(subdir_path) or subdir == 'audit.txt':
+ continue
 
-    for filename in os.listdir(subdir_path):
-        filepath = os.path.join(subdir_path, filename)
-        if not os.path.isfile(filepath):
-            continue
+ for filename in os.listdir(subdir_path):
+ filepath = os.path.join(subdir_path, filename)
+ if not os.path.isfile(filepath):
+ continue
 
-        ext = subdir
-        filesize = os.path.getsize(filepath)
-        stats[ext]['total'] += 1
-        stats[ext]['size'] += filesize
+ ext = subdir
+ filesize = os.path.getsize(filepath)
+ stats[ext]['total'] += 1
+ stats[ext]['size'] += filesize
 
-        # Validate file using 'file' command
-        result = subprocess.run(['file', '--brief', filepath], capture_output=True, text=True)
-        file_type = result.stdout.strip()
+ # Validate file using 'file' command
+ result = subprocess.run(['file', '--brief', filepath], capture_output=True, text=True)
+ file_type = result.stdout.strip()
 
-        if 'data' in file_type.lower() or 'empty' in file_type.lower():
-            stats[ext]['invalid'] += 1
-        else:
-            stats[ext]['valid'] += 1
+ if 'data' in file_type.lower() or 'empty' in file_type.lower():
+ stats[ext]['invalid'] += 1
+ else:
+ stats[ext]['valid'] += 1
 
 print("=== CARVED FILE VALIDATION ===\n")
 print(f"{'Type':<10} {'Total':<8} {'Valid':<8} {'Invalid':<10} {'Total Size':<15}")
 print("-" * 55)
 for ext in sorted(stats.keys()):
-    s = stats[ext]
-    size_mb = s['size'] / (1024*1024)
-    print(f"{ext:<10} {s['total']:<8} {s['valid']:<8} {s['invalid']:<10} {size_mb:>10.1f} MB")
+ s = stats[ext]
+ size_mb = s['size'] / (1024*1024)
+ print(f"{ext:<10} {s['total']:<8} {s['valid']:<8} {s['invalid']:<10} {size_mb:>10.1f} MB")
 
 # Remove zero-byte files
 for subdir in os.listdir(carved_dir):
-    subdir_path = os.path.join(carved_dir, subdir)
-    if os.path.isdir(subdir_path):
-        for filename in os.listdir(subdir_path):
-            filepath = os.path.join(subdir_path, filename)
-            if os.path.isfile(filepath) and os.path.getsize(filepath) == 0:
-                os.remove(filepath)
+ subdir_path = os.path.join(carved_dir, subdir)
+ if os.path.isdir(subdir_path):
+ for filename in os.listdir(subdir_path):
+ filepath = os.path.join(subdir_path, filename)
+ if os.path.isfile(filepath) and os.path.getsize(filepath) == 0:
+ os.remove(filepath)
 PYEOF
 
 # Hash all valid carved files
 find /cases/case-2024-001/carved/foremost_all/ -type f ! -name "audit.txt" \
-   -exec sha256sum {} \; > /cases/case-2024-001/carved/carved_file_hashes.txt
+ -exec sha256sum {} \; > /cases/case-2024-001/carved/carved_file_hashes.txt
 
 # Check against known-bad hash database
 # Check against NSRL known-good database to filter
@@ -221,17 +221,17 @@ find /cases/case-2024-001/carved/foremost_all/ -type f ! -name "audit.txt" \
 ```bash
 # Extract metadata from carved images (EXIF data including GPS)
 exiftool -r -csv /cases/case-2024-001/carved/foremost_all/jpg/ \
-   > /cases/case-2024-001/analysis/carved_image_metadata.csv
+ > /cases/case-2024-001/analysis/carved_image_metadata.csv
 
 # Search carved documents for keywords
 find /cases/case-2024-001/carved/foremost_all/pdf/ -name "*.pdf" -exec pdftotext {} - \; 2>/dev/null | \
-   grep -iE '(confidential|secret|password|account|ssn|credit.card)' \
-   > /cases/case-2024-001/analysis/keyword_hits_pdf.txt
+ grep -iE '(confidential|secret|password|account|ssn|credit.card)' \
+ > /cases/case-2024-001/analysis/keyword_hits_pdf.txt
 
 # Generate thumbnails for image review
 mkdir -p /cases/case-2024-001/carved/thumbnails/
 find /cases/case-2024-001/carved/foremost_all/jpg/ -name "*.jpg" -exec \
-   convert {} -thumbnail 200x200 /cases/case-2024-001/carved/thumbnails/{} \; 2>/dev/null
+ convert {} -thumbnail 200x200 /cases/case-2024-001/carved/thumbnails/{} \; 2>/dev/null
 
 # Create evidence catalog
 python3 << 'PYEOF'
@@ -241,29 +241,29 @@ catalog = []
 carved_dir = '/cases/case-2024-001/carved/foremost_all/'
 
 for subdir in sorted(os.listdir(carved_dir)):
-    subdir_path = os.path.join(carved_dir, subdir)
-    if not os.path.isdir(subdir_path):
-        continue
-    for filename in sorted(os.listdir(subdir_path)):
-        filepath = os.path.join(subdir_path, filename)
-        if not os.path.isfile(filepath):
-            continue
-        size = os.path.getsize(filepath)
-        sha256 = hashlib.sha256(open(filepath, 'rb').read()).hexdigest()
-        file_type = subprocess.run(['file', '--brief', filepath], capture_output=True, text=True).stdout.strip()
+ subdir_path = os.path.join(carved_dir, subdir)
+ if not os.path.isdir(subdir_path):
+ continue
+ for filename in sorted(os.listdir(subdir_path)):
+ filepath = os.path.join(subdir_path, filename)
+ if not os.path.isfile(filepath):
+ continue
+ size = os.path.getsize(filepath)
+ sha256 = hashlib.sha256(open(filepath, 'rb').read()).hexdigest()
+ file_type = subprocess.run(['file', '--brief', filepath], capture_output=True, text=True).stdout.strip()
 
-        catalog.append({
-            'filename': filename,
-            'type': subdir,
-            'size': size,
-            'sha256': sha256,
-            'file_description': file_type[:100]
-        })
+ catalog.append({
+ 'filename': filename,
+ 'type': subdir,
+ 'size': size,
+ 'sha256': sha256,
+ 'file_description': file_type[:100]
+ })
 
 with open('/cases/case-2024-001/analysis/carved_file_catalog.csv', 'w', newline='') as f:
-    writer = csv.DictWriter(f, fieldnames=['filename', 'type', 'size', 'sha256', 'file_description'])
-    writer.writeheader()
-    writer.writerows(catalog)
+ writer = csv.DictWriter(f, fieldnames=['filename', 'type', 'size', 'sha256', 'file_description'])
+ writer.writeheader()
+ writer.writerows(catalog)
 
 print(f"Catalog created with {len(catalog)} files")
 PYEOF
@@ -313,23 +313,23 @@ Configure Foremost to carve SQLite databases from unallocated space, recover app
 
 ```
 File Carving Summary:
-  Tool: Foremost 1.5.7
-  Source: evidence.dd (500 GB)
-  Target: Unallocated space (234 GB)
-  Duration: 1h 45m
+ Tool: Foremost 1.5.7
+ Source: evidence.dd (500 GB)
+ Target: Unallocated space (234 GB)
+ Duration: 1h 45m
 
-  Files Carved:
-    jpg:    2,345 files (1.8 GB) - Valid: 2,100 / Invalid: 245
-    png:      234 files (456 MB) - Valid: 210 / Invalid: 24
-    pdf:      156 files (890 MB) - Valid: 134 / Invalid: 22
-    doc:       89 files (234 MB) - Valid: 67 / Invalid: 22
-    xls:       45 files (123 MB) - Valid: 38 / Invalid: 7
-    zip:       67 files (567 MB) - Valid: 52 / Invalid: 15
-    exe:       34 files (234 MB) - Valid: 30 / Invalid: 4
-    sqlite:    12 files (89 MB)  - Valid: 10 / Invalid: 2
+ Files Carved:
+ jpg: 2,345 files (1.8 GB) - Valid: 2,100 / Invalid: 245
+ png: 234 files (456 MB) - Valid: 210 / Invalid: 24
+ pdf: 156 files (890 MB) - Valid: 134 / Invalid: 22
+ doc: 89 files (234 MB) - Valid: 67 / Invalid: 22
+ xls: 45 files (123 MB) - Valid: 38 / Invalid: 7
+ zip: 67 files (567 MB) - Valid: 52 / Invalid: 15
+ exe: 34 files (234 MB) - Valid: 30 / Invalid: 4
+ sqlite: 12 files (89 MB) - Valid: 10 / Invalid: 2
 
-  Total Files: 2,982 (3.4 GB recovered)
-  Evidence-Relevant: 45 files flagged for review
-  Audit Log: /cases/case-2024-001/carved/foremost_all/audit.txt
-  File Catalog: /cases/case-2024-001/analysis/carved_file_catalog.csv
+ Total Files: 2,982 (3.4 GB recovered)
+ Evidence-Relevant: 45 files flagged for review
+ Audit Log: /cases/case-2024-001/carved/foremost_all/audit.txt
+ File Catalog: /cases/case-2024-001/analysis/carved_file_catalog.csv
 ```

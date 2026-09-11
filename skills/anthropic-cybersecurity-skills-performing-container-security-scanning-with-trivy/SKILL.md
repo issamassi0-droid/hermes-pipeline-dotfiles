@@ -1,13 +1,13 @@
 ---
 name: performing-container-security-scanning-with-trivy
 description: >-
-  Runs Trivy across every target type it supports - container images, filesystems, Git
-  repositories, and Kubernetes clusters - for OS and dependency vulnerabilities, IaC
-  misconfiguration, exposed secrets, and licences, generating CycloneDX or SPDX SBOMs. Use
-  when integrating Trivy into CI/CD, deploying the Trivy Kubernetes operator, scanning
-  non-image targets, or triaging results at scale. Keywords: Trivy, trivy k8s, operator, SBOM,
-  CycloneDX, SPDX, misconfig, secret scanning. Do not use for a single Docker image scan - use
-  scanning-docker-images-with-trivy.
+ Runs Trivy across every target type it supports - container images, filesystems, Git
+ repositories, and Kubernetes clusters - for OS and dependency vulnerabilities, IaC
+ misconfiguration, exposed secrets, and licences, generating CycloneDX or SPDX SBOMs. Use
+ when integrating Trivy into CI/CD, deploying the Trivy Kubernetes operator, scanning
+ non-image targets, or triaging results at scale. Keywords: Trivy, trivy k8s, operator, SBOM,
+ CycloneDX, SPDX, misconfig, secret scanning. Do not use for a single Docker image scan - use
+ scanning-docker-images-with-trivy.
 domain: cybersecurity
 subdomain: container-security
 tags:

@@ -1,12 +1,12 @@
 ---
 name: detecting-cloud-threats-with-guardduty
 description: 'Deploy and operationalize Amazon GuardDuty, covering protection plans
-  for S3, EKS, EC2 runtime monitoring, and Lambda, interpreting finding severity, and
-  building automated response with EventBridge and Lambda. Use when establishing threat
-  detection for AWS accounts, investigating findings on compromised instances or credential
-  abuse, or building automated incident-response playbooks.
+ for S3, EKS, EC2 runtime monitoring, and Lambda, interpreting finding severity, and
+ building automated response with EventBridge and Lambda. Use when establishing threat
+ detection for AWS accounts, investigating findings on compromised instances or credential
+ abuse, or building automated incident-response playbooks.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -59,28 +59,28 @@ Activate GuardDuty at the organization level using a delegated administrator acc
 ```bash
 # Enable GuardDuty as organization delegated administrator
 aws guardduty create-detector \
-  --enable \
-  --finding-publishing-frequency FIFTEEN_MINUTES \
-  --data-sources '{
-    "S3Logs": {"Enable": true},
-    "Kubernetes": {"AuditLogs": {"Enable": true}},
-    "MalwareProtection": {"ScanEc2InstanceWithFindings": {"EbsVolumes": true}}
-  }'
+ --enable \
+ --finding-publishing-frequency FIFTEEN_MINUTES \
+ --data-sources '{
+ "S3Logs": {"Enable": true},
+ "Kubernetes": {"AuditLogs": {"Enable": true}},
+ "MalwareProtection": {"ScanEc2InstanceWithFindings": {"EbsVolumes": true}}
+ }'
 
 # Enable Runtime Monitoring for EC2 and ECS
 aws guardduty update-detector \
-  --detector-id <detector-id> \
-  --features '[
-    {"Name": "RUNTIME_MONITORING", "Status": "ENABLED",
-     "AdditionalConfiguration": [
-       {"Name": "ECS_FARGATE_AGENT_MANAGEMENT", "Status": "ENABLED"},
-       {"Name": "EC2_AGENT_MANAGEMENT", "Status": "ENABLED"}
-     ]}
-  ]'
+ --detector-id <detector-id> \
+ --features '[
+ {"Name": "RUNTIME_MONITORING", "Status": "ENABLED",
+ "AdditionalConfiguration": [
+ {"Name": "ECS_FARGATE_AGENT_MANAGEMENT", "Status": "ENABLED"},
+ {"Name": "EC2_AGENT_MANAGEMENT", "Status": "ENABLED"}
+ ]}
+ ]'
 
 # Designate delegated admin for multi-account
 aws guardduty enable-organization-admin-account \
-  --admin-account-id 111122223333
+ --admin-account-id 111122223333
 ```
 
 ### Step 2: Configure Multi-Account Aggregation
@@ -90,22 +90,22 @@ Automatically enroll all organization member accounts and configure finding expo
 ```bash
 # Auto-enable GuardDuty for all org members
 aws guardduty update-organization-configuration \
-  --detector-id <detector-id> \
-  --auto-enable-organization-members ALL \
-  --features '[
-    {"Name": "S3_DATA_EVENTS", "AutoEnable": "ALL"},
-    {"Name": "EKS_AUDIT_LOGS", "AutoEnable": "ALL"},
-    {"Name": "RUNTIME_MONITORING", "AutoEnable": "ALL"}
-  ]'
+ --detector-id <detector-id> \
+ --auto-enable-organization-members ALL \
+ --features '[
+ {"Name": "S3_DATA_EVENTS", "AutoEnable": "ALL"},
+ {"Name": "EKS_AUDIT_LOGS", "AutoEnable": "ALL"},
+ {"Name": "RUNTIME_MONITORING", "AutoEnable": "ALL"}
+ ]'
 
 # Configure finding export to S3
 aws guardduty create-publishing-destination \
-  --detector-id <detector-id> \
-  --destination-type S3 \
-  --destination-properties '{
-    "DestinationArn": "arn:aws:s3:::guardduty-findings-centralized",
-    "KmsKeyArn": "arn:aws:kms:us-east-1:123456789012:key/key-id"
-  }'
+ --detector-id <detector-id> \
+ --destination-type S3 \
+ --destination-properties '{
+ "DestinationArn": "arn:aws:s3:::guardduty-findings-centralized",
+ "KmsKeyArn": "arn:aws:kms:us-east-1:123456789012:key/key-id"
+ }'
 ```
 
 ### Step 3: Interpret Finding Types and Severity Levels
@@ -126,22 +126,22 @@ Create EventBridge rules that route GuardDuty findings to Lambda functions for a
 ```bash
 # EventBridge rule for high/critical GuardDuty findings
 aws events put-rule \
-  --name GuardDutyHighSeverity \
-  --event-pattern '{
-    "source": ["aws.guardduty"],
-    "detail-type": ["GuardDuty Finding"],
-    "detail": {
-      "severity": [{"numeric": [">=", 7]}]
-    }
-  }'
+ --name GuardDutyHighSeverity \
+ --event-pattern '{
+ "source": ["aws.guardduty"],
+ "detail-type": ["GuardDuty Finding"],
+ "detail": {
+ "severity": [{"numeric": [">=", 7]}]
+ }
+ }'
 
 # Target Lambda function for auto-remediation
 aws events put-targets \
-  --rule GuardDutyHighSeverity \
-  --targets '[{
-    "Id": "AutoRemediateTarget",
-    "Arn": "arn:aws:lambda:us-east-1:123456789012:function/guardduty-auto-remediate"
-  }]'
+ --rule GuardDutyHighSeverity \
+ --targets '[{
+ "Id": "AutoRemediateTarget",
+ "Arn": "arn:aws:lambda:us-east-1:123456789012:function/guardduty-auto-remediate"
+ }]'
 ```
 
 Auto-remediation Lambda example for isolating a compromised EC2 instance:
@@ -150,36 +150,36 @@ Auto-remediation Lambda example for isolating a compromised EC2 instance:
 import boto3
 
 def lambda_handler(event, context):
-    finding = event['detail']
-    finding_type = finding['type']
-    severity = finding['severity']
+ finding = event['detail']
+ finding_type = finding['type']
+ severity = finding['severity']
 
-    if finding_type.startswith('UnauthorizedAccess:EC2') and severity >= 7:
-        instance_id = finding['resource']['instanceDetails']['instanceId']
-        ec2 = boto3.client('ec2')
+ if finding_type.startswith('UnauthorizedAccess:EC2') and severity >= 7:
+ instance_id = finding['resource']['instanceDetails']['instanceId']
+ ec2 = boto3.client('ec2')
 
-        # Create isolation security group (no inbound/outbound rules)
-        vpc_id = finding['resource']['instanceDetails']['networkInterfaces'][0]['vpcId']
-        isolation_sg = ec2.create_security_group(
-            GroupName=f'isolation-{instance_id}',
-            Description='GuardDuty auto-isolation',
-            VpcId=vpc_id
-        )
+ # Create isolation security group (no inbound/outbound rules)
+ vpc_id = finding['resource']['instanceDetails']['networkInterfaces'][0]['vpcId']
+ isolation_sg = ec2.create_security_group(
+ GroupName=f'isolation-{instance_id}',
+ Description='GuardDuty auto-isolation',
+ VpcId=vpc_id
+ )
 
-        # Replace all security groups with isolation group
-        ec2.modify_instance_attribute(
-            InstanceId=instance_id,
-            Groups=[isolation_sg['GroupId']]
-        )
+ # Replace all security groups with isolation group
+ ec2.modify_instance_attribute(
+ InstanceId=instance_id,
+ Groups=[isolation_sg['GroupId']]
+ )
 
-        # Tag instance for investigation
-        ec2.create_tags(
-            Resources=[instance_id],
-            Tags=[{'Key': 'SecurityStatus', 'Value': 'ISOLATED'},
-                  {'Key': 'GuardDutyFinding', 'Value': finding_type}]
-        )
+ # Tag instance for investigation
+ ec2.create_tags(
+ Resources=[instance_id],
+ Tags=[{'Key': 'SecurityStatus', 'Value': 'ISOLATED'},
+ {'Key': 'GuardDutyFinding', 'Value': finding_type}]
+ )
 
-        return {'status': 'isolated', 'instance': instance_id}
+ return {'status': 'isolated', 'instance': instance_id}
 ```
 
 ### Step 5: Investigate Extended Threat Detection Attack Sequences
@@ -189,20 +189,20 @@ Review Critical-severity attack sequence findings that correlate multiple signal
 ```bash
 # List critical attack sequence findings
 aws guardduty list-findings \
-  --detector-id <detector-id> \
-  --finding-criteria '{
-    "Criterion": {
-      "severity": {"Gte": 9},
-      "type": {"Eq": ["AttackSequence:EC2/CompromisedInstanceGroup",
-                       "AttackSequence:ECS/CompromisedCluster",
-                       "AttackSequence:EKS/CompromisedCluster"]}
-    }
-  }'
+ --detector-id <detector-id> \
+ --finding-criteria '{
+ "Criterion": {
+ "severity": {"Gte": 9},
+ "type": {"Eq": ["AttackSequence:EC2/CompromisedInstanceGroup",
+ "AttackSequence:ECS/CompromisedCluster",
+ "AttackSequence:EKS/CompromisedCluster"]}
+ }
+ }'
 
 # Get full finding details with attack sequence timeline
 aws guardduty get-findings \
-  --detector-id <detector-id> \
-  --finding-ids <finding-id>
+ --detector-id <detector-id> \
+ --finding-ids <finding-id>
 ```
 
 ### Step 6: Integrate with Security Hub and SIEM
@@ -215,12 +215,12 @@ aws securityhub get-enabled-standards
 
 # Enable Amazon Security Lake with GuardDuty as a source
 aws securitylake create-data-lake \
-  --configurations '[{
-    "region": "us-east-1",
-    "lifecycleConfiguration": {
-      "expiration": {"days": 365}
-    }
-  }]'
+ --configurations '[{
+ "region": "us-east-1",
+ "lifecycleConfiguration": {
+ "expiration": {"days": 365}
+ }
+ }]'
 ```
 
 ## Key Concepts
@@ -270,28 +270,28 @@ Period: 2025-02-01 to 2025-02-23
 
 CRITICAL FINDINGS (Immediate Action Required):
 [CRIT-001] AttackSequence:EC2/CompromisedInstanceGroup
-  - Instances: i-0abc123def, i-0def456abc
-  - Attack Chain: Credential theft -> Persistence -> Crypto mining
-  - First Signal: 2025-02-15T08:23:00Z
-  - Duration: 4 hours across 3 stages
-  - Status: Auto-isolated via Lambda
+ - Instances: i-0abc123def, i-0def456abc
+ - Attack Chain: Credential theft -> Persistence -> Crypto mining
+ - First Signal: 2025-02-15T08:23:00Z
+ - Duration: 4 hours across 3 stages
+ - Status: Auto-isolated via Lambda
 
 HIGH FINDINGS:
 [HIGH-001] UnauthorizedAccess:IAMUser/MaliciousIPCaller
-  - Principal: arn:aws:iam::123456789012:user/ci-deploy
-  - Source IP: 198.51.100.42 (Tor exit node)
-  - API Calls: 47 calls to ec2:RunInstances
-  - Status: Access key deactivated
+ - Principal: arn:aws:iam::123456789012:user/ci-deploy
+ - Source IP: 198.51.100.42 (Tor exit node)
+ - API Calls: 47 calls to ec2:RunInstances
+ - Status: Access key deactivated
 
 [HIGH-002] CryptoCurrency:Runtime/BitcoinTool.B
-  - Resource: ECS Task arn:aws:ecs:us-east-1:123456789012:task/cluster/task-id
-  - Image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/app:v2.1
-  - Process: /tmp/.hidden/xmrig --pool stratum+tcp://pool.example.com:3333
-  - Status: Task stopped, image quarantined
+ - Resource: ECS Task arn:aws:ecs:us-east-1:123456789012:task/cluster/task-id
+ - Image: 123456789012.dkr.ecr.us-east-1.amazonaws.com/app:v2.1
+ - Process: /tmp/.hidden/xmrig --pool stratum+tcp://pool.example.com:3333
+ - Status: Task stopped, image quarantined
 
 STATISTICS:
-  Total Findings: 23
-  Critical: 1 | High: 3 | Medium: 8 | Low: 11
-  Auto-Remediated: 4
-  Pending Investigation: 2
+ Total Findings: 23
+ Critical: 1 | High: 3 | Medium: 8 | Low: 11
+ Auto-Remediated: 4
+ Pending Investigation: 2
 ```

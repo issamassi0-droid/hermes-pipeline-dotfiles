@@ -1,9 +1,9 @@
 ---
 name: beads-validation
 description: |
-  Validates beads issues after creation. Checks dependencies, PRD mapping, order, and issue quality.
-  Use when: after creating issues, before TDD loop, before handoff.
-  Triggers: "validate beads", "check issues", "verify tasks", "check quality", "validate handoff".
+ Validates beads issues after creation. Checks dependencies, PRD mapping, order, and issue quality.
+ Use when: after creating issues, before TDD loop, before handoff.
+ Triggers: "validate beads", "check issues", "verify tasks", "check quality", "validate handoff".
 ---
 
 # Beads Validation Skill
@@ -13,14 +13,14 @@ Validates that beads issues are correctly created and ready for TDD.
 ## When to Use
 
 1. **After creating issues** (in rust-project-init):
-   - Check all PRD features have corresponding issues
-   - Check priorities are valid
-   - Check issue IDs exist before adding dependencies
+ - Check all PRD features have corresponding issues
+ - Check priorities are valid
+ - Check issue IDs exist before adding dependencies
 
 2. **Before TDD loop** (in /ship Phase 2.5):
-   - Check for circular dependencies
-   - Check `bd ready` returns expected first task
-   - Check no issues are incorrectly blocked
+ - Check for circular dependencies
+ - Check `bd ready` returns expected first task
+ - Check no issues are incorrectly blocked
 
 ## Validation Checks
 
@@ -41,7 +41,7 @@ bd list --status=open | wc -l
 bd list --status=open --json | jq '.[] | .dependencies'
 
 # Check each dependency ID exists
-bd show {dep_id}  # Should not error
+bd show {dep_id} # Should not error
 ```
 
 ### 3. Circular Dependency Check
@@ -113,12 +113,12 @@ Result: 6/6 checks passed
 
 [WARN] 2/4 issues have quality problems
 
-  Quality issues:
-    task-abc:
-      - Description too short (45 chars, need 100+)
-      - Missing Acceptance Criteria section
-    task-xyz:
-      - Missing Files to Modify section
+ Quality issues:
+ task-abc:
+ - Description too short (45 chars, need 100+)
+ - Missing Acceptance Criteria section
+ task-xyz:
+ - Missing Files to Modify section
 ```
 
 ## Common Issues

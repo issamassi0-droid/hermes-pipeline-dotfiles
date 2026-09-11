@@ -6,9 +6,9 @@ author: Teknium (teknium1), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Obsidian, Notes, Markdown, Vault]
-    related_skills: []
+ hermes:
+ tags: [Obsidian, Notes, Markdown, Vault]
+ related_skills: []
 ---
 
 # Obsidian Vault

@@ -1,7 +1,7 @@
 ---
 name: performing-security-headers-audit
 description: Auditing HTTP security headers including CSP, HSTS, X-Frame-Options,
-  and cookie attributes to identify missing or misconfigured browser-level protections.
+ and cookie attributes to identify missing or misconfigured browser-level protections.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -55,16 +55,16 @@ Retrieve and catalog all security-related response headers.
 ```bash
 # Fetch all response headers
 curl -s -I "https://target.example.com/" | grep -iE \
-  "(strict-transport|content-security|x-frame|x-content-type|x-xss|referrer-policy|permissions-policy|feature-policy|x-permitted|cross-origin|set-cookie|server|x-powered-by|cache-control)"
+ "(strict-transport|content-security|x-frame|x-content-type|x-xss|referrer-policy|permissions-policy|feature-policy|x-permitted|cross-origin|set-cookie|server|x-powered-by|cache-control)"
 
 # Check headers across multiple pages
 PAGES=("/" "/login" "/api/health" "/admin" "/account/settings" "/static/app.js")
 
 for page in "${PAGES[@]}"; do
-  echo "=== $page ==="
-  curl -s -I "https://target.example.com$page" 2>/dev/null | grep -iE \
-    "(strict-transport|content-security|x-frame|x-content-type|x-xss|referrer-policy|permissions-policy|set-cookie|server|x-powered)"
-  echo
+ echo "=== $page ==="
+ curl -s -I "https://target.example.com$page" 2>/dev/null | grep -iE \
+ "(strict-transport|content-security|x-frame|x-content-type|x-xss|referrer-policy|permissions-policy|set-cookie|server|x-powered)"
+ echo
 done
 
 # Check both HTTP and HTTPS responses
@@ -122,16 +122,16 @@ echo "$CSP"
 # Missing default-src: No fallback policy
 
 echo "$CSP" | tr ';' '\n' | while read directive; do
-  echo "  $directive"
-  if echo "$directive" | grep -q "unsafe-inline"; then
-    echo "    WARNING: unsafe-inline allows inline script execution"
-  fi
-  if echo "$directive" | grep -q "unsafe-eval"; then
-    echo "    WARNING: unsafe-eval allows eval() calls"
-  fi
-  if echo "$directive" | grep -q " \* "; then
-    echo "    WARNING: wildcard allows loading from any origin"
-  fi
+ echo " $directive"
+ if echo "$directive" | grep -q "unsafe-inline"; then
+ echo " WARNING: unsafe-inline allows inline script execution"
+ fi
+ if echo "$directive" | grep -q "unsafe-eval"; then
+ echo " WARNING: unsafe-eval allows eval() calls"
+ fi
+ if echo "$directive" | grep -q " \* "; then
+ echo " WARNING: wildcard allows loading from any origin"
+ fi
 done
 
 # Check for CSP report-only (not enforcing)
@@ -193,16 +193,16 @@ curl -s -I -L "https://target.example.com/login" | grep -i "set-cookie"
 
 # Automated cookie check
 curl -s -I "https://target.example.com/login" | grep -i "set-cookie" | while read line; do
-  echo "Cookie: $(echo "$line" | grep -oP '[^:]+=[^;]+')"
-  missing=""
-  echo "$line" | grep -qi "secure" || missing="$missing Secure"
-  echo "$line" | grep -qi "httponly" || missing="$missing HttpOnly"
-  echo "$line" | grep -qi "samesite" || missing="$missing SameSite"
-  if [ -n "$missing" ]; then
-    echo "  MISSING:$missing"
-  else
-    echo "  All flags present"
-  fi
+ echo "Cookie: $(echo "$line" | grep -oP '[^:]+=[^;]+')"
+ missing=""
+ echo "$line" | grep -qi "secure" || missing="$missing Secure"
+ echo "$line" | grep -qi "httponly" || missing="$missing HttpOnly"
+ echo "$line" | grep -qi "samesite" || missing="$missing SameSite"
+ if [ -n "$missing" ]; then
+ echo " MISSING:$missing"
+ else
+ echo " All flags present"
+ fi
 done
 
 # Check for __Host- and __Secure- cookie prefixes

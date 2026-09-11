@@ -1,10 +1,10 @@
 ---
 name: performing-yara-rule-development-for-detection
 description: Develops precise YARA and YARA-X rules for malware detection by identifying
-  unique strings, byte sequences, PE header traits, and behavioral indicators in
-  unpacked malware artifacts while minimizing false positives. Use when building
-  detection signatures for threat hunting, classifying malware families, or authoring
-  rules from IOCs such as C2 URLs, mutex names, and encryption constants.
+ unique strings, byte sequences, PE header traits, and behavioral indicators in
+ unpacked malware artifacts while minimizing false positives. Use when building
+ detection signatures for threat hunting, classifying malware families, or authoring
+ rules from IOCs such as C2 URLs, mutex names, and encryption constants.
 domain: cybersecurity
 subdomain: malware-analysis
 tags:
@@ -80,130 +80,130 @@ from collections import Counter
 
 
 def extract_strings(filepath, min_length=6):
-    """Extract ASCII and wide strings from binary."""
-    with open(filepath, 'rb') as f:
-        data = f.read()
+ """Extract ASCII and wide strings from binary."""
+ with open(filepath, 'rb') as f:
+ data = f.read()
 
-    # ASCII strings
-    ascii_strings = re.findall(
-        rb'[\x20-\x7e]{' + str(min_length).encode() + rb',}', data
-    )
+ # ASCII strings
+ ascii_strings = re.findall(
+ rb'[\x20-\x7e]{' + str(min_length).encode() + rb',}', data
+ )
 
-    # Wide (UTF-16LE) strings
-    wide_strings = re.findall(
-        rb'(?:[\x20-\x7e]\x00){' + str(min_length).encode() + rb',}', data
-    )
+ # Wide (UTF-16LE) strings
+ wide_strings = re.findall(
+ rb'(?:[\x20-\x7e]\x00){' + str(min_length).encode() + rb',}', data
+ )
 
-    return {
-        'ascii': [s.decode('ascii') for s in ascii_strings],
-        'wide': [s.decode('utf-16-le') for s in wide_strings],
-    }
+ return {
+ 'ascii': [s.decode('ascii') for s in ascii_strings],
+ 'wide': [s.decode('utf-16-le') for s in wide_strings],
+ }
 
 
 def analyze_pe_imports(filepath):
-    """Extract import table for API-based detection."""
-    try:
-        pe = pefile.PE(filepath)
-    except pefile.PEFormatError:
-        return []
+ """Extract import table for API-based detection."""
+ try:
+ pe = pefile.PE(filepath)
+ except pefile.PEFormatError:
+ return []
 
-    imports = []
-    if hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
-        for entry in pe.DIRECTORY_ENTRY_IMPORT:
-            dll_name = entry.dll.decode('utf-8', errors='replace')
-            for imp in entry.imports:
-                if imp.name:
-                    func_name = imp.name.decode('utf-8', errors='replace')
-                    imports.append(f"{dll_name}!{func_name}")
-    return imports
+ imports = []
+ if hasattr(pe, 'DIRECTORY_ENTRY_IMPORT'):
+ for entry in pe.DIRECTORY_ENTRY_IMPORT:
+ dll_name = entry.dll.decode('utf-8', errors='replace')
+ for imp in entry.imports:
+ if imp.name:
+ func_name = imp.name.decode('utf-8', errors='replace')
+ imports.append(f"{dll_name}!{func_name}")
+ return imports
 
 
 def find_unique_byte_patterns(filepath, pattern_length=16):
-    """Find unique byte sequences suitable for YARA hex patterns."""
-    with open(filepath, 'rb') as f:
-        data = f.read()
+ """Find unique byte sequences suitable for YARA hex patterns."""
+ with open(filepath, 'rb') as f:
+ data = f.read()
 
-    try:
-        pe = pefile.PE(filepath)
-        # Focus on code section
-        for section in pe.sections:
-            if section.Characteristics & 0x20000000:  # IMAGE_SCN_MEM_EXECUTE
-                code_start = section.PointerToRawData
-                code_end = code_start + section.SizeOfRawData
-                code_data = data[code_start:code_end]
-                break
-        else:
-            code_data = data
-    except Exception:
-        code_data = data
+ try:
+ pe = pefile.PE(filepath)
+ # Focus on code section
+ for section in pe.sections:
+ if section.Characteristics & 0x20000000: # IMAGE_SCN_MEM_EXECUTE
+ code_start = section.PointerToRawData
+ code_end = code_start + section.SizeOfRawData
+ code_data = data[code_start:code_end]
+ break
+ else:
+ code_data = data
+ except Exception:
+ code_data = data
 
-    # Find byte patterns that appear exactly once
-    patterns = []
-    for i in range(0, len(code_data) - pattern_length, 4):
-        pattern = code_data[i:i+pattern_length]
-        if pattern.count(b'\x00') < pattern_length // 3:  # Skip null-heavy
-            hex_pattern = ' '.join(f'{b:02X}' for b in pattern)
-            patterns.append(hex_pattern)
+ # Find byte patterns that appear exactly once
+ patterns = []
+ for i in range(0, len(code_data) - pattern_length, 4):
+ pattern = code_data[i:i+pattern_length]
+ if pattern.count(b'\x00') < pattern_length // 3: # Skip null-heavy
+ hex_pattern = ' '.join(f'{b:02X}' for b in pattern)
+ patterns.append(hex_pattern)
 
-    # Count frequency and return unique ones
-    freq = Counter(patterns)
-    unique = [p for p, count in freq.items() if count == 1]
+ # Count frequency and return unique ones
+ freq = Counter(patterns)
+ unique = [p for p, count in freq.items() if count == 1]
 
-    return unique[:20]  # Top 20 candidates
+ return unique[:20] # Top 20 candidates
 
 
 def suggest_rule_strings(filepath):
-    """Suggest strings and patterns for YARA rule."""
-    print(f"[+] Analyzing: {filepath}")
+ """Suggest strings and patterns for YARA rule."""
+ print(f"[+] Analyzing: {filepath}")
 
-    # Extract strings
-    strings = extract_strings(filepath)
+ # Extract strings
+ strings = extract_strings(filepath)
 
-    # Filter for suspicious/unique strings
-    suspicious_keywords = [
-        'http', 'https', 'cmd', 'powershell', 'mutex', 'pipe',
-        'password', 'credential', 'inject', 'hook', 'debug',
-        'sandbox', 'virtual', 'vmware', 'vbox',
-    ]
+ # Filter for suspicious/unique strings
+ suspicious_keywords = [
+ 'http', 'https', 'cmd', 'powershell', 'mutex', 'pipe',
+ 'password', 'credential', 'inject', 'hook', 'debug',
+ 'sandbox', 'virtual', 'vmware', 'vbox',
+ ]
 
-    print("\n[+] Suspicious ASCII strings:")
-    for s in strings['ascii']:
-        if any(kw in s.lower() for kw in suspicious_keywords):
-            print(f"  $ = \"{s}\" ascii")
+ print("\n[+] Suspicious ASCII strings:")
+ for s in strings['ascii']:
+ if any(kw in s.lower() for kw in suspicious_keywords):
+ print(f" $ = \"{s}\" ascii")
 
-    print("\n[+] Suspicious wide strings:")
-    for s in strings['wide']:
-        if any(kw in s.lower() for kw in suspicious_keywords):
-            print(f"  $ = \"{s}\" wide")
+ print("\n[+] Suspicious wide strings:")
+ for s in strings['wide']:
+ if any(kw in s.lower() for kw in suspicious_keywords):
+ print(f" $ = \"{s}\" wide")
 
-    # Import analysis
-    imports = analyze_pe_imports(filepath)
-    suspicious_apis = [
-        'VirtualAlloc', 'VirtualProtect', 'WriteProcessMemory',
-        'CreateRemoteThread', 'NtUnmapViewOfSection', 'RtlMoveMemory',
-        'OpenProcess', 'CreateToolhelp32Snapshot',
-        'InternetOpenA', 'HttpSendRequestA',
-        'CryptEncrypt', 'CryptDecrypt',
-    ]
+ # Import analysis
+ imports = analyze_pe_imports(filepath)
+ suspicious_apis = [
+ 'VirtualAlloc', 'VirtualProtect', 'WriteProcessMemory',
+ 'CreateRemoteThread', 'NtUnmapViewOfSection', 'RtlMoveMemory',
+ 'OpenProcess', 'CreateToolhelp32Snapshot',
+ 'InternetOpenA', 'HttpSendRequestA',
+ 'CryptEncrypt', 'CryptDecrypt',
+ ]
 
-    print("\n[+] Suspicious imports:")
-    for imp in imports:
-        func = imp.split('!')[-1]
-        if func in suspicious_apis:
-            print(f"  {imp}")
+ print("\n[+] Suspicious imports:")
+ for imp in imports:
+ func = imp.split('!')[-1]
+ if func in suspicious_apis:
+ print(f" {imp}")
 
-    # Byte patterns
-    print("\n[+] Candidate hex patterns:")
-    patterns = find_unique_byte_patterns(filepath)
-    for p in patterns[:5]:
-        print(f"  $hex = {{ {p} }}")
+ # Byte patterns
+ print("\n[+] Candidate hex patterns:")
+ patterns = find_unique_byte_patterns(filepath)
+ for p in patterns[:5]:
+ print(f" $hex = {{ {p} }}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print(f"Usage: {sys.argv[0]} <sample_path>")
-        sys.exit(1)
-    suggest_rule_strings(sys.argv[1])
+ if len(sys.argv) < 2:
+ print(f"Usage: {sys.argv[0]} <sample_path>")
+ sys.exit(1)
+ suggest_rule_strings(sys.argv[1])
 ```
 
 ### Step 2: Write and Test YARA Rules
@@ -213,77 +213,77 @@ import yara
 import os
 
 def create_yara_rule(rule_name, meta, strings, condition):
-    """Generate a YARA rule from components."""
-    meta_str = "\n".join(f'        {k} = "{v}"' for k, v in meta.items())
-    strings_str = "\n".join(f"        {s}" for s in strings)
+ """Generate a YARA rule from components."""
+ meta_str = "\n".join(f' {k} = "{v}"' for k, v in meta.items())
+ strings_str = "\n".join(f" {s}" for s in strings)
 
-    rule = f"""rule {rule_name} {{
-    meta:
+ rule = f"""rule {rule_name} {{
+ meta:
 {meta_str}
 
-    strings:
+ strings:
 {strings_str}
 
-    condition:
-        {condition}
+ condition:
+ {condition}
 }}"""
-    return rule
+ return rule
 
 
 def test_yara_rule(rule_text, test_dir):
-    """Compile and test YARA rule against sample directory."""
-    try:
-        rules = yara.compile(source=rule_text)
-    except yara.SyntaxError as e:
-        print(f"[-] YARA syntax error: {e}")
-        return None
+ """Compile and test YARA rule against sample directory."""
+ try:
+ rules = yara.compile(source=rule_text)
+ except yara.SyntaxError as e:
+ print(f"[-] YARA syntax error: {e}")
+ return None
 
-    results = {"matches": [], "no_match": []}
+ results = {"matches": [], "no_match": []}
 
-    for filename in os.listdir(test_dir):
-        filepath = os.path.join(test_dir, filename)
-        if not os.path.isfile(filepath):
-            continue
+ for filename in os.listdir(test_dir):
+ filepath = os.path.join(test_dir, filename)
+ if not os.path.isfile(filepath):
+ continue
 
-        matches = rules.match(filepath)
-        if matches:
-            results["matches"].append({
-                "file": filename,
-                "rules": [m.rule for m in matches],
-            })
-        else:
-            results["no_match"].append(filename)
+ matches = rules.match(filepath)
+ if matches:
+ results["matches"].append({
+ "file": filename,
+ "rules": [m.rule for m in matches],
+ })
+ else:
+ results["no_match"].append(filename)
 
-    print(f"[+] Matches: {len(results['matches'])}")
-    print(f"[-] No match: {len(results['no_match'])}")
-    return results
+ print(f"[+] Matches: {len(results['matches'])}")
+ print(f"[-] No match: {len(results['no_match'])}")
+ return results
 
 
 # Example: Create a rule for a hypothetical malware family
 example_rule = create_yara_rule(
-    rule_name="MalwareFamily_Variant_A",
-    meta={
-        "description": "Detects MalwareFamily Variant A",
-        "author": "Malware Analysis Team",
-        "date": "2025-01-01",
-        "hash": "abc123...",
-        "tlp": "WHITE",
-    },
-    strings=[
-        '$mutex = "Global\\\\UniqueM4lwareMutex" ascii wide',
-        '$c2_pattern = /https?:\\/\\/[a-z]{5,10}\\.(xyz|top|buzz)\\/gate\\.php/',
-        '$api1 = "VirtualAllocEx" ascii',
-        '$api2 = "WriteProcessMemory" ascii',
-        '$api3 = "CreateRemoteThread" ascii',
-        '$hex_decrypt = { 8B 45 ?? 33 C1 89 45 ?? 83 C1 04 }',
-        '$pdb = "C:\\\\Users\\\\" ascii',
-    ],
-    condition=(
-        'uint16(0) == 0x5A4D and filesize < 2MB and '
-        '($mutex or $c2_pattern) and '
-        '2 of ($api*) and '
-        '$hex_decrypt'
-    ),
+ rule_name="MalwareFamily_Variant_A",
+ meta={
+ "description": "Detects MalwareFamily Variant A",
+ "author": "Malware Analysis Team",
+ "date": "2025-01-01",
+ "hash": "abc123...",
+ "tlp": "WHITE",
+ },
+ strings=[
+ '$mutex = "Global\\\\UniqueM4lwareMutex" ascii wide',
+ '$c2_pattern = /https?:\\/\\/[a-z]{5,10}\\.(xyz|top|buzz)\\/gate\\.php/',
+ '$api1 = "VirtualAllocEx" ascii',
+ '$api2 = "WriteProcessMemory" ascii',
+ '$api3 = "CreateRemoteThread" ascii',
+ '$hex_decrypt = { 8B 45 ?? 33 C1 89 45 ?? 83 C1 04 }',
+ '$pdb = "C:\\\\Users\\\\" ascii',
+ ],
+ condition=(
+ 'uint16(0) == 0x5A4D and filesize < 2MB and '
+ '($mutex or $c2_pattern) and '
+ '2 of ($api*) and '
+ '$hex_decrypt'
+ ),
 )
 
 print(example_rule)
@@ -295,36 +295,36 @@ print(example_rule)
 import time
 
 def benchmark_rule(rule_text, scan_directory, iterations=3):
-    """Benchmark YARA rule scan performance."""
-    rules = yara.compile(source=rule_text)
+ """Benchmark YARA rule scan performance."""
+ rules = yara.compile(source=rule_text)
 
-    files = []
-    for root, _, filenames in os.walk(scan_directory):
-        for f in filenames:
-            files.append(os.path.join(root, f))
+ files = []
+ for root, _, filenames in os.walk(scan_directory):
+ for f in filenames:
+ files.append(os.path.join(root, f))
 
-    print(f"[+] Benchmarking against {len(files)} files "
-          f"({iterations} iterations)")
+ print(f"[+] Benchmarking against {len(files)} files "
+ f"({iterations} iterations)")
 
-    times = []
-    for i in range(iterations):
-        start = time.perf_counter()
-        matches = 0
-        for filepath in files:
-            try:
-                result = rules.match(filepath)
-                if result:
-                    matches += 1
-            except Exception:
-                pass
-        elapsed = time.perf_counter() - start
-        times.append(elapsed)
-        print(f"  Iteration {i+1}: {elapsed:.3f}s ({matches} matches)")
+ times = []
+ for i in range(iterations):
+ start = time.perf_counter()
+ matches = 0
+ for filepath in files:
+ try:
+ result = rules.match(filepath)
+ if result:
+ matches += 1
+ except Exception:
+ pass
+ elapsed = time.perf_counter() - start
+ times.append(elapsed)
+ print(f" Iteration {i+1}: {elapsed:.3f}s ({matches} matches)")
 
-    avg_time = sum(times) / len(times)
-    files_per_sec = len(files) / avg_time
-    print(f"\n[+] Average: {avg_time:.3f}s ({files_per_sec:.0f} files/sec)")
-    return avg_time
+ avg_time = sum(times) / len(times)
+ files_per_sec = len(files) / avg_time
+ print(f"\n[+] Average: {avg_time:.3f}s ({files_per_sec:.0f} files/sec)")
+ return avg_time
 ```
 
 ## Validation Criteria

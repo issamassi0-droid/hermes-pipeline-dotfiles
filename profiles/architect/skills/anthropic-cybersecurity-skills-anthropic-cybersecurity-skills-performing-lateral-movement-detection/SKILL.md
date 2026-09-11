@@ -1,15 +1,15 @@
 ---
 name: performing-lateral-movement-detection
 description: 'Detects lateral movement techniques including Pass-the-Hash, PsExec,
-  WMI execution, RDP pivoting, and SMB-based spreading by correlating Windows Security/Sysmon
-  event logs, network flow data (NetFlow/Zeek), and endpoint telemetry in a SIEM,
-  mapped to MITRE ATT&CK Lateral Movement (TA0008) techniques with sample SPL detection
-  queries. Use when a SOC team needs to detect attackers pivoting between internal
-  systems after initial compromise, trace an attacker''s movement path during an
-  incident investigation, or build detection engineering rules for TA0008; not for
-  detecting initial access or external attacks.
+ WMI execution, RDP pivoting, and SMB-based spreading by correlating Windows Security/Sysmon
+ event logs, network flow data (NetFlow/Zeek), and endpoint telemetry in a SIEM,
+ mapped to MITRE ATT&CK Lateral Movement (TA0008) techniques with sample SPL detection
+ queries. Use when a SOC team needs to detect attackers pivoting between internal
+ systems after initial compromise, trace an attacker''s movement path during an
+ incident investigation, or build detection engineering rules for TA0008; not for
+ detecting initial access or external attacks.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -73,7 +73,7 @@ index=wineventlog sourcetype="WinEventLog:Security" EventCode=4624 Logon_Type=3
 AuthenticationPackageName="NTLM"
 | where TargetUserName!="ANONYMOUS LOGON" AND TargetUserName!="$"
 | stats count, dc(ComputerName) AS unique_targets, values(ComputerName) AS targets
-  by src_ip, TargetUserName
+ by src_ip, TargetUserName
 | where unique_targets > 3
 | eval alert = "Possible Pass-the-Hash: NTLM network logon to ".unique_targets." hosts"
 | sort - unique_targets
@@ -96,7 +96,7 @@ TicketEncryptionType="0x17"
 index=wineventlog sourcetype="WinEventLog:Security" EventCode=4769
 | where TicketOptions="0x40810000" OR TicketOptions="0x40800000"
 | eval ticket_lifetime = TicketExpireTime - TicketIssueTime
-| where ticket_lifetime > 36000  --- >10 hours (abnormal)
+| where ticket_lifetime > 36000 --- >10 hours (abnormal)
 | stats count by src_ip, TargetUserName, ServiceName, TicketEncryptionType, TicketOptions
 | eval alert = "Possible Golden/Silver Ticket: Abnormal ticket properties"
 ```
@@ -129,9 +129,9 @@ index=sysmon EventCode=1
 (Image="*\\wmic.exe" AND CommandLine="*/node:*")
 OR (ParentImage="*\\WmiPrvSE.exe" AND Image IN ("*\\cmd.exe", "*\\powershell.exe"))
 | eval execution_type = case(
-    match(Image, "wmic"), "WMI Command Line",
-    match(ParentImage, "WmiPrvSE"), "WMI Provider Host (remote execution)"
-  )
+ match(Image, "wmic"), "WMI Command Line",
+ match(ParentImage, "WmiPrvSE"), "WMI Provider Host (remote execution)"
+ )
 | table _time, Computer, User, execution_type, ParentImage, Image, CommandLine
 ```
 
@@ -155,8 +155,8 @@ Image IN ("*\\cmd.exe", "*\\powershell.exe", "*\\csc.exe")
 ```spl
 index=wineventlog sourcetype="WinEventLog:Security" EventCode=4624 Logon_Type=10
 | stats count, dc(ComputerName) AS rdp_targets, values(ComputerName) AS destinations,
-        earliest(_time) AS first_rdp, latest(_time) AS last_rdp
-  by src_ip, TargetUserName
+ earliest(_time) AS first_rdp, latest(_time) AS last_rdp
+ by src_ip, TargetUserName
 | where rdp_targets > 2
 | eval duration_hours = round((last_rdp - first_rdp) / 3600, 1)
 | eval alert = TargetUserName." RDP'd to ".rdp_targets." hosts in ".duration_hours." hours"
@@ -171,14 +171,14 @@ index=firewall OR index=zeek sourcetype IN ("pan:traffic", "bro:conn:json")
 dest_port=445 action=allowed
 | where src_ip!=dest_ip
 | stats count AS smb_sessions, dc(dest_ip) AS unique_targets,
-        sum(bytes_out) AS total_bytes
-  by src_ip
+ sum(bytes_out) AS total_bytes
+ by src_ip
 | where unique_targets > 10
 | eval alert = case(
-    unique_targets > 50, "CRITICAL: Mass SMB enumeration from ".src_ip,
-    unique_targets > 20, "HIGH: Significant SMB lateral movement",
-    unique_targets > 10, "MEDIUM: Elevated SMB connections"
-  )
+ unique_targets > 50, "CRITICAL: Mass SMB enumeration from ".src_ip,
+ unique_targets > 20, "HIGH: Significant SMB lateral movement",
+ unique_targets > 10, "MEDIUM: Elevated SMB connections"
+ )
 | sort - unique_targets
 ```
 
@@ -202,7 +202,7 @@ Visualize the attack path:
 index=wineventlog EventCode=4624 Logon_Type IN (3, 10)
 earliest=-24h
 | stats count AS connections, latest(_time) AS last_connection
-  by src_ip, ComputerName, TargetUserName, Logon_Type
+ by src_ip, ComputerName, TargetUserName, Logon_Type
 | eval edge = src_ip." -> ".ComputerName." (User: ".TargetUserName.", Type: ".Logon_Type.")"
 | sort - connections
 | table edge, connections, last_connection
@@ -211,14 +211,14 @@ earliest=-24h
 index=netflow earliest=-24h
 dest_port IN (445, 135, 3389, 5985, 5986)
 | stats sum(bytes) AS total_bytes, count AS flow_count,
-        dc(dest_ip) AS targets by src_ip, dest_port
+ dc(dest_ip) AS targets by src_ip, dest_port
 | where targets > 5
 | eval service = case(
-    dest_port=445, "SMB",
-    dest_port=135, "RPC/WMI",
-    dest_port=3389, "RDP",
-    dest_port IN (5985, 5986), "WinRM"
-  )
+ dest_port=445, "SMB",
+ dest_port=135, "RPC/WMI",
+ dest_port=3389, "RDP",
+ dest_port IN (5985, 5986), "WinRM"
+ )
 | sort - targets
 | table src_ip, service, targets, flow_count, total_bytes
 ```
@@ -253,13 +253,13 @@ Build end-to-end attack chain detection:
 index=wineventlog OR index=sysmon
 (EventCode=4625 OR EventCode=4624 OR EventCode=1 OR EventCode=4698 OR EventCode=5140)
 | eval phase = case(
-    EventCode=4625, "1-Recon/BruteForce",
-    EventCode=4624 AND Logon_Type=3, "2-Lateral Movement",
-    EventCode=5140 AND match(ShareName, "C\$|ADMIN\$"), "3-Admin Share Access",
-    EventCode=1 AND match(ParentImage, "psexesvc|WmiPrvSE|wsmprovhost"), "4-Remote Execution",
-    EventCode=4698, "5-Persistence (Scheduled Task)",
-    1=1, "other"
-  )
+ EventCode=4625, "1-Recon/BruteForce",
+ EventCode=4624 AND Logon_Type=3, "2-Lateral Movement",
+ EventCode=5140 AND match(ShareName, "C\$|ADMIN\$"), "3-Admin Share Access",
+ EventCode=1 AND match(ParentImage, "psexesvc|WmiPrvSE|wsmprovhost"), "4-Remote Execution",
+ EventCode=4698, "5-Persistence (Scheduled Task)",
+ 1=1, "other"
+ )
 | where phase!="other"
 | stats count by phase, src_ip, ComputerName, TargetUserName
 | sort phase, _time
@@ -298,23 +298,23 @@ index=wineventlog OR index=sysmon
 ```
 LATERAL MOVEMENT DETECTION REPORT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Period:       2024-03-15 14:00 to 18:00 UTC
-Source:       192.168.1.105 (WORKSTATION-042)
+Period: 2024-03-15 14:00 to 18:00 UTC
+Source: 192.168.1.105 (WORKSTATION-042)
 
 Movement Path:
-  14:23  192.168.1.105 → 10.0.5.20  (DC-PRIMARY) — PtH via NTLM Type 3
-  14:25  10.0.5.20 → 10.0.5.21     (DC-BACKUP)  — Kerberos ticket reuse
-  14:28  10.0.5.20 → 10.0.10.15    (FILESERVER-01) — PsExec service creation
-  14:32  10.0.10.15 → 10.0.10.20   (DB-PRIMARY) — WMI remote execution
-  14:35  10.0.10.20 → 10.0.10.25   (DB-BACKUP)  — SMB admin share access
+ 14:23 192.168.1.105 → 10.0.5.20 (DC-PRIMARY) — PtH via NTLM Type 3
+ 14:25 10.0.5.20 → 10.0.5.21 (DC-BACKUP) — Kerberos ticket reuse
+ 14:28 10.0.5.20 → 10.0.10.15 (FILESERVER-01) — PsExec service creation
+ 14:32 10.0.10.15 → 10.0.10.20 (DB-PRIMARY) — WMI remote execution
+ 14:35 10.0.10.20 → 10.0.10.25 (DB-BACKUP) — SMB admin share access
 
 Techniques Detected:
-  T1550.002 — Pass-the-Hash (NTLM authentication to DC)
-  T1021.002 — PsExec (remote service installation)
-  T1047     — WMI Execution (WmiPrvSE child process)
-  T1021.002 — SMB Admin Share (C$ access on DB-BACKUP)
+ T1550.002 — Pass-the-Hash (NTLM authentication to DC)
+ T1021.002 — PsExec (remote service installation)
+ T1047 — WMI Execution (WmiPrvSE child process)
+ T1021.002 — SMB Admin Share (C$ access on DB-BACKUP)
 
 Affected Systems: 5 hosts across 2 network segments
-User Account:     admin_compromised (Domain Admin)
-Containment:      All 5 hosts isolated at 14:45 UTC
+User Account: admin_compromised (Domain Admin)
+Containment: All 5 hosts isolated at 14:45 UTC
 ```

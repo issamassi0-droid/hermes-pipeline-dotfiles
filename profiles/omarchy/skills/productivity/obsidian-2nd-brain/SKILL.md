@@ -5,8 +5,8 @@ version: 0.1.0
 author: Hermes
 platforms: [linux, macos]
 metadata:
-  hermes:
-    tags: [Obsidian, Productivity, Second-Brain, Knowledge-Management, Workflow]
+ hermes:
+ tags: [Obsidian, Productivity, Second-Brain, Knowledge-Management, Workflow]
 ---
 
 # Obsidian 2nd Brain (Second Brain Prompt Pack)

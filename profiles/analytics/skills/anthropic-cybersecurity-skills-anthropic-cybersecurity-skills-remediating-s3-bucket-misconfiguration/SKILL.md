@@ -1,13 +1,13 @@
 ---
 name: remediating-s3-bucket-misconfiguration
 description: 'Provides step-by-step procedures for remediating Amazon S3 bucket
-  misconfigurations that expose sensitive data: enabling S3 Block Public Access,
-  auditing bucket policies and ACLs, enforcing encryption, configuring access logging,
-  and deploying automated remediation with AWS Config and Lambda. Use when AWS Config
-  or Security Hub flags public or unencrypted S3 buckets, or preparing audit evidence
-  for storage security controls.
+ misconfigurations that expose sensitive data: enabling S3 Block Public Access,
+ auditing bucket policies and ACLs, enforcing encryption, configuring access logging,
+ and deploying automated remediation with AWS Config and Lambda. Use when AWS Config
+ or Security Hub flags public or unencrypted S3 buckets, or preparing audit evidence
+ for storage security controls.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -60,30 +60,30 @@ Use multiple detection methods to identify S3 buckets with public access. Rely o
 ```bash
 # Enable S3 Access Analyzer for external access detection
 aws accessanalyzer create-analyzer \
-  --analyzer-name s3-analyzer \
-  --type ACCOUNT
+ --analyzer-name s3-analyzer \
+ --type ACCOUNT
 
 # List all S3 buckets with public access indicators
 aws s3api list-buckets --query 'Buckets[*].Name' --output text | while read bucket; do
-  public_status=$(aws s3api get-public-access-block --bucket "$bucket" 2>/dev/null)
-  if [ $? -ne 0 ]; then
-    echo "NO PUBLIC ACCESS BLOCK: $bucket"
-  fi
+ public_status=$(aws s3api get-public-access-block --bucket "$bucket" 2>/dev/null)
+ if [ $? -ne 0 ]; then
+ echo "NO PUBLIC ACCESS BLOCK: $bucket"
+ fi
 done
 
 # Check bucket policies for public access grants
 aws s3api list-buckets --query 'Buckets[*].Name' --output text | while read bucket; do
-  policy=$(aws s3api get-bucket-policy --bucket "$bucket" 2>/dev/null)
-  if echo "$policy" | grep -q '"Principal":"*"' 2>/dev/null; then
-    echo "PUBLIC POLICY DETECTED: $bucket"
-  fi
+ policy=$(aws s3api get-bucket-policy --bucket "$bucket" 2>/dev/null)
+ if echo "$policy" | grep -q '"Principal":"*"' 2>/dev/null; then
+ echo "PUBLIC POLICY DETECTED: $bucket"
+ fi
 done
 
 # Use AWS Config to find non-compliant buckets
 aws configservice get-compliance-details-by-config-rule \
-  --config-rule-name s3-bucket-public-read-prohibited \
-  --compliance-types NON_COMPLIANT \
-  --query 'EvaluationResults[*].EvaluationResultIdentifier.EvaluationResultQualifier.ResourceId'
+ --config-rule-name s3-bucket-public-read-prohibited \
+ --compliance-types NON_COMPLIANT \
+ --query 'EvaluationResults[*].EvaluationResultIdentifier.EvaluationResultQualifier.ResourceId'
 ```
 
 ### Step 2: Enable S3 Block Public Access at Account Level
@@ -93,26 +93,26 @@ Apply the four Block Public Access settings at the AWS account level as a safety
 ```bash
 # Enable account-level Block Public Access (all four settings)
 aws s3control put-public-access-block \
-  --account-id 123456789012 \
-  --public-access-block-configuration '{
-    "BlockPublicAcls": true,
-    "IgnorePublicAcls": true,
-    "BlockPublicPolicy": true,
-    "RestrictPublicBuckets": true
-  }'
+ --account-id 123456789012 \
+ --public-access-block-configuration '{
+ "BlockPublicAcls": true,
+ "IgnorePublicAcls": true,
+ "BlockPublicPolicy": true,
+ "RestrictPublicBuckets": true
+ }'
 
 # Verify account-level settings
 aws s3control get-public-access-block --account-id 123456789012
 
 # Enable at bucket level for defense in depth
 aws s3api put-public-access-block \
-  --bucket production-data-bucket \
-  --public-access-block-configuration '{
-    "BlockPublicAcls": true,
-    "IgnorePublicAcls": true,
-    "BlockPublicPolicy": true,
-    "RestrictPublicBuckets": true
-  }'
+ --bucket production-data-bucket \
+ --public-access-block-configuration '{
+ "BlockPublicAcls": true,
+ "IgnorePublicAcls": true,
+ "BlockPublicPolicy": true,
+ "RestrictPublicBuckets": true
+ }'
 ```
 
 ### Step 3: Audit and Remediate Bucket Policies and ACLs
@@ -125,40 +125,40 @@ aws s3api delete-bucket-policy --bucket exposed-bucket
 
 # Replace with a restrictive policy
 aws s3api put-bucket-policy --bucket exposed-bucket --policy '{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "DenyUnencryptedTransport",
-      "Effect": "Deny",
-      "Principal": "*",
-      "Action": "s3:*",
-      "Resource": [
-        "arn:aws:s3:::exposed-bucket",
-        "arn:aws:s3:::exposed-bucket/*"
-      ],
-      "Condition": {
-        "Bool": {"aws:SecureTransport": "false"}
-      }
-    },
-    {
-      "Sid": "AllowOnlyVPCEndpoint",
-      "Effect": "Deny",
-      "Principal": "*",
-      "Action": "s3:*",
-      "Resource": [
-        "arn:aws:s3:::exposed-bucket",
-        "arn:aws:s3:::exposed-bucket/*"
-      ],
-      "Condition": {
-        "StringNotEquals": {"aws:SourceVpce": "vpce-0abc123def456"}
-      }
-    }
-  ]
+ "Version": "2012-10-17",
+ "Statement": [
+ {
+ "Sid": "DenyUnencryptedTransport",
+ "Effect": "Deny",
+ "Principal": "*",
+ "Action": "s3:*",
+ "Resource": [
+ "arn:aws:s3:::exposed-bucket",
+ "arn:aws:s3:::exposed-bucket/*"
+ ],
+ "Condition": {
+ "Bool": {"aws:SecureTransport": "false"}
+ }
+ },
+ {
+ "Sid": "AllowOnlyVPCEndpoint",
+ "Effect": "Deny",
+ "Principal": "*",
+ "Action": "s3:*",
+ "Resource": [
+ "arn:aws:s3:::exposed-bucket",
+ "arn:aws:s3:::exposed-bucket/*"
+ ],
+ "Condition": {
+ "StringNotEquals": {"aws:SourceVpce": "vpce-0abc123def456"}
+ }
+ }
+ ]
 }'
 
 # Enforce bucket owner for all objects (disable ACLs)
 aws s3api put-bucket-ownership-controls --bucket exposed-bucket \
-  --ownership-controls '{"Rules": [{"ObjectOwnership": "BucketOwnerEnforced"}]}'
+ --ownership-controls '{"Rules": [{"ObjectOwnership": "BucketOwnerEnforced"}]}'
 ```
 
 ### Step 4: Enforce Default Encryption
@@ -168,29 +168,29 @@ Enable default server-side encryption with AWS KMS or AES-256 for all buckets. A
 ```bash
 # Enable default KMS encryption
 aws s3api put-bucket-encryption --bucket production-data-bucket \
-  --server-side-encryption-configuration '{
-    "Rules": [{
-      "ApplyServerSideEncryptionByDefault": {
-        "SSEAlgorithm": "aws:kms",
-        "KMSMasterKeyID": "arn:aws:kms:us-east-1:123456789012:key/key-id"
-      },
-      "BucketKeyEnabled": true
-    }]
-  }'
+ --server-side-encryption-configuration '{
+ "Rules": [{
+ "ApplyServerSideEncryptionByDefault": {
+ "SSEAlgorithm": "aws:kms",
+ "KMSMasterKeyID": "arn:aws:kms:us-east-1:123456789012:key/key-id"
+ },
+ "BucketKeyEnabled": true
+ }]
+ }'
 
 # Deny unencrypted uploads via bucket policy
 aws s3api put-bucket-policy --bucket production-data-bucket --policy '{
-  "Version": "2012-10-17",
-  "Statement": [{
-    "Sid": "DenyUnencryptedUploads",
-    "Effect": "Deny",
-    "Principal": "*",
-    "Action": "s3:PutObject",
-    "Resource": "arn:aws:s3:::production-data-bucket/*",
-    "Condition": {
-      "StringNotEquals": {"s3:x-amz-server-side-encryption": ["aws:kms", "AES256"]}
-    }
-  }]
+ "Version": "2012-10-17",
+ "Statement": [{
+ "Sid": "DenyUnencryptedUploads",
+ "Effect": "Deny",
+ "Principal": "*",
+ "Action": "s3:PutObject",
+ "Resource": "arn:aws:s3:::production-data-bucket/*",
+ "Condition": {
+ "StringNotEquals": {"s3:x-amz-server-side-encryption": ["aws:kms", "AES256"]}
+ }
+ }]
 }'
 ```
 
@@ -201,22 +201,22 @@ Configure S3 server access logging and CloudTrail data events to track all objec
 ```bash
 # Enable server access logging
 aws s3api put-bucket-logging --bucket production-data-bucket \
-  --bucket-logging-status '{
-    "LoggingEnabled": {
-      "TargetBucket": "s3-access-logs-bucket",
-      "TargetPrefix": "production-data-bucket/"
-    }
-  }'
+ --bucket-logging-status '{
+ "LoggingEnabled": {
+ "TargetBucket": "s3-access-logs-bucket",
+ "TargetPrefix": "production-data-bucket/"
+ }
+ }'
 
 # Enable CloudTrail S3 data events
 aws cloudtrail put-event-selectors --trail-name management-trail \
-  --event-selectors '[{
-    "ReadWriteType": "All",
-    "DataResources": [{
-      "Type": "AWS::S3::Object",
-      "Values": ["arn:aws:s3:::production-data-bucket/"]
-    }]
-  }]'
+ --event-selectors '[{
+ "ReadWriteType": "All",
+ "DataResources": [{
+ "Type": "AWS::S3::Object",
+ "Values": ["arn:aws:s3:::production-data-bucket/"]
+ }]
+ }]'
 ```
 
 ### Step 6: Deploy Preventive Controls with SCP and Config
@@ -226,23 +226,23 @@ Use Service Control Policies to prevent disabling Block Public Access across the
 ```bash
 # SCP preventing Block Public Access removal
 aws organizations create-policy \
-  --name PreventS3PublicAccess \
-  --type SERVICE_CONTROL_POLICY \
-  --content '{
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Sid": "DenyRemovePublicAccessBlock",
-      "Effect": "Deny",
-      "Action": [
-        "s3:PutBucketPublicAccessBlock",
-        "s3:PutAccountPublicAccessBlock"
-      ],
-      "Resource": "*",
-      "Condition": {
-        "StringNotLike": {"aws:PrincipalArn": "arn:aws:iam::*:role/SecurityAdmin"}
-      }
-    }]
-  }'
+ --name PreventS3PublicAccess \
+ --type SERVICE_CONTROL_POLICY \
+ --content '{
+ "Version": "2012-10-17",
+ "Statement": [{
+ "Sid": "DenyRemovePublicAccessBlock",
+ "Effect": "Deny",
+ "Action": [
+ "s3:PutBucketPublicAccessBlock",
+ "s3:PutAccountPublicAccessBlock"
+ ],
+ "Resource": "*",
+ "Condition": {
+ "StringNotLike": {"aws:PrincipalArn": "arn:aws:iam::*:role/SecurityAdmin"}
+ }
+ }]
+ }'
 ```
 
 ## Key Concepts
@@ -292,29 +292,29 @@ Assessment Date: 2025-02-23
 Buckets Scanned: 156
 
 ACCOUNT-LEVEL CONTROLS:
-  Block Public Access: ENABLED (all four settings)
-  SCP Preventing Removal: DEPLOYED
+ Block Public Access: ENABLED (all four settings)
+ SCP Preventing Removal: DEPLOYED
 
 CRITICAL FINDINGS (Remediated):
-  [S3-001] production-uploads - Public READ via ACL
-    Status: REMEDIATED - BucketOwnerEnforced applied
-    Objects Exposed: 273,412
-    Duration of Exposure: 47 days
-    Unique External IPs Accessed: 1,247
+ [S3-001] production-uploads - Public READ via ACL
+ Status: REMEDIATED - BucketOwnerEnforced applied
+ Objects Exposed: 273,412
+ Duration of Exposure: 47 days
+ Unique External IPs Accessed: 1,247
 
-  [S3-002] analytics-export - Public bucket policy (Principal: *)
-    Status: REMEDIATED - Policy replaced with VPC endpoint restriction
-    Sensitive Data (Macie): 12,400 objects with PII detected
+ [S3-002] analytics-export - Public bucket policy (Principal: *)
+ Status: REMEDIATED - Policy replaced with VPC endpoint restriction
+ Sensitive Data (Macie): 12,400 objects with PII detected
 
 HIGH FINDINGS:
-  [S3-003] 14 buckets missing default encryption
-    Status: REMEDIATED - KMS encryption enabled
-  [S3-004] 8 buckets without server access logging
-    Status: REMEDIATED - Logging enabled to centralized log bucket
+ [S3-003] 14 buckets missing default encryption
+ Status: REMEDIATED - KMS encryption enabled
+ [S3-004] 8 buckets without server access logging
+ Status: REMEDIATED - Logging enabled to centralized log bucket
 
 SUMMARY:
-  Buckets Remediated: 24/156
-  Encryption Coverage: 100%
-  Access Logging Coverage: 100%
-  Block Public Access: 156/156 buckets
+ Buckets Remediated: 24/156
+ Encryption Coverage: 100%
+ Access Logging Coverage: 100%
+ Block Public Access: 156/156 buckets
 ```

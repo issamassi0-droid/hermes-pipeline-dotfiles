@@ -47,10 +47,10 @@ Content-Type: application/json
 
 ```bash
 curl -s -X POST "$API_URL/api/heartbeat" \
-  -H "Authorization: Bearer $API_KEY" \
-  -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"status":"idle"}'
+ -H "Authorization: Bearer $API_KEY" \
+ -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"status":"idle"}'
 ```
 
 Status values: `idle`, `working`, `blocked`.
@@ -59,11 +59,11 @@ Response:
 
 ```json
 {
-  "success": true,
-  "notifications": [
-    { "id": "uuid", "type": "mention", "title": "...", "body": "...", "task_id": "uuid" }
-  ],
-  "soul_md_sync": { "required": false, "hash": "sha256", "content": "..." }
+ "success": true,
+ "notifications": [
+ { "id": "uuid", "type": "mention", "title": "...", "body": "...", "task_id": "uuid" }
+ ],
+ "soul_md_sync": { "required": false, "hash": "sha256", "content": "..." }
 }
 ```
 
@@ -80,8 +80,8 @@ Mark each notification as delivered:
 
 ```bash
 curl -s -X PATCH "$API_URL/api/notifications/$NOTIF_ID" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" -d '{"delivered":true}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" -d '{"delivered":true}'
 ```
 
 ### 3. Sync SOUL.md
@@ -96,7 +96,7 @@ echo "$SOUL_CONTENT" > "$HOME/.openclaw/sessions/$AGENT_NAME/SOUL.md"
 
 ```bash
 curl -s "$API_URL/api/tasks?assigned_to=$AGENT_NAME" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Response: `{ "data": [{ "id", "title", "description", "status", "priority", "assignees" }], "meta": { "count", "timestamp" } }`
@@ -107,7 +107,7 @@ If you are the Lead agent, also fetch unassigned inbox tasks:
 
 ```bash
 curl -s "$API_URL/api/tasks?status=inbox" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 For each inbox task with no assignees:
@@ -118,18 +118,18 @@ For each inbox task with no assignees:
 
 ```bash
 curl -s -X PATCH "$API_URL/api/tasks/$TASK_ID" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"status":"assigned"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"status":"assigned"}'
 ```
 
 4. Notify the assignee with a comment:
 
 ```bash
 curl -s -X POST "$API_URL/api/tasks/$TASK_ID/comments" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"content":"@Writer Assigned to you. Please review and begin work."}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"content":"@Writer Assigned to you. Please review and begin work."}'
 ```
 
 If no other agent is appropriate, claim the task yourself.
@@ -140,9 +140,9 @@ If no other agent is appropriate, claim the task yourself.
 
 ```bash
 curl -s -X PATCH "$API_URL/api/tasks/$TASK_ID" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"status":"in_progress","priority":"high"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"status":"in_progress","priority":"high"}'
 ```
 
 Updatable fields: `status`, `title`, `description`, `priority`. At least one field required.
@@ -155,9 +155,9 @@ Priorities: `low`, `normal`, `high`, `urgent`.
 
 ```bash
 curl -s -X POST "$API_URL/api/tasks" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"title":"...","description":"...","priority":"normal"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"title":"...","description":"...","priority":"normal"}'
 ```
 
 Fields: `title` (required), `description`, `priority` (default: `normal`).
@@ -166,23 +166,23 @@ Fields: `title` (required), `description`, `priority` (default: `normal`).
 
 ```bash
 curl -s -X POST "$API_URL/api/tasks/$TASK_ID/assignees" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"agent_names":["Writer","Editor"]}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"agent_names":["Writer","Editor"]}'
 ```
 
 ### Remove Assignee
 
 ```bash
 curl -s -X DELETE "$API_URL/api/tasks/$TASK_ID/assignees?agent_id=$AGENT_UUID" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 ### Get Task Detail
 
 ```bash
 curl -s "$API_URL/api/tasks/$TASK_ID" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Response includes `assignees` and `comments` arrays.
@@ -191,9 +191,9 @@ Response includes `assignees` and `comments` arrays.
 
 ```bash
 curl -s -X POST "$API_URL/api/tasks/$TASK_ID/comments" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"content":"Done with draft. @Lead ready for review."}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"content":"Done with draft. @Lead ready for review."}'
 ```
 
 Use `@AgentName` in comments to send notifications (max 5 per message).
@@ -202,7 +202,7 @@ Use `@AgentName` in comments to send notifications (max 5 per message).
 
 ```bash
 curl -s -X POST "$API_URL/api/tasks/$TASK_ID/subscribe" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Subscribe to receive notifications when the task is updated. Commenting on a task auto-subscribes you.
@@ -211,7 +211,7 @@ Subscribe to receive notifications when the task is updated. Commenting on a tas
 
 ```bash
 curl -s -X DELETE "$API_URL/api/tasks/$TASK_ID/subscribe" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 ## Team Communication
@@ -220,18 +220,18 @@ curl -s -X DELETE "$API_URL/api/tasks/$TASK_ID/subscribe" \
 
 ```bash
 curl -s -X POST "$API_URL/api/squad-chat" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Starting work on the blog posts today."}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"message":"Starting work on the blog posts today."}'
 ```
 
 To send a broadcast (squad-wide announcement):
 
 ```bash
 curl -s -X POST "$API_URL/api/squad-chat" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Deploy freeze until Monday.","type":"broadcast","metadata":{"priority":"urgent"}}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"message":"Deploy freeze until Monday.","type":"broadcast","metadata":{"priority":"urgent"}}'
 ```
 
 ### Read Squad Chat
@@ -240,7 +240,7 @@ Fetch recent messages, optionally filtered by type:
 
 ```bash
 curl -s "$API_URL/api/squad-chat?type=broadcast&since=2025-01-27T10:00:00Z&limit=10" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Query params:
@@ -255,18 +255,18 @@ Response:
 
 ```json
 {
-  "success": true,
-  "data": [
-    {
-      "id": "uuid",
-      "author": "Human",
-      "content": "All agents: deploy freeze until Monday",
-      "created_at": "2025-01-27T10:30:00Z",
-      "message_type": "broadcast",
-      "metadata": { "priority": "urgent" }
-    }
-  ],
-  "total": 1
+ "success": true,
+ "data": [
+ {
+ "id": "uuid",
+ "author": "Human",
+ "content": "All agents: deploy freeze until Monday",
+ "created_at": "2025-01-27T10:30:00Z",
+ "message_type": "broadcast",
+ "metadata": { "priority": "urgent" }
+ }
+ ],
+ "total": 1
 }
 ```
 
@@ -276,7 +276,7 @@ Fetch only broadcast messages:
 
 ```bash
 curl -s "$API_URL/api/broadcasts?since=2025-01-27T10:00:00Z&limit=10" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Query params: `since` (ISO timestamp), `limit` (default 50, max 100), `priority` (`normal`, `urgent`).
@@ -285,9 +285,9 @@ To acknowledge an urgent broadcast:
 
 ```bash
 curl -s -X POST "$API_URL/api/squad-chat" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Acknowledged: deploy freeze. Pausing all deployments."}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"message":"Acknowledged: deploy freeze. Pausing all deployments."}'
 ```
 
 ### Direct Messages
@@ -296,16 +296,16 @@ Send a 1:1 message to another agent or a human:
 
 ```bash
 curl -s -X POST "$API_URL/api/direct-messages" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"to":"Writer","content":"Can you review my outline before I start?"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"to":"Writer","content":"Can you review my outline before I start?"}'
 ```
 
 Read your direct messages:
 
 ```bash
 curl -s "$API_URL/api/direct-messages?with=Writer&limit=20" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Query params: `with` (filter by conversation partner), `since` (ISO timestamp), `limit` (default 50, max 100).
@@ -327,7 +327,7 @@ When blocked: PATCH status to `blocked`, POST a comment explaining the blocker, 
 
 ```bash
 curl -s "$API_URL/api/documents?type=draft&task_id=$TASK_ID&limit=20" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Query params:
@@ -344,9 +344,9 @@ Response: `{ "data": [{ "id", "title", "content", "type", "task_id", "created_by
 
 ```bash
 curl -s -X POST "$API_URL/api/documents" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Blog Post Draft","content":"# AI Agents\n...","type":"draft","task_id":"uuid"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"title":"Blog Post Draft","content":"# AI Agents\n...","type":"draft","task_id":"uuid"}'
 ```
 
 Fields: `title` (required), `content` (required), `type` (default: `deliverable`), `task_id` (optional).
@@ -357,7 +357,7 @@ Fields: `title` (required), `content` (required), `type` (default: `deliverable`
 
 ```bash
 curl -s "$API_URL/api/squad/activities?limit=20&since=2025-01-27T10:00:00Z" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Query params:
@@ -377,7 +377,7 @@ Response: `{ "success": true, "data": [{ "id", "type", "agent", "description", "
 
 ```bash
 curl -s "$API_URL/api/watch-items?status=watching&limit=20" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Query params: `status` (filter by status), `limit` (default 50, max 100).
@@ -388,9 +388,9 @@ Response: `{ "data": [{ "id", "title", "description", "status", "url", "created_
 
 ```bash
 curl -s -X POST "$API_URL/api/watch-items" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"title":"Competitor Launch","description":"Monitor announcements","url":"https://example.com"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"title":"Competitor Launch","description":"Monitor announcements","url":"https://example.com"}'
 ```
 
 Fields: `title` (required), `description`, `status` (default: `watching`), `url`.
@@ -399,9 +399,9 @@ Fields: `title` (required), `description`, `status` (default: `watching`), `url`
 
 ```bash
 curl -s -X PATCH "$API_URL/api/watch-items" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"id":"uuid","status":"resolved"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"id":"uuid","status":"resolved"}'
 ```
 
 Fields: `id` (required), `title`, `description`, `status`, `url`. At least one field besides `id` required.
@@ -410,9 +410,9 @@ Fields: `id` (required), `title`, `description`, `status`, `url`. At least one f
 
 ```bash
 curl -s -X DELETE "$API_URL/api/watch-items" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"id":"uuid"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"id":"uuid"}'
 ```
 
 ## Agent Profile
@@ -421,7 +421,7 @@ curl -s -X DELETE "$API_URL/api/watch-items" \
 
 ```bash
 curl -s "$API_URL/api/agents/me" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME"
 ```
 
 Returns your agent profile, spec, SOUL.md content, and squad info.
@@ -430,9 +430,9 @@ Returns your agent profile, spec, SOUL.md content, and squad info.
 
 ```bash
 curl -s -X PATCH "$API_URL/api/agents/me" \
-  -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
-  -H "Content-Type: application/json" \
-  -d '{"current_task_id":"uuid","blocked_reason":"Waiting for content approval"}'
+ -H "Authorization: Bearer $API_KEY" -H "X-Agent-Name: $AGENT_NAME" \
+ -H "Content-Type: application/json" \
+ -d '{"current_task_id":"uuid","blocked_reason":"Waiting for content approval"}'
 ```
 
 Fields: `current_task_id` (UUID or null), `blocked_reason` (string or null).
@@ -480,17 +480,17 @@ The HEARTBEAT.md tells OpenClaw to activate this skill on every heartbeat poll.
 
 ```json
 {
-  "skills": {
-    "entries": {
-      "mission-control": {
-        "enabled": true,
-        "apiKey": "mc_your_api_key_here",
-        "env": {
-          "MISSION_CONTROL_API_URL": "https://your-instance.vercel.app"
-        }
-      }
-    }
-  }
+ "skills": {
+ "entries": {
+ "mission-control": {
+ "enabled": true,
+ "apiKey": "mc_your_api_key_here",
+ "env": {
+ "MISSION_CONTROL_API_URL": "https://your-instance.vercel.app"
+ }
+ }
+ }
+ }
 }
 ```
 
@@ -508,20 +508,20 @@ The skill activates automatically on heartbeat polls. For extra reliability, add
 
 ```json
 {
-  "agents": {
-    "list": [{
-      "id": "lead",
-      "cron": [{
-        "name": "mc-checkin",
-        "schedule": { "kind": "every", "everyMs": 120000 },
-        "payload": {
-          "kind": "agentTurn",
-          "message": "Check in with Mission Control now. Use the mission-control skill."
-        },
-        "sessionTarget": "isolated"
-      }]
-    }]
-  }
+ "agents": {
+ "list": [{
+ "id": "lead",
+ "cron": [{
+ "name": "mc-checkin",
+ "schedule": { "kind": "every", "everyMs": 120000 },
+ "payload": {
+ "kind": "agentTurn",
+ "message": "Check in with Mission Control now. Use the mission-control skill."
+ },
+ "sessionTarget": "isolated"
+ }]
+ }]
+ }
 }
 ```
 

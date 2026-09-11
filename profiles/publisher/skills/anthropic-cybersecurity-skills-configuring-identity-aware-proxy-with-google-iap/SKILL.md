@@ -1,13 +1,13 @@
 ---
 name: configuring-identity-aware-proxy-with-google-iap
 description: 'Configures Google Cloud Identity-Aware Proxy (IAP) via gcloud to enforce
-  per-request identity verification on Compute Engine, App Engine, Cloud Run, and
-  GKE, including IAM bindings, Access Context Manager access levels, session/reauth
-  settings, and service-account programmatic access. Use when replacing VPN access
-  with identity-based access to GCP backends or configuring context-aware, zero-trust
-  policies for Google Cloud services.
+ per-request identity verification on Compute Engine, App Engine, Cloud Run, and
+ GKE, including IAM bindings, Access Context Manager access levels, session/reauth
+ settings, and service-account programmatic access. Use when replacing VPN access
+ with identity-based access to GCP backends or configuring context-aware, zero-trust
+ policies for Google Cloud services.
 
-  '
+ '
 domain: cybersecurity
 subdomain: zero-trust-architecture
 tags:
@@ -31,27 +31,27 @@ mitre_attack:
 - T1133
 - T1021.007
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  techniques:
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: F1004
-    name: Access with Stolen Session Cookie
-    tactic: initial-access
-    source: f3
-  - id: T1550.001
-    name: 'Use Alternate Authentication Material: Application Access Token'
-    tactic: initial-access
-    source: attack
-  - id: T1539
-    name: Steal Web Session Cookie
-    tactic: positioning
-    source: attack
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ techniques:
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: F1004
+ name: Access with Stolen Session Cookie
+ tactic: initial-access
+ source: f3
+ - id: T1550.001
+ name: 'Use Alternate Authentication Material: Application Access Token'
+ tactic: initial-access
+ source: attack
+ - id: T1539
+ name: Steal Web Session Cookie
+ tactic: positioning
+ source: attack
 ---
 
 # Configuring Identity-Aware Proxy with Google IAP
@@ -88,51 +88,51 @@ gcloud services enable accesscontextmanager.googleapis.com
 
 # Create OAuth consent screen
 gcloud iap oauth-brands create \
-  --application_title="Internal Applications" \
-  --support_email=security@company.com
+ --application_title="Internal Applications" \
+ --support_email=security@company.com
 
 # Create OAuth client
 gcloud iap oauth-clients create \
-  projects/PROJECT_ID/brands/BRAND_ID \
-  --display_name="IAP Web Client"
+ projects/PROJECT_ID/brands/BRAND_ID \
+ --display_name="IAP Web Client"
 
 # === Enable IAP on Compute Engine Backend Service ===
 gcloud compute backend-services update my-backend-service \
-  --iap=enabled,oauth2-client-id=CLIENT_ID,oauth2-client-secret=CLIENT_SECRET \
-  --global
+ --iap=enabled,oauth2-client-id=CLIENT_ID,oauth2-client-secret=CLIENT_SECRET \
+ --global
 
 # === Enable IAP on App Engine ===
 gcloud iap web enable \
-  --resource-type=app-engine \
-  --oauth2-client-id=CLIENT_ID \
-  --oauth2-client-secret=CLIENT_SECRET
+ --resource-type=app-engine \
+ --oauth2-client-id=CLIENT_ID \
+ --oauth2-client-secret=CLIENT_SECRET
 
 # === Enable IAP on Cloud Run ===
 # First grant IAP service account the Cloud Run Invoker role
 gcloud run services add-iam-policy-binding my-service \
-  --member="serviceAccount:service-PROJECT_NUM@gcp-sa-iap.iam.gserviceaccount.com" \
-  --role="roles/run.invoker" \
-  --region=us-central1
+ --member="serviceAccount:service-PROJECT_NUM@gcp-sa-iap.iam.gserviceaccount.com" \
+ --role="roles/run.invoker" \
+ --region=us-central1
 
 # Enable IAP on the Cloud Run backend service
 gcloud compute backend-services update my-cloud-run-backend \
-  --iap=enabled,oauth2-client-id=CLIENT_ID,oauth2-client-secret=CLIENT_SECRET \
-  --global
+ --iap=enabled,oauth2-client-id=CLIENT_ID,oauth2-client-secret=CLIENT_SECRET \
+ --global
 
 # === Enable IAP TCP Forwarding for SSH/RDP ===
 # No load balancer needed - uses IAP tunnel
 gcloud compute instances add-iam-policy-binding my-vm \
-  --member="group:developers@company.com" \
-  --role="roles/iap.tunnelResourceAccessor" \
-  --zone=us-central1-a
+ --member="group:developers@company.com" \
+ --role="roles/iap.tunnelResourceAccessor" \
+ --zone=us-central1-a
 
 # SSH through IAP tunnel
 gcloud compute ssh my-vm --zone=us-central1-a --tunnel-through-iap
 
 # RDP through IAP tunnel
 gcloud compute start-iap-tunnel my-windows-vm 3389 \
-  --local-host-port=localhost:3390 \
-  --zone=us-central1-a
+ --local-host-port=localhost:3390 \
+ --zone=us-central1-a
 ```
 
 ### Step 2: Configure IAM Bindings for Access Control
@@ -142,34 +142,34 @@ Grant access to specific users and groups with optional access level conditions.
 ```bash
 # Grant basic access to a group
 gcloud iap web add-iam-policy-binding \
-  --resource-type=backend-services \
-  --service=my-backend-service \
-  --member="group:engineering@company.com" \
-  --role="roles/iap.httpsResourceAccessor"
+ --resource-type=backend-services \
+ --service=my-backend-service \
+ --member="group:engineering@company.com" \
+ --role="roles/iap.httpsResourceAccessor"
 
 # Grant access with access level condition
 gcloud iap web add-iam-policy-binding \
-  --resource-type=backend-services \
-  --service=finance-app \
-  --member="group:finance@company.com" \
-  --role="roles/iap.httpsResourceAccessor" \
-  --condition='expression=request.auth.access_levels.exists(x, x == "accessPolicies/POLICY_ID/accessLevels/corporate-device"),title=RequireCorporateDevice,description=Requires managed corporate device'
+ --resource-type=backend-services \
+ --service=finance-app \
+ --member="group:finance@company.com" \
+ --role="roles/iap.httpsResourceAccessor" \
+ --condition='expression=request.auth.access_levels.exists(x, x == "accessPolicies/POLICY_ID/accessLevels/corporate-device"),title=RequireCorporateDevice,description=Requires managed corporate device'
 
 # Grant access only during business hours
 gcloud iap web add-iam-policy-binding \
-  --resource-type=backend-services \
-  --service=admin-console \
-  --member="group:admins@company.com" \
-  --role="roles/iap.httpsResourceAccessor" \
-  --condition='expression=request.time.getHours("America/New_York") >= 8 && request.time.getHours("America/New_York") <= 18 && request.time.getDayOfWeek("America/New_York") >= 1 && request.time.getDayOfWeek("America/New_York") <= 5,title=BusinessHoursOnly'
+ --resource-type=backend-services \
+ --service=admin-console \
+ --member="group:admins@company.com" \
+ --role="roles/iap.httpsResourceAccessor" \
+ --condition='expression=request.time.getHours("America/New_York") >= 8 && request.time.getHours("America/New_York") <= 18 && request.time.getDayOfWeek("America/New_York") >= 1 && request.time.getDayOfWeek("America/New_York") <= 5,title=BusinessHoursOnly'
 
 # Grant access to a specific URL path
 gcloud iap web add-iam-policy-binding \
-  --resource-type=backend-services \
-  --service=internal-api \
-  --member="group:api-consumers@company.com" \
-  --role="roles/iap.httpsResourceAccessor" \
-  --condition='expression=request.path.startsWith("/api/v2/"),title=APIv2Access'
+ --resource-type=backend-services \
+ --service=internal-api \
+ --member="group:api-consumers@company.com" \
+ --role="roles/iap.httpsResourceAccessor" \
+ --condition='expression=request.path.startsWith("/api/v2/"),title=APIv2Access'
 ```
 
 ### Step 3: Create Access Levels with Access Context Manager
@@ -180,56 +180,56 @@ Define context-based access requirements using device attributes and network con
 # Create access level requiring encrypted corporate device
 cat > managed-device.yaml << 'EOF'
 - devicePolicy:
-    allowedEncryptionStatuses:
-      - ENCRYPTED
-    osConstraints:
-      - osType: DESKTOP_WINDOWS
-        minimumVersion: "10.0.19045"
-      - osType: DESKTOP_MAC
-        minimumVersion: "14.0"
-      - osType: DESKTOP_CHROME_OS
-    requireScreenlock: true
-    requireAdminApproval: true
-    allowedDeviceManagementLevels:
-      - ADVANCED
+ allowedEncryptionStatuses:
+ - ENCRYPTED
+ osConstraints:
+ - osType: DESKTOP_WINDOWS
+ minimumVersion: "10.0.19045"
+ - osType: DESKTOP_MAC
+ minimumVersion: "14.0"
+ - osType: DESKTOP_CHROME_OS
+ requireScreenlock: true
+ requireAdminApproval: true
+ allowedDeviceManagementLevels:
+ - ADVANCED
 EOF
 
 gcloud access-context-manager levels create managed-device \
-  --policy=POLICY_ID \
-  --title="Managed Device" \
-  --basic-level-spec=managed-device.yaml
+ --policy=POLICY_ID \
+ --title="Managed Device" \
+ --basic-level-spec=managed-device.yaml
 
 # Create access level for corporate network
 cat > corp-network.yaml << 'EOF'
 - ipSubnetworks:
-    - "203.0.113.0/24"
-    - "198.51.100.0/24"
-  regions:
-    - US
-    - GB
+ - "203.0.113.0/24"
+ - "198.51.100.0/24"
+ regions:
+ - US
+ - GB
 EOF
 
 gcloud access-context-manager levels create corp-network \
-  --policy=POLICY_ID \
-  --title="Corporate Network" \
-  --basic-level-spec=corp-network.yaml
+ --policy=POLICY_ID \
+ --title="Corporate Network" \
+ --basic-level-spec=corp-network.yaml
 
 # Create custom access level using CEL for complex logic
 cat > high-trust.yaml << 'EOF'
 expression: >
-  device.encryption_status == DeviceEncryptionStatus.ENCRYPTED &&
-  device.is_admin_approved_device == true &&
-  (
-    origin.ip in ["203.0.113.0/24"] ||
-    device.os_type == OsType.DESKTOP_CHROME_OS
-  ) &&
-  request.auth.claims.hd == "company.com"
+ device.encryption_status == DeviceEncryptionStatus.ENCRYPTED &&
+ device.is_admin_approved_device == true &&
+ (
+ origin.ip in ["203.0.113.0/24"] ||
+ device.os_type == OsType.DESKTOP_CHROME_OS
+ ) &&
+ request.auth.claims.hd == "company.com"
 EOF
 
 gcloud access-context-manager levels create high-trust \
-  --policy=POLICY_ID \
-  --title="High Trust" \
-  --custom-level-spec=high-trust.yaml
+ --policy=POLICY_ID \
+ --title="High Trust" \
+ --custom-level-spec=high-trust.yaml
 ```
 
 ### Step 4: Configure Session Settings and Re-authentication
@@ -240,26 +240,26 @@ Set session duration and re-authentication policies per application.
 # Configure re-authentication for a backend service
 # Requires login every 4 hours for sensitive apps
 gcloud iap settings set \
-  --project=PROJECT_ID \
-  --resource-type=compute \
-  --service=finance-app \
-  reauthSettings.method=LOGIN \
-  reauthSettings.maxAge=14400s \
-  reauthSettings.policyType=MINIMUM
+ --project=PROJECT_ID \
+ --resource-type=compute \
+ --service=finance-app \
+ reauthSettings.method=LOGIN \
+ reauthSettings.maxAge=14400s \
+ reauthSettings.policyType=MINIMUM
 
 # Configure session settings for App Engine
 gcloud iap settings set \
-  --project=PROJECT_ID \
-  --resource-type=app-engine \
-  reauthSettings.method=SECURE_KEY \
-  reauthSettings.maxAge=3600s \
-  reauthSettings.policyType=MINIMUM
+ --project=PROJECT_ID \
+ --resource-type=app-engine \
+ reauthSettings.method=SECURE_KEY \
+ reauthSettings.maxAge=3600s \
+ reauthSettings.policyType=MINIMUM
 
 # View current IAP settings
 gcloud iap settings get \
-  --project=PROJECT_ID \
-  --resource-type=compute \
-  --service=finance-app
+ --project=PROJECT_ID \
+ --resource-type=compute \
+ --service=finance-app
 ```
 
 ### Step 5: Configure Programmatic Access for Service Accounts
@@ -279,24 +279,24 @@ IAP_CLIENT_ID = "YOUR_IAP_OAUTH_CLIENT_ID.apps.googleusercontent.com"
 IAP_URL = "https://my-app.company.com/api/data"
 
 def access_iap_resource():
-    # Get default credentials (works with service account key or workload identity)
-    credentials, project = google.auth.default()
+ # Get default credentials (works with service account key or workload identity)
+ credentials, project = google.auth.default()
 
-    # Create IAP-authenticated request
-    authed_session = google.auth.transport.requests.AuthorizedSession(
-        credentials,
-        target_audience=IAP_CLIENT_ID
-    )
+ # Create IAP-authenticated request
+ authed_session = google.auth.transport.requests.AuthorizedSession(
+ credentials,
+ target_audience=IAP_CLIENT_ID
+ )
 
-    # Make request to IAP-protected resource
-    response = authed_session.get(IAP_URL)
-    print(f"Status: {response.status_code}")
-    print(f"Response: {response.text[:500]}")
+ # Make request to IAP-protected resource
+ response = authed_session.get(IAP_URL)
+ print(f"Status: {response.status_code}")
+ print(f"Response: {response.text[:500]}")
 
-    return response
+ return response
 
 if __name__ == "__main__":
-    access_iap_resource()
+ access_iap_resource()
 ```
 
 ### Step 6: Set Up Audit Logging and Monitoring
@@ -309,35 +309,35 @@ gcloud projects get-iam-policy PROJECT_ID --format=json > policy.json
 
 # Add IAP audit config to policy.json:
 # {
-#   "service": "iap.googleapis.com",
-#   "auditLogConfigs": [
-#     {"logType": "ADMIN_READ"},
-#     {"logType": "DATA_READ"},
-#     {"logType": "DATA_WRITE"}
-#   ]
+# "service": "iap.googleapis.com",
+# "auditLogConfigs": [
+# {"logType": "ADMIN_READ"},
+# {"logType": "DATA_READ"},
+# {"logType": "DATA_WRITE"}
+# ]
 # }
 
 gcloud projects set-iam-policy PROJECT_ID policy.json
 
 # Create log-based metric for denied access
 gcloud logging metrics create iap-denied-access \
-  --description="Count of IAP access denials" \
-  --log-filter='resource.type="gce_backend_service" AND protoPayload.status.code=16'
+ --description="Count of IAP access denials" \
+ --log-filter='resource.type="gce_backend_service" AND protoPayload.status.code=16'
 
 # Create alerting policy for high denial rates
 gcloud alpha monitoring policies create \
-  --display-name="IAP High Denial Rate" \
-  --condition-display-name="Denied access > 50 in 5 min" \
-  --condition-filter='metric.type="logging.googleapis.com/user/iap-denied-access"' \
-  --condition-threshold-value=50 \
-  --condition-threshold-duration=300s \
-  --notification-channels=projects/PROJECT_ID/notificationChannels/CHANNEL_ID
+ --display-name="IAP High Denial Rate" \
+ --condition-display-name="Denied access > 50 in 5 min" \
+ --condition-filter='metric.type="logging.googleapis.com/user/iap-denied-access"' \
+ --condition-threshold-value=50 \
+ --condition-threshold-duration=300s \
+ --notification-channels=projects/PROJECT_ID/notificationChannels/CHANNEL_ID
 
 # Query IAP access logs
 gcloud logging read '
-  resource.type="gce_backend_service"
-  protoPayload.serviceName="iap.googleapis.com"
-  timestamp >= "2026-02-22T00:00:00Z"
+ resource.type="gce_backend_service"
+ protoPayload.serviceName="iap.googleapis.com"
+ timestamp >= "2026-02-22T00:00:00Z"
 ' --project=PROJECT_ID --format='table(timestamp,protoPayload.authenticationInfo.principalEmail,protoPayload.status.code,resource.labels.backend_service_name)' --limit=50
 ```
 
@@ -388,26 +388,26 @@ Project: ecommerce-internal
 Report Date: 2026-02-23
 
 IAP-PROTECTED SERVICES:
-  Backend Services:     12
-  App Engine:            1
-  Cloud Run:             2
-  IAP TCP Tunnels:       4 (SSH access)
-  Total:                19
+ Backend Services: 12
+ App Engine: 1
+ Cloud Run: 2
+ IAP TCP Tunnels: 4 (SSH access)
+ Total: 19
 
 ACCESS CONTROL:
-  IAM Bindings:         34
-  With Access Levels:   18 (52.9%)
-  Access Levels:         3 (managed-device, corp-network, high-trust)
+ IAM Bindings: 34
+ With Access Levels: 18 (52.9%)
+ Access Levels: 3 (managed-device, corp-network, high-trust)
 
 SESSION POLICIES:
-  Admin tools:          4h re-auth (SECURE_KEY)
-  Sensitive apps:       4h re-auth (LOGIN)
-  General tools:        8h re-auth (LOGIN)
+ Admin tools: 4h re-auth (SECURE_KEY)
+ Sensitive apps: 4h re-auth (LOGIN)
+ General tools: 8h re-auth (LOGIN)
 
 ACCESS LOGS (last 24h):
-  Total requests:       23,456
-  Authenticated:        23,289 (99.3%)
-  Denied by IAM:           112
-  Denied by access level:   55
-  Unique users:            134
+ Total requests: 23,456
+ Authenticated: 23,289 (99.3%)
+ Denied by IAM: 112
+ Denied by access level: 55
+ Unique users: 134
 ```

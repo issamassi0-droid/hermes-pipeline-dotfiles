@@ -1,13 +1,13 @@
 ---
 name: hardening-linux-endpoint-with-cis-benchmark
 description: 'Hardens Linux endpoints using CIS Benchmark recommendations for Ubuntu,
-  RHEL, and CentOS to reduce attack surface, enforce security baselines, and meet
-  compliance requirements. Use when deploying new Linux servers, remediating audit
-  findings, or establishing security baselines for Linux infrastructure. Activates
-  for requests involving Linux hardening, CIS benchmarks for Linux, server security
-  baselines, or Linux configuration compliance.
+ RHEL, and CentOS to reduce attack surface, enforce security baselines, and meet
+ compliance requirements. Use when deploying new Linux servers, remediating audit
+ findings, or establishing security baselines for Linux infrastructure. Activates
+ for requests involving Linux hardening, CIS benchmarks for Linux, server security
+ baselines, or Linux configuration compliance.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -80,7 +80,7 @@ echo "tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0" >> /etc/fstab
 chown root:root /boot/grub/grub.cfg
 chmod 600 /boot/grub/grub.cfg
 # Set GRUB password
-grub-mkpasswd-pbkdf2  # Generate hash, add to /etc/grub.d/40_custom
+grub-mkpasswd-pbkdf2 # Generate hash, add to /etc/grub.d/40_custom
 ```
 
 ### Step 2: Services and Network (Sections 2-3)
@@ -93,7 +93,7 @@ systemctl disable --now rpcbind
 systemctl disable --now xinetd
 
 # 2.2 Ensure NTP is configured
-apt install chrony -y  # or systemd-timesyncd
+apt install chrony -y # or systemd-timesyncd
 systemctl enable --now chrony
 
 # 3.1 Network parameters (host only, not router)
@@ -204,10 +204,10 @@ apt install openscap-scanner scap-security-guide -y
 
 # Run CIS benchmark assessment
 oscap xccdf eval \
-  --profile xccdf_org.ssgproject.content_profile_cis_level1_server \
-  --results /tmp/cis_results.xml \
-  --report /tmp/cis_report.html \
-  /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
+ --profile xccdf_org.ssgproject.content_profile_cis_level1_server \
+ --results /tmp/cis_results.xml \
+ --report /tmp/cis_report.html \
+ /usr/share/xml/scap/ssg/content/ssg-ubuntu2204-ds.xml
 
 # View HTML report in browser for detailed results
 ```

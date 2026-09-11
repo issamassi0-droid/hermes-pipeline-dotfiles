@@ -62,18 +62,18 @@ $app = New-MgServicePrincipal -AppId "SALESFORCE_APP_ID" -DisplayName "Salesforc
 
 # Configure SAML SSO settings
 $samlSettings = @{
-    preferredSingleSignOnMode = "saml"
-    samlSingleSignOnSettings = @{
-        relayState = ""
-    }
+ preferredSingleSignOnMode = "saml"
+ samlSingleSignOnSettings = @{
+ relayState = ""
+ }
 }
 Update-MgServicePrincipal -ServicePrincipalId $app.Id -BodyParameter $samlSettings
 
 # Assign user groups to the application
 New-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $app.Id -BodyParameter @{
-    principalId = "SALES_GROUP_ID"
-    resourceId = $app.Id
-    appRoleId = "DEFAULT_ROLE_ID"
+ principalId = "SALES_GROUP_ID"
+ resourceId = $app.Id
+ appRoleId = "DEFAULT_ROLE_ID"
 }
 ```
 
@@ -84,56 +84,56 @@ Enforce identity and device requirements before granting SaaS access.
 ```powershell
 # Block access from non-compliant devices to sensitive SaaS apps
 $policy = @{
-    displayName = "ZT - Require Compliant Device for SaaS"
-    state = "enabled"
-    conditions = @{
-        applications = @{
-            includeApplications = @("SALESFORCE_APP_ID", "M365_APP_ID", "SLACK_APP_ID")
-        }
-        users = @{
-            includeUsers = @("All")
-            excludeGroups = @("BREAK_GLASS_GROUP")
-        }
-        clientAppTypes = @("browser", "mobileAppsAndDesktopClients")
-    }
-    grantControls = @{
-        operator = "AND"
-        builtInControls = @("mfa", "compliantDevice")
-    }
-    sessionControls = @{
-        cloudAppSecurity = @{
-            isEnabled = $true
-            cloudAppSecurityType = "mcasConfigured"
-        }
-        signInFrequency = @{
-            value = 8
-            type = "hours"
-            isEnabled = $true
-        }
-    }
+ displayName = "ZT - Require Compliant Device for SaaS"
+ state = "enabled"
+ conditions = @{
+ applications = @{
+ includeApplications = @("SALESFORCE_APP_ID", "M365_APP_ID", "SLACK_APP_ID")
+ }
+ users = @{
+ includeUsers = @("All")
+ excludeGroups = @("BREAK_GLASS_GROUP")
+ }
+ clientAppTypes = @("browser", "mobileAppsAndDesktopClients")
+ }
+ grantControls = @{
+ operator = "AND"
+ builtInControls = @("mfa", "compliantDevice")
+ }
+ sessionControls = @{
+ cloudAppSecurity = @{
+ isEnabled = $true
+ cloudAppSecurityType = "mcasConfigured"
+ }
+ signInFrequency = @{
+ value = 8
+ type = "hours"
+ isEnabled = $true
+ }
+ }
 }
 New-MgIdentityConditionalAccessPolicy -BodyParameter $policy
 
 # Block downloads on unmanaged devices
 $downloadPolicy = @{
-    displayName = "ZT - Block Downloads on Unmanaged Devices"
-    state = "enabled"
-    conditions = @{
-        applications = @{ includeApplications = @("SHAREPOINT_APP_ID") }
-        users = @{ includeUsers = @("All") }
-        devices = @{
-            deviceFilter = @{
-                mode = "include"
-                rule = "device.isCompliant -ne True -or device.trustType -ne 'ServerAD'"
-            }
-        }
-    }
-    sessionControls = @{
-        cloudAppSecurity = @{
-            isEnabled = $true
-            cloudAppSecurityType = "mcasConfigured"
-        }
-    }
+ displayName = "ZT - Block Downloads on Unmanaged Devices"
+ state = "enabled"
+ conditions = @{
+ applications = @{ includeApplications = @("SHAREPOINT_APP_ID") }
+ users = @{ includeUsers = @("All") }
+ devices = @{
+ deviceFilter = @{
+ mode = "include"
+ rule = "device.isCompliant -ne True -or device.trustType -ne 'ServerAD'"
+ }
+ }
+ }
+ sessionControls = @{
+ cloudAppSecurity = @{
+ isEnabled = $true
+ cloudAppSecurityType = "mcasConfigured"
+ }
+ }
 }
 New-MgIdentityConditionalAccessPolicy -BodyParameter $downloadPolicy
 ```
@@ -145,43 +145,43 @@ Configure Microsoft Defender for Cloud Apps to discover and control SaaS usage.
 ```bash
 # Query discovered cloud apps via Defender for Cloud Apps API
 curl -X GET "https://api.cloudappsecurity.com/api/v1/discovery/" \
-  -H "Authorization: Token ${MDCA_API_TOKEN}" \
-  -H "Content-Type: application/json"
+ -H "Authorization: Token ${MDCA_API_TOKEN}" \
+ -H "Content-Type: application/json"
 
 # Get list of unsanctioned apps
 curl -X GET "https://api.cloudappsecurity.com/api/v1/discovery/discovered_apps/" \
-  -H "Authorization: Token ${MDCA_API_TOKEN}" \
-  -d '{
-    "filters": {
-      "appTag": {"eq": "unsanctioned"},
-      "traffic": {"gte": 1000}
-    },
-    "sortField": "traffic",
-    "sortDirection": "desc"
-  }'
+ -H "Authorization: Token ${MDCA_API_TOKEN}" \
+ -d '{
+ "filters": {
+ "appTag": {"eq": "unsanctioned"},
+ "traffic": {"gte": 1000}
+ },
+ "sortField": "traffic",
+ "sortDirection": "desc"
+ }'
 
 # Create session policy for DLP enforcement
 curl -X POST "https://api.cloudappsecurity.com/api/v1/policies/" \
-  -H "Authorization: Token ${MDCA_API_TOKEN}" \
-  -d '{
-    "name": "Block PII Upload to SaaS",
-    "policyType": "SESSION",
-    "severity": "HIGH",
-    "enabled": true,
-    "sessionPolicyType": "CONTROL_UPLOAD",
-    "filters": {
-      "fileType": {"eq": ["DOCUMENT", "SPREADSHEET"]},
-      "contentInspection": {
-        "dataType": ["CREDIT_CARD", "SSN", "PASSPORT"]
-      }
-    },
-    "actions": {
-      "block": true,
-      "notify": {
-        "emailRecipients": ["security-team@company.com"]
-      }
-    }
-  }'
+ -H "Authorization: Token ${MDCA_API_TOKEN}" \
+ -d '{
+ "name": "Block PII Upload to SaaS",
+ "policyType": "SESSION",
+ "severity": "HIGH",
+ "enabled": true,
+ "sessionPolicyType": "CONTROL_UPLOAD",
+ "filters": {
+ "fileType": {"eq": ["DOCUMENT", "SPREADSHEET"]},
+ "contentInspection": {
+ "dataType": ["CREDIT_CARD", "SSN", "PASSPORT"]
+ }
+ },
+ "actions": {
+ "block": true,
+ "notify": {
+ "emailRecipients": ["security-team@company.com"]
+ }
+ }
+ }'
 ```
 
 ### Step 4: Configure OAuth App Governance
@@ -191,33 +191,33 @@ Review and restrict OAuth application permissions to prevent excessive consent.
 ```powershell
 # Query OAuth apps with high-privilege permissions
 $oauthApps = Invoke-MgGraphRequest -Method GET `
-  "https://graph.microsoft.com/v1.0/servicePrincipals?\$filter=tags/any(t:t eq 'WindowsAzureActiveDirectoryIntegratedApp')&\$select=displayName,appId,oauth2PermissionScopes"
+ "https://graph.microsoft.com/v1.0/servicePrincipals?\$filter=tags/any(t:t eq 'WindowsAzureActiveDirectoryIntegratedApp')&\$select=displayName,appId,oauth2PermissionScopes"
 
 # Review consent grants
 $grants = Get-MgOauth2PermissionGrant -All
 $highRisk = $grants | Where-Object {
-    $_.Scope -match "Mail.ReadWrite|Files.ReadWrite.All|Directory.ReadWrite.All"
+ $_.Scope -match "Mail.ReadWrite|Files.ReadWrite.All|Directory.ReadWrite.All"
 }
 
 Write-Host "High-risk OAuth grants: $($highRisk.Count)"
 $highRisk | ForEach-Object {
-    $sp = Get-MgServicePrincipal -ServicePrincipalId $_.ClientId
-    Write-Host "  App: $($sp.DisplayName) | Scope: $($_.Scope) | Type: $($_.ConsentType)"
+ $sp = Get-MgServicePrincipal -ServicePrincipalId $_.ClientId
+ Write-Host " App: $($sp.DisplayName) | Scope: $($_.Scope) | Type: $($_.ConsentType)"
 }
 
 # Configure app consent policy to require admin approval
 $consentPolicy = @{
-    displayName = "Require Admin Approval for High-Risk Permissions"
-    conditions = @{
-        clientApplications = @{ includeAllClientApplications = $true }
-        permissions = @{
-            permissionClassification = "high"
-            permissions = @(
-                @{ permissionValue = "Mail.ReadWrite"; permissionType = "delegated" }
-                @{ permissionValue = "Files.ReadWrite.All"; permissionType = "delegated" }
-            )
-        }
-    }
+ displayName = "Require Admin Approval for High-Risk Permissions"
+ conditions = @{
+ clientApplications = @{ includeAllClientApplications = $true }
+ permissions = @{
+ permissionClassification = "high"
+ permissions = @(
+ @{ permissionValue = "Mail.ReadWrite"; permissionType = "delegated" }
+ @{ permissionValue = "Files.ReadWrite.All"; permissionType = "delegated" }
+ )
+ }
+ }
 }
 ```
 
@@ -228,8 +228,8 @@ Audit and remediate SaaS security configuration drift.
 ```bash
 # Query SaaS security posture via CASB API
 curl -X GET "https://api.cloudappsecurity.com/api/v1/security_config/" \
-  -H "Authorization: Token ${MDCA_API_TOKEN}" \
-  -d '{"app": "Microsoft 365"}'
+ -H "Authorization: Token ${MDCA_API_TOKEN}" \
+ -d '{"app": "Microsoft 365"}'
 
 # Common SSPM checks:
 # - MFA enforcement for all admin accounts
@@ -288,35 +288,35 @@ Organization: ProServices Corp
 Report Date: 2026-02-23
 
 SAAS INVENTORY:
-  Sanctioned Apps: 25
-  Unsanctioned (blocked): 127
-  Shadow IT Users: 342 (discovered in last 30 days)
+ Sanctioned Apps: 25
+ Unsanctioned (blocked): 127
+ Shadow IT Users: 342 (discovered in last 30 days)
 
 CONDITIONAL ACCESS:
-  Policies active: 8
-  Sign-ins evaluated: 456,789
-  Blocked by policy: 2,345 (0.5%)
-  MFA enforced: 100% of sign-ins
+ Policies active: 8
+ Sign-ins evaluated: 456,789
+ Blocked by policy: 2,345 (0.5%)
+ MFA enforced: 100% of sign-ins
 
 DEVICE COMPLIANCE:
-  Compliant device required: All 25 sanctioned apps
-  Sign-ins from compliant: 448,123 (98.1%)
-  Sign-ins blocked (non-compliant): 8,666
+ Compliant device required: All 25 sanctioned apps
+ Sign-ins from compliant: 448,123 (98.1%)
+ Sign-ins blocked (non-compliant): 8,666
 
 CASB / DLP:
-  DLP violations detected: 89
-  Files blocked from upload: 34
-  Downloads blocked (unmanaged): 1,234
+ DLP violations detected: 89
+ Files blocked from upload: 34
+ Downloads blocked (unmanaged): 1,234
 
 OAUTH GOVERNANCE:
-  Total OAuth apps: 312
-  High-risk permissions: 12 (reviewed)
-  Revoked consents: 45
-  Pending admin approval: 8
+ Total OAuth apps: 312
+ High-risk permissions: 12 (reviewed)
+ Revoked consents: 45
+ Pending admin approval: 8
 
 SSPM FINDINGS:
-  Critical misconfigurations: 3
-  High: 7
-  Medium: 15
-  Remediated this month: 18
+ Critical misconfigurations: 3
+ High: 7
+ Medium: 15
+ Remediated this month: 18
 ```

@@ -6,9 +6,9 @@ author: Ben Barclay (benbarclay), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Documents, OCR, Action-Items, Deadlines, Extraction]
-    related_skills: [pdf, pdf, docx, notion]
+ hermes:
+ tags: [Documents, OCR, Action-Items, Deadlines, Extraction]
+ related_skills: [pdf, pdf, docx, notion]
 ---
 
 # Document to Action Items

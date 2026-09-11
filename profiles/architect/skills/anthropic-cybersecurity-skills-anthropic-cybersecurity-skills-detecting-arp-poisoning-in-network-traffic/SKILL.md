@@ -1,10 +1,10 @@
 ---
 name: detecting-arp-poisoning-in-network-traffic
 description: Detect Layer 2 ARP poisoning/spoofing by deploying ARPWatch, Dynamic ARP
-  Inspection (DAI), Wireshark packet analysis, and custom Python monitoring scripts
-  that flag gratuitous ARP floods, IP-to-MAC mapping changes, and duplicate IP addresses.
-  Use when investigating suspected man-in-the-middle interception or session hijacking
-  on a local network segment, or when building layer-2 anomaly detection for a SOC.
+ Inspection (DAI), Wireshark packet analysis, and custom Python monitoring scripts
+ that flag gratuitous ARP floods, IP-to-MAC mapping changes, and duplicate IP addresses.
+ Use when investigating suspected man-in-the-middle interception or session hijacking
+ on a local network segment, or when building layer-2 anomaly detection for a SOC.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -68,7 +68,7 @@ Normal ARP Process:
 
 ARP Poisoning Attack:
 1. Attacker sends unsolicited ARP reply to Host A:
-   "10.0.1.1 is at EV:IL:MA:CA:DD:RR" (attacker's MAC)
+ "10.0.1.1 is at EV:IL:MA:CA:DD:RR" (attacker's MAC)
 2. Host A updates cache, sends traffic to attacker
 3. Attacker forwards to real gateway (MitM position)
 ```
@@ -198,193 +198,193 @@ from collections import defaultdict
 from datetime import datetime
 
 try:
-    from scapy.all import sniff, ARP, Ether, get_if_hwaddr, conf
-    SCAPY_AVAILABLE = True
+ from scapy.all import sniff, ARP, Ether, get_if_hwaddr, conf
+ SCAPY_AVAILABLE = True
 except ImportError:
-    SCAPY_AVAILABLE = False
+ SCAPY_AVAILABLE = False
 
 
 class ARPPoisonDetector:
-    def __init__(self, interface: str, gateway_ip: str, gateway_mac: str):
-        self.interface = interface
-        self.gateway_ip = gateway_ip
-        self.gateway_mac = gateway_mac.lower()
-        self.arp_table = {}  # IP -> MAC mapping
-        self.arp_history = defaultdict(list)  # IP -> list of (MAC, timestamp)
-        self.alerts = []
-        self.arp_count = defaultdict(int)  # Source MAC -> count per interval
-        self.last_reset = time.time()
-        self.arp_rate_threshold = 50  # ARP packets per 10 seconds
+ def __init__(self, interface: str, gateway_ip: str, gateway_mac: str):
+ self.interface = interface
+ self.gateway_ip = gateway_ip
+ self.gateway_mac = gateway_mac.lower()
+ self.arp_table = {} # IP -> MAC mapping
+ self.arp_history = defaultdict(list) # IP -> list of (MAC, timestamp)
+ self.alerts = []
+ self.arp_count = defaultdict(int) # Source MAC -> count per interval
+ self.last_reset = time.time()
+ self.arp_rate_threshold = 50 # ARP packets per 10 seconds
 
-    def alert(self, severity: str, message: str, details: dict):
-        """Generate alert for detected anomaly."""
-        alert_data = {
-            'timestamp': datetime.now().isoformat(),
-            'severity': severity,
-            'message': message,
-            'details': details,
-        }
-        self.alerts.append(alert_data)
-        print(f"\n[{severity}] {datetime.now().strftime('%H:%M:%S')} - {message}")
-        for key, value in details.items():
-            print(f"  {key}: {value}")
+ def alert(self, severity: str, message: str, details: dict):
+ """Generate alert for detected anomaly."""
+ alert_data = {
+ 'timestamp': datetime.now().isoformat(),
+ 'severity': severity,
+ 'message': message,
+ 'details': details,
+ }
+ self.alerts.append(alert_data)
+ print(f"\n[{severity}] {datetime.now().strftime('%H:%M:%S')} - {message}")
+ for key, value in details.items():
+ print(f" {key}: {value}")
 
-    def check_gateway_spoofing(self, src_ip: str, src_mac: str):
-        """Check if someone is spoofing the gateway."""
-        if src_ip == self.gateway_ip and src_mac != self.gateway_mac:
-            self.alert('CRITICAL', 'Gateway ARP Spoofing Detected', {
-                'gateway_ip': self.gateway_ip,
-                'expected_mac': self.gateway_mac,
-                'spoofed_mac': src_mac,
-                'action': 'Potential MitM attack on default gateway',
-            })
-            return True
-        return False
+ def check_gateway_spoofing(self, src_ip: str, src_mac: str):
+ """Check if someone is spoofing the gateway."""
+ if src_ip == self.gateway_ip and src_mac != self.gateway_mac:
+ self.alert('CRITICAL', 'Gateway ARP Spoofing Detected', {
+ 'gateway_ip': self.gateway_ip,
+ 'expected_mac': self.gateway_mac,
+ 'spoofed_mac': src_mac,
+ 'action': 'Potential MitM attack on default gateway',
+ })
+ return True
+ return False
 
-    def check_mac_change(self, src_ip: str, src_mac: str):
-        """Check if IP-to-MAC mapping has changed."""
-        if src_ip in self.arp_table:
-            known_mac = self.arp_table[src_ip]
-            if known_mac != src_mac:
-                self.alert('HIGH', 'ARP Cache Poisoning Attempt', {
-                    'ip_address': src_ip,
-                    'previous_mac': known_mac,
-                    'new_mac': src_mac,
-                    'action': 'IP-to-MAC mapping changed unexpectedly',
-                })
-                return True
-        return False
+ def check_mac_change(self, src_ip: str, src_mac: str):
+ """Check if IP-to-MAC mapping has changed."""
+ if src_ip in self.arp_table:
+ known_mac = self.arp_table[src_ip]
+ if known_mac != src_mac:
+ self.alert('HIGH', 'ARP Cache Poisoning Attempt', {
+ 'ip_address': src_ip,
+ 'previous_mac': known_mac,
+ 'new_mac': src_mac,
+ 'action': 'IP-to-MAC mapping changed unexpectedly',
+ })
+ return True
+ return False
 
-    def check_flip_flop(self, src_ip: str, src_mac: str):
-        """Check for MAC address flip-flopping (active attack indicator)."""
-        self.arp_history[src_ip].append((src_mac, time.time()))
+ def check_flip_flop(self, src_ip: str, src_mac: str):
+ """Check for MAC address flip-flopping (active attack indicator)."""
+ self.arp_history[src_ip].append((src_mac, time.time()))
 
-        # Keep only last 60 seconds of history
-        cutoff = time.time() - 60
-        self.arp_history[src_ip] = [
-            (mac, ts) for mac, ts in self.arp_history[src_ip]
-            if ts > cutoff
-        ]
+ # Keep only last 60 seconds of history
+ cutoff = time.time() - 60
+ self.arp_history[src_ip] = [
+ (mac, ts) for mac, ts in self.arp_history[src_ip]
+ if ts > cutoff
+ ]
 
-        unique_macs = set(mac for mac, ts in self.arp_history[src_ip])
-        if len(unique_macs) > 2:
-            self.alert('CRITICAL', 'ARP Flip-Flop Detected (Active Attack)', {
-                'ip_address': src_ip,
-                'mac_addresses': list(unique_macs),
-                'changes_in_60s': len(self.arp_history[src_ip]),
-            })
-            return True
-        return False
+ unique_macs = set(mac for mac, ts in self.arp_history[src_ip])
+ if len(unique_macs) > 2:
+ self.alert('CRITICAL', 'ARP Flip-Flop Detected (Active Attack)', {
+ 'ip_address': src_ip,
+ 'mac_addresses': list(unique_macs),
+ 'changes_in_60s': len(self.arp_history[src_ip]),
+ })
+ return True
+ return False
 
-    def check_arp_rate(self, src_mac: str):
-        """Check for ARP flood (DoS or scanning)."""
-        self.arp_count[src_mac] += 1
+ def check_arp_rate(self, src_mac: str):
+ """Check for ARP flood (DoS or scanning)."""
+ self.arp_count[src_mac] += 1
 
-        # Reset counters every 10 seconds
-        if time.time() - self.last_reset > 10:
-            for mac, count in self.arp_count.items():
-                if count > self.arp_rate_threshold:
-                    self.alert('MEDIUM', 'ARP Flood Detected', {
-                        'source_mac': mac,
-                        'arp_packets_10s': count,
-                        'threshold': self.arp_rate_threshold,
-                    })
-            self.arp_count.clear()
-            self.last_reset = time.time()
+ # Reset counters every 10 seconds
+ if time.time() - self.last_reset > 10:
+ for mac, count in self.arp_count.items():
+ if count > self.arp_rate_threshold:
+ self.alert('MEDIUM', 'ARP Flood Detected', {
+ 'source_mac': mac,
+ 'arp_packets_10s': count,
+ 'threshold': self.arp_rate_threshold,
+ })
+ self.arp_count.clear()
+ self.last_reset = time.time()
 
-    def process_packet(self, packet):
-        """Process captured ARP packet."""
-        if not packet.haslayer(ARP):
-            return
+ def process_packet(self, packet):
+ """Process captured ARP packet."""
+ if not packet.haslayer(ARP):
+ return
 
-        arp = packet[ARP]
+ arp = packet[ARP]
 
-        # Only process ARP replies (opcode 2) and requests (opcode 1)
-        if arp.op not in (1, 2):
-            return
+ # Only process ARP replies (opcode 2) and requests (opcode 1)
+ if arp.op not in (1, 2):
+ return
 
-        src_ip = arp.psrc
-        src_mac = arp.hwsrc.lower()
+ src_ip = arp.psrc
+ src_mac = arp.hwsrc.lower()
 
-        # Run detection checks
-        self.check_gateway_spoofing(src_ip, src_mac)
-        self.check_mac_change(src_ip, src_mac)
-        self.check_flip_flop(src_ip, src_mac)
-        self.check_arp_rate(src_mac)
+ # Run detection checks
+ self.check_gateway_spoofing(src_ip, src_mac)
+ self.check_mac_change(src_ip, src_mac)
+ self.check_flip_flop(src_ip, src_mac)
+ self.check_arp_rate(src_mac)
 
-        # Update ARP table
-        self.arp_table[src_ip] = src_mac
+ # Update ARP table
+ self.arp_table[src_ip] = src_mac
 
-    def start_monitoring(self):
-        """Start real-time ARP monitoring."""
-        print(f"[*] Starting ARP Poison Detection on {self.interface}")
-        print(f"[*] Gateway: {self.gateway_ip} ({self.gateway_mac})")
-        print(f"[*] Monitoring... (Ctrl+C to stop)\n")
+ def start_monitoring(self):
+ """Start real-time ARP monitoring."""
+ print(f"[*] Starting ARP Poison Detection on {self.interface}")
+ print(f"[*] Gateway: {self.gateway_ip} ({self.gateway_mac})")
+ print(f"[*] Monitoring... (Ctrl+C to stop)\n")
 
-        if SCAPY_AVAILABLE:
-            sniff(
-                iface=self.interface,
-                filter="arp",
-                prn=self.process_packet,
-                store=False,
-            )
-        else:
-            print("[-] Scapy not available. Install with: pip install scapy")
-            print("[*] Falling back to tcpdump-based monitoring...")
-            self._monitor_with_tcpdump()
+ if SCAPY_AVAILABLE:
+ sniff(
+ iface=self.interface,
+ filter="arp",
+ prn=self.process_packet,
+ store=False,
+ )
+ else:
+ print("[-] Scapy not available. Install with: pip install scapy")
+ print("[*] Falling back to tcpdump-based monitoring...")
+ self._monitor_with_tcpdump()
 
-    def _monitor_with_tcpdump(self):
-        """Fallback monitoring using tcpdump."""
-        cmd = ['tcpdump', '-i', self.interface, '-l', '-n', 'arp']
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
-                                stderr=subprocess.DEVNULL, text=True)
-        try:
-            for line in proc.stdout:
-                parts = line.strip().split()
-                if 'is-at' in parts:
-                    try:
-                        ip_idx = parts.index('is-at') - 1
-                        mac_idx = parts.index('is-at') + 1
-                        src_ip = parts[ip_idx]
-                        src_mac = parts[mac_idx].lower()
-                        self.check_gateway_spoofing(src_ip, src_mac)
-                        self.check_mac_change(src_ip, src_mac)
-                        self.arp_table[src_ip] = src_mac
-                    except (IndexError, ValueError):
-                        continue
-        except KeyboardInterrupt:
-            proc.terminate()
+ def _monitor_with_tcpdump(self):
+ """Fallback monitoring using tcpdump."""
+ cmd = ['tcpdump', '-i', self.interface, '-l', '-n', 'arp']
+ proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
+ stderr=subprocess.DEVNULL, text=True)
+ try:
+ for line in proc.stdout:
+ parts = line.strip().split()
+ if 'is-at' in parts:
+ try:
+ ip_idx = parts.index('is-at') - 1
+ mac_idx = parts.index('is-at') + 1
+ src_ip = parts[ip_idx]
+ src_mac = parts[mac_idx].lower()
+ self.check_gateway_spoofing(src_ip, src_mac)
+ self.check_mac_change(src_ip, src_mac)
+ self.arp_table[src_ip] = src_mac
+ except (IndexError, ValueError):
+ continue
+ except KeyboardInterrupt:
+ proc.terminate()
 
-    def generate_report(self) -> dict:
-        """Generate summary report of detected anomalies."""
-        return {
-            'monitoring_interface': self.interface,
-            'gateway': {'ip': self.gateway_ip, 'mac': self.gateway_mac},
-            'total_alerts': len(self.alerts),
-            'arp_table_size': len(self.arp_table),
-            'alerts': self.alerts,
-        }
+ def generate_report(self) -> dict:
+ """Generate summary report of detected anomalies."""
+ return {
+ 'monitoring_interface': self.interface,
+ 'gateway': {'ip': self.gateway_ip, 'mac': self.gateway_mac},
+ 'total_alerts': len(self.alerts),
+ 'arp_table_size': len(self.arp_table),
+ 'alerts': self.alerts,
+ }
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 4:
-        print("Usage: python process.py <interface> <gateway_ip> <gateway_mac>")
-        print("Example: python process.py eth0 10.0.1.1 aa:bb:cc:dd:ee:01")
-        sys.exit(1)
+ if len(sys.argv) < 4:
+ print("Usage: python process.py <interface> <gateway_ip> <gateway_mac>")
+ print("Example: python process.py eth0 10.0.1.1 aa:bb:cc:dd:ee:01")
+ sys.exit(1)
 
-    detector = ARPPoisonDetector(
-        interface=sys.argv[1],
-        gateway_ip=sys.argv[2],
-        gateway_mac=sys.argv[3],
-    )
+ detector = ARPPoisonDetector(
+ interface=sys.argv[1],
+ gateway_ip=sys.argv[2],
+ gateway_mac=sys.argv[3],
+ )
 
-    try:
-        detector.start_monitoring()
-    except KeyboardInterrupt:
-        print("\n\n[*] Monitoring stopped.")
-        report = detector.generate_report()
-        print(f"[*] Total alerts generated: {report['total_alerts']}")
-        print(f"[*] ARP table entries: {report['arp_table_size']}")
+ try:
+ detector.start_monitoring()
+ except KeyboardInterrupt:
+ print("\n\n[*] Monitoring stopped.")
+ report = detector.generate_report()
+ print(f"[*] Total alerts generated: {report['total_alerts']}")
+ print(f"[*] ARP table entries: {report['arp_table_size']}")
 ```
 
 ## Prevention Measures

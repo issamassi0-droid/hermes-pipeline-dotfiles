@@ -1,10 +1,10 @@
 ---
 name: building-super-timelines-with-plaso
 description: Generate forensic super-timelines with Plaso's log2timeline.py, pinfo.py,
-  psort.py, and psteal.py CLI tools (fusing file-system MACB, registry, EVTX, browser
-  history, prefetch, LNK, and more), then triage and filter the results in Timesketch.
-  Use when reconstructing the full sequence of events on a compromised or forensically
-  imaged host during a DFIR investigation.
+ psort.py, and psteal.py CLI tools (fusing file-system MACB, registry, EVTX, browser
+ history, prefetch, LNK, and more), then triage and filter the results in Timesketch.
+ Use when reconstructing the full sequence of events on a compromised or forensically
+ imaged host during a DFIR investigation.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -49,16 +49,16 @@ The resulting timeline is enormous, so analysts triage it in **Timesketch** — 
 ## Prerequisites
 
 - Install Plaso (Docker is the supported, reproducible method):
-  ```bash
-  docker pull log2timeline/plaso
-  # Run a tool, mounting your evidence/output directory
-  docker run -v /cases:/data log2timeline/plaso log2timeline.py --version
-  ```
-  Alternatively on Ubuntu via the GIFT PPA:
-  ```bash
-  sudo add-apt-repository ppa:gift/stable
-  sudo apt-get update && sudo apt-get install -y plaso-tools
-  ```
+ ```bash
+ docker pull log2timeline/plaso
+ # Run a tool, mounting your evidence/output directory
+ docker run -v /cases:/data log2timeline/plaso log2timeline.py --version
+ ```
+ Alternatively on Ubuntu via the GIFT PPA:
+ ```bash
+ sudo add-apt-repository ppa:gift/stable
+ sudo apt-get update && sudo apt-get install -y plaso-tools
+ ```
 - A Timesketch instance (docker-compose deployment from https://github.com/google/timesketch) for triage.
 - A forensic image (E01/raw) or mounted file system.
 
@@ -99,10 +99,10 @@ pinfo.py timeline.plaso
 `psort.py` selects an output module with `-o`, writes with `-w`, normalizes the timezone with `--output-time-zone`, and accepts an event filter expression to scope a date range.
 ```bash
 psort.py --output-time-zone 'UTC' \
-  -o l2tcsv \
-  -w supertimeline.csv \
-  timeline.plaso \
-  "date > datetime('2026-01-01T00:00:00') AND date < datetime('2026-01-27T00:00:00')"
+ -o l2tcsv \
+ -w supertimeline.csv \
+ timeline.plaso \
+ "date > datetime('2026-01-01T00:00:00') AND date < datetime('2026-01-27T00:00:00')"
 ```
 For Timesketch-friendly JSON lines, use the `json_line` output module:
 ```bash
@@ -119,11 +119,11 @@ psteal.py --source /cases/greendale/image.E01 -o l2tcsv -w supertimeline.csv
 Use the official `timesketch_importer` CLI to upload the `.plaso` (or CSV/JSONL) into a sketch. Timesketch chunks/reassembles and indexes the file.
 ```bash
 timesketch_importer \
-  --host http://127.0.0.1:5000 \
-  --username admin \
-  --timeline_name "greendale-host01" \
-  --sketch_id 1 \
-  timeline.plaso
+ --host http://127.0.0.1:5000 \
+ --username admin \
+ --timeline_name "greendale-host01" \
+ --sketch_id 1 \
+ timeline.plaso
 ```
 
 ### 6. Triage in Timesketch

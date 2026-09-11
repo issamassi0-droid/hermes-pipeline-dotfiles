@@ -1,7 +1,7 @@
 ---
 name: building-detection-rule-with-splunk-spl
 description: Build effective detection rules using Splunk Search Processing Language
-  (SPL) correlation searches to identify security threats in SOC environments.
+ (SPL) correlation searches to identify security threats in SOC environments.
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -94,8 +94,8 @@ index=proxy sourcetype=squid
 | bin _time span=1h
 | stats count as current_count by src_ip, _time
 | join src_ip type=left [
-    search index=proxy sourcetype=squid earliest=-7d@d latest=-1d@d
-    | stats avg(count) as avg_count stdev(count) as stdev_count by src_ip
+ search index=proxy sourcetype=squid earliest=-7d@d latest=-1d@d
+ | stats avg(count) as avg_count stdev(count) as stdev_count by src_ip
 ]
 | eval threshold=avg_count + (3 * stdev_count)
 | where current_count > threshold
@@ -162,8 +162,8 @@ index=wineventlog sourcetype=WinEventLog:Security EventCode=4104
 
 ```spl
 | tstats summariesonly=true count from datamodel=Authentication
-    where Authentication.action=failure
-    by Authentication.src, Authentication.user, _time span=5m
+ where Authentication.action=failure
+ by Authentication.src, Authentication.user, _time span=5m
 | rename "Authentication.*" as *
 | stats count as total_failures dc(user) as unique_users values(user) as targeted_users by src
 | where total_failures > 20 AND unique_users > 5
@@ -182,10 +182,10 @@ index=wineventlog sourcetype=WinEventLog:Security EventCode=4104
 | lookup asset_lookup ip as src_ip OUTPUT asset_name, asset_category, asset_priority, asset_owner
 | lookup threatintel_lookup ip as src_ip OUTPUT threat_type, threat_confidence, threat_source
 | eval context=case(
-    isnotnull(threat_type), "Known threat: ".threat_type,
-    user_risk > 80, "High-risk user: risk score ".user_risk,
-    asset_priority=="critical", "Critical asset: ".asset_name,
-    true(), "Standard context"
+ isnotnull(threat_type), "Known threat: ".threat_type,
+ user_risk > 80, "High-risk user: risk score ".user_risk,
+ asset_priority=="critical", "Critical asset: ".asset_name,
+ true(), "Standard context"
 )
 ```
 
@@ -195,8 +195,8 @@ index=wineventlog sourcetype=WinEventLog:Security EventCode=4104
 
 ```spl
 | tstats summariesonly=true count from datamodel=Network_Traffic
-    where All_Traffic.action=allowed
-    by All_Traffic.src_ip, All_Traffic.dest_ip, All_Traffic.dest_port, _time span=1h
+ where All_Traffic.action=allowed
+ by All_Traffic.src_ip, All_Traffic.dest_ip, All_Traffic.dest_port, _time span=1h
 | rename "All_Traffic.*" as *
 ```
 
@@ -204,7 +204,7 @@ index=wineventlog sourcetype=WinEventLog:Security EventCode=4104
 
 ```spl
 index=wineventlog source="WinEventLog:Security" EventCode=4688
-    earliest=-15m latest=now()
+ earliest=-15m latest=now()
 | where NOT match(New_Process_Name, "(?i)(svchost|csrss|lsass|services)")
 ```
 
@@ -224,11 +224,11 @@ index=wineventlog source="WinEventLog:Security" EventCode=4688
 | eval src_ip="10.0.0.50", failed_logins=25, unique_users=8, severity="high"
 | eval description="Test brute force detection"
 | append [
-    search index=wineventlog sourcetype=WinEventLog:Security EventCode=4625
-    earliest=-24h latest=now()
-    | stats count as failed_logins dc(TargetUserName) as unique_users by src_ip
-    | where failed_logins > 10 AND unique_users > 3
-    | eval severity="high"
+ search index=wineventlog sourcetype=WinEventLog:Security EventCode=4625
+ earliest=-24h latest=now()
+ | stats count as failed_logins dc(TargetUserName) as unique_users by src_ip
+ | where failed_logins > 10 AND unique_users > 3
+ | eval severity="high"
 ]
 ```
 

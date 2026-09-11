@@ -7,9 +7,9 @@ license: MIT
 dependencies: []
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [architecture, diagrams, SVG, HTML, visualization, infrastructure, cloud]
-    related_skills: [concept-diagrams, excalidraw]
+ hermes:
+ tags: [architecture, diagrams, SVG, HTML, visualization, infrastructure, cloud]
+ related_skills: [concept-diagrams, excalidraw]
 ---
 
 # Architecture Diagram Skill
@@ -84,7 +84,7 @@ Use specific `rgba` fills and hex strokes to categorize components:
 ```svg
 <!-- Background Grid Pattern -->
 <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+ <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
 </pattern>
 ```
 
@@ -100,8 +100,8 @@ Components are rounded rectangles (`rx="6"`) with 1.5px strokes. To prevent arro
 - **Arrowheads:** Defined via SVG markers
 - **Security Flows:** Use dashed lines in rose color (`#fb7185`)
 - **Boundaries:**
-  - *Security Groups:* Dashed (`4,4`), rose color
-  - *Regions:* Large dashed (`8,4`), amber color, `rx="12"`
+ - *Security Groups:* Dashed (`4,4`), rose color
+ - *Regions:* Large dashed (`8,4`), amber color, `rx="12"`
 
 ### Spacing & Layout Logic
 - **Standard Height:** 60px (Services); 80-120px (Large components)
@@ -120,14 +120,14 @@ The generated HTML file follows a four-part layout:
 ### Info Card Pattern
 ```html
 <div class="card">
-  <div class="card-header">
-    <div class="card-dot cyan"></div>
-    <h3>Title</h3>
-  </div>
-  <ul>
-    <li>• Item one</li>
-    <li>• Item two</li>
-  </ul>
+ <div class="card-header">
+ <div class="card-dot cyan"></div>
+ <h3>Title</h3>
+ </div>
+ <ul>
+ <li>• Item one</li>
+ <li>• Item two</li>
+ </ul>
 </div>
 ```
 

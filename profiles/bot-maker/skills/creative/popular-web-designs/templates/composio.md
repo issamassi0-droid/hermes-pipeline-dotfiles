@@ -153,10 +153,10 @@ What makes Composio distinctive is its tension between extreme minimalism and st
 
 ### Inputs & Forms
 - No explicit input token data extracted — inputs likely follow the dark-surface pattern with:
-  - Background: transparent or Pure Black
-  - Border: Border Mist 10 (`rgba(255,255,255,0.10)`)
-  - Focus: border shifts to Signal Blue (`#0089ff`) or Electric Cyan
-  - Text: Pure White with Ghost White placeholder
+ - Background: transparent or Pure Black
+ - Border: Border Mist 10 (`rgba(255,255,255,0.10)`)
+ - Focus: border shifts to Signal Blue (`#0089ff`) or Electric Cyan
+ - Text: Pure White with Ghost White placeholder
 
 ### Navigation
 - Sticky top nav bar on dark/black background

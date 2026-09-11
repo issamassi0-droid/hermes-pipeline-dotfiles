@@ -1,11 +1,11 @@
 ---
 name: implementing-soar-playbook-with-palo-alto-xsoar
 description: Build automated incident response playbooks in Cortex XSOAR (Demisto)
-  using its YAML playbook structure, integration commands, and task types to orchestrate
-  phishing, malware, account-compromise, and DDoS response workflows across SOC tools.
-  Use when authoring or wiring up an XSOAR playbook, adding custom XSOAR integration
-  commands or Python automation scripts, or reducing manual SOC response time via
-  orchestration.
+ using its YAML playbook structure, integration commands, and task types to orchestrate
+ phishing, malware, account-compromise, and DDoS response workflows across SOC tools.
+ Use when authoring or wiring up an XSOAR playbook, adding custom XSOAR integration
+ commands or Python automation scripts, or reducing manual SOC response time via
+ orchestration.
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -60,25 +60,25 @@ Cortex XSOAR (formerly Demisto) is Palo Alto Networks' Security Orchestration, A
 
 ```
 Incident Type (e.g., Phishing)
-    |
-    v
+ |
+ v
 Incident Layout (UI display configuration)
-    |
-    v
+ |
+ v
 Pre-Processing Rules (auto-classification, deduplication)
-    |
-    v
+ |
+ v
 Playbook (automation logic)
-    |-- Sub-Playbooks (modular reusable workflows)
-    |-- Tasks (individual automation steps)
-    |-- Conditional Tasks (decision branches)
-    |-- Scripts (custom Python/JavaScript)
-    |-- Integrations (external tool commands)
-    |
-    v
+ |-- Sub-Playbooks (modular reusable workflows)
+ |-- Tasks (individual automation steps)
+ |-- Conditional Tasks (decision branches)
+ |-- Scripts (custom Python/JavaScript)
+ |-- Integrations (external tool commands)
+ |
+ v
 War Room (investigation timeline)
-    |
-    v
+ |
+ v
 Closing Report
 ```
 
@@ -101,12 +101,12 @@ Closing Report
 incident_type: Phishing
 playbook: Phishing Investigation - Full
 severity_mapping:
-  - condition: email contains executable attachment
-    severity: high
-  - condition: email from external domain with link
-    severity: medium
-  - condition: email reported by user
-    severity: low
+ - condition: email contains executable attachment
+ severity: high
+ - condition: email from external domain with link
+ severity: medium
+ - condition: email reported by user
+ severity: low
 layout: Phishing Layout
 sla: 60 minutes
 ```
@@ -120,100 +120,100 @@ name: Phishing Investigation - Full
 description: Automated phishing email investigation with enrichment, analysis, and response
 starttaskid: "0"
 tasks:
-  "0":
-    id: "0"
-    taskid: start
-    type: start
-    nexttasks:
-      '#none#':
-      - "1"
-  "1":
-    id: "1"
-    taskid: extract-indicators
-    type: regular
-    task:
-      name: Extract Indicators from Email
-      script: ParseEmailFiles
-    nexttasks:
-      '#none#':
-      - "2"
-      - "3"
-      - "4"
-  "2":
-    id: "2"
-    taskid: enrich-urls
-    type: playbook
-    task:
-      name: URL Enrichment
-      playbookName: URL Enrichment - Generic v2
-  "3":
-    id: "3"
-    taskid: enrich-files
-    type: playbook
-    task:
-      name: File Enrichment
-      playbookName: File Enrichment - Generic v2
-  "4":
-    id: "4"
-    taskid: enrich-ips
-    type: playbook
-    task:
-      name: IP Enrichment
-      playbookName: IP Enrichment - Generic v2
-  "5":
-    id: "5"
-    taskid: determine-verdict
-    type: condition
-    task:
-      name: Is Email Malicious?
-    conditions:
-      - label: "yes"
-        condition:
-          - - operator: isEqualString
-              left: DBotScore.Score
-              right: "3"
-      - label: "no"
-    nexttasks:
-      "yes":
-      - "6"
-      "no":
-      - "9"
-  "6":
-    id: "6"
-    taskid: block-sender
-    type: regular
-    task:
-      name: Block Sender Domain
-      script: '|||o365-mail-block-sender'
-    scriptarguments:
-      sender_address: ${incident.emailfrom}
-  "7":
-    id: "7"
-    taskid: search-mailboxes
-    type: regular
-    task:
-      name: Search and Delete from All Mailboxes
-      script: '|||o365-mail-purge-compliance-search'
-    scriptarguments:
-      query: "from:${incident.emailfrom} subject:${incident.emailsubject}"
-  "8":
-    id: "8"
-    taskid: notify-user
-    type: regular
-    task:
-      name: Notify Reporting User
-      script: '|||send-mail'
-    scriptarguments:
-      to: ${incident.reporter}
-      subject: "Phishing Report Confirmed - Action Taken"
-      body: "The email you reported has been confirmed as malicious and removed."
-  "9":
-    id: "9"
-    taskid: close-incident
-    type: regular
-    task:
-      name: Close Incident
-      script: closeInvestigation
+ "0":
+ id: "0"
+ taskid: start
+ type: start
+ nexttasks:
+ '#none#':
+ - "1"
+ "1":
+ id: "1"
+ taskid: extract-indicators
+ type: regular
+ task:
+ name: Extract Indicators from Email
+ script: ParseEmailFiles
+ nexttasks:
+ '#none#':
+ - "2"
+ - "3"
+ - "4"
+ "2":
+ id: "2"
+ taskid: enrich-urls
+ type: playbook
+ task:
+ name: URL Enrichment
+ playbookName: URL Enrichment - Generic v2
+ "3":
+ id: "3"
+ taskid: enrich-files
+ type: playbook
+ task:
+ name: File Enrichment
+ playbookName: File Enrichment - Generic v2
+ "4":
+ id: "4"
+ taskid: enrich-ips
+ type: playbook
+ task:
+ name: IP Enrichment
+ playbookName: IP Enrichment - Generic v2
+ "5":
+ id: "5"
+ taskid: determine-verdict
+ type: condition
+ task:
+ name: Is Email Malicious?
+ conditions:
+ - label: "yes"
+ condition:
+ - - operator: isEqualString
+ left: DBotScore.Score
+ right: "3"
+ - label: "no"
+ nexttasks:
+ "yes":
+ - "6"
+ "no":
+ - "9"
+ "6":
+ id: "6"
+ taskid: block-sender
+ type: regular
+ task:
+ name: Block Sender Domain
+ script: '|||o365-mail-block-sender'
+ scriptarguments:
+ sender_address: ${incident.emailfrom}
+ "7":
+ id: "7"
+ taskid: search-mailboxes
+ type: regular
+ task:
+ name: Search and Delete from All Mailboxes
+ script: '|||o365-mail-purge-compliance-search'
+ scriptarguments:
+ query: "from:${incident.emailfrom} subject:${incident.emailsubject}"
+ "8":
+ id: "8"
+ taskid: notify-user
+ type: regular
+ task:
+ name: Notify Reporting User
+ script: '|||send-mail'
+ scriptarguments:
+ to: ${incident.reporter}
+ subject: "Phishing Report Confirmed - Action Taken"
+ body: "The email you reported has been confirmed as malicious and removed."
+ "9":
+ id: "9"
+ taskid: close-incident
+ type: regular
+ task:
+ name: Close Incident
+ script: closeInvestigation
 ```
 
 ### Step 3: Integration Commands
@@ -253,15 +253,15 @@ tasks:
 ```
 Trigger: Malware alert from EDR
 Steps:
-  1. Extract file hash, process details, host info
-  2. Enrich hash via VirusTotal, Hybrid Analysis
-  3. Check if file is on allowlist
-  4. If malicious:
-     a. Isolate endpoint via EDR
-     b. Block hash on all endpoints
-     c. Search for hash across environment
-     d. Create incident ticket
-  5. If clean: Close as false positive
+ 1. Extract file hash, process details, host info
+ 2. Enrich hash via VirusTotal, Hybrid Analysis
+ 3. Check if file is on allowlist
+ 4. If malicious:
+ a. Isolate endpoint via EDR
+ b. Block hash on all endpoints
+ c. Search for hash across environment
+ d. Create incident ticket
+ 5. If clean: Close as false positive
 ```
 
 ### 2. Account Compromise Playbook
@@ -269,17 +269,17 @@ Steps:
 ```
 Trigger: Impossible travel or suspicious login alert
 Steps:
-  1. Get user details from Active Directory
-  2. Get login history for past 30 days
-  3. Check for impossible travel (geo-distance vs time)
-  4. Check for known VPN/proxy IP
-  5. If compromised:
-     a. Disable AD account
-     b. Revoke all OAuth tokens
-     c. Reset MFA
-     d. Notify user's manager
-     e. Search for lateral movement
-  6. If false positive: Document and close
+ 1. Get user details from Active Directory
+ 2. Get login history for past 30 days
+ 3. Check for impossible travel (geo-distance vs time)
+ 4. Check for known VPN/proxy IP
+ 5. If compromised:
+ a. Disable AD account
+ b. Revoke all OAuth tokens
+ c. Reset MFA
+ d. Notify user's manager
+ e. Search for lateral movement
+ 6. If false positive: Document and close
 ```
 
 ### 3. DDoS Mitigation Playbook
@@ -287,15 +287,15 @@ Steps:
 ```
 Trigger: Network anomaly alert
 Steps:
-  1. Verify traffic spike from network monitoring
-  2. Identify source IPs and geolocation
-  3. Check if source IPs are known botnets
-  4. Implement rate limiting on WAF
-  5. If sustained attack:
-     a. Enable upstream DDoS protection
-     b. Activate CDN scrubbing
-     c. Notify ISP if needed
-  6. Monitor and document
+ 1. Verify traffic spike from network monitoring
+ 2. Identify source IPs and geolocation
+ 3. Check if source IPs are known botnets
+ 4. Implement rate limiting on WAF
+ 5. If sustained attack:
+ a. Enable upstream DDoS protection
+ b. Activate CDN scrubbing
+ c. Notify ISP if needed
+ 6. Monitor and document
 ```
 
 ## Custom XSOAR Scripts
@@ -305,25 +305,25 @@ Steps:
 ```python
 # XSOAR Automation Script: CalculateRiskScore
 def calculate_risk_score():
-    """Calculate composite risk score for an incident."""
-    severity = demisto.incident().get('severity', 0)
-    indicator_count = len(demisto.get(demisto.context(), 'DBotScore', []))
-    malicious_count = len([
-        i for i in demisto.get(demisto.context(), 'DBotScore', [])
-        if i.get('Score', 0) == 3
-    ])
+ """Calculate composite risk score for an incident."""
+ severity = demisto.incident().get('severity', 0)
+ indicator_count = len(demisto.get(demisto.context(), 'DBotScore', []))
+ malicious_count = len([
+ i for i in demisto.get(demisto.context(), 'DBotScore', [])
+ if i.get('Score', 0) == 3
+ ])
 
-    base_score = severity * 20
-    indicator_boost = min(indicator_count * 5, 25)
-    malicious_boost = malicious_count * 15
+ base_score = severity * 20
+ indicator_boost = min(indicator_count * 5, 25)
+ malicious_boost = malicious_count * 15
 
-    risk_score = min(100, base_score + indicator_boost + malicious_boost)
+ risk_score = min(100, base_score + indicator_boost + malicious_boost)
 
-    return_results(CommandResults(
-        outputs_prefix='RiskScore',
-        outputs={'Score': risk_score, 'Level': 'Critical' if risk_score > 80 else 'High' if risk_score > 60 else 'Medium'},
-        readable_output=f'Risk Score: {risk_score}/100'
-    ))
+ return_results(CommandResults(
+ outputs_prefix='RiskScore',
+ outputs={'Score': risk_score, 'Level': 'Critical' if risk_score > 80 else 'High' if risk_score > 60 else 'Medium'},
+ readable_output=f'Risk Score: {risk_score}/100'
+ ))
 
 calculate_risk_score()
 ```

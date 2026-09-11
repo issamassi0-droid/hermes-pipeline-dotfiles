@@ -1,10 +1,10 @@
 ---
 name: analyzing-threat-landscape-with-misp
 description: Query a MISP (Malware Information Sharing Platform) instance via PyMISP
-  to compute event statistics, IOC type breakdowns, threat actor galaxy clusters,
-  and tag trends, and generate threat landscape reports with temporal trends. Use
-  when asked to analyze threat intelligence data, summarize top threat actors or
-  malware families, or produce a CTI landscape report from MISP events.
+ to compute event statistics, IOC type breakdowns, threat actor galaxy clusters,
+ and tag trends, and generate threat landscape reports with temporal trends. Use
+ when asked to analyze threat intelligence data, summarize top threat actors or
+ malware families, or produce a CTI landscape report from MISP events.
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -59,11 +59,11 @@ mitre_attack:
 1. Install dependencies: `pip install pymisp`
 2. Configure MISP URL and API key.
 3. Run the agent to generate threat landscape analysis:
-   - Pull event statistics by threat level and date range
-   - Analyze attribute type distributions (IP, domain, hash, URL)
-   - Identify top MITRE ATT&CK techniques from event tags
-   - Track threat actor activity via galaxy clusters
-   - Generate temporal trend analysis of IOC submissions
+ - Pull event statistics by threat level and date range
+ - Analyze attribute type distributions (IP, domain, hash, URL)
+ - Identify top MITRE ATT&CK techniques from event tags
+ - Track threat actor activity via galaxy clusters
+ - Generate temporal trend analysis of IOC submissions
 
 ```bash
 python scripts/agent.py --misp-url https://misp.local --api-key YOUR_KEY --days 90 --output landscape_report.json

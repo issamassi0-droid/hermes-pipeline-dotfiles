@@ -6,9 +6,9 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Coding-Agent, Codex, OpenAI, Code-Review, Refactoring]
-    related_skills: [claude-code, hermes-agent]
+ hermes:
+ tags: [Coding-Agent, Codex, OpenAI, Code-Review, Refactoring]
+ related_skills: [claude-code, hermes-agent]
 ---
 
 # Codex CLI
@@ -28,7 +28,7 @@ Requires the codex CLI and a git repository.
 
 - Codex installed: `npm install -g @openai/codex`
 - OpenAI auth configured: either `OPENAI_API_KEY` or Codex OAuth credentials
-  from the Codex CLI login flow
+ from the Codex CLI login flow
 - **Must run inside a git repository** — Codex refuses to run outside one
 - Use `pty=true` in terminal calls — Codex is an interactive terminal app
 

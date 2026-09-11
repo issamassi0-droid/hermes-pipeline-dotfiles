@@ -1,10 +1,10 @@
 ---
 name: backend-nodejs
 description: |
-  Modern Node.js backend stack: NestJS/Hono, Drizzle ORM, Vitest, TypeScript.
-  Use when: building Node.js APIs, TypeScript backends, or serverless functions.
-  Triggers: "nestjs", "node backend", "express", "hono", "drizzle", "vitest",
-  "typescript api", "node api", "bun".
+ Modern Node.js backend stack: NestJS/Hono, Drizzle ORM, Vitest, TypeScript.
+ Use when: building Node.js APIs, TypeScript backends, or serverless functions.
+ Triggers: "nestjs", "node backend", "express", "hono", "drizzle", "vitest",
+ "typescript api", "node api", "bun".
 ---
 
 # Node.js Backend Stack
@@ -49,17 +49,17 @@ pnpm add -D drizzle-kit vitest
 ```json
 // tsconfig.json
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "outDir": "dist",
-    "rootDir": "src"
-  },
-  "include": ["src"]
+ "compilerOptions": {
+ "target": "ES2022",
+ "module": "NodeNext",
+ "moduleResolution": "NodeNext",
+ "strict": true,
+ "esModuleInterop": true,
+ "skipLibCheck": true,
+ "outDir": "dist",
+ "rootDir": "src"
+ },
+ "include": ["src"]
 }
 ```
 
@@ -72,19 +72,19 @@ import typescript from '@typescript-eslint/eslint-plugin';
 import tsParser from '@typescript-eslint/parser';
 
 export default [
-  js.configs.recommended,
-  {
-    files: ['**/*.ts'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: { project: './tsconfig.json' },
-    },
-    plugins: { '@typescript-eslint': typescript },
-    rules: {
-      ...typescript.configs.recommended.rules,
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-    },
-  },
+ js.configs.recommended,
+ {
+ files: ['**/*.ts'],
+ languageOptions: {
+ parser: tsParser,
+ parserOptions: { project: './tsconfig.json' },
+ },
+ plugins: { '@typescript-eslint': typescript },
+ rules: {
+ ...typescript.configs.recommended.rules,
+ '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+ },
+ },
 ];
 ```
 
@@ -92,23 +92,23 @@ export default [
 
 ```
 src/
-├── index.ts             # Entry point
-├── config.ts            # Environment config
+├── index.ts # Entry point
+├── config.ts # Environment config
 ├── db/
-│   ├── index.ts         # Drizzle client
-│   ├── schema.ts        # Table definitions
-│   └── migrate.ts       # Migration runner
+│ ├── index.ts # Drizzle client
+│ ├── schema.ts # Table definitions
+│ └── migrate.ts # Migration runner
 ├── routes/
-│   ├── index.ts
-│   ├── auth.ts
-│   └── users.ts
+│ ├── index.ts
+│ ├── auth.ts
+│ └── users.ts
 ├── services/
-│   └── user.ts
+│ └── user.ts
 ├── middleware/
-│   ├── auth.ts
-│   └── error.ts
+│ ├── auth.ts
+│ └── error.ts
 └── types/
-    └── index.ts
+ └── index.ts
 tests/
 ├── setup.ts
 └── users.test.ts
@@ -134,11 +134,11 @@ app.use('*', cors());
 app.get('/', (c) => c.json({ status: 'ok' }));
 
 app.onError((err, c) => {
-  if (err instanceof HTTPException) {
-    return c.json({ error: err.message }, err.status);
-  }
-  console.error(err);
-  return c.json({ error: 'Internal Server Error' }, 500);
+ if (err instanceof HTTPException) {
+ return c.json({ error: err.message }, err.status);
+ }
+ console.error(err);
+ return c.json({ error: 'Internal Server Error' }, 500);
 });
 
 export default app;
@@ -154,23 +154,23 @@ import { z } from 'zod';
 const users = new Hono();
 
 const createUserSchema = z.object({
-  email: z.string().email(),
-  name: z.string().min(1).max(100),
+ email: z.string().email(),
+ name: z.string().min(1).max(100),
 });
 
 users.post('/', zValidator('json', createUserSchema), async (c) => {
-  const data = c.req.valid('json');
-  const user = await userService.create(data);
-  return c.json(user, 201);
+ const data = c.req.valid('json');
+ const user = await userService.create(data);
+ return c.json(user, 201);
 });
 
 users.get('/:id', async (c) => {
-  const id = c.req.param('id');
-  const user = await userService.findById(id);
-  if (!user) {
-    throw new HTTPException(404, { message: 'User not found' });
-  }
-  return c.json(user);
+ const id = c.req.param('id');
+ const user = await userService.findById(id);
+ if (!user) {
+ throw new HTTPException(404, { message: 'User not found' });
+ }
+ return c.json(user);
 });
 
 export default users;
@@ -184,23 +184,23 @@ import { HTTPException } from 'hono/http-exception';
 import { verify } from 'hono/jwt';
 
 type Env = {
-  Variables: { userId: string };
+ Variables: { userId: string };
 };
 
 export const authMiddleware = createMiddleware<Env>(async (c, next) => {
-  const header = c.req.header('Authorization');
-  if (!header?.startsWith('Bearer ')) {
-    throw new HTTPException(401, { message: 'Missing token' });
-  }
+ const header = c.req.header('Authorization');
+ if (!header?.startsWith('Bearer ')) {
+ throw new HTTPException(401, { message: 'Missing token' });
+ }
 
-  const token = header.slice(7);
-  try {
-    const payload = await verify(token, process.env.JWT_SECRET!);
-    c.set('userId', payload.sub as string);
-    await next();
-  } catch {
-    throw new HTTPException(401, { message: 'Invalid token' });
-  }
+ const token = header.slice(7);
+ try {
+ const payload = await verify(token, process.env.JWT_SECRET!);
+ c.set('userId', payload.sub as string);
+ await next();
+ } catch {
+ throw new HTTPException(401, { message: 'Invalid token' });
+ }
 });
 ```
 
@@ -213,18 +213,18 @@ export const authMiddleware = createMiddleware<Env>(async (c, next) => {
 import { pgTable, serial, varchar, timestamp, integer } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
-  id: serial('id').primaryKey(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  name: varchar('name', { length: 100 }).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+ id: serial('id').primaryKey(),
+ email: varchar('email', { length: 255 }).notNull().unique(),
+ name: varchar('name', { length: 100 }).notNull(),
+ createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export const posts = pgTable('posts', {
-  id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id).notNull(),
-  title: varchar('title', { length: 255 }).notNull(),
-  body: varchar('body', { length: 10000 }),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+ id: serial('id').primaryKey(),
+ userId: integer('user_id').references(() => users.id).notNull(),
+ title: varchar('title', { length: 255 }).notNull(),
+ body: varchar('body', { length: 10000 }),
+ createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 // Types
@@ -253,34 +253,34 @@ import { eq, desc } from 'drizzle-orm';
 
 // Insert
 const [user] = await db.insert(users)
-  .values({ email: 'test@example.com', name: 'Test' })
-  .returning();
+ .values({ email: 'test@example.com', name: 'Test' })
+ .returning();
 
 // Select
 const user = await db.query.users.findFirst({
-  where: eq(users.email, 'test@example.com'),
+ where: eq(users.email, 'test@example.com'),
 });
 
 // Select with relations
 const userWithPosts = await db.query.users.findFirst({
-  where: eq(users.id, userId),
-  with: { posts: true },
+ where: eq(users.id, userId),
+ with: { posts: true },
 });
 
 // Update
 await db.update(users)
-  .set({ name: 'New Name' })
-  .where(eq(users.id, userId));
+ .set({ name: 'New Name' })
+ .where(eq(users.id, userId));
 
 // Delete
 await db.delete(users).where(eq(users.id, userId));
 
 // Pagination
 const usersList = await db.select()
-  .from(users)
-  .orderBy(desc(users.createdAt))
-  .limit(20)
-  .offset(0);
+ .from(users)
+ .orderBy(desc(users.createdAt))
+ .limit(20)
+ .offset(0);
 ```
 
 ### Migrations
@@ -290,12 +290,12 @@ const usersList = await db.select()
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-  schema: './src/db/schema.ts',
-  out: './drizzle/migrations',
-  dialect: 'postgresql',
-  dbCredentials: {
-    url: process.env.DATABASE_URL!,
-  },
+ schema: './src/db/schema.ts',
+ out: './drizzle/migrations',
+ dialect: 'postgresql',
+ dbCredentials: {
+ url: process.env.DATABASE_URL!,
+ },
 });
 ```
 
@@ -316,10 +316,10 @@ pnpm drizzle-kit studio
 import { z } from 'zod';
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  PORT: z.coerce.number().default(3000),
-  DATABASE_URL: z.string().url(),
-  JWT_SECRET: z.string().min(32),
+ NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
+ PORT: z.coerce.number().default(3000),
+ DATABASE_URL: z.string().url(),
+ JWT_SECRET: z.string().min(32),
 });
 
 export const env = envSchema.parse(process.env);

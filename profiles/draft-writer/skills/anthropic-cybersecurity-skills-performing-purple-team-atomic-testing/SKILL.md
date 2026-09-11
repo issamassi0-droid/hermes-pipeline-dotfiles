@@ -1,12 +1,12 @@
 ---
 name: performing-purple-team-atomic-testing
 description: 'Executes Atomic Red Team tests mapped to MITRE ATT&CK via Invoke-AtomicRedTeam
-  PowerShell, generates ATT&CK Navigator coverage heatmaps, correlates results against
-  Sigma rules, and runs detection validation loops to measure blue team visibility.
-  Use for purple team exercises, atomic test execution, ATT&CK coverage assessment,
-  or detection engineering validation.
+ PowerShell, generates ATT&CK Navigator coverage heatmaps, correlates results against
+ Sigma rules, and runs detection validation loops to measure blue team visibility.
+ Use for purple team exercises, atomic test execution, ATT&CK coverage assessment,
+ or detection engineering validation.
 
-  '
+ '
 domain: cybersecurity
 subdomain: purple-team
 tags:
@@ -86,7 +86,7 @@ Import-Module invoke-atomicredteam
 
 # Install atomics to default location (C:\AtomicRedTeam\atomics)
 IEX (IEX (New-Object System.Net.WebClient).DownloadString(
-    'https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1'
+ 'https://raw.githubusercontent.com/redcanaryco/invoke-atomicredteam/master/install-atomicredteam.ps1'
 )); Install-AtomicRedTeam -getAtomics -Force
 
 # Verify installation - list available techniques
@@ -112,35 +112,35 @@ Invoke-AtomicTest T1059.001 -ShowDetails
 
 # List tests for a tactic (e.g., Persistence)
 $persistenceTechniques = @(
-    "T1547.001",  # Boot or Logon Autostart - Registry Run Keys
-    "T1053.005",  # Scheduled Task
-    "T1136.001",  # Create Account - Local Account
-    "T1543.003",  # Create or Modify System Process - Windows Service
-    "T1546.001",  # Event Triggered Execution - Change Default File Association
-    "T1574.001",  # Hijack Execution Flow - DLL Search Order Hijacking
-    "T1197"       # BITS Jobs
+ "T1547.001", # Boot or Logon Autostart - Registry Run Keys
+ "T1053.005", # Scheduled Task
+ "T1136.001", # Create Account - Local Account
+ "T1543.003", # Create or Modify System Process - Windows Service
+ "T1546.001", # Event Triggered Execution - Change Default File Association
+ "T1574.001", # Hijack Execution Flow - DLL Search Order Hijacking
+ "T1197" # BITS Jobs
 )
 
 foreach ($tech in $persistenceTechniques) {
-    Write-Host "`n=== $tech ===" -ForegroundColor Cyan
-    try {
-        Invoke-AtomicTest $tech -ShowDetailsBrief
-    } catch {
-        Write-Host "  No tests available" -ForegroundColor Yellow
-    }
+ Write-Host "`n=== $tech ===" -ForegroundColor Cyan
+ try {
+ Invoke-AtomicTest $tech -ShowDetailsBrief
+ } catch {
+ Write-Host " No tests available" -ForegroundColor Yellow
+ }
 }
 
 # Get all atomic techniques from YAML files programmatically
 $allAtomics = Get-ChildItem "$atomicsPath\T*\T*.yaml" -Recurse |
-    ForEach-Object {
-        $yaml = Get-Content $_.FullName -Raw | ConvertFrom-Yaml
-        [PSCustomObject]@{
-            TechniqueId   = $yaml.attack_technique
-            TechniqueName = $yaml.display_name
-            TestCount     = $yaml.atomic_tests.Count
-            Platforms     = ($yaml.atomic_tests.supported_platforms | Sort-Object -Unique) -join ", "
-        }
-    }
+ ForEach-Object {
+ $yaml = Get-Content $_.FullName -Raw | ConvertFrom-Yaml
+ [PSCustomObject]@{
+ TechniqueId = $yaml.attack_technique
+ TechniqueName = $yaml.display_name
+ TestCount = $yaml.atomic_tests.Count
+ Platforms = ($yaml.atomic_tests.supported_platforms | Sort-Object -Unique) -join ", "
+ }
+ }
 
 $allAtomics | Sort-Object TechniqueId | Format-Table -AutoSize
 Write-Host "Total techniques with tests: $($allAtomics.Count)"
@@ -177,55 +177,55 @@ Invoke-AtomicTest T1059.001 -TestNumbers 1 -Cleanup
 
 # Execute with full logging wrapper
 function Invoke-AtomicWithLogging {
-    param(
-        [string]$TechniqueId,
-        [int[]]$TestNumbers,
-        [string]$LogPath = "C:\AtomicRedTeam\logs"
-    )
+ param(
+ [string]$TechniqueId,
+ [int[]]$TestNumbers,
+ [string]$LogPath = "C:\AtomicRedTeam\logs"
+ )
 
-    $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-    $logFile = Join-Path $LogPath "${TechniqueId}_${timestamp}.json"
+ $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+ $logFile = Join-Path $LogPath "${TechniqueId}_${timestamp}.json"
 
-    $result = @{
-        technique_id  = $TechniqueId
-        test_numbers  = $TestNumbers
-        start_time    = (Get-Date).ToString("o")
-        hostname      = $env:COMPUTERNAME
-        username      = $env:USERNAME
-        results       = @()
-    }
+ $result = @{
+ technique_id = $TechniqueId
+ test_numbers = $TestNumbers
+ start_time = (Get-Date).ToString("o")
+ hostname = $env:COMPUTERNAME
+ username = $env:USERNAME
+ results = @()
+ }
 
-    foreach ($testNum in $TestNumbers) {
-        $testResult = @{
-            test_number = $testNum
-            status      = "unknown"
-            start_time  = (Get-Date).ToString("o")
-        }
+ foreach ($testNum in $TestNumbers) {
+ $testResult = @{
+ test_number = $testNum
+ status = "unknown"
+ start_time = (Get-Date).ToString("o")
+ }
 
-        try {
-            # Show what will execute
-            $details = Invoke-AtomicTest $TechniqueId -TestNumbers $testNum -ShowDetails 2>&1
-            $testResult["details"] = $details | Out-String
+ try {
+ # Show what will execute
+ $details = Invoke-AtomicTest $TechniqueId -TestNumbers $testNum -ShowDetails 2>&1
+ $testResult["details"] = $details | Out-String
 
-            # Execute the test
-            Invoke-AtomicTest $TechniqueId -TestNumbers $testNum -Confirm:$false
-            $testResult["status"] = "executed"
-        } catch {
-            $testResult["status"] = "failed"
-            $testResult["error"] = $_.Exception.Message
-        }
+ # Execute the test
+ Invoke-AtomicTest $TechniqueId -TestNumbers $testNum -Confirm:$false
+ $testResult["status"] = "executed"
+ } catch {
+ $testResult["status"] = "failed"
+ $testResult["error"] = $_.Exception.Message
+ }
 
-        $testResult["end_time"] = (Get-Date).ToString("o")
-        $result.results += $testResult
+ $testResult["end_time"] = (Get-Date).ToString("o")
+ $result.results += $testResult
 
-        # Wait for SIEM ingestion
-        Start-Sleep -Seconds 30
-    }
+ # Wait for SIEM ingestion
+ Start-Sleep -Seconds 30
+ }
 
-    $result["end_time"] = (Get-Date).ToString("o")
-    $result | ConvertTo-Json -Depth 10 | Set-Content $logFile
-    Write-Host "Log written to: $logFile" -ForegroundColor Green
-    return $result
+ $result["end_time"] = (Get-Date).ToString("o")
+ $result | ConvertTo-Json -Depth 10 | Set-Content $logFile
+ Write-Host "Log written to: $logFile" -ForegroundColor Green
+ return $result
 }
 
 # Usage
@@ -242,34 +242,34 @@ Splunk SPL Queries for Detection Validation:
 
 -- T1059.001: PowerShell Execution
 index=windows sourcetype="WinEventLog:Microsoft-Windows-PowerShell/Operational"
-  EventCode=4104
-  | eval script_block=ScriptBlockText
-  | where len(script_block) > 500
-  | stats count by host, script_block
-  | sort -count
+ EventCode=4104
+ | eval script_block=ScriptBlockText
+ | where len(script_block) > 500
+ | stats count by host, script_block
+ | sort -count
 
 -- T1003.001: LSASS Memory Credential Dumping
 index=windows sourcetype="WinEventLog:Security" EventCode=4663
-  ObjectName="*lsass*"
-  | stats count by host, SubjectUserName, ProcessName
-  | where count > 0
+ ObjectName="*lsass*"
+ | stats count by host, SubjectUserName, ProcessName
+ | where count > 0
 
 -- T1547.001: Registry Run Key Persistence
 index=windows sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational"
-  EventCode=13
-  TargetObject="*\\CurrentVersion\\Run*"
-  | stats count by host, Image, TargetObject, Details
+ EventCode=13
+ TargetObject="*\\CurrentVersion\\Run*"
+ | stats count by host, Image, TargetObject, Details
 
 -- T1053.005: Scheduled Task Creation
 index=windows sourcetype="WinEventLog:Security" EventCode=4698
-  | stats count by host, SubjectUserName, TaskName, TaskContent
-  | sort -count
+ | stats count by host, SubjectUserName, TaskName, TaskContent
+ | sort -count
 
 -- Generic: Hunt for Atomic Red Team artifacts
 index=windows (sourcetype="WinEventLog:Microsoft-Windows-Sysmon/Operational"
-  OR sourcetype="WinEventLog:Security")
-  | search "*AtomicRedTeam*" OR "*atomic*" OR "*Invoke-AtomicTest*"
-  | stats count by sourcetype, EventCode, host
+ OR sourcetype="WinEventLog:Security")
+ | search "*AtomicRedTeam*" OR "*atomic*" OR "*Invoke-AtomicTest*"
+ | stats count by sourcetype, EventCode, host
 ```
 
 ```
@@ -305,431 +305,431 @@ from datetime import datetime
 
 
 def load_atomics_inventory(atomics_path):
-    """Parse all atomic test YAML files to build technique inventory."""
-    inventory = {}
-    atomics_dir = Path(atomics_path)
+ """Parse all atomic test YAML files to build technique inventory."""
+ inventory = {}
+ atomics_dir = Path(atomics_path)
 
-    for yaml_file in atomics_dir.glob("T*/T*.yaml"):
-        try:
-            with open(yaml_file, "r", encoding="utf-8") as f:
-                data = yaml.safe_load(f)
+ for yaml_file in atomics_dir.glob("T*/T*.yaml"):
+ try:
+ with open(yaml_file, "r", encoding="utf-8") as f:
+ data = yaml.safe_load(f)
 
-            tech_id = data.get("attack_technique", "")
-            if not tech_id:
-                continue
+ tech_id = data.get("attack_technique", "")
+ if not tech_id:
+ continue
 
-            tests = data.get("atomic_tests", [])
-            inventory[tech_id] = {
-                "name": data.get("display_name", "Unknown"),
-                "test_count": len(tests),
-                "platforms": list(set(
-                    p for t in tests
-                    for p in t.get("supported_platforms", [])
-                )),
-                "tests": [
-                    {
-                        "name": t.get("name", "Unnamed"),
-                        "description": t.get("description", ""),
-                        "platforms": t.get("supported_platforms", []),
-                        "executor": t.get("executor", {}).get("name", "unknown"),
-                    }
-                    for t in tests
-                ],
-            }
-        except Exception as e:
-            print(f"[WARN] Failed to parse {yaml_file}: {e}")
+ tests = data.get("atomic_tests", [])
+ inventory[tech_id] = {
+ "name": data.get("display_name", "Unknown"),
+ "test_count": len(tests),
+ "platforms": list(set(
+ p for t in tests
+ for p in t.get("supported_platforms", [])
+ )),
+ "tests": [
+ {
+ "name": t.get("name", "Unnamed"),
+ "description": t.get("description", ""),
+ "platforms": t.get("supported_platforms", []),
+ "executor": t.get("executor", {}).get("name", "unknown"),
+ }
+ for t in tests
+ ],
+ }
+ except Exception as e:
+ print(f"[WARN] Failed to parse {yaml_file}: {e}")
 
-    return inventory
+ return inventory
 
 
 def load_execution_logs(log_dir):
-    """Load atomic test execution logs."""
-    executed = {}
-    log_path = Path(log_dir)
+ """Load atomic test execution logs."""
+ executed = {}
+ log_path = Path(log_dir)
 
-    if not log_path.exists():
-        return executed
+ if not log_path.exists():
+ return executed
 
-    for log_file in log_path.glob("T*_*.json"):
-        try:
-            with open(log_file, "r") as f:
-                data = json.load(f)
-            tech_id = data.get("technique_id", "")
-            if tech_id:
-                if tech_id not in executed:
-                    executed[tech_id] = {
-                        "executions": [],
-                        "last_executed": data.get("end_time", ""),
-                    }
-                executed[tech_id]["executions"].append({
-                    "timestamp": data.get("start_time", ""),
-                    "results": data.get("results", []),
-                })
-        except Exception as e:
-            print(f"[WARN] Failed to parse {log_file}: {e}")
+ for log_file in log_path.glob("T*_*.json"):
+ try:
+ with open(log_file, "r") as f:
+ data = json.load(f)
+ tech_id = data.get("technique_id", "")
+ if tech_id:
+ if tech_id not in executed:
+ executed[tech_id] = {
+ "executions": [],
+ "last_executed": data.get("end_time", ""),
+ }
+ executed[tech_id]["executions"].append({
+ "timestamp": data.get("start_time", ""),
+ "results": data.get("results", []),
+ })
+ except Exception as e:
+ print(f"[WARN] Failed to parse {log_file}: {e}")
 
-    return executed
+ return executed
 
 
 def load_detection_results(detection_file):
-    """Load SIEM detection validation results (JSON export from SIEM queries)."""
-    if not os.path.exists(detection_file):
-        return {}
+ """Load SIEM detection validation results (JSON export from SIEM queries)."""
+ if not os.path.exists(detection_file):
+ return {}
 
-    with open(detection_file, "r") as f:
-        data = json.load(f)
+ with open(detection_file, "r") as f:
+ data = json.load(f)
 
-    detections = {}
-    for entry in data:
-        tech_id = entry.get("technique_id", "")
-        if tech_id:
-            detections[tech_id] = {
-                "detected": entry.get("detected", False),
-                "alert_count": entry.get("alert_count", 0),
-                "rule_name": entry.get("rule_name", ""),
-                "confidence": entry.get("confidence", "unknown"),
-                "data_sources": entry.get("data_sources", []),
-            }
+ detections = {}
+ for entry in data:
+ tech_id = entry.get("technique_id", "")
+ if tech_id:
+ detections[tech_id] = {
+ "detected": entry.get("detected", False),
+ "alert_count": entry.get("alert_count", 0),
+ "rule_name": entry.get("rule_name", ""),
+ "confidence": entry.get("confidence", "unknown"),
+ "data_sources": entry.get("data_sources", []),
+ }
 
-    return detections
+ return detections
 
 
 # MITRE ATT&CK tactic ordering for structured output
 TACTIC_ORDER = [
-    "reconnaissance", "resource-development", "initial-access",
-    "execution", "persistence", "privilege-escalation",
-    "defense-evasion", "credential-access", "discovery",
-    "lateral-movement", "collection", "command-and-control",
-    "exfiltration", "impact",
+ "reconnaissance", "resource-development", "initial-access",
+ "execution", "persistence", "privilege-escalation",
+ "defense-evasion", "credential-access", "discovery",
+ "lateral-movement", "collection", "command-and-control",
+ "exfiltration", "impact",
 ]
 
 # Tactic-to-technique mapping for common techniques (subset for illustration)
 TACTIC_TECHNIQUE_MAP = {
-    "execution": [
-        "T1059", "T1059.001", "T1059.003", "T1059.004", "T1059.005",
-        "T1059.006", "T1059.007", "T1047", "T1053", "T1053.005",
-        "T1129", "T1203", "T1569", "T1569.002",
-    ],
-    "persistence": [
-        "T1547", "T1547.001", "T1547.004", "T1547.009",
-        "T1053.005", "T1136", "T1136.001", "T1543", "T1543.003",
-        "T1546", "T1546.001", "T1546.003", "T1574", "T1574.001",
-        "T1197", "T1505", "T1505.003",
-    ],
-    "credential-access": [
-        "T1003", "T1003.001", "T1003.002", "T1003.003",
-        "T1003.004", "T1003.005", "T1003.006",
-        "T1110", "T1110.001", "T1110.003",
-        "T1555", "T1555.003", "T1552", "T1552.001",
-        "T1558", "T1558.003",
-    ],
-    "defense-evasion": [
-        "T1070", "T1070.001", "T1070.004",
-        "T1218", "T1218.001", "T1218.003", "T1218.005",
-        "T1218.010", "T1218.011",
-        "T1027", "T1140", "T1562", "T1562.001",
-        "T1036", "T1036.005",
-    ],
-    "discovery": [
-        "T1082", "T1083", "T1087", "T1087.001", "T1087.002",
-        "T1016", "T1049", "T1057", "T1069", "T1069.001",
-        "T1069.002", "T1518", "T1518.001",
-    ],
-    "lateral-movement": [
-        "T1021", "T1021.001", "T1021.002", "T1021.003",
-        "T1021.004", "T1021.006", "T1570",
-    ],
-    "command-and-control": [
-        "T1071", "T1071.001", "T1071.004",
-        "T1105", "T1132", "T1573", "T1573.001",
-        "T1219", "T1090",
-    ],
-    "exfiltration": [
-        "T1041", "T1048", "T1048.003", "T1567",
-    ],
-    "impact": [
-        "T1485", "T1486", "T1489", "T1490", "T1491",
-    ],
+ "execution": [
+ "T1059", "T1059.001", "T1059.003", "T1059.004", "T1059.005",
+ "T1059.006", "T1059.007", "T1047", "T1053", "T1053.005",
+ "T1129", "T1203", "T1569", "T1569.002",
+ ],
+ "persistence": [
+ "T1547", "T1547.001", "T1547.004", "T1547.009",
+ "T1053.005", "T1136", "T1136.001", "T1543", "T1543.003",
+ "T1546", "T1546.001", "T1546.003", "T1574", "T1574.001",
+ "T1197", "T1505", "T1505.003",
+ ],
+ "credential-access": [
+ "T1003", "T1003.001", "T1003.002", "T1003.003",
+ "T1003.004", "T1003.005", "T1003.006",
+ "T1110", "T1110.001", "T1110.003",
+ "T1555", "T1555.003", "T1552", "T1552.001",
+ "T1558", "T1558.003",
+ ],
+ "defense-evasion": [
+ "T1070", "T1070.001", "T1070.004",
+ "T1218", "T1218.001", "T1218.003", "T1218.005",
+ "T1218.010", "T1218.011",
+ "T1027", "T1140", "T1562", "T1562.001",
+ "T1036", "T1036.005",
+ ],
+ "discovery": [
+ "T1082", "T1083", "T1087", "T1087.001", "T1087.002",
+ "T1016", "T1049", "T1057", "T1069", "T1069.001",
+ "T1069.002", "T1518", "T1518.001",
+ ],
+ "lateral-movement": [
+ "T1021", "T1021.001", "T1021.002", "T1021.003",
+ "T1021.004", "T1021.006", "T1570",
+ ],
+ "command-and-control": [
+ "T1071", "T1071.001", "T1071.004",
+ "T1105", "T1132", "T1573", "T1573.001",
+ "T1219", "T1090",
+ ],
+ "exfiltration": [
+ "T1041", "T1048", "T1048.003", "T1567",
+ ],
+ "impact": [
+ "T1485", "T1486", "T1489", "T1490", "T1491",
+ ],
 }
 
 
 def generate_coverage_report(atomics_inventory, execution_logs, detection_results):
-    """Generate comprehensive coverage gap analysis."""
-    report = {
-        "generated_at": datetime.utcnow().isoformat() + "Z",
-        "summary": {},
-        "tactics": {},
-        "gaps": [],
-        "recommendations": [],
-    }
+ """Generate comprehensive coverage gap analysis."""
+ report = {
+ "generated_at": datetime.utcnow().isoformat() + "Z",
+ "summary": {},
+ "tactics": {},
+ "gaps": [],
+ "recommendations": [],
+ }
 
-    total_available = len(atomics_inventory)
-    total_executed = len(execution_logs)
-    total_detected = sum(1 for d in detection_results.values() if d.get("detected"))
+ total_available = len(atomics_inventory)
+ total_executed = len(execution_logs)
+ total_detected = sum(1 for d in detection_results.values() if d.get("detected"))
 
-    report["summary"] = {
-        "total_techniques_with_atomics": total_available,
-        "total_techniques_executed": total_executed,
-        "total_techniques_detected": total_detected,
-        "execution_coverage_pct": round(
-            (total_executed / total_available * 100) if total_available else 0, 1
-        ),
-        "detection_coverage_pct": round(
-            (total_detected / total_executed * 100) if total_executed else 0, 1
-        ),
-    }
+ report["summary"] = {
+ "total_techniques_with_atomics": total_available,
+ "total_techniques_executed": total_executed,
+ "total_techniques_detected": total_detected,
+ "execution_coverage_pct": round(
+ (total_executed / total_available * 100) if total_available else 0, 1
+ ),
+ "detection_coverage_pct": round(
+ (total_detected / total_executed * 100) if total_executed else 0, 1
+ ),
+ }
 
-    # Per-tactic analysis
-    for tactic, technique_ids in TACTIC_TECHNIQUE_MAP.items():
-        tactic_data = {
-            "techniques_available": 0,
-            "techniques_executed": 0,
-            "techniques_detected": 0,
-            "gaps": [],
-        }
+ # Per-tactic analysis
+ for tactic, technique_ids in TACTIC_TECHNIQUE_MAP.items():
+ tactic_data = {
+ "techniques_available": 0,
+ "techniques_executed": 0,
+ "techniques_detected": 0,
+ "gaps": [],
+ }
 
-        for tech_id in technique_ids:
-            if tech_id in atomics_inventory:
-                tactic_data["techniques_available"] += 1
+ for tech_id in technique_ids:
+ if tech_id in atomics_inventory:
+ tactic_data["techniques_available"] += 1
 
-                executed = tech_id in execution_logs
-                detected = detection_results.get(tech_id, {}).get("detected", False)
+ executed = tech_id in execution_logs
+ detected = detection_results.get(tech_id, {}).get("detected", False)
 
-                if executed:
-                    tactic_data["techniques_executed"] += 1
-                if detected:
-                    tactic_data["techniques_detected"] += 1
+ if executed:
+ tactic_data["techniques_executed"] += 1
+ if detected:
+ tactic_data["techniques_detected"] += 1
 
-                if executed and not detected:
-                    gap = {
-                        "technique_id": tech_id,
-                        "technique_name": atomics_inventory[tech_id]["name"],
-                        "tactic": tactic,
-                        "status": "BLIND_SPOT",
-                        "detail": "Test executed but no detection triggered",
-                    }
-                    tactic_data["gaps"].append(gap)
-                    report["gaps"].append(gap)
-                elif not executed and tech_id in atomics_inventory:
-                    gap = {
-                        "technique_id": tech_id,
-                        "technique_name": atomics_inventory[tech_id]["name"],
-                        "tactic": tactic,
-                        "status": "NOT_TESTED",
-                        "detail": "Atomic test available but not yet executed",
-                    }
-                    tactic_data["gaps"].append(gap)
+ if executed and not detected:
+ gap = {
+ "technique_id": tech_id,
+ "technique_name": atomics_inventory[tech_id]["name"],
+ "tactic": tactic,
+ "status": "BLIND_SPOT",
+ "detail": "Test executed but no detection triggered",
+ }
+ tactic_data["gaps"].append(gap)
+ report["gaps"].append(gap)
+ elif not executed and tech_id in atomics_inventory:
+ gap = {
+ "technique_id": tech_id,
+ "technique_name": atomics_inventory[tech_id]["name"],
+ "tactic": tactic,
+ "status": "NOT_TESTED",
+ "detail": "Atomic test available but not yet executed",
+ }
+ tactic_data["gaps"].append(gap)
 
-        avail = tactic_data["techniques_available"]
-        tactic_data["coverage_pct"] = round(
-            (tactic_data["techniques_detected"] / avail * 100) if avail else 0, 1
-        )
-        report["tactics"][tactic] = tactic_data
+ avail = tactic_data["techniques_available"]
+ tactic_data["coverage_pct"] = round(
+ (tactic_data["techniques_detected"] / avail * 100) if avail else 0, 1
+ )
+ report["tactics"][tactic] = tactic_data
 
-    # Generate prioritized recommendations
-    blind_spots = [g for g in report["gaps"] if g["status"] == "BLIND_SPOT"]
-    if blind_spots:
-        report["recommendations"].append({
-            "priority": "CRITICAL",
-            "action": f"Write detection rules for {len(blind_spots)} blind spot techniques",
-            "techniques": [g["technique_id"] for g in blind_spots],
-        })
+ # Generate prioritized recommendations
+ blind_spots = [g for g in report["gaps"] if g["status"] == "BLIND_SPOT"]
+ if blind_spots:
+ report["recommendations"].append({
+ "priority": "CRITICAL",
+ "action": f"Write detection rules for {len(blind_spots)} blind spot techniques",
+ "techniques": [g["technique_id"] for g in blind_spots],
+ })
 
-    low_coverage_tactics = [
-        t for t, d in report["tactics"].items() if d["coverage_pct"] < 30
-    ]
-    if low_coverage_tactics:
-        report["recommendations"].append({
-            "priority": "HIGH",
-            "action": f"Expand testing in low-coverage tactics: {', '.join(low_coverage_tactics)}",
-            "detail": "These tactics have less than 30% detection coverage",
-        })
+ low_coverage_tactics = [
+ t for t, d in report["tactics"].items() if d["coverage_pct"] < 30
+ ]
+ if low_coverage_tactics:
+ report["recommendations"].append({
+ "priority": "HIGH",
+ "action": f"Expand testing in low-coverage tactics: {', '.join(low_coverage_tactics)}",
+ "detail": "These tactics have less than 30% detection coverage",
+ })
 
-    return report
+ return report
 
 
 def generate_navigator_layer(atomics_inventory, execution_logs, detection_results,
-                             layer_name="Purple Team Coverage"):
-    """Generate ATT&CK Navigator layer JSON for heatmap visualization."""
-    layer = {
-        "name": layer_name,
-        "versions": {
-            "attack": "15",
-            "navigator": "5.1",
-            "layer": "4.5",
-        },
-        "domain": "enterprise-attack",
-        "description": f"Purple team atomic testing coverage - Generated {datetime.utcnow().isoformat()}Z",
-        "filters": {"platforms": ["Windows", "Linux", "macOS"]},
-        "sorting": 0,
-        "layout": {
-            "layout": "side",
-            "aggregateFunction": "average",
-            "showID": True,
-            "showName": True,
-        },
-        "hideDisabled": False,
-        "techniques": [],
-        "gradient": {
-            "colors": ["#ff6666", "#ffeb3b", "#66bb6a"],
-            "minValue": 0,
-            "maxValue": 100,
-        },
-        "legendItems": [
-            {"label": "No Coverage (Blind Spot)", "color": "#ff6666"},
-            {"label": "Logged Only (Partial)", "color": "#ffeb3b"},
-            {"label": "Alert/Detection Active", "color": "#66bb6a"},
-            {"label": "Not Tested", "color": "#d3d3d3"},
-        ],
-        "metadata": [],
-        "links": [],
-        "showTacticRowBackground": True,
-        "tacticRowBackground": "#dddddd",
-        "selectTechniquesAcrossTactics": True,
-        "selectSubtechniquesWithParent": False,
-    }
+ layer_name="Purple Team Coverage"):
+ """Generate ATT&CK Navigator layer JSON for heatmap visualization."""
+ layer = {
+ "name": layer_name,
+ "versions": {
+ "attack": "15",
+ "navigator": "5.1",
+ "layer": "4.5",
+ },
+ "domain": "enterprise-attack",
+ "description": f"Purple team atomic testing coverage - Generated {datetime.utcnow().isoformat()}Z",
+ "filters": {"platforms": ["Windows", "Linux", "macOS"]},
+ "sorting": 0,
+ "layout": {
+ "layout": "side",
+ "aggregateFunction": "average",
+ "showID": True,
+ "showName": True,
+ },
+ "hideDisabled": False,
+ "techniques": [],
+ "gradient": {
+ "colors": ["#ff6666", "#ffeb3b", "#66bb6a"],
+ "minValue": 0,
+ "maxValue": 100,
+ },
+ "legendItems": [
+ {"label": "No Coverage (Blind Spot)", "color": "#ff6666"},
+ {"label": "Logged Only (Partial)", "color": "#ffeb3b"},
+ {"label": "Alert/Detection Active", "color": "#66bb6a"},
+ {"label": "Not Tested", "color": "#d3d3d3"},
+ ],
+ "metadata": [],
+ "links": [],
+ "showTacticRowBackground": True,
+ "tacticRowBackground": "#dddddd",
+ "selectTechniquesAcrossTactics": True,
+ "selectSubtechniquesWithParent": False,
+ }
 
-    for tech_id, tech_data in atomics_inventory.items():
-        executed = tech_id in execution_logs
-        detection = detection_results.get(tech_id, {})
-        detected = detection.get("detected", False)
-        confidence = detection.get("confidence", "none")
+ for tech_id, tech_data in atomics_inventory.items():
+ executed = tech_id in execution_logs
+ detection = detection_results.get(tech_id, {})
+ detected = detection.get("detected", False)
+ confidence = detection.get("confidence", "none")
 
-        if detected and confidence in ("high", "medium"):
-            score = 100
-            color = "#66bb6a"  # Green - high confidence detection
-            comment = f"DETECTED - {detection.get('rule_name', 'Alert active')}"
-        elif detected:
-            score = 50
-            color = "#ffeb3b"  # Yellow - logged/partial
-            comment = "PARTIAL - Detection exists but low confidence"
-        elif executed:
-            score = 0
-            color = "#ff6666"  # Red - blind spot
-            comment = "BLIND SPOT - Test executed, no detection"
-        else:
-            score = 0
-            color = "#d3d3d3"  # Gray - not tested
-            comment = f"NOT TESTED - {tech_data['test_count']} atomic tests available"
+ if detected and confidence in ("high", "medium"):
+ score = 100
+ color = "#66bb6a" # Green - high confidence detection
+ comment = f"DETECTED - {detection.get('rule_name', 'Alert active')}"
+ elif detected:
+ score = 50
+ color = "#ffeb3b" # Yellow - logged/partial
+ comment = "PARTIAL - Detection exists but low confidence"
+ elif executed:
+ score = 0
+ color = "#ff6666" # Red - blind spot
+ comment = "BLIND SPOT - Test executed, no detection"
+ else:
+ score = 0
+ color = "#d3d3d3" # Gray - not tested
+ comment = f"NOT TESTED - {tech_data['test_count']} atomic tests available"
 
-        technique_entry = {
-            "techniqueID": tech_id,
-            "tactic": "",
-            "color": color,
-            "comment": comment,
-            "score": score,
-            "enabled": True,
-            "metadata": [
-                {"name": "tests_available", "value": str(tech_data["test_count"])},
-                {"name": "executed", "value": str(executed)},
-                {"name": "detected", "value": str(detected)},
-            ],
-            "links": [],
-            "showSubtechniques": False,
-        }
-        layer["techniques"].append(technique_entry)
+ technique_entry = {
+ "techniqueID": tech_id,
+ "tactic": "",
+ "color": color,
+ "comment": comment,
+ "score": score,
+ "enabled": True,
+ "metadata": [
+ {"name": "tests_available", "value": str(tech_data["test_count"])},
+ {"name": "executed", "value": str(executed)},
+ {"name": "detected", "value": str(detected)},
+ ],
+ "links": [],
+ "showSubtechniques": False,
+ }
+ layer["techniques"].append(technique_entry)
 
-    return layer
+ return layer
 
 
 def print_coverage_report(report):
-    """Print formatted coverage report to console."""
-    print("=" * 72)
-    print("PURPLE TEAM ATOMIC TESTING - COVERAGE GAP ANALYSIS")
-    print("=" * 72)
-    print(f"Generated: {report['generated_at']}")
-    print()
+ """Print formatted coverage report to console."""
+ print("=" * 72)
+ print("PURPLE TEAM ATOMIC TESTING - COVERAGE GAP ANALYSIS")
+ print("=" * 72)
+ print(f"Generated: {report['generated_at']}")
+ print()
 
-    s = report["summary"]
-    print("EXECUTIVE SUMMARY")
-    print("-" * 40)
-    print(f"  Techniques with atomics:  {s['total_techniques_with_atomics']}")
-    print(f"  Techniques executed:      {s['total_techniques_executed']}")
-    print(f"  Techniques detected:      {s['total_techniques_detected']}")
-    print(f"  Execution coverage:       {s['execution_coverage_pct']}%")
-    print(f"  Detection coverage:       {s['detection_coverage_pct']}%")
-    print()
+ s = report["summary"]
+ print("EXECUTIVE SUMMARY")
+ print("-" * 40)
+ print(f" Techniques with atomics: {s['total_techniques_with_atomics']}")
+ print(f" Techniques executed: {s['total_techniques_executed']}")
+ print(f" Techniques detected: {s['total_techniques_detected']}")
+ print(f" Execution coverage: {s['execution_coverage_pct']}%")
+ print(f" Detection coverage: {s['detection_coverage_pct']}%")
+ print()
 
-    print("PER-TACTIC COVERAGE")
-    print("-" * 72)
-    print(f"{'Tactic':<25} {'Available':>9} {'Executed':>9} {'Detected':>9} {'Coverage':>9}")
-    print("-" * 72)
-    for tactic in TACTIC_ORDER:
-        if tactic in report["tactics"]:
-            t = report["tactics"][tactic]
-            bar = "#" * int(t["coverage_pct"] / 5) + "." * (20 - int(t["coverage_pct"] / 5))
-            print(
-                f"  {tactic:<23} {t['techniques_available']:>9} "
-                f"{t['techniques_executed']:>9} {t['techniques_detected']:>9} "
-                f"{t['coverage_pct']:>8.1f}%"
-            )
-    print()
+ print("PER-TACTIC COVERAGE")
+ print("-" * 72)
+ print(f"{'Tactic':<25} {'Available':>9} {'Executed':>9} {'Detected':>9} {'Coverage':>9}")
+ print("-" * 72)
+ for tactic in TACTIC_ORDER:
+ if tactic in report["tactics"]:
+ t = report["tactics"][tactic]
+ bar = "#" * int(t["coverage_pct"] / 5) + "." * (20 - int(t["coverage_pct"] / 5))
+ print(
+ f" {tactic:<23} {t['techniques_available']:>9} "
+ f"{t['techniques_executed']:>9} {t['techniques_detected']:>9} "
+ f"{t['coverage_pct']:>8.1f}%"
+ )
+ print()
 
-    blind_spots = [g for g in report["gaps"] if g["status"] == "BLIND_SPOT"]
-    if blind_spots:
-        print("CRITICAL BLIND SPOTS (executed but not detected)")
-        print("-" * 72)
-        for gap in blind_spots:
-            print(f"  [!] {gap['technique_id']} - {gap['technique_name']}")
-            print(f"      Tactic: {gap['tactic']}")
-        print()
+ blind_spots = [g for g in report["gaps"] if g["status"] == "BLIND_SPOT"]
+ if blind_spots:
+ print("CRITICAL BLIND SPOTS (executed but not detected)")
+ print("-" * 72)
+ for gap in blind_spots:
+ print(f" [!] {gap['technique_id']} - {gap['technique_name']}")
+ print(f" Tactic: {gap['tactic']}")
+ print()
 
-    if report["recommendations"]:
-        print("RECOMMENDATIONS")
-        print("-" * 72)
-        for rec in report["recommendations"]:
-            print(f"  [{rec['priority']}] {rec['action']}")
-            if "techniques" in rec:
-                print(f"         Techniques: {', '.join(rec['techniques'][:10])}")
-            if "detail" in rec:
-                print(f"         {rec['detail']}")
-        print()
+ if report["recommendations"]:
+ print("RECOMMENDATIONS")
+ print("-" * 72)
+ for rec in report["recommendations"]:
+ print(f" [{rec['priority']}] {rec['action']}")
+ if "techniques" in rec:
+ print(f" Techniques: {', '.join(rec['techniques'][:10])}")
+ if "detail" in rec:
+ print(f" {rec['detail']}")
+ print()
 
 
 if __name__ == "__main__":
-    import argparse
+ import argparse
 
-    parser = argparse.ArgumentParser(description="ATT&CK coverage gap analysis for purple team testing")
-    parser.add_argument("--atomics-path", default=r"C:\AtomicRedTeam\atomics",
-                        help="Path to Atomic Red Team atomics directory")
-    parser.add_argument("--log-dir", default=r"C:\AtomicRedTeam\logs",
-                        help="Path to atomic test execution logs")
-    parser.add_argument("--detections-file", default="detection_results.json",
-                        help="Path to SIEM detection validation export (JSON)")
-    parser.add_argument("--output-layer", default="navigator_layer.json",
-                        help="Output path for ATT&CK Navigator layer JSON")
-    parser.add_argument("--output-report", default="coverage_report.json",
-                        help="Output path for coverage report JSON")
-    args = parser.parse_args()
+ parser = argparse.ArgumentParser(description="ATT&CK coverage gap analysis for purple team testing")
+ parser.add_argument("--atomics-path", default=r"C:\AtomicRedTeam\atomics",
+ help="Path to Atomic Red Team atomics directory")
+ parser.add_argument("--log-dir", default=r"C:\AtomicRedTeam\logs",
+ help="Path to atomic test execution logs")
+ parser.add_argument("--detections-file", default="detection_results.json",
+ help="Path to SIEM detection validation export (JSON)")
+ parser.add_argument("--output-layer", default="navigator_layer.json",
+ help="Output path for ATT&CK Navigator layer JSON")
+ parser.add_argument("--output-report", default="coverage_report.json",
+ help="Output path for coverage report JSON")
+ args = parser.parse_args()
 
-    print("[*] Loading atomics inventory...")
-    inventory = load_atomics_inventory(args.atomics_path)
-    print(f"    Found {len(inventory)} techniques with atomic tests")
+ print("[*] Loading atomics inventory...")
+ inventory = load_atomics_inventory(args.atomics_path)
+ print(f" Found {len(inventory)} techniques with atomic tests")
 
-    print("[*] Loading execution logs...")
-    exec_logs = load_execution_logs(args.log_dir)
-    print(f"    Found logs for {len(exec_logs)} techniques")
+ print("[*] Loading execution logs...")
+ exec_logs = load_execution_logs(args.log_dir)
+ print(f" Found logs for {len(exec_logs)} techniques")
 
-    print("[*] Loading detection results...")
-    det_results = load_detection_results(args.detections_file)
-    print(f"    Found detection data for {len(det_results)} techniques")
+ print("[*] Loading detection results...")
+ det_results = load_detection_results(args.detections_file)
+ print(f" Found detection data for {len(det_results)} techniques")
 
-    print("[*] Generating coverage report...")
-    report = generate_coverage_report(inventory, exec_logs, det_results)
-    print_coverage_report(report)
+ print("[*] Generating coverage report...")
+ report = generate_coverage_report(inventory, exec_logs, det_results)
+ print_coverage_report(report)
 
-    # Save report JSON
-    with open(args.output_report, "w") as f:
-        json.dump(report, f, indent=2)
-    print(f"[+] Report saved to {args.output_report}")
+ # Save report JSON
+ with open(args.output_report, "w") as f:
+ json.dump(report, f, indent=2)
+ print(f"[+] Report saved to {args.output_report}")
 
-    # Generate and save Navigator layer
-    print("[*] Generating ATT&CK Navigator layer...")
-    layer = generate_navigator_layer(inventory, exec_logs, det_results)
-    with open(args.output_layer, "w") as f:
-        json.dump(layer, f, indent=2)
-    print(f"[+] Navigator layer saved to {args.output_layer}")
-    print(f"    Import at: https://mitre-attack.github.io/attack-navigator/")
+ # Generate and save Navigator layer
+ print("[*] Generating ATT&CK Navigator layer...")
+ layer = generate_navigator_layer(inventory, exec_logs, det_results)
+ with open(args.output_layer, "w") as f:
+ json.dump(layer, f, indent=2)
+ print(f"[+] Navigator layer saved to {args.output_layer}")
+ print(f" Import at: https://mitre-attack.github.io/attack-navigator/")
 ```
 
 ### Step 6: Run Continuous Atomic Testing Pipeline
@@ -741,86 +741,86 @@ Schedule recurring tests against priority techniques:
 # Run as a scheduled task or via CI/CD pipeline
 
 $PriorityTechniques = @(
-    # Top MITRE ATT&CK techniques by prevalence (Red Canary Threat Detection Report)
-    @{ Id = "T1059.001"; Name = "PowerShell" },
-    @{ Id = "T1059.003"; Name = "Windows Command Shell" },
-    @{ Id = "T1547.001"; Name = "Registry Run Keys" },
-    @{ Id = "T1053.005"; Name = "Scheduled Task" },
-    @{ Id = "T1003.001"; Name = "LSASS Memory" },
-    @{ Id = "T1003.003"; Name = "NTDS" },
-    @{ Id = "T1070.004"; Name = "File Deletion" },
-    @{ Id = "T1218.011"; Name = "Rundll32" },
-    @{ Id = "T1082";     Name = "System Information Discovery" },
-    @{ Id = "T1105";     Name = "Ingress Tool Transfer" }
+ # Top MITRE ATT&CK techniques by prevalence (Red Canary Threat Detection Report)
+ @{ Id = "T1059.001"; Name = "PowerShell" },
+ @{ Id = "T1059.003"; Name = "Windows Command Shell" },
+ @{ Id = "T1547.001"; Name = "Registry Run Keys" },
+ @{ Id = "T1053.005"; Name = "Scheduled Task" },
+ @{ Id = "T1003.001"; Name = "LSASS Memory" },
+ @{ Id = "T1003.003"; Name = "NTDS" },
+ @{ Id = "T1070.004"; Name = "File Deletion" },
+ @{ Id = "T1218.011"; Name = "Rundll32" },
+ @{ Id = "T1082"; Name = "System Information Discovery" },
+ @{ Id = "T1105"; Name = "Ingress Tool Transfer" }
 )
 
 $ResultsLog = @()
 $RunTimestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 
 foreach ($technique in $PriorityTechniques) {
-    Write-Host "`n[*] Testing $($technique.Id) - $($technique.Name)" -ForegroundColor Cyan
+ Write-Host "`n[*] Testing $($technique.Id) - $($technique.Name)" -ForegroundColor Cyan
 
-    # Check prerequisites
-    try {
-        $prereqs = Invoke-AtomicTest $technique.Id -TestNumbers 1 -CheckPrereqs 2>&1
-        $prereqsMet = $prereqs -notmatch "not met"
-    } catch {
-        $prereqsMet = $false
-    }
+ # Check prerequisites
+ try {
+ $prereqs = Invoke-AtomicTest $technique.Id -TestNumbers 1 -CheckPrereqs 2>&1
+ $prereqsMet = $prereqs -notmatch "not met"
+ } catch {
+ $prereqsMet = $false
+ }
 
-    if (-not $prereqsMet) {
-        Write-Host "    [!] Prerequisites not met, attempting install..." -ForegroundColor Yellow
-        try {
-            Invoke-AtomicTest $technique.Id -TestNumbers 1 -GetPrereqs 2>&1 | Out-Null
-        } catch {
-            Write-Host "    [!] Prereq install failed, skipping" -ForegroundColor Red
-            $ResultsLog += [PSCustomObject]@{
-                TechniqueId = $technique.Id
-                Name        = $technique.Name
-                Status      = "PREREQS_FAILED"
-                Timestamp   = (Get-Date).ToString("o")
-            }
-            continue
-        }
-    }
+ if (-not $prereqsMet) {
+ Write-Host " [!] Prerequisites not met, attempting install..." -ForegroundColor Yellow
+ try {
+ Invoke-AtomicTest $technique.Id -TestNumbers 1 -GetPrereqs 2>&1 | Out-Null
+ } catch {
+ Write-Host " [!] Prereq install failed, skipping" -ForegroundColor Red
+ $ResultsLog += [PSCustomObject]@{
+ TechniqueId = $technique.Id
+ Name = $technique.Name
+ Status = "PREREQS_FAILED"
+ Timestamp = (Get-Date).ToString("o")
+ }
+ continue
+ }
+ }
 
-    # Execute the test
-    try {
-        $startTime = Get-Date
-        Invoke-AtomicTest $technique.Id -TestNumbers 1 -Confirm:$false
-        $endTime = Get-Date
-        $duration = ($endTime - $startTime).TotalSeconds
+ # Execute the test
+ try {
+ $startTime = Get-Date
+ Invoke-AtomicTest $technique.Id -TestNumbers 1 -Confirm:$false
+ $endTime = Get-Date
+ $duration = ($endTime - $startTime).TotalSeconds
 
-        Write-Host "    [+] Executed successfully (${duration}s)" -ForegroundColor Green
+ Write-Host " [+] Executed successfully (${duration}s)" -ForegroundColor Green
 
-        $ResultsLog += [PSCustomObject]@{
-            TechniqueId = $technique.Id
-            Name        = $technique.Name
-            Status      = "EXECUTED"
-            Duration    = $duration
-            Timestamp   = $startTime.ToString("o")
-        }
-    } catch {
-        Write-Host "    [-] Execution failed: $($_.Exception.Message)" -ForegroundColor Red
-        $ResultsLog += [PSCustomObject]@{
-            TechniqueId = $technique.Id
-            Name        = $technique.Name
-            Status      = "FAILED"
-            Error       = $_.Exception.Message
-            Timestamp   = (Get-Date).ToString("o")
-        }
-    }
+ $ResultsLog += [PSCustomObject]@{
+ TechniqueId = $technique.Id
+ Name = $technique.Name
+ Status = "EXECUTED"
+ Duration = $duration
+ Timestamp = $startTime.ToString("o")
+ }
+ } catch {
+ Write-Host " [-] Execution failed: $($_.Exception.Message)" -ForegroundColor Red
+ $ResultsLog += [PSCustomObject]@{
+ TechniqueId = $technique.Id
+ Name = $technique.Name
+ Status = "FAILED"
+ Error = $_.Exception.Message
+ Timestamp = (Get-Date).ToString("o")
+ }
+ }
 
-    # Cleanup
-    try {
-        Invoke-AtomicTest $technique.Id -TestNumbers 1 -Cleanup 2>&1 | Out-Null
-        Write-Host "    [+] Cleanup completed" -ForegroundColor DarkGray
-    } catch {
-        Write-Host "    [!] Cleanup failed" -ForegroundColor Yellow
-    }
+ # Cleanup
+ try {
+ Invoke-AtomicTest $technique.Id -TestNumbers 1 -Cleanup 2>&1 | Out-Null
+ Write-Host " [+] Cleanup completed" -ForegroundColor DarkGray
+ } catch {
+ Write-Host " [!] Cleanup failed" -ForegroundColor Yellow
+ }
 
-    # Brief pause between tests for log ingestion
-    Start-Sleep -Seconds 10
+ # Brief pause between tests for log ingestion
+ Start-Sleep -Seconds 10
 }
 
 # Export results
@@ -831,8 +831,8 @@ $ResultsLog | Format-Table -AutoSize
 $executed = ($ResultsLog | Where-Object Status -eq "EXECUTED").Count
 $failed = ($ResultsLog | Where-Object Status -ne "EXECUTED").Count
 Write-Host "`n=== CONTINUOUS TEST SUMMARY ===" -ForegroundColor Cyan
-Write-Host "  Executed: $executed / $($PriorityTechniques.Count)" -ForegroundColor Green
-Write-Host "  Failed:   $failed / $($PriorityTechniques.Count)" -ForegroundColor Red
+Write-Host " Executed: $executed / $($PriorityTechniques.Count)" -ForegroundColor Green
+Write-Host " Failed: $failed / $($PriorityTechniques.Count)" -ForegroundColor Red
 ```
 
 ### Step 7: Detection Validation Loop
@@ -843,57 +843,57 @@ Close the purple team loop by correlating tests with detections and iterating:
 Detection Validation Loop Workflow:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-  ┌──────────────────┐
-  │ 1. SELECT        │  Choose technique from threat intel or gap report
-  │    TECHNIQUE     │  Map to Atomic Red Team test ID
-  └───────┬──────────┘
-          │
-  ┌───────▼──────────┐
-  │ 2. EXECUTE       │  Run Invoke-AtomicTest with logging
-  │    ATOMIC TEST   │  Record timestamp, hostname, test details
-  └───────┬──────────┘
-          │
-  ┌───────▼──────────┐
-  │ 3. WAIT FOR      │  Allow 30-60 seconds for log ingestion
-  │    INGESTION     │  Ensure Sysmon, WinEventLog, EDR agents forward data
-  └───────┬──────────┘
-          │
-  ┌───────▼──────────┐
-  │ 4. QUERY SIEM    │  Search for correlated alerts matching technique
-  │    FOR ALERTS    │  Check: Did our detection rules fire?
-  └───────┬──────────┘
-          │
-     ┌────┴────┐
-     │DETECTED?│
-     └────┬────┘
-    YES   │   NO
-  ┌───────▼──────────┐   ┌──────────────────┐
-  │ 5a. MARK GREEN   │   │ 5b. WRITE NEW    │
-  │  Update Navigator│   │  Sigma/SIEM Rule │
-  │  layer, log pass │   │  for technique   │
-  └───────┬──────────┘   └───────┬──────────┘
-          │                       │
-          │               ┌───────▼──────────┐
-          │               │ 5c. DEPLOY RULE  │
-          │               │  Push to SIEM    │
-          │               └───────┬──────────┘
-          │                       │
-          │               ┌───────▼──────────┐
-          │               │ 5d. RE-EXECUTE   │
-          │               │  Re-run atomic   │
-          │               │  test, validate  │
-          │               └───────┬──────────┘
-          │                       │
-  ┌───────▼───────────────────────▼──┐
-  │ 6. CLEANUP                       │
-  │    Run Invoke-AtomicTest -Cleanup│
-  │    Document results              │
-  └───────┬──────────────────────────┘
-          │
-  ┌───────▼──────────┐
-  │ 7. NEXT          │  Select next technique
-  │    TECHNIQUE     │  Repeat from step 1
-  └──────────────────┘
+ ┌──────────────────┐
+ │ 1. SELECT │ Choose technique from threat intel or gap report
+ │ TECHNIQUE │ Map to Atomic Red Team test ID
+ └───────┬──────────┘
+ │
+ ┌───────▼──────────┐
+ │ 2. EXECUTE │ Run Invoke-AtomicTest with logging
+ │ ATOMIC TEST │ Record timestamp, hostname, test details
+ └───────┬──────────┘
+ │
+ ┌───────▼──────────┐
+ │ 3. WAIT FOR │ Allow 30-60 seconds for log ingestion
+ │ INGESTION │ Ensure Sysmon, WinEventLog, EDR agents forward data
+ └───────┬──────────┘
+ │
+ ┌───────▼──────────┐
+ │ 4. QUERY SIEM │ Search for correlated alerts matching technique
+ │ FOR ALERTS │ Check: Did our detection rules fire?
+ └───────┬──────────┘
+ │
+ ┌────┴────┐
+ │DETECTED?│
+ └────┬────┘
+ YES │ NO
+ ┌───────▼──────────┐ ┌──────────────────┐
+ │ 5a. MARK GREEN │ │ 5b. WRITE NEW │
+ │ Update Navigator│ │ Sigma/SIEM Rule │
+ │ layer, log pass │ │ for technique │
+ └───────┬──────────┘ └───────┬──────────┘
+ │ │
+ │ ┌───────▼──────────┐
+ │ │ 5c. DEPLOY RULE │
+ │ │ Push to SIEM │
+ │ └───────┬──────────┘
+ │ │
+ │ ┌───────▼──────────┐
+ │ │ 5d. RE-EXECUTE │
+ │ │ Re-run atomic │
+ │ │ test, validate │
+ │ └───────┬──────────┘
+ │ │
+ ┌───────▼───────────────────────▼──┐
+ │ 6. CLEANUP │
+ │ Run Invoke-AtomicTest -Cleanup│
+ │ Document results │
+ └───────┬──────────────────────────┘
+ │
+ ┌───────▼──────────┐
+ │ 7. NEXT │ Select next technique
+ │ TECHNIQUE │ Repeat from step 1
+ └──────────────────┘
 ```
 
 ## Key Concepts
@@ -968,43 +968,43 @@ Detection Validation Loop Workflow:
 ```
 PURPLE TEAM ATOMIC TESTING REPORT
 ====================================
-Campaign:         Q1 2026 Detection Validation
-Date Range:       2026-01-15 to 2026-03-15
+Campaign: Q1 2026 Detection Validation
+Date Range: 2026-01-15 to 2026-03-15
 Test Environment: YOURLAB-WIN10-01, YOURLAB-SRV-01
-SIEM:             Splunk Enterprise 9.x
+SIEM: Splunk Enterprise 9.x
 
 EXECUTION SUMMARY
-Techniques Tested:        47 / 200+ available
-Individual Tests Run:     112
-Tests Succeeded:          104
-Tests Failed (prereqs):   8
-Cleanup Completed:        104 / 104
+Techniques Tested: 47 / 200+ available
+Individual Tests Run: 112
+Tests Succeeded: 104
+Tests Failed (prereqs): 8
+Cleanup Completed: 104 / 104
 
 DETECTION COVERAGE
-                            Tested    Detected    Coverage
-Execution:                     12          10       83.3%
-Persistence:                    8           5       62.5%
-Credential Access:              6           4       66.7%
-Defense Evasion:               10           3       30.0%
-Discovery:                      5           5      100.0%
-Lateral Movement:               3           1       33.3%
-Command and Control:            2           1       50.0%
-Exfiltration:                   1           0        0.0%
+ Tested Detected Coverage
+Execution: 12 10 83.3%
+Persistence: 8 5 62.5%
+Credential Access: 6 4 66.7%
+Defense Evasion: 10 3 30.0%
+Discovery: 5 5 100.0%
+Lateral Movement: 3 1 33.3%
+Command and Control: 2 1 50.0%
+Exfiltration: 1 0 0.0%
 
 CRITICAL BLIND SPOTS
-[!] T1218.011 - Rundll32          (defense-evasion)
-[!] T1218.005 - Mshta             (defense-evasion)
-[!] T1070.004 - File Deletion     (defense-evasion)
-[!] T1574.001 - DLL Search Order  (persistence)
-[!] T1021.002 - SMB/Admin Shares  (lateral-movement)
-[!] T1048.003 - Exfil Over HTTP   (exfiltration)
+[!] T1218.011 - Rundll32 (defense-evasion)
+[!] T1218.005 - Mshta (defense-evasion)
+[!] T1070.004 - File Deletion (defense-evasion)
+[!] T1574.001 - DLL Search Order (persistence)
+[!] T1021.002 - SMB/Admin Shares (lateral-movement)
+[!] T1048.003 - Exfil Over HTTP (exfiltration)
 
 NAVIGATOR LAYER: coverage_layer_20260315.json
-  Import at: https://mitre-attack.github.io/attack-navigator/
+ Import at: https://mitre-attack.github.io/attack-navigator/
 
 RECOMMENDATIONS
 [CRITICAL] Write Sigma rules for 6 blind spot techniques
-[HIGH]     Expand defense-evasion testing (30% coverage)
-[HIGH]     Enable exfiltration monitoring data sources
-[MEDIUM]   Increase lateral movement test coverage (3 of 7 tested)
+[HIGH] Expand defense-evasion testing (30% coverage)
+[HIGH] Enable exfiltration monitoring data sources
+[MEDIUM] Increase lateral movement test coverage (3 of 7 tested)
 ```

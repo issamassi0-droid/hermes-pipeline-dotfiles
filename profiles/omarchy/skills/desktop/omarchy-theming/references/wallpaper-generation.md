@@ -6,13 +6,13 @@
 from PIL import Image, ImageDraw
 
 # Palette — use theme colors
-bg      = (20, 18, 16)       # #141210
-orange  = (196, 104, 42)     # #c4682a
-cyan    = (58, 138, 138)     # #3a8a8a
-yellow  = (168, 144, 48)     # #a89030
-muted   = (122, 112, 96)     # #7a7060
-surface = (30, 28, 24)       # #1e1c18
-fg      = (209, 200, 176)    # #d1c8b0
+bg = (20, 18, 16) # #141210
+orange = (196, 104, 42) # #c4682a
+cyan = (58, 138, 138) # #3a8a8a
+yellow = (168, 144, 48) # #a89030
+muted = (122, 112, 96) # #7a7060
+surface = (30, 28, 24) # #1e1c18
+fg = (209, 200, 176) # #d1c8b0
 
 W, H = 1920, 1080
 img = Image.new("RGB", (W, H), bg)
@@ -24,8 +24,8 @@ cx, cy, r = 1480, 380, 180
 draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=surface, outline=orange, width=3)
 
 # 2. Horizontal rules
-draw.rectangle([60, 140, 300, 143], fill=orange)   # top
-draw.rectangle([60, 940, 400, 943], fill=cyan)      # bottom
+draw.rectangle([60, 140, 300, 143], fill=orange) # top
+draw.rectangle([60, 940, 400, 943], fill=cyan) # bottom
 
 # 3. Vertical accent left
 draw.rectangle([57, 160, 60, 880], fill=yellow)
@@ -33,11 +33,11 @@ draw.rectangle([57, 160, 60, 880], fill=yellow)
 # 4. Grid squares bottom-right (2a2620 / cyan alternating)
 grid_x, grid_y, cell = 1460, 780, 24
 for row in range(3):
-    for col in range(3):
-        x = grid_x + col * (cell + 4)
-        y = grid_y + row * (cell + 4)
-        fill = orange if (row + col) % 2 == 0 else cyan
-        draw.rectangle([x, y, x + cell, y + cell], fill=fill)
+ for col in range(3):
+ x = grid_x + col * (cell + 4)
+ y = grid_y + row * (cell + 4)
+ fill = orange if (row + col) % 2 == 0 else cyan
+ draw.rectangle([x, y, x + cell, y + cell], fill=fill)
 
 # 5. Horizontal line center-left (wabi-sabi balance)
 draw.rectangle([80, 540, 500, 542], fill=muted)

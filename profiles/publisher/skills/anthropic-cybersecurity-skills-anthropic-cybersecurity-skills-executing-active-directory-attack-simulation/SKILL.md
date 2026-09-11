@@ -1,14 +1,14 @@
 ---
 name: executing-active-directory-attack-simulation
 description: 'Executes authorized attack simulations against Active Directory environments
-  to identify misconfigurations, weak credentials, dangerous privilege paths, and
-  exploitable trust relationships that could lead to domain compromise. The tester
-  uses BloodHound for attack path analysis, Mimikatz for credential extraction, and
-  Impacket for protocol-level attacks including Kerberoasting, AS-REP Roasting, and
-  delegation abuse. Activates for requests involving Active Directory pentest, AD
-  attack simulation, domain compromise testing, or Kerberos attack assessment.
+ to identify misconfigurations, weak credentials, dangerous privilege paths, and
+ exploitable trust relationships that could lead to domain compromise. The tester
+ uses BloodHound for attack path analysis, Mimikatz for credential extraction, and
+ Impacket for protocol-level attacks including Kerberoasting, AS-REP Roasting, and
+ delegation abuse. Activates for requests involving Active Directory pentest, AD
+ attack simulation, domain compromise testing, or Kerberos attack assessment.
 
-  '
+ '
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -78,11 +78,11 @@ Collect and analyze AD relationship data to identify the shortest paths to Domai
 
 - Run SharpHound collector: `SharpHound.exe -c All,GPOLocalGroup --outputdirectory C:\temp\` to collect users, groups, sessions, ACLs, trusts, and GPO data
 - Import the JSON output into BloodHound and run built-in queries:
-  - "Shortest Paths to Domain Admins from Owned Principals"
-  - "Find Principals with DCSync Rights"
-  - "Find Computers where Domain Users are Local Admin"
-  - "Shortest Paths to Unconstrained Delegation Systems"
-  - "Find All Paths from Kerberoastable Users"
+ - "Shortest Paths to Domain Admins from Owned Principals"
+ - "Find Principals with DCSync Rights"
+ - "Find Computers where Domain Users are Local Admin"
+ - "Shortest Paths to Unconstrained Delegation Systems"
+ - "Find All Paths from Kerberoastable Users"
 - Mark the compromised user as "owned" in BloodHound and analyze the resulting attack paths
 - Identify ACL-based attack paths: GenericAll, GenericWrite, WriteDACL, WriteOwner, ForceChangePassword on high-value objects
 - Document each identified attack path with the chain of relationships and affected objects

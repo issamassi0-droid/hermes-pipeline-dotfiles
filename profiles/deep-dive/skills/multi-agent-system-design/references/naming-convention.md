@@ -1,0 +1,109 @@
+# Three-Layer Naming Convention for Multi-Agent Systems
+
+## The Pattern
+
+Every agent has **three names** serving different audiences:
+
+| Layer | Purpose | Audience | Example |
+|---|---|---|---|
+| **Technical** | File names, code, APIs, documentation | Engineers, systems | `orchestrator-agent` |
+| **Functional** | Reports, dashboards, CLI, architecture diagrams | Technical managers, architects | `Orchestrator` |
+| **Display** | User chat, help text, guides | End users | `المُنسّق` |
+
+## Naming Rules
+
+### Technical Names
+
+| Rule | Example |
+|---|---|
+| Lowercase, hyphen-separated | `research-agent-multi` |
+| Format: `[role]-agent` or `[role]-factory` | `strategy-agent` |
+| Must be unique | No two agents share the same technical name |
+| Used in: file names, registry keys, API endpoints, CLI flags | `--agent research-agent-multi` |
+| Maximum 40 characters | — |
+
+### Functional Names
+
+| Rule | Example |
+|---|---|
+| Title case, single word preferred | `Strategist` |
+| May use two words if needed | `Agent Factory` |
+| Used in: reports, dashboards, documentation headers | `Researcher` |
+| Maximum 30 characters | — |
+
+### Display Names
+
+| Rule | Example |
+|---|---|
+| Arabic for Arabic users | `المُنسّق` |
+| English fallback | `Orchestrator` |
+| User-friendly, non-technical | `الباحث` (not `research-agent-multi`) |
+| Used in: chat, help text, guides | — |
+
+## Migration Guide
+
+### Registry.json
+
+```json
+{
+ "name": "orchestrator-agent",
+ "functional_name": "Orchestrator",
+ "display_name": "المُنسّق",
+ "handle": "@architect"
+}
+```
+
+### SOUL.md
+
+Each SOUL.md must include:
+
+```markdown
+## Names
+
+- **Technical:** `orchestrator-agent`
+- **Functional:** Orchestrator
+- **Display:** المُنسّق
+```
+
+### Routing.yaml
+
+Use technical names in tier agent lists:
+
+```yaml
+tiers:
+ "3":
+ agents: [orchestrator-agent, research-agent-multi, ...]
+```
+
+### Protocol.md
+
+Use technical names in FROM/TO examples:
+
+```
+[FROM:orchestrator-agent]
+[TO:research-agent-multi]
+```
+
+## Rationale
+
+| Problem | Solution |
+|---|---|
+| `@architect` is unclear in technical docs | `orchestrator-agent` is self-documenting |
+| `orchestrator-agent` is too technical for users | `المُنسّق` is intuitive |
+| Single name forces compromise | Three names serve each audience perfectly |
+
+## Example Mappings
+
+| Handle | Technical | Functional | Display (Ar) |
+|---|---|---|---|
+| @architect | `orchestrator-agent` | Orchestrator | المُنسّق |
+| @omni-researcher | `research-agent-multi` | Multi-Source Researcher | الباحث |
+| @deep-dive | `research-agent-youtube` | YouTube Researcher | باحث يوتيوب |
+| @strategist | `strategy-agent` | Strategist | الاستراتيجي |
+| @draft-writer | `drafting-agent` | Drafter | الكاتب |
+| @editor-qa | `qa-agent` | QA Auditor | المدقق |
+| @publisher | `distribution-agent` | Distributor | الناشر |
+| @analytics | `analytics-agent` | Analyst | المحلّل |
+| @bot-maker | `agent-factory` | Agent Factory | صانع الوكلاء |
+| @omarchy | `system-operator` | System Operator | مشغّل النظام |
+| @scout | `source-monitor` | Source Monitor | الراصد |

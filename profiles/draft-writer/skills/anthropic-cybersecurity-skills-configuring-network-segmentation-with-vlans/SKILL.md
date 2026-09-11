@@ -1,12 +1,12 @@
 ---
 name: configuring-network-segmentation-with-vlans
 description: 'Designs and implements VLAN-based (802.1Q) network segmentation on
-  managed switches to isolate zones such as corporate, servers, DMZ, guest, and
-  IoT, and to limit lateral movement paths. Use when segmenting an enterprise network
-  into isolated security zones, meeting compliance mandates (PCI-DSS, HIPAA, SOC
-  2) for network isolation, or reducing blast radius from a security incident.
+ managed switches to isolate zones such as corporate, servers, DMZ, guest, and
+ IoT, and to limit lateral movement paths. Use when segmenting an enterprise network
+ into isolated security zones, meeting compliance mandates (PCI-DSS, HIPAA, SOC
+ 2) for network isolation, or reducing blast radius from a security incident.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -58,15 +58,15 @@ mitre_attack:
 # Define VLANs based on security zones and function
 
 VLAN Plan:
-  VLAN 10  - CORPORATE    (10.10.10.0/24)  - Employee workstations
-  VLAN 20  - SERVERS      (10.10.20.0/24)  - Internal servers
-  VLAN 30  - DMZ          (10.10.30.0/24)  - Internet-facing servers
-  VLAN 40  - GUEST        (10.10.40.0/24)  - Guest WiFi
-  VLAN 50  - IOT          (10.10.50.0/24)  - IoT/OT devices
-  VLAN 60  - VOIP         (10.10.60.0/24)  - VoIP phones
-  VLAN 100 - MANAGEMENT   (10.10.100.0/24) - Switch/AP management
-  VLAN 999 - QUARANTINE   (10.10.99.0/24)  - Isolated/compromised hosts
-  VLAN 998 - NATIVE_UNUSED                  - Native VLAN (no traffic)
+ VLAN 10 - CORPORATE (10.10.10.0/24) - Employee workstations
+ VLAN 20 - SERVERS (10.10.20.0/24) - Internal servers
+ VLAN 30 - DMZ (10.10.30.0/24) - Internet-facing servers
+ VLAN 40 - GUEST (10.10.40.0/24) - Guest WiFi
+ VLAN 50 - IOT (10.10.50.0/24) - IoT/OT devices
+ VLAN 60 - VOIP (10.10.60.0/24) - VoIP phones
+ VLAN 100 - MANAGEMENT (10.10.100.0/24) - Switch/AP management
+ VLAN 999 - QUARANTINE (10.10.99.0/24) - Isolated/compromised hosts
+ VLAN 998 - NATIVE_UNUSED - Native VLAN (no traffic)
 
 # Traffic flow matrix:
 # CORPORATE -> SERVERS: Allowed (specific ports)
@@ -88,79 +88,79 @@ configure terminal
 
 ! Create VLANs
 vlan 10
-  name CORPORATE
-  exit
+ name CORPORATE
+ exit
 vlan 20
-  name SERVERS
-  exit
+ name SERVERS
+ exit
 vlan 30
-  name DMZ
-  exit
+ name DMZ
+ exit
 vlan 40
-  name GUEST
-  exit
+ name GUEST
+ exit
 vlan 50
-  name IOT
-  exit
+ name IOT
+ exit
 vlan 60
-  name VOIP
-  exit
+ name VOIP
+ exit
 vlan 100
-  name MANAGEMENT
-  exit
+ name MANAGEMENT
+ exit
 vlan 998
-  name NATIVE_UNUSED
-  exit
+ name NATIVE_UNUSED
+ exit
 vlan 999
-  name QUARANTINE
-  exit
+ name QUARANTINE
+ exit
 
 ! Configure access ports for workstations (VLAN 10)
 interface range GigabitEthernet1/0/1-24
-  switchport mode access
-  switchport access vlan 10
-  switchport nonegotiate
-  spanning-tree portfast
-  spanning-tree bpduguard enable
-  no shutdown
-  exit
+ switchport mode access
+ switchport access vlan 10
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no shutdown
+ exit
 
 ! Configure access ports for servers (VLAN 20)
 interface range GigabitEthernet1/0/25-36
-  switchport mode access
-  switchport access vlan 20
-  switchport nonegotiate
-  spanning-tree portfast
-  spanning-tree bpduguard enable
-  no shutdown
-  exit
+ switchport mode access
+ switchport access vlan 20
+ switchport nonegotiate
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no shutdown
+ exit
 
 ! Configure trunk ports to other switches
 interface GigabitEthernet1/0/48
-  switchport mode trunk
-  switchport trunk encapsulation dot1q
-  switchport trunk native vlan 998
-  switchport trunk allowed vlan 10,20,30,40,50,60,100
-  switchport nonegotiate
-  no shutdown
-  exit
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 998
+ switchport trunk allowed vlan 10,20,30,40,50,60,100
+ switchport nonegotiate
+ no shutdown
+ exit
 
 ! Configure trunk to firewall/router
 interface GigabitEthernet1/0/47
-  switchport mode trunk
-  switchport trunk encapsulation dot1q
-  switchport trunk native vlan 998
-  switchport trunk allowed vlan 10,20,30,40,50,60,100
-  switchport nonegotiate
-  no shutdown
-  exit
+ switchport mode trunk
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 998
+ switchport trunk allowed vlan 10,20,30,40,50,60,100
+ switchport nonegotiate
+ no shutdown
+ exit
 
 ! Shutdown unused ports
 interface range GigabitEthernet1/0/37-46
-  shutdown
-  switchport mode access
-  switchport access vlan 999
-  exit
+ shutdown
+ switchport mode access
+ switchport access vlan 999
+ exit
 ```
 
 ### Step 3: Harden Switch Against VLAN Hopping
@@ -168,39 +168,39 @@ interface range GigabitEthernet1/0/37-46
 ```
 ! Disable DTP on all ports (prevents switch spoofing)
 interface range GigabitEthernet1/0/1-46
-  switchport nonegotiate
-  exit
+ switchport nonegotiate
+ exit
 
 ! Set native VLAN to unused VLAN on all trunks
 interface range GigabitEthernet1/0/47-48
-  switchport trunk native vlan 998
-  exit
+ switchport trunk native vlan 998
+ exit
 
 ! Enable DHCP Snooping
 ip dhcp snooping
 ip dhcp snooping vlan 10,20,30,40,50,60
 interface GigabitEthernet1/0/47
-  ip dhcp snooping trust
-  exit
+ ip dhcp snooping trust
+ exit
 
 ! Enable Dynamic ARP Inspection
 ip arp inspection vlan 10,20,30,40,50,60
 interface GigabitEthernet1/0/47
-  ip arp inspection trust
-  exit
+ ip arp inspection trust
+ exit
 
 ! Enable IP Source Guard (prevents IP spoofing)
 interface range GigabitEthernet1/0/1-36
-  ip verify source
-  exit
+ ip verify source
+ exit
 
 ! Enable Port Security
 interface range GigabitEthernet1/0/1-24
-  switchport port-security
-  switchport port-security maximum 2
-  switchport port-security violation restrict
-  switchport port-security aging time 60
-  exit
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ switchport port-security aging time 60
+ exit
 
 ! Set VTP to transparent mode (prevents VTP attacks)
 vtp mode transparent
@@ -210,10 +210,10 @@ spanning-tree portfast bpduguard default
 
 ! Enable Storm Control
 interface range GigabitEthernet1/0/1-36
-  storm-control broadcast level 10
-  storm-control multicast level 10
-  storm-control action shutdown
-  exit
+ storm-control broadcast level 10
+ storm-control multicast level 10
+ storm-control action shutdown
+ exit
 ```
 
 ### Step 4: Configure Inter-VLAN Routing with ACLs
@@ -221,66 +221,66 @@ interface range GigabitEthernet1/0/1-36
 ```
 ! On the Layer 3 switch or firewall, configure SVIs
 interface Vlan10
-  ip address 10.10.10.1 255.255.255.0
-  no shutdown
-  exit
+ ip address 10.10.10.1 255.255.255.0
+ no shutdown
+ exit
 interface Vlan20
-  ip address 10.10.20.1 255.255.255.0
-  no shutdown
-  exit
+ ip address 10.10.20.1 255.255.255.0
+ no shutdown
+ exit
 interface Vlan30
-  ip address 10.10.30.1 255.255.255.0
-  no shutdown
-  exit
+ ip address 10.10.30.1 255.255.255.0
+ no shutdown
+ exit
 interface Vlan40
-  ip address 10.10.40.1 255.255.255.0
-  no shutdown
-  exit
+ ip address 10.10.40.1 255.255.255.0
+ no shutdown
+ exit
 interface Vlan50
-  ip address 10.10.50.1 255.255.255.0
-  no shutdown
-  exit
+ ip address 10.10.50.1 255.255.255.0
+ no shutdown
+ exit
 
 ! ACL: Corporate to Servers (allow specific services)
 ip access-list extended CORP-TO-SERVERS
-  permit tcp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 eq 80
-  permit tcp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 eq 443
-  permit tcp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 eq 445
-  permit udp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 eq 53
-  permit icmp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 echo
-  deny ip any any log
-  exit
+ permit tcp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 eq 80
+ permit tcp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 eq 443
+ permit tcp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 eq 445
+ permit udp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 eq 53
+ permit icmp 10.10.10.0 0.0.0.255 10.10.20.0 0.0.0.255 echo
+ deny ip any any log
+ exit
 
 ! ACL: Guest to Internet only (deny all internal)
 ip access-list extended GUEST-OUTBOUND
-  deny ip 10.10.40.0 0.0.0.255 10.0.0.0 0.255.255.255
-  deny ip 10.10.40.0 0.0.0.255 172.16.0.0 0.15.255.255
-  deny ip 10.10.40.0 0.0.0.255 192.168.0.0 0.0.255.255
-  permit tcp 10.10.40.0 0.0.0.255 any eq 80
-  permit tcp 10.10.40.0 0.0.0.255 any eq 443
-  permit udp 10.10.40.0 0.0.0.255 any eq 53
-  deny ip any any log
-  exit
+ deny ip 10.10.40.0 0.0.0.255 10.0.0.0 0.255.255.255
+ deny ip 10.10.40.0 0.0.0.255 172.16.0.0 0.15.255.255
+ deny ip 10.10.40.0 0.0.0.255 192.168.0.0 0.0.255.255
+ permit tcp 10.10.40.0 0.0.0.255 any eq 80
+ permit tcp 10.10.40.0 0.0.0.255 any eq 443
+ permit udp 10.10.40.0 0.0.0.255 any eq 53
+ deny ip any any log
+ exit
 
 ! ACL: IoT limited access
 ip access-list extended IOT-OUTBOUND
-  permit tcp 10.10.50.0 0.0.0.255 host 10.10.20.10 eq 443
-  permit tcp 10.10.50.0 0.0.0.255 any eq 443
-  permit udp 10.10.50.0 0.0.0.255 host 10.10.20.1 eq 53
-  deny ip 10.10.50.0 0.0.0.255 10.10.50.0 0.0.0.255 log
-  deny ip any any log
-  exit
+ permit tcp 10.10.50.0 0.0.0.255 host 10.10.20.10 eq 443
+ permit tcp 10.10.50.0 0.0.0.255 any eq 443
+ permit udp 10.10.50.0 0.0.0.255 host 10.10.20.1 eq 53
+ deny ip 10.10.50.0 0.0.0.255 10.10.50.0 0.0.0.255 log
+ deny ip any any log
+ exit
 
 ! Apply ACLs to VLAN interfaces
 interface Vlan10
-  ip access-group CORP-TO-SERVERS out
-  exit
+ ip access-group CORP-TO-SERVERS out
+ exit
 interface Vlan40
-  ip access-group GUEST-OUTBOUND in
-  exit
+ ip access-group GUEST-OUTBOUND in
+ exit
 interface Vlan50
-  ip access-group IOT-OUTBOUND in
-  exit
+ ip access-group IOT-OUTBOUND in
+ exit
 ```
 
 ### Step 5: Configure DHCP and DNS per VLAN
@@ -288,26 +288,26 @@ interface Vlan50
 ```
 ! DHCP pools for each VLAN
 ip dhcp pool CORPORATE
-  network 10.10.10.0 255.255.255.0
-  default-router 10.10.10.1
-  dns-server 10.10.20.10
-  domain-name corp.example.com
-  lease 1
-  exit
+ network 10.10.10.0 255.255.255.0
+ default-router 10.10.10.1
+ dns-server 10.10.20.10
+ domain-name corp.example.com
+ lease 1
+ exit
 
 ip dhcp pool GUEST
-  network 10.10.40.0 255.255.255.0
-  default-router 10.10.40.1
-  dns-server 1.1.1.1 8.8.8.8
-  lease 0 4
-  exit
+ network 10.10.40.0 255.255.255.0
+ default-router 10.10.40.1
+ dns-server 1.1.1.1 8.8.8.8
+ lease 0 4
+ exit
 
 ip dhcp pool IOT
-  network 10.10.50.0 255.255.255.0
-  default-router 10.10.50.1
-  dns-server 10.10.20.10
-  lease 7
-  exit
+ network 10.10.50.0 255.255.255.0
+ default-router 10.10.50.1
+ dns-server 10.10.20.10
+ lease 7
+ exit
 
 ! Exclude gateway and server IPs from DHCP pools
 ip dhcp excluded-address 10.10.10.1 10.10.10.10
@@ -320,21 +320,21 @@ ip dhcp excluded-address 10.10.50.1 10.10.50.10
 ```bash
 # From a workstation on VLAN 10 (Corporate):
 # Should succeed:
-ping 10.10.20.10          # Server access
-curl https://10.10.20.10  # HTTPS to server
+ping 10.10.20.10 # Server access
+curl https://10.10.20.10 # HTTPS to server
 
 # Should fail:
-ping 10.10.40.100         # Guest VLAN - should be blocked
-ping 10.10.50.100         # IoT VLAN - should be blocked
+ping 10.10.40.100 # Guest VLAN - should be blocked
+ping 10.10.50.100 # IoT VLAN - should be blocked
 
 # From a device on VLAN 40 (Guest):
 # Should succeed:
-ping 8.8.8.8              # Internet access
+ping 8.8.8.8 # Internet access
 curl https://www.google.com
 
 # Should fail:
-ping 10.10.10.1           # Corporate gateway - blocked
-ping 10.10.20.10          # Server - blocked
+ping 10.10.10.1 # Corporate gateway - blocked
+ping 10.10.20.10 # Server - blocked
 
 # Verify switch configuration
 show vlan brief

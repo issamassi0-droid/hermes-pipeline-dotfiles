@@ -80,116 +80,116 @@ Scans commits for accidentally committed credentials, API keys, tokens, and priv
 # .gitlab-ci.yml
 
 stages:
-  - build
-  - test
-  - security
-  - deploy-staging
-  - dast
-  - deploy-production
+ - build
+ - test
+ - security
+ - deploy-staging
+ - dast
+ - deploy-production
 
 variables:
-  DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-  SECURE_LOG_LEVEL: "info"
+ DOCKER_IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+ SECURE_LOG_LEVEL: "info"
 
 # Include GitLab managed security templates
 include:
-  - template: Security/SAST.gitlab-ci.yml
-  - template: Security/Secret-Detection.gitlab-ci.yml
-  - template: Security/Dependency-Scanning.gitlab-ci.yml
-  - template: Security/Container-Scanning.gitlab-ci.yml
-  - template: DAST.gitlab-ci.yml
-  - template: Security/License-Scanning.gitlab-ci.yml
+ - template: Security/SAST.gitlab-ci.yml
+ - template: Security/Secret-Detection.gitlab-ci.yml
+ - template: Security/Dependency-Scanning.gitlab-ci.yml
+ - template: Security/Container-Scanning.gitlab-ci.yml
+ - template: DAST.gitlab-ci.yml
+ - template: Security/License-Scanning.gitlab-ci.yml
 
 build:
-  stage: build
-  image: docker:24.0
-  services:
-    - docker:24.0-dind
-  variables:
-    DOCKER_TLS_CERTDIR: "/certs"
-  script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $DOCKER_IMAGE .
-    - docker push $DOCKER_IMAGE
-  rules:
-    - if: $CI_COMMIT_BRANCH
+ stage: build
+ image: docker:24.0
+ services:
+ - docker:24.0-dind
+ variables:
+ DOCKER_TLS_CERTDIR: "/certs"
+ script:
+ - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+ - docker build -t $DOCKER_IMAGE .
+ - docker push $DOCKER_IMAGE
+ rules:
+ - if: $CI_COMMIT_BRANCH
 
 unit-tests:
-  stage: test
-  image: $DOCKER_IMAGE
-  script:
-    - npm ci
-    - npm run test:coverage
-  coverage: '/Lines\s*:\s*(\d+\.?\d*)%/'
-  artifacts:
-    reports:
-      junit: junit-report.xml
-      coverage_report:
-        coverage_format: cobertura
-        path: coverage/cobertura-coverage.xml
+ stage: test
+ image: $DOCKER_IMAGE
+ script:
+ - npm ci
+ - npm run test:coverage
+ coverage: '/Lines\s*:\s*(\d+\.?\d*)%/'
+ artifacts:
+ reports:
+ junit: junit-report.xml
+ coverage_report:
+ coverage_format: cobertura
+ path: coverage/cobertura-coverage.xml
 
 # Override SAST to run in security stage
 sast:
-  stage: security
-  variables:
-    SAST_EXCLUDED_PATHS: "spec,test,tests,tmp,node_modules"
-    SEARCH_MAX_DEPTH: 10
+ stage: security
+ variables:
+ SAST_EXCLUDED_PATHS: "spec,test,tests,tmp,node_modules"
+ SEARCH_MAX_DEPTH: 10
 
 # Override container scanning
 container_scanning:
-  stage: security
-  variables:
-    CS_IMAGE: $DOCKER_IMAGE
-    CS_SEVERITY_THRESHOLD: "HIGH"
+ stage: security
+ variables:
+ CS_IMAGE: $DOCKER_IMAGE
+ CS_SEVERITY_THRESHOLD: "HIGH"
 
 # Override dependency scanning
 dependency_scanning:
-  stage: security
+ stage: security
 
 # Override secret detection
 secret_detection:
-  stage: security
+ stage: security
 
 # License compliance scanning
 license_scanning:
-  stage: security
+ stage: security
 
 deploy-staging:
-  stage: deploy-staging
-  image: bitnami/kubectl:latest
-  script:
-    - kubectl set image deployment/app app=$DOCKER_IMAGE -n staging
-    - kubectl rollout status deployment/app -n staging --timeout=300s
-  environment:
-    name: staging
-    url: https://staging.example.com
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+ stage: deploy-staging
+ image: bitnami/kubectl:latest
+ script:
+ - kubectl set image deployment/app app=$DOCKER_IMAGE -n staging
+ - kubectl rollout status deployment/app -n staging --timeout=300s
+ environment:
+ name: staging
+ url: https://staging.example.com
+ rules:
+ - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 # DAST runs against deployed staging
 dast:
-  stage: dast
-  variables:
-    DAST_WEBSITE: https://staging.example.com
-    DAST_FULL_SCAN_ENABLED: "true"
-    DAST_BROWSER_SCAN: "true"
-  needs:
-    - deploy-staging
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+ stage: dast
+ variables:
+ DAST_WEBSITE: https://staging.example.com
+ DAST_FULL_SCAN_ENABLED: "true"
+ DAST_BROWSER_SCAN: "true"
+ needs:
+ - deploy-staging
+ rules:
+ - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 deploy-production:
-  stage: deploy-production
-  image: bitnami/kubectl:latest
-  script:
-    - kubectl set image deployment/app app=$DOCKER_IMAGE -n production
-    - kubectl rollout status deployment/app -n production --timeout=300s
-  environment:
-    name: production
-    url: https://app.example.com
-  when: manual
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+ stage: deploy-production
+ image: bitnami/kubectl:latest
+ script:
+ - kubectl set image deployment/app app=$DOCKER_IMAGE -n production
+ - kubectl rollout status deployment/app -n production --timeout=300s
+ environment:
+ name: production
+ url: https://app.example.com
+ when: manual
+ rules:
+ - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 ```
 
 ### Security Approval Policies
@@ -206,18 +206,18 @@ Create `.gitlab/sast-ruleset.toml` to customize analyzer behavior:
 
 ```toml
 [semgrep]
-  [[semgrep.ruleset]]
-    dirs = ["src"]
+ [[semgrep.ruleset]]
+ dirs = ["src"]
 
-  [[semgrep.passthrough]]
-    type = "url"
-    target = "/sgrep-rules/custom-rules.yml"
-    value = "https://semgrep.dev/p/owasp-top-ten"
+ [[semgrep.passthrough]]
+ type = "url"
+ target = "/sgrep-rules/custom-rules.yml"
+ value = "https://semgrep.dev/p/owasp-top-ten"
 
-  [[semgrep.passthrough]]
-    type = "url"
-    target = "/sgrep-rules/java-rules.yml"
-    value = "https://semgrep.dev/p/java"
+ [[semgrep.passthrough]]
+ type = "url"
+ target = "/sgrep-rules/java-rules.yml"
+ value = "https://semgrep.dev/p/java"
 ```
 
 ## Security Dashboard and Vulnerability Management

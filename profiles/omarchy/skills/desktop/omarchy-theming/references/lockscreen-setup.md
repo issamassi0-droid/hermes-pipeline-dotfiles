@@ -19,35 +19,35 @@ Reads `colors.toml` (`background`, `foreground`) and `unlock.png`.
 ### Customize a theme's Plymouth
 
 1. Create the plymouth directory:
-   ```bash
-   mkdir -p ~/.config/omarchy/themes/<name>/plymouth
-   ```
+ ```bash
+ mkdir -p ~/.config/omarchy/themes/<name>/plymouth
+ ```
 
 2. Copy base files:
-   ```bash
-   cp /usr/share/omarchy/default/plymouth/* ~/.config/omarchy/themes/<name>/plymouth/
-   ```
+ ```bash
+ cp /usr/share/omarchy/default/plymouth/* ~/.config/omarchy/themes/<name>/plymouth/
+ ```
 
 3. Edit `omarchy.script` — replace `Window.SetBackgroundTopColor`/`BottomColor` with RGB from `colors.toml`:
-   - `#141210` → `Window.SetBackgroundTopColor(0.078, 0.071, 0.063);`
-   - `#d1c8b0` → `Image.Text(text, 0.820, 0.784, 0.690);`
+ - `#141210` → `Window.SetBackgroundTopColor(0.078, 0.071, 0.063);`
+ - `#d1c8b0` → `Image.Text(text, 0.820, 0.784, 0.690);`
 
 4. Edit `omarchy.plymouth` to point to the new paths:
-   ```
-   ImageDir=/home/massi/.config/omarchy/themes/<name>/plymouth
-   ScriptFile=/home/massi/.config/omarchy/themes/<name>/plymouth/omarchy.script
-   ```
+ ```
+ ImageDir=/home/massi/.config/omarchy/themes/<name>/plymouth
+ ScriptFile=/home/massi/.config/omarchy/themes/<name>/plymouth/omarchy.script
+ ```
 
 5. Ensure `unlock.png` exists at `$theme_dir/unlock.png`:
-   ```bash
-   cp /usr/share/omarchy/default/plymouth/lock.png ~/.config/omarchy/themes/<name>/unlock.png
-   ```
+ ```bash
+ cp /usr/share/omarchy/default/plymouth/lock.png ~/.config/omarchy/themes/<name>/unlock.png
+ ```
 
 6. Apply:
-   ```bash
-   omarchy plymouth set by theme <name>
-   ```
-   Requires sudo — if no terminal, use `pkexec`.
+ ```bash
+ omarchy plymouth set by theme <name>
+ ```
+ Requires sudo — if no terminal, use `pkexec`.
 
 ### Required Plymouth files
 - `omarchy.plymouth` — theme descriptor
@@ -70,23 +70,23 @@ Currently `Current=omarchy`.
 ### Apply japon theme to SDDM
 
 1. Copy the base theme to user config:
-   ```bash
-   cp -r /usr/share/sddm/themes/omarchy ~/.config/omarchy/themes/japon/sddm/
-   ```
+ ```bash
+ cp -r /usr/share/sddm/themes/omarchy ~/.config/omarchy/themes/japon/sddm/
+ ```
 
 2. Update `Main.qml` background color:
-   ```bash
-   sed -i 's/color: "#1a1b26"/color: "#141210"/g' ~/.config/omarchy/themes/japon/sddm/Main.qml
-   ```
+ ```bash
+ sed -i 's/color: "#1a1b26"/color: "#141210"/g' ~/.config/omarchy/themes/japon/sddm/Main.qml
+ ```
 
 3. Update system SDDM theme (requires sudo):
-   ```bash
-   sudo sed -i 's/color: "#1a1b26"/color: "#141210"/g' /usr/share/sddm/themes/omarchy/Main.qml
-   ```
+ ```bash
+ sudo sed -i 's/color: "#1a1b26"/color: "#141210"/g' /usr/share/sddm/themes/omarchy/Main.qml
+ ```
 
 4. Set the SDDM config to use the custom theme:
-   ```bash
-   sudo tee /etc/sddm.conf.d/99-omarchy-japon.conf > /dev/null <<'EOF'
+ ```bash
+ sudo tee /etc/sddm.conf.d/99-omarchy-japon.conf > /dev/null <<'EOF'
 [Theme]
 Current=omarchy-japon
 
@@ -94,12 +94,12 @@ Current=omarchy-japon
 RememberLastUser=true
 RememberLastSession=true
 EOF
-   ```
+ ```
 
 5. Restart SDDM to apply:
-   ```bash
-   sudo systemctl restart sddm
-   ```
+ ```bash
+ sudo systemctl restart sddm
+ ```
 
 ### SDDM theme files
 - `Main.qml` — QML lock screen UI

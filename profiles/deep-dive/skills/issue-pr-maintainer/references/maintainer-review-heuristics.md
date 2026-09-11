@@ -11,21 +11,21 @@ result across runs.
 ## Where to look
 
 1. **`CONTRIBUTING.md` / architecture docs** — most maintained projects
-   document their layering rules, security-sensitive areas, and public
-   contracts somewhere. Read it first.
+ document their layering rules, security-sensitive areas, and public
+ contracts somewhere. Read it first.
 2. **Existing PR review comments** (search closed PRs for recurring
-   maintainer feedback) — the same objection showing up repeatedly is a
-   heuristic the project already enforces informally.
+ maintainer feedback) — the same objection showing up repeatedly is a
+ heuristic the project already enforces informally.
 3. **Module/package boundaries visible in the code** — directory
-   structure, import graphs, and any lint rule that already restricts
-   cross-module imports are direct evidence of an intended boundary.
+ structure, import graphs, and any lint rule that already restricts
+ cross-module imports are direct evidence of an intended boundary.
 4. **CI configuration** — job names and their trigger paths reveal what
-   the maintainers consider a distinct, separately-validated surface
-   (e.g. a job that only runs on changes under a specific path is telling
-   you that path is treated as its own contract).
+ the maintainers consider a distinct, separately-validated surface
+ (e.g. a job that only runs on changes under a specific path is telling
+ you that path is treated as its own contract).
 5. **Public API / schema files** — anything versioned, published, or
-   consumed by an external client is a compatibility boundary even if no
-   in-repo caller is visible.
+ consumed by an external client is a compatibility boundary even if no
+ in-repo caller is visible.
 
 ## What to record
 
@@ -37,17 +37,17 @@ other repos):
 ```text
 - `<layer/module>` must not import `<other layer/module>`.
 - `<component>` may depend on `<other component>`; the reverse must stay
-  false / that direction must stay publishable and consumer-agnostic.
+ false / that direction must stay publishable and consumer-agnostic.
 - `<surface>` (e.g. a specific API route family, a message/event schema,
-  a UI behavior) is a contract surface — changes there need extra scrutiny.
+ a UI behavior) is a contract surface — changes there need extra scrutiny.
 - `<area>` (e.g. sandbox permissions, credential handling, remote
-  execution) is security-sensitive — findings there need proof and
-  remediation, not vague assertions.
+ execution) is security-sensitive — findings there need proof and
+ remediation, not vague assertions.
 - `<surface>` (default config/behavior, persistence schema, public
-  API/event shape, a long-lived process's lifecycle) is
-  compatibility-sensitive.
+ API/event shape, a long-lived process's lifecycle) is
+ compatibility-sensitive.
 - User-facing or developer-facing docs should track behavior changes in
-  `<area>`.
+ `<area>`.
 ```
 
 Once this list exists for a project, treat it the same way Section 2 of

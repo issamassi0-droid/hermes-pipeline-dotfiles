@@ -37,9 +37,9 @@ await db.query('SELECT * FROM orders WHERE user_id = ?', [userId]);
 
 ```typescript
 OrderService.getOrders(userId)
-  → called by OrderController.list()
-  → called by router.get('/orders')
-  → called by auth middleware
+ → called by OrderController.list()
+ → called by router.get('/orders')
+ → called by auth middleware
 ```
 
 ### 4. Keep Tracing Up
@@ -55,8 +55,8 @@ OrderService.getOrders(userId)
 ```typescript
 // Auth middleware bug: didn't handle expired tokens
 if (token.expired) {
-  // Missing: return error response
-  // Falls through with req.user = undefined
+ // Missing: return error response
+ // Falls through with req.user = undefined
 }
 ```
 
@@ -66,13 +66,13 @@ When you can't trace manually, add instrumentation:
 
 ```typescript
 async function getOrders(userId: string) {
-  const stack = new Error().stack;
-  console.error('DEBUG getOrders:', {
-    userId,
-    typeOfUserId: typeof userId,
-    stack,
-  });
-  // ... rest of function
+ const stack = new Error().stack;
+ console.error('DEBUG getOrders:', {
+ userId,
+ typeOfUserId: typeof userId,
+ stack,
+ });
+ // ... rest of function
 }
 ```
 
@@ -100,16 +100,16 @@ npm test 2>&1 | grep 'DEBUG getOrders'
 
 ```
 Found immediate cause
-    ↓
+ ↓
 Can trace one level up? → YES → Trace backwards
-    ↓                              ↓
-    NO                        Is this the source?
-    ↓                              ↓
-NEVER fix just              YES → Fix at source
-the symptom                        ↓
-                             Add validation at each layer
-                                   ↓
-                             Bug impossible
+ ↓ ↓
+ NO Is this the source?
+ ↓ ↓
+NEVER fix just YES → Fix at source
+the symptom ↓
+ Add validation at each layer
+ ↓
+ Bug impossible
 ```
 
 **NEVER fix just where the error appears.** Trace back to find the original trigger.

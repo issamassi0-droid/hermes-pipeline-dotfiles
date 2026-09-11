@@ -1,14 +1,14 @@
 ---
 name: benchmarking-kubernetes-with-kube-bench
 description: >-
-  Installs and runs the kube-bench tool against a Kubernetes cluster as a Job, DaemonSet, or
-  standalone binary, selecting the correct benchmark version and targets (control plane, etcd,
-  kubelet, worker nodes) and emitting JSON or JUnit output for pipelines. Use when setting
-  kube-bench up for the first time, choosing which benchmark version and node targets to run,
-  wiring it into CI, or troubleshooting skipped or misdetected checks. Keywords: kube-bench,
-  DaemonSet, --benchmark, --targets, JSON output, JUnit, CI integration. Do not use for
-  interpreting the findings or producing an audit report - use
-  performing-kubernetes-cis-benchmark-with-kube-bench.
+ Installs and runs the kube-bench tool against a Kubernetes cluster as a Job, DaemonSet, or
+ standalone binary, selecting the correct benchmark version and targets (control plane, etcd,
+ kubelet, worker nodes) and emitting JSON or JUnit output for pipelines. Use when setting
+ kube-bench up for the first time, choosing which benchmark version and node targets to run,
+ wiring it into CI, or troubleshooting skipped or misdetected checks. Keywords: kube-bench,
+ DaemonSet, --benchmark, --targets, JSON output, JUnit, CI integration. Do not use for
+ interpreting the findings or producing an audit report - use
+ performing-kubernetes-cis-benchmark-with-kube-bench.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -55,7 +55,7 @@ kube-bench can run as a standalone binary on a node, inside a container, or — 
 # Binary release (Linux)
 KB_VERSION=0.10.7
 curl -L -o kube-bench.tgz \
-  "https://github.com/aquasecurity/kube-bench/releases/download/v${KB_VERSION}/kube-bench_${KB_VERSION}_linux_amd64.tar.gz"
+ "https://github.com/aquasecurity/kube-bench/releases/download/v${KB_VERSION}/kube-bench_${KB_VERSION}_linux_amd64.tar.gz"
 tar -xzf kube-bench.tgz
 sudo mv kube-bench /usr/local/bin/
 sudo cp -R cfg /etc/kube-bench/cfg
@@ -65,8 +65,8 @@ go install github.com/aquasecurity/kube-bench@latest
 
 # Run as a one-off container directly on a node (mounts host config)
 docker run --rm --pid=host \
-  -v /etc:/etc:ro -v /var:/var:ro \
-  -t docker.io/aquasec/kube-bench:latest run --targets node
+ -v /etc:/etc:ro -v /var:/var:ro \
+ -t docker.io/aquasec/kube-bench:latest run --targets node
 
 # Verify
 kube-bench version
@@ -186,7 +186,7 @@ Each failing check prints a remediation. Apply the CIS-recommended fix on the no
 # CIS 1.2.x — ensure anonymous-auth is disabled on the API server.
 # Edit the static pod manifest and set the flag:
 sudo vi /etc/kubernetes/manifests/kube-apiserver.yaml
-#   - --anonymous-auth=false
+# - --anonymous-auth=false
 # The kubelet restarts the static pod automatically.
 
 # Example node remediation — kubelet config file permissions (CIS 4.1.x):

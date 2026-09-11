@@ -1,12 +1,12 @@
 ---
 name: detecting-compromised-cloud-credentials
 description: 'Detect compromised cloud credentials across AWS, Azure, and GCP by analyzing
-  anomalous API activity, impossible-travel patterns, and credential-stuffing indicators
-  using GuardDuty, Microsoft Defender for Identity, and Google SCC Event Threat Detection.
-  Use when investigating alerts about cloud API activity from unfamiliar locations,
-  responding to an exposed-credential notification, or scoping a credential compromise.
+ anomalous API activity, impossible-travel patterns, and credential-stuffing indicators
+ using GuardDuty, Microsoft Defender for Identity, and Google SCC Event Threat Detection.
+ Use when investigating alerts about cloud API activity from unfamiliar locations,
+ responding to an exposed-credential notification, or scoping a credential compromise.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -31,32 +31,32 @@ mitre_attack:
 - T1580
 - T1003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - defense-impairment
-  techniques:
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: F1006.001
-    name: 'Account Takeover: Exposed API Key'
-    tactic: initial-access
-    source: f3
-  - id: T1110.004
-    name: 'Brute Force:  Credential Stuffing'
-    tactic: initial-access
-    source: attack
-  - id: T1586.003
-    name: 'Compromise Accounts: Cloud Accounts'
-    tactic: resource-development
-    source: attack
-  - id: F1005
-    name: Account Manipulation
-    tactic: defense-impairment
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - defense-impairment
+ techniques:
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: F1006.001
+ name: 'Account Takeover: Exposed API Key'
+ tactic: initial-access
+ source: f3
+ - id: T1110.004
+ name: 'Brute Force: Credential Stuffing'
+ tactic: initial-access
+ source: attack
+ - id: T1586.003
+ name: 'Compromise Accounts: Cloud Accounts'
+ tactic: resource-development
+ source: attack
+ - id: F1005
+ name: Account Manipulation
+ tactic: defense-impairment
+ source: f3
 ---
 
 # Detecting Compromised Cloud Credentials
@@ -89,52 +89,52 @@ Monitor GuardDuty findings and CloudTrail anomalies that indicate credential abu
 ```bash
 # List GuardDuty credential-related findings
 aws guardduty list-findings \
-  --detector-id $(aws guardduty list-detectors --query 'DetectorIds[0]' --output text) \
-  --finding-criteria '{
-    "Criterion": {
-      "type": {
-        "Eq": [
-          "UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.OutsideAWS",
-          "UnauthorizedAccess:IAMUser/MaliciousIPCaller",
-          "UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom",
-          "UnauthorizedAccess:IAMUser/TorIPCaller",
-          "UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B",
-          "Recon:IAMUser/MaliciousIPCaller",
-          "Recon:IAMUser/MaliciousIPCaller.Custom",
-          "InitialAccess:IAMUser/AnomalousBehavior",
-          "CredentialAccess:IAMUser/AnomalousBehavior",
-          "Persistence:IAMUser/AnomalousBehavior"
-        ]
-      },
-      "service.archived": {"Eq": ["false"]}
-    }
-  }' --output json
+ --detector-id $(aws guardduty list-detectors --query 'DetectorIds[0]' --output text) \
+ --finding-criteria '{
+ "Criterion": {
+ "type": {
+ "Eq": [
+ "UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration.OutsideAWS",
+ "UnauthorizedAccess:IAMUser/MaliciousIPCaller",
+ "UnauthorizedAccess:IAMUser/MaliciousIPCaller.Custom",
+ "UnauthorizedAccess:IAMUser/TorIPCaller",
+ "UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B",
+ "Recon:IAMUser/MaliciousIPCaller",
+ "Recon:IAMUser/MaliciousIPCaller.Custom",
+ "InitialAccess:IAMUser/AnomalousBehavior",
+ "CredentialAccess:IAMUser/AnomalousBehavior",
+ "Persistence:IAMUser/AnomalousBehavior"
+ ]
+ },
+ "service.archived": {"Eq": ["false"]}
+ }
+ }' --output json
 
 # Check for console logins from new locations
 aws logs start-query \
-  --log-group-name cloudtrail-logs \
-  --start-time $(date -d "7 days ago" +%s) \
-  --end-time $(date +%s) \
-  --query-string '
-    fields @timestamp, userIdentity.userName, sourceIPAddress, responseElements.ConsoleLogin
-    | filter eventName = "ConsoleLogin"
-    | filter responseElements.ConsoleLogin = "Success"
-    | stats count() by userIdentity.userName, sourceIPAddress
-    | sort count desc
-  '
+ --log-group-name cloudtrail-logs \
+ --start-time $(date -d "7 days ago" +%s) \
+ --end-time $(date +%s) \
+ --query-string '
+ fields @timestamp, userIdentity.userName, sourceIPAddress, responseElements.ConsoleLogin
+ | filter eventName = "ConsoleLogin"
+ | filter responseElements.ConsoleLogin = "Success"
+ | stats count() by userIdentity.userName, sourceIPAddress
+ | sort count desc
+ '
 
 # Detect impossible travel (same user from geographically distant IPs within short time)
 aws logs start-query \
-  --log-group-name cloudtrail-logs \
-  --start-time $(date -d "24 hours ago" +%s) \
-  --end-time $(date +%s) \
-  --query-string '
-    fields @timestamp, userIdentity.arn, sourceIPAddress, eventName
-    | filter userIdentity.type = "IAMUser"
-    | stats earliest(@timestamp) as first_seen, latest(@timestamp) as last_seen,
-            count_distinct(sourceIPAddress) as unique_ips by userIdentity.arn
-    | filter unique_ips > 3
-  '
+ --log-group-name cloudtrail-logs \
+ --start-time $(date -d "24 hours ago" +%s) \
+ --end-time $(date +%s) \
+ --query-string '
+ fields @timestamp, userIdentity.arn, sourceIPAddress, eventName
+ | filter userIdentity.type = "IAMUser"
+ | stats earliest(@timestamp) as first_seen, latest(@timestamp) as last_seen,
+ count_distinct(sourceIPAddress) as unique_ips by userIdentity.arn
+ | filter unique_ips > 3
+ '
 ```
 
 ### Step 2: Detect Credential Abuse in Azure
@@ -144,27 +144,27 @@ Monitor Entra ID sign-in logs and Defender for Identity alerts for compromised c
 ```bash
 # Check for risky sign-ins
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=riskLevelDuringSignIn ne 'none' and createdDateTime ge 2026-02-16T00:00:00Z&\$top=50" \
-  --query "value[*].{User:userPrincipalName,Risk:riskLevelDuringSignIn,IP:ipAddress,Location:location.city,App:appDisplayName,Status:status.errorCode}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=riskLevelDuringSignIn ne 'none' and createdDateTime ge 2026-02-16T00:00:00Z&\$top=50" \
+ --query "value[*].{User:userPrincipalName,Risk:riskLevelDuringSignIn,IP:ipAddress,Location:location.city,App:appDisplayName,Status:status.errorCode}" \
+ -o table
 
 # Check for sign-ins from anonymous or Tor IPs
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=riskEventTypes_v2/any(r:r eq 'anonymizedIPAddress') and createdDateTime ge 2026-02-22T00:00:00Z" \
-  --query "value[*].{User:userPrincipalName,IP:ipAddress,Location:location.city}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/auditLogs/signIns?\$filter=riskEventTypes_v2/any(r:r eq 'anonymizedIPAddress') and createdDateTime ge 2026-02-22T00:00:00Z" \
+ --query "value[*].{User:userPrincipalName,IP:ipAddress,Location:location.city}" \
+ -o table
 
 # List users flagged as compromised by Identity Protection
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/identityProtection/riskyUsers?\$filter=riskLevel eq 'high'" \
-  --query "value[*].{User:userPrincipalName,RiskLevel:riskLevel,RiskState:riskState,LastDetected:riskLastUpdatedDateTime}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/identityProtection/riskyUsers?\$filter=riskLevel eq 'high'" \
+ --query "value[*].{User:userPrincipalName,RiskLevel:riskLevel,RiskState:riskState,LastDetected:riskLastUpdatedDateTime}" \
+ -o table
 
 # Check for suspicious application consent grants
 az rest --method GET \
-  --url "https://graph.microsoft.com/v1.0/auditLogs/directoryAudits?\$filter=activityDisplayName eq 'Consent to application' and activityDateTime ge 2026-02-16T00:00:00Z" \
-  --query "value[*].{Activity:activityDisplayName,User:initiatedBy.user.userPrincipalName,App:targetResources[0].displayName}" \
-  -o table
+ --url "https://graph.microsoft.com/v1.0/auditLogs/directoryAudits?\$filter=activityDisplayName eq 'Consent to application' and activityDateTime ge 2026-02-16T00:00:00Z" \
+ --query "value[*].{Activity:activityDisplayName,User:initiatedBy.user.userPrincipalName,App:targetResources[0].displayName}" \
+ -o table
 ```
 
 ### Step 3: Detect Credential Abuse in GCP
@@ -174,27 +174,27 @@ Query GCP audit logs and SCC findings for credential compromise indicators.
 ```bash
 # Check SCC Event Threat Detection findings
 gcloud scc findings list ORG_ID \
-  --filter="state=\"ACTIVE\" AND (category=\"ANOMALOUS_CALLER_LOCATION\" OR category=\"SUSPICIOUS_LOGIN\" OR category=\"CREDENTIAL_ACCESS\")" \
-  --format="table(finding.category, finding.severity, finding.resourceName, finding.eventTime)"
+ --filter="state=\"ACTIVE\" AND (category=\"ANOMALOUS_CALLER_LOCATION\" OR category=\"SUSPICIOUS_LOGIN\" OR category=\"CREDENTIAL_ACCESS\")" \
+ --format="table(finding.category, finding.severity, finding.resourceName, finding.eventTime)"
 
 # Query audit logs for service account key usage from unusual IPs
 gcloud logging read '
-  protoPayload.authenticationInfo.principalEmail:*@*.iam.gserviceaccount.com
-  AND protoPayload.requestMetadata.callerIp!=("10." OR "172." OR "192.168.")
-  AND timestamp>="2026-02-22T00:00:00Z"
+ protoPayload.authenticationInfo.principalEmail:*@*.iam.gserviceaccount.com
+ AND protoPayload.requestMetadata.callerIp!=("10." OR "172." OR "192.168.")
+ AND timestamp>="2026-02-22T00:00:00Z"
 ' --limit=100 --format="table(timestamp, protoPayload.authenticationInfo.principalEmail, protoPayload.requestMetadata.callerIp, protoPayload.methodName)"
 
 # Detect API calls from Tor exit nodes
 gcloud logging read '
-  protoPayload.requestMetadata.callerIp:("185." OR "198." OR "45.")
-  AND protoPayload.authenticationInfo.principalEmail:*@company.com
-  AND timestamp>="2026-02-22T00:00:00Z"
+ protoPayload.requestMetadata.callerIp:("185." OR "198." OR "45.")
+ AND protoPayload.authenticationInfo.principalEmail:*@company.com
+ AND timestamp>="2026-02-22T00:00:00Z"
 ' --limit=50 --format=json
 
 # Check for new service account keys created (persistence indicator)
 gcloud logging read '
-  protoPayload.methodName="google.iam.admin.v1.CreateServiceAccountKey"
-  AND timestamp>="2026-02-16T00:00:00Z"
+ protoPayload.methodName="google.iam.admin.v1.CreateServiceAccountKey"
+ AND timestamp>="2026-02-16T00:00:00Z"
 ' --format="table(timestamp, protoPayload.authenticationInfo.principalEmail, protoPayload.request.name)"
 ```
 
@@ -208,52 +208,52 @@ import json
 from datetime import datetime, timedelta
 
 def detect_impossible_travel(events):
-    """Detect same identity used from distant locations in short timeframe."""
-    user_events = {}
-    for event in events:
-        user = event.get('principal', '')
-        ip = event.get('source_ip', '')
-        ts = event.get('timestamp', '')
-        cloud = event.get('cloud_provider', '')
+ """Detect same identity used from distant locations in short timeframe."""
+ user_events = {}
+ for event in events:
+ user = event.get('principal', '')
+ ip = event.get('source_ip', '')
+ ts = event.get('timestamp', '')
+ cloud = event.get('cloud_provider', '')
 
-        key = f"{user}_{cloud}"
-        if key not in user_events:
-            user_events[key] = []
-        user_events[key].append({'ip': ip, 'timestamp': ts, 'cloud': cloud})
+ key = f"{user}_{cloud}"
+ if key not in user_events:
+ user_events[key] = []
+ user_events[key].append({'ip': ip, 'timestamp': ts, 'cloud': cloud})
 
-    alerts = []
-    for user_key, accesses in user_events.items():
-        accesses.sort(key=lambda x: x['timestamp'])
-        for i in range(1, len(accesses)):
-            time_diff = (datetime.fromisoformat(accesses[i]['timestamp']) -
-                        datetime.fromisoformat(accesses[i-1]['timestamp']))
-            if time_diff < timedelta(hours=1) and accesses[i]['ip'] != accesses[i-1]['ip']:
-                alerts.append({
-                    'type': 'IMPOSSIBLE_TRAVEL',
-                    'user': user_key,
-                    'ip_1': accesses[i-1]['ip'],
-                    'ip_2': accesses[i]['ip'],
-                    'time_gap_minutes': time_diff.total_seconds() / 60,
-                    'severity': 'HIGH'
-                })
-    return alerts
+ alerts = []
+ for user_key, accesses in user_events.items():
+ accesses.sort(key=lambda x: x['timestamp'])
+ for i in range(1, len(accesses)):
+ time_diff = (datetime.fromisoformat(accesses[i]['timestamp']) -
+ datetime.fromisoformat(accesses[i-1]['timestamp']))
+ if time_diff < timedelta(hours=1) and accesses[i]['ip'] != accesses[i-1]['ip']:
+ alerts.append({
+ 'type': 'IMPOSSIBLE_TRAVEL',
+ 'user': user_key,
+ 'ip_1': accesses[i-1]['ip'],
+ 'ip_2': accesses[i]['ip'],
+ 'time_gap_minutes': time_diff.total_seconds() / 60,
+ 'severity': 'HIGH'
+ })
+ return alerts
 
 def detect_credential_stuffing(events, threshold=10):
-    """Detect multiple failed logins followed by success."""
-    user_attempts = {}
-    for event in events:
-        user = event.get('principal', '')
-        success = event.get('success', False)
-        key = user
-        if key not in user_attempts:
-            user_attempts[key] = {'failures': 0, 'success_after_failures': False}
-        if not success:
-            user_attempts[key]['failures'] += 1
-        elif user_attempts[key]['failures'] >= threshold:
-            user_attempts[key]['success_after_failures'] = True
+ """Detect multiple failed logins followed by success."""
+ user_attempts = {}
+ for event in events:
+ user = event.get('principal', '')
+ success = event.get('success', False)
+ key = user
+ if key not in user_attempts:
+ user_attempts[key] = {'failures': 0, 'success_after_failures': False}
+ if not success:
+ user_attempts[key]['failures'] += 1
+ elif user_attempts[key]['failures'] >= threshold:
+ user_attempts[key]['success_after_failures'] = True
 
-    return [{'user': u, 'failures': d['failures'], 'severity': 'CRITICAL'}
-            for u, d in user_attempts.items() if d['success_after_failures']]
+ return [{'user': u, 'failures': d['failures'], 'severity': 'CRITICAL'}
+ for u, d in user_attempts.items() if d['success_after_failures']]
 ```
 
 ### Step 5: Respond to Confirmed Credential Compromise
@@ -263,28 +263,28 @@ Execute containment actions when credential compromise is confirmed.
 ```bash
 # AWS: Deactivate access key immediately
 aws iam update-access-key --user-name COMPROMISED_USER \
-  --access-key-id AKIA_COMPROMISED --status Inactive
+ --access-key-id AKIA_COMPROMISED --status Inactive
 
 # AWS: Invalidate temporary role credentials by updating role trust policy
 aws iam update-assume-role-policy --role-name COMPROMISED_ROLE \
-  --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Deny","Principal":"*","Action":"sts:AssumeRole"}]}'
+ --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Deny","Principal":"*","Action":"sts:AssumeRole"}]}'
 
 # AWS: Revoke all sessions for an IAM user
 aws iam put-user-policy --user-name COMPROMISED_USER \
-  --policy-name RevokeOldSessions \
-  --policy-document '{
-    "Version":"2012-10-17",
-    "Statement":[{
-      "Effect":"Deny",
-      "Action":"*",
-      "Resource":"*",
-      "Condition":{"DateLessThan":{"aws:TokenIssueTime":"2026-02-23T10:00:00Z"}}
-    }]
-  }'
+ --policy-name RevokeOldSessions \
+ --policy-document '{
+ "Version":"2012-10-17",
+ "Statement":[{
+ "Effect":"Deny",
+ "Action":"*",
+ "Resource":"*",
+ "Condition":{"DateLessThan":{"aws:TokenIssueTime":"2026-02-23T10:00:00Z"}}
+ }]
+ }'
 
 # Azure: Revoke all sign-in sessions
 az rest --method POST \
-  --url "https://graph.microsoft.com/v1.0/users/COMPROMISED_USER_ID/revokeSignInSessions"
+ --url "https://graph.microsoft.com/v1.0/users/COMPROMISED_USER_ID/revokeSignInSessions"
 
 # Azure: Force password reset
 az ad user update --id COMPROMISED_USER_ID --force-change-password-next-sign-in true
@@ -344,31 +344,31 @@ Period: 2026-02-16 to 2026-02-23
 
 ACTIVE COMPROMISE INDICATORS:
 [CRED-001] AWS Console Login from Unusual Location
-  User: developer@company.com
-  Source IP: 185.x.x.x (Russia)
-  Normal Location: US-East
-  GuardDuty Finding: UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B
-  Severity: HIGH
-  Status: Credential deactivated
+ User: developer@company.com
+ Source IP: 185.x.x.x (Russia)
+ Normal Location: US-East
+ GuardDuty Finding: UnauthorizedAccess:IAMUser/ConsoleLoginSuccess.B
+ Severity: HIGH
+ Status: Credential deactivated
 
 [CRED-002] Azure Impossible Travel Detection
-  User: admin@company.onmicrosoft.com
-  Location 1: New York, US (09:00 UTC)
-  Location 2: Beijing, CN (09:15 UTC)
-  Risk Level: HIGH
-  Status: Sessions revoked, under investigation
+ User: admin@company.onmicrosoft.com
+ Location 1: New York, US (09:00 UTC)
+ Location 2: Beijing, CN (09:15 UTC)
+ Risk Level: HIGH
+ Status: Sessions revoked, under investigation
 
 DETECTION METRICS (Last 7 Days):
-  Impossible travel detections:        5
-  Anomalous API activity alerts:      12
-  Failed login attempts > threshold:   3
-  New credentials from unusual IPs:    2
-  Total compromises confirmed:         2
+ Impossible travel detections: 5
+ Anomalous API activity alerts: 12
+ Failed login attempts > threshold: 3
+ New credentials from unusual IPs: 2
+ Total compromises confirmed: 2
 
 CONTAINMENT ACTIONS TAKEN:
-  AWS access keys deactivated:    3
-  Azure sessions revoked:         2
-  GCP service accounts disabled:  1
-  Passwords force-reset:          4
-  MFA re-enrolled:                4
+ AWS access keys deactivated: 3
+ Azure sessions revoked: 2
+ GCP service accounts disabled: 1
+ Passwords force-reset: 4
+ MFA re-enrolled: 4
 ```

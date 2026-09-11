@@ -1,11 +1,11 @@
 ---
 name: implementing-cloud-workload-protection
 description: 'Implements cloud workload protection using boto3 and google-cloud APIs
-  for runtime security monitoring, process anomaly detection, and file integrity checking
-  on EC2/GCE instances. Scans for cryptomining, reverse shells, and unauthorized binaries.
-  Use when building runtime security controls for cloud compute workloads.
+ for runtime security monitoring, process anomaly detection, and file integrity checking
+ on EC2/GCE instances. Scans for cryptomining, reverse shells, and unauthorized binaries.
+ Use when building runtime security controls for cloud compute workloads.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -59,9 +59,9 @@ import boto3
 ssm = boto3.client("ssm")
 # Run command on EC2 instances to check for suspicious processes
 response = ssm.send_command(
-    InstanceIds=["i-1234567890abcdef0"],
-    DocumentName="AWS-RunShellScript",
-    Parameters={"commands": ["ps aux | grep -E 'xmrig|minerd|cryptonight'"]},
+ InstanceIds=["i-1234567890abcdef0"],
+ DocumentName="AWS-RunShellScript",
+ Parameters={"commands": ["ps aux | grep -E 'xmrig|minerd|cryptonight'"]},
 )
 ```
 
@@ -77,8 +77,8 @@ Key protection areas:
 ```python
 # Check for unauthorized outbound connections
 ssm.send_command(
-    InstanceIds=instances,
-    DocumentName="AWS-RunShellScript",
-    Parameters={"commands": ["ss -tlnp | grep ESTABLISHED"]},
+ InstanceIds=instances,
+ DocumentName="AWS-RunShellScript",
+ Parameters={"commands": ["ss -tlnp | grep ESTABLISHED"]},
 )
 ```

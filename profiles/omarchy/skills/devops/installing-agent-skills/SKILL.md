@@ -11,12 +11,12 @@ description: Use when importing external skill repos into Hermes.
 2. Inspect the layout. Most Agent-Skills repos nest skills as `skills/<skill-name>/SKILL.md` (with optional `references/`, `scripts/`, `assets/` beside it).
 3. Hermes only auto-discovers skills at `~/.hermes/skills/<skill-name>/SKILL.md` — one flat directory per skill. Do NOT clone the repo directly into ~/.hermes/skills; a nested clone never registers.
 4. Copy each skill out flat:
-   ```bash
-   for d in <skill1> <skill2>; do
-     mkdir -p ~/.hermes/skills/$d
-     cp -r /tmp/<name>-src/skills/$d/* ~/.hermes/skills/$d/
-   done
-   ```
+ ```bash
+ for d in <skill1> <skill2>; do
+ mkdir -p ~/.hermes/skills/$d
+ cp -r /tmp/<name>-src/skills/$d/* ~/.hermes/skills/$d/
+ done
+ ```
 5. Verify each one loads and shows `readiness_status: available`: `skill_view(name="<skill>")`.
 6. Clean up /tmp.
 
@@ -29,7 +29,7 @@ A ported skill may require a CLI binary. Check `which <tool>` first; install onl
 Pitfall — npm global installs on this machine may succeed without creating the bin symlink: mise-managed Node plus npm v11 sometimes skips it, so `which <tool>` fails after a clean `npm install -g`. Verify, and fix by symlinking the package's declared bin entry:
 
 ```bash
-PKG=$(npm root -g)/<pkg>          # grep package.json "bin" for the entry script
+PKG=$(npm root -g)/<pkg> # grep package.json "bin" for the entry script
 ln -sf $PKG/<bin-entry>.js ~/.local/bin/<tool> && chmod +x ~/.local/bin/<tool>
 ```
 

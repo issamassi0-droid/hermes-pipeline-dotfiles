@@ -1,13 +1,13 @@
 ---
 name: implementing-code-signing-for-artifacts
 description: 'Implements code signing for build artifacts (binaries, packages, containers)
-  using GPG, Sigstore, and platform-specific signing tools, establishing trust chains
-  and verifying signatures in deployment pipelines. Use when establishing artifact
-  integrity checks against supply-chain tampering, proving authenticity to customers,
-  building zero-trust pipelines that reject unsigned artifacts, or meeting SLSA Level
-  2+ provenance requirements.
+ using GPG, Sigstore, and platform-specific signing tools, establishing trust chains
+ and verifying signatures in deployment pipelines. Use when establishing artifact
+ integrity checks against supply-chain tampering, proving authenticity to customers,
+ building zero-trust pipelines that reject unsigned artifacts, or meeting SLSA Level
+ 2+ provenance requirements.
 
-  '
+ '
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -83,54 +83,54 @@ gpg --armor --export-secret-keys ci-signing@company.com > signing-key.priv
 name: Build and Sign
 
 on:
-  push:
-    tags: ['v*']
+ push:
+ tags: ['v*']
 
 jobs:
-  build-sign:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      id-token: write  # For Sigstore keyless signing
-    steps:
-      - uses: actions/checkout@v4
+ build-sign:
+ runs-on: ubuntu-latest
+ permissions:
+ contents: write
+ id-token: write # For Sigstore keyless signing
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Build artifacts
-        run: |
-          make build
-          sha256sum dist/* > dist/checksums.sha256
+ - name: Build artifacts
+ run: |
+ make build
+ sha256sum dist/* > dist/checksums.sha256
 
-      - name: Import GPG Key
-        run: |
-          echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
-          gpg --list-secret-keys
+ - name: Import GPG Key
+ run: |
+ echo "${{ secrets.GPG_PRIVATE_KEY }}" | gpg --batch --import
+ gpg --list-secret-keys
 
-      - name: Sign artifacts
-        run: |
-          for file in dist/*; do
-            gpg --detach-sign --armor --local-user ci-signing@company.com "$file"
-          done
+ - name: Sign artifacts
+ run: |
+ for file in dist/*; do
+ gpg --detach-sign --armor --local-user ci-signing@company.com "$file"
+ done
 
-      - name: Install cosign for keyless signing
-        uses: sigstore/cosign-installer@v3
+ - name: Install cosign for keyless signing
+ uses: sigstore/cosign-installer@v3
 
-      - name: Keyless sign with Sigstore
-        run: |
-          for file in dist/*.tar.gz; do
-            cosign sign-blob "$file" \
-              --output-signature "${file}.sig" \
-              --output-certificate "${file}.cert" \
-              --yes
-          done
+ - name: Keyless sign with Sigstore
+ run: |
+ for file in dist/*.tar.gz; do
+ cosign sign-blob "$file" \
+ --output-signature "${file}.sig" \
+ --output-certificate "${file}.cert" \
+ --yes
+ done
 
-      - name: Create Release with signed artifacts
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            dist/*
-            dist/*.asc
-            dist/*.sig
-            dist/*.cert
+ - name: Create Release with signed artifacts
+ uses: softprops/action-gh-release@v2
+ with:
+ files: |
+ dist/*
+ dist/*.asc
+ dist/*.sig
+ dist/*.cert
 ```
 
 ### Step 3: Verify Signatures in Deployment Pipeline
@@ -142,10 +142,10 @@ gpg --verify artifact.tar.gz.asc artifact.tar.gz
 
 # Verify Sigstore keyless signature
 cosign verify-blob artifact.tar.gz \
-  --signature artifact.tar.gz.sig \
-  --certificate artifact.tar.gz.cert \
-  --certificate-identity ci-signing@company.com \
-  --certificate-oidc-issuer https://token.actions.githubusercontent.com
+ --signature artifact.tar.gz.sig \
+ --certificate artifact.tar.gz.cert \
+ --certificate-identity ci-signing@company.com \
+ --certificate-oidc-issuer https://token.actions.githubusercontent.com
 
 # Verify checksums
 sha256sum --check checksums.sha256
@@ -155,12 +155,12 @@ sha256sum --check checksums.sha256
 
 ```json
 {
-  "scripts": {
-    "prepublishOnly": "npm run build && npm run test"
-  },
-  "publishConfig": {
-    "provenance": true
-  }
+ "scripts": {
+ "prepublishOnly": "npm run build && npm run test"
+ },
+ "publishConfig": {
+ "provenance": true
+ }
 }
 ```
 
@@ -215,21 +215,21 @@ Date: 2026-02-23
 Signing Method: Sigstore Keyless + GPG
 
 SIGNED ARTIFACTS:
-  app-v2.3.0-linux-amd64.tar.gz
-    GPG:      PASS (ci-signing@company.com, EdDSA/Ed25519)
-    Sigstore: PASS (Rekor entry: 24658135, Fulcio cert issued)
-    SHA256:   a1b2c3d4...
+ app-v2.3.0-linux-amd64.tar.gz
+ GPG: PASS (ci-signing@company.com, EdDSA/Ed25519)
+ Sigstore: PASS (Rekor entry: 24658135, Fulcio cert issued)
+ SHA256: a1b2c3d4...
 
-  app-v2.3.0-darwin-arm64.tar.gz
-    GPG:      PASS
-    Sigstore: PASS (Rekor entry: 24658136)
-    SHA256:   e5f6g7h8...
+ app-v2.3.0-darwin-arm64.tar.gz
+ GPG: PASS
+ Sigstore: PASS (Rekor entry: 24658136)
+ SHA256: e5f6g7h8...
 
-  checksums.sha256
-    GPG:      PASS (detached signature)
+ checksums.sha256
+ GPG: PASS (detached signature)
 
 TRANSPARENCY LOG:
-  Entries recorded: 3
-  Log index range: 24658135-24658137
-  Verification: https://search.sigstore.dev
+ Entries recorded: 3
+ Log index range: 24658135-24658137
+ Verification: https://search.sigstore.dev
 ```

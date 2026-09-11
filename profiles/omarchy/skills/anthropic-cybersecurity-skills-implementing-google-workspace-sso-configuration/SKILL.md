@@ -1,10 +1,10 @@
 ---
 name: implementing-google-workspace-sso-configuration
 description: Configures SAML 2.0 single sign-on for Google Workspace against a third-party
-  identity provider (Okta, Azure AD/Entra ID, ADFS), with Workspace as the Service
-  Provider, to centralize authentication and enable immediate access revocation.
-  Use when setting up or troubleshooting Google Workspace SSO/SAML federation or
-  migrating from native Google passwords to an external IdP.
+ identity provider (Okta, Azure AD/Entra ID, ADFS), with Workspace as the Service
+ Provider, to centralize authentication and enable immediate access revocation.
+ Use when setting up or troubleshooting Google Workspace SSO/SAML federation or
+ migrating from native Google passwords to an external IdP.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -28,31 +28,31 @@ mitre_attack:
 - T1556
 - T1098
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  techniques:
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: T1110.004
-    name: 'Brute Force:  Credential Stuffing'
-    tactic: initial-access
-    source: attack
-  - id: T1539
-    name: Steal Web Session Cookie
-    tactic: positioning
-    source: attack
-  - id: F1004
-    name: Access with Stolen Session Cookie
-    tactic: initial-access
-    source: f3
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ techniques:
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: T1110.004
+ name: 'Brute Force: Credential Stuffing'
+ tactic: initial-access
+ source: attack
+ - id: T1539
+ name: Steal Web Session Cookie
+ tactic: positioning
+ source: attack
+ - id: F1004
+ name: Access with Stolen Session Cookie
+ tactic: initial-access
+ source: f3
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
 ---
 
 # Implementing Google Workspace SSO Configuration
@@ -83,22 +83,22 @@ Single Sign-On (SSO) for Google Workspace allows organizations to authenticate u
 
 ```
 User navigates to Google Workspace app (Gmail, Drive, etc.)
-        │
-        ├── Google checks: Is SSO configured for this domain?
-        │
-        ├── YES → Redirect user to IdP Sign-In Page URL
-        │          (SAML AuthnRequest sent via browser redirect)
-        │
-        ├── User authenticates at IdP (credentials + MFA)
-        │
-        ├── IdP generates SAML Response with signed assertion
-        │
-        ├── Browser POSTs SAML Response to Google ACS URL:
-        │   https://www.google.com/a/{domain}/acs
-        │
-        ├── Google validates SAML signature against uploaded certificate
-        │
-        └── User is granted access to Google Workspace
+ │
+ ├── Google checks: Is SSO configured for this domain?
+ │
+ ├── YES → Redirect user to IdP Sign-In Page URL
+ │ (SAML AuthnRequest sent via browser redirect)
+ │
+ ├── User authenticates at IdP (credentials + MFA)
+ │
+ ├── IdP generates SAML Response with signed assertion
+ │
+ ├── Browser POSTs SAML Response to Google ACS URL:
+ │ https://www.google.com/a/{domain}/acs
+ │
+ ├── Google validates SAML signature against uploaded certificate
+ │
+ └── User is granted access to Google Workspace
 ```
 
 ### Key SAML Parameters
@@ -125,9 +125,9 @@ User navigates to Google Workspace app (Gmail, Drive, etc.)
 1. Navigate to Enterprise Applications > New Application > Google Cloud/Workspace
 2. Configure Single sign-on > SAML
 3. Set Basic SAML Configuration:
-   - Identifier (Entity ID): `google.com`
-   - Reply URL (ACS): `https://www.google.com/a/{your-domain}/acs`
-   - Sign on URL: `https://www.google.com/a/{your-domain}/ServiceLogin`
+ - Identifier (Entity ID): `google.com`
+ - Reply URL (ACS): `https://www.google.com/a/{your-domain}/acs`
+ - Sign on URL: `https://www.google.com/a/{your-domain}/ServiceLogin`
 4. Download Federation Metadata XML or Certificate (Base64)
 
 **For ADFS:**
@@ -158,14 +158,14 @@ SSO profiles can be applied at different scopes:
 
 ```
 Organization-wide (all users)
-    │
-    ├── Org Unit level (specific departments)
-    │   ├── Engineering OU → SSO via Okta
-    │   ├── Marketing OU → SSO via Azure AD
-    │   └── Contractors OU → SSO via specific IdP
-    │
-    └── Group level (specific security groups)
-        └── VPN Users → SSO with additional MFA
+ │
+ ├── Org Unit level (specific departments)
+ │ ├── Engineering OU → SSO via Okta
+ │ ├── Marketing OU → SSO via Azure AD
+ │ └── Contractors OU → SSO via specific IdP
+ │
+ └── Group level (specific security groups)
+ └── VPN Users → SSO with additional MFA
 ```
 
 1. Navigate to Security > Authentication > SSO with third-party IdP

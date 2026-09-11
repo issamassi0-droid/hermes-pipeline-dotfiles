@@ -3,9 +3,9 @@ title: "Your AI Skepticism Is Calibrated: What 49,000 Developers and 3 RCTs Say 
 target_audience: "Senior/staff software engineers (5-15 yrs) who use AI tools daily and feel cognitive dissonance; engineering leaders deciding rollout policy"
 word_count_target: 2400
 keywords:
-  primary: "AI coding assistants"
-  secondary: ["developer trust", "senior engineers + AI", "AI-generated code", "code review / verification"]
-  long_tail: ["adoption-trust paradox", "productivity paradox", "OWASP Top 10 AI code", "Model Context Protocol", "calibrated skepticism"]
+ primary: "AI coding assistants"
+ secondary: ["developer trust", "senior engineers + AI", "AI-generated code", "code review / verification"]
+ long_tail: ["adoption-trust paradox", "productivity paradox", "OWASP Top 10 AI code", "Model Context Protocol", "calibrated skepticism"]
 tone: "peer-to-peer authority: dry, precise, evidence-first, zero hype and zero doom"
 source_summary: "23 sources (12 Tier-1, 6 Tier-2, 5 Tier-3, 0 Tier-4), credibility 0.89"
 ---
@@ -66,7 +66,7 @@ The tooling shift from autocomplete to agents amplified the verification burden.
 
 ## Box: What We Still Don't Know
 
-[X] No longitudinal trust data — will trust recover as tools improve or continue declining?  
-[X] No staff+/principal engineer isolation — current data aggregates "senior" from ~5 years experience.  
-[X] No language/domain effectiveness data — systems vs. web, Rust vs. TypeScript.  
+[X] No longitudinal trust data — will trust recover as tools improve or continue declining? 
+[X] No staff+/principal engineer isolation — current data aggregates "senior" from ~5 years experience. 
+[X] No language/domain effectiveness data — systems vs. web, Rust vs. TypeScript. 
 [X] Autonomous-agent ROI unknown — Devin, Codex agents, and similar "AI teammates" lack measured evaluations.

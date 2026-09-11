@@ -1,12 +1,12 @@
 ---
 name: performing-ssl-tls-inspection-configuration
 description: >-
-  Configure SSL/TLS break-and-inspect on next-generation firewalls and forward
-  proxies to decrypt, inspect, and re-encrypt HTTPS traffic for malware and
-  exfiltration detection, including deploying trusted CA certificates,
-  managing exemptions for certificate-pinned apps, and privacy compliance. Use
-  when setting up or auditing TLS inspection on network security devices to
-  close the encrypted-traffic blind spot.
+ Configure SSL/TLS break-and-inspect on next-generation firewalls and forward
+ proxies to decrypt, inspect, and re-encrypt HTTPS traffic for malware and
+ exfiltration detection, including deploying trusted CA certificates,
+ managing exemptions for certificate-pinned apps, and privacy compliance. Use
+ when setting up or auditing TLS inspection on network security devices to
+ close the encrypted-traffic blind spot.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -69,33 +69,33 @@ SSL/TLS inspection (also called SSL decryption, HTTPS inspection, or TLS break-a
 ### Forward Proxy Process
 
 ```
-Client                  Firewall/Proxy              Web Server
-  │                         │                          │
-  │──TLS ClientHello──────→│                          │
-  │                         │──TLS ClientHello───────→│
-  │                         │←─TLS ServerHello────────│
-  │                         │  (real server cert)      │
-  │                         │                          │
-  │                         │  [Validates server cert]  │
-  │                         │  [Generates proxy cert   │
-  │                         │   signed by internal CA]  │
-  │                         │                          │
-  │←─TLS ServerHello───────│                          │
-  │  (proxy-signed cert)    │                          │
-  │                         │                          │
-  │──Encrypted data────────→│  [Decrypt, Inspect]      │
-  │                         │──Encrypted data────────→│
-  │←─Encrypted data─────────│  [Decrypt, Inspect]      │
-  │                         │←─Encrypted data─────────│
+Client Firewall/Proxy Web Server
+ │ │ │
+ │──TLS ClientHello──────→│ │
+ │ │──TLS ClientHello───────→│
+ │ │←─TLS ServerHello────────│
+ │ │ (real server cert) │
+ │ │ │
+ │ │ [Validates server cert] │
+ │ │ [Generates proxy cert │
+ │ │ signed by internal CA] │
+ │ │ │
+ │←─TLS ServerHello───────│ │
+ │ (proxy-signed cert) │ │
+ │ │ │
+ │──Encrypted data────────→│ [Decrypt, Inspect] │
+ │ │──Encrypted data────────→│
+ │←─Encrypted data─────────│ [Decrypt, Inspect] │
+ │ │←─Encrypted data─────────│
 ```
 
 ### Certificate Trust Chain
 
 ```
 Enterprise Root CA
-  └── Subordinate CA (SSL Inspection)
-        └── Dynamically Generated Server Certificates
-             (CN matches requested server)
+ └── Subordinate CA (SSL Inspection)
+ └── Dynamically Generated Server Certificates
+ (CN matches requested server)
 ```
 
 ## Workflow
@@ -108,11 +108,11 @@ openssl genrsa -aes256 -out ssl-inspect-ca.key 4096
 
 # Create CA certificate (5 year validity)
 openssl req -new -x509 -key ssl-inspect-ca.key \
-  -sha256 -days 1825 \
-  -out ssl-inspect-ca.crt \
-  -subj "/C=US/ST=California/O=Corp Inc/OU=Network Security/CN=Corp SSL Inspection CA" \
-  -extensions v3_ca \
-  -config <(cat <<EOF
+ -sha256 -days 1825 \
+ -out ssl-inspect-ca.crt \
+ -subj "/C=US/ST=California/O=Corp Inc/OU=Network Security/CN=Corp SSL Inspection CA" \
+ -extensions v3_ca \
+ -config <(cat <<EOF
 [req]
 distinguished_name = req_dn
 x509_extensions = v3_ca
@@ -142,11 +142,11 @@ openssl x509 -in ssl-inspect-ca.crt -text -noout
 
 # Or deploy via PowerShell
 Import-Certificate -FilePath "\\server\share\ssl-inspect-ca.crt" `
-  -CertStoreLocation "Cert:\LocalMachine\Root"
+ -CertStoreLocation "Cert:\LocalMachine\Root"
 
 # Verify deployment
 Get-ChildItem Cert:\LocalMachine\Root | Where-Object {
-    $_.Subject -like "*SSL Inspection CA*"
+ $_.Subject -like "*SSL Inspection CA*"
 }
 ```
 
@@ -155,7 +155,7 @@ Get-ChildItem Cert:\LocalMachine\Root | Where-Object {
 ```bash
 # Install via command line
 sudo security add-trusted-cert -d -r trustRoot \
-  -k /Library/Keychains/System.keychain ssl-inspect-ca.crt
+ -k /Library/Keychains/System.keychain ssl-inspect-ca.crt
 ```
 
 **Linux:**
@@ -241,7 +241,7 @@ set rulebase decryption rules Inspect-WebServers profile Corporate-Decrypt
 ```bash
 # Test from client - verify certificate issuer is internal CA
 openssl s_client -connect www.google.com:443 -servername www.google.com 2>/dev/null | \
-  openssl x509 -noout -issuer -subject
+ openssl x509 -noout -issuer -subject
 
 # Expected output (with inspection active):
 # issuer= /C=US/O=Corp Inc/OU=Network Security/CN=Corp SSL Inspection CA

@@ -21,14 +21,14 @@ scene.add(directionalLight);
 
 ## Light Types Overview
 
-| Light            | Description            | Shadow Support | Cost     |
+| Light | Description | Shadow Support | Cost |
 | ---------------- | ---------------------- | -------------- | -------- |
-| AmbientLight     | Uniform everywhere     | No             | Very Low |
-| HemisphereLight  | Sky/ground gradient    | No             | Very Low |
-| DirectionalLight | Parallel rays (sun)    | Yes            | Low      |
-| PointLight       | Omnidirectional (bulb) | Yes            | Medium   |
-| SpotLight        | Cone-shaped            | Yes            | Medium   |
-| RectAreaLight    | Area light (window)    | No\*           | High     |
+| AmbientLight | Uniform everywhere | No | Very Low |
+| HemisphereLight | Sky/ground gradient | No | Very Low |
+| DirectionalLight | Parallel rays (sun) | Yes | Low |
+| PointLight | Omnidirectional (bulb) | Yes | Medium |
+| SpotLight | Cone-shaped | Yes | Medium |
+| RectAreaLight | Area light (window) | No\* | High |
 
 \*RectAreaLight shadows require custom solutions
 
@@ -257,11 +257,11 @@ dirLight.shadow.normalBias = 0.02; // Bias along normal
 import { ContactShadows } from "three/examples/jsm/objects/ContactShadows.js";
 
 const contactShadows = new ContactShadows({
-  resolution: 512,
-  blur: 2,
-  opacity: 0.5,
-  scale: 10,
-  position: [0, 0, 0],
+ resolution: 512,
+ blur: 2,
+ opacity: 0.5,
+ scale: 10,
+ position: [0, 0, 0],
 });
 scene.add(contactShadows);
 ```
@@ -305,15 +305,15 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load("environment.hdr", (texture) => {
-  texture.mapping = THREE.EquirectangularReflectionMapping;
+ texture.mapping = THREE.EquirectangularReflectionMapping;
 
-  // Set as scene environment (affects all PBR materials)
-  scene.environment = texture;
+ // Set as scene environment (affects all PBR materials)
+ scene.environment = texture;
 
-  // Optional: also use as background
-  scene.background = texture;
-  scene.backgroundBlurriness = 0; // 0-1, blur the background
-  scene.backgroundIntensity = 1;
+ // Optional: also use as background
+ scene.background = texture;
+ scene.backgroundBlurriness = 0; // 0-1, blur the background
+ scene.backgroundIntensity = 1;
 });
 
 // PMREMGenerator for better reflections
@@ -321,10 +321,10 @@ const pmremGenerator = new THREE.PMREMGenerator(renderer);
 pmremGenerator.compileEquirectangularShader();
 
 rgbeLoader.load("environment.hdr", (texture) => {
-  const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-  scene.environment = envMap;
-  texture.dispose();
-  pmremGenerator.dispose();
+ const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+ scene.environment = envMap;
+ texture.dispose();
+ pmremGenerator.dispose();
 });
 ```
 
@@ -333,12 +333,12 @@ rgbeLoader.load("environment.hdr", (texture) => {
 ```javascript
 const cubeLoader = new THREE.CubeTextureLoader();
 const envMap = cubeLoader.load([
-  "px.jpg",
-  "nx.jpg",
-  "py.jpg",
-  "ny.jpg",
-  "pz.jpg",
-  "nz.jpg",
+ "px.jpg",
+ "nx.jpg",
+ "py.jpg",
+ "ny.jpg",
+ "pz.jpg",
+ "nz.jpg",
 ]);
 
 scene.environment = envMap;
@@ -360,13 +360,13 @@ lightProbe.copy(LightProbeGenerator.fromCubeTexture(cubeTexture));
 
 // Or from render target
 const cubeCamera = new THREE.CubeCamera(
-  0.1,
-  100,
-  new THREE.WebGLCubeRenderTarget(256),
+ 0.1,
+ 100,
+ new THREE.WebGLCubeRenderTarget(256),
 );
 cubeCamera.update(renderer, scene);
 lightProbe.copy(
-  LightProbeGenerator.fromCubeRenderTarget(renderer, cubeCamera.renderTarget),
+ LightProbeGenerator.fromCubeRenderTarget(renderer, cubeCamera.renderTarget),
 );
 ```
 
@@ -436,20 +436,20 @@ scene.add(ambient);
 const clock = new THREE.Clock();
 
 function animate() {
-  const time = clock.getElapsedTime();
+ const time = clock.getElapsedTime();
 
-  // Orbit light around scene
-  light.position.x = Math.cos(time) * 5;
-  light.position.z = Math.sin(time) * 5;
+ // Orbit light around scene
+ light.position.x = Math.cos(time) * 5;
+ light.position.z = Math.sin(time) * 5;
 
-  // Pulsing intensity
-  light.intensity = 1 + Math.sin(time * 2) * 0.5;
+ // Pulsing intensity
+ light.intensity = 1 + Math.sin(time * 2) * 0.5;
 
-  // Color cycling
-  light.color.setHSL((time * 0.1) % 1, 1, 0.5);
+ // Color cycling
+ light.color.setHSL((time * 0.1) % 1, 1, 0.5);
 
-  // Update helpers if using
-  lightHelper.update();
+ // Update helpers if using
+ lightHelper.update();
 }
 ```
 

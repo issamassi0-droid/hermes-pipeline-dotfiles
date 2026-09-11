@@ -1,13 +1,13 @@
 ---
 name: deploying-decoy-files-for-ransomware-detection
 description: 'Deploys canary files (honeytokens) across file systems to detect ransomware
-  encryption activity in real time. Uses strategically placed decoy documents monitored
-  via file integrity monitoring or OS-level watchdogs to trigger alerts when ransomware
-  modifies or encrypts them. Activates for requests involving ransomware canary deployment,
-  honeyfile setup, deception-based ransomware detection, or file integrity monitoring
-  for encryption.
+ encryption activity in real time. Uses strategically placed decoy documents monitored
+ via file integrity monitoring or OS-level watchdogs to trigger alerts when ransomware
+ modifies or encrypts them. Activates for requests involving ransomware canary deployment,
+ honeyfile setup, deception-based ransomware detection, or file integrity monitoring
+ for encryption.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -31,28 +31,28 @@ mitre_attack:
 - T1490
 - T1485
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - monetization
-  - positioning
-  - stealth
-  techniques:
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1017.001
-    name: 'Conversion to Physical Monetary Instruments: Cash'
-    tactic: monetization
-    source: f3
-  - id: T1219
-    name: Remote Access Tools
-    tactic: positioning
-    source: attack
-  - id: T1070
-    name: Indicator Removal
-    tactic: stealth
-    source: attack
+ version: '1.1'
+ tactics:
+ - monetization
+ - positioning
+ - stealth
+ techniques:
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1017.001
+ name: 'Conversion to Physical Monetary Instruments: Cash'
+ tactic: monetization
+ source: f3
+ - id: T1219
+ name: Remote Access Tools
+ tactic: positioning
+ source: attack
+ - id: T1070
+ name: Indicator Removal
+ tactic: stealth
+ source: attack
 ---
 
 # Deploying Decoy Files for Ransomware Detection
@@ -86,21 +86,21 @@ Plan file placement for maximum detection coverage:
 Canary File Placement Strategy:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Naming Convention:
-  - Use names that sort FIRST and LAST alphabetically in each directory
-  - Ransomware typically enumerates directories A-Z or Z-A
-  - Examples: _AAAA_budget_2024.docx, ~zzzz_report_final.xlsx
+ - Use names that sort FIRST and LAST alphabetically in each directory
+ - Ransomware typically enumerates directories A-Z or Z-A
+ - Examples: _AAAA_budget_2024.docx, ~zzzz_report_final.xlsx
 
 Placement Locations:
-  - Root of every file share (\\server\share\_AAAA_canary.docx)
-  - Desktop, Documents, Downloads on each endpoint
-  - Department-specific shares (Finance, HR, Legal)
-  - Backup staging directories
-  - Home directories of high-privilege accounts
+ - Root of every file share (\\server\share\_AAAA_canary.docx)
+ - Desktop, Documents, Downloads on each endpoint
+ - Department-specific shares (Finance, HR, Legal)
+ - Backup staging directories
+ - Home directories of high-privilege accounts
 
 File Types:
-  - .docx, .xlsx, .pdf (most targeted by ransomware)
-  - .sql, .bak (database files, high value)
-  - Mix of file types to detect ransomware that targets specific extensions
+ - .docx, .xlsx, .pdf (most targeted by ransomware)
+ - .sql, .bak (database files, high value)
+ - Mix of file types to detect ransomware that targets specific extensions
 ```
 
 ### Step 2: Generate Realistic Canary Files
@@ -112,21 +112,21 @@ import os
 import time
 
 def create_canary_docx(filepath, content="Q4 Financial Summary - Confidential"):
-    """Create a realistic .docx canary file using python-docx."""
-    from docx import Document
-    doc = Document()
-    doc.add_heading("Financial Report - CONFIDENTIAL", level=1)
-    doc.add_paragraph(content)
-    doc.add_paragraph(f"Generated: {time.strftime('%Y-%m-%d')}")
-    doc.save(filepath)
+ """Create a realistic .docx canary file using python-docx."""
+ from docx import Document
+ doc = Document()
+ doc.add_heading("Financial Report - CONFIDENTIAL", level=1)
+ doc.add_paragraph(content)
+ doc.add_paragraph(f"Generated: {time.strftime('%Y-%m-%d')}")
+ doc.save(filepath)
 
 def create_canary_txt(filepath):
-    """Create a simple text canary with known content for hash verification."""
-    content = "CANARY_TOKEN_DO_NOT_MODIFY\n"
-    content += f"Created: {time.strftime('%Y-%m-%dT%H:%M:%S')}\n"
-    content += "This file is monitored for unauthorized changes.\n"
-    with open(filepath, "w") as f:
-        f.write(content)
+ """Create a simple text canary with known content for hash verification."""
+ content = "CANARY_TOKEN_DO_NOT_MODIFY\n"
+ content += f"Created: {time.strftime('%Y-%m-%dT%H:%M:%S')}\n"
+ content += "This file is monitored for unauthorized changes.\n"
+ with open(filepath, "w") as f:
+ f.write(content)
 ```
 
 ### Step 3: Deploy File System Watcher
@@ -138,21 +138,21 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
 class CanaryHandler(FileSystemEventHandler):
-    def __init__(self, canary_paths, alert_callback):
-        self.canary_paths = set(canary_paths)
-        self.alert_callback = alert_callback
+ def __init__(self, canary_paths, alert_callback):
+ self.canary_paths = set(canary_paths)
+ self.alert_callback = alert_callback
 
-    def on_modified(self, event):
-        if event.src_path in self.canary_paths:
-            self.alert_callback("MODIFIED", event.src_path)
+ def on_modified(self, event):
+ if event.src_path in self.canary_paths:
+ self.alert_callback("MODIFIED", event.src_path)
 
-    def on_deleted(self, event):
-        if event.src_path in self.canary_paths:
-            self.alert_callback("DELETED", event.src_path)
+ def on_deleted(self, event):
+ if event.src_path in self.canary_paths:
+ self.alert_callback("DELETED", event.src_path)
 
-    def on_moved(self, event):
-        if event.src_path in self.canary_paths:
-            self.alert_callback("RENAMED", event.src_path)
+ def on_moved(self, event):
+ if event.src_path in self.canary_paths:
+ self.alert_callback("RENAMED", event.src_path)
 ```
 
 ### Step 4: Configure Alerting and Response
@@ -163,21 +163,21 @@ Define automated responses when canary files are triggered:
 Alert Response Matrix:
 ━━━━━━━━━━━━━━━━━━━━━
 Event: Canary MODIFIED
-  → Severity: CRITICAL
-  → Action: Alert SOC, identify modifying process (PID), isolate endpoint
+ → Severity: CRITICAL
+ → Action: Alert SOC, identify modifying process (PID), isolate endpoint
 
 Event: Canary DELETED
-  → Severity: HIGH
-  → Action: Alert SOC, check for ransomware note in same directory
+ → Severity: HIGH
+ → Action: Alert SOC, check for ransomware note in same directory
 
 Event: Canary RENAMED (new extension added)
-  → Severity: CRITICAL
-  → Action: Alert SOC, check extension against known ransomware extensions
-  → Automated: Kill modifying process, disable network interface
+ → Severity: CRITICAL
+ → Action: Alert SOC, check extension against known ransomware extensions
+ → Automated: Kill modifying process, disable network interface
 
 Event: Multiple canaries triggered within 60 seconds
-  → Severity: EMERGENCY
-  → Action: Network-wide isolation, activate incident response plan
+ → Severity: EMERGENCY
+ → Action: Network-wide isolation, activate incident response plan
 ```
 
 ### Step 5: Validate Detection Coverage

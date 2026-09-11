@@ -1,12 +1,12 @@
 ---
 name: analyzing-uefi-bootkit-persistence
 description: 'Analyzes UEFI bootkit persistence (SPI flash implants, ESP modifications,
-  Secure Boot bypass, UEFI variable manipulation) using chipsec for firmware integrity
-  verification, detecting known families like BlackLotus, LoJax, and MoonBounce.
-  Use for UEFI malware analysis, firmware persistence investigation, or Secure Boot
-  bypass detection.
+ Secure Boot bypass, UEFI variable manipulation) using chipsec for firmware integrity
+ verification, detecting known families like BlackLotus, LoJax, and MoonBounce.
+ Use for UEFI malware analysis, firmware persistence investigation, or Secure Boot
+ bypass detection.
 
-  '
+ '
 domain: cybersecurity
 subdomain: firmware-security
 tags:
@@ -292,62 +292,62 @@ Report should include:
 ```
 UEFI BOOTKIT PERSISTENCE ANALYSIS REPORT
 ============================================
-System:           Lenovo ThinkPad X1 Carbon Gen 11
-Firmware:         N3HET82W (1.54) - Lenovo UEFI BIOS
-Platform:         Intel 13th Gen (Raptor Lake)
-TPM:              2.0 (Infineon SLB 9672)
-Secure Boot:      ENABLED (BYPASSED via CVE-2022-21894)
-Analysis Method:  Linux live USB + chipsec + UEFITool
+System: Lenovo ThinkPad X1 Carbon Gen 11
+Firmware: N3HET82W (1.54) - Lenovo UEFI BIOS
+Platform: Intel 13th Gen (Raptor Lake)
+TPM: 2.0 (Infineon SLB 9672)
+Secure Boot: ENABLED (BYPASSED via CVE-2022-21894)
+Analysis Method: Linux live USB + chipsec + UEFITool
 
 SPI FLASH PROTECTION STATUS
-BIOS Write Protection:    DISABLED [!]
+BIOS Write Protection: DISABLED [!]
 SPI Flash Lock (FLOCKDN): SET [OK]
-SMM BIOS Write Protect:   DISABLED [!]
-SPI Protected Ranges:     Region 0 only (descriptor)
+SMM BIOS Write Protect: DISABLED [!]
+SPI Protected Ranges: Region 0 only (descriptor)
 
 UEFI VARIABLE ANALYSIS
-SecureBoot:        Enabled (value=1)
-SetupMode:         Disabled (value=0)
-PK:                Lenovo Ltd. (legitimate)
-KEK:               Microsoft + Lenovo (legitimate)
-db:                MODIFIED - contains unauthorized entry [!]
-  [!] Unknown certificate: CN=Secure Boot Signing, O=Unknown
-  [!] Not present in vendor baseline db
-MOK:               1 unauthorized key enrolled [!]
-  [!] MOK enrolled: CN=shim, self-signed, not from distro vendor
+SecureBoot: Enabled (value=1)
+SetupMode: Disabled (value=0)
+PK: Lenovo Ltd. (legitimate)
+KEK: Microsoft + Lenovo (legitimate)
+db: MODIFIED - contains unauthorized entry [!]
+ [!] Unknown certificate: CN=Secure Boot Signing, O=Unknown
+ [!] Not present in vendor baseline db
+MOK: 1 unauthorized key enrolled [!]
+ [!] MOK enrolled: CN=shim, self-signed, not from distro vendor
 
 ESP PARTITION ANALYSIS
-Total EFI binaries:     12
-Verified (signed):      9
+Total EFI binaries: 12
+Verified (signed): 9
 Modified (hash mismatch): 2 [!]
-Unauthorized:           1 [!]
+Unauthorized: 1 [!]
 
-  [!] EFI/Microsoft/Boot/bootmgfw.efi - MODIFIED
-      Expected SHA-256: a3f2c8...
-      Current SHA-256:  7b1e4d...
-      Signature:        Valid (signed with unauthorized MOK)
+ [!] EFI/Microsoft/Boot/bootmgfw.efi - MODIFIED
+ Expected SHA-256: a3f2c8...
+ Current SHA-256: 7b1e4d...
+ Signature: Valid (signed with unauthorized MOK)
 
-  [!] EFI/Microsoft/Boot/grubx64.efi - UNAUTHORIZED
-      SHA-256:  e9c1a7...
-      Not present in vendor baseline
-      Matches BlackLotus stage-2 loader signature
+ [!] EFI/Microsoft/Boot/grubx64.efi - UNAUTHORIZED
+ SHA-256: e9c1a7...
+ Not present in vendor baseline
+ Matches BlackLotus stage-2 loader signature
 
-  [!] system32/ directory present on ESP (BlackLotus artifact)
-      Directory empty (files deleted post-installation)
+ [!] system32/ directory present on ESP (BlackLotus artifact)
+ Directory empty (files deleted post-installation)
 
 FIRMWARE MODULE ANALYSIS
-Total firmware modules:   312
-Vendor baseline modules:  312
-Added modules:            0
-Modified modules:         0
-SPI flash integrity:      CLEAN (no firmware-level implant detected)
+Total firmware modules: 312
+Vendor baseline modules: 312
+Added modules: 0
+Modified modules: 0
+SPI flash integrity: CLEAN (no firmware-level implant detected)
 
 BOOTKIT ATTRIBUTION
-Family:           BlackLotus
-Confidence:       HIGH
-Persistence:      ESP-based (not SPI flash)
-Bypass Method:    CVE-2022-21894 (baton drop)
-MITRE ATT&CK:    T1542.003 (Bootkit), T1553.006 (Code Signing Policy Modification)
+Family: BlackLotus
+Confidence: HIGH
+Persistence: ESP-based (not SPI flash)
+Bypass Method: CVE-2022-21894 (baton drop)
+MITRE ATT&CK: T1542.003 (Bootkit), T1553.006 (Code Signing Policy Modification)
 
 INDICATORS OF COMPROMISE
 - ESP:/system32/ directory (empty, post-cleanup artifact)

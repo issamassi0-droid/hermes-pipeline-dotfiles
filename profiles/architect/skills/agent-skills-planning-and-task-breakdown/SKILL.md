@@ -38,18 +38,18 @@ Map what depends on what:
 
 ```
 Database schema
-    │
-    ├── API models/types
-    │       │
-    │       ├── API endpoints
-    │       │       │
-    │       │       └── Frontend API client
-    │       │               │
-    │       │               └── UI components
-    │       │
-    │       └── Validation logic
-    │
-    └── Seed data / migrations
+ │
+ ├── API models/types
+ │ │
+ │ ├── API endpoints
+ │ │ │
+ │ │ └── Frontend API client
+ │ │ │
+ │ │ └── UI components
+ │ │
+ │ └── Validation logic
+ │
+ └── Seed data / migrations
 ```
 
 Implementation order follows the dependency graph bottom-up: build foundations first.

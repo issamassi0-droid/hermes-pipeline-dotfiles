@@ -1,10 +1,10 @@
 ---
 name: detecting-aws-guardduty-findings-automation
 description: Build automated AWS GuardDuty finding response pipelines using EventBridge
-  and Lambda to trigger real-time incident response, automatically quarantine compromised
-  resources, and route security notifications. Use when designing automated remediation
-  playbooks for GuardDuty findings across VPC Flow Logs, CloudTrail, DNS, EKS, or S3
-  data events, or when reducing mean time to respond to cloud threats.
+ and Lambda to trigger real-time incident response, automatically quarantine compromised
+ resources, and route security notifications. Use when designing automated remediation
+ playbooks for GuardDuty findings across VPC Flow Logs, CloudTrail, DNS, EKS, or S3
+ data events, or when reducing mean time to respond to cloud threats.
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -62,13 +62,13 @@ aws guardduty create-detector --enable --finding-publishing-frequency FIFTEEN_MI
 
 # Enable additional data sources
 aws guardduty update-detector \
-  --detector-id DETECTOR_ID \
-  --data-sources '{
-    "S3Logs": {"Enable": true},
-    "Kubernetes": {"AuditLogs": {"Enable": true}},
-    "MalwareProtection": {"ScanEc2InstanceWithFindings": {"EbsVolumes": true}},
-    "RuntimeMonitoring": {"Enable": true}
-  }'
+ --detector-id DETECTOR_ID \
+ --data-sources '{
+ "S3Logs": {"Enable": true},
+ "Kubernetes": {"AuditLogs": {"Enable": true}},
+ "MalwareProtection": {"ScanEc2InstanceWithFindings": {"EbsVolumes": true}},
+ "RuntimeMonitoring": {"Enable": true}
+ }'
 ```
 
 ## EventBridge Rule Configuration
@@ -77,11 +77,11 @@ aws guardduty update-detector \
 
 ```json
 {
-  "source": ["aws.guardduty"],
-  "detail-type": ["GuardDuty Finding"],
-  "detail": {
-    "severity": [{"numeric": [">=", 7.0]}]
-  }
+ "source": ["aws.guardduty"],
+ "detail-type": ["GuardDuty Finding"],
+ "detail": {
+ "severity": [{"numeric": [">=", 7.0]}]
+ }
 }
 ```
 
@@ -89,18 +89,18 @@ aws guardduty update-detector \
 
 ```bash
 aws events put-rule \
-  --name "guardduty-high-severity" \
-  --event-pattern '{
-    "source": ["aws.guardduty"],
-    "detail-type": ["GuardDuty Finding"],
-    "detail": {
-      "severity": [{"numeric": [">=", 7.0]}]
-    }
-  }'
+ --name "guardduty-high-severity" \
+ --event-pattern '{
+ "source": ["aws.guardduty"],
+ "detail-type": ["GuardDuty Finding"],
+ "detail": {
+ "severity": [{"numeric": [">=", 7.0]}]
+ }
+ }'
 
 aws events put-targets \
-  --rule "guardduty-high-severity" \
-  --targets "Id"="lambda-handler","Arn"="arn:aws:lambda:us-east-1:123456789012:function:guardduty-response"
+ --rule "guardduty-high-severity" \
+ --targets "Id"="lambda-handler","Arn"="arn:aws:lambda:us-east-1:123456789012:function:guardduty-response"
 ```
 
 ## Lambda Automated Response Functions
@@ -119,88 +119,88 @@ QUARANTINE_SG = os.environ.get('QUARANTINE_SECURITY_GROUP')
 SNS_TOPIC = os.environ.get('SNS_TOPIC_ARN')
 
 def lambda_handler(event, context):
-    finding = event['detail']
-    finding_type = finding['type']
-    severity = finding['severity']
-    account_id = finding['accountId']
-    region = finding['region']
+ finding = event['detail']
+ finding_type = finding['type']
+ severity = finding['severity']
+ account_id = finding['accountId']
+ region = finding['region']
 
-    # Extract resource information
-    resource = finding.get('resource', {})
-    resource_type = resource.get('resourceType', '')
+ # Extract resource information
+ resource = finding.get('resource', {})
+ resource_type = resource.get('resourceType', '')
 
-    if resource_type == 'Instance':
-        instance_id = resource['instanceDetails']['instanceId']
-        instance_tags = {t['key']: t['value']
-                        for t in resource['instanceDetails'].get('tags', [])}
+ if resource_type == 'Instance':
+ instance_id = resource['instanceDetails']['instanceId']
+ instance_tags = {t['key']: t['value']
+ for t in resource['instanceDetails'].get('tags', [])}
 
-        # Skip if already quarantined
-        if instance_tags.get('SecurityStatus') == 'Quarantined':
-            return {'statusCode': 200, 'body': 'Already quarantined'}
+ # Skip if already quarantined
+ if instance_tags.get('SecurityStatus') == 'Quarantined':
+ return {'statusCode': 200, 'body': 'Already quarantined'}
 
-        # Get current security groups for forensics
-        instance = ec2.describe_instances(InstanceIds=[instance_id])
-        current_sgs = [sg['GroupId'] for sg in
-                       instance['Reservations'][0]['Instances'][0]['SecurityGroups']]
+ # Get current security groups for forensics
+ instance = ec2.describe_instances(InstanceIds=[instance_id])
+ current_sgs = [sg['GroupId'] for sg in
+ instance['Reservations'][0]['Instances'][0]['SecurityGroups']]
 
-        # Tag instance with finding info and original SGs
-        ec2.create_tags(
-            Resources=[instance_id],
-            Tags=[
-                {'Key': 'SecurityStatus', 'Value': 'Quarantined'},
-                {'Key': 'GuardDutyFinding', 'Value': finding_type},
-                {'Key': 'OriginalSecurityGroups', 'Value': ','.join(current_sgs)},
-                {'Key': 'QuarantineTime', 'Value': finding['updatedAt']}
-            ]
-        )
+ # Tag instance with finding info and original SGs
+ ec2.create_tags(
+ Resources=[instance_id],
+ Tags=[
+ {'Key': 'SecurityStatus', 'Value': 'Quarantined'},
+ {'Key': 'GuardDutyFinding', 'Value': finding_type},
+ {'Key': 'OriginalSecurityGroups', 'Value': ','.join(current_sgs)},
+ {'Key': 'QuarantineTime', 'Value': finding['updatedAt']}
+ ]
+ )
 
-        # Move to quarantine security group (blocks all traffic)
-        if QUARANTINE_SG:
-            ec2.modify_instance_attribute(
-                InstanceId=instance_id,
-                Groups=[QUARANTINE_SG]
-            )
+ # Move to quarantine security group (blocks all traffic)
+ if QUARANTINE_SG:
+ ec2.modify_instance_attribute(
+ InstanceId=instance_id,
+ Groups=[QUARANTINE_SG]
+ )
 
-        # Create EBS snapshots for forensics
-        volumes = ec2.describe_volumes(
-            Filters=[{'Name': 'attachment.instance-id', 'Values': [instance_id]}]
-        )
-        for vol in volumes['Volumes']:
-            ec2.create_snapshot(
-                VolumeId=vol['VolumeId'],
-                Description=f'GuardDuty forensic snapshot - {finding_type}',
-                TagSpecifications=[{
-                    'ResourceType': 'snapshot',
-                    'Tags': [
-                        {'Key': 'Purpose', 'Value': 'ForensicCapture'},
-                        {'Key': 'SourceInstance', 'Value': instance_id},
-                        {'Key': 'FindingType', 'Value': finding_type}
-                    ]
-                }]
-            )
+ # Create EBS snapshots for forensics
+ volumes = ec2.describe_volumes(
+ Filters=[{'Name': 'attachment.instance-id', 'Values': [instance_id]}]
+ )
+ for vol in volumes['Volumes']:
+ ec2.create_snapshot(
+ VolumeId=vol['VolumeId'],
+ Description=f'GuardDuty forensic snapshot - {finding_type}',
+ TagSpecifications=[{
+ 'ResourceType': 'snapshot',
+ 'Tags': [
+ {'Key': 'Purpose', 'Value': 'ForensicCapture'},
+ {'Key': 'SourceInstance', 'Value': instance_id},
+ {'Key': 'FindingType', 'Value': finding_type}
+ ]
+ }]
+ )
 
-        # Notify security team
-        sns.publish(
-            TopicArn=SNS_TOPIC,
-            Subject=f'[GuardDuty] {finding_type} - Instance {instance_id} Quarantined',
-            Message=json.dumps({
-                'action': 'instance_quarantined',
-                'instance_id': instance_id,
-                'finding_type': finding_type,
-                'severity': severity,
-                'account': account_id,
-                'region': region,
-                'original_security_groups': current_sgs,
-                'description': finding.get('description', '')
-            }, indent=2)
-        )
+ # Notify security team
+ sns.publish(
+ TopicArn=SNS_TOPIC,
+ Subject=f'[GuardDuty] {finding_type} - Instance {instance_id} Quarantined',
+ Message=json.dumps({
+ 'action': 'instance_quarantined',
+ 'instance_id': instance_id,
+ 'finding_type': finding_type,
+ 'severity': severity,
+ 'account': account_id,
+ 'region': region,
+ 'original_security_groups': current_sgs,
+ 'description': finding.get('description', '')
+ }, indent=2)
+ )
 
-        return {
-            'statusCode': 200,
-            'body': f'Instance {instance_id} quarantined and snapshots created'
-        }
+ return {
+ 'statusCode': 200,
+ 'body': f'Instance {instance_id} quarantined and snapshots created'
+ }
 
-    return {'statusCode': 200, 'body': 'Non-EC2 finding processed'}
+ return {'statusCode': 200, 'body': 'Non-EC2 finding processed'}
 ```
 
 ### IAM Credential Compromise Response
@@ -216,104 +216,104 @@ sns = boto3.client('sns')
 SNS_TOPIC = os.environ.get('SNS_TOPIC_ARN')
 
 def lambda_handler(event, context):
-    finding = event['detail']
-    finding_type = finding['type']
+ finding = event['detail']
+ finding_type = finding['type']
 
-    if 'IAMUser' not in finding_type and 'UnauthorizedAccess' not in finding_type:
-        return {'statusCode': 200, 'body': 'Not an IAM finding'}
+ if 'IAMUser' not in finding_type and 'UnauthorizedAccess' not in finding_type:
+ return {'statusCode': 200, 'body': 'Not an IAM finding'}
 
-    resource = finding.get('resource', {})
-    access_key_details = resource.get('accessKeyDetails', {})
-    user_name = access_key_details.get('userName', '')
-    access_key_id = access_key_details.get('accessKeyId', '')
+ resource = finding.get('resource', {})
+ access_key_details = resource.get('accessKeyDetails', {})
+ user_name = access_key_details.get('userName', '')
+ access_key_id = access_key_details.get('accessKeyId', '')
 
-    if not user_name:
-        return {'statusCode': 200, 'body': 'No user identified'}
+ if not user_name:
+ return {'statusCode': 200, 'body': 'No user identified'}
 
-    actions_taken = []
+ actions_taken = []
 
-    # Deactivate the compromised access key
-    if access_key_id and access_key_id != 'GeneratedFindingAccessKeyId':
-        try:
-            iam.update_access_key(
-                UserName=user_name,
-                AccessKeyId=access_key_id,
-                Status='Inactive'
-            )
-            actions_taken.append(f'Deactivated access key {access_key_id}')
-        except Exception as e:
-            actions_taken.append(f'Failed to deactivate key: {str(e)}')
+ # Deactivate the compromised access key
+ if access_key_id and access_key_id != 'GeneratedFindingAccessKeyId':
+ try:
+ iam.update_access_key(
+ UserName=user_name,
+ AccessKeyId=access_key_id,
+ Status='Inactive'
+ )
+ actions_taken.append(f'Deactivated access key {access_key_id}')
+ except Exception as e:
+ actions_taken.append(f'Failed to deactivate key: {str(e)}')
 
-    # Attach deny-all policy to user
-    deny_policy = {
-        "Version": "2012-10-17",
-        "Statement": [{
-            "Effect": "Deny",
-            "Action": "*",
-            "Resource": "*"
-        }]
-    }
+ # Attach deny-all policy to user
+ deny_policy = {
+ "Version": "2012-10-17",
+ "Statement": [{
+ "Effect": "Deny",
+ "Action": "*",
+ "Resource": "*"
+ }]
+ }
 
-    try:
-        iam.put_user_policy(
-            UserName=user_name,
-            PolicyName='GuardDuty-DenyAll-Quarantine',
-            PolicyDocument=json.dumps(deny_policy)
-        )
-        actions_taken.append(f'Applied deny-all policy to {user_name}')
-    except Exception as e:
-        actions_taken.append(f'Failed to apply deny policy: {str(e)}')
+ try:
+ iam.put_user_policy(
+ UserName=user_name,
+ PolicyName='GuardDuty-DenyAll-Quarantine',
+ PolicyDocument=json.dumps(deny_policy)
+ )
+ actions_taken.append(f'Applied deny-all policy to {user_name}')
+ except Exception as e:
+ actions_taken.append(f'Failed to apply deny policy: {str(e)}')
 
-    # Notify
-    sns.publish(
-        TopicArn=SNS_TOPIC,
-        Subject=f'[GuardDuty] IAM Compromise - {user_name}',
-        Message=json.dumps({
-            'finding_type': finding_type,
-            'user': user_name,
-            'access_key': access_key_id,
-            'actions_taken': actions_taken,
-            'severity': finding['severity']
-        }, indent=2)
-    )
+ # Notify
+ sns.publish(
+ TopicArn=SNS_TOPIC,
+ Subject=f'[GuardDuty] IAM Compromise - {user_name}',
+ Message=json.dumps({
+ 'finding_type': finding_type,
+ 'user': user_name,
+ 'access_key': access_key_id,
+ 'actions_taken': actions_taken,
+ 'severity': finding['severity']
+ }, indent=2)
+ )
 
-    return {'statusCode': 200, 'body': json.dumps(actions_taken)}
+ return {'statusCode': 200, 'body': json.dumps(actions_taken)}
 ```
 
 ## Terraform Deployment
 
 ```hcl
 resource "aws_guardduty_detector" "main" {
-  enable = true
-  finding_publishing_frequency = "FIFTEEN_MINUTES"
+ enable = true
+ finding_publishing_frequency = "FIFTEEN_MINUTES"
 
-  datasources {
-    s3_logs { enable = true }
-    kubernetes { audit_logs { enable = true } }
-    malware_protection {
-      scan_ec2_instance_with_findings {
-        ebs_volumes { enable = true }
-      }
-    }
-  }
+ datasources {
+ s3_logs { enable = true }
+ kubernetes { audit_logs { enable = true } }
+ malware_protection {
+ scan_ec2_instance_with_findings {
+ ebs_volumes { enable = true }
+ }
+ }
+ }
 }
 
 resource "aws_cloudwatch_event_rule" "guardduty_high" {
-  name        = "guardduty-high-severity"
-  description = "GuardDuty high severity findings"
+ name = "guardduty-high-severity"
+ description = "GuardDuty high severity findings"
 
-  event_pattern = jsonencode({
-    source      = ["aws.guardduty"]
-    detail-type = ["GuardDuty Finding"]
-    detail = {
-      severity = [{ numeric = [">=", 7.0] }]
-    }
-  })
+ event_pattern = jsonencode({
+ source = ["aws.guardduty"]
+ detail-type = ["GuardDuty Finding"]
+ detail = {
+ severity = [{ numeric = [">=", 7.0] }]
+ }
+ })
 }
 
 resource "aws_cloudwatch_event_target" "lambda" {
-  rule = aws_cloudwatch_event_rule.guardduty_high.name
-  arn  = aws_lambda_function.guardduty_response.arn
+ rule = aws_cloudwatch_event_rule.guardduty_high.name
+ arn = aws_lambda_function.guardduty_response.arn
 }
 ```
 
@@ -333,12 +333,12 @@ resource "aws_cloudwatch_event_target" "lambda" {
 ```bash
 # Designate GuardDuty administrator
 aws guardduty enable-organization-admin-account \
-  --admin-account-id 111111111111
+ --admin-account-id 111111111111
 
 # Auto-enable for new accounts
 aws guardduty update-organization-configuration \
-  --detector-id DETECTOR_ID \
-  --auto-enable
+ --detector-id DETECTOR_ID \
+ --auto-enable
 ```
 
 ## References

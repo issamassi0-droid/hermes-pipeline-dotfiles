@@ -1,11 +1,11 @@
 ---
 name: performing-web-application-scanning-with-nikto
 description: Runs Nikto, an open-source web server and web application scanner,
-  to test over 7,000 potentially dangerous files/programs, check for outdated versions
-  across 1,250+ servers, and identify XSS, SQL injection, misconfigurations, default
-  credentials, and vulnerable CGI scripts. Use when performing web application vulnerability
-  scanning, security assessments, scheduled security testing, or validating web
-  server security controls.
+ to test over 7,000 potentially dangerous files/programs, check for outdated versions
+ across 1,250+ servers, and identify XSS, SQL injection, misconfigurations, default
+ credentials, and vulnerable CGI scripts. Use when performing web application vulnerability
+ scanning, security assessments, scheduled security testing, or validating web
+ server security controls.
 domain: cybersecurity
 subdomain: vulnerability-management
 tags:
@@ -93,12 +93,12 @@ nikto -h targets.txt
 ```bash
 # Comprehensive scan with all tuning options
 nikto -h https://target.example.com \
-  -Tuning 123456789abcde \
-  -timeout 10 \
-  -Pause 2 \
-  -Display V \
-  -output report.html \
-  -Format htm
+ -Tuning 123456789abcde \
+ -timeout 10 \
+ -Pause 2 \
+ -Display V \
+ -output report.html \
+ -Format htm
 
 # Tuning options control test types:
 # 0 - File Upload
@@ -151,8 +151,8 @@ nikto -h https://target.example.com -output scan.json -Format json
 
 # Save to multiple formats simultaneously
 nikto -h https://target.example.com \
-  -output scan_report \
-  -Format htm
+ -output scan_report \
+ -Format htm
 ```
 
 ### Step 4: Scan Multiple Targets
@@ -176,8 +176,8 @@ cat targets.txt | parallel -j 5 "nikto -h {} -output {/}_report.html -Format htm
 ```bash
 # Comprehensive SSL scan
 nikto -h https://target.example.com -ssl \
-  -Tuning b \
-  -Display V
+ -Tuning b \
+ -Display V
 
 # Check for specific SSL vulnerabilities
 # Nikto checks for:
@@ -193,8 +193,8 @@ nikto -h https://target.example.com -ssl \
 ```bash
 # Pipe Nmap results into Nikto
 nmap -p 80,443,8080 --open -oG - 192.168.1.0/24 | \
-  awk '/open/{print $2}' | \
-  while read host; do nikto -h "$host" -output "${host}_nikto.html" -Format htm; done
+ awk '/open/{print $2}' | \
+ while read host; do nikto -h "$host" -output "${host}_nikto.html" -Format htm; done
 
 # Export to Metasploit-compatible format
 nikto -h target.example.com -output msf_import.xml -Format xml
@@ -204,7 +204,7 @@ python3 -c "
 import xml.etree.ElementTree as ET
 tree = ET.parse('scan.xml')
 for item in tree.findall('.//item'):
-    print(f\"[{item.get('id')}] {item.findtext('description', '')[:100]}\")
+ print(f\"[{item.get('id')}] {item.findtext('description', '')[:100]}\")
 "
 ```
 

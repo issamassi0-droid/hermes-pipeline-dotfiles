@@ -1,14 +1,14 @@
 ---
 name: analyzing-sbom-for-supply-chain-vulnerabilities
 description: 'Parses Software Bill of Materials (SBOM) in CycloneDX and SPDX JSON
-  formats to identify supply chain vulnerabilities by correlating components against
-  the NVD CVE database via the NVD 2.0 API. Builds dependency graphs, calculates risk
-  scores, identifies transitive vulnerability paths, and generates compliance reports.
-  Activates for requests involving SBOM analysis, software composition analysis, supply
-  chain security assessment, dependency vulnerability scanning, CycloneDX/SPDX parsing,
-  or CVE correlation.
+ formats to identify supply chain vulnerabilities by correlating components against
+ the NVD CVE database via the NVD 2.0 API. Builds dependency graphs, calculates risk
+ scores, identifies transitive vulnerability paths, and generates compliance reports.
+ Activates for requests involving SBOM analysis, software composition analysis, supply
+ chain security assessment, dependency vulnerability scanning, CycloneDX/SPDX parsing,
+ or CVE correlation.
 
-  '
+ '
 domain: cybersecurity
 subdomain: supply-chain-security
 tags:
@@ -90,43 +90,43 @@ Parse the SBOM to extract all software components with their identifiers:
 **CycloneDX JSON Structure:**
 ```json
 {
-  "bomFormat": "CycloneDX",
-  "specVersion": "1.5",
-  "components": [
-    {
-      "type": "library",
-      "name": "lodash",
-      "version": "4.17.20",
-      "purl": "pkg:npm/lodash@4.17.20",
-      "cpe": "cpe:2.3:a:lodash:lodash:4.17.20:*:*:*:*:*:*:*",
-      "licenses": [{"license": {"id": "MIT"}}]
-    }
-  ],
-  "dependencies": [
-    {"ref": "pkg:npm/express@4.18.2", "dependsOn": ["pkg:npm/lodash@4.17.20"]}
-  ]
+ "bomFormat": "CycloneDX",
+ "specVersion": "1.5",
+ "components": [
+ {
+ "type": "library",
+ "name": "lodash",
+ "version": "4.17.20",
+ "purl": "pkg:npm/lodash@4.17.20",
+ "cpe": "cpe:2.3:a:lodash:lodash:4.17.20:*:*:*:*:*:*:*",
+ "licenses": [{"license": {"id": "MIT"}}]
+ }
+ ],
+ "dependencies": [
+ {"ref": "pkg:npm/express@4.18.2", "dependsOn": ["pkg:npm/lodash@4.17.20"]}
+ ]
 }
 ```
 
 **SPDX JSON Structure:**
 ```json
 {
-  "spdxVersion": "SPDX-2.3",
-  "packages": [
-    {
-      "name": "lodash",
-      "versionInfo": "4.17.20",
-      "externalRefs": [
-        {"referenceType": "purl", "referenceLocator": "pkg:npm/lodash@4.17.20"},
-        {"referenceType": "cpe23Type", "referenceLocator": "cpe:2.3:a:lodash:lodash:4.17.20:*:*:*:*:*:*:*"}
-      ],
-      "licenseConcluded": "MIT"
-    }
-  ],
-  "relationships": [
-    {"spdxElementId": "SPDXRef-express", "relatedSpdxElement": "SPDXRef-lodash",
-     "relationshipType": "DEPENDS_ON"}
-  ]
+ "spdxVersion": "SPDX-2.3",
+ "packages": [
+ {
+ "name": "lodash",
+ "versionInfo": "4.17.20",
+ "externalRefs": [
+ {"referenceType": "purl", "referenceLocator": "pkg:npm/lodash@4.17.20"},
+ {"referenceType": "cpe23Type", "referenceLocator": "cpe:2.3:a:lodash:lodash:4.17.20:*:*:*:*:*:*:*"}
+ ],
+ "licenseConcluded": "MIT"
+ }
+ ],
+ "relationships": [
+ {"spdxElementId": "SPDXRef-express", "relatedSpdxElement": "SPDXRef-lodash",
+ "relationshipType": "DEPENDS_ON"}
+ ]
 }
 ```
 
@@ -140,18 +140,18 @@ import requests
 NVD_API = "https://services.nvd.nist.gov/rest/json/cves/2.0"
 
 def search_cves_by_cpe(cpe_name, api_key=None):
-    params = {"cpeName": cpe_name, "resultsPerPage": 50}
-    headers = {"apiKey": api_key} if api_key else {}
-    resp = requests.get(NVD_API, params=params, headers=headers, timeout=30)
-    resp.raise_for_status()
-    return resp.json().get("vulnerabilities", [])
+ params = {"cpeName": cpe_name, "resultsPerPage": 50}
+ headers = {"apiKey": api_key} if api_key else {}
+ resp = requests.get(NVD_API, params=params, headers=headers, timeout=30)
+ resp.raise_for_status()
+ return resp.json().get("vulnerabilities", [])
 
 def search_cves_by_keyword(keyword, version=None, api_key=None):
-    params = {"keywordSearch": keyword, "resultsPerPage": 50}
-    headers = {"apiKey": api_key} if api_key else {}
-    resp = requests.get(NVD_API, params=params, headers=headers, timeout=30)
-    resp.raise_for_status()
-    return resp.json().get("vulnerabilities", [])
+ params = {"keywordSearch": keyword, "resultsPerPage": 50}
+ headers = {"apiKey": api_key} if api_key else {}
+ resp = requests.get(NVD_API, params=params, headers=headers, timeout=30)
+ resp.raise_for_status()
+ return resp.json().get("vulnerabilities", [])
 ```
 
 The NVD API supports searching by CPE name (most precise), keyword, CVE ID, and date ranges. Rate limits: 5 requests/30 seconds without API key, 50 requests/30 seconds with key.
@@ -164,15 +164,15 @@ Construct a directed graph of dependencies to trace vulnerability propagation:
 import networkx as nx
 
 def build_dependency_graph(sbom):
-    G = nx.DiGraph()
-    # Add nodes for each component
-    for comp in sbom["components"]:
-        G.add_node(comp["purl"], name=comp["name"], version=comp["version"])
-    # Add edges from dependency relationships
-    for dep in sbom.get("dependencies", []):
-        for child in dep.get("dependsOn", []):
-            G.add_edge(dep["ref"], child)
-    return G
+ G = nx.DiGraph()
+ # Add nodes for each component
+ for comp in sbom["components"]:
+ G.add_node(comp["purl"], name=comp["name"], version=comp["version"])
+ # Add edges from dependency relationships
+ for dep in sbom.get("dependencies", []):
+ for child in dep.get("dependsOn", []):
+ G.add_edge(dep["ref"], child)
+ return G
 ```
 
 Transitive dependency analysis identifies components that are not directly included but are pulled in through dependency chains. A vulnerability in a deeply nested transitive dependency (e.g., 4 levels deep) still represents risk but may be harder to remediate.
@@ -192,17 +192,17 @@ Risk Score Calculation:
 Component Risk = max(CVSS scores of all CVEs affecting the component)
 
 Weighted Risk = Component Risk * Dependency Factor
-  where Dependency Factor = 1.0 + (0.1 * in_degree)
-  (more dependents = higher organizational impact)
+ where Dependency Factor = 1.0 + (0.1 * in_degree)
+ (more dependents = higher organizational impact)
 
 Overall SBOM Risk = weighted average of all component risks
-  weighted by dependency centrality
+ weighted by dependency centrality
 
 Risk Levels:
-  CRITICAL: CVSS >= 9.0 or known exploited (CISA KEV)
-  HIGH:     CVSS >= 7.0
-  MEDIUM:   CVSS >= 4.0
-  LOW:      CVSS < 4.0
+ CRITICAL: CVSS >= 9.0 or known exploited (CISA KEV)
+ HIGH: CVSS >= 7.0
+ MEDIUM: CVSS >= 4.0
+ LOW: CVSS < 4.0
 ```
 
 ### Step 6: Cross-Validate with Grype
@@ -229,39 +229,39 @@ Produce a structured report suitable for regulatory compliance:
 ```
 SBOM VULNERABILITY ANALYSIS REPORT
 ====================================
-SBOM File:         app-sbom-cyclonedx.json
-Format:            CycloneDX v1.5
-Analysis Date:     2026-03-19
-Total Components:  247
+SBOM File: app-sbom-cyclonedx.json
+Format: CycloneDX v1.5
+Analysis Date: 2026-03-19
+Total Components: 247
 Total Dependencies: 1,842 (direct: 34, transitive: 213)
 
 VULNERABILITY SUMMARY
-  Critical:  3 components / 5 CVEs
-  High:      11 components / 18 CVEs
-  Medium:    27 components / 41 CVEs
-  Low:       8 components / 12 CVEs
+ Critical: 3 components / 5 CVEs
+ High: 11 components / 18 CVEs
+ Medium: 27 components / 41 CVEs
+ Low: 8 components / 12 CVEs
 
 CRITICAL FINDINGS
 1. lodash@4.17.20
-   CVE-2021-23337 (CVSS 7.2) - Command Injection via template
-   CVE-2020-28500 (CVSS 5.3) - ReDoS in trimEnd
-   Dependents: 14 components (high blast radius)
-   Fix: Upgrade to 4.17.21+
+ CVE-2021-23337 (CVSS 7.2) - Command Injection via template
+ CVE-2020-28500 (CVSS 5.3) - ReDoS in trimEnd
+ Dependents: 14 components (high blast radius)
+ Fix: Upgrade to 4.17.21+
 
 2. log4j-core@2.14.1
-   CVE-2021-44228 (CVSS 10.0) - Log4Shell RCE [CISA KEV]
-   CVE-2021-45046 (CVSS 9.0) - Incomplete fix bypass
-   Dependents: 8 components
-   Fix: Upgrade to 2.17.1+
+ CVE-2021-44228 (CVSS 10.0) - Log4Shell RCE [CISA KEV]
+ CVE-2021-45046 (CVSS 9.0) - Incomplete fix bypass
+ Dependents: 8 components
+ Fix: Upgrade to 2.17.1+
 
 DEPENDENCY GRAPH RISKS
-  Most depended-on: core-util@1.2.3 (47 dependents)
-  Deepest chain: app -> framework -> adapter -> codec -> zlib (5 levels)
-  Bottleneck components: 3 components on >50% of dependency paths
+ Most depended-on: core-util@1.2.3 (47 dependents)
+ Deepest chain: app -> framework -> adapter -> codec -> zlib (5 levels)
+ Bottleneck components: 3 components on >50% of dependency paths
 
 LICENSE COMPLIANCE
-  Copyleft licenses found: 2 (GPL-3.0 in libxml2, AGPL-3.0 in mongodb-driver)
-  Review required for commercial distribution
+ Copyleft licenses found: 2 (GPL-3.0 in libxml2, AGPL-3.0 in mongodb-driver)
+ Review required for commercial distribution
 ```
 
 ## Key Concepts

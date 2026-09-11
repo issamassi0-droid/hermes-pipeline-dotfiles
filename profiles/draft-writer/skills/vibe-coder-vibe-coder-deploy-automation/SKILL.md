@@ -1,9 +1,9 @@
 ---
 name: deploy-automation
 description: |
-  One-click deploy to production. User just says "deploy".
-  Use when: user wants to publish their app.
-  Triggers: "deploy", "publish", "go live", "опубликуй".
+ One-click deploy to production. User just says "deploy".
+ Use when: user wants to publish their app.
+ Triggers: "deploy", "publish", "go live", "опубликуй".
 ---
 
 # Deploy Automation

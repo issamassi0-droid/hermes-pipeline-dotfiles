@@ -1,7 +1,7 @@
 ---
 name: performing-log-analysis-for-forensic-investigation
 description: Collect, parse, and correlate system, application, and security logs
-  to reconstruct events and establish timelines during forensic investigations.
+ to reconstruct events and establish timelines during forensic investigations.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -90,14 +90,14 @@ import Evtx.Evtx as evtx
 import json, xml.etree.ElementTree as ET
 
 with evtx.Evtx('/cases/case-2024-001/logs/windows/Security.evtx') as log:
-    for record in log.records():
-        print(record.xml())
+ for record in log.records():
+ print(record.xml())
 " > /cases/case-2024-001/logs/windows/Security_parsed.xml
 
 # Using evtxexport (libevtx-utils)
 sudo apt-get install libevtx-utils
 evtxexport /cases/case-2024-001/logs/windows/Security.evtx \
-   > /cases/case-2024-001/logs/windows/Security_exported.txt
+ > /cases/case-2024-001/logs/windows/Security_exported.txt
 
 # Key Security Event IDs to investigate
 # 4624 - Successful logon
@@ -119,16 +119,16 @@ import xml.etree.ElementTree as ET
 target_events = ['4624', '4625', '4648', '4672', '4688', '4697', '1102']
 
 with evtx.Evtx('/cases/case-2024-001/logs/windows/Security.evtx') as log:
-    for record in log.records():
-        root = ET.fromstring(record.xml())
-        ns = {'ns': 'http://schemas.microsoft.com/win/2004/08/events/event'}
-        event_id = root.find('.//ns:EventID', ns).text
-        if event_id in target_events:
-            time = root.find('.//ns:TimeCreated', ns).get('SystemTime')
-            print(f"[{time}] EventID: {event_id}")
-            for data in root.findall('.//ns:Data', ns):
-                print(f"  {data.get('Name')}: {data.text}")
-            print()
+ for record in log.records():
+ root = ET.fromstring(record.xml())
+ ns = {'ns': 'http://schemas.microsoft.com/win/2004/08/events/event'}
+ event_id = root.find('.//ns:EventID', ns).text
+ if event_id in target_events:
+ time = root.find('.//ns:TimeCreated', ns).get('SystemTime')
+ print(f"[{time}] EventID: {event_id}")
+ for data in root.findall('.//ns:Data', ns):
+ print(f" {data.get('Name')}: {data.text}")
+ print()
 PYEOF
 ```
 
@@ -137,35 +137,35 @@ PYEOF
 ```bash
 # Parse auth.log for SSH and sudo events
 grep -E '(sshd|sudo|su\[|passwd|useradd|usermod)' \
-   /cases/case-2024-001/logs/linux/auth.log* | \
-   sort > /cases/case-2024-001/analysis/auth_events.txt
+ /cases/case-2024-001/logs/linux/auth.log* | \
+ sort > /cases/case-2024-001/analysis/auth_events.txt
 
 # Extract failed SSH login attempts
 grep 'Failed password' /cases/case-2024-001/logs/linux/auth.log* | \
-   awk '{print $1,$2,$3,$9,$11}' | sort | uniq -c | sort -rn \
-   > /cases/case-2024-001/analysis/failed_ssh.txt
+ awk '{print $1,$2,$3,$9,$11}' | sort | uniq -c | sort -rn \
+ > /cases/case-2024-001/analysis/failed_ssh.txt
 
 # Extract successful SSH logins
 grep 'Accepted' /cases/case-2024-001/logs/linux/auth.log* | \
-   awk '{print $1,$2,$3,$9,$11}' > /cases/case-2024-001/analysis/successful_ssh.txt
+ awk '{print $1,$2,$3,$9,$11}' > /cases/case-2024-001/analysis/successful_ssh.txt
 
 # Parse audit logs for file access and command execution
 ausearch -if /cases/case-2024-001/logs/linux/audit.log \
-   --start 2024-01-15 --end 2024-01-20 \
-   -m EXECVE > /cases/case-2024-001/analysis/audit_commands.txt
+ --start 2024-01-15 --end 2024-01-20 \
+ -m EXECVE > /cases/case-2024-001/analysis/audit_commands.txt
 
 ausearch -if /cases/case-2024-001/logs/linux/audit.log \
-   -m USER_AUTH,USER_LOGIN,USER_CMD \
-   > /cases/case-2024-001/analysis/audit_auth.txt
+ -m USER_AUTH,USER_LOGIN,USER_CMD \
+ > /cases/case-2024-001/analysis/audit_auth.txt
 
 # Parse web access logs for suspicious requests
 cat /cases/case-2024-001/logs/web/access.log* | \
-   grep -iE '(union.*select|<script|\.\.\/|cmd\.exe|/etc/passwd)' \
-   > /cases/case-2024-001/analysis/web_attacks.txt
+ grep -iE '(union.*select|<script|\.\.\/|cmd\.exe|/etc/passwd)' \
+ > /cases/case-2024-001/analysis/web_attacks.txt
 
 # Extract unique IP addresses from web logs
 awk '{print $1}' /cases/case-2024-001/logs/web/access.log* | \
-   sort | uniq -c | sort -rn > /cases/case-2024-001/analysis/web_ips.txt
+ sort | uniq -c | sort -rn > /cases/case-2024-001/analysis/web_ips.txt
 ```
 
 ### Step 4: Correlate Events Across Sources
@@ -181,37 +181,37 @@ events = []
 
 # Parse Windows Security events (pre-exported to CSV)
 with open('/cases/case-2024-001/analysis/windows_events.csv') as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        events.append({
-            'timestamp': row['TimeCreated'],
-            'source': 'Windows-Security',
-            'event_id': row['EventID'],
-            'description': row['Description'],
-            'details': row.get('Details', '')
-        })
+ reader = csv.DictReader(f)
+ for row in reader:
+ events.append({
+ 'timestamp': row['TimeCreated'],
+ 'source': 'Windows-Security',
+ 'event_id': row['EventID'],
+ 'description': row['Description'],
+ 'details': row.get('Details', '')
+ })
 
 # Parse Linux auth events
 with open('/cases/case-2024-001/analysis/auth_events.txt') as f:
-    for line in f:
-        parts = line.strip().split()
-        if len(parts) >= 6:
-            events.append({
-                'timestamp': ' '.join(parts[:3]),
-                'source': 'Linux-Auth',
-                'event_id': parts[4].rstrip(':'),
-                'description': ' '.join(parts[5:]),
-                'details': ''
-            })
+ for line in f:
+ parts = line.strip().split()
+ if len(parts) >= 6:
+ events.append({
+ 'timestamp': ' '.join(parts[:3]),
+ 'source': 'Linux-Auth',
+ 'event_id': parts[4].rstrip(':'),
+ 'description': ' '.join(parts[5:]),
+ 'details': ''
+ })
 
 # Sort by timestamp
 events.sort(key=lambda x: x['timestamp'])
 
 # Write correlated timeline
 with open('/cases/case-2024-001/analysis/correlated_timeline.csv', 'w', newline='') as f:
-    writer = csv.DictWriter(f, fieldnames=['timestamp', 'source', 'event_id', 'description', 'details'])
-    writer.writeheader()
-    writer.writerows(events)
+ writer = csv.DictWriter(f, fieldnames=['timestamp', 'source', 'event_id', 'description', 'details'])
+ writer.writeheader()
+ writer.writerows(events)
 
 print(f"Total correlated events: {len(events)}")
 PYEOF
@@ -219,7 +219,7 @@ PYEOF
 # Quick correlation: find events within time windows
 # Look for lateral movement patterns
 grep "4648\|4624.*Type.*3\|4624.*Type.*10" /cases/case-2024-001/analysis/windows_events.csv | \
-   sort > /cases/case-2024-001/analysis/lateral_movement.txt
+ sort > /cases/case-2024-001/analysis/lateral_movement.txt
 ```
 
 ### Step 5: Generate Forensic Timeline Report
@@ -254,7 +254,7 @@ REPORT
 
 # Package analysis artifacts
 tar -czf /cases/case-2024-001/log_analysis_package.tar.gz \
-   /cases/case-2024-001/analysis/
+ /cases/case-2024-001/analysis/
 ```
 
 ## Key Concepts
@@ -301,25 +301,25 @@ Identify the initial execution through process creation events (4688), trace pri
 
 ```
 Log Analysis Summary:
-  Investigation Period: 2024-01-15 00:00 to 2024-01-20 23:59 UTC
-  Total Events Analyzed: 894,567
-  Log Sources: 6 (3 Windows, 3 Linux)
+ Investigation Period: 2024-01-15 00:00 to 2024-01-20 23:59 UTC
+ Total Events Analyzed: 894,567
+ Log Sources: 6 (3 Windows, 3 Linux)
 
-  Critical Events:
-    Failed Logons:       1,234 (from 5 unique IPs)
-    Successful Logons:   456 (3 anomalous)
-    Account Changes:     12 (1 unauthorized admin creation)
-    Process Creations:   8,234 (15 suspicious)
-    Log Clearings:       2 (Security log cleared at 2024-01-18 03:00 UTC)
-    Service Installs:    3 (1 unknown service)
+ Critical Events:
+ Failed Logons: 1,234 (from 5 unique IPs)
+ Successful Logons: 456 (3 anomalous)
+ Account Changes: 12 (1 unauthorized admin creation)
+ Process Creations: 8,234 (15 suspicious)
+ Log Clearings: 2 (Security log cleared at 2024-01-18 03:00 UTC)
+ Service Installs: 3 (1 unknown service)
 
-  Attack Timeline:
-    2024-01-15 14:32 - Initial access via RDP brute force
-    2024-01-15 14:45 - Admin account "svcbackup" created
-    2024-01-16 02:15 - Lateral movement to 3 servers
-    2024-01-17 03:00 - Data staging in C:\ProgramData\temp\
-    2024-01-18 01:30 - 4.2 GB exfiltrated to 185.x.x.x
-    2024-01-18 03:00 - Security logs cleared
+ Attack Timeline:
+ 2024-01-15 14:32 - Initial access via RDP brute force
+ 2024-01-15 14:45 - Admin account "svcbackup" created
+ 2024-01-16 02:15 - Lateral movement to 3 servers
+ 2024-01-17 03:00 - Data staging in C:\ProgramData\temp\
+ 2024-01-18 01:30 - 4.2 GB exfiltrated to 185.x.x.x
+ 2024-01-18 03:00 - Security logs cleared
 
-  Report: /cases/case-2024-001/analysis/log_analysis_report.txt
+ Report: /cases/case-2024-001/analysis/log_analysis_report.txt
 ```

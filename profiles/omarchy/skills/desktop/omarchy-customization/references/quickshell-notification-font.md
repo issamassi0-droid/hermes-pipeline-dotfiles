@@ -12,9 +12,9 @@ Edit `~/.config/omarchy/shell.json` and set `fontFamily` in the
 notifications section:
 ```json
 {
-  "notifications": {
-    "fontFamily": "MonoLisa"
-  }
+ "notifications": {
+ "fontFamily": "MonoLisa"
+ }
 }
 ```
 

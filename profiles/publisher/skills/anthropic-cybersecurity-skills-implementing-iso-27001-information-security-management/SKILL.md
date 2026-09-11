@@ -1,12 +1,12 @@
 ---
 name: implementing-iso-27001-information-security-management
 description: >-
-  Guides implementation of an ISO/IEC 27001:2022 Information Security Management
-  System (ISMS) end to end: gap analysis and scoping, risk assessment methodology,
-  Annex A control selection, Statement of Applicability (SoA) creation, and
-  continuous improvement. Use when scoping a new ISMS, preparing for ISO 27001
-  certification or audit, or selecting and documenting Annex A controls for a
-  compliance program.
+ Guides implementation of an ISO/IEC 27001:2022 Information Security Management
+ System (ISMS) end to end: gap analysis and scoping, risk assessment methodology,
+ Annex A control selection, Statement of Applicability (SoA) creation, and
+ continuous improvement. Use when scoping a new ISMS, preparing for ISO 27001
+ certification or audit, or selecting and documenting Annex A controls for a
+ compliance program.
 domain: cybersecurity
 subdomain: compliance-governance
 tags:
@@ -105,21 +105,21 @@ The 2022 revision restructured 93 controls into four categories:
 ### Phase 3: Control Selection and SoA (Weeks 11-14)
 1. Map risk treatments to Annex A controls
 2. Create Statement of Applicability (SoA) documenting:
-   - Which controls are applicable and justification
-   - Which controls are excluded and justification
-   - Implementation status of each control
+ - Which controls are applicable and justification
+ - Which controls are excluded and justification
+ - Implementation status of each control
 3. Design control implementation plans with owners and timelines
 
 ### Phase 4: Implementation (Weeks 15-30)
 1. Develop and approve information security policy
 2. Implement selected Annex A controls
 3. Create mandatory documented procedures:
-   - Information Security Policy (A.5.1)
-   - Risk Assessment Process (Clause 6.1.2)
-   - Risk Treatment Process (Clause 6.1.3)
-   - Internal Audit Programme (Clause 9.2)
-   - Management Review Process (Clause 9.3)
-   - Corrective Action Procedure (Clause 10.1)
+ - Information Security Policy (A.5.1)
+ - Risk Assessment Process (Clause 6.1.2)
+ - Risk Treatment Process (Clause 6.1.3)
+ - Internal Audit Programme (Clause 9.2)
+ - Management Review Process (Clause 9.3)
+ - Corrective Action Procedure (Clause 10.1)
 4. Deploy technical controls and security tooling
 5. Conduct security awareness training for all personnel
 
@@ -128,11 +128,11 @@ The 2022 revision restructured 93 controls into four categories:
 2. Document audit findings and nonconformities
 3. Implement corrective actions with root cause analysis
 4. Conduct management review covering:
-   - Status of previous actions
-   - Changes in internal/external issues
-   - Information security performance metrics
-   - Audit results and risk assessment outcomes
-   - Opportunities for improvement
+ - Status of previous actions
+ - Changes in internal/external issues
+ - Information security performance metrics
+ - Audit results and risk assessment outcomes
+ - Opportunities for improvement
 
 ### Phase 6: Certification Audit (Weeks 37-42)
 1. **Stage 1 Audit**: Documentation review, readiness assessment

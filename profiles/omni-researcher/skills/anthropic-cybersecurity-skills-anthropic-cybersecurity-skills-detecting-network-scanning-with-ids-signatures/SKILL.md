@@ -1,8 +1,8 @@
 ---
 name: detecting-network-scanning-with-ids-signatures
 description: Detect network reconnaissance and port scanning using Suricata and Snort
-  IDS signatures, threshold-based detection rules, and traffic anomaly analysis to
-  identify Nmap, Masscan, and custom scanning activity.
+ IDS signatures, threshold-based detection rules, and traffic anomaly analysis to
+ identify Nmap, Masscan, and custom scanning activity.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -171,117 +171,117 @@ from datetime import datetime
 
 
 class ScanDetector:
-    """Correlate IDS alerts to identify scanning campaigns."""
+ """Correlate IDS alerts to identify scanning campaigns."""
 
-    def __init__(self):
-        self.scan_events = defaultdict(lambda: {
-            'source_ip': '',
-            'target_ips': set(),
-            'target_ports': set(),
-            'scan_types': set(),
-            'alert_count': 0,
-            'first_seen': None,
-            'last_seen': None,
-            'signatures': defaultdict(int),
-        })
+ def __init__(self):
+ self.scan_events = defaultdict(lambda: {
+ 'source_ip': '',
+ 'target_ips': set(),
+ 'target_ports': set(),
+ 'scan_types': set(),
+ 'alert_count': 0,
+ 'first_seen': None,
+ 'last_seen': None,
+ 'signatures': defaultdict(int),
+ })
 
-    def process_eve_json(self, filepath: str):
-        """Process Suricata EVE JSON alert log."""
-        with open(filepath, 'r') as f:
-            for line in f:
-                try:
-                    event = json.loads(line)
-                    if event.get('event_type') != 'alert':
-                        continue
+ def process_eve_json(self, filepath: str):
+ """Process Suricata EVE JSON alert log."""
+ with open(filepath, 'r') as f:
+ for line in f:
+ try:
+ event = json.loads(line)
+ if event.get('event_type') != 'alert':
+ continue
 
-                    alert = event.get('alert', {})
-                    sig = alert.get('signature', '')
+ alert = event.get('alert', {})
+ sig = alert.get('signature', '')
 
-                    if 'SCAN' not in sig:
-                        continue
+ if 'SCAN' not in sig:
+ continue
 
-                    src_ip = event.get('src_ip', '')
-                    dst_ip = event.get('dest_ip', '')
-                    dst_port = event.get('dest_port', 0)
-                    ts = datetime.fromisoformat(
-                        event['timestamp'].replace('Z', '+00:00')
-                    )
+ src_ip = event.get('src_ip', '')
+ dst_ip = event.get('dest_ip', '')
+ dst_port = event.get('dest_port', 0)
+ ts = datetime.fromisoformat(
+ event['timestamp'].replace('Z', '+00:00')
+ )
 
-                    scanner = self.scan_events[src_ip]
-                    scanner['source_ip'] = src_ip
-                    scanner['target_ips'].add(dst_ip)
-                    scanner['target_ports'].add(dst_port)
-                    scanner['alert_count'] += 1
-                    scanner['signatures'][sig] += 1
+ scanner = self.scan_events[src_ip]
+ scanner['source_ip'] = src_ip
+ scanner['target_ips'].add(dst_ip)
+ scanner['target_ports'].add(dst_port)
+ scanner['alert_count'] += 1
+ scanner['signatures'][sig] += 1
 
-                    if 'SYN' in sig:
-                        scanner['scan_types'].add('SYN Scan')
-                    elif 'FIN' in sig:
-                        scanner['scan_types'].add('FIN Scan')
-                    elif 'Xmas' in sig:
-                        scanner['scan_types'].add('Xmas Scan')
-                    elif 'NULL' in sig:
-                        scanner['scan_types'].add('NULL Scan')
-                    elif 'UDP' in sig:
-                        scanner['scan_types'].add('UDP Scan')
-                    elif 'Nmap' in sig:
-                        scanner['scan_types'].add('Nmap Detected')
-                    elif 'Masscan' in sig:
-                        scanner['scan_types'].add('Masscan Detected')
-                    elif 'Internal' in sig:
-                        scanner['scan_types'].add('Internal Scan')
+ if 'SYN' in sig:
+ scanner['scan_types'].add('SYN Scan')
+ elif 'FIN' in sig:
+ scanner['scan_types'].add('FIN Scan')
+ elif 'Xmas' in sig:
+ scanner['scan_types'].add('Xmas Scan')
+ elif 'NULL' in sig:
+ scanner['scan_types'].add('NULL Scan')
+ elif 'UDP' in sig:
+ scanner['scan_types'].add('UDP Scan')
+ elif 'Nmap' in sig:
+ scanner['scan_types'].add('Nmap Detected')
+ elif 'Masscan' in sig:
+ scanner['scan_types'].add('Masscan Detected')
+ elif 'Internal' in sig:
+ scanner['scan_types'].add('Internal Scan')
 
-                    if scanner['first_seen'] is None or ts < scanner['first_seen']:
-                        scanner['first_seen'] = ts
-                    if scanner['last_seen'] is None or ts > scanner['last_seen']:
-                        scanner['last_seen'] = ts
+ if scanner['first_seen'] is None or ts < scanner['first_seen']:
+ scanner['first_seen'] = ts
+ if scanner['last_seen'] is None or ts > scanner['last_seen']:
+ scanner['last_seen'] = ts
 
-                except (json.JSONDecodeError, KeyError, ValueError):
-                    continue
+ except (json.JSONDecodeError, KeyError, ValueError):
+ continue
 
-    def generate_report(self):
-        """Generate scan detection report."""
-        scanners = sorted(
-            self.scan_events.values(),
-            key=lambda x: x['alert_count'],
-            reverse=True
-        )
+ def generate_report(self):
+ """Generate scan detection report."""
+ scanners = sorted(
+ self.scan_events.values(),
+ key=lambda x: x['alert_count'],
+ reverse=True
+ )
 
-        print(f"\n{'='*70}")
-        print("NETWORK SCAN DETECTION REPORT")
-        print(f"{'='*70}")
-        print(f"Unique Scanning Sources: {len(scanners)}\n")
+ print(f"\n{'='*70}")
+ print("NETWORK SCAN DETECTION REPORT")
+ print(f"{'='*70}")
+ print(f"Unique Scanning Sources: {len(scanners)}\n")
 
-        for scanner in scanners:
-            targets = len(scanner['target_ips'])
-            ports = len(scanner['target_ports'])
-            duration = (scanner['last_seen'] - scanner['first_seen']).total_seconds() \
-                if scanner['first_seen'] and scanner['last_seen'] else 0
+ for scanner in scanners:
+ targets = len(scanner['target_ips'])
+ ports = len(scanner['target_ports'])
+ duration = (scanner['last_seen'] - scanner['first_seen']).total_seconds() \
+ if scanner['first_seen'] and scanner['last_seen'] else 0
 
-            is_internal = scanner['source_ip'].startswith(('10.', '172.', '192.168.'))
-            severity = "CRITICAL" if is_internal else \
-                       "HIGH" if targets > 50 or ports > 100 else "MEDIUM"
+ is_internal = scanner['source_ip'].startswith(('10.', '172.', '192.168.'))
+ severity = "CRITICAL" if is_internal else \
+ "HIGH" if targets > 50 or ports > 100 else "MEDIUM"
 
-            print(f"[{severity}] Scanner: {scanner['source_ip']}")
-            print(f"  Type: {'INTERNAL' if is_internal else 'EXTERNAL'}")
-            print(f"  Scan Types: {', '.join(scanner['scan_types'])}")
-            print(f"  Target Hosts: {targets}, Target Ports: {ports}")
-            print(f"  Total Alerts: {scanner['alert_count']}")
-            print(f"  Duration: {duration:.0f}s")
-            print(f"  First Seen: {scanner['first_seen']}")
-            print(f"  Top Signatures:")
-            for sig, count in sorted(
-                scanner['signatures'].items(), key=lambda x: x[1], reverse=True
-            )[:5]:
-                print(f"    - {sig}: {count}")
-            print()
+ print(f"[{severity}] Scanner: {scanner['source_ip']}")
+ print(f" Type: {'INTERNAL' if is_internal else 'EXTERNAL'}")
+ print(f" Scan Types: {', '.join(scanner['scan_types'])}")
+ print(f" Target Hosts: {targets}, Target Ports: {ports}")
+ print(f" Total Alerts: {scanner['alert_count']}")
+ print(f" Duration: {duration:.0f}s")
+ print(f" First Seen: {scanner['first_seen']}")
+ print(f" Top Signatures:")
+ for sig, count in sorted(
+ scanner['signatures'].items(), key=lambda x: x[1], reverse=True
+ )[:5]:
+ print(f" - {sig}: {count}")
+ print()
 
 
 if __name__ == '__main__':
-    detector = ScanDetector()
-    log_file = sys.argv[1] if len(sys.argv) > 1 else '/var/log/suricata/eve.json'
-    detector.process_eve_json(log_file)
-    detector.generate_report()
+ detector = ScanDetector()
+ log_file = sys.argv[1] if len(sys.argv) > 1 else '/var/log/suricata/eve.json'
+ detector.process_eve_json(log_file)
+ detector.generate_report()
 ```
 
 ## Response Playbook

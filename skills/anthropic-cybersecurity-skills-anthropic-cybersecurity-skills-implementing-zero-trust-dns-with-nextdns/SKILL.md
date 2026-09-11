@@ -54,31 +54,31 @@ NextDNS is a cloud-based DNS resolver that provides encrypted DNS resolution (DN
 ## Architecture
 
 ```
-    Endpoint Device
-         |
-    DNS Query (Encrypted)
-         |
-    +----+----+
-    |  DoH/DoT |  (DNS-over-HTTPS or DNS-over-TLS)
-    |  Tunnel  |
-    +----+----+
-         |
-    +----+----+
-    | NextDNS  |
-    | Resolver |
-    +----+----+
-         |
-    +----+----+------+--------+
-    |         |       |        |
-  Threat   Ad/Tracker Privacy  Parental
-  Intel    Blocklists Controls Controls
-  Check    Check      Check    Check
-    |         |       |        |
-    +----+----+------+--------+
-         |
-    ALLOW or BLOCK
-         |
-    Response to Endpoint
+ Endpoint Device
+ |
+ DNS Query (Encrypted)
+ |
+ +----+----+
+ | DoH/DoT | (DNS-over-HTTPS or DNS-over-TLS)
+ | Tunnel |
+ +----+----+
+ |
+ +----+----+
+ | NextDNS |
+ | Resolver |
+ +----+----+
+ |
+ +----+----+------+--------+
+ | | | |
+ Threat Ad/Tracker Privacy Parental
+ Intel Blocklists Controls Controls
+ Check Check Check Check
+ | | | |
+ +----+----+------+--------+
+ |
+ ALLOW or BLOCK
+ |
+ Response to Endpoint
 ```
 
 ## Configuration Setup
@@ -91,66 +91,66 @@ Dashboard: https://my.nextdns.io
 Configuration ID: abc123 (unique per profile)
 
 Endpoints:
-  DNS-over-HTTPS: https://dns.nextdns.io/abc123
-  DNS-over-TLS:   abc123.dns.nextdns.io
-  DNS-over-QUIC:  quic://abc123.dns.nextdns.io
-  IPv4:           45.90.28.x, 45.90.30.x (linked to config)
-  IPv6:           2a07:a8c0::xx, 2a07:a8c1::xx
+ DNS-over-HTTPS: https://dns.nextdns.io/abc123
+ DNS-over-TLS: abc123.dns.nextdns.io
+ DNS-over-QUIC: quic://abc123.dns.nextdns.io
+ IPv4: 45.90.28.x, 45.90.30.x (linked to config)
+ IPv6: 2a07:a8c0::xx, 2a07:a8c1::xx
 ```
 
 ### Security Settings
 
 ```
 Security Tab Configuration:
-  [x] Threat Intelligence Feeds - Block domains from curated threat feeds
-  [x] AI-Driven Threat Detection - Machine learning-based detection
-  [x] Google Safe Browsing - Cross-reference with Google's threat database
-  [x] Cryptojacking Protection - Block crypto mining domains
-  [x] DNS Rebinding Protection - Prevent DNS rebinding attacks
-  [x] IDN Homograph Attacks - Block internationalized domain name attacks
-  [x] Typosquatting Protection - Block common typosquatting domains
-  [x] DGA Protection - Block domain generation algorithm domains
-  [x] NRD (Newly Registered Domains) - Block domains < 30 days old
-  [x] DDNS (Dynamic DNS) - Block dynamic DNS services
-  [x] Parked Domains - Block parked/unused domains
-  [x] CSAM - Block child sexual abuse material domains
+ [x] Threat Intelligence Feeds - Block domains from curated threat feeds
+ [x] AI-Driven Threat Detection - Machine learning-based detection
+ [x] Google Safe Browsing - Cross-reference with Google's threat database
+ [x] Cryptojacking Protection - Block crypto mining domains
+ [x] DNS Rebinding Protection - Prevent DNS rebinding attacks
+ [x] IDN Homograph Attacks - Block internationalized domain name attacks
+ [x] Typosquatting Protection - Block common typosquatting domains
+ [x] DGA Protection - Block domain generation algorithm domains
+ [x] NRD (Newly Registered Domains) - Block domains < 30 days old
+ [x] DDNS (Dynamic DNS) - Block dynamic DNS services
+ [x] Parked Domains - Block parked/unused domains
+ [x] CSAM - Block child sexual abuse material domains
 ```
 
 ### Privacy Settings
 
 ```
 Privacy Tab Configuration:
-  Blocklists:
-    [x] NextDNS Ads & Trackers Blocklist
-    [x] OISD (Full)
-    [x] EasyPrivacy
-    [x] AdGuard DNS Filter
+ Blocklists:
+ [x] NextDNS Ads & Trackers Blocklist
+ [x] OISD (Full)
+ [x] EasyPrivacy
+ [x] AdGuard DNS Filter
 
-  Native Tracking Protection:
-    [x] Block Windows telemetry
-    [x] Block Apple telemetry
-    [x] Block Samsung telemetry
-    [x] Block Xiaomi telemetry
-    [x] Block Huawei telemetry
-    [x] Block Roku telemetry
-    [x] Block Sonos telemetry
+ Native Tracking Protection:
+ [x] Block Windows telemetry
+ [x] Block Apple telemetry
+ [x] Block Samsung telemetry
+ [x] Block Xiaomi telemetry
+ [x] Block Huawei telemetry
+ [x] Block Roku telemetry
+ [x] Block Sonos telemetry
 
-  [x] Block Disguised Third-Party Trackers (CNAME cloaking)
-  [x] Allow Affiliate & Tracking Links (optional, for business)
+ [x] Block Disguised Third-Party Trackers (CNAME cloaking)
+ [x] Allow Affiliate & Tracking Links (optional, for business)
 ```
 
 ### Allowlist and Denylist
 
 ```
 Allowlist (domains that bypass all blocking):
-  - login.microsoftonline.com
-  - graph.microsoft.com
-  - *.company.com
+ - login.microsoftonline.com
+ - graph.microsoft.com
+ - *.company.com
 
 Denylist (always blocked regardless of other settings):
-  - known-malicious-domain.com
-  - unauthorized-cloud-storage.com
-  - personal-email-provider.com  (if policy requires)
+ - known-malicious-domain.com
+ - unauthorized-cloud-storage.com
+ - personal-email-provider.com (if policy requires)
 ```
 
 ## Endpoint Deployment
@@ -184,9 +184,9 @@ sh -c 'sh -e $(curl -sL https://nextdns.io/install)'
 
 # Configure with your profile
 sudo nextdns install \
-  -config abc123 \
-  -report-client-info \
-  -auto-activate
+ -config abc123 \
+ -report-client-info \
+ -auto-activate
 
 # Verify
 nextdns status
@@ -201,8 +201,8 @@ brew install nextdns/tap/nextdns
 
 # Configure
 sudo nextdns install \
-  -config abc123 \
-  -report-client-info
+ -config abc123 \
+ -report-client-info
 
 # Or configure via System Settings > Network > DNS
 # Add DNS-over-HTTPS: https://dns.nextdns.io/abc123
@@ -222,9 +222,9 @@ sudo nextdns install \
 
 # PowerShell: Configure DoH
 Set-DnsClientDohServerAddress -ServerAddress "45.90.28.x" `
-  -DohTemplate "https://dns.nextdns.io/abc123" `
-  -AllowFallbackToUdp $false `
-  -AutoUpgrade $true
+ -DohTemplate "https://dns.nextdns.io/abc123" `
+ -AllowFallbackToUdp $false `
+ -AutoUpgrade $true
 ```
 
 ### Router-Level Configuration
@@ -236,11 +236,11 @@ Set-DnsClientDohServerAddress -ServerAddress "45.90.28.x" `
 # pfSense DNS Resolver (Unbound):
 # Services > DNS Resolver > Custom Options:
 server:
-  forward-zone:
-    name: "."
-    forward-tls-upstream: yes
-    forward-addr: 45.90.28.x@853#abc123.dns.nextdns.io
-    forward-addr: 45.90.30.x@853#abc123.dns.nextdns.io
+ forward-zone:
+ name: "."
+ forward-tls-upstream: yes
+ forward-addr: 45.90.28.x@853#abc123.dns.nextdns.io
+ forward-addr: 45.90.30.x@853#abc123.dns.nextdns.io
 
 # OpenWrt (using https-dns-proxy):
 opkg update && opkg install https-dns-proxy
@@ -253,15 +253,15 @@ uci commit https-dns-proxy
 
 ```
 iOS:
-  Install NextDNS app from App Store
-  Or: Settings > General > VPN & Device Management
-  Install NextDNS configuration profile
+ Install NextDNS app from App Store
+ Or: Settings > General > VPN & Device Management
+ Install NextDNS configuration profile
 
 Android:
-  Settings > Network > Private DNS
-  DNS Provider: abc123.dns.nextdns.io
+ Settings > Network > Private DNS
+ DNS Provider: abc123.dns.nextdns.io
 
-  Or: Install NextDNS app from Play Store
+ Or: Install NextDNS app from Play Store
 ```
 
 ## Microsoft Zero Trust DNS (Windows 11)
@@ -287,17 +287,17 @@ For enterprise Windows environments, Microsoft's ZTDNS enforces that endpoints c
 
 ```
 NextDNS Analytics Dashboard provides:
-  - Total queries over time
-  - Blocked queries by category
-  - Top domains (allowed and blocked)
-  - Top blocked reasons (threat, ad, tracker)
-  - Device-level breakdown
-  - Geographic query distribution
+ - Total queries over time
+ - Blocked queries by category
+ - Top domains (allowed and blocked)
+ - Top blocked reasons (threat, ad, tracker)
+ - Device-level breakdown
+ - Geographic query distribution
 
 Log Settings:
-  Retention: 1 hour / 6 hours / 1 day / 1 week / 1 month / 3 months / 1 year / 2 years
-  Storage Location: US / EU / UK / Switzerland
-  Logging: [ ] Enable / [ ] Disable
+ Retention: 1 hour / 6 hours / 1 day / 1 week / 1 month / 3 months / 1 year / 2 years
+ Storage Location: US / EU / UK / Switzerland
+ Logging: [ ] Enable / [ ] Disable
 ```
 
 ### API Integration
@@ -306,16 +306,16 @@ Log Settings:
 # NextDNS API for automated monitoring
 # Get analytics data
 curl -H "X-Api-Key: your-api-key" \
-  "https://api.nextdns.io/profiles/abc123/analytics/domains?from=-24h"
+ "https://api.nextdns.io/profiles/abc123/analytics/domains?from=-24h"
 
 # Get blocked domains
 curl -H "X-Api-Key: your-api-key" \
-  "https://api.nextdns.io/profiles/abc123/analytics/domains?from=-24h&status=blocked"
+ "https://api.nextdns.io/profiles/abc123/analytics/domains?from=-24h&status=blocked"
 
 # Export logs for SIEM integration
 curl -H "X-Api-Key: your-api-key" \
-  "https://api.nextdns.io/profiles/abc123/logs?from=-1h" \
-  | jq '.data[] | select(.status == "blocked")'
+ "https://api.nextdns.io/profiles/abc123/logs?from=-1h" \
+ | jq '.data[] | select(.status == "blocked")'
 ```
 
 ## Zero Trust DNS Policy Framework
@@ -324,22 +324,22 @@ curl -H "X-Api-Key: your-api-key" \
 
 ```
 Tier 1 - Security (Mandatory for all):
-  - Threat intelligence blocking
-  - Cryptojacking protection
-  - DNS rebinding protection
-  - DGA detection
-  - NRD blocking (< 30 days)
+ - Threat intelligence blocking
+ - Cryptojacking protection
+ - DNS rebinding protection
+ - DGA detection
+ - NRD blocking (< 30 days)
 
 Tier 2 - Privacy (Recommended):
-  - Tracker blocking
-  - Native telemetry blocking
-  - CNAME cloaking protection
+ - Tracker blocking
+ - Native telemetry blocking
+ - CNAME cloaking protection
 
 Tier 3 - Compliance (Organization-specific):
-  - Category-based blocking
-  - Custom allowlists/denylists
-  - Time-based access policies
-  - Log retention per regulatory requirements
+ - Category-based blocking
+ - Custom allowlists/denylists
+ - Time-based access policies
+ - Log retention per regulatory requirements
 ```
 
 ## Security Best Practices

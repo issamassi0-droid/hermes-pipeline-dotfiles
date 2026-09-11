@@ -13,9 +13,9 @@ Use this skill when animating character rigs made from SVG parts.
 - Animate transforms (`x`, `y`, `scale`, `rotation`) rather than layout.
 - Use timelines for multi-part acting beats.
 - For SVG elements, use stable pivots (`svgOrigin` or correctly scoped
-  transform origins).
+ transform origins).
 - In Remotion, do not let GSAP advance with `requestAnimationFrame`; drive a
-  paused timeline from the current frame.
+ paused timeline from the current frame.
 
 ## Browser Pattern
 
@@ -23,7 +23,7 @@ Use this skill when animating character rigs made from SVG parts.
 gsap.set("#arm_right", { svgOrigin: "390 310" });
 const tl = gsap.timeline({ defaults: { ease: "power2.inOut" } });
 tl.to("#head", { rotation: -8, duration: 0.2 })
-  .to("#arm_right", { rotation: 35, duration: 0.4 }, "<");
+ .to("#arm_right", { rotation: 35, duration: 0.4 }, "<");
 ```
 
 ## Remotion Pattern
@@ -49,8 +49,8 @@ HyperFrames CLI before final render.
 ## Sources
 
 - GSAP core transform properties and SVG handling:
-  https://gsap.com/docs/v3/GSAP/CorePlugins/CSS/
+ https://gsap.com/docs/v3/GSAP/CorePlugins/CSS/
 - GSAP timelines and sequencing:
-  https://gsap.com/docs/v3/GSAP/Timeline/
+ https://gsap.com/docs/v3/GSAP/Timeline/
 - Remotion `useCurrentFrame`:
-  https://www.remotion.dev/docs/use-current-frame
+ https://www.remotion.dev/docs/use-current-frame

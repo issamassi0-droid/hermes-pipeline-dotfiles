@@ -1,7 +1,7 @@
 ---
 name: implementing-semgrep-for-custom-sast-rules
 description: Write custom Semgrep SAST rules in YAML to detect application-specific
-  vulnerabilities, enforce coding standards, and integrate into CI/CD pipelines.
+ vulnerabilities, enforce coding standards, and integrate into CI/CD pipelines.
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -93,141 +93,141 @@ semgrep --config auto --severity ERROR .
 ```yaml
 # rules/sql-injection.yaml
 rules:
-  - id: sql-injection-string-format
-    languages: [python]
-    severity: ERROR
-    message: |
-      Potential SQL injection via string formatting.
-      Use parameterized queries instead.
-    pattern: |
-      cursor.execute(f"..." % ...)
-    metadata:
-      cwe: ["CWE-89"]
-      owasp: ["A03:2021"]
-      category: security
-    fix: |
-      cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+ - id: sql-injection-string-format
+ languages: [python]
+ severity: ERROR
+ message: |
+ Potential SQL injection via string formatting.
+ Use parameterized queries instead.
+ pattern: |
+ cursor.execute(f"..." % ...)
+ metadata:
+ cwe: ["CWE-89"]
+ owasp: ["A03:2021"]
+ category: security
+ fix: |
+ cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
 ```
 
 ### Pattern Operators
 
 ```yaml
 rules:
-  - id: hardcoded-secret-in-code
-    languages: [python, javascript, typescript]
-    severity: ERROR
-    message: Hardcoded secret detected in source code
-    patterns:
-      - pattern-either:
-          - pattern: $VAR = "..."
-          - pattern: $VAR = '...'
-      - metavariable-regex:
-          metavariable: $VAR
-          regex: (?i)(password|secret|api_key|token|aws_secret)
-      - pattern-not: $VAR = ""
-      - pattern-not: $VAR = "changeme"
-      - pattern-not: $VAR = "PLACEHOLDER"
-    metadata:
-      cwe: ["CWE-798"]
-      category: security
+ - id: hardcoded-secret-in-code
+ languages: [python, javascript, typescript]
+ severity: ERROR
+ message: Hardcoded secret detected in source code
+ patterns:
+ - pattern-either:
+ - pattern: $VAR = "..."
+ - pattern: $VAR = '...'
+ - metavariable-regex:
+ metavariable: $VAR
+ regex: (?i)(password|secret|api_key|token|aws_secret)
+ - pattern-not: $VAR = ""
+ - pattern-not: $VAR = "changeme"
+ - pattern-not: $VAR = "PLACEHOLDER"
+ metadata:
+ cwe: ["CWE-798"]
+ category: security
 ```
 
 ### Taint Analysis
 
 ```yaml
 rules:
-  - id: xss-taint-tracking
-    languages: [python]
-    severity: ERROR
-    message: User input flows to HTML response without sanitization
-    mode: taint
-    pattern-sources:
-      - pattern: request.args.get(...)
-      - pattern: request.form.get(...)
-      - pattern: request.form[...]
-    pattern-sinks:
-      - pattern: return render_template_string(...)
-      - pattern: Markup(...)
-    pattern-sanitizers:
-      - pattern: bleach.clean(...)
-      - pattern: escape(...)
-    metadata:
-      cwe: ["CWE-79"]
-      owasp: ["A03:2021"]
+ - id: xss-taint-tracking
+ languages: [python]
+ severity: ERROR
+ message: User input flows to HTML response without sanitization
+ mode: taint
+ pattern-sources:
+ - pattern: request.args.get(...)
+ - pattern: request.form.get(...)
+ - pattern: request.form[...]
+ pattern-sinks:
+ - pattern: return render_template_string(...)
+ - pattern: Markup(...)
+ pattern-sanitizers:
+ - pattern: bleach.clean(...)
+ - pattern: escape(...)
+ metadata:
+ cwe: ["CWE-79"]
+ owasp: ["A03:2021"]
 ```
 
 ### Multiple Language Rule
 
 ```yaml
 rules:
-  - id: insecure-random
-    languages: [python, javascript, go, java]
-    severity: WARNING
-    message: |
-      Using insecure random number generator. Use cryptographically
-      secure alternatives for security-sensitive operations.
-    pattern-either:
-      # Python
-      - pattern: random.random()
-      - pattern: random.randint(...)
-      # JavaScript
-      - pattern: Math.random()
-      # Go
-      - pattern: math/rand.Intn(...)
-      # Java
-      - pattern: new java.util.Random()
-    metadata:
-      cwe: ["CWE-330"]
+ - id: insecure-random
+ languages: [python, javascript, go, java]
+ severity: WARNING
+ message: |
+ Using insecure random number generator. Use cryptographically
+ secure alternatives for security-sensitive operations.
+ pattern-either:
+ # Python
+ - pattern: random.random()
+ - pattern: random.randint(...)
+ # JavaScript
+ - pattern: Math.random()
+ # Go
+ - pattern: math/rand.Intn(...)
+ # Java
+ - pattern: new java.util.Random()
+ metadata:
+ cwe: ["CWE-330"]
 ```
 
 ### Enforce Coding Standards
 
 ```yaml
 rules:
-  - id: require-error-handling
-    languages: [go]
-    severity: WARNING
-    message: Error return value not checked
-    pattern: |
-      $VAR, _ := $FUNC(...)
-    fix: |
-      $VAR, err := $FUNC(...)
-      if err != nil {
-        return fmt.Errorf("$FUNC failed: %w", err)
-      }
+ - id: require-error-handling
+ languages: [go]
+ severity: WARNING
+ message: Error return value not checked
+ pattern: |
+ $VAR, _ := $FUNC(...)
+ fix: |
+ $VAR, err := $FUNC(...)
+ if err != nil {
+ return fmt.Errorf("$FUNC failed: %w", err)
+ }
 
-  - id: no-console-log-in-production
-    languages: [javascript, typescript]
-    severity: WARNING
-    message: Remove console.log before merging to production
-    pattern: console.log(...)
-    paths:
-      exclude:
-        - "tests/*"
-        - "*.test.*"
+ - id: no-console-log-in-production
+ languages: [javascript, typescript]
+ severity: WARNING
+ message: Remove console.log before merging to production
+ pattern: console.log(...)
+ paths:
+ exclude:
+ - "tests/*"
+ - "*.test.*"
 ```
 
 ### JWT Security Rules
 
 ```yaml
 rules:
-  - id: jwt-none-algorithm
-    languages: [python]
-    severity: ERROR
-    message: JWT decoded without algorithm verification - allows token forgery
-    patterns:
-      - pattern: jwt.decode($TOKEN, ..., algorithms=["none"], ...)
-    metadata:
-      cwe: ["CWE-347"]
+ - id: jwt-none-algorithm
+ languages: [python]
+ severity: ERROR
+ message: JWT decoded without algorithm verification - allows token forgery
+ patterns:
+ - pattern: jwt.decode($TOKEN, ..., algorithms=["none"], ...)
+ metadata:
+ cwe: ["CWE-347"]
 
-  - id: jwt-no-verification
-    languages: [python]
-    severity: ERROR
-    message: JWT decoded with verification disabled
-    patterns:
-      - pattern: jwt.decode($TOKEN, ..., options={"verify_signature": False}, ...)
-    metadata:
-      cwe: ["CWE-345"]
+ - id: jwt-no-verification
+ languages: [python]
+ severity: ERROR
+ message: JWT decoded with verification disabled
+ patterns:
+ - pattern: jwt.decode($TOKEN, ..., options={"verify_signature": False}, ...)
+ metadata:
+ cwe: ["CWE-345"]
 ```
 
 ## Rule Testing
@@ -235,22 +235,22 @@ rules:
 ```yaml
 # rules/test-sql-injection.yaml
 rules:
-  - id: sql-injection-format-string
-    languages: [python]
-    severity: ERROR
-    message: SQL injection via format string
-    pattern: |
-      cursor.execute(f"...{$VAR}...")
+ - id: sql-injection-format-string
+ languages: [python]
+ severity: ERROR
+ message: SQL injection via format string
+ pattern: |
+ cursor.execute(f"...{$VAR}...")
 
 # Test annotation in test file:
 # test-sql-injection.py
 def bad_query(user_id):
-    # ruleid: sql-injection-format-string
-    cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
+ # ruleid: sql-injection-format-string
+ cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
 
 def good_query(user_id):
-    # ok: sql-injection-format-string
-    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+ # ok: sql-injection-format-string
+ cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
 ```
 
 ```bash
@@ -270,38 +270,38 @@ name: Semgrep SAST
 on: [pull_request]
 
 jobs:
-  semgrep:
-    runs-on: ubuntu-latest
-    container:
-      image: returntocorp/semgrep
-    steps:
-      - uses: actions/checkout@v4
+ semgrep:
+ runs-on: ubuntu-latest
+ container:
+ image: returntocorp/semgrep
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Run Semgrep
-        run: |
-          semgrep --config auto \
-            --config ./custom-rules/ \
-            --sarif --output results.sarif \
-            --severity ERROR \
-            .
+ - name: Run Semgrep
+ run: |
+ semgrep --config auto \
+ --config ./custom-rules/ \
+ --sarif --output results.sarif \
+ --severity ERROR \
+ .
 
-      - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: results.sarif
+ - name: Upload SARIF
+ uses: github/codeql-action/upload-sarif@v3
+ with:
+ sarif_file: results.sarif
 ```
 
 ### GitLab CI
 
 ```yaml
 semgrep:
-  stage: test
-  image: returntocorp/semgrep
-  script:
-    - semgrep --config auto --config ./custom-rules/ --json --output semgrep.json .
-  artifacts:
-    reports:
-      sast: semgrep.json
+ stage: test
+ image: returntocorp/semgrep
+ script:
+ - semgrep --config auto --config ./custom-rules/ --json --output semgrep.json .
+ artifacts:
+ reports:
+ sast: semgrep.json
 ```
 
 ## Configuration File
@@ -309,8 +309,8 @@ semgrep:
 ```yaml
 # .semgrep.yaml
 rules:
-  - id: my-org-rules
-    # ... rules here
+ - id: my-org-rules
+ # ... rules here
 
 # .semgrepignore
 tests/

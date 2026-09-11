@@ -66,11 +66,11 @@ This skill covers end-to-end deployment of ZPA including connector setup, applic
 
 ```
 User Device (Client Connector)
-    |
-    v [Outbound TLS tunnel]
+ |
+ v [Outbound TLS tunnel]
 ZPA Service Edge (Policy Evaluation + IdP Auth)
-    |
-    v [Outbound TLS tunnel]
+ |
+ v [Outbound TLS tunnel]
 App Connector --> Internal Application
 ```
 
@@ -95,66 +95,66 @@ ZPA supports clientless browser-based access for web applications, enabling ZTNA
 ### Phase 1: Foundation Setup
 
 1. **Configure Identity Provider Integration**
-   - Navigate to Administration > IdP Configuration in ZPA Admin Portal
-   - Add SAML 2.0 or OIDC integration with your IdP (Azure AD, Okta, Ping)
-   - Configure SCIM provisioning for automatic user/group synchronization
-   - Test SSO authentication flow
+ - Navigate to Administration > IdP Configuration in ZPA Admin Portal
+ - Add SAML 2.0 or OIDC integration with your IdP (Azure AD, Okta, Ping)
+ - Configure SCIM provisioning for automatic user/group synchronization
+ - Test SSO authentication flow
 
 2. **Deploy App Connectors**
-   - Provision App Connector VMs in each application environment (data center, AWS VPC, Azure VNet)
-   - Download the provisioning key from ZPA Admin Portal
-   - Install and enroll the App Connector using the provisioning key
-   - Verify connector status shows "Healthy" in the admin portal
-   - Deploy at least two connectors per environment for high availability
+ - Provision App Connector VMs in each application environment (data center, AWS VPC, Azure VNet)
+ - Download the provisioning key from ZPA Admin Portal
+ - Install and enroll the App Connector using the provisioning key
+ - Verify connector status shows "Healthy" in the admin portal
+ - Deploy at least two connectors per environment for high availability
 
 3. **Create Server Groups**
-   - Group App Connectors by geographic location or application tier
-   - Configure health check intervals and failover behavior
+ - Group App Connectors by geographic location or application tier
+ - Configure health check intervals and failover behavior
 
 ### Phase 2: Application Segmentation
 
 4. **Define Application Segments**
-   - Create segments for each application or logical group
-   - Specify domains/IPs, ports, and protocols
-   - Associate segments with appropriate server groups
-   - Enable or disable browser access as needed
+ - Create segments for each application or logical group
+ - Specify domains/IPs, ports, and protocols
+ - Associate segments with appropriate server groups
+ - Enable or disable browser access as needed
 
 5. **Create Segment Groups**
-   - Organize application segments into logical groups (e.g., HR apps, Finance apps)
-   - Use segment groups to simplify policy management
+ - Organize application segments into logical groups (e.g., HR apps, Finance apps)
+ - Use segment groups to simplify policy management
 
 ### Phase 3: Policy Configuration
 
 6. **Configure Access Policies**
-   - Define rules matching user groups to application segments
-   - Apply conditions: device posture, client type, SAML attributes
-   - Order rules by priority (most restrictive first)
-   - Create deny rules for blocked access scenarios
+ - Define rules matching user groups to application segments
+ - Apply conditions: device posture, client type, SAML attributes
+ - Order rules by priority (most restrictive first)
+ - Create deny rules for blocked access scenarios
 
 7. **Enable Device Posture Checks**
-   - Configure posture profiles requiring OS patch level, disk encryption, antivirus status
-   - Integrate with endpoint management (CrowdStrike, Microsoft Intune, Carbon Black)
-   - Associate posture profiles with access policies
+ - Configure posture profiles requiring OS patch level, disk encryption, antivirus status
+ - Integrate with endpoint management (CrowdStrike, Microsoft Intune, Carbon Black)
+ - Associate posture profiles with access policies
 
 ### Phase 4: Client Deployment
 
 8. **Deploy Client Connector**
-   - Package the Zscaler Client Connector with enrollment token
-   - Deploy via MDM (Intune, Jamf, SCCM) or manual installation
-   - Configure forwarding profile to route private app traffic through ZPA
-   - Test user authentication and application access
+ - Package the Zscaler Client Connector with enrollment token
+ - Deploy via MDM (Intune, Jamf, SCCM) or manual installation
+ - Configure forwarding profile to route private app traffic through ZPA
+ - Test user authentication and application access
 
 ### Phase 5: Monitoring and Optimization
 
 9. **Enable Logging and Monitoring**
-   - Configure log streaming to SIEM (Splunk, Sentinel, QRadar)
-   - Set up alerts for policy violations, connector health, and authentication failures
-   - Review ZPA Insights dashboard for usage analytics
+ - Configure log streaming to SIEM (Splunk, Sentinel, QRadar)
+ - Set up alerts for policy violations, connector health, and authentication failures
+ - Review ZPA Insights dashboard for usage analytics
 
 10. **Iterative Refinement**
-    - Analyze access logs to identify shadow IT and unauthorized access attempts
-    - Refine application segments based on actual traffic patterns
-    - Expand coverage from pilot applications to full enterprise deployment
+ - Analyze access logs to identify shadow IT and unauthorized access attempts
+ - Refine application segments based on actual traffic patterns
+ - Expand coverage from pilot applications to full enterprise deployment
 
 ## Validation Checklist
 

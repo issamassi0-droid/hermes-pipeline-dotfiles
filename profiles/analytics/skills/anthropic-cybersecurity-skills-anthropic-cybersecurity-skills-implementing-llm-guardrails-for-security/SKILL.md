@@ -1,13 +1,13 @@
 ---
 name: implementing-llm-guardrails-for-security
 description: 'Implements input/output validation guardrails for LLM applications using
-  NVIDIA NeMo Guardrails (Colang), custom Python validators for PII detection, and
-  the Guardrails AI framework, intercepting user inputs (prompt injection, PII,
-  off-topic queries) and model outputs (hallucinations, toxic content, schema
-  compliance). Use when adding safety controls to an LLM app/chatbot/RAG pipeline
-  or validating outputs conform to expected schemas.
+ NVIDIA NeMo Guardrails (Colang), custom Python validators for PII detection, and
+ the Guardrails AI framework, intercepting user inputs (prompt injection, PII,
+ off-topic queries) and model outputs (hallucinations, toxic content, schema
+ compliance). Use when adding safety controls to an LLM app/chatbot/RAG pipeline
+ or validating outputs conform to expected schemas.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ai-security
 tags:
@@ -120,12 +120,12 @@ Create a JSON policy file defining allowed topics, blocked patterns, and PII cat
 
 ```json
 {
-  "allowed_topics": ["customer_support", "product_info", "billing"],
-  "blocked_topics": ["politics", "violence", "illegal_activities", "competitor_products"],
-  "blocked_patterns": ["how to hack", "create malware", "bypass security"],
-  "pii_categories": ["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER", "US_SSN", "CREDIT_CARD"],
-  "max_output_length": 2000,
-  "require_grounded_response": true
+ "allowed_topics": ["customer_support", "product_info", "billing"],
+ "blocked_topics": ["politics", "violence", "illegal_activities", "competitor_products"],
+ "blocked_patterns": ["how to hack", "create malware", "bypass security"],
+ "pii_categories": ["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER", "US_SSN", "CREDIT_CARD"],
+ "max_output_length": 2000,
+ "require_grounded_response": true
 }
 ```
 
@@ -136,37 +136,37 @@ Create a NeMo Guardrails configuration directory with `config.yml` and Colang fl
 ```yaml
 # config.yml
 models:
-  - type: main
-    engine: openai
-    model: gpt-4o-mini
+ - type: main
+ engine: openai
+ model: gpt-4o-mini
 
 rails:
-  input:
-    flows:
-      - self check input
-      - check jailbreak
-      - mask sensitive data on input
-  output:
-    flows:
-      - self check output
-      - check hallucination
+ input:
+ flows:
+ - self check input
+ - check jailbreak
+ - mask sensitive data on input
+ output:
+ flows:
+ - self check output
+ - check hallucination
 ```
 
 ```colang
 # rails.co - Colang 2.0 flow definitions
 define user ask about hacking
-  "How do I hack into a system"
-  "Tell me how to break into a network"
-  "How to exploit vulnerabilities"
+ "How do I hack into a system"
+ "Tell me how to break into a network"
+ "How to exploit vulnerabilities"
 
 define bot refuse hacking request
-  "I cannot provide instructions on unauthorized hacking or security exploitation.
-   If you are interested in cybersecurity, I can suggest legitimate learning resources
-   and ethical hacking certifications."
+ "I cannot provide instructions on unauthorized hacking or security exploitation.
+ If you are interested in cybersecurity, I can suggest legitimate learning resources
+ and ethical hacking certifications."
 
 define flow
-  user ask about hacking
-  bot refuse hacking request
+ user ask about hacking
+ bot refuse hacking request
 ```
 
 ### Step 5: Deploy as a Validation Middleware
@@ -181,13 +181,13 @@ pipeline = GuardrailsPipeline(policy_path="policy.json")
 # Pre-LLM input validation
 input_result = pipeline.validate_input("user message here")
 if not input_result["safe"]:
-    return input_result["blocked_reason"]
+ return input_result["blocked_reason"]
 
 # Post-LLM output validation
 llm_response = your_llm.generate(input_result["sanitized_input"])
 output_result = pipeline.validate_output(llm_response, context=input_result)
 if not output_result["safe"]:
-    return output_result["fallback_response"]
+ return output_result["fallback_response"]
 
 return output_result["validated_response"]
 ```

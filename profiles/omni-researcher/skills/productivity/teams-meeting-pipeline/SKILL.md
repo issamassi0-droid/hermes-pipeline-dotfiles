@@ -6,19 +6,19 @@ author: Hermes Agent + Teknium
 license: MIT
 platforms: [linux, macos, windows]
 prerequisites:
-  env_vars: [MSGRAPH_TENANT_ID, MSGRAPH_CLIENT_ID, MSGRAPH_CLIENT_SECRET]
-  commands: [hermes]
+ env_vars: [MSGRAPH_TENANT_ID, MSGRAPH_CLIENT_ID, MSGRAPH_CLIENT_SECRET]
+ commands: [hermes]
 metadata:
-  hermes:
-    tags: [Teams, Microsoft Graph, Meetings, Productivity, Operations]
-    # Channel-gated: this pipeline only makes sense on the Teams gateway
-    # channel (and in cron jobs, where its scheduled summary/replay work
-    # actually runs). Hidden from every other session's skills index.
-    session_platforms: [teams, cron]
-    related_docs:
-      - /docs/guides/microsoft-graph-app-registration
-      - /docs/user-guide/messaging/teams-meetings
-      - /docs/guides/operate-teams-meeting-pipeline
+ hermes:
+ tags: [Teams, Microsoft Graph, Meetings, Productivity, Operations]
+ # Channel-gated: this pipeline only makes sense on the Teams gateway
+ # channel (and in cron jobs, where its scheduled summary/replay work
+ # actually runs). Hidden from every other session's skills index.
+ session_platforms: [teams, cron]
+ related_docs:
+ - /docs/guides/microsoft-graph-app-registration
+ - /docs/user-guide/messaging/teams-meetings
+ - /docs/guides/operate-teams-meeting-pipeline
 ---
 
 # Teams Meeting Pipeline
@@ -59,36 +59,36 @@ If any are missing, direct the user to the Azure app registration guide at `/doc
 ### Status and inspection (start here)
 
 ```bash
-hermes teams-pipeline validate              # config snapshot — run first after any change
-hermes teams-pipeline token-health          # Graph token status
-hermes teams-pipeline token-health --force-refresh   # force a fresh token acquisition
-hermes teams-pipeline list                  # recent meeting jobs
-hermes teams-pipeline list --status failed  # only failed jobs
-hermes teams-pipeline show <job-id>         # full detail of one job
-hermes teams-pipeline subscriptions         # current Graph webhook subscriptions
+hermes teams-pipeline validate # config snapshot — run first after any change
+hermes teams-pipeline token-health # Graph token status
+hermes teams-pipeline token-health --force-refresh # force a fresh token acquisition
+hermes teams-pipeline list # recent meeting jobs
+hermes teams-pipeline list --status failed # only failed jobs
+hermes teams-pipeline show <job-id> # full detail of one job
+hermes teams-pipeline subscriptions # current Graph webhook subscriptions
 ```
 
 ### Re-running / debugging
 
 ```bash
-hermes teams-pipeline run <job-id>          # replay a stored job (re-summarize, re-deliver)
-hermes teams-pipeline fetch --meeting-id <id>   # dry-run: resolve meeting + transcript without persisting
-hermes teams-pipeline fetch --join-web-url "<url>"   # dry-run by join URL
-hermes teams-pipeline fetch --join-web-url "<url>" --organizer-user-id <id>   # organizer-scoped lookup (required for /meet/ short URLs)
+hermes teams-pipeline run <job-id> # replay a stored job (re-summarize, re-deliver)
+hermes teams-pipeline fetch --meeting-id <id> # dry-run: resolve meeting + transcript without persisting
+hermes teams-pipeline fetch --join-web-url "<url>" # dry-run by join URL
+hermes teams-pipeline fetch --join-web-url "<url>" --organizer-user-id <id> # organizer-scoped lookup (required for /meet/ short URLs)
 ```
 
 ### Subscription management
 
 ```bash
 hermes teams-pipeline subscribe \
-  --resource communications/onlineMeetings/getAllTranscripts \
-  --notification-url https://<your-public-host>/msgraph/webhook \
-  --client-state "$MSGRAPH_WEBHOOK_CLIENT_STATE"
+ --resource communications/onlineMeetings/getAllTranscripts \
+ --notification-url https://<your-public-host>/msgraph/webhook \
+ --client-state "$MSGRAPH_WEBHOOK_CLIENT_STATE"
 
 hermes teams-pipeline renew-subscription <sub-id> --expiration <iso-8601>
 hermes teams-pipeline delete-subscription <sub-id>
-hermes teams-pipeline maintain-subscriptions            # renew near-expiry ones
-hermes teams-pipeline maintain-subscriptions --dry-run  # show what would be renewed
+hermes teams-pipeline maintain-subscriptions # renew near-expiry ones
+hermes teams-pipeline maintain-subscriptions --dry-run # show what would be renewed
 ```
 
 ## Decision tree for common asks

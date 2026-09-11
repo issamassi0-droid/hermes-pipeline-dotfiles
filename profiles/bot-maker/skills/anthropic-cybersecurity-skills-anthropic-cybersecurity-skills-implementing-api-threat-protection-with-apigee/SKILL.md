@@ -1,10 +1,10 @@
 ---
 name: implementing-api-threat-protection-with-apigee
 description: Implements API threat protection using Google Apigee reverse-proxy
-  policies, including JSON/XML threat protection, OAuth 2.0 enforcement, SpikeArrest
-  rate limiting, regex-based threat detection, and Advanced API Security for detecting
-  malicious clients. Use when shielding APIs proxied through Apigee against OWASP
-  API Security Top 10 threats and malicious client abuse patterns.
+ policies, including JSON/XML threat protection, OAuth 2.0 enforcement, SpikeArrest
+ rate limiting, regex-based threat detection, and Advanced API Security for detecting
+ malicious clients. Use when shielding APIs proxied through Apigee against OWASP
+ API Security Top 10 threats and malicious client abuse patterns.
 domain: cybersecurity
 subdomain: api-security
 tags:
@@ -65,14 +65,14 @@ Protects against JSON-based denial-of-service attacks by limiting structural dep
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <JSONThreatProtection name="JSON-Threat-Protection-1">
-    <DisplayName>JSON Threat Protection</DisplayName>
-    <Source>request</Source>
-    <!-- Maximum nesting depth of JSON structure -->
-    <ObjectEntryNameLength>50</ObjectEntryNameLength>
-    <ObjectEntryCount>25</ObjectEntryCount>
-    <ArrayElementCount>100</ArrayElementCount>
-    <ContainerDepth>5</ContainerDepth>
-    <StringValueLength>500</StringValueLength>
+ <DisplayName>JSON Threat Protection</DisplayName>
+ <Source>request</Source>
+ <!-- Maximum nesting depth of JSON structure -->
+ <ObjectEntryNameLength>50</ObjectEntryNameLength>
+ <ObjectEntryCount>25</ObjectEntryCount>
+ <ArrayElementCount>100</ArrayElementCount>
+ <ContainerDepth>5</ContainerDepth>
+ <StringValueLength>500</StringValueLength>
 </JSONThreatProtection>
 ```
 
@@ -83,27 +83,27 @@ Shields against XML bombs, XXE attacks, and oversized XML payloads:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <XMLThreatProtection name="XML-Threat-Protection-1">
-    <DisplayName>XML Threat Protection</DisplayName>
-    <Source>request</Source>
-    <NameLimits>
-        <Element>50</Element>
-        <Attribute>50</Attribute>
-        <NamespacePrefix>20</NamespacePrefix>
-        <ProcessingInstructionTarget>50</ProcessingInstructionTarget>
-    </NameLimits>
-    <ValueLimits>
-        <Text>1000</Text>
-        <Attribute>500</Attribute>
-        <NamespaceURI>256</NamespaceURI>
-        <Comment>256</Comment>
-        <ProcessingInstructionData>256</ProcessingInstructionData>
-    </ValueLimits>
-    <StructureLimits>
-        <NodeDepth>5</NodeDepth>
-        <AttributeCountPerElement>5</AttributeCountPerElement>
-        <NamespaceCountPerElement>3</NamespaceCountPerElement>
-        <ChildCount>25</ChildCount>
-    </StructureLimits>
+ <DisplayName>XML Threat Protection</DisplayName>
+ <Source>request</Source>
+ <NameLimits>
+ <Element>50</Element>
+ <Attribute>50</Attribute>
+ <NamespacePrefix>20</NamespacePrefix>
+ <ProcessingInstructionTarget>50</ProcessingInstructionTarget>
+ </NameLimits>
+ <ValueLimits>
+ <Text>1000</Text>
+ <Attribute>500</Attribute>
+ <NamespaceURI>256</NamespaceURI>
+ <Comment>256</Comment>
+ <ProcessingInstructionData>256</ProcessingInstructionData>
+ </ValueLimits>
+ <StructureLimits>
+ <NodeDepth>5</NodeDepth>
+ <AttributeCountPerElement>5</AttributeCountPerElement>
+ <NamespaceCountPerElement>3</NamespaceCountPerElement>
+ <ChildCount>25</ChildCount>
+ </StructureLimits>
 </XMLThreatProtection>
 ```
 
@@ -114,35 +114,35 @@ Detects SQL injection, XSS, and other injection patterns in request parameters:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <RegularExpressionProtection name="RegEx-Threat-Protection-1">
-    <DisplayName>Regex Injection Protection</DisplayName>
-    <Source>request</Source>
-    <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+ <DisplayName>Regex Injection Protection</DisplayName>
+ <Source>request</Source>
+ <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
 
-    <!-- SQL Injection patterns -->
-    <QueryParam name="*">
-        <Pattern>[\s]*((delete)|(exec)|(drop\s*table)|(insert)|(shutdown)|(update)|(\bor\b))</Pattern>
-    </QueryParam>
+ <!-- SQL Injection patterns -->
+ <QueryParam name="*">
+ <Pattern>[\s]*((delete)|(exec)|(drop\s*table)|(insert)|(shutdown)|(update)|(\bor\b))</Pattern>
+ </QueryParam>
 
-    <!-- XSS patterns -->
-    <QueryParam name="*">
-        <Pattern>[\s]*&lt;\s*script\b[^&gt;]*&gt;[^&lt;]+&lt;\s*/\s*script\s*&gt;</Pattern>
-    </QueryParam>
+ <!-- XSS patterns -->
+ <QueryParam name="*">
+ <Pattern>[\s]*&lt;\s*script\b[^&gt;]*&gt;[^&lt;]+&lt;\s*/\s*script\s*&gt;</Pattern>
+ </QueryParam>
 
-    <!-- Header injection -->
-    <Header name="*">
-        <Pattern>[\r\n]</Pattern>
-    </Header>
+ <!-- Header injection -->
+ <Header name="*">
+ <Pattern>[\r\n]</Pattern>
+ </Header>
 
-    <!-- URI path traversal -->
-    <URIPath>
-        <Pattern>(/\.\.)|(\.\./)</Pattern>
-    </URIPath>
+ <!-- URI path traversal -->
+ <URIPath>
+ <Pattern>(/\.\.)|(\.\./)</Pattern>
+ </URIPath>
 
-    <!-- JSON body injection -->
-    <JSONPayload>
-        <JSONPath>$.*</JSONPath>
-        <Pattern>[\s]*((delete)|(exec)|(drop\s*table)|(insert)|(shutdown)|(update))</Pattern>
-    </JSONPayload>
+ <!-- JSON body injection -->
+ <JSONPayload>
+ <JSONPath>$.*</JSONPath>
+ <Pattern>[\s]*((delete)|(exec)|(drop\s*table)|(insert)|(shutdown)|(update))</Pattern>
+ </JSONPayload>
 </RegularExpressionProtection>
 ```
 
@@ -153,11 +153,11 @@ Prevents traffic spikes from overwhelming backend services:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <SpikeArrest name="Spike-Arrest-1">
-    <DisplayName>API Spike Arrest</DisplayName>
-    <Rate>30ps</Rate> <!-- 30 per second smoothed -->
-    <Identifier ref="request.header.x-api-key"/>
-    <MessageWeight ref="request.header.x-request-weight"/>
-    <UseEffectiveCount>true</UseEffectiveCount>
+ <DisplayName>API Spike Arrest</DisplayName>
+ <Rate>30ps</Rate> <!-- 30 per second smoothed -->
+ <Identifier ref="request.header.x-api-key"/>
+ <MessageWeight ref="request.header.x-request-weight"/>
+ <UseEffectiveCount>true</UseEffectiveCount>
 </SpikeArrest>
 ```
 
@@ -166,16 +166,16 @@ Prevents traffic spikes from overwhelming backend services:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <OAuthV2 name="Verify-OAuth-Token">
-    <DisplayName>Verify OAuth 2.0 Access Token</DisplayName>
-    <Operation>VerifyAccessToken</Operation>
-    <ExternalAuthorization>false</ExternalAuthorization>
-    <ExternalAccessToken>request.header.Authorization</ExternalAccessToken>
-    <SupportedGrantTypes>
-        <GrantType>authorization_code</GrantType>
-        <GrantType>client_credentials</GrantType>
-    </SupportedGrantTypes>
-    <Scope>read write</Scope>
-    <GenerateResponse enabled="true"/>
+ <DisplayName>Verify OAuth 2.0 Access Token</DisplayName>
+ <Operation>VerifyAccessToken</Operation>
+ <ExternalAuthorization>false</ExternalAuthorization>
+ <ExternalAccessToken>request.header.Authorization</ExternalAccessToken>
+ <SupportedGrantTypes>
+ <GrantType>authorization_code</GrantType>
+ <GrantType>client_credentials</GrantType>
+ </SupportedGrantTypes>
+ <Scope>read write</Scope>
+ <GenerateResponse enabled="true"/>
 </OAuthV2>
 ```
 
@@ -184,8 +184,8 @@ Prevents traffic spikes from overwhelming backend services:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <VerifyAPIKey name="Verify-API-Key-1">
-    <DisplayName>Verify API Key</DisplayName>
-    <APIKey ref="request.header.x-api-key"/>
+ <DisplayName>Verify API Key</DisplayName>
+ <APIKey ref="request.header.x-api-key"/>
 </VerifyAPIKey>
 ```
 
@@ -197,67 +197,67 @@ Prevents traffic spikes from overwhelming backend services:
 <!-- apiproxy/proxies/default.xml -->
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <ProxyEndpoint name="default">
-    <PreFlow name="PreFlow">
-        <Request>
-            <!-- Step 1: Verify API Key or OAuth token -->
-            <Step>
-                <Name>Verify-OAuth-Token</Name>
-            </Step>
-            <!-- Step 2: Rate limiting -->
-            <Step>
-                <Name>Spike-Arrest-1</Name>
-            </Step>
-            <!-- Step 3: Threat protection -->
-            <Step>
-                <Name>JSON-Threat-Protection-1</Name>
-                <Condition>request.header.Content-Type = "application/json"</Condition>
-            </Step>
-            <Step>
-                <Name>XML-Threat-Protection-1</Name>
-                <Condition>request.header.Content-Type = "text/xml"</Condition>
-            </Step>
-            <!-- Step 4: Injection prevention -->
-            <Step>
-                <Name>RegEx-Threat-Protection-1</Name>
-            </Step>
-            <!-- Step 5: CORS enforcement -->
-            <Step>
-                <Name>CORS-Policy</Name>
-            </Step>
-        </Request>
-        <Response>
-            <!-- Remove internal headers from response -->
-            <Step>
-                <Name>Remove-Internal-Headers</Name>
-            </Step>
-            <!-- Add security headers -->
-            <Step>
-                <Name>Add-Security-Headers</Name>
-            </Step>
-        </Response>
-    </PreFlow>
+ <PreFlow name="PreFlow">
+ <Request>
+ <!-- Step 1: Verify API Key or OAuth token -->
+ <Step>
+ <Name>Verify-OAuth-Token</Name>
+ </Step>
+ <!-- Step 2: Rate limiting -->
+ <Step>
+ <Name>Spike-Arrest-1</Name>
+ </Step>
+ <!-- Step 3: Threat protection -->
+ <Step>
+ <Name>JSON-Threat-Protection-1</Name>
+ <Condition>request.header.Content-Type = "application/json"</Condition>
+ </Step>
+ <Step>
+ <Name>XML-Threat-Protection-1</Name>
+ <Condition>request.header.Content-Type = "text/xml"</Condition>
+ </Step>
+ <!-- Step 4: Injection prevention -->
+ <Step>
+ <Name>RegEx-Threat-Protection-1</Name>
+ </Step>
+ <!-- Step 5: CORS enforcement -->
+ <Step>
+ <Name>CORS-Policy</Name>
+ </Step>
+ </Request>
+ <Response>
+ <!-- Remove internal headers from response -->
+ <Step>
+ <Name>Remove-Internal-Headers</Name>
+ </Step>
+ <!-- Add security headers -->
+ <Step>
+ <Name>Add-Security-Headers</Name>
+ </Step>
+ </Response>
+ </PreFlow>
 
-    <Flows>
-        <Flow name="sensitive-operations">
-            <Description>Additional protection for sensitive endpoints</Description>
-            <Request>
-                <Step>
-                    <Name>Quota-Strict</Name>
-                </Step>
-            </Request>
-            <Condition>(proxy.pathsuffix MatchesPath "/admin/**") or
-                       (proxy.pathsuffix MatchesPath "/users/*/sensitive")</Condition>
-        </Flow>
-    </Flows>
+ <Flows>
+ <Flow name="sensitive-operations">
+ <Description>Additional protection for sensitive endpoints</Description>
+ <Request>
+ <Step>
+ <Name>Quota-Strict</Name>
+ </Step>
+ </Request>
+ <Condition>(proxy.pathsuffix MatchesPath "/admin/**") or
+ (proxy.pathsuffix MatchesPath "/users/*/sensitive")</Condition>
+ </Flow>
+ </Flows>
 
-    <HTTPProxyConnection>
-        <BasePath>/v1</BasePath>
-        <VirtualHost>secure</VirtualHost>
-    </HTTPProxyConnection>
+ <HTTPProxyConnection>
+ <BasePath>/v1</BasePath>
+ <VirtualHost>secure</VirtualHost>
+ </HTTPProxyConnection>
 
-    <RouteRule name="default">
-        <TargetEndpoint>default</TargetEndpoint>
-    </RouteRule>
+ <RouteRule name="default">
+ <TargetEndpoint>default</TargetEndpoint>
+ </RouteRule>
 </ProxyEndpoint>
 ```
 
@@ -266,25 +266,25 @@ Prevents traffic spikes from overwhelming backend services:
 ```xml
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <AssignMessage name="Add-Security-Headers">
-    <DisplayName>Add Security Response Headers</DisplayName>
-    <Set>
-        <Headers>
-            <Header name="X-Content-Type-Options">nosniff</Header>
-            <Header name="X-Frame-Options">DENY</Header>
-            <Header name="Strict-Transport-Security">max-age=31536000; includeSubDomains</Header>
-            <Header name="Cache-Control">no-store, no-cache, must-revalidate</Header>
-            <Header name="Content-Security-Policy">default-src 'none'</Header>
-            <Header name="X-Request-ID">{messageid}</Header>
-        </Headers>
-    </Set>
-    <Remove>
-        <Headers>
-            <Header name="X-Powered-By"/>
-            <Header name="Server"/>
-        </Headers>
-    </Remove>
-    <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
-    <AssignTo createNew="false" transport="http" type="response"/>
+ <DisplayName>Add Security Response Headers</DisplayName>
+ <Set>
+ <Headers>
+ <Header name="X-Content-Type-Options">nosniff</Header>
+ <Header name="X-Frame-Options">DENY</Header>
+ <Header name="Strict-Transport-Security">max-age=31536000; includeSubDomains</Header>
+ <Header name="Cache-Control">no-store, no-cache, must-revalidate</Header>
+ <Header name="Content-Security-Policy">default-src 'none'</Header>
+ <Header name="X-Request-ID">{messageid}</Header>
+ </Headers>
+ </Set>
+ <Remove>
+ <Headers>
+ <Header name="X-Powered-By"/>
+ <Header name="Server"/>
+ </Headers>
+ </Remove>
+ <IgnoreUnresolvedVariables>false</IgnoreUnresolvedVariables>
+ <AssignTo createNew="false" transport="http" type="response"/>
 </AssignMessage>
 ```
 
@@ -295,21 +295,21 @@ Enable Apigee's Advanced API Security add-on for machine-learning-based threat d
 ```bash
 # Enable Advanced API Security on Apigee X instance
 gcloud apigee organizations update $ORG_NAME \
-  --advanced-api-security-config=enabled
+ --advanced-api-security-config=enabled
 
 # View detected abuse alerts
 gcloud apigee apis security-reports list \
-  --organization=$ORG_NAME \
-  --environment=$ENV_NAME
+ --organization=$ORG_NAME \
+ --environment=$ENV_NAME
 
 # Create security action to block suspicious traffic
 gcloud apigee security-actions create \
-  --organization=$ORG_NAME \
-  --environment=$ENV_NAME \
-  --action-type=DENY \
-  --condition-type=IP_ADDRESS \
-  --condition-values="192.168.1.100,10.0.0.50" \
-  --description="Block identified malicious IPs"
+ --organization=$ORG_NAME \
+ --environment=$ENV_NAME \
+ --action-type=DENY \
+ --condition-type=IP_ADDRESS \
+ --condition-values="192.168.1.100,10.0.0.50" \
+ --description="Block identified malicious IPs"
 ```
 
 ## Deployment
@@ -317,15 +317,15 @@ gcloud apigee security-actions create \
 ```bash
 # Deploy proxy bundle with security policies
 gcloud apigee apis deploy \
-  --api=$API_NAME \
-  --environment=$ENV_NAME \
-  --revision=$REVISION \
-  --organization=$ORG_NAME
+ --api=$API_NAME \
+ --environment=$ENV_NAME \
+ --revision=$REVISION \
+ --organization=$ORG_NAME
 
 # Validate deployment
 gcloud apigee apis list-deployments \
-  --api=$API_NAME \
-  --organization=$ORG_NAME
+ --api=$API_NAME \
+ --organization=$ORG_NAME
 ```
 
 ## References

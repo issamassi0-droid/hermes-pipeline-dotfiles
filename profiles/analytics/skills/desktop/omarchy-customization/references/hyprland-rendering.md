@@ -24,8 +24,8 @@ Persists via xconfig. Verify: `nvidia-settings --query CurrentMetaMode`.
 
 ```bash
 hyprctl reload
-hyprctl monitors   # confirm no errors
-hyprctl clients    # confirm windows still mapped
+hyprctl monitors # confirm no errors
+hyprctl clients # confirm windows still mapped
 ```
 
 ## Free smoothing packages

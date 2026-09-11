@@ -1,13 +1,13 @@
 ---
 name: securing-kubernetes-on-cloud
 description: 'Hardens managed Kubernetes clusters on EKS, AKS, and GKE by implementing
-  Pod Security Standards, network policies, workload identity (IRSA for EKS, Workload
-  Identity for GKE, Managed Identities for AKS), RBAC scoping, image admission controls,
-  and runtime security monitoring. Use when deploying a new managed Kubernetes cluster
-  with security requirements or hardening an existing EKS, AKS, or GKE cluster after
-  an audit or pentest finding.
+ Pod Security Standards, network policies, workload identity (IRSA for EKS, Workload
+ Identity for GKE, Managed Identities for AKS), RBAC scoping, image admission controls,
+ and runtime security monitoring. Use when deploying a new managed Kubernetes cluster
+ with security requirements or hardening an existing EKS, AKS, or GKE cluster after
+ an audit or pentest finding.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -63,22 +63,22 @@ Apply Pod Security Admission labels at the namespace level to enforce the Restri
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: production
-  labels:
-    pod-security.kubernetes.io/enforce: restricted
-    pod-security.kubernetes.io/enforce-version: latest
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/warn: restricted
+ name: production
+ labels:
+ pod-security.kubernetes.io/enforce: restricted
+ pod-security.kubernetes.io/enforce-version: latest
+ pod-security.kubernetes.io/audit: restricted
+ pod-security.kubernetes.io/warn: restricted
 ---
 # Staging namespace with baseline enforcement
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: staging
-  labels:
-    pod-security.kubernetes.io/enforce: baseline
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/warn: restricted
+ name: staging
+ labels:
+ pod-security.kubernetes.io/enforce: baseline
+ pod-security.kubernetes.io/audit: restricted
+ pod-security.kubernetes.io/warn: restricted
 ```
 
 ```yaml
@@ -86,31 +86,31 @@ metadata:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: secure-app
-  namespace: production
+ name: secure-app
+ namespace: production
 spec:
-  automountServiceAccountToken: false
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 1000
-    fsGroup: 1000
-    seccompProfile:
-      type: RuntimeDefault
-  containers:
-    - name: app
-      image: company/app:v2.1@sha256:abc123...
-      securityContext:
-        allowPrivilegeEscalation: false
-        readOnlyRootFilesystem: true
-        capabilities:
-          drop: ["ALL"]
-      resources:
-        limits:
-          cpu: "500m"
-          memory: "256Mi"
-        requests:
-          cpu: "100m"
-          memory: "128Mi"
+ automountServiceAccountToken: false
+ securityContext:
+ runAsNonRoot: true
+ runAsUser: 1000
+ fsGroup: 1000
+ seccompProfile:
+ type: RuntimeDefault
+ containers:
+ - name: app
+ image: company/app:v2.1@sha256:abc123...
+ securityContext:
+ allowPrivilegeEscalation: false
+ readOnlyRootFilesystem: true
+ capabilities:
+ drop: ["ALL"]
+ resources:
+ limits:
+ cpu: "500m"
+ memory: "256Mi"
+ requests:
+ cpu: "100m"
+ memory: "128Mi"
 ```
 
 ### Step 2: Configure Cloud-Native Workload Identity
@@ -120,33 +120,33 @@ Eliminate static cloud credentials in pods by binding Kubernetes service account
 ```bash
 # EKS: IAM Roles for Service Accounts (IRSA)
 eksctl create iamserviceaccount \
-  --cluster production-cluster \
-  --namespace production \
-  --name web-app-sa \
-  --attach-policy-arn arn:aws:iam::123456789012:policy/WebAppS3ReadOnly \
-  --approve
+ --cluster production-cluster \
+ --namespace production \
+ --name web-app-sa \
+ --attach-policy-arn arn:aws:iam::123456789012:policy/WebAppS3ReadOnly \
+ --approve
 
 # GKE: Workload Identity
 gcloud iam service-accounts create web-app-sa \
-  --project=my-gcp-project
+ --project=my-gcp-project
 
 gcloud iam service-accounts add-iam-policy-binding \
-  web-app-sa@my-gcp-project.iam.gserviceaccount.com \
-  --role roles/storage.objectViewer \
-  --member "serviceAccount:my-gcp-project.svc.id.goog[production/web-app-sa]"
+ web-app-sa@my-gcp-project.iam.gserviceaccount.com \
+ --role roles/storage.objectViewer \
+ --member "serviceAccount:my-gcp-project.svc.id.goog[production/web-app-sa]"
 
 kubectl annotate serviceaccount web-app-sa \
-  --namespace production \
-  iam.gke.io/gcp-service-account=web-app-sa@my-gcp-project.iam.gserviceaccount.com
+ --namespace production \
+ iam.gke.io/gcp-service-account=web-app-sa@my-gcp-project.iam.gserviceaccount.com
 
 # AKS: Azure AD Workload Identity
 az identity create --name web-app-identity --resource-group production-rg
 az identity federated-credential create \
-  --name web-app-federation \
-  --identity-name web-app-identity \
-  --resource-group production-rg \
-  --issuer "$(az aks show -n production-cluster -g production-rg --query oidcIssuerProfile.issuerUrl -o tsv)" \
-  --subject system:serviceaccount:production:web-app-sa
+ --name web-app-federation \
+ --identity-name web-app-identity \
+ --resource-group production-rg \
+ --issuer "$(az aks show -n production-cluster -g production-rg --query oidcIssuerProfile.issuerUrl -o tsv)" \
+ --subject system:serviceaccount:production:web-app-sa
 ```
 
 ### Step 3: Implement Network Policies
@@ -158,63 +158,63 @@ Deploy network policies to restrict pod-to-pod communication following the princ
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: default-deny-all
-  namespace: production
+ name: default-deny-all
+ namespace: production
 spec:
-  podSelector: {}
-  policyTypes:
-    - Ingress
-    - Egress
+ podSelector: {}
+ policyTypes:
+ - Ingress
+ - Egress
 ---
 # Allow web-app to receive traffic from ingress controller only
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-ingress-to-web
-  namespace: production
+ name: allow-ingress-to-web
+ namespace: production
 spec:
-  podSelector:
-    matchLabels:
-      app: web-app
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - namespaceSelector:
-            matchLabels:
-              name: ingress-nginx
-      ports:
-        - protocol: TCP
-          port: 8080
+ podSelector:
+ matchLabels:
+ app: web-app
+ policyTypes:
+ - Ingress
+ ingress:
+ - from:
+ - namespaceSelector:
+ matchLabels:
+ name: ingress-nginx
+ ports:
+ - protocol: TCP
+ port: 8080
 ---
 # Allow web-app to connect to database only
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-web-to-db
-  namespace: production
+ name: allow-web-to-db
+ namespace: production
 spec:
-  podSelector:
-    matchLabels:
-      app: web-app
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - podSelector:
-            matchLabels:
-              app: postgres
-      ports:
-        - protocol: TCP
-          port: 5432
-    - to:
-        - namespaceSelector: {}
-          podSelector:
-            matchLabels:
-              k8s-app: kube-dns
-      ports:
-        - protocol: UDP
-          port: 53
+ podSelector:
+ matchLabels:
+ app: web-app
+ policyTypes:
+ - Egress
+ egress:
+ - to:
+ - podSelector:
+ matchLabels:
+ app: postgres
+ ports:
+ - protocol: TCP
+ port: 5432
+ - to:
+ - namespaceSelector: {}
+ podSelector:
+ matchLabels:
+ k8s-app: kube-dns
+ ports:
+ - protocol: UDP
+ port: 53
 ```
 
 ### Step 4: Configure RBAC with Least Privilege
@@ -226,30 +226,30 @@ Scope Kubernetes RBAC roles to specific namespaces and resources. Avoid ClusterR
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: developer-role
-  namespace: staging
+ name: developer-role
+ namespace: staging
 rules:
-  - apiGroups: [""]
-    resources: ["pods", "pods/log", "services", "configmaps"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    verbs: ["get", "list", "watch", "update", "patch"]
-  # Explicitly deny secrets access
+ - apiGroups: [""]
+ resources: ["pods", "pods/log", "services", "configmaps"]
+ verbs: ["get", "list", "watch"]
+ - apiGroups: ["apps"]
+ resources: ["deployments"]
+ verbs: ["get", "list", "watch", "update", "patch"]
+ # Explicitly deny secrets access
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: developer-binding
-  namespace: staging
+ name: developer-binding
+ namespace: staging
 subjects:
-  - kind: Group
-    name: developers
-    apiGroup: rbac.authorization.k8s.io
+ - kind: Group
+ name: developers
+ apiGroup: rbac.authorization.k8s.io
 roleRef:
-  kind: Role
-  name: developer-role
-  apiGroup: rbac.authorization.k8s.io
+ kind: Role
+ name: developer-role
+ apiGroup: rbac.authorization.k8s.io
 ```
 
 ### Step 5: Deploy Image Admission Controls
@@ -261,41 +261,41 @@ Use admission controllers to enforce that only signed images from trusted regist
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: restrict-image-registries
+ name: restrict-image-registries
 spec:
-  validationFailureAction: Enforce
-  rules:
-    - name: validate-registries
-      match:
-        any:
-          - resources:
-              kinds: ["Pod"]
-      validate:
-        message: "Images must come from approved registries"
-        pattern:
-          spec:
-            containers:
-              - image: "123456789012.dkr.ecr.us-east-1.amazonaws.com/* | gcr.io/my-gcp-project/*"
+ validationFailureAction: Enforce
+ rules:
+ - name: validate-registries
+ match:
+ any:
+ - resources:
+ kinds: ["Pod"]
+ validate:
+ message: "Images must come from approved registries"
+ pattern:
+ spec:
+ containers:
+ - image: "123456789012.dkr.ecr.us-east-1.amazonaws.com/* | gcr.io/my-gcp-project/*"
 ---
 # Kyverno policy: require image digest (no mutable tags)
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: require-image-digest
+ name: require-image-digest
 spec:
-  validationFailureAction: Enforce
-  rules:
-    - name: require-digest
-      match:
-        any:
-          - resources:
-              kinds: ["Pod"]
-      validate:
-        message: "Images must use digest references, not tags"
-        pattern:
-          spec:
-            containers:
-              - image: "*@sha256:*"
+ validationFailureAction: Enforce
+ rules:
+ - name: require-digest
+ match:
+ any:
+ - resources:
+ kinds: ["Pod"]
+ validate:
+ message: "Images must use digest references, not tags"
+ pattern:
+ spec:
+ containers:
+ - image: "*@sha256:*"
 ```
 
 ### Step 6: Enable Runtime Security Monitoring
@@ -306,9 +306,9 @@ Deploy runtime security tools to detect anomalous behavior inside containers inc
 # Deploy Falco for runtime threat detection
 helm repo add falcosecurity https://falcosecurity.github.io/charts
 helm install falco falcosecurity/falco \
-  --namespace falco-system --create-namespace \
-  --set falcosidekick.enabled=true \
-  --set falcosidekick.config.slack.webhookurl="https://hooks.slack.com/services/xxx"
+ --namespace falco-system --create-namespace \
+ --set falcosidekick.enabled=true \
+ --set falcosidekick.config.slack.webhookurl="https://hooks.slack.com/services/xxx"
 
 # Run kube-bench for CIS Kubernetes Benchmark assessment
 kubectl apply -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job-eks.yaml
@@ -362,26 +362,26 @@ Assessment Date: 2025-02-23
 Tool: kube-bench v0.8.0 + manual review
 
 CIS KUBERNETES BENCHMARK RESULTS:
-  Total Controls: 124
-  Passed: 98 (79%)
-  Failed: 18 (15%)
-  Warnings: 8 (6%)
+ Total Controls: 124
+ Passed: 98 (79%)
+ Failed: 18 (15%)
+ Warnings: 8 (6%)
 
 CRITICAL FINDINGS:
-  [K8S-001] 3 namespaces lack Pod Security Standards enforcement
-    Namespaces: monitoring, logging, default
-    Remediation: Apply restricted PSA labels
+ [K8S-001] 3 namespaces lack Pod Security Standards enforcement
+ Namespaces: monitoring, logging, default
+ Remediation: Apply restricted PSA labels
 
-  [K8S-002] Default service account tokens auto-mounted in 12 deployments
-    Risk: Credential theft if container is compromised
-    Remediation: Set automountServiceAccountToken: false
+ [K8S-002] Default service account tokens auto-mounted in 12 deployments
+ Risk: Credential theft if container is compromised
+ Remediation: Set automountServiceAccountToken: false
 
-  [K8S-003] No network policies in production namespace
-    Risk: Unrestricted lateral movement between all pods
-    Remediation: Deploy default-deny policy with explicit allow rules
+ [K8S-003] No network policies in production namespace
+ Risk: Unrestricted lateral movement between all pods
+ Remediation: Deploy default-deny policy with explicit allow rules
 
 HIGH FINDINGS:
-  [K8S-004] 5 pods running as root with privileged security context
-  [K8S-005] Images deployed using mutable tags (:latest) in 8 deployments
-  [K8S-006] RBAC ClusterRoleBinding grants cluster-admin to developers group
+ [K8S-004] 5 pods running as root with privileged security context
+ [K8S-005] Images deployed using mutable tags (:latest) in 8 deployments
+ [K8S-006] RBAC ClusterRoleBinding grants cluster-admin to developers group
 ```

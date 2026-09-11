@@ -40,19 +40,19 @@ Before deprecating anything, answer these questions:
 
 ```
 1. Does this system still provide unique value?
-   → If yes, maintain it. If no, proceed.
+ → If yes, maintain it. If no, proceed.
 
 2. How many users/consumers depend on it?
-   → Quantify the migration scope.
+ → Quantify the migration scope.
 
 3. Does a replacement exist?
-   → If no, build the replacement first. Don't deprecate without an alternative.
+ → If no, build the replacement first. Don't deprecate without an alternative.
 
 4. What's the migration cost for each consumer?
-   → If trivially automated, do it. If manual and high-effort, weigh against maintenance cost.
+ → If trivially automated, do it. If manual and high-effort, weigh against maintenance cost.
 
 5. What's the ongoing maintenance cost of NOT deprecating?
-   → Security risk, engineer time, opportunity cost of complexity.
+ → Security risk, engineer time, opportunity cost of complexity.
 ```
 
 ## Compulsory vs Advisory Deprecation
@@ -83,7 +83,7 @@ Don't deprecate without a working alternative. The replacement must:
 **Replacement:** NewService (see migration guide below)
 **Removal date:** Advisory — no hard deadline yet
 **Reason:** OldService requires manual scaling and lacks observability.
-            NewService handles both automatically.
+ NewService handles both automatically.
 
 ### Migration Guide
 1. Replace `import { client } from 'old-service'` with `import { client } from 'new-service'`
@@ -138,13 +138,13 @@ Create an adapter that translates calls from the old interface to the new implem
 ```typescript
 // Adapter: old interface, new implementation
 class LegacyTaskService implements OldTaskAPI {
-  constructor(private newService: NewTaskService) {}
+ constructor(private newService: NewTaskService) {}
 
-  // Old method signature, delegates to new implementation
-  getTask(id: number): OldTask {
-    const task = this.newService.findById(String(id));
-    return this.toOldFormat(task);
-  }
+ // Old method signature, delegates to new implementation
+ getTask(id: number): OldTask {
+ const task = this.newService.findById(String(id));
+ return this.toOldFormat(task);
+ }
 }
 ```
 
@@ -154,10 +154,10 @@ Use feature flags to switch consumers from old to new system one at a time:
 
 ```typescript
 function getTaskService(userId: string): TaskService {
-  if (featureFlags.isEnabled('new-task-service', { userId })) {
-    return new NewTaskService();
-  }
-  return new LegacyTaskService();
+ if (featureFlags.isEnabled('new-task-service', { userId })) {
+ return new NewTaskService();
+ }
+ return new LegacyTaskService();
 }
 ```
 
@@ -167,9 +167,9 @@ A schema change is the riskiest migration because the data is the one thing you 
 
 ```
 EXPAND ──────────────→ MIGRATE ──────────────→ CONTRACT
-add the new column,    backfill existing rows,  once no code reads the
-nullable, alongside    dual-write old+new from  old column, drop it in
-the old one            the app                  a later, separate deploy
+add the new column, backfill existing rows, once no code reads the
+nullable, alongside dual-write old+new from old column, drop it in
+the old one the app a later, separate deploy
 ```
 
 **Worked example — renaming `name` to `full_name`:**

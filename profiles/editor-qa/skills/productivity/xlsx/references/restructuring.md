@@ -21,17 +21,17 @@ gives the exact rewrite rules and honest limits.
 ## Reference grammar handled
 
 - Relative and absolute coordinates in any mix: `B2`, `$B2`, `B$2`,
-  `$B$2` — the `$` flags are preserved through the shift.
+ `$B$2` — the `$` flags are preserved through the shift.
 - Ranges `B2:D9`, including partial-absolute endpoints.
 - Cross-sheet refs: `Data!B2`, `'My Sheet'!$A$1:$C$9` (quoted names may
-  contain doubled quotes `''`). Only refs whose sheet qualifier matches
-  the edited sheet are touched; unqualified refs are interpreted
-  relative to the formula's own sheet.
+ contain doubled quotes `''`). Only refs whose sheet qualifier matches
+ the edited sheet are touched; unqualified refs are interpreted
+ relative to the formula's own sheet.
 - String literals inside formulas (`"See B2"`) are never rewritten.
 - Function names that look like cells (`LOG10(...)`) are not touched
-  (a reference is never followed by `(`).
+ (a reference is never followed by `(`).
 - Whole-row/column refs (`B:B`, `2:2`) pass through unchanged — Excel
-  semantics keep them valid across inserts within the span.
+ semantics keep them valid across inserts within the span.
 
 ## Shift semantics
 
@@ -47,17 +47,17 @@ is removed (merges/validations).
 ## What it CANNOT shift (honest limits)
 
 - **Chart anchors and plotted ranges** — openpyxl chart objects are not
-  reliably round-tripped; anchors stay where they were. Re-create
-  charts after restructuring if their data moved.
+ reliably round-tripped; anchors stay where they were. Re-create
+ charts after restructuring if their data moved.
 - **Images / drawings** — same reason.
 - **Conditional-format RULE formulas** — the applied range (sqref) is
-  shifted, but formulas inside `cell_is`/`expression` rules (e.g.
-  `$B1>100`) are left as-is. Review them if they reference moved cells.
+ shifted, but formulas inside `cell_is`/`expression` rules (e.g.
+ `$B1>100`) are left as-is. Review them if they reference moved cells.
 - **Sheet-local defined names** and names using R1C1 or union/
-  intersection operators are rewritten only if they parse as plain A1
-  refs; anything else passes through untouched.
+ intersection operators are rewritten only if they parse as plain A1
+ refs; anything else passes through untouched.
 - **Structured table references** in formulas (`Table1[Sales]`) don't
-  need shifting (they follow the table), and are left alone.
+ need shifting (they follow the table), and are left alone.
 
 Every run prints a JSON report listing exactly which formulas, merges,
 tables, names, and ranges were changed, plus a fixed `not_shifted` list

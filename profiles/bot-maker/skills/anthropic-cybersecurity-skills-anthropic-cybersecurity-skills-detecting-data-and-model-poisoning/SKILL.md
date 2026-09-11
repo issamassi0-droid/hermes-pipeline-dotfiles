@@ -57,7 +57,7 @@ pip install cleanlab
 pip install numpy scikit-learn safetensors
 
 # (Choose one framework backend ART can wrap)
-pip install tensorflow   # or: pip install torch
+pip install tensorflow # or: pip install torch
 ```
 
 ## Objectives
@@ -95,7 +95,7 @@ find ./models -type f \( -name "*.bin" -o -name "*.pt" -o -name "*.pkl" -o -name
 ```python
 # safe_load.py — load weights without executing pickle
 from safetensors.numpy import load_file
-weights = load_file("model.safetensors")   # no arbitrary code execution
+weights = load_file("model.safetensors") # no arbitrary code execution
 ```
 
 ### 2. Detect label/data-quality issues with Cleanlab
@@ -109,12 +109,12 @@ from cleanlab.filter import find_label_issues
 # pred_probs: out-of-sample predicted probabilities (n_samples x n_classes)
 # labels: given integer labels (n_samples,)
 def scan(labels: np.ndarray, pred_probs: np.ndarray):
-    issues = find_label_issues(
-        labels=labels, pred_probs=pred_probs,
-        return_indices_ranked_by="self_confidence",
-    )
-    print(f"[*] {len(issues)} suspected label issues (potential poisoning)")
-    return issues
+ issues = find_label_issues(
+ labels=labels, pred_probs=pred_probs,
+ return_indices_ranked_by="self_confidence",
+ )
+ print(f"[*] {len(issues)} suspected label issues (potential poisoning)")
+ return issues
 ```
 
 ### 3. Detect poisoned samples via ART activation clustering
@@ -127,15 +127,15 @@ from art.estimators.classification import KerasClassifier
 from art.defences.detector.poison import ActivationDefence
 
 def detect(model, x_train, y_train):
-    classifier = KerasClassifier(model=model)          # wrap your trained model
-    defence = ActivationDefence(classifier, x_train, y_train)
-    report, is_clean_lst = defence.detect_poison(
-        nb_clusters=2, nb_dims=10, reduce="PCA"
-    )
-    # is_clean_lst[i] == 0 marks a suspected poisoned sample
-    poisoned_idx = np.where(np.array(is_clean_lst) == 0)[0]
-    print(f"[*] activation clustering flagged {len(poisoned_idx)} samples")
-    return poisoned_idx, report
+ classifier = KerasClassifier(model=model) # wrap your trained model
+ defence = ActivationDefence(classifier, x_train, y_train)
+ report, is_clean_lst = defence.detect_poison(
+ nb_clusters=2, nb_dims=10, reduce="PCA"
+ )
+ # is_clean_lst[i] == 0 marks a suspected poisoned sample
+ poisoned_idx = np.where(np.array(is_clean_lst) == 0)[0]
+ print(f"[*] activation clustering flagged {len(poisoned_idx)} samples")
+ return poisoned_idx, report
 ```
 
 ### 4. Confirm with ART spectral signatures
@@ -148,15 +148,15 @@ from art.estimators.classification import KerasClassifier
 from art.defences.detector.poison import SpectralSignatureDefense
 
 def detect(model, x_train, y_train, nb_classes):
-    classifier = KerasClassifier(model=model)
-    defence = SpectralSignatureDefense(
-        classifier, x_train, y_train,
-        expected_pp_poison=0.05, batch_size=128, eps_multiplier=1.5,
-    )
-    report, is_clean_lst = defence.detect_poison()
-    poisoned_idx = np.where(np.array(is_clean_lst) == 0)[0]
-    print(f"[*] spectral signatures flagged {len(poisoned_idx)} samples")
-    return poisoned_idx, report
+ classifier = KerasClassifier(model=model)
+ defence = SpectralSignatureDefense(
+ classifier, x_train, y_train,
+ expected_pp_poison=0.05, batch_size=128, eps_multiplier=1.5,
+ )
+ report, is_clean_lst = defence.detect_poison()
+ poisoned_idx = np.where(np.array(is_clean_lst) == 0)[0]
+ print(f"[*] spectral signatures flagged {len(poisoned_idx)} samples")
+ return poisoned_idx, report
 ```
 
 ### 5. Probe the model for backdoor triggers
@@ -167,15 +167,15 @@ Test whether a candidate trigger flips predictions to an attacker target class f
 import numpy as np
 
 def test_trigger(model, x_clean, target_class, apply_trigger):
-    """apply_trigger(x) stamps a candidate trigger (e.g. a corner pixel patch)."""
-    clean_preds = model.predict(x_clean).argmax(axis=1)
-    x_trig = np.stack([apply_trigger(x.copy()) for x in x_clean])
-    trig_preds = model.predict(x_trig).argmax(axis=1)
-    asr = float(np.mean(trig_preds == target_class))   # attack success rate
-    base = float(np.mean(clean_preds == target_class))
-    print(f"[*] target-class rate clean={base:.3f} triggered={asr:.3f}")
-    return {"baseline": base, "trigger_success_rate": asr,
-            "backdoor_suspected": asr - base > 0.5}
+ """apply_trigger(x) stamps a candidate trigger (e.g. a corner pixel patch)."""
+ clean_preds = model.predict(x_clean).argmax(axis=1)
+ x_trig = np.stack([apply_trigger(x.copy()) for x in x_clean])
+ trig_preds = model.predict(x_trig).argmax(axis=1)
+ asr = float(np.mean(trig_preds == target_class)) # attack success rate
+ base = float(np.mean(clean_preds == target_class))
+ print(f"[*] target-class rate clean={base:.3f} triggered={asr:.3f}")
+ return {"baseline": base, "trigger_success_rate": asr,
+ "backdoor_suspected": asr - base > 0.5}
 ```
 
 ### 6. Quarantine, retrain, and report

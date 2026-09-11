@@ -62,19 +62,19 @@ Use the generated SDK matching the project language. The exact generated method 
 from box_sdk_gen import AiItemAsk, AiItemAskTypeField, CreateAiAskMode
 
 answer = client.ai.create_ai_ask(
-    CreateAiAskMode.SINGLE_ITEM_QA,
-    "What changed in the latest policy?",
-    [AiItemAsk(id=hub_id, type=AiItemAskTypeField.HUBS)],
-    include_citations=True,
+ CreateAiAskMode.SINGLE_ITEM_QA,
+ "What changed in the latest policy?",
+ [AiItemAsk(id=hub_id, type=AiItemAskTypeField.HUBS)],
+ include_citations=True,
 )
 ```
 
 ```typescript
 const answer = await client.ai.createAiAsk({
-  mode: "single_item_qa",
-  prompt: "What changed in the latest policy?",
-  items: [{ id: hubId, type: "hubs" }],
-  includeCitations: true,
+ mode: "single_item_qa",
+ prompt: "What changed in the latest policy?",
+ items: [{ id: hubId, type: "hubs" }],
+ includeCitations: true,
 });
 ```
 

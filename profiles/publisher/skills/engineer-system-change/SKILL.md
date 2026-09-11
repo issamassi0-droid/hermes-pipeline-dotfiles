@@ -1,11 +1,11 @@
 ---
 name: engineer-system-change
 description: >
-  First-principles evaluation of non-trivial system changes (RFCs, new
-  APIs/fields/events, refactors, migrations, dependency bumps) before writing
-  code. Use when assessing whether a proposed change should exist, choosing the
-  smallest sufficient solution, and mapping consequences proportionally. Not
-  for mechanical edits or dedicated diff review.
+ First-principles evaluation of non-trivial system changes (RFCs, new
+ APIs/fields/events, refactors, migrations, dependency bumps) before writing
+ code. Use when assessing whether a proposed change should exist, choosing the
+ smallest sufficient solution, and mapping consequences proportionally. Not
+ for mechanical edits or dedicated diff review.
 ---
 
 # Engineer System Change
@@ -24,34 +24,34 @@ the risk.
 ## Preserve the Task Boundary
 
 - If asked only to assess, review, or plan, make no project or
-  external-state changes.
+ external-state changes.
 - If explicitly asked to implement, including after an assessment, pass the
-  decision gates before editing and verify the result afterward.
+ decision gates before editing and verify the result afterward.
 - Treat implementation permission as separate from permission to commit,
-  push, deploy, publish, or update issues and pull requests.
+ push, deploy, publish, or update issues and pull requests.
 - If repository truth matters, inspect the current target revision and
-  relevant discussion. Don't rely on a stale checkout, an RFC alone, or
-  remembered architecture.
+ relevant discussion. Don't rely on a stale checkout, an RFC alone, or
+ remembered architecture.
 - Separate verified facts, inferences, and unknowns. Don't turn missing
-  evidence into a confident conclusion.
+ evidence into a confident conclusion.
 
 ## Apply the Decision Gates
 
 ### 1. Ground the Problem
 
 - Trace the current user workflow, failure, or code path before proposing a
-  solution.
+ solution.
 - State the undesirable observable behavior and the invariant or outcome that
-  should replace it.
+ should replace it.
 - Identify who is affected and which concrete decision or action changes.
 - Check whether the existing system, configuration, documentation, or
-  operating procedure already solves the problem.
+ operating procedure already solves the problem.
 - Enumerate adjacent product paths and workarounds, not only the proposed
-  target surface. Explain precisely which accepted outcome each alternative
-  fails; don't claim "the only option" from one missing UI control or code
-  path.
+ target surface. Explain precisely which accepted outcome each alternative
+ fails; don't claim "the only option" from one missing UI control or code
+ path.
 - Treat an absent field, interface, abstraction, or standard as an
-  observation, not proof of a requirement.
+ observation, not proof of a requirement.
 
 Return `STOP` only when evidence affirmatively shows no change is needed or
 the affected workflow already achieves the outcome. Return `NEEDS_EVIDENCE`
@@ -95,17 +95,17 @@ cost, coupling, or risk downstream:
 7. Introduce a new subsystem or migration path
 
 - Minimize concepts, states, interfaces, irreversible decisions, and
-  maintenance surface — not literal line count.
+ maintenance surface — not literal line count.
 - Require a second current consumer, a demonstrated variation, or a hard
-  boundary before generalizing a local solution.
+ boundary before generalizing a local solution.
 - Prefer independently reversible slices over a comprehensive architecture
-  rollout.
+ rollout.
 - Distinguish a real problem from an oversized solution. A valid verdict:
-  "The problem is real; reduce the proposal to this smaller change."
+ "The problem is real; reduce the proposal to this smaller change."
 - Apply these gates recursively to your own recommendation — don't propose a
-  new field, contract, abstraction, migration, or validation system without
-  naming its consumer, checking existing mechanisms, and showing why a smaller
-  change is insufficient.
+ new field, contract, abstraction, migration, or validation system without
+ naming its consumer, checking existing mechanisms, and showing why a smaller
+ change is insufficient.
 
 ### 4. Map Consequences and Verification Proportionally
 
@@ -131,41 +131,41 @@ plan. Proposed checks are a verification plan, not observed evidence.
 ### 5. Implement Only the Justified Slice
 
 - Reproduce the baseline first — encode it as a failing behavioral test when
-  executable; otherwise state why and record a reproducible check.
+ executable; otherwise state why and record a reproducible check.
 - Change only the paths required by the accepted outcome and consumers.
 - Reuse existing execution paths and contracts when they preserve the required
-  semantics.
+ semantics.
 - Avoid speculative compatibility layers, selectors, shadow systems, canaries,
-  or dual stacks unless an irreversible or high-risk transition requires them.
+ or dual stacks unless an irreversible or high-risk transition requires them.
 - Update repository guidance only when architecture, commands, or durable
-  conventions actually change.
+ conventions actually change.
 
 ### 6. Prove the Result
 
 - Map each important result claim to observed evidence: tests, contract
-  checks, static analysis, runtime traces, benchmarks, or a reproducible
-  manual check.
+ checks, static analysis, runtime traces, benchmarks, or a reproducible
+ manual check.
 - Don't use the agent's own summary as proof.
 - Verify negative boundaries and failure behavior, not only the happy path.
 - State what remains unverified and how that uncertainty affects the verdict.
 - Use focused regression checks for local reversible changes.
 - Add targeted integration and adversarial checks for contract, persistence,
-  security, concurrency, replay, or cross-component changes.
+ security, concurrency, replay, or cross-component changes.
 - Require a production-like rehearsal plus executable containment or rollback
-  for irreversible changes or materially high-risk external side effects.
+ for irreversible changes or materially high-risk external side effects.
 
 ## Use Explicit Verdicts
 
 - `STOP`: evidence affirmatively shows no current change is needed, or existing
-  capability already achieves the accepted outcome.
+ capability already achieves the accepted outcome.
 - `REDUCE`: the problem is real, but the proposed scope or abstraction exceeds
-  the evidence.
+ the evidence.
 - `REVISE`: the problem and approximate scope are justified, but a
-  correctness, contract, or failure-semantics defect must change first.
+ correctness, contract, or failure-semantics defect must change first.
 - `PROCEED`: problem, consumers, minimum solution, consequences, and a
-  proportional verification plan are sufficiently established.
+ proportional verification plan are sufficiently established.
 - `NEEDS_EVIDENCE`: a decision would be guesswork until a specific fact, code
-  path, incident, or consumer is verified.
+ path, incident, or consumer is verified.
 
 Don't force a binary approve/reject judgment when evidence is incomplete.
 Choose the verdict from the condition blocking the earliest gate, not the gate

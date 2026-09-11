@@ -6852,7 +6852,7 @@
 "google/gemma-4-26b-a4b-it-20260403":{
 "context_length":262144,
 "max_completion_tokens":32768,
-"name":"Google: Gemma 4 26B A4B  (free)",
+"name":"Google: Gemma 4 26B A4B (free)",
 "pricing":{
 "prompt":"0",
 "completion":"0"
@@ -6870,7 +6870,7 @@
 "google/gemma-4-26b-a4b-it:free":{
 "context_length":262144,
 "max_completion_tokens":32768,
-"name":"Google: Gemma 4 26B A4B  (free)",
+"name":"Google: Gemma 4 26B A4B (free)",
 "pricing":{
 "prompt":"0",
 "completion":"0"
@@ -6879,7 +6879,7 @@
 "gemma-4-26b-a4b-it:free":{
 "context_length":262144,
 "max_completion_tokens":32768,
-"name":"Google: Gemma 4 26B A4B  (free)",
+"name":"Google: Gemma 4 26B A4B (free)",
 "pricing":{
 "prompt":"0",
 "completion":"0"

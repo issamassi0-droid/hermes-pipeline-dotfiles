@@ -1,10 +1,10 @@
 ---
 name: building-incident-timeline-with-timesketch
 description: Build collaborative forensic incident timelines using Timesketch to ingest,
-  normalize, and analyze multi-source event data (including Plaso output) for attack
-  chain reconstruction and investigation documentation. Use when reconstructing the
-  sequence of events during an incident investigation or when multiple analysts need
-  to jointly tag, annotate, and search a shared DFIR timeline.
+ normalize, and analyze multi-source event data (including Plaso output) for attack
+ chain reconstruction and investigation documentation. Use when reconstructing the
+ sequence of events during an incident investigation or when multiple analysts need
+ to jointly tag, annotate, and search a shared DFIR timeline.
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -70,13 +70,13 @@ Timesketch is an open-source collaborative forensic timeline analysis tool devel
 ### Data Flow
 ```
 Evidence Sources --> Plaso/log2timeline --> Plaso storage file (.plaso)
-     |                                           |
-     v                                           v
-  CSV/JSONL --> Timesketch Importer --> OpenSearch Index
-                                           |
-                                           v
-                                    Timesketch Web UI
-                                    (Search, Analyze, Story)
+ | |
+ v v
+ CSV/JSONL --> Timesketch Importer --> OpenSearch Index
+ |
+ v
+ Timesketch Web UI
+ (Search, Analyze, Story)
 ```
 
 ## Deployment
@@ -113,7 +113,7 @@ log2timeline.py --parsers winevtx --storage-file windows_events.plaso /path/to/e
 
 # Process multiple evidence sources
 log2timeline.py --parsers "winevtx,prefetch,amcache,shimcache,userassist" \
-  --storage-file full_analysis.plaso /path/to/mounted/image/
+ --storage-file full_analysis.plaso /path/to/mounted/image/
 
 # Import Plaso file into Timesketch
 timesketch_importer -s "Case-2025-001" -t "Endpoint-WKS01" evidence.plaso
@@ -212,9 +212,9 @@ from timesketch_api_client import client as ts_client
 
 # Connect to Timesketch
 ts = ts_client.TimesketchApi(
-    host_uri="https://timesketch.local",
-    username="analyst",
-    password="password"
+ host_uri="https://timesketch.local",
+ username="analyst",
+ password="password"
 )
 
 # Get sketch
@@ -222,20 +222,20 @@ sketch = ts.get_sketch(1)
 
 # Search events
 search = sketch.explore(
-    query_string='event_identifier:4624 AND LogonType:3',
-    return_fields='datetime,message,hostname,source_short'
+ query_string='event_identifier:4624 AND LogonType:3',
+ return_fields='datetime,message,hostname,source_short'
 )
 
 # Add tags to events
 for event in search.get('objects', []):
-    sketch.tag_event(event['_id'], ['lateral_movement'])
+ sketch.tag_event(event['_id'], ['lateral_movement'])
 ```
 
 ### Integration with Dissect
 ```bash
 # Use Dissect for faster artifact parsing (alternative to Plaso)
 target-query -f timesketch://timesketch.local/case-001 \
-  targets/hostname/ -q "windows.evtx" --limit 0
+ targets/hostname/ -q "windows.evtx" --limit 0
 ```
 
 ## Key Data Sources for Timeline Building

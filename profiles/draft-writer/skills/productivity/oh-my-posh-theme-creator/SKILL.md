@@ -4,7 +4,7 @@ version: 1.0.0
 author: Hermes Agent
 license: MIT
 description: |2
-  Create and customize Oh My Posh themes.
+ Create and customize Oh My Posh themes.
 ---
 
 # Oh My Posh Theme Creator

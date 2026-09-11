@@ -1,12 +1,12 @@
 ---
 name: investigating-phishing-email-incident
 description: 'Investigates phishing email incidents from initial user report through
-  header analysis, URL/attachment detonation, impacted user identification, and containment
-  actions using SOC tools like Splunk, Microsoft Defender, and sandbox analysis platforms.
-  Use when a reported phishing email requires full incident investigation to determine
-  scope and impact.
+ header analysis, URL/attachment detonation, impacted user identification, and containment
+ actions using SOC tools like Splunk, Microsoft Defender, and sandbox analysis platforms.
+ Use when a reported phishing email requires full incident investigation to determine
+ scope and impact.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -24,38 +24,38 @@ mitre_attack:
 - T1566
 - T1598
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - resource-development
-  - initial-access
-  - stealth
-  - positioning
-  techniques:
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1672
-    name: Email Spoofing
-    tactic: stealth
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
-  - id: T1539
-    name: Steal Web Session Cookie
-    tactic: positioning
-    source: attack
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - resource-development
+ - initial-access
+ - stealth
+ - positioning
+ techniques:
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1672
+ name: Email Spoofing
+ tactic: stealth
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
+ - id: T1539
+ name: Steal Web Session Cookie
+ tactic: positioning
+ source: attack
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
 version: '1.0'
 author: mahipal
 license: Apache-2.0
@@ -96,7 +96,7 @@ import email
 from email import policy
 
 with open("phishing_sample.eml", "rb") as f:
-    msg = email.message_from_binary_file(f, policy=policy.default)
+ msg = email.message_from_binary_file(f, policy=policy.default)
 
 # Extract key headers
 print(f"From: {msg['From']}")
@@ -108,7 +108,7 @@ print(f"X-Originating-IP: {msg['X-Originating-IP']}")
 
 # Parse Received headers (bottom-up for true origin)
 for header in reversed(msg.get_all('Received', [])):
-    print(f"Received: {header[:120]}")
+ print(f"Received: {header[:120]}")
 
 # Check authentication results
 print(f"Authentication-Results: {msg['Authentication-Results']}")
@@ -130,9 +130,9 @@ import requests
 # Submit URL to URLScan.io
 url_to_scan = "https://evil-login.example.com/office365"
 response = requests.post(
-    "https://urlscan.io/api/v1/scan/",
-    headers={"API-Key": "YOUR_KEY", "Content-Type": "application/json"},
-    json={"url": url_to_scan, "visibility": "unlisted"}
+ "https://urlscan.io/api/v1/scan/",
+ headers={"API-Key": "YOUR_KEY", "Content-Type": "application/json"},
+ json={"url": url_to_scan, "visibility": "unlisted"}
 )
 scan_id = response.json()["uuid"]
 print(f"Scan URL: https://urlscan.io/result/{scan_id}/")
@@ -153,17 +153,17 @@ import hashlib
 
 # Calculate file hashes
 with open("attachment.docx", "rb") as f:
-    content = f.read()
-    md5 = hashlib.md5(content).hexdigest()
-    sha256 = hashlib.sha256(content).hexdigest()
+ content = f.read()
+ md5 = hashlib.md5(content).hexdigest()
+ sha256 = hashlib.sha256(content).hexdigest()
 
 print(f"MD5: {md5}")
 print(f"SHA256: {sha256}")
 
 # Submit to MalwareBazaar for lookup
 response = requests.post(
-    "https://mb-api.abuse.ch/api/v1/",
-    data={"query": "get_info", "hash": sha256}
+ "https://mb-api.abuse.ch/api/v1/",
+ data={"query": "get_info", "hash": sha256}
 )
 print(response.json()["query_status"])
 ```
@@ -190,14 +190,14 @@ import requests
 
 headers = {"Authorization": f"Bearer {access_token}"}
 params = {
-    "$filter": f"subject eq 'Urgent: Password Reset Required' and "
-               f"receivedDateTime ge 2024-03-14T00:00:00Z",
-    "$select": "sender,toRecipients,subject,receivedDateTime",
-    "$top": 100
+ "$filter": f"subject eq 'Urgent: Password Reset Required' and "
+ f"receivedDateTime ge 2024-03-14T00:00:00Z",
+ "$select": "sender,toRecipients,subject,receivedDateTime",
+ "$top": 100
 }
 response = requests.get(
-    "https://graph.microsoft.com/v1.0/users/admin@company.com/messages",
-    headers=headers, params=params
+ "https://graph.microsoft.com/v1.0/users/admin@company.com/messages",
+ headers=headers, params=params
 )
 messages = response.json()["value"]
 print(f"Found {len(messages)} matching messages")
@@ -210,7 +210,7 @@ Check proxy/web logs for users who visited the phishing URL:
 ```spl
 index=proxy dest="evil-login.example.com" earliest=-7d
 | stats count, values(action) AS actions, latest(_time) AS last_access
-  by src_ip, user
+ by src_ip, user
 | lookup asset_lookup_by_cidr ip AS src_ip OUTPUT owner, category
 | sort - count
 | table user, src_ip, owner, actions, count, last_access
@@ -230,8 +230,8 @@ index=proxy dest="evil-login.example.com" http_method=POST earliest=-7d
 ```powershell
 # Microsoft 365 Compliance Search and Purge
 New-ComplianceSearch -Name "Phishing_Purge_2024_0315" `
-    -ExchangeLocation All `
-    -ContentMatchQuery '(From:attacker@evil-domain.com) AND (Subject:"Urgent: Password Reset Required")'
+ -ExchangeLocation All `
+ -ContentMatchQuery '(From:attacker@evil-domain.com) AND (Subject:"Urgent: Password Reset Required")'
 
 Start-ComplianceSearch -Identity "Phishing_Purge_2024_0315"
 
@@ -251,8 +251,8 @@ New-ComplianceSearchAction -SearchName "Phishing_Purge_2024_0315" -Purge -PurgeT
 # Force password reset for impacted users
 $impactedUsers = @("user1@company.com", "user2@company.com")
 foreach ($user in $impactedUsers) {
-    Set-MsolUserPassword -UserPrincipalName $user -ForceChangePassword $true
-    Revoke-AzureADUserAllRefreshToken -ObjectId (Get-AzureADUser -ObjectId $user).ObjectId
+ Set-MsolUserPassword -UserPrincipalName $user -ForceChangePassword $true
+ Revoke-AzureADUserAllRefreshToken -ObjectId (Get-AzureADUser -ObjectId $user).ObjectId
 }
 ```
 
@@ -263,19 +263,19 @@ Create incident report with full timeline, IOCs, impacted users, and remediation
 ```spl
 | makeresults
 | eval incident_id="PHI-2024-0315",
-       reported_time="2024-03-15 09:12:00",
-       sender="attacker@evil-domain[.]com",
-       subject="Urgent: Password Reset Required",
-       url="hxxps://evil-login[.]example[.]com/office365",
-       recipients_count=47,
-       clicked_count=5,
-       credentials_submitted=2,
-       emails_purged=47,
-       passwords_reset=2,
-       domains_blocked=1,
-       disposition="True Positive - Credential Phishing Campaign"
+ reported_time="2024-03-15 09:12:00",
+ sender="attacker@evil-domain[.]com",
+ subject="Urgent: Password Reset Required",
+ url="hxxps://evil-login[.]example[.]com/office365",
+ recipients_count=47,
+ clicked_count=5,
+ credentials_submitted=2,
+ emails_purged=47,
+ passwords_reset=2,
+ domains_blocked=1,
+ disposition="True Positive - Credential Phishing Campaign"
 | table incident_id, reported_time, sender, subject, url, recipients_count,
-        clicked_count, credentials_submitted, emails_purged, passwords_reset, disposition
+ clicked_count, credentials_submitted, emails_purged, passwords_reset, disposition
 ```
 
 ## Key Concepts
@@ -310,27 +310,27 @@ Create incident report with full timeline, IOCs, impacted users, and remediation
 ```
 PHISHING INCIDENT REPORT — PHI-2024-0315
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Reported:     2024-03-15 09:12 UTC by jsmith (Finance)
-Sender:       attacker@evil-domain[.]com (SPF: FAIL, DKIM: NONE, DMARC: FAIL)
-Subject:      Urgent: Password Reset Required
-Payload:      Credential harvesting URL
+Reported: 2024-03-15 09:12 UTC by jsmith (Finance)
+Sender: attacker@evil-domain[.]com (SPF: FAIL, DKIM: NONE, DMARC: FAIL)
+Subject: Urgent: Password Reset Required
+Payload: Credential harvesting URL
 
 IOCs:
-  URL:        hxxps://evil-login[.]example[.]com/office365
-  Domain:     evil-login[.]example[.]com (registered 2024-03-14, Namecheap)
-  IP:         185.234.xx.xx (VT: 12/90 malicious)
+ URL: hxxps://evil-login[.]example[.]com/office365
+ Domain: evil-login[.]example[.]com (registered 2024-03-14, Namecheap)
+ IP: 185.234.xx.xx (VT: 12/90 malicious)
 
 Scope:
-  Recipients: 47 users across Finance and HR departments
-  Clicked:    5 users visited phishing URL
-  Submitted:  2 users entered credentials (confirmed via POST in proxy logs)
+ Recipients: 47 users across Finance and HR departments
+ Clicked: 5 users visited phishing URL
+ Submitted: 2 users entered credentials (confirmed via POST in proxy logs)
 
 Containment:
-  [DONE] 47 emails purged via Compliance Search
-  [DONE] Domain blocked on proxy and DNS sinkhole
-  [DONE] 2 user passwords reset, sessions revoked
-  [DONE] MFA enforced for both compromised accounts
-  [DONE] Inbox rules audited — no forwarding rules found
+ [DONE] 47 emails purged via Compliance Search
+ [DONE] Domain blocked on proxy and DNS sinkhole
+ [DONE] 2 user passwords reset, sessions revoked
+ [DONE] MFA enforced for both compromised accounts
+ [DONE] Inbox rules audited — no forwarding rules found
 
-Status:       RESOLVED — No evidence of lateral movement post-compromise
+Status: RESOLVED — No evidence of lateral movement post-compromise
 ```

@@ -38,12 +38,12 @@ The examples below use TypeScript for illustration; the workflow is identical in
 ## The TDD Cycle
 
 ```
-    RED                GREEN              REFACTOR
- Write a test    Write minimal code    Clean up the
- that fails  ──→  to make it pass  ──→  implementation  ──→  (repeat)
-      │                  │                    │
-      ▼                  ▼                    ▼
-   Test FAILS        Test PASSES         Tests still PASS
+ RED GREEN REFACTOR
+ Write a test Write minimal code Clean up the
+ that fails ──→ to make it pass ──→ implementation ──→ (repeat)
+ │ │ │
+ ▼ ▼ ▼
+ Test FAILS Test PASSES Tests still PASS
 ```
 
 ### Step 1: RED — Write a Failing Test
@@ -53,14 +53,14 @@ Write the test first. It must fail. A test that passes immediately proves nothin
 ```typescript
 // RED: This test fails because createTask doesn't exist yet
 describe('TaskService', () => {
-  it('creates a task with title and default status', async () => {
-    const task = await taskService.createTask({ title: 'Buy groceries' });
+ it('creates a task with title and default status', async () => {
+ const task = await taskService.createTask({ title: 'Buy groceries' });
 
-    expect(task.id).toBeDefined();
-    expect(task.title).toBe('Buy groceries');
-    expect(task.status).toBe('pending');
-    expect(task.createdAt).toBeInstanceOf(Date);
-  });
+ expect(task.id).toBeDefined();
+ expect(task.title).toBe('Buy groceries');
+ expect(task.status).toBe('pending');
+ expect(task.createdAt).toBeInstanceOf(Date);
+ });
 });
 ```
 
@@ -71,14 +71,14 @@ Write the minimum code to make the test pass. Don't over-engineer:
 ```typescript
 // GREEN: Minimal implementation
 export async function createTask(input: { title: string }): Promise<Task> {
-  const task = {
-    id: generateId(),
-    title: input.title,
-    status: 'pending' as const,
-    createdAt: new Date(),
-  };
-  await db.tasks.insert(task);
-  return task;
+ const task = {
+ id: generateId(),
+ title: input.title,
+ status: 'pending' as const,
+ createdAt: new Date(),
+ };
+ await db.tasks.insert(task);
+ return task;
 }
 ```
 
@@ -99,21 +99,21 @@ When a bug is reported, **do not start by trying to fix it.** Start by writing a
 
 ```
 Bug report arrives
-       │
-       ▼
-  Write a test that demonstrates the bug
-       │
-       ▼
-  Test FAILS (confirming the bug exists)
-       │
-       ▼
-  Implement the fix
-       │
-       ▼
-  Test PASSES (proving the fix works)
-       │
-       ▼
-  Run full test suite (no regressions)
+ │
+ ▼
+ Write a test that demonstrates the bug
+ │
+ ▼
+ Test FAILS (confirming the bug exists)
+ │
+ ▼
+ Implement the fix
+ │
+ ▼
+ Test PASSES (proving the fix works)
+ │
+ ▼
+ Run full test suite (no regressions)
 ```
 
 **Example:**
@@ -123,19 +123,19 @@ Bug report arrives
 
 // Step 1: Write the reproduction test (it should FAIL)
 it('sets completedAt when task is completed', async () => {
-  const task = await taskService.createTask({ title: 'Test' });
-  const completed = await taskService.completeTask(task.id);
+ const task = await taskService.createTask({ title: 'Test' });
+ const completed = await taskService.completeTask(task.id);
 
-  expect(completed.status).toBe('completed');
-  expect(completed.completedAt).toBeInstanceOf(Date);  // This fails → bug confirmed
+ expect(completed.status).toBe('completed');
+ expect(completed.completedAt).toBeInstanceOf(Date); // This fails → bug confirmed
 });
 
 // Step 2: Fix the bug
 export async function completeTask(id: string): Promise<Task> {
-  return db.tasks.update(id, {
-    status: 'completed',
-    completedAt: new Date(),  // This was missing
-  });
+ return db.tasks.update(id, {
+ status: 'completed',
+ completedAt: new Date(), // This was missing
+ });
 }
 
 // Step 3: Test passes → bug fixed, regression guarded
@@ -146,15 +146,15 @@ export async function completeTask(id: string): Promise<Task> {
 Invest testing effort according to the pyramid — most tests should be small and fast, with progressively fewer tests at higher levels:
 
 ```
-          ╱╲
-         ╱  ╲         E2E Tests (~5%)
-        ╱    ╲        Full user flows, real browser
-       ╱──────╲
-      ╱        ╲      Integration Tests (~15%)
-     ╱          ╲     Component interactions, API boundaries
-    ╱────────────╲
-   ╱              ╲   Unit Tests (~80%)
-  ╱                ╲  Pure logic, isolated, milliseconds each
+ ╱╲
+ ╱ ╲ E2E Tests (~5%)
+ ╱ ╲ Full user flows, real browser
+ ╱──────╲
+ ╱ ╲ Integration Tests (~15%)
+ ╱ ╲ Component interactions, API boundaries
+ ╱────────────╲
+ ╱ ╲ Unit Tests (~80%)
+ ╱ ╲ Pure logic, isolated, milliseconds each
  ╱──────────────────╲
 ```
 
@@ -176,13 +176,13 @@ Small tests should make up the vast majority of your suite. They're fast, reliab
 
 ```
 Is it pure logic with no side effects?
-  → Unit test (small)
+ → Unit test (small)
 
 Does it cross a boundary (API, database, file system)?
-  → Integration test (medium)
+ → Integration test (medium)
 
 Is it a critical user flow that must work end-to-end?
-  → E2E test (large) — limit these to critical paths
+ → E2E test (large) — limit these to critical paths
 ```
 
 ## Writing Good Tests
@@ -194,17 +194,17 @@ Assert on the *outcome* of an operation, not on which methods were called intern
 ```typescript
 // Good: Tests what the function does (state-based)
 it('returns tasks sorted by creation date, newest first', async () => {
-  const tasks = await listTasks({ sortBy: 'createdAt', sortOrder: 'desc' });
-  expect(tasks[0].createdAt.getTime())
-    .toBeGreaterThan(tasks[1].createdAt.getTime());
+ const tasks = await listTasks({ sortBy: 'createdAt', sortOrder: 'desc' });
+ expect(tasks[0].createdAt.getTime())
+ .toBeGreaterThan(tasks[1].createdAt.getTime());
 });
 
 // Bad: Tests how the function works internally (interaction-based)
 it('calls db.query with ORDER BY created_at DESC', async () => {
-  await listTasks({ sortBy: 'createdAt', sortOrder: 'desc' });
-  expect(db.query).toHaveBeenCalledWith(
-    expect.stringContaining('ORDER BY created_at DESC')
-  );
+ await listTasks({ sortBy: 'createdAt', sortOrder: 'desc' });
+ expect(db.query).toHaveBeenCalledWith(
+ expect.stringContaining('ORDER BY created_at DESC')
+ );
 });
 ```
 
@@ -215,14 +215,14 @@ In production code, DRY (Don't Repeat Yourself) is usually right. In tests, **DA
 ```typescript
 // DAMP: Each test is self-contained and readable
 it('rejects tasks with empty titles', () => {
-  const input = { title: '', assignee: 'user-1' };
-  expect(() => createTask(input)).toThrow('Title is required');
+ const input = { title: '', assignee: 'user-1' };
+ expect(() => createTask(input)).toThrow('Title is required');
 });
 
 it('trims whitespace from titles', () => {
-  const input = { title: '  Buy groceries  ', assignee: 'user-1' };
-  const task = createTask(input);
-  expect(task.title).toBe('Buy groceries');
+ const input = { title: ' Buy groceries ', assignee: 'user-1' };
+ const task = createTask(input);
+ expect(task.title).toBe('Buy groceries');
 });
 
 // Over-DRY: Shared setup obscures what each test actually verifies
@@ -237,10 +237,10 @@ Use the simplest test double that gets the job done. The more your tests use rea
 
 ```
 Preference order (most to least preferred):
-1. Real implementation  → Highest confidence, catches real bugs
-2. Fake                 → In-memory version of a dependency (e.g., fake DB)
-3. Stub                 → Returns canned data, no behavior
-4. Mock (interaction)   → Verifies method calls — use sparingly
+1. Real implementation → Highest confidence, catches real bugs
+2. Fake → In-memory version of a dependency (e.g., fake DB)
+3. Stub → Returns canned data, no behavior
+4. Mock (interaction) → Verifies method calls — use sparingly
 ```
 
 **Use mocks only when:** the real implementation is too slow, non-deterministic, or has side effects you can't control (external APIs, email sending). Over-mocking creates tests that pass while production breaks.
@@ -249,17 +249,17 @@ Preference order (most to least preferred):
 
 ```typescript
 it('marks overdue tasks when deadline has passed', () => {
-  // Arrange: Set up the test scenario
-  const task = createTask({
-    title: 'Test',
-    deadline: new Date('2025-01-01'),
-  });
+ // Arrange: Set up the test scenario
+ const task = createTask({
+ title: 'Test',
+ deadline: new Date('2025-01-01'),
+ });
 
-  // Act: Perform the action being tested
-  const result = checkOverdue(task, new Date('2025-01-02'));
+ // Act: Perform the action being tested
+ const result = checkOverdue(task, new Date('2025-01-02'));
 
-  // Assert: Verify the outcome
-  expect(result.isOverdue).toBe(true);
+ // Assert: Verify the outcome
+ expect(result.isOverdue).toBe(true);
 });
 ```
 
@@ -273,9 +273,9 @@ it('enforces maximum title length', () => { ... });
 
 // Bad: Everything in one test
 it('validates titles correctly', () => {
-  expect(() => createTask({ title: '' })).toThrow();
-  expect(createTask({ title: '  hello  ' }).title).toBe('hello');
-  expect(() => createTask({ title: 'a'.repeat(256) })).toThrow();
+ expect(() => createTask({ title: '' })).toThrow();
+ expect(createTask({ title: ' hello ' }).title).toBe('hello');
+ expect(() => createTask({ title: 'a'.repeat(256) })).toThrow();
 });
 ```
 
@@ -284,17 +284,17 @@ it('validates titles correctly', () => {
 ```typescript
 // Good: Reads like a specification
 describe('TaskService.completeTask', () => {
-  it('sets status to completed and records timestamp', ...);
-  it('throws NotFoundError for non-existent task', ...);
-  it('is idempotent — completing an already-completed task is a no-op', ...);
-  it('sends notification to task assignee', ...);
+ it('sets status to completed and records timestamp', ...);
+ it('throws NotFoundError for non-existent task', ...);
+ it('is idempotent — completing an already-completed task is a no-op', ...);
+ it('sends notification to task assignee', ...);
 });
 
 // Bad: Vague names
 describe('TaskService', () => {
-  it('works', ...);
-  it('handles errors', ...);
-  it('test 3', ...);
+ it('works', ...);
+ it('handles errors', ...);
+ it('test 3', ...);
 });
 ```
 

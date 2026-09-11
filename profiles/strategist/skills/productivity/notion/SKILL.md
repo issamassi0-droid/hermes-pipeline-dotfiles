@@ -6,11 +6,11 @@ author: community
 license: MIT
 platforms: [linux, macos, windows]
 prerequisites:
-  env_vars: [NOTION_API_KEY]
+ env_vars: [NOTION_API_KEY]
 metadata:
-  hermes:
-    tags: [Notion, Productivity, Notes, Database, API, CLI, Workers]
-    homepage: https://developers.notion.com
+ hermes:
+ tags: [Notion, Productivity, Notes, Database, API, CLI, Workers]
+ homepage: https://developers.notion.com
 ---
 
 # Notion
@@ -27,9 +27,9 @@ Talk to Notion two ways. Same integration token works for both — pick by what'
 1. Create an integration at https://notion.so/my-integrations
 2. Copy the API key (starts with `ntn_` or `secret_`)
 3. Store in `${HERMES_HOME:-~/.hermes}/.env`:
-   ```
-   NOTION_API_KEY=ntn_your_key_here
-   ```
+ ```
+ NOTION_API_KEY=ntn_your_key_here
+ ```
 4. **Share target pages/databases with the integration** in Notion: page menu `...` → `Connect to` → your integration name. Without this, the API returns 404 for that page even though it exists.
 
 ### 2. Install `ntn` (preferred path on macOS / Linux)
@@ -41,13 +41,13 @@ curl -fsSL https://ntn.dev | bash
 # Or via npm (needs Node 22+, npm 10+)
 npm install --global ntn
 
-ntn --version    # verify
+ntn --version # verify
 ```
 
 **Skip `ntn login` — use the integration token instead.** This works headlessly, no browser needed:
 ```bash
-export NOTION_API_TOKEN=$NOTION_API_KEY      # ntn reads NOTION_API_TOKEN
-export NOTION_KEYRING=0                       # don't try to use the OS keychain
+export NOTION_API_TOKEN=$NOTION_API_KEY # ntn reads NOTION_API_TOKEN
+export NOTION_KEYRING=0 # don't try to use the OS keychain
 ```
 
 Add those exports to your shell profile (or to `${HERMES_HOME:-~/.hermes}/.env`) so every session inherits them.
@@ -56,9 +56,9 @@ Add those exports to your shell profile (or to `${HERMES_HOME:-~/.hermes}/.env`)
 
 ```bash
 if command -v ntn >/dev/null 2>&1; then
-  # use ntn
+ # use ntn
 else
-  # fall back to curl
+ # fall back to curl
 fi
 ```
 
@@ -72,10 +72,10 @@ Windows users: skip step 2 entirely until native `ntn` ships — Path B works fi
 
 ### Raw API calls (shorthand for curl)
 ```bash
-ntn api v1/users                                  # GET
-ntn api v1/pages parent[page_id]=abc123 \         # POST with inline body
-  properties[title][0][text][content]="Notes"
-ntn api v1/pages/abc123 -X PATCH archived:=true   # PATCH; := is non-string (bool/num/null)
+ntn api v1/users # GET
+ntn api v1/pages parent[page_id]=abc123 \ # POST with inline body
+ properties[title][0][text][content]="Notes"
+ntn api v1/pages/abc123 -X PATCH archived:=true # PATCH; := is non-string (bool/num/null)
 ```
 
 Syntax notes:
@@ -106,9 +106,9 @@ ntn api v1/blocks/{page_id}/children
 ### Create page from Markdown
 ```bash
 ntn api v1/pages \
-  parent[page_id]=xxx \
-  properties[title][0][text][content]="Notes from meeting" \
-  markdown="# Agenda
+ parent[page_id]=xxx \
+ properties[title][0][text][content]="Notes from meeting" \
+ markdown="# Agenda
 
 - Q3 roadmap
 - Hiring"
@@ -117,7 +117,7 @@ ntn api v1/pages \
 ### Patch a page with Markdown
 ```bash
 ntn api v1/pages/{page_id}/markdown -X PATCH \
-  markdown="## Update
+ markdown="## Update
 
 Shipped the prototype."
 ```
@@ -125,13 +125,13 @@ Shipped the prototype."
 ### Query a database (data source)
 ```bash
 ntn api v1/data_sources/{data_source_id}/query -X POST \
-  filter[property]=Status filter[select][equals]=Active
+ filter[property]=Status filter[select][equals]=Active
 ```
 
 For complex queries with `sorts`, multiple filter clauses, or compound logic, pipe JSON in:
 ```bash
 echo '{"filter": {"property": "Status", "select": {"equals": "Active"}}, "sorts": [{"property": "Date", "direction": "descending"}]}' | \
-  ntn api v1/data_sources/{data_source_id}/query -X POST --json -
+ ntn api v1/data_sources/{data_source_id}/query -X POST --json -
 ```
 
 ### File uploads (one-liner — biggest CLI win)
@@ -156,9 +156,9 @@ All requests share this pattern:
 
 ```bash
 curl -s -X GET "https://api.notion.com/v1/..." \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json"
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json"
 ```
 
 On Windows the `curl` shipped with Windows 10+ works as-is. PowerShell users can also use `Invoke-RestMethod`.
@@ -166,17 +166,17 @@ On Windows the `curl` shipped with Windows 10+ works as-is. PowerShell users can
 ### Search
 ```bash
 curl -s -X POST "https://api.notion.com/v1/search" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{"query": "page title"}'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{"query": "page title"}'
 ```
 
 ### Read page metadata
 ```bash
 curl -s "https://api.notion.com/v1/pages/{page_id}" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03"
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03"
 ```
 
 ### Read page as Markdown (agent-friendly)
@@ -185,15 +185,15 @@ Easier to feed to a model than block JSON.
 
 ```bash
 curl -s "https://api.notion.com/v1/pages/{page_id}/markdown" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03"
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03"
 ```
 
 ### Read page content as blocks (when you need structure)
 ```bash
 curl -s "https://api.notion.com/v1/blocks/{page_id}/children" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03"
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03"
 ```
 
 ### Create page from Markdown
@@ -202,99 +202,99 @@ curl -s "https://api.notion.com/v1/blocks/{page_id}/children" \
 
 ```bash
 curl -s -X POST "https://api.notion.com/v1/pages" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "parent": {"page_id": "xxx"},
-    "properties": {"title": [{"text": {"content": "Notes from meeting"}}]},
-    "markdown": "# Agenda\n\n- Q3 roadmap\n- Hiring\n\n## Decisions\n- Ship MVP Friday"
-  }'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "parent": {"page_id": "xxx"},
+ "properties": {"title": [{"text": {"content": "Notes from meeting"}}]},
+ "markdown": "# Agenda\n\n- Q3 roadmap\n- Hiring\n\n## Decisions\n- Ship MVP Friday"
+ }'
 ```
 
 ### Patch a page with Markdown
 ```bash
 curl -s -X PATCH "https://api.notion.com/v1/pages/{page_id}/markdown" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{"markdown": "## Update\n\nShipped the prototype."}'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{"markdown": "## Update\n\nShipped the prototype."}'
 ```
 
 ### Create page in a database (typed properties)
 ```bash
 curl -s -X POST "https://api.notion.com/v1/pages" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "parent": {"database_id": "xxx"},
-    "properties": {
-      "Name": {"title": [{"text": {"content": "New Item"}}]},
-      "Status": {"select": {"name": "Todo"}}
-    }
-  }'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "parent": {"database_id": "xxx"},
+ "properties": {
+ "Name": {"title": [{"text": {"content": "New Item"}}]},
+ "Status": {"select": {"name": "Todo"}}
+ }
+ }'
 ```
 
 ### Query a database (data source)
 ```bash
 curl -s -X POST "https://api.notion.com/v1/data_sources/{data_source_id}/query" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "filter": {"property": "Status", "select": {"equals": "Active"}},
-    "sorts": [{"property": "Date", "direction": "descending"}]
-  }'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "filter": {"property": "Status", "select": {"equals": "Active"}},
+ "sorts": [{"property": "Date", "direction": "descending"}]
+ }'
 ```
 
 ### Create a database
 ```bash
 curl -s -X POST "https://api.notion.com/v1/data_sources" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "parent": {"page_id": "xxx"},
-    "title": [{"text": {"content": "My Database"}}],
-    "properties": {
-      "Name": {"title": {}},
-      "Status": {"select": {"options": [{"name": "Todo"}, {"name": "Done"}]}},
-      "Date": {"date": {}}
-    }
-  }'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "parent": {"page_id": "xxx"},
+ "title": [{"text": {"content": "My Database"}}],
+ "properties": {
+ "Name": {"title": {}},
+ "Status": {"select": {"options": [{"name": "Todo"}, {"name": "Done"}]}},
+ "Date": {"date": {}}
+ }
+ }'
 ```
 
 ### Update page properties
 ```bash
 curl -s -X PATCH "https://api.notion.com/v1/pages/{page_id}" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{"properties": {"Status": {"select": {"name": "Done"}}}}'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{"properties": {"Status": {"select": {"name": "Done"}}}}'
 ```
 
 ### Append blocks to a page
 ```bash
 curl -s -X PATCH "https://api.notion.com/v1/blocks/{page_id}/children" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "children": [
-      {"object": "block", "type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "Hello from Hermes!"}}]}}
-    ]
-  }'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "children": [
+ {"object": "block", "type": "paragraph", "paragraph": {"rich_text": [{"text": {"content": "Hello from Hermes!"}}]}}
+ ]
+ }'
 ```
 
 ### File uploads (3-step flow)
 ```bash
 # 1. Create upload
 curl -s -X POST "https://api.notion.com/v1/file_uploads" \
-  -H "Authorization: Bearer $NOTION_API_KEY" \
-  -H "Notion-Version: 2025-09-03" \
-  -H "Content-Type: application/json" \
-  -d '{"filename": "photo.png", "content_type": "image/png"}'
+ -H "Authorization: Bearer $NOTION_API_KEY" \
+ -H "Notion-Version: 2025-09-03" \
+ -H "Content-Type: application/json" \
+ -d '{"filename": "photo.png", "content_type": "image/png"}'
 
 # 2. PUT bytes to the upload_url returned above
 curl -s -X PUT "{upload_url}" --data-binary @photo.png
@@ -321,8 +321,8 @@ Common property formats for database items:
 
 - **Databases became data sources.** Use `/data_sources/` endpoints for queries and retrieval.
 - **Two IDs per database:** `database_id` and `data_source_id`.
-  - `database_id` when creating pages: `parent: {"database_id": "..."}`
-  - `data_source_id` when querying: `POST /v1/data_sources/{id}/query`
+ - `database_id` when creating pages: `parent: {"database_id": "..."}`
+ - `data_source_id` when querying: `POST /v1/data_sources/{id}/query`
 - Search returns databases as `"object": "data_source"` with the `data_source_id` field.
 
 ## Notion Workers (advanced, requires `ntn`)
@@ -340,7 +340,7 @@ Workers are TypeScript programs Notion hosts for you. One worker can expose any 
 ### Minimal Worker
 
 ```bash
-ntn workers new my-worker      # scaffold
+ntn workers new my-worker # scaffold
 cd my-worker
 # Edit src/index.ts
 ntn workers deploy --name my-worker
@@ -354,10 +354,10 @@ const worker = new Worker();
 export default worker;
 
 worker.tool("greet", {
-  title: "Greet a User",
-  description: "Returns a friendly greeting",
-  inputSchema: { type: "object", properties: { name: { type: "string" } }, required: ["name"] },
-  execute: async ({ name }) => `Hello, ${name}!`,
+ title: "Greet a User",
+ description: "Returns a friendly greeting",
+ inputSchema: { type: "object", properties: { name: { type: "string" } }, required: ["name"] },
+ execute: async ({ name }) => `Hello, ${name}!`,
 });
 ```
 
@@ -365,13 +365,13 @@ worker.tool("greet", {
 
 ```typescript
 worker.webhook("onGithubPush", {
-  title: "GitHub Push Handler",
-  execute: async (events, { notion }) => {
-    for (const event of events) {
-      // event.body, event.rawBody (for signature verification), event.headers
-      console.log("got delivery", event.deliveryId);
-    }
-  },
+ title: "GitHub Push Handler",
+ execute: async (events, { notion }) => {
+ for (const event of events) {
+ // event.body, event.rawBody (for signature verification), event.headers
+ console.log("got delivery", event.deliveryId);
+ }
+ },
 });
 ```
 
@@ -383,10 +383,10 @@ After deploy: `ntn workers webhooks list` shows the URL Notion generates. Treat 
 ntn workers deploy
 ntn workers list
 ntn workers exec <capability-key> -d '{"name": "world"}'
-ntn workers sync trigger <key>            # run a sync now
+ntn workers sync trigger <key> # run a sync now
 ntn workers sync pause <key>
 ntn workers env set GITHUB_WEBHOOK_SECRET=...
-ntn workers runs list                     # recent invocations
+ntn workers runs list # recent invocations
 ntn workers runs logs <run-id>
 ntn workers webhooks list
 ```

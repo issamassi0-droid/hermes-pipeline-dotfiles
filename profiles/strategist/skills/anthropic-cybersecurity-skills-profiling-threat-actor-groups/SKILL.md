@@ -1,14 +1,14 @@
 ---
 name: profiling-threat-actor-groups
 description: 'Develops comprehensive threat actor profiles for APT groups, criminal
-  organizations, and hacktivist collectives by aggregating TTP documentation, historical
-  campaign data, tooling fingerprints, and attribution indicators from multiple intelligence
-  sources. Use when briefing executives on sector-specific threats, updating threat
-  model assumptions, or prioritizing defensive controls against specific adversaries.
-  Activates for requests involving MITRE ATT&CK Groups, Mandiant APT profiles, CrowdStrike
-  adversary naming, or sector-specific threat briefings.
+ organizations, and hacktivist collectives by aggregating TTP documentation, historical
+ campaign data, tooling fingerprints, and attribution indicators from multiple intelligence
+ sources. Use when briefing executives on sector-specific threats, updating threat
+ model assumptions, or prioritizing defensive controls against specific adversaries.
+ Activates for requests involving MITRE ATT&CK Groups, Mandiant APT profiles, CrowdStrike
+ adversary naming, or sector-specific threat briefings.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -93,10 +93,10 @@ techniques = mitre.get_techniques_used_by_group(apt29)
 
 profile = {}
 for item in techniques:
-    tech = item["object"]
-    tid = tech["external_references"][0]["external_id"]
-    tactic = [p["phase_name"] for p in tech.get("kill_chain_phases", [])]
-    profile[tid] = {"name": tech["name"], "tactics": tactic}
+ tech = item["object"]
+ tid = tech["external_references"][0]["external_id"]
+ tactic = [p["phase_name"] for p in tech.get("kill_chain_phases", [])]
+ profile[tid] = {"name": tech["name"], "tactics": tactic}
 ```
 
 ### Step 4: Assess Detection Coverage Against Profile

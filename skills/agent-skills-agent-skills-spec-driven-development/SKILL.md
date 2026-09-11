@@ -25,10 +25,10 @@ Spec-driven development has four phases, preceded by a scope check (Phase 0) tha
 
 ```
 SPECIFY ──→ PLAN ──→ TASKS ──→ IMPLEMENT
-   │          │        │          │
-   ▼          ▼        ▼          ▼
- Human      Human    Human      Human
- reviews    reviews  reviews    reviews
+ │ │ │ │
+ ▼ ▼ ▼ ▼
+ Human Human Human Human
+ reviews reviews reviews reviews
 ```
 
 ### Phase 0: Scope Check
@@ -86,31 +86,31 @@ Don't silently fill in ambiguous requirements. The spec's entire purpose is to s
 1. **Objective** — What are we building and why? Who is the user? What does success look like?
 
 2. **Commands** — Full executable commands with flags, not just tool names.
-   ```
-   Build: npm run build
-   Test: npm test -- --coverage
-   Lint: npm run lint --fix
-   Dev: npm run dev
-   ```
+ ```
+ Build: npm run build
+ Test: npm test -- --coverage
+ Lint: npm run lint --fix
+ Dev: npm run dev
+ ```
 
 3. **Project Structure** — Where source code lives, where tests go, where docs belong.
-   ```
-   src/           → Application source code
-   src/components → React components
-   src/lib        → Shared utilities
-   tests/         → Unit and integration tests
-   e2e/           → End-to-end tests
-   docs/          → Documentation
-   ```
+ ```
+ src/ → Application source code
+ src/components → React components
+ src/lib → Shared utilities
+ tests/ → Unit and integration tests
+ e2e/ → End-to-end tests
+ docs/ → Documentation
+ ```
 
 4. **Code Style** — One real code snippet showing your style beats three paragraphs describing it. Include naming conventions, formatting rules, and examples of good output.
 
 5. **Testing Strategy** — What framework, where tests live, coverage expectations, which test levels for which concerns.
 
 6. **Boundaries** — Three-tier system:
-   - **Always do:** Run tests before commits, follow naming conventions, validate inputs
-   - **Ask first:** Database schema changes, adding dependencies, changing CI config
-   - **Never do:** Commit secrets, edit vendor directories, remove failing tests without approval
+ - **Always do:** Run tests before commits, follow naming conventions, validate inputs
+ - **Ask first:** Database schema changes, adding dependencies, changing CI config
+ - **Never do:** Commit secrets, edit vendor directories, remove failing tests without approval
 
 **Spec template:**
 
@@ -192,9 +192,9 @@ Break the plan into discrete, implementable tasks:
 **Task template:**
 ```markdown
 - [ ] Task: [Description]
-  - Acceptance: [What must be true when done]
-  - Verify: [How to confirm — test command, build, manual check]
-  - Files: [Which files will be touched]
+ - Acceptance: [What must be true when done]
+ - Verify: [How to confirm — test command, build, manual check]
+ - Files: [Which files will be touched]
 ```
 
 ### Phase 4: Implement

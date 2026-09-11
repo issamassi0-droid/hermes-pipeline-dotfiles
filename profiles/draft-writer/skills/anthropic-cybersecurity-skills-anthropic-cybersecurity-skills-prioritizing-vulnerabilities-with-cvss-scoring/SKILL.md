@@ -1,8 +1,8 @@
 ---
 name: prioritizing-vulnerabilities-with-cvss-scoring
 description: The Common Vulnerability Scoring System (CVSS) is the industry standard
-  framework maintained by FIRST (Forum of Incident Response and Security Teams) for
-  assessing vulnerability severity. CVSS v4.0 (r
+ framework maintained by FIRST (Forum of Incident Response and Security Teams) for
+ assessing vulnerability severity. CVSS v4.0 (r
 domain: cybersecurity
 subdomain: vulnerability-management
 tags:
@@ -108,21 +108,21 @@ For each vulnerability, evaluate:
 ```
 Example: CVE-2024-3094 (XZ Utils Backdoor)
 
-Attack Vector:        Network (N)     - Exploitable over network
-Attack Complexity:    High (H)        - Specific conditions required
-Attack Requirements:  Present (P)     - Specific build/config needed
-Privileges Required:  None (N)        - No authentication needed
-User Interaction:     None (N)        - No victim action needed
+Attack Vector: Network (N) - Exploitable over network
+Attack Complexity: High (H) - Specific conditions required
+Attack Requirements: Present (P) - Specific build/config needed
+Privileges Required: None (N) - No authentication needed
+User Interaction: None (N) - No victim action needed
 
 Vulnerable System Impact:
-  Confidentiality:    High (H)        - Complete access to SSH keys
-  Integrity:          High (H)        - Arbitrary code execution
-  Availability:       High (H)        - Full system compromise
+ Confidentiality: High (H) - Complete access to SSH keys
+ Integrity: High (H) - Arbitrary code execution
+ Availability: High (H) - Full system compromise
 
 Subsequent System Impact:
-  Confidentiality:    High (H)        - Lateral movement possible
-  Integrity:          High (H)        - Network-wide compromise
-  Availability:       None (N)        - No downstream availability impact
+ Confidentiality: High (H) - Lateral movement possible
+ Integrity: High (H) - Network-wide compromise
+ Availability: None (N) - No downstream availability impact
 
 Vector: CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N
 ```
@@ -131,20 +131,20 @@ Vector: CVSS:4.0/AV:N/AC:H/AT:P/PR:N/UI:N/VC:H/VI:H/VA:H/SC:H/SI:H/SA:N
 Enrich CVSS with real-world threat data:
 
 ```
-Exploit Maturity:     Attacked (A)    - Active exploitation in the wild
-EPSS Score:           0.94            - 94% probability of exploitation in 30 days
-CISA KEV:            Listed           - Mandatory remediation for federal agencies
+Exploit Maturity: Attacked (A) - Active exploitation in the wild
+EPSS Score: 0.94 - 94% probability of exploitation in 30 days
+CISA KEV: Listed - Mandatory remediation for federal agencies
 ```
 
 ### Step 3: Calculate Environmental Score
 Adjust for organizational context:
 
 ```
-Confidentiality Req:  High (H)        - Handles PII/financial data
-Integrity Req:        High (H)        - Critical business process
-Availability Req:     Medium (M)      - Has DR/failover capability
+Confidentiality Req: High (H) - Handles PII/financial data
+Integrity Req: High (H) - Critical business process
+Availability Req: Medium (M) - Has DR/failover capability
 
-Modified Attack Vector: Network (N)   - Internet-facing deployment
+Modified Attack Vector: Network (N) - Internet-facing deployment
 ```
 
 ### Step 4: Multi-Factor Prioritization Matrix

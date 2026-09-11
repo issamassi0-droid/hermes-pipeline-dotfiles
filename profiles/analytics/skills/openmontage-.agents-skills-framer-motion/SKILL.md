@@ -11,8 +11,8 @@ Implement all 12 Disney animation principles using Framer Motion's declarative R
 
 ```jsx
 <motion.div
-  animate={{ scaleX: [1, 1.2, 1], scaleY: [1, 0.8, 1] }}
-  transition={{ duration: 0.3, times: [0, 0.5, 1] }}
+ animate={{ scaleX: [1, 1.2, 1], scaleY: [1, 0.8, 1] }}
+ transition={{ duration: 0.3, times: [0, 0.5, 1] }}
 />
 ```
 
@@ -20,14 +20,14 @@ Implement all 12 Disney animation principles using Framer Motion's declarative R
 
 ```jsx
 <motion.div
-  variants={{
-    idle: { y: 0, scaleY: 1 },
-    anticipate: { y: 10, scaleY: 0.9 },
-    jump: { y: -200 }
-  }}
-  initial="idle"
-  animate={["anticipate", "jump"]}
-  transition={{ duration: 0.5, times: [0, 0.2, 1] }}
+ variants={{
+ idle: { y: 0, scaleY: 1 },
+ anticipate: { y: 10, scaleY: 0.9 },
+ jump: { y: -200 }
+ }}
+ initial="idle"
+ animate={["anticipate", "jump"]}
+ transition={{ duration: 0.5, times: [0, 0.2, 1] }}
 />
 ```
 
@@ -42,11 +42,11 @@ Implement all 12 Disney animation principles using Framer Motion's declarative R
 
 ```jsx
 <motion.div
-  animate={{
-    x: [0, 100, 200, 300],
-    y: [0, -50, 0, -30]
-  }}
-  transition={{ duration: 1, ease: "easeInOut" }}
+ animate={{
+ x: [0, 100, 200, 300],
+ y: [0, -50, 0, -30]
+ }}
+ transition={{ duration: 1, ease: "easeInOut" }}
 />
 ```
 
@@ -54,14 +54,14 @@ Implement all 12 Disney animation principles using Framer Motion's declarative R
 
 ```jsx
 <motion.div animate={{ x: 200 }} transition={{ duration: 0.5 }}>
-  <motion.span
-    animate={{ x: 200 }}
-    transition={{ duration: 0.5, delay: 0.05 }} // hair
-  />
-  <motion.span
-    animate={{ x: 200 }}
-    transition={{ duration: 0.6, delay: 0.1 }} // cape
-  />
+ <motion.span
+ animate={{ x: 200 }}
+ transition={{ duration: 0.5, delay: 0.05 }} // hair
+ />
+ <motion.span
+ animate={{ x: 200 }}
+ transition={{ duration: 0.6, delay: 0.1 }} // cape
+ />
 </motion.div>
 ```
 
@@ -69,11 +69,11 @@ Implement all 12 Disney animation principles using Framer Motion's declarative R
 
 ```jsx
 <motion.div
-  animate={{ x: 300 }}
-  transition={{
-    duration: 0.6,
-    ease: [0.42, 0, 0.58, 1] // easeInOut cubic-bezier
-  }}
+ animate={{ x: 300 }}
+ transition={{
+ duration: 0.6,
+ ease: [0.42, 0, 0.58, 1] // easeInOut cubic-bezier
+ }}
 />
 // Or use: "easeIn", "easeOut", "easeInOut"
 ```
@@ -82,11 +82,11 @@ Implement all 12 Disney animation principles using Framer Motion's declarative R
 
 ```jsx
 <motion.div
-  animate={{
-    x: [0, 100, 200],
-    y: [0, -100, 0]
-  }}
-  transition={{ duration: 1, ease: "easeInOut" }}
+ animate={{
+ x: [0, 100, 200],
+ y: [0, -100, 0]
+ }}
+ transition={{ duration: 1, ease: "easeInOut" }}
 />
 ```
 
@@ -94,15 +94,15 @@ Implement all 12 Disney animation principles using Framer Motion's declarative R
 
 ```jsx
 <motion.button
-  whileHover={{ scale: 1.05 }}
-  whileTap={{ scale: 0.95 }}
+ whileHover={{ scale: 1.05 }}
+ whileTap={{ scale: 0.95 }}
 >
-  <motion.span
-    animate={{ rotate: [0, 10, -10, 0] }}
-    transition={{ duration: 0.3 }}
-  >
-    Icon
-  </motion.span>
+ <motion.span
+ animate={{ rotate: [0, 10, -10, 0] }}
+ transition={{ duration: 0.3 }}
+ >
+ Icon
+ </motion.span>
 </motion.button>
 ```
 
@@ -110,10 +110,10 @@ Implement all 12 Disney animation principles using Framer Motion's declarative R
 
 ```jsx
 const timings = {
-  fast: { duration: 0.15 },
-  normal: { duration: 0.3 },
-  slow: { duration: 0.6 },
-  spring: { type: "spring", stiffness: 300, damping: 20 }
+ fast: { duration: 0.15 },
+ normal: { duration: 0.3 },
+ slow: { duration: 0.6 },
+ spring: { type: "spring", stiffness: 300, damping: 20 }
 };
 ```
 
@@ -121,12 +121,12 @@ const timings = {
 
 ```jsx
 <motion.div
-  animate={{ scale: 1.5, rotate: 720 }}
-  transition={{
-    type: "spring",
-    stiffness: 200,
-    damping: 10 // low damping = overshoot
-  }}
+ animate={{ scale: 1.5, rotate: 720 }}
+ transition={{
+ type: "spring",
+ stiffness: 200,
+ damping: 10 // low damping = overshoot
+ }}
 />
 ```
 
@@ -134,9 +134,9 @@ const timings = {
 
 ```jsx
 <motion.div
-  style={{ perspective: 1000 }}
-  animate={{ rotateX: 45, rotateY: 30 }}
-  transition={{ duration: 0.5 }}
+ style={{ perspective: 1000 }}
+ animate={{ rotateX: 45, rotateY: 30 }}
+ transition={{ duration: 0.5 }}
 />
 ```
 
@@ -144,11 +144,11 @@ const timings = {
 
 ```jsx
 <motion.div
-  whileHover={{
-    scale: 1.02,
-    boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
-  }}
-  transition={{ duration: 0.3 }}
+ whileHover={{
+ scale: 1.02,
+ boxShadow: "0 20px 40px rgba(0,0,0,0.2)"
+ }}
+ transition={{ duration: 0.3 }}
 />
 ```
 
@@ -156,15 +156,15 @@ const timings = {
 
 ```jsx
 const container = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.1 }
-  }
+ hidden: { opacity: 0 },
+ show: {
+ opacity: 1,
+ transition: { staggerChildren: 0.1 }
+ }
 };
 
 <motion.ul variants={container} initial="hidden" animate="show">
-  {items.map(item => <motion.li variants={itemVariant} />)}
+ {items.map(item => <motion.li variants={itemVariant} />)}
 </motion.ul>
 ```
 

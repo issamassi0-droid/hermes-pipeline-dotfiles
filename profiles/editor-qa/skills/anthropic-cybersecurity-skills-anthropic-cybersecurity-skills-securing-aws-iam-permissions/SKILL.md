@@ -1,12 +1,12 @@
 ---
 name: securing-aws-iam-permissions
 description: 'Hardens AWS IAM configurations to enforce least-privilege access, covering
-  IAM policy scoping, permission boundaries, IAM Access Analyzer integration, and credential
-  rotation strategies. Use when reducing the blast radius of compromised AWS identities,
-  auditing overly permissive IAM policies, or setting up permission boundaries and
-  Access Analyzer findings review across cloud accounts.
+ IAM policy scoping, permission boundaries, IAM Access Analyzer integration, and credential
+ rotation strategies. Use when reducing the blast radius of compromised AWS identities,
+ auditing overly permissive IAM policies, or setting up permission boundaries and
+ Access Analyzer findings review across cloud accounts.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -30,31 +30,31 @@ mitre_attack:
 - T1580
 - T1003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  techniques:
-  - id: F1006.001
-    name: 'Account Takeover: Exposed API Key'
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: T1550.001
-    name: 'Use Alternate Authentication Material: Application Access Token'
-    tactic: initial-access
-    source: attack
-  - id: T1110.003
-    name: 'Brute Force: Password Spraying'
-    tactic: initial-access
-    source: attack
-  - id: F1005.004
-    name: 'Account Manipulation: Change Account Details'
-    tactic: positioning
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ techniques:
+ - id: F1006.001
+ name: 'Account Takeover: Exposed API Key'
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: T1550.001
+ name: 'Use Alternate Authentication Material: Application Access Token'
+ tactic: initial-access
+ source: attack
+ - id: T1110.003
+ name: 'Brute Force: Password Spraying'
+ tactic: initial-access
+ source: attack
+ - id: F1005.004
+ name: 'Account Manipulation: Change Account Details'
+ tactic: positioning
+ source: f3
 ---
 
 # Securing AWS IAM Permissions
@@ -92,9 +92,9 @@ aws iam list-roles --query 'Roles[*].[RoleName,Arn,CreateDate]' --output table
 
 # Find users with access keys older than 90 days
 aws iam list-users --query 'Users[*].UserName' --output text | while read user; do
-  aws iam list-access-keys --user-name "$user" \
-    --query "AccessKeyMetadata[?CreateDate<='$(date -d '-90 days' +%Y-%m-%d)'].[UserName,AccessKeyId,Status,CreateDate]" \
-    --output table
+ aws iam list-access-keys --user-name "$user" \
+ --query "AccessKeyMetadata[?CreateDate<='$(date -d '-90 days' +%Y-%m-%d)'].[UserName,AccessKeyId,Status,CreateDate]" \
+ --output table
 done
 ```
 
@@ -105,24 +105,24 @@ Activate IAM Access Analyzer at the organization or account level to identify re
 ```bash
 # Create an Access Analyzer for the account
 aws accessanalyzer create-analyzer \
-  --analyzer-name account-analyzer \
-  --type ACCOUNT
+ --analyzer-name account-analyzer \
+ --type ACCOUNT
 
 # List active findings for external access
 aws accessanalyzer list-findings \
-  --analyzer-arn arn:aws:access-analyzer:us-east-1:123456789012:analyzer/account-analyzer \
-  --filter '{"status": {"eq": ["ACTIVE"]}}'
+ --analyzer-arn arn:aws:access-analyzer:us-east-1:123456789012:analyzer/account-analyzer \
+ --filter '{"status": {"eq": ["ACTIVE"]}}'
 
 # Generate a policy based on CloudTrail activity for a specific role
 aws accessanalyzer start-policy-generation \
-  --policy-generation-details '{
-    "principalArn": "arn:aws:iam::123456789012:role/AppRole",
-    "cloudTrailDetails": {
-      "trailArn": "arn:aws:cloudtrail:us-east-1:123456789012:trail/management-trail",
-      "startTime": "2025-01-01T00:00:00Z",
-      "endTime": "2025-03-01T00:00:00Z"
-    }
-  }'
+ --policy-generation-details '{
+ "principalArn": "arn:aws:iam::123456789012:role/AppRole",
+ "cloudTrailDetails": {
+ "trailArn": "arn:aws:cloudtrail:us-east-1:123456789012:trail/management-trail",
+ "startTime": "2025-01-01T00:00:00Z",
+ "endTime": "2025-03-01T00:00:00Z"
+ }
+ }'
 ```
 
 ### Step 3: Scope Policies to Specific Resources and Conditions
@@ -131,26 +131,26 @@ Replace wildcard resource ARNs with specific resource identifiers. Add IAM polic
 
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowS3ReadSpecificBucket",
-      "Effect": "Allow",
-      "Action": [
-        "s3:GetObject",
-        "s3:ListBucket"
-      ],
-      "Resource": [
-        "arn:aws:s3:::production-data-bucket",
-        "arn:aws:s3:::production-data-bucket/*"
-      ],
-      "Condition": {
-        "Bool": {"aws:MultiFactorAuthPresent": "true"},
-        "IpAddress": {"aws:SourceIp": "10.0.0.0/8"},
-        "DateGreaterThan": {"aws:CurrentTime": "2025-01-01T00:00:00Z"}
-      }
-    }
-  ]
+ "Version": "2012-10-17",
+ "Statement": [
+ {
+ "Sid": "AllowS3ReadSpecificBucket",
+ "Effect": "Allow",
+ "Action": [
+ "s3:GetObject",
+ "s3:ListBucket"
+ ],
+ "Resource": [
+ "arn:aws:s3:::production-data-bucket",
+ "arn:aws:s3:::production-data-bucket/*"
+ ],
+ "Condition": {
+ "Bool": {"aws:MultiFactorAuthPresent": "true"},
+ "IpAddress": {"aws:SourceIp": "10.0.0.0/8"},
+ "DateGreaterThan": {"aws:CurrentTime": "2025-01-01T00:00:00Z"}
+ }
+ }
+ ]
 }
 ```
 
@@ -161,45 +161,45 @@ Attach permission boundaries to IAM roles and users to define the maximum scope 
 ```bash
 # Create a permission boundary policy
 aws iam create-policy \
-  --policy-name DeveloperPermissionBoundary \
-  --policy-document file://developer-boundary.json
+ --policy-name DeveloperPermissionBoundary \
+ --policy-document file://developer-boundary.json
 
 # Attach the boundary to an IAM role
 aws iam put-role-permissions-boundary \
-  --role-name DeveloperRole \
-  --permissions-boundary "arn:aws:iam::123456789012:policy/DeveloperPermissionBoundary"
+ --role-name DeveloperRole \
+ --permissions-boundary "arn:aws:iam::123456789012:policy/DeveloperPermissionBoundary"
 ```
 
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "AllowCommonServices",
-      "Effect": "Allow",
-      "Action": [
-        "s3:*",
-        "dynamodb:*",
-        "lambda:*",
-        "logs:*",
-        "cloudwatch:*"
-      ],
-      "Resource": "*"
-    },
-    {
-      "Sid": "DenyIAMChanges",
-      "Effect": "Deny",
-      "Action": [
-        "iam:CreateUser",
-        "iam:DeleteUser",
-        "iam:CreateRole",
-        "iam:DeleteRole",
-        "iam:AttachRolePolicy",
-        "iam:PutRolePermissionsBoundary"
-      ],
-      "Resource": "*"
-    }
-  ]
+ "Version": "2012-10-17",
+ "Statement": [
+ {
+ "Sid": "AllowCommonServices",
+ "Effect": "Allow",
+ "Action": [
+ "s3:*",
+ "dynamodb:*",
+ "lambda:*",
+ "logs:*",
+ "cloudwatch:*"
+ ],
+ "Resource": "*"
+ },
+ {
+ "Sid": "DenyIAMChanges",
+ "Effect": "Deny",
+ "Action": [
+ "iam:CreateUser",
+ "iam:DeleteUser",
+ "iam:CreateRole",
+ "iam:DeleteRole",
+ "iam:AttachRolePolicy",
+ "iam:PutRolePermissionsBoundary"
+ ],
+ "Resource": "*"
+ }
+ ]
 }
 ```
 
@@ -210,28 +210,28 @@ Require MFA for all human users accessing the AWS console and CLI. Migrate workl
 ```bash
 # Enforce MFA via SCP at the organization level
 aws organizations create-policy \
-  --name RequireMFA \
-  --type SERVICE_CONTROL_POLICY \
-  --content '{
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Sid": "DenyAllExceptMFA",
-        "Effect": "Deny",
-        "NotAction": [
-          "iam:CreateVirtualMFADevice",
-          "iam:EnableMFADevice",
-          "iam:ListMFADevices",
-          "iam:ResyncMFADevice",
-          "sts:GetSessionToken"
-        ],
-        "Resource": "*",
-        "Condition": {
-          "BoolIfExists": {"aws:MultiFactorAuthPresent": "false"}
-        }
-      }
-    ]
-  }'
+ --name RequireMFA \
+ --type SERVICE_CONTROL_POLICY \
+ --content '{
+ "Version": "2012-10-17",
+ "Statement": [
+ {
+ "Sid": "DenyAllExceptMFA",
+ "Effect": "Deny",
+ "NotAction": [
+ "iam:CreateVirtualMFADevice",
+ "iam:EnableMFADevice",
+ "iam:ListMFADevices",
+ "iam:ResyncMFADevice",
+ "sts:GetSessionToken"
+ ],
+ "Resource": "*",
+ "Condition": {
+ "BoolIfExists": {"aws:MultiFactorAuthPresent": "false"}
+ }
+ }
+ ]
+ }'
 
 # Deactivate unused access keys
 aws iam update-access-key --user-name old-user --access-key-id AKIAEXAMPLE --status Inactive
@@ -244,24 +244,24 @@ Deploy AWS Config rules and Security Hub controls to continuously evaluate IAM p
 ```bash
 # Enable AWS Config rule for IAM password policy
 aws configservice put-config-rule \
-  --config-rule '{
-    "ConfigRuleName": "iam-password-policy",
-    "Source": {
-      "Owner": "AWS",
-      "SourceIdentifier": "IAM_PASSWORD_POLICY"
-    },
-    "InputParameters": "{\"RequireUppercaseCharacters\":\"true\",\"RequireLowercaseCharacters\":\"true\",\"RequireSymbols\":\"true\",\"RequireNumbers\":\"true\",\"MinimumPasswordLength\":\"14\",\"MaxPasswordAge\":\"90\"}"
-  }'
+ --config-rule '{
+ "ConfigRuleName": "iam-password-policy",
+ "Source": {
+ "Owner": "AWS",
+ "SourceIdentifier": "IAM_PASSWORD_POLICY"
+ },
+ "InputParameters": "{\"RequireUppercaseCharacters\":\"true\",\"RequireLowercaseCharacters\":\"true\",\"RequireSymbols\":\"true\",\"RequireNumbers\":\"true\",\"MinimumPasswordLength\":\"14\",\"MaxPasswordAge\":\"90\"}"
+ }'
 
 # EventBridge rule to detect root account usage
 aws events put-rule \
-  --name DetectRootUsage \
-  --event-pattern '{
-    "detail-type": ["AWS API Call via CloudTrail"],
-    "detail": {
-      "userIdentity": {"type": ["Root"]}
-    }
-  }'
+ --name DetectRootUsage \
+ --event-pattern '{
+ "detail-type": ["AWS API Call via CloudTrail"],
+ "detail": {
+ "userIdentity": {"type": ["Root"]}
+ }
+ }'
 ```
 
 ## Key Concepts
@@ -324,26 +324,26 @@ Analyzer: IAM Access Analyzer + Prowler v4.3
 
 CRITICAL FINDINGS:
 [C-001] Root account has active access keys
-  - Resource: arn:aws:iam::123456789012:root
-  - Remediation: Delete root access keys, enable MFA on root
-  - CIS Benchmark: 1.4 (Ensure no root account access key exists)
+ - Resource: arn:aws:iam::123456789012:root
+ - Remediation: Delete root access keys, enable MFA on root
+ - CIS Benchmark: 1.4 (Ensure no root account access key exists)
 
 [C-002] IAM user 'deploy-bot' has AdministratorAccess with no MFA
-  - Resource: arn:aws:iam::123456789012:user/deploy-bot
-  - Last Activity: 2025-02-20
-  - Remediation: Replace with IAM role, enforce MFA condition
+ - Resource: arn:aws:iam::123456789012:user/deploy-bot
+ - Last Activity: 2025-02-20
+ - Remediation: Replace with IAM role, enforce MFA condition
 
 HIGH FINDINGS:
 [H-001] 3 IAM policies use wildcard Resource "*" with sensitive actions
-  - Policies: DevPolicy, CIPolicy, LegacyAdminPolicy
-  - Remediation: Scope resources to specific ARNs using Access Analyzer
+ - Policies: DevPolicy, CIPolicy, LegacyAdminPolicy
+ - Remediation: Scope resources to specific ARNs using Access Analyzer
 
 [H-002] 7 access keys older than 90 days detected
-  - Users: svc-backup, svc-monitoring, dev-alice, dev-bob, ...
-  - Remediation: Rotate keys, migrate to role-based access
+ - Users: svc-backup, svc-monitoring, dev-alice, dev-bob, ...
+ - Remediation: Rotate keys, migrate to role-based access
 
 SUMMARY:
-  Total Findings: 14
-  Critical: 2 | High: 4 | Medium: 5 | Low: 3
-  Compliance Score: 62% (CIS AWS Foundations Benchmark v3.0)
+ Total Findings: 14
+ Critical: 2 | High: 4 | Medium: 5 | Low: 3
+ Compliance Score: 62% (CIS AWS Foundations Benchmark v3.0)
 ```

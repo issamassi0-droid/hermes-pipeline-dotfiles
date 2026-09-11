@@ -34,14 +34,14 @@ Start with cheap/fast model, escalate only when needed.
 
 ```
 1. Try flash model (cheap, fast)
-   → success: done
-   → failure: escalate
+ → success: done
+ → failure: escalate
 2. Try mid-tier model
-   → success: done
-   → failure: escalate
+ → success: done
+ → failure: escalate
 3. Try premium model
-   → success: done
-   → failure: human escalation
+ → success: done
+ → failure: human escalation
 ```
 
 ## Dynamic Model Selection

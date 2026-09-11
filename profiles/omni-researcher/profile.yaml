@@ -1,15 +1,15 @@
 description: multi-source research bot. Searches official sources, news, Twitter/X,
-  Substack, Reddit, deep web. Deduplicates, classifies
+ Substack, Reddit, deep web. Deduplicates, classifies
 description_auto: false
 ui_meta:
-  hermes-bots:
-    shape: blobatar
-    imageKind: photo
-    title: Omni-Researcher
-    created: 1788885000000
-    color: hsl(160 50% 40%)
-    custom: true
+ hermes-bots: null
+ shape: blobatar
+ imageKind: photo
+ title: Omni-Researcher
+ created: 1788885000000
+ color: hsl(160 50% 40%)
+ custom: true
 _ui_meta_revisions:
-  hermes-bots: 3
+ hermes-bots: 3
 ui:
-  title: Omni-Researcher
+ title: research-agent-multi

@@ -1,10 +1,10 @@
 ---
 name: performing-cloud-native-threat-hunting-with-aws-detective
 description: Investigate AWS security incidents using Amazon Detective's behavior graphs,
-  built from CloudTrail, VPC Flow Logs, GuardDuty, and EKS audit logs, to trace entity
-  timelines and profile IAM users, roles, EC2 instances, and IP addresses for lateral
-  movement. Use when triaging GuardDuty findings, investigating a suspected AWS compromise,
-  or reconstructing an attacker's activity timeline across AWS accounts.
+ built from CloudTrail, VPC Flow Logs, GuardDuty, and EKS audit logs, to trace entity
+ timelines and profile IAM users, roles, EC2 instances, and IP addresses for lateral
+ movement. Use when triaging GuardDuty findings, investigating a suspected AWS compromise,
+ or reconstructing an attacker's activity timeline across AWS accounts.
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -69,8 +69,8 @@ aws detective list-graphs --output table
 ```bash
 # Get entity profile for an IAM user
 aws detective get-investigation \
-  --graph-arn arn:aws:detective:us-east-1:123456789012:graph:a1b2c3d4 \
-  --investigation-id 000000000000000000001
+ --graph-arn arn:aws:detective:us-east-1:123456789012:graph:a1b2c3d4 \
+ --investigation-id 000000000000000000001
 ```
 
 ### Step 3: Search Entities Programmatically
@@ -85,43 +85,43 @@ from datetime import datetime, timedelta
 detective = boto3.client('detective')
 
 def list_behavior_graphs():
-    """List all Detective behavior graphs."""
-    response = detective.list_graphs()
-    return response.get('GraphList', [])
+ """List all Detective behavior graphs."""
+ response = detective.list_graphs()
+ return response.get('GraphList', [])
 
 def get_investigation_indicators(graph_arn, investigation_id, max_results=50):
-    """Get indicators for a specific investigation."""
-    response = detective.list_indicators(
-        GraphArn=graph_arn,
-        InvestigationId=investigation_id,
-        MaxResults=max_results
-    )
-    return response.get('Indicators', [])
+ """Get indicators for a specific investigation."""
+ response = detective.list_indicators(
+ GraphArn=graph_arn,
+ InvestigationId=investigation_id,
+ MaxResults=max_results
+ )
+ return response.get('Indicators', [])
 
 def investigate_guardduty_findings(graph_arn):
-    """List high-severity investigations correlated by Detective."""
-    response = detective.list_investigations(
-        GraphArn=graph_arn,
-        FilterCriteria={
-            'Severity': {'Value': 'CRITICAL'},
-            'Status': {'Value': 'RUNNING'}
-        },
-        MaxResults=20
-    )
+ """List high-severity investigations correlated by Detective."""
+ response = detective.list_investigations(
+ GraphArn=graph_arn,
+ FilterCriteria={
+ 'Severity': {'Value': 'CRITICAL'},
+ 'Status': {'Value': 'RUNNING'}
+ },
+ MaxResults=20
+ )
 
-    for investigation in response.get('InvestigationDetails', []):
-        print(f"Investigation: {investigation['InvestigationId']}")
-        print(f"  Entity: {investigation['EntityArn']}")
-        print(f"  Status: {investigation['Status']}")
-        print(f"  Severity: {investigation['Severity']}")
-        print(f"  Created: {investigation['CreatedTime']}")
-        print()
+ for investigation in response.get('InvestigationDetails', []):
+ print(f"Investigation: {investigation['InvestigationId']}")
+ print(f" Entity: {investigation['EntityArn']}")
+ print(f" Status: {investigation['Status']}")
+ print(f" Severity: {investigation['Severity']}")
+ print(f" Created: {investigation['CreatedTime']}")
+ print()
 
 if __name__ == "__main__":
-    graphs = list_behavior_graphs()
-    for graph in graphs:
-        print(f"Graph: {graph['Arn']}")
-        investigate_guardduty_findings(graph['Arn'])
+ graphs = list_behavior_graphs()
+ for graph in graphs:
+ print(f"Graph: {graph['Arn']}")
+ investigate_guardduty_findings(graph['Arn'])
 ```
 
 ### Step 4: Analyze Finding Groups for Attack Campaigns
@@ -129,9 +129,9 @@ if __name__ == "__main__":
 ```bash
 # List investigations with high severity
 aws detective list-investigations \
-  --graph-arn arn:aws:detective:us-east-1:123456789012:graph:a1b2c3d4 \
-  --filter-criteria '{"Severity":{"Value":"HIGH"}}' \
-  --max-results 10
+ --graph-arn arn:aws:detective:us-east-1:123456789012:graph:a1b2c3d4 \
+ --filter-criteria '{"Severity":{"Value":"HIGH"}}' \
+ --max-results 10
 ```
 
 ### Step 5: Check Entity Indicators
@@ -139,9 +139,9 @@ aws detective list-investigations \
 ```bash
 # Get indicators for a specific investigation
 aws detective list-indicators \
-  --graph-arn arn:aws:detective:us-east-1:123456789012:graph:a1b2c3d4 \
-  --investigation-id 000000000000000000001 \
-  --max-results 50
+ --graph-arn arn:aws:detective:us-east-1:123456789012:graph:a1b2c3d4 \
+ --investigation-id 000000000000000000001 \
+ --max-results 50
 ```
 
 ## Expected Output
@@ -150,17 +150,17 @@ The `list-investigations` command returns investigation metadata:
 
 ```json
 {
-  "InvestigationDetails": [
-    {
-      "InvestigationId": "000000000000000000001",
-      "Severity": "CRITICAL",
-      "Status": "RUNNING",
-      "State": "ACTIVE",
-      "EntityArn": "arn:aws:iam::123456789012:user/suspicious-user",
-      "EntityType": "IAM_USER",
-      "CreatedTime": "2026-03-15T14:30:00Z"
-    }
-  ]
+ "InvestigationDetails": [
+ {
+ "InvestigationId": "000000000000000000001",
+ "Severity": "CRITICAL",
+ "Status": "RUNNING",
+ "State": "ACTIVE",
+ "EntityArn": "arn:aws:iam::123456789012:user/suspicious-user",
+ "EntityType": "IAM_USER",
+ "CreatedTime": "2026-03-15T14:30:00Z"
+ }
+ ]
 }
 ```
 

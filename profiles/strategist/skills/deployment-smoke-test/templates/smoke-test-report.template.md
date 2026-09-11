@@ -2,7 +2,7 @@
 
 **Test Date**: {{test_date}}
 **Test Environment**: {{test_environment}}
-**Deployment Mode**: {{deployment_mode}}  <!-- Local | Container -->
+**Deployment Mode**: {{deployment_mode}} <!-- Local | Container -->
 **Commit Tested**: {{git_commit}}
 
 ---
@@ -45,8 +45,8 @@
 ### Phase 2: Environment Check
 
 <!-- Rows below are discovered per-project in Phase 0 of
-     references/smoke-test-sop.md — delete/add rows to match what was
-     actually checked for this repo instead of assuming a fixed tool list. -->
+ references/smoke-test-sop.md — delete/add rows to match what was
+ actually checked for this repo instead of assuming a fixed tool list. -->
 
 | Tool/Dependency | Required version (if any) | Status |
 |---|---|---|
@@ -95,7 +95,7 @@
 ### Route/Page Smoke Results
 
 <!-- Populate rows for whatever routes were actually checked in this
-     project (see scripts/route-check.sh) — don't assume a fixed set. -->
+ project (see scripts/route-check.sh) — don't assume a fixed set. -->
 
 | Route | Status | Details |
 |-------|--------|---------|
@@ -120,8 +120,8 @@
 ### Optional Functional Verification
 
 <!-- Only fill in if this phase was actually run; otherwise delete this
-     section rather than showing it as skipped, per SKILL.md Section 4's
-     execution rules. -->
+ section rather than showing it as skipped, per SKILL.md Section 4's
+ execution rules. -->
 
 - [ ] {{optional_check_1_description}} — {{optional_check_1_status}}
 - [ ] {{optional_check_2_description}} — {{optional_check_2_status}}
@@ -162,7 +162,7 @@ Commit Message: {{git_commit_message}}
 ## Service Status
 
 <!-- Rows correspond to whatever processes/containers this project
-     actually runs — discovered in Phase 0.2 of smoke-test-sop.md. -->
+ actually runs — discovered in Phase 0.2 of smoke-test-sop.md. -->
 
 | Service | Status | Endpoint |
 |---------|--------|----------|
@@ -181,11 +181,11 @@ Commit Message: {{git_commit_message}}
 
 ### If the Test Fails
 1. [ ] Check `references/troubleshooting.md` for the matching symptom
-   category.
+ category.
 2. [ ] Check local/container logs: {{log_locations}}
 3. [ ] Verify configuration file format and content.
 4. [ ] If needed, fully reset the environment using the project's own
-   documented stop/clean/reinstall/start sequence.
+ documented stop/clean/reinstall/start sequence.
 
 ---
 

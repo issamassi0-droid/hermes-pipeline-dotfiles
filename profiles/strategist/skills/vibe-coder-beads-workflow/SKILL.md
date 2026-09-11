@@ -1,10 +1,10 @@
 ---
 name: beads-workflow
 description: |
-  Proactive workflow for projects using beads issue tracker.
-  ACTIVATE AUTOMATICALLY when session starts in directory with .beads/.
-  Use when: starting work session, selecting tasks, completing tasks, creating subtasks.
-  Triggers: "какие задачи", "что делать", "готово", "done", "следующая задача", "создай задачу", "tasks", "next task", "pick task", "обнови задачи", "refresh", "sync".
+ Proactive workflow for projects using beads issue tracker.
+ ACTIVATE AUTOMATICALLY when session starts in directory with .beads/.
+ Use when: starting work session, selecting tasks, completing tasks, creating subtasks.
+ Triggers: "какие задачи", "что делать", "готово", "done", "следующая задача", "создай задачу", "tasks", "next task", "pick task", "обнови задачи", "refresh", "sync".
 ---
 
 # Beads Workflow
@@ -30,9 +30,9 @@ If `.beads/` does not exist — this skill is not applicable.
 ```bash
 # Check if CLAUDE.md exists and has Beads Workflow section
 if [ -f CLAUDE.md ]; then
-  grep -q "## Beads Workflow" CLAUDE.md && echo "configured" || echo "needs_section"
+ grep -q "## Beads Workflow" CLAUDE.md && echo "configured" || echo "needs_section"
 else
-  echo "no_claude_md"
+ echo "no_claude_md"
 fi
 ```
 
@@ -88,10 +88,10 @@ Use TodoWrite to break down the task into subtasks.
 - Track current task ID in conversation context
 - Use TodoWrite for subtask tracking within the beads task
 - When discovering subtasks that should be tracked separately:
-  ```bash
-  bd create "Subtask title" -t task -p 1
-  bd dep add <new-id> <parent-id> --type parent-child
-  ```
+ ```bash
+ bd create "Subtask title" -t task -p 1
+ bd dep add <new-id> <parent-id> --type parent-child
+ ```
 
 ## Task Completion
 
@@ -99,16 +99,16 @@ When user says "готово", "done", "сделал", "закрой задач�
 
 1. Confirm which task (if ambiguous)
 2. Ask for brief reason via AskUserQuestion:
-   - "Реализовано" (Implemented)
-   - "Исправлено" (Fixed)
-   - "Не актуально" (Not relevant)
-   - Other (custom input)
+ - "Реализовано" (Implemented)
+ - "Исправлено" (Fixed)
+ - "Не актуально" (Not relevant)
+ - Other (custom input)
 
 3. Close and sync:
-   ```bash
-   bd close <id> --reason "<reason>"
-   bd sync
-   ```
+ ```bash
+ bd close <id> --reason "<reason>"
+ bd sync
+ ```
 
 4. Offer next task from ready list
 

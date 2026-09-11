@@ -1,11 +1,11 @@
 ---
 name: detecting-t1055-process-injection-with-sysmon
 description: Detect process injection techniques (T1055) - including DLL injection, process
-  hollowing, and APC injection - by analyzing Sysmon Event IDs 1, 7, 8, 10, and 25 for
-  cross-process memory operations, remote thread creation, and anomalous DLL loads. Use
-  when hunting defense-evasion activity that hides code inside legitimate processes, investigating
-  an EDR alert on suspicious cross-process access, or validating Sysmon coverage for injection
-  detection.
+ hollowing, and APC injection - by analyzing Sysmon Event IDs 1, 7, 8, 10, and 25 for
+ cross-process memory operations, remote thread creation, and anomalous DLL loads. Use
+ when hunting defense-evasion activity that hides code inside legitimate processes, investigating
+ an EDR alert on suspicious cross-process access, or validating Sysmon coverage for injection
+ detection.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:
@@ -125,7 +125,7 @@ DeviceEvents
 | where InitiatingProcessFileName !in~ ("csrss.exe", "lsass.exe", "services.exe", "svchost.exe")
 | where FileName in~ ("svchost.exe", "explorer.exe", "lsass.exe", "winlogon.exe")
 | project Timestamp, DeviceName, InitiatingProcessFileName, InitiatingProcessCommandLine,
-    FileName, ProcessCommandLine
+ FileName, ProcessCommandLine
 ```
 
 ### Sigma Rule -- Process Injection Detection
@@ -133,26 +133,26 @@ DeviceEvents
 title: Process Injection via CreateRemoteThread into System Process
 status: stable
 logsource:
-    product: windows
-    category: create_remote_thread
+ product: windows
+ category: create_remote_thread
 detection:
-    selection:
-        TargetImage|endswith:
-            - '\svchost.exe'
-            - '\explorer.exe'
-            - '\lsass.exe'
-            - '\winlogon.exe'
-    filter_legitimate:
-        SourceImage|endswith:
-            - '\csrss.exe'
-            - '\lsass.exe'
-            - '\services.exe'
-            - '\MsMpEng.exe'
-    condition: selection and not filter_legitimate
+ selection:
+ TargetImage|endswith:
+ - '\svchost.exe'
+ - '\explorer.exe'
+ - '\lsass.exe'
+ - '\winlogon.exe'
+ filter_legitimate:
+ SourceImage|endswith:
+ - '\csrss.exe'
+ - '\lsass.exe'
+ - '\services.exe'
+ - '\MsMpEng.exe'
+ condition: selection and not filter_legitimate
 level: high
 tags:
-    - attack.defense_evasion
-    - attack.t1055
+ - attack.defense_evasion
+ - attack.t1055
 ```
 
 ## Common Scenarios

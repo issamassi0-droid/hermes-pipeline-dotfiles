@@ -2,9 +2,9 @@
 name: bfl-api
 description: BFL FLUX API integration guide covering endpoints, async polling patterns, rate limiting, error handling, webhooks, and regional endpoints with Python and TypeScript code examples.
 metadata:
-  author: Black Forest Labs
-  version: "1.0.0"
-  tags: flux, bfl, api, integration, webhooks, rate-limiting
+ author: Black Forest Labs
+ version: "1.0.0"
+ tags: flux, bfl, api, integration, webhooks, rate-limiting
 ---
 
 # BFL API Integration Guide
@@ -38,11 +38,11 @@ Result URLs from the API are temporary. Download images immediately after genera
 
 ### Base Endpoints
 
-| Region | Endpoint                | Use Case                    |
+| Region | Endpoint | Use Case |
 | ------ | ----------------------- | --------------------------- |
-| Global | `https://api.bfl.ai`    | Default, automatic failover |
-| EU     | `https://api.eu.bfl.ai` | GDPR compliance             |
-| US     | `https://api.us.bfl.ai` | US data residency           |
+| Global | `https://api.bfl.ai` | Default, automatic failover |
+| EU | `https://api.eu.bfl.ai` | GDPR compliance |
+| US | `https://api.us.bfl.ai` | US data residency |
 
 ### Model Endpoints & Pricing
 
@@ -50,27 +50,27 @@ Result URLs from the API are temporary. Download images immediately after genera
 
 #### FLUX.2 Models
 
-| Model             | Path                  | 1st MP | +MP  | 1MP T2I | 1MP I2I | Best For                           |
+| Model | Path | 1st MP | +MP | 1MP T2I | 1MP I2I | Best For |
 | ----------------- | --------------------- | ------ | ---- | ------- | ------- | ---------------------------------- |
-| FLUX.2 [klein] 4B | `/v1/flux-2-klein-4b` | 1.4c   | 0.1c | $0.014  | $0.015  | Real-time, high volume             |
-| FLUX.2 [klein] 9B | `/v1/flux-2-klein-9b` | 1.5c   | 0.2c | $0.015  | $0.017  | Balanced quality/speed             |
-| FLUX.2 [pro]      | `/v1/flux-2-pro`      | 3c     | 1.5c | $0.03   | $0.045  | Production, fast turnaround        |
-| FLUX.2 [max]      | `/v1/flux-2-max`      | 7c     | 3c   | $0.07   | $0.10   | Maximum quality                    |
-| FLUX.2 [flex]     | `/v1/flux-2-flex`     | 5c     | 5c   | $0.05   | $0.10   | Typography, adjustable controls    |
-| FLUX.2 [dev]      | -                     | -      | -    | Free    | Free    | Local development (non-commercial) |
+| FLUX.2 [klein] 4B | `/v1/flux-2-klein-4b` | 1.4c | 0.1c | $0.014 | $0.015 | Real-time, high volume |
+| FLUX.2 [klein] 9B | `/v1/flux-2-klein-9b` | 1.5c | 0.2c | $0.015 | $0.017 | Balanced quality/speed |
+| FLUX.2 [pro] | `/v1/flux-2-pro` | 3c | 1.5c | $0.03 | $0.045 | Production, fast turnaround |
+| FLUX.2 [max] | `/v1/flux-2-max` | 7c | 3c | $0.07 | $0.10 | Maximum quality |
+| FLUX.2 [flex] | `/v1/flux-2-flex` | 5c | 5c | $0.05 | $0.10 | Typography, adjustable controls |
+| FLUX.2 [dev] | - | - | - | Free | Free | Local development (non-commercial) |
 
 > **Pricing formula:** `(firstMP + (outputMP-1) * mpPrice) + (inputMP * mpPrice)` in cents
 
 #### FLUX.1 Models
 
-| Model                | Path                     | Price/Image | Best For                      |
+| Model | Path | Price/Image | Best For |
 | -------------------- | ------------------------ | ----------- | ----------------------------- |
-| FLUX.1 Kontext [pro] | `/v1/flux-kontext`       | $0.04       | Image editing with context    |
-| FLUX.1 Kontext [max] | `/v1/flux-kontext-max`   | $0.08       | Max quality editing           |
-| FLUX1.1 [pro]        | `/v1/flux-pro-1.1`       | $0.04       | Standard T2I, fast & reliable |
-| FLUX1.1 [pro] Ultra  | `/v1/flux-pro-1.1-ultra` | $0.06       | Ultra high-resolution         |
-| FLUX1.1 [pro] Raw    | `/v1/flux-pro-1.1-raw`   | $0.06       | Candid photography feel       |
-| FLUX.1 Fill [pro]    | `/v1/flux-pro-1.0-fill`  | $0.05       | Inpainting                    |
+| FLUX.1 Kontext [pro] | `/v1/flux-kontext` | $0.04 | Image editing with context |
+| FLUX.1 Kontext [max] | `/v1/flux-kontext-max` | $0.08 | Max quality editing |
+| FLUX1.1 [pro] | `/v1/flux-pro-1.1` | $0.04 | Standard T2I, fast & reliable |
+| FLUX1.1 [pro] Ultra | `/v1/flux-pro-1.1-ultra` | $0.06 | Ultra high-resolution |
+| FLUX1.1 [pro] Raw | `/v1/flux-pro-1.1-raw` | $0.06 | Candid photography feel |
+| FLUX.1 Fill [pro] | `/v1/flux-pro-1.0-fill` | $0.05 | Inpainting |
 
 > **Tip:** All FLUX.2 models support image editing via the `input_image` parameter - no separate editing endpoint needed. Use [bfl.ai/pricing](https://bfl.ai/pricing) calculator for exact costs at different resolutions.
 
@@ -82,25 +82,25 @@ Result URLs from the API are temporary. Download images immediately after genera
 
 ```bash
 curl -X POST "https://api.bfl.ai/v1/flux-2-pro" \
-  -H "x-key: $BFL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "Change the background to a sunset",
-    "input_image": "https://example.com/photo.jpg"
-  }'
+ -H "x-key: $BFL_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "prompt": "Change the background to a sunset",
+ "input_image": "https://example.com/photo.jpg"
+ }'
 ```
 
 **Multi-reference editing:**
 
 ```bash
 curl -X POST "https://api.bfl.ai/v1/flux-2-pro" \
-  -H "x-key: $BFL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "The person from image 1 in the environment from image 2",
-    "input_image": "https://example.com/person.jpg",
-    "input_image_2": "https://example.com/background.jpg"
-  }'
+ -H "x-key: $BFL_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "prompt": "The person from image 1 in the environment from image 2",
+ "input_image": "https://example.com/person.jpg",
+ "input_image_2": "https://example.com/background.jpg"
+ }'
 ```
 
 The API fetches URLs automatically. Both URL and base64 work, but URLs are recommended when available.
@@ -109,10 +109,10 @@ The API fetches URLs automatically. Both URL and base64 work, but URLs are recom
 
 FLUX.2 models support multiple input images for combining elements, style transfer, and character consistency:
 
-| Model                 | Max References |
+| Model | Max References |
 | --------------------- | -------------- |
-| FLUX.2 [klein]        | 4 images       |
-| FLUX.2 [pro/max/flex] | 8 images       |
+| FLUX.2 [klein] | 4 images |
+| FLUX.2 [pro/max/flex] | 8 images |
 
 **Parameters:** `input_image`, `input_image_2`, `input_image_3`, ... `input_image_8`
 
@@ -126,15 +126,15 @@ FLUX.2 models support multiple input images for combining elements, style transf
 
 ### Rate Limits
 
-| Tier                      | Concurrent Requests |
+| Tier | Concurrent Requests |
 | ------------------------- | ------------------- |
-| Standard (most endpoints) | 24                  |
+| Standard (most endpoints) | 24 |
 
 ### Polling vs Webhooks
 
-| Approach     | Use When                                                                             |
+| Approach | Use When |
 | ------------ | ------------------------------------------------------------------------------------ |
-| **Polling**  | Scripts, CLI tools, local development, single requests, simple integrations          |
+| **Polling** | Scripts, CLI tools, local development, single requests, simple integrations |
 | **Webhooks** | Production apps, high volume, server-to-server, when you need immediate notification |
 
 **Start with polling** - it's simpler and works everywhere. Switch to webhooks when you need to scale or want event-driven architecture.
@@ -159,10 +159,10 @@ echo $BFL_API_KEY
 
 1. **Get a key**: Go to https://dashboard.bfl.ai/get-started → Click **"Create Key"** → Select organization
 2. **Save to `.env`** (recommended for persistence):
-   ```bash
-   echo 'BFL_API_KEY=bfl_your_key_here' >> .env
-   echo '.env' >> .gitignore  # Don't commit secrets
-   ```
+ ```bash
+ echo 'BFL_API_KEY=bfl_your_key_here' >> .env
+ echo '.env' >> .gitignore # Don't commit secrets
+ ```
 
 See [references/api-key-setup.md](references/api-key-setup.md) for detailed setup instructions.
 
@@ -176,13 +176,13 @@ x-key: YOUR_API_KEY
 
 ```
 1. POST request to model endpoint
-   └─> Response: { "polling_url": "..." }
+ └─> Response: { "polling_url": "..." }
 
 2. GET polling_url (repeat until complete)
-   └─> Response: { "status": "Pending" | "Ready" | "Error", ... }
+ └─> Response: { "status": "Pending" | "Ready" | "Error", ... }
 
 3. When Ready, download result URL
-   └─> URL expires in 10 minutes - download immediately
+ └─> URL expires in 10 minutes - download immediately
 ```
 
 ## Related
@@ -213,9 +213,9 @@ x-key: YOUR_API_KEY
 
 ```bash
 curl -s -X POST "https://api.bfl.ai/v1/flux-2-pro" \
-  -H "x-key: $BFL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "A serene mountain landscape at sunset", "width": 1024, "height": 1024}'
+ -H "x-key: $BFL_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{"prompt": "A serene mountain landscape at sunset", "width": 1024, "height": 1024}'
 ```
 
 Response:
@@ -250,15 +250,15 @@ Combine elements from multiple images:
 
 ```bash
 curl -s -X POST "https://api.bfl.ai/v1/flux-2-pro" \
-  -H "x-key: $BFL_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "prompt": "The cat from image 1 sitting in the cozy room from image 2",
-    "input_image": "https://example.com/cat.jpg",
-    "input_image_2": "https://example.com/room.jpg",
-    "width": 1024,
-    "height": 1024
-  }'
+ -H "x-key: $BFL_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "prompt": "The cat from image 1 sitting in the cozy room from image 2",
+ "input_image": "https://example.com/cat.jpg",
+ "input_image_2": "https://example.com/room.jpg",
+ "width": 1024,
+ "height": 1024
+ }'
 ```
 
 Reference images by number in your prompt. See [Multi-Reference I2I](#multi-reference-i2i) for limits and patterns.

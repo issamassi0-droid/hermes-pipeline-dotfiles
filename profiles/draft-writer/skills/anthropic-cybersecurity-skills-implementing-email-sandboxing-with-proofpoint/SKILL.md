@@ -1,8 +1,8 @@
 ---
 name: implementing-email-sandboxing-with-proofpoint
 description: Email sandboxing detonates suspicious attachments and URLs in isolated
-  environments to detect zero-day malware and evasive phishing payloads. Proofpoint
-  Targeted Attack Protection (TAP) is an industry
+ environments to detect zero-day malware and evasive phishing payloads. Proofpoint
+ Targeted Attack Protection (TAP) is an industry
 domain: cybersecurity
 subdomain: phishing-defense
 tags:

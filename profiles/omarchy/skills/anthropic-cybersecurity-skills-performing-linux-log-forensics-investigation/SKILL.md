@@ -1,11 +1,11 @@
 ---
 name: performing-linux-log-forensics-investigation
 description: Perform forensic investigation of Linux system logs including syslog,
-  auth.log, systemd journal (via journalctl), kern.log, auditd, and application logs
-  to reconstruct user sessions, identify unauthorized access and privilege escalation,
-  trace lateral movement, and establish event timelines. Use when investigating a
-  suspected compromise of a Linux system and needing to analyze SSH, sudo, cron, or
-  kernel-level activity from plain-text or systemd journal logs.
+ auth.log, systemd journal (via journalctl), kern.log, auditd, and application logs
+ to reconstruct user sessions, identify unauthorized access and privilege escalation,
+ trace lateral movement, and establish event timelines. Use when investigating a
+ suspected compromise of a Linux system and needing to analyze SSH, sudo, cron, or
+ kernel-level activity from plain-text or systemd journal logs.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -119,7 +119,7 @@ journalctl -p err --output=json > errors.json
 
 # Boot-specific logs
 journalctl -b 0 --output=json > current_boot.json
-journalctl --list-boots  # List all recorded boot sessions
+journalctl --list-boots # List all recorded boot sessions
 ```
 
 ### Linux Audit Framework Analysis
@@ -141,8 +141,8 @@ aureport --login --start "02/01/2025"
 aureport --auth --failed
 
 # Search for specific user activity
-ausearch -ua 1001  # By UID
-ausearch -ua username  # By username
+ausearch -ua 1001 # By UID
+ausearch -ua username # By username
 ```
 
 ### Cron Job Investigation
@@ -174,124 +174,124 @@ from collections import defaultdict
 
 
 class LinuxLogForensicAnalyzer:
-    """Analyze Linux system logs for forensic investigation."""
+ """Analyze Linux system logs for forensic investigation."""
 
-    def __init__(self, log_dir: str, output_dir: str):
-        self.log_dir = log_dir
-        self.output_dir = output_dir
-        os.makedirs(output_dir, exist_ok=True)
+ def __init__(self, log_dir: str, output_dir: str):
+ self.log_dir = log_dir
+ self.output_dir = output_dir
+ os.makedirs(output_dir, exist_ok=True)
 
-    def parse_auth_log(self, auth_log_path: str) -> dict:
-        """Parse auth.log for authentication events."""
-        events = {
-            "successful_logins": [],
-            "failed_logins": [],
-            "sudo_commands": [],
-            "account_changes": [],
-            "ssh_sessions": []
-        }
+ def parse_auth_log(self, auth_log_path: str) -> dict:
+ """Parse auth.log for authentication events."""
+ events = {
+ "successful_logins": [],
+ "failed_logins": [],
+ "sudo_commands": [],
+ "account_changes": [],
+ "ssh_sessions": []
+ }
 
-        ssh_accepted = re.compile(
-            r'(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+sshd\[\d+\]:\s+Accepted\s+(\S+)\s+for\s+(\S+)\s+from\s+([\d.]+)'
-        )
-        ssh_failed = re.compile(
-            r'(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+sshd\[\d+\]:\s+Failed\s+password\s+for\s+(\S*)\s+from\s+([\d.]+)'
-        )
-        sudo_cmd = re.compile(
-            r'(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+sudo:\s+(\S+)\s+:.*COMMAND=(.*)'
-        )
-        useradd = re.compile(
-            r'(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+useradd\[\d+\]:\s+new user: name=(\S+)'
-        )
+ ssh_accepted = re.compile(
+ r'(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+sshd\[\d+\]:\s+Accepted\s+(\S+)\s+for\s+(\S+)\s+from\s+([\d.]+)'
+ )
+ ssh_failed = re.compile(
+ r'(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+sshd\[\d+\]:\s+Failed\s+password\s+for\s+(\S*)\s+from\s+([\d.]+)'
+ )
+ sudo_cmd = re.compile(
+ r'(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+sudo:\s+(\S+)\s+:.*COMMAND=(.*)'
+ )
+ useradd = re.compile(
+ r'(\w+\s+\d+\s+[\d:]+)\s+(\S+)\s+useradd\[\d+\]:\s+new user: name=(\S+)'
+ )
 
-        with open(auth_log_path, "r", errors="replace") as f:
-            for line in f:
-                m = ssh_accepted.search(line)
-                if m:
-                    events["successful_logins"].append({
-                        "timestamp": m.group(1), "host": m.group(2),
-                        "method": m.group(3), "user": m.group(4), "source_ip": m.group(5)
-                    })
-                    continue
+ with open(auth_log_path, "r", errors="replace") as f:
+ for line in f:
+ m = ssh_accepted.search(line)
+ if m:
+ events["successful_logins"].append({
+ "timestamp": m.group(1), "host": m.group(2),
+ "method": m.group(3), "user": m.group(4), "source_ip": m.group(5)
+ })
+ continue
 
-                m = ssh_failed.search(line)
-                if m:
-                    events["failed_logins"].append({
-                        "timestamp": m.group(1), "host": m.group(2),
-                        "user": m.group(3), "source_ip": m.group(4)
-                    })
-                    continue
+ m = ssh_failed.search(line)
+ if m:
+ events["failed_logins"].append({
+ "timestamp": m.group(1), "host": m.group(2),
+ "user": m.group(3), "source_ip": m.group(4)
+ })
+ continue
 
-                m = sudo_cmd.search(line)
-                if m:
-                    events["sudo_commands"].append({
-                        "timestamp": m.group(1), "host": m.group(2),
-                        "user": m.group(3), "command": m.group(4).strip()
-                    })
-                    continue
+ m = sudo_cmd.search(line)
+ if m:
+ events["sudo_commands"].append({
+ "timestamp": m.group(1), "host": m.group(2),
+ "user": m.group(3), "command": m.group(4).strip()
+ })
+ continue
 
-                m = useradd.search(line)
-                if m:
-                    events["account_changes"].append({
-                        "timestamp": m.group(1), "host": m.group(2),
-                        "new_user": m.group(3)
-                    })
+ m = useradd.search(line)
+ if m:
+ events["account_changes"].append({
+ "timestamp": m.group(1), "host": m.group(2),
+ "new_user": m.group(3)
+ })
 
-        return events
+ return events
 
-    def detect_brute_force(self, auth_events: dict, threshold: int = 10) -> list:
-        """Detect brute force attempts from auth log data."""
-        ip_failures = defaultdict(int)
-        for event in auth_events.get("failed_logins", []):
-            ip_failures[event["source_ip"]] += 1
+ def detect_brute_force(self, auth_events: dict, threshold: int = 10) -> list:
+ """Detect brute force attempts from auth log data."""
+ ip_failures = defaultdict(int)
+ for event in auth_events.get("failed_logins", []):
+ ip_failures[event["source_ip"]] += 1
 
-        brute_force = []
-        for ip, count in ip_failures.items():
-            if count >= threshold:
-                brute_force.append({"source_ip": ip, "failed_attempts": count})
+ brute_force = []
+ for ip, count in ip_failures.items():
+ if count >= threshold:
+ brute_force.append({"source_ip": ip, "failed_attempts": count})
 
-        return sorted(brute_force, key=lambda x: x["failed_attempts"], reverse=True)
+ return sorted(brute_force, key=lambda x: x["failed_attempts"], reverse=True)
 
-    def generate_report(self, auth_log_path: str) -> str:
-        """Generate comprehensive forensic analysis report."""
-        auth_events = self.parse_auth_log(auth_log_path)
-        brute_force = self.detect_brute_force(auth_events)
+ def generate_report(self, auth_log_path: str) -> str:
+ """Generate comprehensive forensic analysis report."""
+ auth_events = self.parse_auth_log(auth_log_path)
+ brute_force = self.detect_brute_force(auth_events)
 
-        report = {
-            "analysis_timestamp": datetime.now().isoformat(),
-            "log_source": auth_log_path,
-            "summary": {
-                "successful_logins": len(auth_events["successful_logins"]),
-                "failed_logins": len(auth_events["failed_logins"]),
-                "sudo_commands": len(auth_events["sudo_commands"]),
-                "account_changes": len(auth_events["account_changes"]),
-                "brute_force_sources": len(brute_force)
-            },
-            "brute_force_detected": brute_force,
-            "auth_events": auth_events
-        }
+ report = {
+ "analysis_timestamp": datetime.now().isoformat(),
+ "log_source": auth_log_path,
+ "summary": {
+ "successful_logins": len(auth_events["successful_logins"]),
+ "failed_logins": len(auth_events["failed_logins"]),
+ "sudo_commands": len(auth_events["sudo_commands"]),
+ "account_changes": len(auth_events["account_changes"]),
+ "brute_force_sources": len(brute_force)
+ },
+ "brute_force_detected": brute_force,
+ "auth_events": auth_events
+ }
 
-        report_path = os.path.join(self.output_dir, "linux_log_forensics.json")
-        with open(report_path, "w") as f:
-            json.dump(report, f, indent=2)
+ report_path = os.path.join(self.output_dir, "linux_log_forensics.json")
+ with open(report_path, "w") as f:
+ json.dump(report, f, indent=2)
 
-        print(f"[*] Successful logins: {report['summary']['successful_logins']}")
-        print(f"[*] Failed logins: {report['summary']['failed_logins']}")
-        print(f"[*] Sudo commands: {report['summary']['sudo_commands']}")
-        print(f"[*] Brute force sources: {report['summary']['brute_force_sources']}")
-        return report_path
+ print(f"[*] Successful logins: {report['summary']['successful_logins']}")
+ print(f"[*] Failed logins: {report['summary']['failed_logins']}")
+ print(f"[*] Sudo commands: {report['summary']['sudo_commands']}")
+ print(f"[*] Brute force sources: {report['summary']['brute_force_sources']}")
+ return report_path
 
 
 def main():
-    if len(sys.argv) < 3:
-        print("Usage: python process.py <auth_log_path> <output_dir>")
-        sys.exit(1)
-    analyzer = LinuxLogForensicAnalyzer(os.path.dirname(sys.argv[1]), sys.argv[2])
-    analyzer.generate_report(sys.argv[1])
+ if len(sys.argv) < 3:
+ print("Usage: python process.py <auth_log_path> <output_dir>")
+ sys.exit(1)
+ analyzer = LinuxLogForensicAnalyzer(os.path.dirname(sys.argv[1]), sys.argv[2])
+ analyzer.generate_report(sys.argv[1])
 
 
 if __name__ == "__main__":
-    main()
+ main()
 ```
 
 ## References

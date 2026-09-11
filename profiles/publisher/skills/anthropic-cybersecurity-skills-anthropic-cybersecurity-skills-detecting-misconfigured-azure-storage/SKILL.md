@@ -63,18 +63,18 @@ List all storage accounts across subscriptions and assess their baseline securit
 ```bash
 # List all storage accounts across all subscriptions
 az storage account list \
-  --query "[].{Name:name, ResourceGroup:resourceGroup, Location:location, Kind:kind, Sku:sku.name, HttpsOnly:enableHttpsTrafficOnly, MinTLS:minimumTlsVersion, PublicAccess:allowBlobPublicAccess}" \
-  -o table
+ --query "[].{Name:name, ResourceGroup:resourceGroup, Location:location, Kind:kind, Sku:sku.name, HttpsOnly:enableHttpsTrafficOnly, MinTLS:minimumTlsVersion, PublicAccess:allowBlobPublicAccess}" \
+ -o table
 
 # Use Resource Graph for cross-subscription enumeration
 az graph query -q "
-  Resources
-  | where type == 'microsoft.storage/storageaccounts'
-  | project name, resourceGroup, subscriptionId, location,
-    properties.allowBlobPublicAccess,
-    properties.enableHttpsTrafficOnly,
-    properties.minimumTlsVersion,
-    properties.networkAcls.defaultAction
+ Resources
+ | where type == 'microsoft.storage/storageaccounts'
+ | project name, resourceGroup, subscriptionId, location,
+ properties.allowBlobPublicAccess,
+ properties.enableHttpsTrafficOnly,
+ properties.minimumTlsVersion,
+ properties.networkAcls.defaultAction
 " -o table
 ```
 
@@ -85,19 +85,19 @@ Identify storage accounts and containers allowing anonymous public access to blo
 ```bash
 # Check each storage account for public blob access setting
 for account in $(az storage account list --query "[].name" -o tsv); do
-  public=$(az storage account show --name "$account" --query "allowBlobPublicAccess" -o tsv)
-  echo "$account: allowBlobPublicAccess=$public"
+ public=$(az storage account show --name "$account" --query "allowBlobPublicAccess" -o tsv)
+ echo "$account: allowBlobPublicAccess=$public"
 done
 
 # List containers with public access level set
 for account in $(az storage account list --query "[?allowBlobPublicAccess==true].name" -o tsv); do
-  key=$(az storage account keys list --account-name "$account" --query "[0].value" -o tsv)
-  echo "=== $account ==="
-  az storage container list \
-    --account-name "$account" \
-    --account-key "$key" \
-    --query "[?properties.publicAccess!='off' && properties.publicAccess!=null].{Container:name, PublicAccess:properties.publicAccess}" \
-    -o table 2>/dev/null
+ key=$(az storage account keys list --account-name "$account" --query "[0].value" -o tsv)
+ echo "=== $account ==="
+ az storage container list \
+ --account-name "$account" \
+ --account-key "$key" \
+ --query "[?properties.publicAccess!='off' && properties.publicAccess!=null].{Container:name, PublicAccess:properties.publicAccess}" \
+ -o table 2>/dev/null
 done
 
 # Test anonymous access to discovered public containers
@@ -111,21 +111,21 @@ Check for storage accounts accessible from all networks versus those restricted 
 ```bash
 # Find storage accounts with default network action set to Allow (open to all networks)
 az storage account list \
-  --query "[?networkRuleSet.defaultAction=='Allow'].{Name:name, DefaultAction:networkRuleSet.defaultAction, VNetRules:networkRuleSet.virtualNetworkRules}" \
-  -o table
+ --query "[?networkRuleSet.defaultAction=='Allow'].{Name:name, DefaultAction:networkRuleSet.defaultAction, VNetRules:networkRuleSet.virtualNetworkRules}" \
+ -o table
 
 # Detailed network rule audit
 for account in $(az storage account list --query "[].name" -o tsv); do
-  echo "=== $account ==="
-  az storage account show --name "$account" \
-    --query "{DefaultAction:networkRuleSet.defaultAction, IPRules:networkRuleSet.ipRules[*].ipAddressOrRange, VNetRules:networkRuleSet.virtualNetworkRules[*].virtualNetworkResourceId, Bypass:networkRuleSet.bypass}" \
-    -o json
+ echo "=== $account ==="
+ az storage account show --name "$account" \
+ --query "{DefaultAction:networkRuleSet.defaultAction, IPRules:networkRuleSet.ipRules[*].ipAddressOrRange, VNetRules:networkRuleSet.virtualNetworkRules[*].virtualNetworkResourceId, Bypass:networkRuleSet.bypass}" \
+ -o json
 done
 
 # Find storage accounts with private endpoints
 az network private-endpoint list \
-  --query "[?privateLinkServiceConnections[0].groupIds[0]=='blob'].{Name:name, Storage:privateLinkServiceConnections[0].privateLinkServiceId}" \
-  -o table
+ --query "[?privateLinkServiceConnections[0].groupIds[0]=='blob'].{Name:name, Storage:privateLinkServiceConnections[0].privateLinkServiceId}" \
+ -o table
 ```
 
 ### Step 4: Verify Encryption Settings and Key Management
@@ -135,21 +135,21 @@ Ensure all storage accounts use encryption at rest with appropriate key manageme
 ```bash
 # Check encryption configuration for all storage accounts
 for account in $(az storage account list --query "[].name" -o tsv); do
-  echo "=== $account ==="
-  az storage account show --name "$account" \
-    --query "{Encryption:encryption.services, KeySource:encryption.keySource, KeyVaultUri:encryption.keyVaultProperties.keyVaultUri, InfraEncryption:encryption.requireInfrastructureEncryption}" \
-    -o json
+ echo "=== $account ==="
+ az storage account show --name "$account" \
+ --query "{Encryption:encryption.services, KeySource:encryption.keySource, KeyVaultUri:encryption.keyVaultProperties.keyVaultUri, InfraEncryption:encryption.requireInfrastructureEncryption}" \
+ -o json
 done
 
 # Find accounts without infrastructure encryption (double encryption)
 az storage account list \
-  --query "[?encryption.requireInfrastructureEncryption!=true].{Name:name, KeySource:encryption.keySource}" \
-  -o table
+ --query "[?encryption.requireInfrastructureEncryption!=true].{Name:name, KeySource:encryption.keySource}" \
+ -o table
 
 # Check for accounts using TLS version below 1.2
 az storage account list \
-  --query "[?minimumTlsVersion!='TLS1_2'].{Name:name, TLS:minimumTlsVersion}" \
-  -o table
+ --query "[?minimumTlsVersion!='TLS1_2'].{Name:name, TLS:minimumTlsVersion}" \
+ -o table
 ```
 
 ### Step 5: Audit Shared Access Signatures and Access Keys
@@ -159,25 +159,25 @@ Identify overly permissive SAS tokens and check for access key usage patterns.
 ```bash
 # Check when storage account keys were last rotated
 for account in $(az storage account list --query "[].name" -o tsv); do
-  echo "=== $account ==="
-  az storage account keys list \
-    --account-name "$account" \
-    --query "[].{KeyName:keyName, CreationTime:creationTime}" \
-    -o table
+ echo "=== $account ==="
+ az storage account keys list \
+ --account-name "$account" \
+ --query "[].{KeyName:keyName, CreationTime:creationTime}" \
+ -o table
 done
 
 # Check if storage account allows shared key access (should be disabled for AAD-only)
 az storage account list \
-  --query "[].{Name:name, AllowSharedKeyAccess:allowSharedKeyAccess}" \
-  -o table
+ --query "[].{Name:name, AllowSharedKeyAccess:allowSharedKeyAccess}" \
+ -o table
 
 # Review stored access policies on containers (SAS governance)
 for account in $(az storage account list --query "[].name" -o tsv); do
-  key=$(az storage account keys list --account-name "$account" --query "[0].value" -o tsv 2>/dev/null)
-  for container in $(az storage container list --account-name "$account" --account-key "$key" --query "[].name" -o tsv 2>/dev/null); do
-    policies=$(az storage container policy list --container-name "$container" --account-name "$account" --account-key "$key" 2>/dev/null)
-    [ -n "$policies" ] && echo "$account/$container: $policies"
-  done
+ key=$(az storage account keys list --account-name "$account" --query "[0].value" -o tsv 2>/dev/null)
+ for container in $(az storage container list --account-name "$account" --account-key "$key" --query "[].name" -o tsv 2>/dev/null); do
+ policies=$(az storage container policy list --container-name "$container" --account-name "$account" --account-key "$key" 2>/dev/null)
+ [ -n "$policies" ] && echo "$account/$container: $policies"
+ done
 done
 ```
 
@@ -188,21 +188,21 @@ Verify that storage analytics logging and Azure Monitor diagnostic settings are 
 ```bash
 # Check diagnostic settings for storage accounts
 for account in $(az storage account list --query "[].name" -o tsv); do
-  rg=$(az storage account show --name "$account" --query "resourceGroup" -o tsv)
-  echo "=== $account ==="
-  az monitor diagnostic-settings list \
-    --resource "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$rg/providers/Microsoft.Storage/storageAccounts/$account" \
-    --query "[].{Name:name, Logs:logs[*].category, Metrics:metrics[*].category}" \
-    -o json 2>/dev/null || echo "  No diagnostic settings configured"
+ rg=$(az storage account show --name "$account" --query "resourceGroup" -o tsv)
+ echo "=== $account ==="
+ az monitor diagnostic-settings list \
+ --resource "/subscriptions/$(az account show --query id -o tsv)/resourceGroups/$rg/providers/Microsoft.Storage/storageAccounts/$account" \
+ --query "[].{Name:name, Logs:logs[*].category, Metrics:metrics[*].category}" \
+ -o json 2>/dev/null || echo " No diagnostic settings configured"
 done
 
 # Check blob service logging properties
 for account in $(az storage account list --query "[].name" -o tsv); do
-  key=$(az storage account keys list --account-name "$account" --query "[0].value" -o tsv 2>/dev/null)
-  az storage logging show \
-    --account-name "$account" \
-    --account-key "$key" \
-    --services b 2>/dev/null
+ key=$(az storage account keys list --account-name "$account" --query "[0].value" -o tsv 2>/dev/null)
+ az storage logging show \
+ --account-name "$account" \
+ --account-key "$key" \
+ --services b 2>/dev/null
 done
 ```
 
@@ -254,24 +254,24 @@ Storage Accounts Audited: 24
 
 CRITICAL FINDINGS:
 [STOR-001] Public Blob Access Enabled
-  Account: webapp-static-prod
-  Container: uploads (PublicAccess: blob)
-  Risk: Anonymous users can read all blobs in the container
-  Contents: 1,247 files including .env and config.json
-  Remediation: Disable allowBlobPublicAccess, use Azure CDN with SAS
+ Account: webapp-static-prod
+ Container: uploads (PublicAccess: blob)
+ Risk: Anonymous users can read all blobs in the container
+ Contents: 1,247 files including .env and config.json
+ Remediation: Disable allowBlobPublicAccess, use Azure CDN with SAS
 
 [STOR-002] Storage Account Open to All Networks
-  Account: data-lake-analytics
-  Default Action: Allow (no network restrictions)
-  Risk: Accessible from any network including the internet
-  Remediation: Set default action to Deny, add VNet rules
+ Account: data-lake-analytics
+ Default Action: Allow (no network restrictions)
+ Risk: Accessible from any network including the internet
+ Remediation: Set default action to Deny, add VNet rules
 
 SUMMARY:
-  Public blob access enabled:           3 / 24
-  Open to all networks:                 8 / 24
-  Missing infrastructure encryption:   12 / 24
-  TLS version below 1.2:                2 / 24
-  No diagnostic logging:               10 / 24
-  Shared key access enabled:           18 / 24
-  Keys not rotated in 90+ days:        14 / 24
+ Public blob access enabled: 3 / 24
+ Open to all networks: 8 / 24
+ Missing infrastructure encryption: 12 / 24
+ TLS version below 1.2: 2 / 24
+ No diagnostic logging: 10 / 24
+ Shared key access enabled: 18 / 24
+ Keys not rotated in 90+ days: 14 / 24
 ```

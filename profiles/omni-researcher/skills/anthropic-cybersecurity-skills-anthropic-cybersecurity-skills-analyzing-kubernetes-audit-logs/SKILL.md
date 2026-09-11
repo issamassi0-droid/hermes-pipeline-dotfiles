@@ -1,15 +1,15 @@
 ---
 name: analyzing-kubernetes-audit-logs
 description: >-
-  Parses Kubernetes API server audit logs (JSON lines) to detect exec-into-pod, secret access,
-  RBAC modifications, privileged pod creation, and anonymous API access, and builds SIEM
-  detection rules from the event patterns. Use when investigating a suspected cluster
-  compromise, reconstructing what an attacker did through the API server, or writing
-  Kubernetes-specific detection content. Keywords: audit policy, audit log, kube-apiserver,
-  exec into pod, RBAC change, anonymous access, detection rules. Do not use for syscall-level
-  detection inside a running container - use detecting-container-runtime-threats-with-falco.
+ Parses Kubernetes API server audit logs (JSON lines) to detect exec-into-pod, secret access,
+ RBAC modifications, privileged pod creation, and anonymous API access, and builds SIEM
+ detection rules from the event patterns. Use when investigating a suspected cluster
+ compromise, reconstructing what an attacker did through the API server, or writing
+ Kubernetes-specific detection content. Keywords: audit policy, audit log, kube-apiserver,
+ exec into pod, RBAC change, anonymous access, detection rules. Do not use for syscall-level
+ detection inside a running container - use detecting-container-runtime-threats-with-falco.
 
-  '
+ '
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -61,13 +61,13 @@ events including unauthorized access, privilege escalation, and data exfiltratio
 import json
 
 with open("/var/log/kubernetes/audit.log") as f:
-    for line in f:
-        event = json.loads(line)
-        verb = event.get("verb")
-        resource = event.get("objectRef", {}).get("resource")
-        user = event.get("user", {}).get("username")
-        if verb == "create" and resource == "pods/exec":
-            print(f"Pod exec by {user}")
+ for line in f:
+ event = json.loads(line)
+ verb = event.get("verb")
+ resource = event.get("objectRef", {}).get("resource")
+ user = event.get("user", {}).get("username")
+ if verb == "create" and resource == "pods/exec":
+ print(f"Pod exec by {user}")
 ```
 
 Key events to detect:
@@ -82,5 +82,5 @@ Key events to detect:
 ```python
 # Detect secret enumeration
 if verb in ("get", "list") and resource == "secrets":
-    print(f"Secret access: {user} -> {event['objectRef'].get('name')}")
+ print(f"Secret access: {user} -> {event['objectRef'].get('name')}")
 ```

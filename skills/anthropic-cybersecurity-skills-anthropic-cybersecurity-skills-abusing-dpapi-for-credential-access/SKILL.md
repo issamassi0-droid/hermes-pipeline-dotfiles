@@ -60,8 +60,8 @@ msbuild SharpDPAPI.sln /p:Configuration=Release
 # https://github.com/gentilkiwi/mimikatz/releases
 
 # Linux remote/offline triage (Impacket)
-pipx install impacket            # provides dpapi.py / impacket-dpapi
-pipx install donpapi             # https://github.com/login-securite/DonPAPI
+pipx install impacket # provides dpapi.py / impacket-dpapi
+pipx install donpapi # https://github.com/login-securite/DonPAPI
 ```
 
 ## Objectives

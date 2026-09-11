@@ -54,11 +54,11 @@ Install the tooling:
 git clone https://github.com/rustfoundation/typomania
 cd typomania
 cargo build --release
-cargo run --example registry   # demonstrates the Harness against a fake registry
+cargo run --example registry # demonstrates the Harness against a fake registry
 
 # OSSGadget (Microsoft) — cross-ecosystem squat finder
 # Download a release binary, then:
-oss-find-squats pkg:npm/requests          # purl syntax
+oss-find-squats pkg:npm/requests # purl syntax
 oss-find-squats pkg:pypi/reqeusts
 
 # pypi-scan (IQTLabs) — PyPI typosquat enumerator
@@ -94,30 +94,30 @@ The detector needs a reference set of legitimate names to compare against. Pull 
 ```bash
 # PyPI: top packages dataset (Hugo van Kemenade's top-pypi-packages)
 curl -s https://hugovk.github.io/top-pypi-packages/top-pypi-packages.min.json \
-  -o top-pypi-packages.json
+ -o top-pypi-packages.json
 
 # npm: query the registry's most-depended-upon search
 curl -s 'https://registry.npmjs.org/-/v1/search?text=not:unstable&popularity=1.0&size=250' \
-  -o npm-top.json
+ -o npm-top.json
 
 # crates.io: top crates by downloads
 curl -s 'https://crates.io/api/v1/crates?sort=downloads&per_page=100' \
-  -H 'User-Agent: typosquat-screen (security@example.com)' -o crates-top.json
+ -H 'User-Agent: typosquat-screen (security@example.com)' -o crates-top.json
 ```
 
 ### Step 2: Generate candidate squats with the standard mutation primitives
 typomania/typogard apply a fixed set of name transformations that mirror real attacker behavior. Reproduce them to understand what a screen must catch:
 
 ```text
-1. Repeated characters     requests  -> reqquests
-2. Omitted characters      requests  -> requsts
-3. Swapped/transposed      requests  -> reqeusts
-4. Swapped words           python-dateutil -> dateutil-python
-5. Common typos (1-edit)   requests  -> rewuests   (keyboard adjacency)
-6. Homophones / vowel swap requests  -> requeasts
-7. Version / suffix tricks lodash    -> lodashs, lodash-js
-8. Delimiter swaps         cross-env -> crossenv, cross_env
-9. Scope confusion (npm)   @types/node -> types-node
+1. Repeated characters requests -> reqquests
+2. Omitted characters requests -> requsts
+3. Swapped/transposed requests -> reqeusts
+4. Swapped words python-dateutil -> dateutil-python
+5. Common typos (1-edit) requests -> rewuests (keyboard adjacency)
+6. Homophones / vowel swap requests -> requeasts
+7. Version / suffix tricks lodash -> lodashs, lodash-js
+8. Delimiter swaps cross-env -> crossenv, cross_env
+9. Scope confusion (npm) @types/node -> types-node
 ```
 
 Run typomania's harness, which implements these as reusable primitives behind the `Corpus` and `Harness` traits:
@@ -157,14 +157,14 @@ A near-miss name is only suspicious if it is also young, low-download, or ships 
 ```bash
 # npm package metadata: creation time, maintainers, scripts
 curl -s https://registry.npmjs.org/loadsh | \
-  python -c 'import sys,json;d=json.load(sys.stdin);v=d["dist-tags"]["latest"];print("created:",d["time"]["created"]);print("scripts:",d["versions"][v].get("scripts",{}))'
+ python -c 'import sys,json;d=json.load(sys.stdin);v=d["dist-tags"]["latest"];print("created:",d["time"]["created"]);print("scripts:",d["versions"][v].get("scripts",{}))'
 
 # npm download counts (last week)
 curl -s https://api.npmjs.org/downloads/point/last-week/loadsh
 
 # PyPI JSON API: release history and author
 curl -s https://pypi.org/pypi/reqeusts/json | \
-  python -c 'import sys,json;d=json.load(sys.stdin);i=d["info"];print(i["name"],i["author"],i["home_page"]);print("releases:",list(d["releases"].keys()))'
+ python -c 'import sys,json;d=json.load(sys.stdin);i=d["info"];print(i["name"],i["author"],i["home_page"]);print("releases:",list(d["releases"].keys()))'
 ```
 
 ### Step 6: Score, triage, and confirm
@@ -185,14 +185,14 @@ Add a blocking gate that screens every new dependency name introduced by a PR:
 name: typosquat-gate
 on: [pull_request]
 jobs:
-  screen:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Screen new dependencies
-        run: |
-          git diff origin/${{ github.base_ref }}...HEAD -- package.json requirements.txt \
-            | grep '^+' | python scripts/agent.py screen --ecosystem npm --corpus top.json --stdin
+ screen:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - name: Screen new dependencies
+ run: |
+ git diff origin/${{ github.base_ref }}...HEAD -- package.json requirements.txt \
+ | grep '^+' | python scripts/agent.py screen --ecosystem npm --corpus top.json --stdin
 ```
 
 ## Tools and Resources

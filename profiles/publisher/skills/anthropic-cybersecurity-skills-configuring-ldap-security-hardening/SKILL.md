@@ -1,10 +1,10 @@
 ---
 name: configuring-ldap-security-hardening
 description: Hardens LDAP directory services against credential harvesting, LDAP
-  injection, anonymous binding, and channel-binding bypass by enforcing LDAPS, channel
-  binding, and LDAP signing. Use when securing an LDAP or Active Directory environment
-  against these attack classes or auditing directory service configurations for
-  these vulnerabilities.
+ injection, anonymous binding, and channel-binding bypass by enforcing LDAPS, channel
+ binding, and LDAP signing. Use when securing an LDAP or Active Directory environment
+ against these attack classes or auditing directory service configurations for
+ these vulnerabilities.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -29,27 +29,27 @@ mitre_attack:
 - T1040
 - T1078.002
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  techniques:
-  - id: T1110.003
-    name: 'Brute Force: Password Spraying'
-    tactic: initial-access
-    source: attack
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: T1557
-    name: Adversary-in-the-Middle
-    tactic: positioning
-    source: attack
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ techniques:
+ - id: T1110.003
+ name: 'Brute Force: Password Spraying'
+ tactic: initial-access
+ source: attack
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: T1557
+ name: Adversary-in-the-Middle
+ tactic: positioning
+ source: attack
 ---
 # Configuring LDAP Security Hardening
 

@@ -1,10 +1,10 @@
 ---
 name: implementing-stix-taxii-feed-integration
 description: Implements a STIX 2.1/TAXII 2.1 threat-intelligence feed consumer and
-  producer in Python, covering TAXII server discovery, collection polling, parsing
-  STIX bundles with the stix2 library, and standing up a local TAXII server with Medallion.
-  Use when integrating a STIX/TAXII CTI feed into a SIEM or TIP, writing a TAXII client
-  to poll for new indicators, or setting up TAXII collections for indicator exchange.
+ producer in Python, covering TAXII server discovery, collection polling, parsing
+ STIX bundles with the stix2 library, and standing up a local TAXII server with Medallion.
+ Use when integrating a STIX/TAXII CTI feed into a SIEM or TIP, writing a TAXII client
+ to poll for new indicators, or setting up TAXII collections for indicator exchange.
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -88,14 +88,14 @@ print(f"Description: {server.description}")
 
 # List API roots
 for api_root in server.api_roots:
-    print(f"\nAPI Root: {api_root.title}")
-    print(f"  URL: {api_root.url}")
+ print(f"\nAPI Root: {api_root.title}")
+ print(f" URL: {api_root.url}")
 
-    # List collections
-    for collection in api_root.collections:
-        print(f"  Collection: {collection.title} (ID: {collection.id})")
-        print(f"    Can Read: {collection.can_read}")
-        print(f"    Can Write: {collection.can_write}")
+ # List collections
+ for collection in api_root.collections:
+ print(f" Collection: {collection.title} (ID: {collection.id})")
+ print(f" Can Read: {collection.can_read}")
+ print(f" Can Write: {collection.can_write}")
 ```
 
 ### Step 2: Fetch STIX Objects from Collection
@@ -107,9 +107,9 @@ import json
 # Connect to Enterprise ATT&CK collection
 ENTERPRISE_ATTACK_ID = "95ecc380-afe9-11e4-9b6c-751b66dd541e"
 collection = Collection(
-    f"https://cti-taxii.mitre.org/stix/collections/{ENTERPRISE_ATTACK_ID}/",
-    user="",
-    password="",
+ f"https://cti-taxii.mitre.org/stix/collections/{ENTERPRISE_ATTACK_ID}/",
+ user="",
+ password="",
 )
 
 print(f"Collection: {collection.title}")
@@ -117,20 +117,20 @@ print(f"Collection: {collection.title}")
 # Fetch all objects (paginated)
 all_objects = []
 for envelope in as_pages(collection.get_objects, per_request=50):
-    objects = envelope.get("objects", [])
-    all_objects.extend(objects)
-    print(f"  Fetched {len(objects)} objects (total: {len(all_objects)})")
+ objects = envelope.get("objects", [])
+ all_objects.extend(objects)
+ print(f" Fetched {len(objects)} objects (total: {len(all_objects)})")
 
 print(f"\nTotal objects retrieved: {len(all_objects)}")
 
 # Categorize by type
 type_counts = {}
 for obj in all_objects:
-    obj_type = obj.get("type", "unknown")
-    type_counts[obj_type] = type_counts.get(obj_type, 0) + 1
+ obj_type = obj.get("type", "unknown")
+ type_counts[obj_type] = type_counts.get(obj_type, 0) + 1
 
 for obj_type, count in sorted(type_counts.items()):
-    print(f"  {obj_type}: {count}")
+ print(f" {obj_type}: {count}")
 ```
 
 ### Step 3: Parse STIX 2.1 Objects with stix2 Library
@@ -146,7 +146,7 @@ indicators = store.query([Filter("type", "=", "indicator")])
 print(f"Indicators: {len(indicators)}")
 
 for ind in indicators[:5]:
-    print(f"  {ind.name}: {ind.pattern}")
+ print(f" {ind.name}: {ind.pattern}")
 
 # Query for malware
 malware_list = store.query([Filter("type", "=", "malware")])
@@ -158,23 +158,23 @@ print(f"Threat actors: {len(actors)}")
 
 # Find relationships for a specific object
 def get_related(store, source_id):
-    relationships = store.query([
-        Filter("type", "=", "relationship"),
-        Filter("source_ref", "=", source_id),
-    ])
-    return relationships
+ relationships = store.query([
+ Filter("type", "=", "relationship"),
+ Filter("source_ref", "=", source_id),
+ ])
+ return relationships
 
 # Example: Get all techniques used by APT28
 apt28 = store.query([
-    Filter("type", "=", "intrusion-set"),
-    Filter("name", "=", "APT28"),
+ Filter("type", "=", "intrusion-set"),
+ Filter("name", "=", "APT28"),
 ])
 if apt28:
-    rels = get_related(store, apt28[0].id)
-    for rel in rels:
-        target = store.get(rel.target_ref)
-        if target:
-            print(f"  {rel.relationship_type} -> {target.name} ({target.type})")
+ rels = get_related(store, apt28[0].id)
+ for rel in rels:
+ target = store.get(rel.target_ref)
+ if target:
+ print(f" {rel.relationship_type} -> {target.name} ({target.type})")
 ```
 
 ### Step 4: Implement Custom TAXII Consumer
@@ -186,72 +186,72 @@ from datetime import datetime, timedelta
 import json
 
 class TAXIIConsumer:
-    """Consume STIX/TAXII 2.1 feeds and extract IOCs."""
+ """Consume STIX/TAXII 2.1 feeds and extract IOCs."""
 
-    def __init__(self, collection_url, user="", password=""):
-        self.collection = Collection(collection_url, user=user, password=password)
-        self.last_poll = None
+ def __init__(self, collection_url, user="", password=""):
+ self.collection = Collection(collection_url, user=user, password=password)
+ self.last_poll = None
 
-    def poll_new_objects(self, added_after=None):
-        """Poll for objects added after a specific timestamp."""
-        if added_after is None:
-            added_after = (
-                self.last_poll or
-                (datetime.utcnow() - timedelta(days=1)).strftime(
-                    "%Y-%m-%dT%H:%M:%S.000Z"
-                )
-            )
+ def poll_new_objects(self, added_after=None):
+ """Poll for objects added after a specific timestamp."""
+ if added_after is None:
+ added_after = (
+ self.last_poll or
+ (datetime.utcnow() - timedelta(days=1)).strftime(
+ "%Y-%m-%dT%H:%M:%S.000Z"
+ )
+ )
 
-        all_objects = []
-        kwargs = {"added_after": added_after}
+ all_objects = []
+ kwargs = {"added_after": added_after}
 
-        for envelope in as_pages(
-            self.collection.get_objects, per_request=100, **kwargs
-        ):
-            objects = envelope.get("objects", [])
-            all_objects.extend(objects)
+ for envelope in as_pages(
+ self.collection.get_objects, per_request=100, **kwargs
+ ):
+ objects = envelope.get("objects", [])
+ all_objects.extend(objects)
 
-        self.last_poll = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z")
-        return all_objects
+ self.last_poll = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S.000Z")
+ return all_objects
 
-    def extract_indicators(self, objects):
-        """Extract actionable indicators from STIX objects."""
-        indicators = []
-        for obj in objects:
-            if obj.get("type") == "indicator":
-                indicators.append({
-                    "id": obj.get("id"),
-                    "name": obj.get("name", ""),
-                    "pattern": obj.get("pattern", ""),
-                    "pattern_type": obj.get("pattern_type", ""),
-                    "valid_from": obj.get("valid_from", ""),
-                    "valid_until": obj.get("valid_until", ""),
-                    "indicator_types": obj.get("indicator_types", []),
-                    "confidence": obj.get("confidence", 0),
-                    "labels": obj.get("labels", []),
-                })
-        return indicators
+ def extract_indicators(self, objects):
+ """Extract actionable indicators from STIX objects."""
+ indicators = []
+ for obj in objects:
+ if obj.get("type") == "indicator":
+ indicators.append({
+ "id": obj.get("id"),
+ "name": obj.get("name", ""),
+ "pattern": obj.get("pattern", ""),
+ "pattern_type": obj.get("pattern_type", ""),
+ "valid_from": obj.get("valid_from", ""),
+ "valid_until": obj.get("valid_until", ""),
+ "indicator_types": obj.get("indicator_types", []),
+ "confidence": obj.get("confidence", 0),
+ "labels": obj.get("labels", []),
+ })
+ return indicators
 
-    def extract_observables(self, objects):
-        """Extract STIX Cyber Observables."""
-        observables = []
-        observable_types = {
-            "ipv4-addr", "ipv6-addr", "domain-name", "url",
-            "file", "email-addr", "network-traffic",
-        }
-        for obj in objects:
-            if obj.get("type") in observable_types:
-                observables.append({
-                    "type": obj["type"],
-                    "value": obj.get("value", ""),
-                    "id": obj.get("id"),
-                })
-        return observables
+ def extract_observables(self, objects):
+ """Extract STIX Cyber Observables."""
+ observables = []
+ observable_types = {
+ "ipv4-addr", "ipv6-addr", "domain-name", "url",
+ "file", "email-addr", "network-traffic",
+ }
+ for obj in objects:
+ if obj.get("type") in observable_types:
+ observables.append({
+ "type": obj["type"],
+ "value": obj.get("value", ""),
+ "id": obj.get("id"),
+ })
+ return observables
 
 
 # Usage
 consumer = TAXIIConsumer(
-    f"https://cti-taxii.mitre.org/stix/collections/{ENTERPRISE_ATTACK_ID}/"
+ f"https://cti-taxii.mitre.org/stix/collections/{ENTERPRISE_ATTACK_ID}/"
 )
 new_objects = consumer.poll_new_objects()
 indicators = consumer.extract_indicators(new_objects)
@@ -263,16 +263,16 @@ print(f"New indicators: {len(indicators)}")
 ```python
 # medallion configuration (medallion.conf)
 TAXII_CONFIG = {
-    "backend": {
-        "module_class": "MemoryBackend",
-    },
-    "users": {
-        "admin": "admin_password",
-        "readonly": "readonly_password",
-    },
-    "taxii": {
-        "max_content_length": 10485760,
-    },
+ "backend": {
+ "module_class": "MemoryBackend",
+ },
+ "users": {
+ "admin": "admin_password",
+ "readonly": "readonly_password",
+ },
+ "taxii": {
+ "max_content_length": 10485760,
+ },
 }
 
 # Run medallion server:
@@ -283,20 +283,20 @@ TAXII_CONFIG = {
 import requests
 
 def push_to_taxii(server_url, collection_id, stix_bundle, user, password):
-    """Push STIX bundle to a TAXII 2.1 collection."""
-    url = f"{server_url}/collections/{collection_id}/objects/"
-    headers = {
-        "Content-Type": "application/stix+json;version=2.1",
-        "Accept": "application/taxii+json;version=2.1",
-    }
-    response = requests.post(
-        url,
-        json=stix_bundle,
-        headers=headers,
-        auth=(user, password),
-        timeout=30,
-    )
-    return response.json()
+ """Push STIX bundle to a TAXII 2.1 collection."""
+ url = f"{server_url}/collections/{collection_id}/objects/"
+ headers = {
+ "Content-Type": "application/stix+json;version=2.1",
+ "Accept": "application/taxii+json;version=2.1",
+ }
+ response = requests.post(
+ url,
+ json=stix_bundle,
+ headers=headers,
+ auth=(user, password),
+ timeout=30,
+ )
+ return response.json()
 ```
 
 ## Validation Criteria

@@ -61,41 +61,41 @@ Create a Log Analytics workspace optimized for security data and enable data con
 ```powershell
 # Create Log Analytics workspace
 az monitor log-analytics workspace create \
-  --resource-group security-rg \
-  --workspace-name sentinel-workspace \
-  --location eastus \
-  --retention-time 365 \
-  --sku PerGB2018
+ --resource-group security-rg \
+ --workspace-name sentinel-workspace \
+ --location eastus \
+ --retention-time 365 \
+ --sku PerGB2018
 
 # Enable Microsoft Sentinel on the workspace
 az sentinel onboarding-state create \
-  --resource-group security-rg \
-  --workspace-name sentinel-workspace
+ --resource-group security-rg \
+ --workspace-name sentinel-workspace
 
 # Enable AWS CloudTrail connector
 az sentinel data-connector create \
-  --resource-group security-rg \
-  --workspace-name sentinel-workspace \
-  --data-connector-id aws-cloudtrail \
-  --kind AmazonWebServicesCloudTrail \
-  --aws-cloud-trail-data-connector '{
-    "awsRoleArn": "arn:aws:iam::123456789012:role/SentinelCloudTrailRole",
-    "dataTypes": {"logs": {"state": "Enabled"}}
-  }'
+ --resource-group security-rg \
+ --workspace-name sentinel-workspace \
+ --data-connector-id aws-cloudtrail \
+ --kind AmazonWebServicesCloudTrail \
+ --aws-cloud-trail-data-connector '{
+ "awsRoleArn": "arn:aws:iam::123456789012:role/SentinelCloudTrailRole",
+ "dataTypes": {"logs": {"state": "Enabled"}}
+ }'
 
 # Enable Azure AD sign-in and audit logs
 az sentinel data-connector create \
-  --resource-group security-rg \
-  --workspace-name sentinel-workspace \
-  --data-connector-id azure-ad \
-  --kind AzureActiveDirectory \
-  --azure-active-directory '{
-    "dataTypes": {
-      "alerts": {"state": "Enabled"},
-      "signinLogs": {"state": "Enabled"},
-      "auditLogs": {"state": "Enabled"}
-    }
-  }'
+ --resource-group security-rg \
+ --workspace-name sentinel-workspace \
+ --data-connector-id azure-ad \
+ --kind AzureActiveDirectory \
+ --azure-active-directory '{
+ "dataTypes": {
+ "alerts": {"state": "Enabled"},
+ "signinLogs": {"state": "Enabled"},
+ "auditLogs": {"state": "Enabled"}
+ }
+ }'
 ```
 
 ### Step 2: Write KQL Detection Rules
@@ -110,11 +110,11 @@ SigninLogs
 | where TimeGenerated > ago(timeframe)
 | where ResultType == 0 // Successful sign-ins only
 | project TimeGenerated, UserPrincipalName, IPAddress, Location,
-          Latitude = toreal(LocationDetails.geoCoordinates.latitude),
-          Longitude = toreal(LocationDetails.geoCoordinates.longitude)
+ Latitude = toreal(LocationDetails.geoCoordinates.latitude),
+ Longitude = toreal(LocationDetails.geoCoordinates.longitude)
 | sort by UserPrincipalName asc, TimeGenerated asc
 | extend PrevLatitude = prev(Latitude, 1), PrevLongitude = prev(Longitude, 1),
-         PrevTime = prev(TimeGenerated, 1), PrevUser = prev(UserPrincipalName, 1)
+ PrevTime = prev(TimeGenerated, 1), PrevUser = prev(UserPrincipalName, 1)
 | where UserPrincipalName == PrevUser
 | extend TimeDiff = datetime_diff('minute', TimeGenerated, PrevTime)
 | where TimeDiff < 60
@@ -130,8 +130,8 @@ AWSCloudTrail
 | where EventName in ("ConsoleLogin", "AssumeRole", "GetSessionToken")
 | where ErrorCode == ""
 | summarize LoginCount = count(), DistinctIPs = dcount(SourceIpAddress),
-            IPList = make_set(SourceIpAddress, 10)
-            by UserIdentityArn, bin(TimeGenerated, 1h)
+ IPList = make_set(SourceIpAddress, 10)
+ by UserIdentityArn, bin(TimeGenerated, 1h)
 | where DistinctIPs > 3
 | project TimeGenerated, UserIdentityArn, LoginCount, DistinctIPs, IPList
 ```
@@ -142,7 +142,7 @@ AWSCloudTrail
 | where TimeGenerated > ago(1h)
 | where EventName == "DeleteObject" or EventName == "DeleteObjects"
 | summarize DeleteCount = count(), BucketsAffected = dcount(RequestParameters_bucketName)
-            by UserIdentityArn, bin(TimeGenerated, 10m)
+ by UserIdentityArn, bin(TimeGenerated, 10m)
 | where DeleteCount > 100
 | project TimeGenerated, UserIdentityArn, DeleteCount, BucketsAffected
 ```
@@ -153,43 +153,43 @@ Create automated response playbooks that execute when analytics rules trigger in
 
 ```json
 {
-  "definition": {
-    "triggers": {
-      "Microsoft_Sentinel_incident": {
-        "type": "ApiConnectionWebhook",
-        "inputs": {
-          "body": {"incidentArmId": "subscriptions/@{triggerBody()?['workspaceInfo']?['SubscriptionId']}/resourceGroups/@{triggerBody()?['workspaceInfo']?['ResourceGroupName']}/providers/Microsoft.OperationalInsights/workspaces/@{triggerBody()?['workspaceInfo']?['WorkspaceName']}/providers/Microsoft.SecurityInsights/Incidents/@{triggerBody()?['object']?['properties']?['incidentNumber']}"},
-          "host": {"connection": {"name": "@parameters('$connections')['microsoftsentinel']['connectionId']"}}
-        }
-      }
-    },
-    "actions": {
-      "Get_incident_entities": {
-        "type": "ApiConnection",
-        "inputs": {"method": "post", "path": "/Incidents/entities"}
-      },
-      "For_each_account_entity": {
-        "type": "Foreach",
-        "foreach": "@body('Get_incident_entities')?['Accounts']",
-        "actions": {
-          "Disable_Azure_AD_user": {
-            "type": "ApiConnection",
-            "inputs": {
-              "method": "PATCH",
-              "path": "/v1.0/users/@{items('For_each_account_entity')?['AadUserId']}",
-              "body": {"accountEnabled": false}
-            }
-          },
-          "Add_comment_to_incident": {
-            "type": "ApiConnection",
-            "inputs": {
-              "body": {"message": "User @{items('For_each_account_entity')?['Name']} disabled by automated playbook"}
-            }
-          }
-        }
-      }
-    }
-  }
+ "definition": {
+ "triggers": {
+ "Microsoft_Sentinel_incident": {
+ "type": "ApiConnectionWebhook",
+ "inputs": {
+ "body": {"incidentArmId": "subscriptions/@{triggerBody()?['workspaceInfo']?['SubscriptionId']}/resourceGroups/@{triggerBody()?['workspaceInfo']?['ResourceGroupName']}/providers/Microsoft.OperationalInsights/workspaces/@{triggerBody()?['workspaceInfo']?['WorkspaceName']}/providers/Microsoft.SecurityInsights/Incidents/@{triggerBody()?['object']?['properties']?['incidentNumber']}"},
+ "host": {"connection": {"name": "@parameters('$connections')['microsoftsentinel']['connectionId']"}}
+ }
+ }
+ },
+ "actions": {
+ "Get_incident_entities": {
+ "type": "ApiConnection",
+ "inputs": {"method": "post", "path": "/Incidents/entities"}
+ },
+ "For_each_account_entity": {
+ "type": "Foreach",
+ "foreach": "@body('Get_incident_entities')?['Accounts']",
+ "actions": {
+ "Disable_Azure_AD_user": {
+ "type": "ApiConnection",
+ "inputs": {
+ "method": "PATCH",
+ "path": "/v1.0/users/@{items('For_each_account_entity')?['AadUserId']}",
+ "body": {"accountEnabled": false}
+ }
+ },
+ "Add_comment_to_incident": {
+ "type": "ApiConnection",
+ "inputs": {
+ "body": {"message": "User @{items('For_each_account_entity')?['Name']} disabled by automated playbook"}
+ }
+ }
+ }
+ }
+ }
+ }
 }
 ```
 
@@ -205,13 +205,13 @@ let suspicious_roles = AWSCloudTrail
 | extend AssumedRoleArn = tostring(parse_json(RequestParameters).roleArn)
 | where AssumedRoleArn contains "cross-account" or AssumedRoleArn contains "admin"
 | summarize AssumeCount = count(), UniqueSourceAccounts = dcount(RecipientAccountId)
-            by UserIdentityArn, AssumedRoleArn
+ by UserIdentityArn, AssumedRoleArn
 | where AssumeCount > 10 and UniqueSourceAccounts > 2;
 suspicious_roles
 | join kind=inner (
-    AWSCloudTrail
-    | where TimeGenerated > ago(7d)
-    | where EventName in ("RunInstances", "CreateFunction", "PutBucketPolicy")
+ AWSCloudTrail
+ | where TimeGenerated > ago(7d)
+ | where EventName in ("RunInstances", "CreateFunction", "PutBucketPolicy")
 ) on UserIdentityArn
 | project TimeGenerated, UserIdentityArn, AssumedRoleArn, EventName, SourceIpAddress
 ```
@@ -223,13 +223,13 @@ Connect threat intelligence providers and create indicator-based matching rules 
 ```powershell
 # Enable Microsoft Threat Intelligence connector
 az sentinel data-connector create \
-  --resource-group security-rg \
-  --workspace-name sentinel-workspace \
-  --data-connector-id microsoft-ti \
-  --kind MicrosoftThreatIntelligence \
-  --microsoft-threat-intelligence '{
-    "dataTypes": {"microsoftEmergingThreatFeed": {"lookbackPeriod": "2025-01-01T00:00:00Z", "state": "Enabled"}}
-  }'
+ --resource-group security-rg \
+ --workspace-name sentinel-workspace \
+ --data-connector-id microsoft-ti \
+ --kind MicrosoftThreatIntelligence \
+ --microsoft-threat-intelligence '{
+ "dataTypes": {"microsoftEmergingThreatFeed": {"lookbackPeriod": "2025-01-01T00:00:00Z", "state": "Enabled"}}
+ }'
 ```
 
 ```kql
@@ -291,28 +291,28 @@ Data Sources: 14 connectors active
 Report Period: 2025-02-01 to 2025-02-23
 
 DATA INGESTION:
-  Azure AD Sign-in Logs:     2.3 TB (23 days)
-  AWS CloudTrail:            1.8 TB (23 days)
-  Azure Activity:            0.9 TB (23 days)
-  Defender for Cloud Alerts: 45 GB (23 days)
-  Total Ingestion:           5.1 TB
+ Azure AD Sign-in Logs: 2.3 TB (23 days)
+ AWS CloudTrail: 1.8 TB (23 days)
+ Azure Activity: 0.9 TB (23 days)
+ Defender for Cloud Alerts: 45 GB (23 days)
+ Total Ingestion: 5.1 TB
 
 DETECTION SUMMARY:
-  Active Analytics Rules: 87
-  Incidents Created: 234
-    Critical: 8 | High: 34 | Medium: 89 | Low: 103
-  Mean Time to Detect (MTTD): 4.2 minutes
-  Mean Time to Respond (MTTR): 18 minutes
+ Active Analytics Rules: 87
+ Incidents Created: 234
+ Critical: 8 | High: 34 | Medium: 89 | Low: 103
+ Mean Time to Detect (MTTD): 4.2 minutes
+ Mean Time to Respond (MTTR): 18 minutes
 
 TOP INCIDENT TYPES:
-  Impossible Travel Detected:          42 incidents
-  AWS Unauthorized API Call Pattern:   28 incidents
-  Mass File Deletion in S3:            3 incidents
-  Suspicious Azure AD App Registration: 12 incidents
+ Impossible Travel Detected: 42 incidents
+ AWS Unauthorized API Call Pattern: 28 incidents
+ Mass File Deletion in S3: 3 incidents
+ Suspicious Azure AD App Registration: 12 incidents
 
 AUTOMATION:
-  Playbooks Executed: 156
-  Accounts Auto-Disabled: 23
-  Incidents Auto-Enriched: 198
-  False Positive Rate: 12%
+ Playbooks Executed: 156
+ Accounts Auto-Disabled: 23
+ Incidents Auto-Enriched: 198
+ False Positive Rate: 12%
 ```

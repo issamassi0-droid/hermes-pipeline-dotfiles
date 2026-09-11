@@ -1,10 +1,10 @@
 ---
 name: analyzing-linux-system-artifacts
 description: Examine Linux system artifacts (auth logs, cron/systemd persistence,
-  shell history, SSH keys, and system configuration) to uncover evidence of compromise,
-  detect rootkits or backdoors, and reconstruct user/attacker activity. Use when
-  investigating a compromised Linux server or workstation, hunting for persistence
-  mechanisms, or scoping a Linux-based breach during incident response.
+ shell history, SSH keys, and system configuration) to uncover evidence of compromise,
+ detect rootkits or backdoors, and reconstruct user/attacker activity. Use when
+ investigating a compromised Linux server or workstation, hunting for persistence
+ mechanisms, or scoping a Linux-based breach during incident response.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -69,16 +69,16 @@ cp /mnt/evidence/var/log/faillog /cases/case-2024-001/linux/logs/
 
 # Collect user artifacts
 for user_dir in /mnt/evidence/home/*/; do
-    username=$(basename "$user_dir")
-    mkdir -p /cases/case-2024-001/linux/users/$username
-    cp "$user_dir"/.bash_history /cases/case-2024-001/linux/users/$username/ 2>/dev/null
-    cp "$user_dir"/.zsh_history /cases/case-2024-001/linux/users/$username/ 2>/dev/null
-    cp -r "$user_dir"/.ssh/ /cases/case-2024-001/linux/users/$username/ 2>/dev/null
-    cp "$user_dir"/.bashrc /cases/case-2024-001/linux/users/$username/ 2>/dev/null
-    cp "$user_dir"/.profile /cases/case-2024-001/linux/users/$username/ 2>/dev/null
-    cp "$user_dir"/.viminfo /cases/case-2024-001/linux/users/$username/ 2>/dev/null
-    cp "$user_dir"/.wget-hsts /cases/case-2024-001/linux/users/$username/ 2>/dev/null
-    cp "$user_dir"/.python_history /cases/case-2024-001/linux/users/$username/ 2>/dev/null
+ username=$(basename "$user_dir")
+ mkdir -p /cases/case-2024-001/linux/users/$username
+ cp "$user_dir"/.bash_history /cases/case-2024-001/linux/users/$username/ 2>/dev/null
+ cp "$user_dir"/.zsh_history /cases/case-2024-001/linux/users/$username/ 2>/dev/null
+ cp -r "$user_dir"/.ssh/ /cases/case-2024-001/linux/users/$username/ 2>/dev/null
+ cp "$user_dir"/.bashrc /cases/case-2024-001/linux/users/$username/ 2>/dev/null
+ cp "$user_dir"/.profile /cases/case-2024-001/linux/users/$username/ 2>/dev/null
+ cp "$user_dir"/.viminfo /cases/case-2024-001/linux/users/$username/ 2>/dev/null
+ cp "$user_dir"/.wget-hsts /cases/case-2024-001/linux/users/$username/ 2>/dev/null
+ cp "$user_dir"/.python_history /cases/case-2024-001/linux/users/$username/ 2>/dev/null
 done
 
 # Collect root user artifacts
@@ -105,40 +105,40 @@ print("=== USER ACCOUNT ANALYSIS ===\n")
 
 # Parse /etc/passwd
 with open('/cases/case-2024-001/linux/config/passwd') as f:
-    for line in f:
-        parts = line.strip().split(':')
-        if len(parts) >= 7:
-            username, _, uid, gid, comment, home, shell = parts[0], parts[1], int(parts[2]), int(parts[3]), parts[4], parts[5], parts[6]
+ for line in f:
+ parts = line.strip().split(':')
+ if len(parts) >= 7:
+ username, _, uid, gid, comment, home, shell = parts[0], parts[1], int(parts[2]), int(parts[3]), parts[4], parts[5], parts[6]
 
-            # Flag accounts with UID 0 (root equivalent)
-            if uid == 0 and username != 'root':
-                print(f"  ALERT: UID 0 account: {username} (shell: {shell})")
+ # Flag accounts with UID 0 (root equivalent)
+ if uid == 0 and username != 'root':
+ print(f" ALERT: UID 0 account: {username} (shell: {shell})")
 
-            # Flag accounts with login shells that shouldn't have them
-            if shell not in ('/bin/false', '/usr/sbin/nologin', '/bin/sync') and uid >= 1000:
-                print(f"  User: {username} (UID:{uid}, Shell:{shell}, Home:{home})")
+ # Flag accounts with login shells that shouldn't have them
+ if shell not in ('/bin/false', '/usr/sbin/nologin', '/bin/sync') and uid >= 1000:
+ print(f" User: {username} (UID:{uid}, Shell:{shell}, Home:{home})")
 
-            # Flag system accounts with login shells
-            if uid < 1000 and uid > 0 and shell in ('/bin/bash', '/bin/sh', '/bin/zsh'):
-                print(f"  WARNING: System account with shell: {username} (UID:{uid}, Shell:{shell})")
+ # Flag system accounts with login shells
+ if uid < 1000 and uid > 0 and shell in ('/bin/bash', '/bin/sh', '/bin/zsh'):
+ print(f" WARNING: System account with shell: {username} (UID:{uid}, Shell:{shell})")
 
 # Parse /etc/shadow for account status
 print("\n=== PASSWORD STATUS ===")
 with open('/cases/case-2024-001/linux/config/shadow') as f:
-    for line in f:
-        parts = line.strip().split(':')
-        if len(parts) >= 3:
-            username = parts[0]
-            pwd_hash = parts[1]
-            last_change = parts[2]
+ for line in f:
+ parts = line.strip().split(':')
+ if len(parts) >= 3:
+ username = parts[0]
+ pwd_hash = parts[1]
+ last_change = parts[2]
 
-            if pwd_hash and pwd_hash not in ('*', '!', '!!', ''):
-                hash_type = 'Unknown'
-                if pwd_hash.startswith('$6$'): hash_type = 'SHA-512'
-                elif pwd_hash.startswith('$5$'): hash_type = 'SHA-256'
-                elif pwd_hash.startswith('$y$'): hash_type = 'yescrypt'
-                elif pwd_hash.startswith('$1$'): hash_type = 'MD5 (WEAK)'
-                print(f"  {username}: {hash_type} hash, last changed: day {last_change}")
+ if pwd_hash and pwd_hash not in ('*', '!', '!!', ''):
+ hash_type = 'Unknown'
+ if pwd_hash.startswith('$6$'): hash_type = 'SHA-512'
+ elif pwd_hash.startswith('$5$'): hash_type = 'SHA-256'
+ elif pwd_hash.startswith('$y$'): hash_type = 'yescrypt'
+ elif pwd_hash.startswith('$1$'): hash_type = 'MD5 (WEAK)'
+ print(f" {username}: {hash_type} hash, last changed: day {last_change}")
 PYEOF
 
 # Analyze login history
@@ -154,33 +154,33 @@ echo "=== CRON JOBS ===" > /cases/case-2024-001/linux/persistence/cron_analysis.
 
 # System cron
 for cronfile in /mnt/evidence/etc/crontab /mnt/evidence/etc/cron.d/*; do
-    echo "--- $cronfile ---" >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
-    cat "$cronfile" 2>/dev/null >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
-    echo "" >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
+ echo "--- $cronfile ---" >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
+ cat "$cronfile" 2>/dev/null >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
+ echo "" >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
 done
 
 # User cron tabs
 for cronfile in /mnt/evidence/var/spool/cron/crontabs/*; do
-    echo "--- User crontab: $(basename $cronfile) ---" >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
-    cat "$cronfile" 2>/dev/null >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
-    echo "" >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
+ echo "--- User crontab: $(basename $cronfile) ---" >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
+ cat "$cronfile" 2>/dev/null >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
+ echo "" >> /cases/case-2024-001/linux/persistence/cron_analysis.txt
 done
 
 # Check systemd services for persistence
 echo "=== SYSTEMD SERVICES ===" > /cases/case-2024-001/linux/persistence/systemd_analysis.txt
 find /mnt/evidence/etc/systemd/system/ -name "*.service" -newer /mnt/evidence/etc/os-release \
-   >> /cases/case-2024-001/linux/persistence/systemd_analysis.txt
+ >> /cases/case-2024-001/linux/persistence/systemd_analysis.txt
 
 for svc in /mnt/evidence/etc/systemd/system/*.service; do
-    echo "--- $(basename $svc) ---" >> /cases/case-2024-001/linux/persistence/systemd_analysis.txt
-    cat "$svc" >> /cases/case-2024-001/linux/persistence/systemd_analysis.txt
-    echo "" >> /cases/case-2024-001/linux/persistence/systemd_analysis.txt
+ echo "--- $(basename $svc) ---" >> /cases/case-2024-001/linux/persistence/systemd_analysis.txt
+ cat "$svc" >> /cases/case-2024-001/linux/persistence/systemd_analysis.txt
+ echo "" >> /cases/case-2024-001/linux/persistence/systemd_analysis.txt
 done
 
 # Check authorized SSH keys (backdoor detection)
 echo "=== SSH AUTHORIZED KEYS ===" > /cases/case-2024-001/linux/persistence/ssh_keys.txt
 find /mnt/evidence/home/ /mnt/evidence/root/ -name "authorized_keys" -exec sh -c \
-   'echo "--- {} ---"; cat {}; echo ""' \; >> /cases/case-2024-001/linux/persistence/ssh_keys.txt
+ 'echo "--- {} ---"; cat {}; echo ""' \; >> /cases/case-2024-001/linux/persistence/ssh_keys.txt
 
 # Check rc.local and init scripts
 cat /mnt/evidence/etc/rc.local 2>/dev/null > /cases/case-2024-001/linux/persistence/rc_local.txt
@@ -203,36 +203,36 @@ import os, glob
 print("=== SHELL HISTORY ANALYSIS ===\n")
 
 suspicious_commands = [
-    'wget', 'curl', 'nc ', 'ncat', 'netcat', 'python -c', 'python3 -c',
-    'perl -e', 'base64', 'chmod 777', 'chmod +s', '/dev/tcp', '/dev/udp',
-    'nmap', 'masscan', 'hydra', 'john', 'hashcat', 'passwd', 'useradd',
-    'iptables -F', 'ufw disable', 'history -c', 'rm -rf /', 'dd if=',
-    'crontab', 'at ', 'systemctl enable', 'ssh-keygen', 'scp ', 'rsync',
-    'tar czf', 'zip -r', 'openssl enc', 'gpg --encrypt', 'shred',
-    'chattr', 'setfacl', 'awk', '/tmp/', '/dev/shm/'
+ 'wget', 'curl', 'nc ', 'ncat', 'netcat', 'python -c', 'python3 -c',
+ 'perl -e', 'base64', 'chmod 777', 'chmod +s', '/dev/tcp', '/dev/udp',
+ 'nmap', 'masscan', 'hydra', 'john', 'hashcat', 'passwd', 'useradd',
+ 'iptables -F', 'ufw disable', 'history -c', 'rm -rf /', 'dd if=',
+ 'crontab', 'at ', 'systemctl enable', 'ssh-keygen', 'scp ', 'rsync',
+ 'tar czf', 'zip -r', 'openssl enc', 'gpg --encrypt', 'shred',
+ 'chattr', 'setfacl', 'awk', '/tmp/', '/dev/shm/'
 ]
 
 for hist_file in glob.glob('/cases/case-2024-001/linux/users/*/.bash_history'):
-    username = hist_file.split('/')[-2]
-    print(f"User: {username}")
+ username = hist_file.split('/')[-2]
+ print(f"User: {username}")
 
-    with open(hist_file, 'r', errors='ignore') as f:
-        lines = f.readlines()
+ with open(hist_file, 'r', errors='ignore') as f:
+ lines = f.readlines()
 
-    print(f"  Total commands: {len(lines)}")
-    flagged = []
-    for i, line in enumerate(lines):
-        line = line.strip()
-        for cmd in suspicious_commands:
-            if cmd in line.lower():
-                flagged.append((i+1, line))
-                break
+ print(f" Total commands: {len(lines)}")
+ flagged = []
+ for i, line in enumerate(lines):
+ line = line.strip()
+ for cmd in suspicious_commands:
+ if cmd in line.lower():
+ flagged.append((i+1, line))
+ break
 
-    if flagged:
-        print(f"  Suspicious commands: {len(flagged)}")
-        for lineno, cmd in flagged:
-            print(f"    Line {lineno}: {cmd[:120]}")
-    print()
+ if flagged:
+ print(f" Suspicious commands: {len(flagged)}")
+ for lineno, cmd in flagged:
+ print(f" Line {lineno}: {cmd[:120]}")
+ print()
 PYEOF
 ```
 
@@ -242,7 +242,7 @@ PYEOF
 # Check for known rootkit indicators
 # Compare system binary hashes against known-good
 find /mnt/evidence/usr/bin/ /mnt/evidence/usr/sbin/ /mnt/evidence/bin/ /mnt/evidence/sbin/ \
-   -type f -executable -exec sha256sum {} \; > /cases/case-2024-001/linux/analysis/binary_hashes.txt
+ -type f -executable -exec sha256sum {} \; > /cases/case-2024-001/linux/analysis/binary_hashes.txt
 
 # Check for SUID/SGID binaries (potential privilege escalation)
 find /mnt/evidence/ -perm -4000 -type f 2>/dev/null > /cases/case-2024-001/linux/analysis/suid_files.txt
@@ -250,19 +250,19 @@ find /mnt/evidence/ -perm -2000 -type f 2>/dev/null > /cases/case-2024-001/linux
 
 # Check for suspicious files in /tmp and /dev/shm
 find /mnt/evidence/tmp/ /mnt/evidence/dev/shm/ -type f 2>/dev/null \
-   -exec file {} \; > /cases/case-2024-001/linux/analysis/tmp_files.txt
+ -exec file {} \; > /cases/case-2024-001/linux/analysis/tmp_files.txt
 
 # Check for hidden files and directories
 find /mnt/evidence/ -name ".*" -not -path "*/\." -type f 2>/dev/null | \
-   head -100 > /cases/case-2024-001/linux/analysis/hidden_files.txt
+ head -100 > /cases/case-2024-001/linux/analysis/hidden_files.txt
 
 # Check kernel modules
 ls -la /mnt/evidence/lib/modules/$(ls /mnt/evidence/lib/modules/ | head -1)/extra/ 2>/dev/null \
-   > /cases/case-2024-001/linux/analysis/extra_modules.txt
+ > /cases/case-2024-001/linux/analysis/extra_modules.txt
 
 # Check for modified PAM configuration (authentication backdoors)
 diff /mnt/evidence/etc/pam.d/ /cases/baseline/pam.d/ 2>/dev/null \
-   > /cases/case-2024-001/linux/analysis/pam_changes.txt
+ > /cases/case-2024-001/linux/analysis/pam_changes.txt
 ```
 
 ## Key Concepts
@@ -309,31 +309,31 @@ Check for high-CPU processes in /proc (live) or systemd service files, examine c
 
 ```
 Linux Forensics Summary:
-  System: webserver01 (Ubuntu 22.04 LTS)
-  Hostname: webserver01.corp.local
-  Kernel: 5.15.0-91-generic
+ System: webserver01 (Ubuntu 22.04 LTS)
+ Hostname: webserver01.corp.local
+ Kernel: 5.15.0-91-generic
 
-  User Accounts:
-    Total: 25 (3 with UID 0 - 1 ANOMALOUS)
-    Interactive shells: 8 users
-    Recently created: admin2 (created 2024-01-15)
+ User Accounts:
+ Total: 25 (3 with UID 0 - 1 ANOMALOUS)
+ Interactive shells: 8 users
+ Recently created: admin2 (created 2024-01-15)
 
-  Authentication Events:
-    Successful SSH logins: 456
-    Failed SSH attempts: 12,345 (from 23 unique IPs)
-    Sudo executions: 89
+ Authentication Events:
+ Successful SSH logins: 456
+ Failed SSH attempts: 12,345 (from 23 unique IPs)
+ Sudo executions: 89
 
-  Persistence Mechanisms Found:
-    Cron jobs: 3 suspicious (reverse shell, miner restart)
-    Systemd services: 1 unknown (update-checker.service)
-    SSH keys: 2 unauthorized keys in root authorized_keys
-    rc.local: Modified with download cradle
+ Persistence Mechanisms Found:
+ Cron jobs: 3 suspicious (reverse shell, miner restart)
+ Systemd services: 1 unknown (update-checker.service)
+ SSH keys: 2 unauthorized keys in root authorized_keys
+ rc.local: Modified with download cradle
 
-  Suspicious Activity:
-    - bash_history contains wget to pastebin URL
-    - SUID binary /tmp/.hidden/escalate found
-    - /dev/shm/ contains compiled ELF binary
-    - LD_PRELOAD in /etc/ld.so.preload pointing to /lib/.hidden.so
+ Suspicious Activity:
+ - bash_history contains wget to pastebin URL
+ - SUID binary /tmp/.hidden/escalate found
+ - /dev/shm/ contains compiled ELF binary
+ - LD_PRELOAD in /etc/ld.so.preload pointing to /lib/.hidden.so
 
-  Report: /cases/case-2024-001/linux/analysis/
+ Report: /cases/case-2024-001/linux/analysis/
 ```

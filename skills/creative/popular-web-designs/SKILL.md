@@ -7,15 +7,15 @@ license: MIT
 tags: [design, css, html, ui, web-development, design-systems, templates]
 platforms: [linux, macos, windows]
 triggers:
-  - build a page that looks like
-  - make it look like stripe
-  - design like linear
-  - vercel style
-  - create a UI
-  - web design
-  - landing page
-  - dashboard design
-  - website styled like
+ - build a page that looks like
+ - make it look like stripe
+ - design like linear
+ - vercel style
+ - create a UI
+ - web design
+ - landing page
+ - dashboard design
+ - website styled like
 ---
 
 # Popular Web Designs
@@ -27,12 +27,12 @@ system, shadows, responsive behavior, and practical agent prompts with exact CSS
 ## Related design skills
 
 - **`claude-design`** — use for the design *process and taste* (scoping a brief,
-  producing variants, verifying a local HTML artifact, avoiding AI-design slop).
-  Pair it with this skill when the user wants a thoughtfully-designed page styled
-  after a known brand: `claude-design` drives the workflow, this skill supplies
-  the visual vocabulary.
+ producing variants, verifying a local HTML artifact, avoiding AI-design slop).
+ Pair it with this skill when the user wants a thoughtfully-designed page styled
+ after a known brand: `claude-design` drives the workflow, this skill supplies
+ the visual vocabulary.
 - **`design-md`** — use when the deliverable is a formal DESIGN.md token spec
-  file, not a rendered artifact.
+ file, not a rendered artifact.
 
 ## How to Use
 
@@ -52,32 +52,32 @@ Each template includes a **Hermes Implementation Notes** block at the top with:
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Page Title</title>
-  <!-- Paste the Google Fonts <link> from the template's Hermes notes -->
-  <link href="https://fonts.googleapis.com/css2?family=..." rel="stylesheet">
-  <style>
-    /* Apply the template's color palette as CSS custom properties */
-    :root {
-      --color-bg: #ffffff;
-      --color-text: #171717;
-      --color-accent: #533afd;
-      /* ... more from template Section 2 */
-    }
-    /* Apply typography from template Section 3 */
-    body {
-      font-family: 'Inter', system-ui, sans-serif;
-      color: var(--color-text);
-      background: var(--color-bg);
-    }
-    /* Apply component styles from template Section 4 */
-    /* Apply layout from template Section 5 */
-    /* Apply shadows from template Section 6 */
-  </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Page Title</title>
+ <!-- Paste the Google Fonts <link> from the template's Hermes notes -->
+ <link href="https://fonts.googleapis.com/css2?family=..." rel="stylesheet">
+ <style>
+ /* Apply the template's color palette as CSS custom properties */
+ :root {
+ --color-bg: #ffffff;
+ --color-text: #171717;
+ --color-accent: #533afd;
+ /* ... more from template Section 2 */
+ }
+ /* Apply typography from template Section 3 */
+ body {
+ font-family: 'Inter', system-ui, sans-serif;
+ color: var(--color-text);
+ background: var(--color-bg);
+ }
+ /* Apply component styles from template Section 4 */
+ /* Apply layout from template Section 5 */
+ /* Apply shadows from template Section 6 */
+ </style>
 </head>
 <body>
-  <!-- Build using component specs from the template -->
+ <!-- Build using component specs from the template -->
 </body>
 </html>
 ```

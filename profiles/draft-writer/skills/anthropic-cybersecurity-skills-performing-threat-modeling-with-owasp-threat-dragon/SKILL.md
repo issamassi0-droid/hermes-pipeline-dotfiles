@@ -1,11 +1,11 @@
 ---
 name: performing-threat-modeling-with-owasp-threat-dragon
 description: >-
-  Uses OWASP Threat Dragon (web or desktop) to build data flow diagrams,
-  identify threats with STRIDE, LINDDUN, CIA, DIE, or PLOT4ai methodologies
-  via its auto-generation rule engine, and produce PDF threat model reports.
-  Use during secure design review of an application architecture to build a
-  formal threat model and document mitigations for GRC compliance.
+ Uses OWASP Threat Dragon (web or desktop) to build data flow diagrams,
+ identify threats with STRIDE, LINDDUN, CIA, DIE, or PLOT4ai methodologies
+ via its auto-generation rule engine, and produce PDF threat model reports.
+ Use during secure design review of an application architecture to build a
+ formal threat model and document mitigations for GRC compliance.
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -96,11 +96,11 @@ Download the installer from the [OWASP Threat Dragon releases](https://github.co
 **Web Application (Docker):**
 ```bash
 docker run -p 3000:3000 \
-  -e ENCRYPTION_JWT_SIGNING_KEY=$(openssl rand -hex 32) \
-  -e ENCRYPTION_JWT_REFRESH_SIGNING_KEY=$(openssl rand -hex 32) \
-  -e ENCRYPTION_KEYS='[{"isPrimary":true,"id":0,"value":"'$(openssl rand -hex 16)'"}]' \
-  -e NODE_ENV=production \
-  owasp/threat-dragon:latest
+ -e ENCRYPTION_JWT_SIGNING_KEY=$(openssl rand -hex 32) \
+ -e ENCRYPTION_JWT_REFRESH_SIGNING_KEY=$(openssl rand -hex 32) \
+ -e ENCRYPTION_KEYS='[{"isPrimary":true,"id":0,"value":"'$(openssl rand -hex 16)'"}]' \
+ -e NODE_ENV=production \
+ owasp/threat-dragon:latest
 ```
 
 ### Step 2 --- Define the Scope
@@ -173,25 +173,25 @@ Threat Dragon uses JSON format for threat models, enabling version control and p
 
 ```json
 {
-  "version": "2.2.0",
-  "summary": {
-    "title": "E-Commerce Application",
-    "owner": "Security Team",
-    "description": "Threat model for the checkout flow"
-  },
-  "detail": {
-    "contributors": [
-      {"name": "Security Architect"}
-    ],
-    "diagrams": [
-      {
-        "id": 0,
-        "title": "Checkout Flow",
-        "diagramType": "STRIDE",
-        "cells": []
-      }
-    ]
-  }
+ "version": "2.2.0",
+ "summary": {
+ "title": "E-Commerce Application",
+ "owner": "Security Team",
+ "description": "Threat model for the checkout flow"
+ },
+ "detail": {
+ "contributors": [
+ {"name": "Security Architect"}
+ ],
+ "diagrams": [
+ {
+ "id": 0,
+ "title": "Checkout Flow",
+ "diagramType": "STRIDE",
+ "cells": []
+ }
+ ]
+ }
 }
 ```
 

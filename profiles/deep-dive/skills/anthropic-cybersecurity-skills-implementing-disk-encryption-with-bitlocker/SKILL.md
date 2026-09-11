@@ -1,13 +1,13 @@
 ---
 name: implementing-disk-encryption-with-bitlocker
 description: 'Implements full disk encryption using Microsoft BitLocker on Windows
-  endpoints to protect data at rest from unauthorized access in case of device loss
-  or theft. Use when deploying encryption for compliance requirements, securing mobile
-  workstations, or implementing data protection controls across the enterprise. Activates
-  for requests involving BitLocker encryption, disk encryption, TPM configuration,
-  or data-at-rest protection.
+ endpoints to protect data at rest from unauthorized access in case of device loss
+ or theft. Use when deploying encryption for compliance requirements, securing mobile
+ workstations, or implementing data protection controls across the enterprise. Activates
+ for requests involving BitLocker encryption, disk encryption, TPM configuration,
+ or data-at-rest protection.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -70,8 +70,8 @@ Confirm-SecureBootUEFI
 
 # Check BitLocker readiness
 $vol = Get-BitLockerVolume -MountPoint "C:"
-$vol.VolumeStatus  # Should be "FullyDecrypted"
-$vol.ProtectionStatus  # Should be "Off"
+$vol.VolumeStatus # Should be "FullyDecrypted"
+$vol.ProtectionStatus # Should be "Off"
 ```
 
 ### Step 2: Configure BitLocker GPO Settings
@@ -80,30 +80,30 @@ $vol.ProtectionStatus  # Should be "Off"
 Computer Configuration → Administrative Templates → Windows Components → BitLocker Drive Encryption
 
 Operating System Drives:
-  - Require additional authentication at startup: Enabled
-    - Allow BitLocker without compatible TPM: Disabled (enforce TPM)
-    - Configure TPM startup: Allow TPM
-    - Configure TPM startup PIN: Allow startup PIN with TPM
-    - Configure TPM startup key: Allow startup key with TPM
+ - Require additional authentication at startup: Enabled
+ - Allow BitLocker without compatible TPM: Disabled (enforce TPM)
+ - Configure TPM startup: Allow TPM
+ - Configure TPM startup PIN: Allow startup PIN with TPM
+ - Configure TPM startup key: Allow startup key with TPM
 
-  - Choose how BitLocker-protected OS drives can be recovered: Enabled
-    - Allow data recovery agent: True
-    - Configure storage of recovery information to AD DS: Enabled
-    - Save recovery info to AD DS for OS drives: Store recovery passwords and key packages
-    - Do not enable BitLocker until recovery information is stored: Enabled
+ - Choose how BitLocker-protected OS drives can be recovered: Enabled
+ - Allow data recovery agent: True
+ - Configure storage of recovery information to AD DS: Enabled
+ - Save recovery info to AD DS for OS drives: Store recovery passwords and key packages
+ - Do not enable BitLocker until recovery information is stored: Enabled
 
-  - Choose drive encryption method and cipher strength:
-    - OS drives: XTS-AES 256-bit (Windows 10 1511+)
-    - Fixed drives: XTS-AES 256-bit
-    - Removable drives: AES-CBC 256-bit (for cross-platform compatibility)
+ - Choose drive encryption method and cipher strength:
+ - OS drives: XTS-AES 256-bit (Windows 10 1511+)
+ - Fixed drives: XTS-AES 256-bit
+ - Removable drives: AES-CBC 256-bit (for cross-platform compatibility)
 
 Fixed Data Drives:
-  - Choose how BitLocker-protected fixed drives can be recovered: Enabled
-    - Store recovery passwords in AD DS: Enabled
+ - Choose how BitLocker-protected fixed drives can be recovered: Enabled
+ - Store recovery passwords in AD DS: Enabled
 
 Removable Data Drives:
-  - Control use of BitLocker on removable drives: Enabled
-  - Configure use of passwords for removable drives: Require complexity
+ - Control use of BitLocker on removable drives: Enabled
+ - Configure use of passwords for removable drives: Require complexity
 ```
 
 ### Step 3: Enable BitLocker - Command Line
@@ -111,23 +111,23 @@ Removable Data Drives:
 ```powershell
 # Enable BitLocker with TPM-only protector (transparent to user)
 Enable-BitLocker -MountPoint "C:" -EncryptionMethod XtsAes256 `
-  -TpmProtector -SkipHardwareTest
+ -TpmProtector -SkipHardwareTest
 
 # Enable BitLocker with TPM + PIN (recommended for laptops)
 $pin = ConvertTo-SecureString "123456" -AsPlainText -Force
 Enable-BitLocker -MountPoint "C:" -EncryptionMethod XtsAes256 `
-  -TpmAndPinProtector -Pin $pin
+ -TpmAndPinProtector -Pin $pin
 
 # Add recovery password protector
 Add-BitLockerKeyProtector -MountPoint "C:" -RecoveryPasswordProtector
 
 # Backup recovery key to Active Directory
 Backup-BitLockerKeyProtector -MountPoint "C:" `
-  -KeyProtectorId (Get-BitLockerVolume -MountPoint "C:").KeyProtector[1].KeyProtectorId
+ -KeyProtectorId (Get-BitLockerVolume -MountPoint "C:").KeyProtector[1].KeyProtectorId
 
 # Encrypt fixed data drives
 Enable-BitLocker -MountPoint "D:" -EncryptionMethod XtsAes256 `
-  -RecoveryPasswordProtector -AutoUnlockEnabled
+ -RecoveryPasswordProtector -AutoUnlockEnabled
 ```
 
 ### Step 4: Deploy via Intune (Enterprise)
@@ -139,23 +139,23 @@ Platform: Windows 10 and later
 Profile: BitLocker
 
 Settings:
-  BitLocker base settings:
-    - Encryption for operating system drives: Require
-    - Encryption for fixed data drives: Require
-    - Encryption for removable data drives: Require
+ BitLocker base settings:
+ - Encryption for operating system drives: Require
+ - Encryption for fixed data drives: Require
+ - Encryption for removable data drives: Require
 
-  Operating system drive settings:
-    - Additional authentication at startup: Require
-    - TPM startup: Allowed
-    - TPM startup PIN: Required (for high-security endpoints)
-    - Encryption method: XTS-AES 256-bit
-    - Recovery: Escrow to Azure AD
+ Operating system drive settings:
+ - Additional authentication at startup: Require
+ - TPM startup: Allowed
+ - TPM startup PIN: Required (for high-security endpoints)
+ - Encryption method: XTS-AES 256-bit
+ - Recovery: Escrow to Azure AD
 
-  Fixed drive settings:
-    - Encryption method: XTS-AES 256-bit
-    - Recovery: Escrow to Azure AD
+ Fixed drive settings:
+ - Encryption method: XTS-AES 256-bit
+ - Recovery: Escrow to Azure AD
 
-  Assign to: All managed Windows devices (or specific groups)
+ Assign to: All managed Windows devices (or specific groups)
 ```
 
 ### Step 5: Manage Recovery Keys
@@ -163,14 +163,14 @@ Settings:
 ```powershell
 # View recovery key on local system
 (Get-BitLockerVolume -MountPoint "C:").KeyProtector |
-  Where-Object {$_.KeyProtectorType -eq "RecoveryPassword"} |
-  Select-Object KeyProtectorId, RecoveryPassword
+ Where-Object {$_.KeyProtectorType -eq "RecoveryPassword"} |
+ Select-Object KeyProtectorId, RecoveryPassword
 
 # Retrieve recovery key from Active Directory (requires RSAT)
 Get-ADObject -Filter {objectClass -eq "msFVE-RecoveryInformation"} `
-  -SearchBase "CN=COMPUTER01,OU=Workstations,DC=corp,DC=example,DC=com" `
-  -Properties msFVE-RecoveryPassword |
-  Select-Object -ExpandProperty msFVE-RecoveryPassword
+ -SearchBase "CN=COMPUTER01,OU=Workstations,DC=corp,DC=example,DC=com" `
+ -Properties msFVE-RecoveryPassword |
+ Select-Object -ExpandProperty msFVE-RecoveryPassword
 
 # Retrieve recovery key from Azure AD
 # Azure Portal → Azure AD → Devices → [device] → BitLocker keys
@@ -185,18 +185,18 @@ Get-ADObject -Filter {objectClass -eq "msFVE-RecoveryInformation"} `
 manage-bde -status C:
 
 # Expected output for encrypted drive:
-#   Conversion Status: Fully Encrypted
-#   Percentage Encrypted: 100.0%
-#   Encryption Method: XTS-AES 256
-#   Protection Status: Protection On
-#   Key Protectors: TPM, Numerical Password
+# Conversion Status: Fully Encrypted
+# Percentage Encrypted: 100.0%
+# Encryption Method: XTS-AES 256
+# Protection Status: Protection On
+# Key Protectors: TPM, Numerical Password
 
 # PowerShell compliance check
 $vol = Get-BitLockerVolume -MountPoint "C:"
 if ($vol.ProtectionStatus -eq "On" -and $vol.VolumeStatus -eq "FullyEncrypted") {
-    Write-Host "COMPLIANT: BitLocker enabled and fully encrypted"
+ Write-Host "COMPLIANT: BitLocker enabled and fully encrypted"
 } else {
-    Write-Host "NON-COMPLIANT: BitLocker status - Protection: $($vol.ProtectionStatus), Volume: $($vol.VolumeStatus)"
+ Write-Host "NON-COMPLIANT: BitLocker status - Protection: $($vol.ProtectionStatus), Volume: $($vol.VolumeStatus)"
 }
 ```
 

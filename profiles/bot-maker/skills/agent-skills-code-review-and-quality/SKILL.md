@@ -105,9 +105,9 @@ Prefer the remedy that removes moving pieces over one that spreads the same comp
 Small, focused changes are easier to review, faster to merge, and safer to deploy. Target these sizes:
 
 ```
-~100 lines changed   → Good. Reviewable in one sitting.
-~300 lines changed   → Acceptable if it's a single logical change.
-~1000 lines changed  → Too large. Split it.
+~100 lines changed → Good. Reviewable in one sitting.
+~300 lines changed → Acceptable if it's a single logical change.
+~1000 lines changed → Too large. Split it.
 ```
 
 **Watch file size, not just diff size.** A small diff can still push a file past a healthy boundary — around 1000 *total* lines in a single file (distinct from the ~1000 *changed*-lines threshold above) is a common inspection signal, not a hard cap. When a change materially grows an already-large file, ask whether to extract helpers, subcomponents, or modules *first*, before piling more on. Decompose, then add.
@@ -208,14 +208,14 @@ Use different models for different review perspectives:
 
 ```
 Model A writes the code
-    │
-    ▼
+ │
+ ▼
 Model B reviews for correctness and architecture
-    │
-    ▼
+ │
+ ▼
 Model A addresses the feedback
-    │
-    ▼
+ │
+ ▼
 Human makes the final call
 ```
 

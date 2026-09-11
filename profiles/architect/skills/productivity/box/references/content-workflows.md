@@ -80,7 +80,7 @@ Include the item ID with the link. If a human cannot open an item visible only t
 ```bash
 box files:metadata:get <FILE_ID> --scope global --template-key properties --json
 box files:metadata:create <FILE_ID> --scope global --template-key properties \
-  --data invoice_id=INV-001 --json
+ --data invoice_id=INV-001 --json
 ```
 
 `global.properties` is Box's built-in schema-free metadata instance; no template creation is required. Its values are not a reusable typed enterprise schema and cannot be used by the Metadata Query API. Read all existing metadata instances before writing so unrelated properties are preserved. Use [Search and AI](search-and-ai.md) when metadata must be extracted from document content; do not use a partial, unrelated, or incomplete enterprise template.

@@ -1,10 +1,10 @@
 ---
 name: performing-alert-triage-with-elastic-siem
 description: Perform systematic alert triage in Elastic Security SIEM—classifying,
-  prioritizing, and investigating alerts using Kibana, ES|QL queries, and ECS-normalized
-  data—to drive SOC analyst workflows. Use when triaging incoming Elastic Security
-  detections, prioritizing an analyst's alert queue, or investigating alerts during
-  SOC operations.
+ prioritizing, and investigating alerts using Kibana, ES|QL queries, and ECS-normalized
+ data—to drive SOC analyst workflows. Use when triaging incoming Elastic Security
+ detections, prioritizing an analyst's alert queue, or investigating alerts during
+ SOC operations.
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -174,36 +174,36 @@ Elastic Security includes 1000+ pre-built detection rules organized by:
 
 ```json
 {
-  "name": "Multiple Failed Logins Followed by Success",
-  "type": "threshold",
-  "query": "event.category:authentication AND event.outcome:failure",
-  "threshold": {
-    "field": ["source.ip", "user.name"],
-    "value": 5,
-    "cardinality": [
-      {
-        "field": "user.name",
-        "value": 3
-      }
-    ]
-  },
-  "severity": "high",
-  "risk_score": 73,
-  "threat": [
-    {
-      "framework": "MITRE ATT&CK",
-      "tactic": {
-        "id": "TA0006",
-        "name": "Credential Access"
-      },
-      "technique": [
-        {
-          "id": "T1110",
-          "name": "Brute Force"
-        }
-      ]
-    }
-  ]
+ "name": "Multiple Failed Logins Followed by Success",
+ "type": "threshold",
+ "query": "event.category:authentication AND event.outcome:failure",
+ "threshold": {
+ "field": ["source.ip", "user.name"],
+ "value": 5,
+ "cardinality": [
+ {
+ "field": "user.name",
+ "value": 3
+ }
+ ]
+ },
+ "severity": "high",
+ "risk_score": 73,
+ "threat": [
+ {
+ "framework": "MITRE ATT&CK",
+ "tactic": {
+ "id": "TA0006",
+ "name": "Credential Access"
+ },
+ "technique": [
+ {
+ "id": "T1110",
+ "name": "Brute Force"
+ }
+ ]
+ }
+ ]
 }
 ```
 
@@ -214,10 +214,10 @@ Elastic Security includes 1000+ pre-built detection rules organized by:
 1. Open alert in Elastic Security
 2. Click AI Assistant panel
 3. Use quick prompts:
-   - "Summarize this alert" - Get initial assessment
-   - "Generate ES|QL query to find related activity" - Expand investigation
-   - "What are the recommended response actions?" - Get playbook guidance
-   - "Is this likely a false positive?" - Get AI confidence assessment
+ - "Summarize this alert" - Get initial assessment
+ - "Generate ES|QL query to find related activity" - Expand investigation
+ - "What are the recommended response actions?" - Get playbook guidance
+ - "Is this likely a false positive?" - Get AI confidence assessment
 
 ### Attack Discovery
 

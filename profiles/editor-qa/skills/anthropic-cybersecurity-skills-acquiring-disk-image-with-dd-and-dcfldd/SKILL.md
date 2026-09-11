@@ -85,17 +85,17 @@ sha256sum /dev/sdb | tee /cases/case-2024-001/hashes/source_hash_before.txt
 ```bash
 # Basic dd acquisition with progress and error handling
 dd if=/dev/sdb of=/cases/case-2024-001/images/evidence.dd \
-   bs=4096 \
-   conv=noerror,sync \
-   status=progress 2>&1 | tee /cases/case-2024-001/logs/dd_acquisition.log
+ bs=4096 \
+ conv=noerror,sync \
+ status=progress 2>&1 | tee /cases/case-2024-001/logs/dd_acquisition.log
 
 # For compressed images to save space
 dd if=/dev/sdb bs=4096 conv=noerror,sync status=progress | \
-   gzip -c > /cases/case-2024-001/images/evidence.dd.gz
+ gzip -c > /cases/case-2024-001/images/evidence.dd.gz
 
 # Using dd with a specific count for partial acquisition
 dd if=/dev/sdb of=/cases/case-2024-001/images/first_1gb.dd \
-   bs=1M count=1024 status=progress
+ bs=1M count=1024 status=progress
 ```
 
 ### Step 4: Acquire Using dcfldd (Preferred Forensic Method)
@@ -106,30 +106,30 @@ apt-get install dcfldd
 
 # Acquire image with built-in hashing and split output
 dcfldd if=/dev/sdb \
-   of=/cases/case-2024-001/images/evidence.dd \
-   hash=sha256,md5 \
-   hashwindow=1G \
-   hashlog=/cases/case-2024-001/hashes/acquisition_hashes.txt \
-   bs=4096 \
-   conv=noerror,sync \
-   errlog=/cases/case-2024-001/logs/dcfldd_errors.log
+ of=/cases/case-2024-001/images/evidence.dd \
+ hash=sha256,md5 \
+ hashwindow=1G \
+ hashlog=/cases/case-2024-001/hashes/acquisition_hashes.txt \
+ bs=4096 \
+ conv=noerror,sync \
+ errlog=/cases/case-2024-001/logs/dcfldd_errors.log
 
 # Split large images into manageable segments
 dcfldd if=/dev/sdb \
-   of=/cases/case-2024-001/images/evidence.dd \
-   hash=sha256 \
-   hashlog=/cases/case-2024-001/hashes/split_hashes.txt \
-   bs=4096 \
-   split=2G \
-   splitformat=aa
+ of=/cases/case-2024-001/images/evidence.dd \
+ hash=sha256 \
+ hashlog=/cases/case-2024-001/hashes/split_hashes.txt \
+ bs=4096 \
+ split=2G \
+ splitformat=aa
 
 # Acquire with verification pass
 dcfldd if=/dev/sdb \
-   of=/cases/case-2024-001/images/evidence.dd \
-   hash=sha256 \
-   hashlog=/cases/case-2024-001/hashes/verification.txt \
-   vf=/cases/case-2024-001/images/evidence.dd \
-   verifylog=/cases/case-2024-001/logs/verify.log
+ of=/cases/case-2024-001/images/evidence.dd \
+ hash=sha256 \
+ hashlog=/cases/case-2024-001/hashes/verification.txt \
+ vf=/cases/case-2024-001/images/evidence.dd \
+ verifylog=/cases/case-2024-001/logs/verify.log
 ```
 
 ### Step 5: Verify Image Integrity
@@ -137,20 +137,20 @@ dcfldd if=/dev/sdb \
 ```bash
 # Hash the acquired image
 sha256sum /cases/case-2024-001/images/evidence.dd | \
-   tee /cases/case-2024-001/hashes/image_hash.txt
+ tee /cases/case-2024-001/hashes/image_hash.txt
 
 # Compare source and image hashes
 diff <(sha256sum /dev/sdb | awk '{print $1}') \
-     <(sha256sum /cases/case-2024-001/images/evidence.dd | awk '{print $1}')
+ <(sha256sum /cases/case-2024-001/images/evidence.dd | awk '{print $1}')
 
 # If using split images, verify each segment
 sha256sum /cases/case-2024-001/images/evidence.dd.* | \
-   tee /cases/case-2024-001/hashes/split_image_hashes.txt
+ tee /cases/case-2024-001/hashes/split_image_hashes.txt
 
 # Re-hash source to confirm no changes occurred
 sha256sum /dev/sdb | tee /cases/case-2024-001/hashes/source_hash_after.txt
 diff /cases/case-2024-001/hashes/source_hash_before.txt \
-     /cases/case-2024-001/hashes/source_hash_after.txt
+ /cases/case-2024-001/hashes/source_hash_after.txt
 ```
 
 ### Step 6: Document the Acquisition Process
@@ -183,9 +183,9 @@ EOF
 
 # Compress logs for archival
 tar -czf /cases/case-2024-001/acquisition_package.tar.gz \
-   /cases/case-2024-001/hashes/ \
-   /cases/case-2024-001/logs/ \
-   /cases/case-2024-001/notes/
+ /cases/case-2024-001/hashes/ \
+ /cases/case-2024-001/logs/ \
+ /cases/case-2024-001/notes/
 ```
 
 ## Key Concepts
@@ -232,14 +232,14 @@ Use `ddrescue` first to recover readable sectors, then use dd with `conv=noerror
 
 ```
 Acquisition Summary:
-  Source:       /dev/sdb (500GB Western Digital WD5000AAKX)
-  Destination:  /cases/case-2024-001/images/evidence.dd
-  Tool:         dcfldd 1.9.1
-  Block Size:   4096 bytes
-  Duration:     2h 15m 32s
-  Bytes Copied: 500,107,862,016
-  Errors:       0 bad sectors
-  Source SHA-256:  a3f2b8c9d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1
-  Image SHA-256:   a3f2b8c9d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1
-  Verification:    PASSED - Hashes match
+ Source: /dev/sdb (500GB Western Digital WD5000AAKX)
+ Destination: /cases/case-2024-001/images/evidence.dd
+ Tool: dcfldd 1.9.1
+ Block Size: 4096 bytes
+ Duration: 2h 15m 32s
+ Bytes Copied: 500,107,862,016
+ Errors: 0 bad sectors
+ Source SHA-256: a3f2b8c9d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1
+ Image SHA-256: a3f2b8c9d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1
+ Verification: PASSED - Hashes match
 ```

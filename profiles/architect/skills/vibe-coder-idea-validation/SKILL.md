@@ -1,10 +1,10 @@
 ---
 name: idea-validation
 description: |
-  Validate idea and create detailed PRD. Saves docs/PRD.md to project.
-  Use when: user describes an app idea, wants to create something new.
-  Triggers: "I want to build", "create app", "make website", "build MVP",
-  "хочу создать", "сделать приложение".
+ Validate idea and create detailed PRD. Saves docs/PRD.md to project.
+ Use when: user describes an app idea, wants to create something new.
+ Triggers: "I want to build", "create app", "make website", "build MVP",
+ "хочу создать", "сделать приложение".
 ---
 
 # Idea Validation
@@ -21,14 +21,14 @@ First, determine project type from user's description or ask directly:
 question: "Какой тип проекта?"
 header: "Type"
 options:
-  - label: "Web App (SaaS)"
-    description: "Веб-приложение с UI"
-  - label: "Telegram Bot"
-    description: "Бот для Telegram"
-  - label: "REST/GraphQL API"
-    description: "Backend сервис"
-  - label: "CLI Tool"
-    description: "Консольная утилита"
+ - label: "Web App (SaaS)"
+ description: "Веб-приложение с UI"
+ - label: "Telegram Bot"
+ description: "Бот для Telegram"
+ - label: "REST/GraphQL API"
+ description: "Backend сервис"
+ - label: "CLI Tool"
+ description: "Консольная утилита"
 # Other types via "Other": Mobile App, Discord Bot, Library/SDK, Data Pipeline, Browser Extension
 ```
 
@@ -47,12 +47,12 @@ Based on complexity, offer brainstorming:
 question: "Хочешь уточнить идею через brainstorm?"
 header: "Brainstorm"
 options:
-  - label: "Да, давай уточним"
-    description: "Детальные вопросы → полный PRD"
-  - label: "Нет, идея понятна"
-    description: "Быстрые вопросы → минимальный PRD"
-  - label: "Частично"
-    description: "Ключевые вопросы только"
+ - label: "Да, давай уточним"
+ description: "Детальные вопросы → полный PRD"
+ - label: "Нет, идея понятна"
+ description: "Быстрые вопросы → минимальный PRD"
+ - label: "Частично"
+ description: "Ключевые вопросы только"
 ```
 
 ### Step 3: Core Questions (всегда)
@@ -69,14 +69,14 @@ options: [3-4 contextual options based on idea]
 question: "Кто будет этим пользоваться?"
 header: "User"
 options:
-  - label: "Для себя"
-    description: "Личное использование"
-  - label: "AI агенты"
-    description: "Через API/MCP"
-  - label: "Команда/Бизнес"
-    description: "Совместная работа"
-  - label: "Публичный сервис"
-    description: "Широкая аудитория"
+ - label: "Для себя"
+ description: "Личное использование"
+ - label: "AI агенты"
+ description: "Через API/MCP"
+ - label: "Команда/Бизнес"
+ description: "Совместная работа"
+ - label: "Публичный сервис"
+ description: "Широкая аудитория"
 ```
 
 **Q3: Core Action**
@@ -100,33 +100,33 @@ options: [3-4 contextual options]
 question: "Как бот взаимодействует с пользователем?"
 header: "Interaction"
 options:
-  - label: "Команды (/start, /help)"
-    description: "Структурированное взаимодействие"
-  - label: "Диалог"
-    description: "Свободное общение"
-  - label: "Inline режим"
-    description: "Поиск из любого чата"
-  - label: "Кнопки/меню"
-    description: "Визуальная навигация"
+ - label: "Команды (/start, /help)"
+ description: "Структурированное взаимодействие"
+ - label: "Диалог"
+ description: "Свободное общение"
+ - label: "Inline режим"
+ description: "Поиск из любого чата"
+ - label: "Кнопки/меню"
+ description: "Визуальная навигация"
 
 question: "Нужна ли база данных?"
 header: "Storage"
 options:
-  - label: "Да, SQLite"
-    description: "Простое хранение"
-  - label: "Да, PostgreSQL"
-    description: "Масштабируемое"
-  - label: "Нет"
-    description: "Stateless бот"
+ - label: "Да, SQLite"
+ description: "Простое хранение"
+ - label: "Да, PostgreSQL"
+ description: "Масштабируемое"
+ - label: "Нет"
+ description: "Stateless бот"
 
 question: "Внешние интеграции?"
 header: "APIs"
 multiSelect: true
 options:
-  - label: "OpenAI/LLM"
-  - label: "Payment (Stripe/YooKassa)"
-  - label: "External APIs"
-  - label: "Нет интеграций"
+ - label: "OpenAI/LLM"
+ - label: "Payment (Stripe/YooKassa)"
+ - label: "External APIs"
+ - label: "Нет интеграций"
 ```
 
 #### For Web App (SaaS):
@@ -134,17 +134,17 @@ options:
 question: "Нужна ли авторизация?"
 header: "Auth"
 options:
-  - label: "Email + пароль"
-  - label: "OAuth (Google/GitHub)"
-  - label: "Magic link"
-  - label: "Не нужна"
+ - label: "Email + пароль"
+ - label: "OAuth (Google/GitHub)"
+ - label: "Magic link"
+ - label: "Не нужна"
 
 question: "Realtime функции?"
 header: "Realtime"
 options:
-  - label: "Да, WebSocket"
-  - label: "Да, Server-Sent Events"
-  - label: "Нет, обычный HTTP"
+ - label: "Да, WebSocket"
+ - label: "Да, Server-Sent Events"
+ - label: "Нет, обычный HTTP"
 ```
 
 #### For REST API:
@@ -152,20 +152,20 @@ options:
 question: "Для кого API?"
 header: "Audience"
 options:
-  - label: "Internal"
-    description: "Для своих фронтов"
-  - label: "Public"
-    description: "Для внешних разработчиков"
-  - label: "Partner"
-    description: "Для партнёров"
+ - label: "Internal"
+ description: "Для своих фронтов"
+ - label: "Public"
+ description: "Для внешних разработчиков"
+ - label: "Partner"
+ description: "Для партнёров"
 
 question: "Аутентификация?"
 header: "Auth"
 options:
-  - label: "API Key"
-  - label: "JWT"
-  - label: "OAuth2"
-  - label: "Без авторизации"
+ - label: "API Key"
+ - label: "JWT"
+ - label: "OAuth2"
+ - label: "Без авторизации"
 ```
 
 #### For CLI Tool:
@@ -173,20 +173,20 @@ options:
 question: "Как запускается?"
 header: "Execution"
 options:
-  - label: "Одна команда"
-    description: "cli do-something"
-  - label: "Субкоманды"
-    description: "cli cmd1, cli cmd2"
-  - label: "Интерактивный"
-    description: "Диалог с пользователем"
+ - label: "Одна команда"
+ description: "cli do-something"
+ - label: "Субкоманды"
+ description: "cli cmd1, cli cmd2"
+ - label: "Интерактивный"
+ description: "Диалог с пользователем"
 
 question: "Вывод?"
 header: "Output"
 options:
-  - label: "Текст"
-  - label: "JSON"
-  - label: "Файлы"
-  - label: "Табличный"
+ - label: "Текст"
+ - label: "JSON"
+ - label: "Файлы"
+ - label: "Табличный"
 ```
 
 ### Step 5: Constraints (если brainstorm full)
@@ -196,13 +196,13 @@ question: "Есть ли ограничения?"
 header: "Constraints"
 multiSelect: true
 options:
-  - label: "Бесплатные сервисы only"
-    description: "Без платных зависимостей"
-  - label: "Быстрый MVP"
-    description: "Дедлайн < 1 недели"
-  - label: "Scale 1000+ пользователей"
-    description: "Нужна масштабируемость"
-  - label: "Нет ограничений"
+ - label: "Бесплатные сервисы only"
+ description: "Без платных зависимостей"
+ - label: "Быстрый MVP"
+ description: "Дедлайн < 1 недели"
+ - label: "Scale 1000+ пользователей"
+ description: "Нужна масштабируемость"
+ - label: "Нет ограничений"
 ```
 
 ## Phase B: PRD Generation
@@ -250,13 +250,13 @@ Status: Draft
 
 ## Core Features (MVP)
 1. **{Feature Name}**
-   - User story: As a {user}, I want to {action} so that {benefit}
-   - Acceptance criteria:
-     - [ ] {Criterion 1}
-     - [ ] {Criterion 2}
+ - User story: As a {user}, I want to {action} so that {benefit}
+ - Acceptance criteria:
+ - [ ] {Criterion 1}
+ - [ ] {Criterion 2}
 
 2. **{Feature 2}**
-   ...
+ ...
 
 ## Non-Goals
 - {What we're NOT building}
@@ -303,9 +303,9 @@ Status: Draft
 ### Feature 1: {Name}
 - **User story:** As a {user}, I want to {action} so that {benefit}
 - **Acceptance criteria:**
-  - [ ] {Criterion 1}
-  - [ ] {Criterion 2}
-  - [ ] {Criterion 3}
+ - [ ] {Criterion 1}
+ - [ ] {Criterion 2}
+ - [ ] {Criterion 3}
 - **Priority:** P0
 
 ### Feature 2: {Name}
@@ -358,21 +358,21 @@ Override:
 ## After PRD Creation
 
 1. **Validate PRD**:
-   ```bash
-   python3 scripts/validate_prd.py --path docs/PRD.md
-   ```
+ ```bash
+ python3 scripts/validate_prd.py --path docs/PRD.md
+ ```
 
 2. **Report to user**:
-   ```
-   PRD saved to docs/PRD.md
+ ```
+ PRD saved to docs/PRD.md
 
-   Summary:
-   - Type: {project type}
-   - Features: {count}
-   - Complexity: {minimal/standard/full}
+ Summary:
+ - Type: {project type}
+ - Features: {count}
+ - Complexity: {minimal/standard/full}
 
-   Next: Task[rust-project-init] or Task[python-project-init]
-   ```
+ Next: Task[rust-project-init] or Task[python-project-init]
+ ```
 
 ## Rules
 

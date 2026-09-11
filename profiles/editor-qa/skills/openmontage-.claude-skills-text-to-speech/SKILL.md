@@ -1,14 +1,14 @@
 ---
 name: text-to-speech
 description: |
-  Generate speech audio from text using HeyGen's Starfish TTS model. Use when: (1) Generating standalone speech audio files from text, (2) Converting text to speech with voice selection, speed, and pitch control, (3) Creating audio for voiceovers, narration, or podcasts, (4) Working with HeyGen's /v1/audio endpoints, (5) Listing available TTS voices by language or gender.
+ Generate speech audio from text using HeyGen's Starfish TTS model. Use when: (1) Generating standalone speech audio files from text, (2) Converting text to speech with voice selection, speed, and pitch control, (3) Creating audio for voiceovers, narration, or podcasts, (4) Working with HeyGen's /v1/audio endpoints, (5) Listing available TTS voices by language or gender.
 allowed-tools: mcp__heygen__*
 metadata:
-  openclaw:
-    requires:
-      env:
-        - HEYGEN_API_KEY
-    primaryEnv: HEYGEN_API_KEY
+ openclaw:
+ requires:
+ env:
+ - HEYGEN_API_KEY
+ primaryEnv: HEYGEN_API_KEY
 ---
 
 # Text-to-Speech (HeyGen Starfish)
@@ -21,7 +21,7 @@ All requests require the `X-Api-Key` header. Set the `HEYGEN_API_KEY` environmen
 
 ```bash
 curl -X GET "https://api.heygen.com/v1/audio/voices" \
-  -H "X-Api-Key: $HEYGEN_API_KEY"
+ -H "X-Api-Key: $HEYGEN_API_KEY"
 ```
 
 ## Tool Selection
@@ -50,42 +50,42 @@ Retrieve voices compatible with the Starfish TTS model.
 
 ```bash
 curl -X GET "https://api.heygen.com/v1/audio/voices" \
-  -H "X-Api-Key: $HEYGEN_API_KEY"
+ -H "X-Api-Key: $HEYGEN_API_KEY"
 ```
 
 ### TypeScript
 
 ```typescript
 interface TTSVoice {
-  voice_id: string;
-  language: string;
-  gender: "female" | "male" | "unknown";
-  name: string;
-  preview_audio_url: string | null;
-  support_pause: boolean;
-  support_locale: boolean;
-  type: string;
+ voice_id: string;
+ language: string;
+ gender: "female" | "male" | "unknown";
+ name: string;
+ preview_audio_url: string | null;
+ support_pause: boolean;
+ support_locale: boolean;
+ type: string;
 }
 
 interface TTSVoicesResponse {
-  error: null | string;
-  data: {
-    voices: TTSVoice[];
-  };
+ error: null | string;
+ data: {
+ voices: TTSVoice[];
+ };
 }
 
 async function listTTSVoices(): Promise<TTSVoice[]> {
-  const response = await fetch("https://api.heygen.com/v1/audio/voices", {
-    headers: { "X-Api-Key": process.env.HEYGEN_API_KEY! },
-  });
+ const response = await fetch("https://api.heygen.com/v1/audio/voices", {
+ headers: { "X-Api-Key": process.env.HEYGEN_API_KEY! },
+ });
 
-  const json: TTSVoicesResponse = await response.json();
+ const json: TTSVoicesResponse = await response.json();
 
-  if (json.error) {
-    throw new Error(json.error);
-  }
+ if (json.error) {
+ throw new Error(json.error);
+ }
 
-  return json.data.voices;
+ return json.data.voices;
 }
 ```
 
@@ -96,37 +96,37 @@ import requests
 import os
 
 def list_tts_voices() -> list:
-    response = requests.get(
-        "https://api.heygen.com/v1/audio/voices",
-        headers={"X-Api-Key": os.environ["HEYGEN_API_KEY"]}
-    )
+ response = requests.get(
+ "https://api.heygen.com/v1/audio/voices",
+ headers={"X-Api-Key": os.environ["HEYGEN_API_KEY"]}
+ )
 
-    data = response.json()
-    if data.get("error"):
-        raise Exception(data["error"])
+ data = response.json()
+ if data.get("error"):
+ raise Exception(data["error"])
 
-    return data["data"]["voices"]
+ return data["data"]["voices"]
 ```
 
 ### Response Format
 
 ```json
 {
-  "error": null,
-  "data": {
-    "voices": [
-      {
-        "voice_id": "f38a635bee7a4d1f9b0a654a31d050d2",
-        "name": "Chill Brian",
-        "language": "English",
-        "gender": "male",
-        "preview_audio_url": "https://resource.heygen.ai/text_to_speech/WpSDQvmLGXEqXZVZQiVeg6.mp3",
-        "support_pause": true,
-        "support_locale": false,
-        "type": "public"
-      }
-    ]
-  }
+ "error": null,
+ "data": {
+ "voices": [
+ {
+ "voice_id": "f38a635bee7a4d1f9b0a654a31d050d2",
+ "name": "Chill Brian",
+ "language": "English",
+ "gender": "male",
+ "preview_audio_url": "https://resource.heygen.ai/text_to_speech/WpSDQvmLGXEqXZVZQiVeg6.mp3",
+ "support_pause": true,
+ "support_locale": false,
+ "type": "public"
+ }
+ ]
+ }
 }
 ```
 
@@ -162,68 +162,68 @@ Convert text to speech audio using a specified voice.
 
 ```bash
 curl -X POST "https://api.heygen.com/v1/audio/text_to_speech" \
-  -H "X-Api-Key: $HEYGEN_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Hello! Welcome to our product demo.",
-    "voice_id": "YOUR_VOICE_ID",
-    "speed": 1.0
-  }'
+ -H "X-Api-Key: $HEYGEN_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "text": "Hello! Welcome to our product demo.",
+ "voice_id": "YOUR_VOICE_ID",
+ "speed": 1.0
+ }'
 ```
 
 ### TypeScript
 
 ```typescript
 interface TTSRequest {
-  text: string;
-  voice_id: string;
-  speed?: number;
-  pitch?: number;
-  locale?: string;
-  elevenlabs_settings?: {
-    model?: string;
-    similarity_boost?: number;
-    stability?: number;
-    style?: number;
-  };
+ text: string;
+ voice_id: string;
+ speed?: number;
+ pitch?: number;
+ locale?: string;
+ elevenlabs_settings?: {
+ model?: string;
+ similarity_boost?: number;
+ stability?: number;
+ style?: number;
+ };
 }
 
 interface WordTimestamp {
-  word: string;
-  start: number;
-  end: number;
+ word: string;
+ start: number;
+ end: number;
 }
 
 interface TTSResponse {
-  error: null | string;
-  data: {
-    audio_url: string;
-    duration: number;
-    request_id: string;
-    word_timestamps: WordTimestamp[];
-  };
+ error: null | string;
+ data: {
+ audio_url: string;
+ duration: number;
+ request_id: string;
+ word_timestamps: WordTimestamp[];
+ };
 }
 
 async function textToSpeech(request: TTSRequest): Promise<TTSResponse["data"]> {
-  const response = await fetch(
-    "https://api.heygen.com/v1/audio/text_to_speech",
-    {
-      method: "POST",
-      headers: {
-        "X-Api-Key": process.env.HEYGEN_API_KEY!,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    }
-  );
+ const response = await fetch(
+ "https://api.heygen.com/v1/audio/text_to_speech",
+ {
+ method: "POST",
+ headers: {
+ "X-Api-Key": process.env.HEYGEN_API_KEY!,
+ "Content-Type": "application/json",
+ },
+ body: JSON.stringify(request),
+ }
+ );
 
-  const json: TTSResponse = await response.json();
+ const json: TTSResponse = await response.json();
 
-  if (json.error) {
-    throw new Error(json.error);
-  }
+ if (json.error) {
+ throw new Error(json.error);
+ }
 
-  return json.data;
+ return json.data;
 }
 ```
 
@@ -234,54 +234,54 @@ import requests
 import os
 
 def text_to_speech(
-    text: str,
-    voice_id: str,
-    speed: float = 1.0,
-    pitch: int = 0,
-    locale: str | None = None,
+ text: str,
+ voice_id: str,
+ speed: float = 1.0,
+ pitch: int = 0,
+ locale: str | None = None,
 ) -> dict:
-    payload = {
-        "text": text,
-        "voice_id": voice_id,
-        "speed": speed,
-        "pitch": pitch,
-    }
+ payload = {
+ "text": text,
+ "voice_id": voice_id,
+ "speed": speed,
+ "pitch": pitch,
+ }
 
-    if locale:
-        payload["locale"] = locale
+ if locale:
+ payload["locale"] = locale
 
-    response = requests.post(
-        "https://api.heygen.com/v1/audio/text_to_speech",
-        headers={
-            "X-Api-Key": os.environ["HEYGEN_API_KEY"],
-            "Content-Type": "application/json",
-        },
-        json=payload,
-    )
+ response = requests.post(
+ "https://api.heygen.com/v1/audio/text_to_speech",
+ headers={
+ "X-Api-Key": os.environ["HEYGEN_API_KEY"],
+ "Content-Type": "application/json",
+ },
+ json=payload,
+ )
 
-    data = response.json()
-    if data.get("error"):
-        raise Exception(data["error"])
+ data = response.json()
+ if data.get("error"):
+ raise Exception(data["error"])
 
-    return data["data"]
+ return data["data"]
 ```
 
 ### Response Format
 
 ```json
 {
-  "error": null,
-  "data": {
-    "audio_url": "https://resource2.heygen.ai/text_to_speech/.../id=365d46bb.wav",
-    "duration": 5.526,
-    "request_id": "p38QJ52hfgNlsYKZZmd9",
-    "word_timestamps": [
-      { "word": "<start>", "start": 0.0, "end": 0.0 },
-      { "word": "Hey", "start": 0.079, "end": 0.219 },
-      { "word": "there,", "start": 0.239, "end": 0.459 },
-      { "word": "<end>", "start": 5.526, "end": 5.526 }
-    ]
-  }
+ "error": null,
+ "data": {
+ "audio_url": "https://resource2.heygen.ai/text_to_speech/.../id=365d46bb.wav",
+ "duration": 5.526,
+ "request_id": "p38QJ52hfgNlsYKZZmd9",
+ "word_timestamps": [
+ { "word": "<start>", "start": 0.0, "end": 0.0 },
+ { "word": "Hey", "start": 0.079, "end": 0.219 },
+ { "word": "there,", "start": 0.239, "end": 0.459 },
+ { "word": "<end>", "start": 5.526, "end": 5.526 }
+ ]
+ }
 }
 ```
 
@@ -291,8 +291,8 @@ def text_to_speech(
 
 ```typescript
 const result = await textToSpeech({
-  text: "Welcome to our quarterly earnings call.",
-  voice_id: "YOUR_VOICE_ID",
+ text: "Welcome to our quarterly earnings call.",
+ voice_id: "YOUR_VOICE_ID",
 });
 
 console.log(`Audio URL: ${result.audio_url}`);
@@ -303,9 +303,9 @@ console.log(`Duration: ${result.duration}s`);
 
 ```typescript
 const result = await textToSpeech({
-  text: "We're thrilled to announce our newest feature!",
-  voice_id: "YOUR_VOICE_ID",
-  speed: 1.1,
+ text: "We're thrilled to announce our newest feature!",
+ voice_id: "YOUR_VOICE_ID",
+ speed: 1.1,
 });
 ```
 
@@ -313,9 +313,9 @@ const result = await textToSpeech({
 
 ```typescript
 const result = await textToSpeech({
-  text: "Bem-vindo ao nosso produto.",
-  voice_id: "MULTILINGUAL_VOICE_ID",
-  locale: "pt-BR",
+ text: "Bem-vindo ao nosso produto.",
+ voice_id: "MULTILINGUAL_VOICE_ID",
+ locale: "pt-BR",
 });
 ```
 
@@ -323,21 +323,21 @@ const result = await textToSpeech({
 
 ```typescript
 async function generateSpeech(text: string, language: string): Promise<string> {
-  const voices = await listTTSVoices();
-  const voice = voices.find(
-    (v) => v.language.toLowerCase().includes(language.toLowerCase())
-  );
+ const voices = await listTTSVoices();
+ const voice = voices.find(
+ (v) => v.language.toLowerCase().includes(language.toLowerCase())
+ );
 
-  if (!voice) {
-    throw new Error(`No TTS voice found for language: ${language}`);
-  }
+ if (!voice) {
+ throw new Error(`No TTS voice found for language: ${language}`);
+ }
 
-  const result = await textToSpeech({
-    text,
-    voice_id: voice.voice_id,
-  });
+ const result = await textToSpeech({
+ text,
+ voice_id: voice.voice_id,
+ });
 
-  return result.audio_url;
+ return result.audio_url;
 }
 
 const audioUrl = await generateSpeech("Hello and welcome!", "english");

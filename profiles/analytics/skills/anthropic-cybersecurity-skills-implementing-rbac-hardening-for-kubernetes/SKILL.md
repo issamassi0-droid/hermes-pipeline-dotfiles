@@ -1,13 +1,13 @@
 ---
 name: implementing-rbac-hardening-for-kubernetes
 description: >-
-  Hardens Kubernetes RBAC by designing least-privilege Roles and ClusterRoles, auditing
-  RoleBindings, eliminating cluster-admin sprawl, separating service accounts, and integrating
-  an external OIDC identity provider. Use when tightening cluster access control, removing
-  excessive ClusterRoleBindings, or hardening service-account permissions against escalation
-  and lateral movement. Keywords: RBAC, Role, ClusterRole, RoleBinding, least privilege,
-  service account, OIDC, cluster-admin. Do not use for discovering existing escalation paths -
-  use auditing-kubernetes-rbac-privilege-escalation.
+ Hardens Kubernetes RBAC by designing least-privilege Roles and ClusterRoles, auditing
+ RoleBindings, eliminating cluster-admin sprawl, separating service accounts, and integrating
+ an external OIDC identity provider. Use when tightening cluster access control, removing
+ excessive ClusterRoleBindings, or hardening service-account permissions against escalation
+ and lateral movement. Keywords: RBAC, Role, ClusterRole, RoleBinding, least privilege,
+ service account, OIDC, cluster-admin. Do not use for discovering existing escalation paths -
+ use auditing-kubernetes-rbac-privilege-escalation.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -64,9 +64,9 @@ Audit and remove unnecessary cluster-admin bindings:
 ```bash
 # List all cluster-admin bindings
 kubectl get clusterrolebindings -o json | jq -r '
-  .items[] |
-  select(.roleRef.name == "cluster-admin") |
-  "\(.metadata.name) -> \(.subjects[]? | "\(.kind)/\(.name) (\(.namespace // "cluster"))")"
+ .items[] |
+ select(.roleRef.name == "cluster-admin") |
+ "\(.metadata.name) -> \(.subjects[]? | "\(.kind)/\(.name) (\(.namespace // "cluster"))")"
 '
 ```
 
@@ -79,32 +79,32 @@ Use Role and RoleBinding instead of ClusterRole and ClusterRoleBinding:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  namespace: application
-  name: app-developer
+ namespace: application
+ name: app-developer
 rules:
-  - apiGroups: ["apps"]
-    resources: ["deployments"]
-    verbs: ["get", "list", "watch", "create", "update", "patch"]
-  - apiGroups: [""]
-    resources: ["pods", "pods/log"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: [""]
-    resources: ["configmaps"]
-    verbs: ["get", "list"]
+ - apiGroups: ["apps"]
+ resources: ["deployments"]
+ verbs: ["get", "list", "watch", "create", "update", "patch"]
+ - apiGroups: [""]
+ resources: ["pods", "pods/log"]
+ verbs: ["get", "list", "watch"]
+ - apiGroups: [""]
+ resources: ["configmaps"]
+ verbs: ["get", "list"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  namespace: application
-  name: app-developer-binding
+ namespace: application
+ name: app-developer-binding
 subjects:
-  - kind: Group
-    name: dev-team
-    apiGroup: rbac.authorization.k8s.io
+ - kind: Group
+ name: dev-team
+ apiGroup: rbac.authorization.k8s.io
 roleRef:
-  kind: Role
-  name: app-developer
-  apiGroup: rbac.authorization.k8s.io
+ kind: Role
+ name: app-developer
+ apiGroup: rbac.authorization.k8s.io
 ```
 
 ### 3. Dedicated Service Accounts Per Workload
@@ -113,23 +113,23 @@ roleRef:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: payment-processor
-  namespace: payments
-automountServiceAccountToken: false  # Disable auto-mount
+ name: payment-processor
+ namespace: payments
+automountServiceAccountToken: false # Disable auto-mount
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: payment-processor
-  namespace: payments
+ name: payment-processor
+ namespace: payments
 spec:
-  template:
-    spec:
-      serviceAccountName: payment-processor
-      automountServiceAccountToken: true  # Only mount when explicitly needed
-      containers:
-        - name: processor
-          image: payments/processor:v2.1@sha256:abc...
+ template:
+ spec:
+ serviceAccountName: payment-processor
+ automountServiceAccountToken: true # Only mount when explicitly needed
+ containers:
+ - name: processor
+ image: payments/processor:v2.1@sha256:abc...
 ```
 
 ### 4. Restrict Dangerous Permissions
@@ -149,17 +149,17 @@ Block permissions that enable privilege escalation:
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
-  name: security-viewer
+ name: security-viewer
 rules:
-  - apiGroups: [""]
-    resources: ["pods", "services", "namespaces", "nodes"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["apps"]
-    resources: ["deployments", "daemonsets", "statefulsets"]
-    verbs: ["get", "list", "watch"]
-  - apiGroups: ["networking.k8s.io"]
-    resources: ["networkpolicies"]
-    verbs: ["get", "list", "watch"]
+ - apiGroups: [""]
+ resources: ["pods", "services", "namespaces", "nodes"]
+ verbs: ["get", "list", "watch"]
+ - apiGroups: ["apps"]
+ resources: ["deployments", "daemonsets", "statefulsets"]
+ verbs: ["get", "list", "watch"]
+ - apiGroups: ["networking.k8s.io"]
+ resources: ["networkpolicies"]
+ verbs: ["get", "list", "watch"]
 ```
 
 ### 5. OIDC Integration for User Authentication
@@ -169,17 +169,17 @@ rules:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: kube-apiserver
+ name: kube-apiserver
 spec:
-  containers:
-    - name: kube-apiserver
-      command:
-        - kube-apiserver
-        - --oidc-issuer-url=https://idp.company.com
-        - --oidc-client-id=kubernetes
-        - --oidc-username-claim=email
-        - --oidc-groups-claim=groups
-        - --oidc-ca-file=/etc/kubernetes/pki/oidc-ca.crt
+ containers:
+ - name: kube-apiserver
+ command:
+ - kube-apiserver
+ - --oidc-issuer-url=https://idp.company.com
+ - --oidc-client-id=kubernetes
+ - --oidc-username-claim=email
+ - --oidc-groups-claim=groups
+ - --oidc-ca-file=/etc/kubernetes/pki/oidc-ca.crt
 ```
 
 ## RBAC Audit Process
@@ -189,16 +189,16 @@ spec:
 ```bash
 # All ClusterRoleBindings with subjects
 kubectl get clusterrolebindings -o json | jq -r '
-  .items[] | select(.subjects != null) |
-  .subjects[] as $s |
-  "\(.metadata.name) | \(.roleRef.name) | \($s.kind)/\($s.name)"
+ .items[] | select(.subjects != null) |
+ .subjects[] as $s |
+ "\(.metadata.name) | \(.roleRef.name) | \($s.kind)/\($s.name)"
 ' | sort | column -t -s '|'
 
 # All RoleBindings across namespaces
 kubectl get rolebindings --all-namespaces -o json | jq -r '
-  .items[] | select(.subjects != null) |
-  .subjects[] as $s |
-  "\(.metadata.namespace) | \(.metadata.name) | \(.roleRef.name) | \($s.kind)/\($s.name)"
+ .items[] | select(.subjects != null) |
+ .subjects[] as $s |
+ "\(.metadata.namespace) | \(.metadata.name) | \(.roleRef.name) | \($s.kind)/\($s.name)"
 ' | sort | column -t -s '|'
 ```
 
@@ -207,10 +207,10 @@ kubectl get rolebindings --all-namespaces -o json | jq -r '
 ```bash
 # Find service accounts with cluster-admin or admin roles
 kubectl get clusterrolebindings -o json | jq -r '
-  .items[] |
-  select(.roleRef.name == "cluster-admin" or .roleRef.name == "admin") |
-  select(.subjects[]?.kind == "ServiceAccount") |
-  "\(.subjects[] | select(.kind == "ServiceAccount") | "\(.namespace)/\(.name)")"
+ .items[] |
+ select(.roleRef.name == "cluster-admin" or .roleRef.name == "admin") |
+ select(.subjects[]?.kind == "ServiceAccount") |
+ "\(.subjects[] | select(.kind == "ServiceAccount") | "\(.namespace)/\(.name)")"
 '
 ```
 
@@ -219,9 +219,9 @@ kubectl get clusterrolebindings -o json | jq -r '
 ```bash
 # Find pods using the default service account
 kubectl get pods --all-namespaces -o json | jq -r '
-  .items[] |
-  select(.spec.serviceAccountName == "default" or .spec.serviceAccountName == null) |
-  "\(.metadata.namespace)/\(.metadata.name)"
+ .items[] |
+ select(.spec.serviceAccountName == "default" or .spec.serviceAccountName == null) |
+ "\(.metadata.namespace)/\(.metadata.name)"
 '
 ```
 
@@ -230,9 +230,9 @@ kubectl get pods --all-namespaces -o json | jq -r '
 ```bash
 # Find pods with auto-mounted service account tokens
 kubectl get pods --all-namespaces -o json | jq -r '
-  .items[] |
-  select(.spec.automountServiceAccountToken != false) |
-  "\(.metadata.namespace)/\(.metadata.name) sa=\(.spec.serviceAccountName // "default")"
+ .items[] |
+ select(.spec.automountServiceAccountToken != false) |
+ "\(.metadata.namespace)/\(.metadata.name) sa=\(.spec.serviceAccountName // "default")"
 '
 ```
 

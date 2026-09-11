@@ -6,11 +6,11 @@ author: Siqi Chen (@blader, https://github.com/blader/humanizer), ported by Herm
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [writing, editing, humanize, anti-ai-slop, voice, prose, text]
-    category: creative
-    homepage: https://github.com/blader/humanizer
-    related_skills: [songwriting-and-ai-music]
+ hermes:
+ tags: [writing, editing, humanize, anti-ai-slop, voice, prose, text]
+ category: creative
+ homepage: https://github.com/blader/humanizer
+ related_skills: [songwriting-and-ai-music]
 ---
 
 # Humanizer: Remove AI Writing Patterns
@@ -56,12 +56,12 @@ When given text to humanize:
 If the user provides a writing sample (their own previous writing), analyze it before rewriting:
 
 1. **Read the sample first.** Note:
-   - Sentence length patterns (short and punchy? Long and flowing? Mixed?)
-   - Word choice level (casual? academic? somewhere between?)
-   - How they start paragraphs (jump right in? Set context first?)
-   - Punctuation habits (lots of dashes? Parenthetical asides? Semicolons?)
-   - Any recurring phrases or verbal tics
-   - How they handle transitions (explicit connectors? Just start the next point?)
+ - Sentence length patterns (short and punchy? Long and flowing? Mixed?)
+ - Word choice level (casual? academic? somewhere between?)
+ - How they start paragraphs (jump right in? Set context first?)
+ - Punctuation habits (lots of dashes? Parenthetical asides? Semicolons?)
+ - Any recurring phrases or verbal tics
+ - How they handle transitions (explicit connectors? Just start the next point?)
 
 2. **Match their voice in the rewrite.** Removing AI patterns is only half of it; swap in patterns from the sample as well. If they write short sentences, do not produce long ones. If they use "stuff" and "things," do not upgrade to "elements" and "components."
 
@@ -554,11 +554,11 @@ Avoiding AI patterns is only half the job. Sterile, voiceless writing is just as
 2. Identify all instances of the patterns above.
 3. Rewrite each problematic section.
 4. Ensure the revised text:
-   - Sounds natural when read aloud
-   - Varies sentence structure naturally
-   - Uses specific details over vague claims
-   - Maintains appropriate tone for context
-   - Uses simple constructions (is/are/has) where appropriate
+ - Sounds natural when read aloud
+ - Varies sentence structure naturally
+ - Uses specific details over vague claims
+ - Maintains appropriate tone for context
+ - Uses simple constructions (is/are/has) where appropriate
 5. Present a draft humanized version.
 6. Prompt yourself: "What makes the below so obviously AI generated?"
 7. Answer briefly with the remaining tells (if any).

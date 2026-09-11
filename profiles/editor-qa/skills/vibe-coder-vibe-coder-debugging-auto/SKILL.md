@@ -25,8 +25,8 @@ Part of the hidden validation layer. When code breaks during generation, fix it 
 ```
 // User doesn't see this
 Error: Cannot read property 'map' of undefined
-  at UserList.tsx:15
-  at renderWithHooks...
+ at UserList.tsx:15
+ at renderWithHooks...
 ```
 
 ### 2. Analyze Root Cause (Hidden)

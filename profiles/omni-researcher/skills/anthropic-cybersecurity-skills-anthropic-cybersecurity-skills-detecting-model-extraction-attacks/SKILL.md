@@ -47,9 +47,9 @@ All three share a common signal: an attacker must send **many queries**, often c
 - Python 3.9+ environment.
 - Access to inference-API access logs (per-API-key/per-principal query counts, timestamps, input features or hashes, returned confidence vectors).
 - For self-assessment red-teaming, install the Adversarial Robustness Toolbox (ART), the reference framework for extraction/inference attacks and defenses:
-  ```bash
-  pip install adversarial-robustness-toolbox scikit-learn numpy
-  ```
+ ```bash
+ pip install adversarial-robustness-toolbox scikit-learn numpy
+ ```
 - Optional: access to the target model object (white/grey-box) or only its API (black-box).
 - Authorization to test the target model.
 
@@ -79,16 +79,16 @@ Capture the fields a detector needs. Per request, log the principal (API key / I
 import hashlib, json, time
 
 def log_inference(principal, features, returned_probs):
-    record = {
-        "ts": time.time(),
-        "principal": principal,
-        # hash inputs so logs don't store raw sensitive data
-        "input_hash": hashlib.sha256(json.dumps(features, sort_keys=True).encode()).hexdigest(),
-        "wants_probs": returned_probs,
-        "n_features": len(features),
-    }
-    with open("inference_audit.jsonl", "a") as f:
-        f.write(json.dumps(record) + "\n")
+ record = {
+ "ts": time.time(),
+ "principal": principal,
+ # hash inputs so logs don't store raw sensitive data
+ "input_hash": hashlib.sha256(json.dumps(features, sort_keys=True).encode()).hexdigest(),
+ "wants_probs": returned_probs,
+ "n_features": len(features),
+ }
+ with open("inference_audit.jsonl", "a") as f:
+ f.write(json.dumps(record) + "\n")
 ```
 
 ### 2. Detect extraction-like query patterns
@@ -98,23 +98,23 @@ Score each principal on the three signals that distinguish extraction from norma
 import collections, json
 
 def score_principals(audit_path="inference_audit.jsonl", window_qps_threshold=100):
-    by_principal = collections.defaultdict(lambda: {"q": 0, "uniq": set(), "probs": 0})
-    for line in open(audit_path):
-        r = json.loads(line)
-        p = by_principal[r["principal"]]
-        p["q"] += 1
-        p["uniq"].add(r["input_hash"])
-        p["probs"] += int(r["wants_probs"])
-    findings = []
-    for principal, p in by_principal.items():
-        uniq_ratio = len(p["uniq"]) / max(p["q"], 1)
-        prob_ratio = p["probs"] / max(p["q"], 1)
-        suspicious = p["q"] > window_qps_threshold and uniq_ratio > 0.9 and prob_ratio > 0.8
-        findings.append({"principal": principal, "queries": p["q"],
-                         "unique_ratio": round(uniq_ratio, 3),
-                         "prob_request_ratio": round(prob_ratio, 3),
-                         "suspected_extraction": suspicious})
-    return sorted(findings, key=lambda x: -x["queries"])
+ by_principal = collections.defaultdict(lambda: {"q": 0, "uniq": set(), "probs": 0})
+ for line in open(audit_path):
+ r = json.loads(line)
+ p = by_principal[r["principal"]]
+ p["q"] += 1
+ p["uniq"].add(r["input_hash"])
+ p["probs"] += int(r["wants_probs"])
+ findings = []
+ for principal, p in by_principal.items():
+ uniq_ratio = len(p["uniq"]) / max(p["q"], 1)
+ prob_ratio = p["probs"] / max(p["q"], 1)
+ suspicious = p["q"] > window_qps_threshold and uniq_ratio > 0.9 and prob_ratio > 0.8
+ findings.append({"principal": principal, "queries": p["q"],
+ "unique_ratio": round(uniq_ratio, 3),
+ "prob_request_ratio": round(prob_ratio, 3),
+ "suspected_extraction": suspicious})
+ return sorted(findings, key=lambda x: -x["queries"])
 ```
 
 ### 3. Measure your model's extractability with ART (self red-team)
@@ -127,13 +127,13 @@ from art.attacks.extraction import KnockoffNets
 from sklearn.ensemble import RandomForestClassifier
 
 # victim is your already-trained model wrapped for ART
-victim = SklearnClassifier(model=trained_model)            # your production model
+victim = SklearnClassifier(model=trained_model) # your production model
 thief_model = RandomForestClassifier(n_estimators=100)
 thief = SklearnClassifier(model=thief_model)
 
 attack = KnockoffNets(classifier=victim, batch_size_fit=64,
-                      batch_size_query=64, nb_epochs=10, nb_stolen=2000)
-stolen = attack.extract(x=x_pool, thief_classifier=thief)   # 2000-query budget
+ batch_size_query=64, nb_epochs=10, nb_stolen=2000)
+stolen = attack.extract(x=x_pool, thief_classifier=thief) # 2000-query budget
 
 agreement = np.mean(stolen.predict(x_test).argmax(1) == victim.predict(x_test).argmax(1))
 print(f"Surrogate fidelity (agreement with victim): {agreement:.2%} at 2000 queries")
@@ -160,13 +160,13 @@ Reduce the information returned and the query economics. Re-run steps 3 and 4 af
 ```python
 # (a) Label-only responses: never return full probability vectors to untrusted callers.
 def respond(probs, trusted):
-    return int(probs.argmax()) if not trusted else probs.tolist()
+ return int(probs.argmax()) if not trusted else probs.tolist()
 
 # (b) Confidence rounding / output perturbation (raises queries needed for inversion):
 def perturb(probs, decimals=2, noise=0.01):
-    p = np.round(probs, decimals) + np.random.normal(0, noise, probs.shape)
-    p = np.clip(p, 0, None)
-    return p / p.sum()
+ p = np.round(probs, decimals) + np.random.normal(0, noise, probs.shape)
+ p = np.clip(p, 0, None)
+ return p / p.sum()
 ```
 Defense in depth combines these with strict **per-principal rate limiting**, anomaly alerting from step 2, ART's `ReverseSigmoid` / prediction-poisoning postprocessor, and watermarking so an extracted surrogate remains attributable.
 

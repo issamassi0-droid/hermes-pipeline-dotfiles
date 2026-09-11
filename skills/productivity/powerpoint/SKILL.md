@@ -6,10 +6,10 @@ author: Nous Research
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [pptx, powerpoint, presentations, slides, office, python-pptx]
-    category: productivity
-    related_skills: [docx, xlsx, pdf]
+ hermes:
+ tags: [pptx, powerpoint, presentations, slides, office, python-pptx]
+ category: productivity
+ related_skills: [docx, xlsx, pdf]
 ---
 
 # Powerpoint Skill
@@ -23,25 +23,25 @@ and slide rendering — all offline, no PowerPoint installation required.
 
 - The user asks to build a slide deck, report presentation, or pitch deck.
 - You need to extract text, notes, tables, chart data, or images from a
-  .pptx someone shared.
+ .pptx someone shared.
 - You need to update an existing deck: replace text, refresh or patch
-  chart data, swap a logo, duplicate/remove/reorder slides, set
-  backgrounds, footers, hyperlinks, or speaker notes.
+ chart data, swap a logo, duplicate/remove/reorder slides, set
+ backgrounds, footers, hyperlinks, or speaker notes.
 - You must produce an on-brand deck from a company .pptx template.
 - Do NOT use this for .ppt (legacy binary) files — convert them first with
-  `soffice --convert-to pptx old.ppt` if LibreOffice is available.
+ `soffice --convert-to pptx old.ppt` if LibreOffice is available.
 
 ## Prerequisites
 
 - Python 3.10+ with `python-pptx` installed
-  (`pip install python-pptx`).
+ (`pip install python-pptx`).
 - Optional: LibreOffice (`soffice`) plus poppler (`pdftoppm` or
-  `pdftocairo`) for rendering slides to PNGs and for PDF export.
-  `pptx_render.py` detects both with `shutil.which` and degrades
-  gracefully (reports `{"rendered": false, "missing": [...]}`, exit 0)
-  when absent — all create/read/edit operations work without them.
+ `pdftocairo`) for rendering slides to PNGs and for PDF export.
+ `pptx_render.py` detects both with `shutil.which` and degrades
+ gracefully (reports `{"rendered": false, "missing": [...]}`, exit 0)
+ when absent — all create/read/edit operations work without them.
 - Check availability via `terminal`:
-  `python -c "import pptx; print(pptx.__version__)"` and `which soffice pdftoppm`.
+ `python -c "import pptx; print(pptx.__version__)"` and `which soffice pdftoppm`.
 
 ## How to Run
 
@@ -50,15 +50,15 @@ exit non-zero on failure. Run them with `terminal`:
 
 ```bash
 python scripts/pptx_create.py deck.json out.pptx
-python scripts/pptx_read.py deck.pptx --outline      # full JSON outline
-python scripts/pptx_read.py deck.pptx --notes        # speaker notes
+python scripts/pptx_read.py deck.pptx --outline # full JSON outline
+python scripts/pptx_read.py deck.pptx --notes # speaker notes
 python scripts/pptx_read.py deck.pptx --images ./img # export pictures
 python scripts/pptx_edit.py deck.pptx --replace-text "Old Corp" "New Corp"
 python scripts/pptx_edit.py deck.pptx --chart-data update.json
 python scripts/pptx_edit.py deck.pptx --duplicate-slide 2
 python scripts/pptx_edit.py deck.pptx --remove-slide 3 --move-slide 2 0
 python scripts/pptx_from_template.py brand.pptx out.pptx --values vals.json
-python scripts/pptx_render.py deck.pptx --outdir ./render  # slide PNGs
+python scripts/pptx_render.py deck.pptx --outdir ./render # slide PNGs
 ```
 
 Author JSON specs with `write_file`; inspect script output and generated
@@ -174,47 +174,47 @@ say so rather than approximating.
 ## Pitfalls
 
 - **Run splitting**: PowerPoint fragments paragraph text into runs at
-  spell-check and edit boundaries. `--replace-text` first merges adjacent
-  runs whose formatting is identical, so matches split across such runs
-  are replaced with formatting fully preserved. Only when a match spans
-  *genuinely differently-formatted* runs is the paragraph rewritten with
-  the first run's formatting — verify those slides after replacement.
+ spell-check and edit boundaries. `--replace-text` first merges adjacent
+ runs whose formatting is identical, so matches split across such runs
+ are replaced with formatting fully preserved. Only when a match spans
+ *genuinely differently-formatted* runs is the paragraph rewritten with
+ the first run's formatting — verify those slides after replacement.
 - **Chart slides cannot be duplicated**: each chart relationship embeds a
-  separate XLSX workbook part; cloning that graph reliably is not
-  supported, so `--duplicate-slide` refuses chart slides cleanly instead
-  of corrupting the deck. Rebuild the chart on a new slide instead.
-  External-hyperlink and image/media rels are carried over; layout and
-  notes rels are recreated fresh.
+ separate XLSX workbook part; cloning that graph reliably is not
+ supported, so `--duplicate-slide` refuses chart slides cleanly instead
+ of corrupting the deck. Rebuild the chart on a new slide instead.
+ External-hyperlink and image/media rels are carried over; layout and
+ notes rels are recreated fresh.
 - **Chart ops are a wrapper**: python-pptx replaces the whole dataset;
-  `"ops"` round-trips existing plot data through `replace_data`, and
-  changing chart *type* is not possible.
+ `"ops"` round-trips existing plot data through `replace_data`, and
+ changing chart *type* is not possible.
 - **Reordering is XML-level**: python-pptx has no supported reorder API.
-  `--move-slide` manipulates `<p:sldIdLst>` directly; safe for ordinary
-  decks but re-read the deck afterward to confirm.
+ `--move-slide` manipulates `<p:sldIdLst>` directly; safe for ordinary
+ decks but re-read the deck afterward to confirm.
 - **Copying slides between decks is unsupported** — duplication works
-  only within one deck, where layouts and masters are shared.
+ only within one deck, where layouts and masters are shared.
 - Footer/slide-number enablement copies the placeholder from the slide's
-  layout; on layouts without those placeholders, `--set-footer` fails
-  with a clear message (add a textbox instead).
+ layout; on layouts without those placeholders, `--set-footer` fails
+ with a clear message (add a textbox instead).
 - Hyperlinks apply to whole runs; `--hyperlink` links every run
-  containing the given text on that slide.
+ containing the given text on that slide.
 - The default python-pptx template is 4:3; the create script sets 16:9
-  unless the spec says otherwise. Custom templates keep their own size.
+ unless the spec says otherwise. Custom templates keep their own size.
 - Layout indexes vary by template. For brand templates, list layout names
-  first: `pptx_read.py template.pptx --outline` (`layouts_available`).
+ first: `pptx_read.py template.pptx --outline` (`layouts_available`).
 - `slide.shapes.title` is None on blank layouts — the create script
-  handles this, but remember it when writing ad-hoc python-pptx code.
+ handles this, but remember it when writing ad-hoc python-pptx code.
 - Always pass `encoding="utf-8"` when writing spec files; tokens like
-  `{{city}}` may be filled with non-ASCII values.
+ `{{city}}` may be filled with non-ASCII values.
 
 ## Verification
 
 1. After any create/edit, run `pptx_read.py OUT.pptx --outline` and check
-   slide count, texts, tables, notes, and chart values match intent.
+ slide count, texts, tables, notes, and chart values match intent.
 2. `--images DIR` then file-size check confirms pictures embedded.
 3. Render every slide with `pptx_render.py deck.pptx --outdir ./render`
-   and review each PNG with `vision_analyze` — this catches overlapping
-   shapes, truncated text, and color problems the outline cannot. If the
-   render tools are missing, the script says so; rely on the outline.
+ and review each PNG with `vision_analyze` — this catches overlapping
+ shapes, truncated text, and color problems the outline cannot. If the
+ render tools are missing, the script says so; rely on the outline.
 4. The bundled test suite is the full contract:
-   `python -m pytest tests/ -q` (requires python-pptx + pytest).
+ `python -m pytest tests/ -q` (requires python-pptx + pytest).

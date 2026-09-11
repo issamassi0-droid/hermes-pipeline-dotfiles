@@ -1,14 +1,14 @@
 ---
 name: performing-iot-security-assessment
 description: 'Performs comprehensive security assessments of IoT devices and their
-  ecosystems by testing hardware interfaces, firmware, network communications, cloud
-  APIs, and companion mobile applications. The tester uses firmware extraction and
-  analysis, hardware debugging via UART and JTAG, network protocol analysis, and runtime
-  exploitation to identify vulnerabilities across all layers of the IoT stack. Activates
-  for requests involving IoT security testing, embedded device assessment, firmware
-  security analysis, or smart device penetration testing.
+ ecosystems by testing hardware interfaces, firmware, network communications, cloud
+ APIs, and companion mobile applications. The tester uses firmware extraction and
+ analysis, hardware debugging via UART and JTAG, network protocol analysis, and runtime
+ exploitation to identify vulnerabilities across all layers of the IoT stack. Activates
+ for requests involving IoT security testing, embedded device assessment, firmware
+ security analysis, or smart device penetration testing.
 
-  '
+ '
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -61,10 +61,10 @@ Examine the physical device and identify attack surfaces:
 - **External inspection**: Document all physical interfaces (USB, Ethernet, serial ports, SD card slots), labels, FCC ID, and model numbers
 - **FCC ID lookup**: Search the FCC database (fcc.gov/oet/ea/fccid) using the FCC ID to find internal photos, schematics, and radio frequency information
 - **PCB analysis**: Open the device enclosure and photograph the PCB. Identify:
-  - Main processor/SoC (read markings, search datasheet)
-  - Flash memory chips (SPI NOR, NAND, eMMC)
-  - Debug headers and test points
-  - UART/JTAG/SWD pins (look for 4-pin or 10-pin headers, or unpopulated pads)
+ - Main processor/SoC (read markings, search datasheet)
+ - Flash memory chips (SPI NOR, NAND, eMMC)
+ - Debug headers and test points
+ - UART/JTAG/SWD pins (look for 4-pin or 10-pin headers, or unpopulated pads)
 - **UART identification**: Use a multimeter to identify UART pins (TX, RX, GND, VCC). Connect USB-to-UART adapter and attempt serial console access at common baud rates (9600, 38400, 57600, 115200)
 - **JTAG identification**: Use JTAGulator or manual probing to identify JTAG pins (TCK, TMS, TDI, TDO, TRST). Connect JTAG debugger for memory access and debugging.
 
@@ -73,17 +73,17 @@ Examine the physical device and identify attack surfaces:
 Extract and analyze the device firmware:
 
 - **Firmware acquisition methods**:
-  - Download from manufacturer website or update server
-  - Extract from flash memory using SPI programmer: connect CH341A to SPI flash, read with `flashrom -p ch341a_spi -r firmware.bin`
-  - Capture over-the-air updates via network interception
-  - Extract from UART bootloader console (U-Boot: `md.b` memory dump)
+ - Download from manufacturer website or update server
+ - Extract from flash memory using SPI programmer: connect CH341A to SPI flash, read with `flashrom -p ch341a_spi -r firmware.bin`
+ - Capture over-the-air updates via network interception
+ - Extract from UART bootloader console (U-Boot: `md.b` memory dump)
 - **Firmware unpacking**: `binwalk -e firmware.bin` to extract filesystem, kernel, and bootloader components
 - **Filesystem analysis**:
-  - Search for credentials: `grep -rn "password\|passwd\|secret\|key" squashfs-root/`
-  - Examine `/etc/shadow` for password hashes
-  - Review startup scripts in `/etc/init.d/` for insecure service configurations
-  - Identify web server configurations and CGI scripts for web interface vulnerabilities
-  - Use Firmwalker: `./firmwalker.sh squashfs-root/` for automated sensitive data discovery
+ - Search for credentials: `grep -rn "password\|passwd\|secret\|key" squashfs-root/`
+ - Examine `/etc/shadow` for password hashes
+ - Review startup scripts in `/etc/init.d/` for insecure service configurations
+ - Identify web server configurations and CGI scripts for web interface vulnerabilities
+ - Use Firmwalker: `./firmwalker.sh squashfs-root/` for automated sensitive data discovery
 - **Binary analysis**: Use Ghidra to reverse engineer key binaries (web server, management daemon, authentication modules) for hardcoded credentials, command injection, and buffer overflow vulnerabilities
 - **Known vulnerability scanning**: Extract software versions and cross-reference with CVE databases. Use `firmware-analysis-toolkit` for automated CVE scanning.
 
@@ -104,11 +104,11 @@ Emulate the firmware for dynamic security testing:
 
 - **QEMU emulation**: Use FirmAE or Firmadyne to emulate the extracted firmware: `python3 fat.py firmware.bin` to boot the firmware in an emulated environment
 - **Web interface testing**: Access the device's web management interface from the emulated environment and test for:
-  - Default credentials (admin:admin, root:root, admin:password)
-  - Command injection in configuration parameters
-  - Authentication bypass via direct URL access
-  - Cross-site scripting in all input fields
-  - CSRF in state-changing operations
+ - Default credentials (admin:admin, root:root, admin:password)
+ - Command injection in configuration parameters
+ - Authentication bypass via direct URL access
+ - Cross-site scripting in all input fields
+ - CSRF in state-changing operations
 - **Service testing**: Use Nmap to scan the emulated device for all open ports and test each service for known vulnerabilities
 - **Fuzzing**: Fuzz network services using Boofuzz or AFL to discover memory corruption vulnerabilities in embedded services
 

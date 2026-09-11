@@ -22,14 +22,14 @@ Build in thin vertical slices — implement one piece, test it, verify it, then 
 
 ```
 ┌──────────────────────────────────────┐
-│                                      │
-│   Implement ──→ Test ──→ Verify ──┐  │
-│       ▲                           │  │
-│       └───── Commit ◄─────────────┘  │
-│              │                       │
-│              ▼                       │
-│          Next slice                  │
-│                                      │
+│ │
+│ Implement ──→ Test ──→ Verify ──┐ │
+│ ▲ │ │
+│ └───── Commit ◄─────────────┘ │
+│ │ │
+│ ▼ │
+│ Next slice │
+│ │
 └──────────────────────────────────────┘
 ```
 
@@ -49,16 +49,16 @@ Build one complete path through the stack:
 
 ```
 Slice 1: Create a task (DB + API + basic UI)
-    → Tests pass, user can create a task via the UI
+ → Tests pass, user can create a task via the UI
 
 Slice 2: List tasks (query + API + UI)
-    → Tests pass, user can see their tasks
+ → Tests pass, user can see their tasks
 
 Slice 3: Edit a task (update + API + UI)
-    → Tests pass, user can modify tasks
+ → Tests pass, user can modify tasks
 
 Slice 4: Delete a task (delete + API + UI + confirmation)
-    → Tests pass, full CRUD complete
+ → Tests pass, full CRUD complete
 ```
 
 Each slice delivers working end-to-end functionality.
@@ -153,7 +153,7 @@ If a feature isn't ready for users but you need to merge increments:
 const ENABLE_TASK_SHARING = process.env.FEATURE_TASK_SHARING === 'true';
 
 if (ENABLE_TASK_SHARING) {
-  // New sharing UI
+ // New sharing UI
 }
 ```
 
@@ -166,8 +166,8 @@ New code should default to safe, conservative behavior:
 ```typescript
 // Safe: disabled by default, opt-in
 export function createTask(data: TaskInput, options?: { notify?: boolean }) {
-  const shouldNotify = options?.notify ?? false;
-  // ...
+ const shouldNotify = options?.notify ?? false;
+ // ...
 }
 ```
 

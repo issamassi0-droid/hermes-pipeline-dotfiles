@@ -11,16 +11,16 @@ Perform code reviews on local changes before pushing, or review open PRs on GitH
 
 ```bash
 if command -v gh &>/dev/null && gh auth status &>/dev/null; then
-  AUTH="gh"
+ AUTH="gh"
 else
-  AUTH="git"
-  if [ -z "$GITHUB_TOKEN" ]; then
-    if _hermes_env="${HERMES_HOME:-$HOME/.hermes}/.env"; [ -f "$_hermes_env" ] && grep -q "^GITHUB_TOKEN=" "$_hermes_env"; then
-      GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
-    elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
-      GITHUB_TOKEN=$(uv run python "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
-    fi
-  fi
+ AUTH="git"
+ if [ -z "$GITHUB_TOKEN" ]; then
+ if _hermes_env="${HERMES_HOME:-$HOME/.hermes}/.env"; [ -f "$_hermes_env" ] && grep -q "^GITHUB_TOKEN=" "$_hermes_env"; then
+ GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
+ elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
+ GITHUB_TOKEN=$(uv run python "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
+ fi
+ fi
 fi
 
 REMOTE_URL=$(git remote get-url origin)
@@ -93,7 +93,7 @@ When reviewing local changes, present findings in this structure:
 
 ### Critical
 - **src/auth.py:45** — SQL injection: user input passed directly to query.
-  Suggestion: Use parameterized queries.
+ Suggestion: Use parameterized queries.
 
 ### Warnings
 - **src/models/user.py:23** — Password stored in plaintext. Use bcrypt or argon2.
@@ -129,9 +129,9 @@ PR_NUMBER=123
 
 # Get PR details
 curl -s \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
-  | python -c "
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
+ | python -c "
 import sys, json
 pr = json.load(sys.stdin)
 print(f\"Title: {pr['title']}\")
@@ -142,12 +142,12 @@ print(f\"Body:\n{pr['body']}\")"
 
 # List changed files
 curl -s \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/files \
-  | python -c "
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/files \
+ | python -c "
 import sys, json
 for f in json.load(sys.stdin):
-    print(f\"{f['status']:10} +{f['additions']:-4} -{f['deletions']:-4}  {f['filename']}\")"
+ print(f\"{f['status']:10} +{f['additions']:-4} -{f['deletions']:-4} {f['filename']}\")"
 ```
 
 ### Check Out PR Locally for Full Review
@@ -183,9 +183,9 @@ gh pr comment 123 --body "Overall looks good, a few suggestions below."
 
 ```bash
 curl -s -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$OWNER/$REPO/issues/$PR_NUMBER/comments \
-  -d '{"body": "Overall looks good, a few suggestions below."}'
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$OWNER/$REPO/issues/$PR_NUMBER/comments \
+ -d '{"body": "Overall looks good, a few suggestions below."}'
 ```
 
 ### Leave Inline Review Comments
@@ -196,12 +196,12 @@ curl -s -X POST \
 HEAD_SHA=$(gh pr view 123 --json headRefOid --jq '.headRefOid')
 
 gh api repos/$OWNER/$REPO/pulls/123/comments \
-  --method POST \
-  -f body="This could be simplified with a list comprehension." \
-  -f path="src/auth/login.py" \
-  -f commit_id="$HEAD_SHA" \
-  -f line=45 \
-  -f side="RIGHT"
+ --method POST \
+ -f body="This could be simplified with a list comprehension." \
+ -f path="src/auth/login.py" \
+ -f commit_id="$HEAD_SHA" \
+ -f line=45 \
+ -f side="RIGHT"
 ```
 
 **Single inline comment — with curl:**
@@ -209,20 +209,20 @@ gh api repos/$OWNER/$REPO/pulls/123/comments \
 ```bash
 # Get the head commit SHA
 HEAD_SHA=$(curl -s \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
-  | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
+ | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
 
 curl -s -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/comments \
-  -d "{
-    \"body\": \"This could be simplified with a list comprehension.\",
-    \"path\": \"src/auth/login.py\",
-    \"commit_id\": \"$HEAD_SHA\",
-    \"line\": 45,
-    \"side\": \"RIGHT\"
-  }"
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/comments \
+ -d "{
+ \"body\": \"This could be simplified with a list comprehension.\",
+ \"path\": \"src/auth/login.py\",
+ \"commit_id\": \"$HEAD_SHA\",
+ \"line\": 45,
+ \"side\": \"RIGHT\"
+ }"
 ```
 
 ### Submit a Formal Review (Approve / Request Changes)
@@ -239,23 +239,23 @@ gh pr review 123 --comment --body "Some suggestions, nothing blocking."
 
 ```bash
 HEAD_SHA=$(curl -s \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
-  | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER \
+ | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
 
 curl -s -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews \
-  -d "{
-    \"commit_id\": \"$HEAD_SHA\",
-    \"event\": \"COMMENT\",
-    \"body\": \"Code review from Hermes Agent\",
-    \"comments\": [
-      {\"path\": \"src/auth.py\", \"line\": 45, \"body\": \"Use parameterized queries to prevent SQL injection.\"},
-      {\"path\": \"src/models/user.py\", \"line\": 23, \"body\": \"Hash passwords with bcrypt before storing.\"},
-      {\"path\": \"tests/test_auth.py\", \"line\": 1, \"body\": \"Add test for expired token edge case.\"}
-    ]
-  }"
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$OWNER/$REPO/pulls/$PR_NUMBER/reviews \
+ -d "{
+ \"commit_id\": \"$HEAD_SHA\",
+ \"event\": \"COMMENT\",
+ \"body\": \"Code review from Hermes Agent\",
+ \"comments\": [
+ {\"path\": \"src/auth.py\", \"line\": 45, \"body\": \"Use parameterized queries to prevent SQL injection.\"},
+ {\"path\": \"src/models/user.py\", \"line\": 23, \"body\": \"Hash passwords with bcrypt before storing.\"},
+ {\"path\": \"tests/test_auth.py\", \"line\": 1, \"body\": \"Add test for expired token edge case.\"}
+ ]
+ }"
 ```
 
 Event values: `"APPROVE"`, `"REQUEST_CHANGES"`, `"COMMENT"`
@@ -343,11 +343,11 @@ PR_NUMBER=123
 
 # PR details (title, author, description, branch)
 curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER
 
 # Changed files with line counts
 curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER/files
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER/files
 ```
 
 ### Step 3: Check out the PR locally
@@ -405,23 +405,23 @@ gh pr review $PR_NUMBER --request-changes --body "Found a few issues — see inl
 **With curl — atomic review with multiple inline comments:**
 ```bash
 HEAD_SHA=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER \
-  | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER \
+ | python -c "import sys,json; print(json.load(sys.stdin)['head']['sha'])")
 
 # Build the review JSON — event is APPROVE, REQUEST_CHANGES, or COMMENT
 curl -s -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER/reviews \
-  -d "{
-    \"commit_id\": \"$HEAD_SHA\",
-    \"event\": \"REQUEST_CHANGES\",
-    \"body\": \"## Hermes Agent Review\n\nFound 2 issues, 1 suggestion. See inline comments.\",
-    \"comments\": [
-      {\"path\": \"src/auth.py\", \"line\": 45, \"body\": \"🔴 **Critical:** User input passed directly to SQL query — use parameterized queries.\"},
-      {\"path\": \"src/models.py\", \"line\": 23, \"body\": \"⚠️ **Warning:** Password stored without hashing.\"},
-      {\"path\": \"src/utils.py\", \"line\": 8, \"body\": \"💡 **Suggestion:** This duplicates logic in core/utils.py:34.\"}
-    ]
-  }"
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO/pulls/$PR_NUMBER/reviews \
+ -d "{
+ \"commit_id\": \"$HEAD_SHA\",
+ \"event\": \"REQUEST_CHANGES\",
+ \"body\": \"## Hermes Agent Review\n\nFound 2 issues, 1 suggestion. See inline comments.\",
+ \"comments\": [
+ {\"path\": \"src/auth.py\", \"line\": 45, \"body\": \"🔴 **Critical:** User input passed directly to SQL query — use parameterized queries.\"},
+ {\"path\": \"src/models.py\", \"line\": 23, \"body\": \"⚠️ **Warning:** Password stored without hashing.\"},
+ {\"path\": \"src/utils.py\", \"line\": 8, \"body\": \"💡 **Suggestion:** This duplicates logic in core/utils.py:34.\"}
+ ]
+ }"
 ```
 
 ### Step 8: Also post a summary comment

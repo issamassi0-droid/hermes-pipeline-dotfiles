@@ -1,8 +1,8 @@
 ---
 name: performing-brand-monitoring-for-impersonation
 description: Monitor for brand impersonation attacks across domains, social media,
-  mobile apps, and dark web channels to detect phishing campaigns, fake sites, and
-  unauthorized brand usage targeting your organization.
+ mobile apps, and dark web channels to detect phishing campaigns, fake sites, and
+ unauthorized brand usage targeting your organization.
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -28,37 +28,37 @@ mitre_attack:
 - T1589
 - T1566
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - resource-development
-  - initial-access
-  - stealth
-  techniques:
-  - id: T1583.001
-    name: 'Acquire Infrastructure: Domains'
-    tactic: resource-development
-    source: attack
-  - id: T1583.008
-    name: 'Acquire Infrastructure: Malvertising'
-    tactic: resource-development
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
-  - id: T1593
-    name: Search Open Websites/Domains
-    tactic: reconnaissance
-    source: attack
-  - id: F1032
-    name: Impersonate Official
-    tactic: initial-access
-    source: f3
-  - id: T1672
-    name: Email Spoofing
-    tactic: stealth
-    source: attack
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - resource-development
+ - initial-access
+ - stealth
+ techniques:
+ - id: T1583.001
+ name: 'Acquire Infrastructure: Domains'
+ tactic: resource-development
+ source: attack
+ - id: T1583.008
+ name: 'Acquire Infrastructure: Malvertising'
+ tactic: resource-development
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
+ - id: T1593
+ name: Search Open Websites/Domains
+ tactic: reconnaissance
+ source: attack
+ - id: F1032
+ name: Impersonate Official
+ tactic: initial-access
+ source: f3
+ - id: T1672
+ name: Email Spoofing
+ tactic: stealth
+ source: attack
 ---
 # Performing Brand Monitoring for Impersonation
 
@@ -109,132 +109,132 @@ from urllib.parse import urlparse
 import Levenshtein
 
 class BrandMonitor:
-    def __init__(self, brand_config):
-        self.brand_name = brand_config["name"]
-        self.domains = brand_config["domains"]
-        self.keywords = brand_config["keywords"]
-        self.executive_names = brand_config.get("executives", [])
-        self.logo_hash = brand_config.get("logo_hash", "")
-        self.findings = []
+ def __init__(self, brand_config):
+ self.brand_name = brand_config["name"]
+ self.domains = brand_config["domains"]
+ self.keywords = brand_config["keywords"]
+ self.executive_names = brand_config.get("executives", [])
+ self.logo_hash = brand_config.get("logo_hash", "")
+ self.findings = []
 
-    def scan_domain_squatting(self):
-        """Detect typosquatting and lookalike domains."""
-        all_results = []
-        for domain in self.domains:
-            cmd = ["dnstwist", "--registered", "--format", "json",
-                   "--nameservers", "8.8.8.8", "--threads", "30", domain]
-            try:
-                result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
-                if result.returncode == 0:
-                    domains = json.loads(result.stdout)
-                    registered = [d for d in domains if d.get("dns_a") or d.get("dns_aaaa")]
-                    all_results.extend(registered)
-                    print(f"[+] Domain squatting scan for {domain}: "
-                          f"{len(registered)} registered lookalikes")
-            except (subprocess.TimeoutExpired, Exception) as e:
-                print(f"[-] Error scanning {domain}: {e}")
+ def scan_domain_squatting(self):
+ """Detect typosquatting and lookalike domains."""
+ all_results = []
+ for domain in self.domains:
+ cmd = ["dnstwist", "--registered", "--format", "json",
+ "--nameservers", "8.8.8.8", "--threads", "30", domain]
+ try:
+ result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+ if result.returncode == 0:
+ domains = json.loads(result.stdout)
+ registered = [d for d in domains if d.get("dns_a") or d.get("dns_aaaa")]
+ all_results.extend(registered)
+ print(f"[+] Domain squatting scan for {domain}: "
+ f"{len(registered)} registered lookalikes")
+ except (subprocess.TimeoutExpired, Exception) as e:
+ print(f"[-] Error scanning {domain}: {e}")
 
-        for entry in all_results:
-            self.findings.append({
-                "type": "domain_squatting",
-                "indicator": entry.get("domain", ""),
-                "fuzzer": entry.get("fuzzer", ""),
-                "dns_a": entry.get("dns_a", []),
-                "ssdeep_score": entry.get("ssdeep_score", 0),
-                "detected_at": datetime.now().isoformat(),
-            })
-        return all_results
+ for entry in all_results:
+ self.findings.append({
+ "type": "domain_squatting",
+ "indicator": entry.get("domain", ""),
+ "fuzzer": entry.get("fuzzer", ""),
+ "dns_a": entry.get("dns_a", []),
+ "ssdeep_score": entry.get("ssdeep_score", 0),
+ "detected_at": datetime.now().isoformat(),
+ })
+ return all_results
 
-    def check_google_safe_browsing(self, urls, api_key):
-        """Check URLs against Google Safe Browsing API."""
-        url = f"https://safebrowsing.googleapis.com/v4/threatMatches:find?key={api_key}"
-        body = {
-            "client": {"clientId": "brand-monitor", "clientVersion": "1.0"},
-            "threatInfo": {
-                "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE"],
-                "platformTypes": ["ANY_PLATFORM"],
-                "threatEntryTypes": ["URL"],
-                "threatEntries": [{"url": u} for u in urls],
-            },
-        }
-        resp = requests.post(url, json=body, timeout=15)
-        if resp.status_code == 200:
-            matches = resp.json().get("matches", [])
-            print(f"[+] Google Safe Browsing: {len(matches)} threats found")
-            return matches
-        return []
+ def check_google_safe_browsing(self, urls, api_key):
+ """Check URLs against Google Safe Browsing API."""
+ url = f"https://safebrowsing.googleapis.com/v4/threatMatches:find?key={api_key}"
+ body = {
+ "client": {"clientId": "brand-monitor", "clientVersion": "1.0"},
+ "threatInfo": {
+ "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE"],
+ "platformTypes": ["ANY_PLATFORM"],
+ "threatEntryTypes": ["URL"],
+ "threatEntries": [{"url": u} for u in urls],
+ },
+ }
+ resp = requests.post(url, json=body, timeout=15)
+ if resp.status_code == 200:
+ matches = resp.json().get("matches", [])
+ print(f"[+] Google Safe Browsing: {len(matches)} threats found")
+ return matches
+ return []
 
-    def monitor_social_media_impersonation(self, platform="twitter"):
-        """Detect social media profiles impersonating brand or executives."""
-        suspicious_profiles = []
-        # Search for profiles with similar names
-        for name in self.executive_names + [self.brand_name]:
-            # Using a general search approach
-            search_url = f"https://api.twitter.com/2/users/by/username/{name.replace(' ', '')}"
-            # Note: In production, use authenticated Twitter API
-            suspicious_profiles.append({
-                "search_term": name,
-                "platform": platform,
-                "note": "Requires authenticated API access for full search",
-            })
-        return suspicious_profiles
+ def monitor_social_media_impersonation(self, platform="twitter"):
+ """Detect social media profiles impersonating brand or executives."""
+ suspicious_profiles = []
+ # Search for profiles with similar names
+ for name in self.executive_names + [self.brand_name]:
+ # Using a general search approach
+ search_url = f"https://api.twitter.com/2/users/by/username/{name.replace(' ', '')}"
+ # Note: In production, use authenticated Twitter API
+ suspicious_profiles.append({
+ "search_term": name,
+ "platform": platform,
+ "note": "Requires authenticated API access for full search",
+ })
+ return suspicious_profiles
 
-    def monitor_app_stores(self):
-        """Check for fake mobile apps impersonating the brand."""
-        fake_apps = []
-        for keyword in self.keywords:
-            # Google Play Store search (unofficial)
-            url = f"https://play.google.com/store/search?q={keyword}&c=apps"
-            try:
-                resp = requests.get(url, timeout=15, headers={
-                    "User-Agent": "Mozilla/5.0"
-                })
-                if resp.status_code == 200:
-                    # Parse results for brand name matches
-                    from bs4 import BeautifulSoup
-                    soup = BeautifulSoup(resp.text, "html.parser")
-                    app_links = soup.find_all("a", href=lambda h: h and "/store/apps/details" in h)
-                    for link in app_links:
-                        app_name = link.get_text(strip=True)
-                        if any(k.lower() in app_name.lower() for k in self.keywords):
-                            fake_apps.append({
-                                "name": app_name,
-                                "url": f"https://play.google.com{link['href']}",
-                                "platform": "google_play",
-                                "keyword": keyword,
-                            })
-            except Exception as e:
-                print(f"[-] App store search error: {e}")
-        return fake_apps
+ def monitor_app_stores(self):
+ """Check for fake mobile apps impersonating the brand."""
+ fake_apps = []
+ for keyword in self.keywords:
+ # Google Play Store search (unofficial)
+ url = f"https://play.google.com/store/search?q={keyword}&c=apps"
+ try:
+ resp = requests.get(url, timeout=15, headers={
+ "User-Agent": "Mozilla/5.0"
+ })
+ if resp.status_code == 200:
+ # Parse results for brand name matches
+ from bs4 import BeautifulSoup
+ soup = BeautifulSoup(resp.text, "html.parser")
+ app_links = soup.find_all("a", href=lambda h: h and "/store/apps/details" in h)
+ for link in app_links:
+ app_name = link.get_text(strip=True)
+ if any(k.lower() in app_name.lower() for k in self.keywords):
+ fake_apps.append({
+ "name": app_name,
+ "url": f"https://play.google.com{link['href']}",
+ "platform": "google_play",
+ "keyword": keyword,
+ })
+ except Exception as e:
+ print(f"[-] App store search error: {e}")
+ return fake_apps
 
-    def generate_monitoring_report(self):
-        report = {
-            "brand": self.brand_name,
-            "generated": datetime.now().isoformat(),
-            "total_findings": len(self.findings),
-            "findings_by_type": {},
-            "high_priority": [],
-        }
-        for finding in self.findings:
-            ftype = finding["type"]
-            if ftype not in report["findings_by_type"]:
-                report["findings_by_type"][ftype] = 0
-            report["findings_by_type"][ftype] += 1
+ def generate_monitoring_report(self):
+ report = {
+ "brand": self.brand_name,
+ "generated": datetime.now().isoformat(),
+ "total_findings": len(self.findings),
+ "findings_by_type": {},
+ "high_priority": [],
+ }
+ for finding in self.findings:
+ ftype = finding["type"]
+ if ftype not in report["findings_by_type"]:
+ report["findings_by_type"][ftype] = 0
+ report["findings_by_type"][ftype] += 1
 
-            # High priority: has web similarity or MX records
-            if finding.get("ssdeep_score", 0) > 50:
-                report["high_priority"].append(finding)
+ # High priority: has web similarity or MX records
+ if finding.get("ssdeep_score", 0) > 50:
+ report["high_priority"].append(finding)
 
-        with open(f"brand_monitoring_{self.brand_name.lower()}.json", "w") as f:
-            json.dump(report, f, indent=2)
-        print(f"[+] Brand monitoring report: {len(self.findings)} findings")
-        return report
+ with open(f"brand_monitoring_{self.brand_name.lower()}.json", "w") as f:
+ json.dump(report, f, indent=2)
+ print(f"[+] Brand monitoring report: {len(self.findings)} findings")
+ return report
 
 monitor = BrandMonitor({
-    "name": "MyCompany",
-    "domains": ["mycompany.com", "mycompany.org"],
-    "keywords": ["mycompany", "mybrand", "myproduct"],
-    "executives": ["CEO Name", "CTO Name"],
+ "name": "MyCompany",
+ "domains": ["mycompany.com", "mycompany.org"],
+ "keywords": ["mycompany", "mybrand", "myproduct"],
+ "executives": ["CEO Name", "CTO Name"],
 })
 monitor.scan_domain_squatting()
 report = monitor.generate_monitoring_report()
@@ -244,8 +244,8 @@ report = monitor.generate_monitoring_report()
 
 ```python
 def generate_takedown_request(finding, brand_info):
-    """Generate abuse report for domain/site takedown."""
-    request = f"""Subject: Abuse Report - Brand Impersonation / Phishing
+ """Generate abuse report for domain/site takedown."""
+ request = f"""Subject: Abuse Report - Brand Impersonation / Phishing
 
 Dear Abuse Team,
 
@@ -268,7 +268,7 @@ Evidence of infringement is available upon request.
 Regards,
 {brand_info['name']} Security Team
 """
-    return request
+ return request
 ```
 
 ## Validation Criteria

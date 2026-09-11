@@ -62,28 +62,28 @@ Zero Standing Privileges (ZSP) is a security model where no user or identity ret
 
 ```
 User requests access via CyberArk
-        │
-        ├── CyberArk evaluates request against policies:
-        │   ├── Is user eligible for this access?
-        │   ├── Does the request comply with TEA policies?
-        │   └── Is approval required?
-        │
-        ├── [If approval needed] → Route to approver (ITSM/ChatOps)
-        │
-        ├── Upon approval:
-        │   ├── CyberArk creates ephemeral IAM role in target cloud
-        │   ├── Scopes permissions to minimum required entitlements
-        │   ├── Sets session TTL (time-bound)
-        │   └── Provisions temporary credentials
-        │
-        ├── User accesses cloud resources via session
-        │   ├── All actions logged and recorded
-        │   └── Session monitored for policy violations
-        │
-        └── Session expires:
-            ├── Ephemeral role deleted
-            ├── Temporary credentials revoked
-            └── Zero standing privileges remain
+ │
+ ├── CyberArk evaluates request against policies:
+ │ ├── Is user eligible for this access?
+ │ ├── Does the request comply with TEA policies?
+ │ └── Is approval required?
+ │
+ ├── [If approval needed] → Route to approver (ITSM/ChatOps)
+ │
+ ├── Upon approval:
+ │ ├── CyberArk creates ephemeral IAM role in target cloud
+ │ ├── Scopes permissions to minimum required entitlements
+ │ ├── Sets session TTL (time-bound)
+ │ └── Provisions temporary credentials
+ │
+ ├── User accesses cloud resources via session
+ │ ├── All actions logged and recorded
+ │ └── Session monitored for policy violations
+ │
+ └── Session expires:
+ ├── Ephemeral role deleted
+ ├── Temporary credentials revoked
+ └── Zero standing privileges remain
 ```
 
 ### CyberArk Components
@@ -108,19 +108,19 @@ User requests access via CyberArk
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [{
-        "Effect": "Allow",
-        "Principal": {
-            "AWS": "arn:aws:iam::CYBERARK_ACCOUNT:role/CyberArkSCARole"
-        },
-        "Action": "sts:AssumeRole",
-        "Condition": {
-            "StringEquals": {
-                "sts:ExternalId": "cyberark-external-id"
-            }
-        }
-    }]
+ "Version": "2012-10-17",
+ "Statement": [{
+ "Effect": "Allow",
+ "Principal": {
+ "AWS": "arn:aws:iam::CYBERARK_ACCOUNT:role/CyberArkSCARole"
+ },
+ "Action": "sts:AssumeRole",
+ "Condition": {
+ "StringEquals": {
+ "sts:ExternalId": "cyberark-external-id"
+ }
+ }
+ }]
 }
 ```
 
@@ -148,32 +148,32 @@ target_cloud: "aws"
 target_accounts: ["123456789012", "987654321098"]
 
 time_policy:
-  max_duration: "4h"
-  default_duration: "1h"
-  business_hours_only: true
-  timezone: "America/New_York"
+ max_duration: "4h"
+ default_duration: "1h"
+ business_hours_only: true
+ timezone: "America/New_York"
 
 entitlement_policy:
-  aws_managed_policies:
-    - "arn:aws:iam::aws:policy/ReadOnlyAccess"
-  deny_actions:
-    - "iam:*"
-    - "organizations:*"
-    - "sts:*"
-  resource_restrictions:
-    - "arn:aws:s3:::production-*"
+ aws_managed_policies:
+ - "arn:aws:iam::aws:policy/ReadOnlyAccess"
+ deny_actions:
+ - "iam:*"
+ - "organizations:*"
+ - "sts:*"
+ resource_restrictions:
+ - "arn:aws:s3:::production-*"
 
 approval_policy:
-  approval_required: true
-  approvers:
-    - type: "manager"
-    - type: "group"
-      group: "cloud-security-team"
-  auto_approve_conditions:
-    - previous_approved_same_policy: true
-      within_days: 7
-  escalation_timeout: "2h"
-  escalation_approver: "cloud-security-lead"
+ approval_required: true
+ approvers:
+ - type: "manager"
+ - type: "group"
+ group: "cloud-security-team"
+ auto_approve_conditions:
+ - previous_approved_same_policy: true
+ within_days: 7
+ escalation_timeout: "2h"
+ escalation_approver: "cloud-security-lead"
 ```
 
 ### Step 3: Configure Session Monitoring
@@ -183,9 +183,9 @@ Set up privileged session recording and real-time monitoring:
 1. Enable session recording for all ZSP sessions
 2. Configure keystroke logging for SSH/RDP sessions
 3. Set up real-time alerts for suspicious activities:
-   - Attempts to escalate privileges during session
-   - Access to resources outside policy scope
-   - Session duration exceeding 2x the normal pattern
+ - Attempts to escalate privileges during session
+ - Access to resources outside policy scope
+ - Session duration exceeding 2x the normal pattern
 4. Forward session metadata to SIEM
 
 ### Step 4: Implement Approval Workflows
@@ -201,29 +201,29 @@ Integrate with ITSM tools for access request and approval:
 
 ```
 Phase 1: DISCOVERY (Weeks 1-2)
-    ├── Inventory all standing privileged roles across cloud accounts
-    ├── Map users to their standing role assignments
-    ├── Analyze CloudTrail/activity logs for actual permission usage
-    └── Identify roles that can be converted to JIT
+ ├── Inventory all standing privileged roles across cloud accounts
+ ├── Map users to their standing role assignments
+ ├── Analyze CloudTrail/activity logs for actual permission usage
+ └── Identify roles that can be converted to JIT
 
 Phase 2: POLICY CREATION (Weeks 3-4)
-    ├── Create ZSP policies based on actual usage analysis
-    ├── Define TEA parameters for each policy
-    ├── Configure approval workflows
-    └── Test policies with pilot users
+ ├── Create ZSP policies based on actual usage analysis
+ ├── Define TEA parameters for each policy
+ ├── Configure approval workflows
+ └── Test policies with pilot users
 
 Phase 3: MIGRATION (Weeks 5-8)
-    ├── Assign ZSP policies to pilot group
-    ├── Remove standing privileges from pilot users
-    ├── Monitor for access issues and adjust policies
-    ├── Expand to additional teams incrementally
-    └── Remove all standing privileges organization-wide
+ ├── Assign ZSP policies to pilot group
+ ├── Remove standing privileges from pilot users
+ ├── Monitor for access issues and adjust policies
+ ├── Expand to additional teams incrementally
+ └── Remove all standing privileges organization-wide
 
 Phase 4: GOVERNANCE (Ongoing)
-    ├── Monthly review of ZSP policy effectiveness
-    ├── Quarterly entitlement optimization
-    ├── Monitor for policy drift or standing privilege re-creation
-    └── Report ZSP metrics to security leadership
+ ├── Monthly review of ZSP policy effectiveness
+ ├── Quarterly entitlement optimization
+ ├── Monitor for policy drift or standing privilege re-creation
+ └── Report ZSP metrics to security leadership
 ```
 
 ## Validation Checklist

@@ -1,10 +1,10 @@
 ---
 name: extracting-credentials-from-memory-dump
 description: Extracts cached credentials, password hashes, Kerberos tickets, and
-  authentication tokens from Windows memory dumps using Volatility 3, Mimikatz,
-  and pypykatz. Use when performing memory forensics or incident response on an
-  LSASS or full memory dump and you need to recover credentials or Kerberos material
-  for investigation.
+ authentication tokens from Windows memory dumps using Volatility 3, Mimikatz,
+ and pypykatz. Use when performing memory forensics or incident response on an
+ LSASS or full memory dump and you need to recover credentials or Kerberos material
+ for investigation.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -22,36 +22,36 @@ mitre_attack:
 - T1070
 - T1003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - positioning
-  - initial-access
-  techniques:
-  - id: T1555
-    name: Credentials from Password Stores
-    tactic: reconnaissance
-    source: attack
-  - id: T1555.003
-    name: 'Credentials from Password Stores: Credentials from Web Browsers'
-    tactic: reconnaissance
-    source: attack
-  - id: T1539
-    name: Steal Web Session Cookie
-    tactic: positioning
-    source: attack
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: F1006.001
-    name: 'Account Takeover: Exposed API Key'
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - positioning
+ - initial-access
+ techniques:
+ - id: T1555
+ name: Credentials from Password Stores
+ tactic: reconnaissance
+ source: attack
+ - id: T1555.003
+ name: 'Credentials from Password Stores: Credentials from Web Browsers'
+ tactic: reconnaissance
+ source: attack
+ - id: T1539
+ name: Steal Web Session Cookie
+ tactic: positioning
+ source: attack
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: F1006.001
+ name: 'Account Takeover: Exposed API Key'
+ tactic: initial-access
+ source: f3
 version: '1.0'
 author: mahipal
 license: Apache-2.0
@@ -96,8 +96,8 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.info
 vol -f /cases/case-2024-001/memory/memory.raw windows.pslist | grep -i lsass
 
 # Output:
-# PID    PPID   ImageFileName   Offset(V)        Threads  Handles  SessionId
-# 684    564    lsass.exe       0xffffe00123456   35       1234     0
+# PID PPID ImageFileName Offset(V) Threads Handles SessionId
+# 684 564 lsass.exe 0xffffe00123456 35 1234 0
 ```
 
 ### Step 2: Extract Credential Hashes with Volatility
@@ -105,22 +105,22 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.pslist | grep -i lsass
 ```bash
 # Dump SAM database hashes from memory
 vol -f /cases/case-2024-001/memory/memory.raw windows.hashdump \
-   | tee /cases/case-2024-001/analysis/hashdump.txt
+ | tee /cases/case-2024-001/analysis/hashdump.txt
 
 # Output format:
-# User           RID    LM Hash                          NTLM Hash
-# Administrator  500    aad3b435b51404eeaad3b435b51404ee  fc525c9683e8fe067095ba2ddc971889
-# Guest          501    aad3b435b51404eeaad3b435b51404ee  31d6cfe0d16ae931b73c59d7e0c089c0
-# DefaultAccount 503    aad3b435b51404eeaad3b435b51404ee  31d6cfe0d16ae931b73c59d7e0c089c0
-# svcbackup      1001   aad3b435b51404eeaad3b435b51404ee  2b576acbe6bcfda7294d6bd18041b8fe
+# User RID LM Hash NTLM Hash
+# Administrator 500 aad3b435b51404eeaad3b435b51404ee fc525c9683e8fe067095ba2ddc971889
+# Guest 501 aad3b435b51404eeaad3b435b51404ee 31d6cfe0d16ae931b73c59d7e0c089c0
+# DefaultAccount 503 aad3b435b51404eeaad3b435b51404ee 31d6cfe0d16ae931b73c59d7e0c089c0
+# svcbackup 1001 aad3b435b51404eeaad3b435b51404ee 2b576acbe6bcfda7294d6bd18041b8fe
 
 # Extract LSA secrets
 vol -f /cases/case-2024-001/memory/memory.raw windows.lsadump \
-   | tee /cases/case-2024-001/analysis/lsadump.txt
+ | tee /cases/case-2024-001/analysis/lsadump.txt
 
 # Extract cached domain credentials
 vol -f /cases/case-2024-001/memory/memory.raw windows.cachedump \
-   | tee /cases/case-2024-001/analysis/cachedump.txt
+ | tee /cases/case-2024-001/analysis/cachedump.txt
 ```
 
 ### Step 3: Dump LSASS Process Memory for Detailed Analysis
@@ -128,19 +128,19 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.cachedump \
 ```bash
 # Dump LSASS process memory (PID from Step 1)
 vol -f /cases/case-2024-001/memory/memory.raw windows.memmap --pid 684 --dump \
-   -o /cases/case-2024-001/analysis/lsass_dump/
+ -o /cases/case-2024-001/analysis/lsass_dump/
 
 # Alternative: Dump all files associated with LSASS
 vol -f /cases/case-2024-001/memory/memory.raw windows.dumpfiles --pid 684 \
-   -o /cases/case-2024-001/analysis/lsass_files/
+ -o /cases/case-2024-001/analysis/lsass_files/
 
 # Use procdump plugin for cleaner process dump
 vol -f /cases/case-2024-001/memory/memory.raw windows.dumpfiles \
-   --pid 684 -o /cases/case-2024-001/analysis/
+ --pid 684 -o /cases/case-2024-001/analysis/
 
 # Rename the dump file for pypykatz/mimikatz
 mv /cases/case-2024-001/analysis/lsass_dump/pid.684.dmp \
-   /cases/case-2024-001/analysis/lsass.dmp
+ /cases/case-2024-001/analysis/lsass.dmp
 ```
 
 ### Step 4: Extract Credentials with pypykatz
@@ -148,11 +148,11 @@ mv /cases/case-2024-001/analysis/lsass_dump/pid.684.dmp \
 ```bash
 # Run pypykatz against the full memory dump
 pypykatz lsa minidump /cases/case-2024-001/analysis/lsass.dmp \
-   > /cases/case-2024-001/analysis/pypykatz_results.txt 2>&1
+ > /cases/case-2024-001/analysis/pypykatz_results.txt 2>&1
 
 # Run pypykatz against the raw memory dump directly
 pypykatz rekall /cases/case-2024-001/memory/memory.raw \
-   > /cases/case-2024-001/analysis/pypykatz_full.txt 2>&1
+ > /cases/case-2024-001/analysis/pypykatz_full.txt 2>&1
 
 # Parse pypykatz output for structured analysis
 python3 << 'PYEOF'
@@ -161,63 +161,63 @@ import json
 # pypykatz can also output JSON
 import subprocess
 result = subprocess.run(
-    ['pypykatz', 'lsa', 'minidump', '/cases/case-2024-001/analysis/lsass.dmp', '-j'],
-    capture_output=True, text=True
+ ['pypykatz', 'lsa', 'minidump', '/cases/case-2024-001/analysis/lsass.dmp', '-j'],
+ capture_output=True, text=True
 )
 
 if result.stdout:
-    data = json.loads(result.stdout)
+ data = json.loads(result.stdout)
 
-    print("=== EXTRACTED CREDENTIALS ===\n")
+ print("=== EXTRACTED CREDENTIALS ===\n")
 
-    for session_key, session in data.get('logon_sessions', {}).items():
-        username = session.get('username', 'Unknown')
-        domain = session.get('domainname', '')
-        logon_server = session.get('logon_server', '')
-        logon_time = session.get('logon_time', '')
-        sid = session.get('sid', '')
+ for session_key, session in data.get('logon_sessions', {}).items():
+ username = session.get('username', 'Unknown')
+ domain = session.get('domainname', '')
+ logon_server = session.get('logon_server', '')
+ logon_time = session.get('logon_time', '')
+ sid = session.get('sid', '')
 
-        if username and username != '(null)':
-            print(f"Session: {domain}\\{username}")
-            print(f"  SID: {sid}")
-            print(f"  Logon Server: {logon_server}")
-            print(f"  Logon Time: {logon_time}")
+ if username and username != '(null)':
+ print(f"Session: {domain}\\{username}")
+ print(f" SID: {sid}")
+ print(f" Logon Server: {logon_server}")
+ print(f" Logon Time: {logon_time}")
 
-            # NTLM hashes
-            msv = session.get('msv_creds', [])
-            for cred in msv:
-                nt = cred.get('NThash', '')
-                lm = cred.get('LMHash', '')
-                if nt:
-                    print(f"  NTLM Hash: {nt}")
-                if lm:
-                    print(f"  LM Hash: {lm}")
+ # NTLM hashes
+ msv = session.get('msv_creds', [])
+ for cred in msv:
+ nt = cred.get('NThash', '')
+ lm = cred.get('LMHash', '')
+ if nt:
+ print(f" NTLM Hash: {nt}")
+ if lm:
+ print(f" LM Hash: {lm}")
 
-            # Kerberos tickets
-            kerb = session.get('kerberos_creds', [])
-            for cred in kerb:
-                password = cred.get('password', '')
-                if password:
-                    print(f"  Kerberos Password: {password}")
-                tickets = cred.get('tickets', [])
-                for ticket in tickets:
-                    print(f"  Kerberos Ticket: {ticket.get('server', '')} (type: {ticket.get('enc_type', '')})")
+ # Kerberos tickets
+ kerb = session.get('kerberos_creds', [])
+ for cred in kerb:
+ password = cred.get('password', '')
+ if password:
+ print(f" Kerberos Password: {password}")
+ tickets = cred.get('tickets', [])
+ for ticket in tickets:
+ print(f" Kerberos Ticket: {ticket.get('server', '')} (type: {ticket.get('enc_type', '')})")
 
-            # WDigest (plaintext on older systems)
-            wdigest = session.get('wdigest_creds', [])
-            for cred in wdigest:
-                pwd = cred.get('password', '')
-                if pwd:
-                    print(f"  WDigest Password: {pwd}")
+ # WDigest (plaintext on older systems)
+ wdigest = session.get('wdigest_creds', [])
+ for cred in wdigest:
+ pwd = cred.get('password', '')
+ if pwd:
+ print(f" WDigest Password: {pwd}")
 
-            # DPAPI master keys
-            dpapi = session.get('dpapi_creds', [])
-            for cred in dpapi:
-                mk = cred.get('masterkey', '')
-                if mk:
-                    print(f"  DPAPI Master Key: {mk[:40]}...")
+ # DPAPI master keys
+ dpapi = session.get('dpapi_creds', [])
+ for cred in dpapi:
+ mk = cred.get('masterkey', '')
+ if mk:
+ print(f" DPAPI Master Key: {mk[:40]}...")
 
-            print()
+ print()
 PYEOF
 ```
 
@@ -229,35 +229,35 @@ python3 << 'PYEOF'
 import subprocess, json
 
 result = subprocess.run(
-    ['pypykatz', 'lsa', 'minidump', '/cases/case-2024-001/analysis/lsass.dmp', '-j', '-k', '/cases/case-2024-001/analysis/kerberos/'],
-    capture_output=True, text=True
+ ['pypykatz', 'lsa', 'minidump', '/cases/case-2024-001/analysis/lsass.dmp', '-j', '-k', '/cases/case-2024-001/analysis/kerberos/'],
+ capture_output=True, text=True
 )
 
 # pypykatz exports .kirbi files to the specified directory
 import os
 kirbi_dir = '/cases/case-2024-001/analysis/kerberos/'
 if os.path.exists(kirbi_dir):
-    for f in os.listdir(kirbi_dir):
-        if f.endswith('.kirbi'):
-            filepath = os.path.join(kirbi_dir, f)
-            size = os.path.getsize(filepath)
-            print(f"  Kerberos ticket: {f} ({size} bytes)")
+ for f in os.listdir(kirbi_dir):
+ if f.endswith('.kirbi'):
+ filepath = os.path.join(kirbi_dir, f)
+ size = os.path.getsize(filepath)
+ print(f" Kerberos ticket: {f} ({size} bytes)")
 PYEOF
 
 # Search process memory for authentication tokens and API keys
 vol -f /cases/case-2024-001/memory/memory.raw windows.strings --pid 684 | \
-   grep -iE '(bearer |authorization:|api[_-]key|token=|password=|secret=)' \
-   > /cases/case-2024-001/analysis/auth_strings.txt
+ grep -iE '(bearer |authorization:|api[_-]key|token=|password=|secret=)' \
+ > /cases/case-2024-001/analysis/auth_strings.txt
 
 # Search for cloud credentials in memory
 vol -f /cases/case-2024-001/memory/memory.raw windows.strings | \
-   grep -iE '(AKIA[A-Z0-9]{16}|ASIA[A-Z0-9]{16}|aws_secret_access_key)' \
-   > /cases/case-2024-001/analysis/aws_credentials.txt
+ grep -iE '(AKIA[A-Z0-9]{16}|ASIA[A-Z0-9]{16}|aws_secret_access_key)' \
+ > /cases/case-2024-001/analysis/aws_credentials.txt
 
 # Search for browser session tokens
 vol -f /cases/case-2024-001/memory/memory.raw windows.strings | \
-   grep -iE '(session_id=|PHPSESSID=|JSESSIONID=|_ga=|sid=)' \
-   > /cases/case-2024-001/analysis/session_tokens.txt
+ grep -iE '(session_id=|PHPSESSID=|JSESSIONID=|_ga=|sid=)' \
+ > /cases/case-2024-001/analysis/session_tokens.txt
 ```
 
 ### Step 6: Compile Credential Findings Report
@@ -276,22 +276,22 @@ COMPROMISED ACCOUNTS:
 =====================
 
 1. Local Accounts (SAM):
-   - Administrator (RID 500): NTLM hash extracted
-   - svcbackup (RID 1001): NTLM hash extracted
-   - SQLService (RID 1002): NTLM hash extracted
+ - Administrator (RID 500): NTLM hash extracted
+ - svcbackup (RID 1001): NTLM hash extracted
+ - SQLService (RID 1002): NTLM hash extracted
 
 2. Domain Accounts (LSASS):
-   - CORP\\admin.user: NTLM hash + Kerberos TGT
-   - CORP\\svc.backup: NTLM hash + plaintext password (WDigest)
-   - CORP\\domain.admin: Kerberos TGS tickets for 3 services
+ - CORP\\admin.user: NTLM hash + Kerberos TGT
+ - CORP\\svc.backup: NTLM hash + plaintext password (WDigest)
+ - CORP\\domain.admin: Kerberos TGS tickets for 3 services
 
 3. Cached Domain Credentials:
-   - CORP\\helpdesk.user: DCC2 hash
-   - CORP\\it.manager: DCC2 hash
+ - CORP\\helpdesk.user: DCC2 hash
+ - CORP\\it.manager: DCC2 hash
 
 4. Cloud Credentials:
-   - AWS Access Key: AKIA... found in process memory (PID 3456)
-   - Azure AD token found in browser process memory
+ - AWS Access Key: AKIA... found in process memory (PID 3456)
+ - Azure AD token found in browser process memory
 
 IMMEDIATE ACTIONS REQUIRED:
 - Reset passwords for all listed accounts
@@ -346,26 +346,26 @@ Search endpoint memory for AWS access keys, Azure tokens, and GCP service accoun
 
 ```
 Credential Extraction Summary:
-  Source: memory.raw (16 GB, Windows 10 Build 19041)
-  LSASS PID: 684
+ Source: memory.raw (16 GB, Windows 10 Build 19041)
+ LSASS PID: 684
 
-  Credentials Recovered:
-    Local NTLM Hashes:        4 accounts
-    Domain NTLM Hashes:       3 accounts
-    Kerberos TGTs:             2 tickets
-    Kerberos TGS:              5 service tickets
-    Plaintext Passwords:       1 (WDigest - svc.backup)
-    Cached Domain Creds:       2 DCC2 hashes
-    LSA Secrets:               3 service account passwords
-    DPAPI Master Keys:         4 keys recovered
-    Cloud Credentials:         1 AWS access key, 1 Azure token
+ Credentials Recovered:
+ Local NTLM Hashes: 4 accounts
+ Domain NTLM Hashes: 3 accounts
+ Kerberos TGTs: 2 tickets
+ Kerberos TGS: 5 service tickets
+ Plaintext Passwords: 1 (WDigest - svc.backup)
+ Cached Domain Creds: 2 DCC2 hashes
+ LSA Secrets: 3 service account passwords
+ DPAPI Master Keys: 4 keys recovered
+ Cloud Credentials: 1 AWS access key, 1 Azure token
 
-  Highest Privilege Compromised: Domain Admin (CORP\domain.admin)
+ Highest Privilege Compromised: Domain Admin (CORP\domain.admin)
 
-  Recommended Actions:
-    - Immediate: Reset all extracted account passwords
-    - Immediate: Rotate AWS access key AKIA...
-    - Urgent: Double krbtgt password reset (golden ticket mitigation)
-    - High: Revoke all Kerberos tickets via krbtgt rotation
-    - Medium: Audit DPAPI-protected data exposure
+ Recommended Actions:
+ - Immediate: Reset all extracted account passwords
+ - Immediate: Rotate AWS access key AKIA...
+ - Urgent: Double krbtgt password reset (golden ticket mitigation)
+ - High: Revoke all Kerberos tickets via krbtgt rotation
+ - Medium: Audit DPAPI-protected data exposure
 ```

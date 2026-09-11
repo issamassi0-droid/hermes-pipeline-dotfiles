@@ -1,10 +1,10 @@
 ---
 name: implementing-azure-ad-privileged-identity-management
 description: Configure Microsoft Entra Privileged Identity Management (PIM) to convert
-  standing privileged assignments into eligible, time-bound roles requiring justification,
-  MFA, and approval, covering Entra roles, Azure resource roles, and PIM for Groups,
-  plus access reviews. Use for role-assignment audits, just-in-time admin activation,
-  or Zero Trust identity governance in Entra/Azure AD.
+ standing privileged assignments into eligible, time-bound roles requiring justification,
+ MFA, and approval, covering Entra roles, Azure resource roles, and PIM for Groups,
+ plus access reviews. Use for role-assignment audits, just-in-time admin activation,
+ or Zero Trust identity governance in Entra/Azure AD.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -29,28 +29,28 @@ mitre_attack:
 - T1556
 - T1098
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - defense-impairment
-  techniques:
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: T1110.003
-    name: 'Brute Force: Password Spraying'
-    tactic: initial-access
-    source: attack
-  - id: F1005
-    name: Account Manipulation
-    tactic: positioning
-    source: f3
-  - id: F1005.002
-    name: 'Account Manipulation: Add Authorized User'
-    tactic: defense-impairment
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - defense-impairment
+ techniques:
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: T1110.003
+ name: 'Brute Force: Password Spraying'
+ tactic: initial-access
+ source: attack
+ - id: F1005
+ name: Account Manipulation
+ tactic: positioning
+ source: f3
+ - id: F1005.002
+ name: 'Account Manipulation: Add Authorized User'
+ tactic: defense-impairment
+ source: f3
 ---
 
 # Implementing Azure AD Privileged Identity Management
@@ -89,23 +89,23 @@ Microsoft Entra Privileged Identity Management (PIM) provides time-based and app
 
 ```
 User with Eligible Assignment
-        │
-        ├── Opens PIM portal → My Roles
-        │
-        ├── Clicks "Activate" on the desired role
-        │
-        ├── Provides justification and optional ticket number
-        │
-        ├── Completes MFA challenge (if required)
-        │
-        ├── [If approval required] → Notification sent to approvers
-        │       │
-        │       ├── Approver reviews and approves/denies
-        │       └── User notified of decision
-        │
-        ├── Role activated for configured duration (e.g., 8 hours)
-        │
-        └── Role automatically deactivated when duration expires
+ │
+ ├── Opens PIM portal → My Roles
+ │
+ ├── Clicks "Activate" on the desired role
+ │
+ ├── Provides justification and optional ticket number
+ │
+ ├── Completes MFA challenge (if required)
+ │
+ ├── [If approval required] → Notification sent to approvers
+ │ │
+ │ ├── Approver reviews and approves/denies
+ │ └── User notified of decision
+ │
+ ├── Role activated for configured duration (e.g., 8 hours)
+ │
+ └── Role automatically deactivated when duration expires
 ```
 
 ### Supported Resource Types
@@ -165,65 +165,65 @@ import requests
 
 # Acquire token for Microsoft Graph
 def get_graph_token(tenant_id, client_id, client_secret):
-    url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
-    data = {
-        "grant_type": "client_credentials",
-        "client_id": client_id,
-        "client_secret": client_secret,
-        "scope": "https://graph.microsoft.com/.default"
-    }
-    response = requests.post(url, data=data)
-    return response.json()["access_token"]
+ url = f"https://login.microsoftonline.com/{tenant_id}/oauth2/v2.0/token"
+ data = {
+ "grant_type": "client_credentials",
+ "client_id": client_id,
+ "client_secret": client_secret,
+ "scope": "https://graph.microsoft.com/.default"
+ }
+ response = requests.post(url, data=data)
+ return response.json()["access_token"]
 
 # Create eligible role assignment
 def create_eligible_assignment(token, role_definition_id, principal_id,
-                                directory_scope="/", duration_hours=8):
-    url = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleEligibilityScheduleRequests"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
-    body = {
-        "action": "adminAssign",
-        "justification": "PIM eligible assignment",
-        "roleDefinitionId": role_definition_id,
-        "directoryScopeId": directory_scope,
-        "principalId": principal_id,
-        "scheduleInfo": {
-            "startDateTime": "2025-01-01T00:00:00Z",
-            "expiration": {
-                "type": "afterDuration",
-                "duration": "P180D"  # 180-day eligible window
-            }
-        }
-    }
-    response = requests.post(url, headers=headers, json=body)
-    return response.json()
+ directory_scope="/", duration_hours=8):
+ url = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleEligibilityScheduleRequests"
+ headers = {
+ "Authorization": f"Bearer {token}",
+ "Content-Type": "application/json"
+ }
+ body = {
+ "action": "adminAssign",
+ "justification": "PIM eligible assignment",
+ "roleDefinitionId": role_definition_id,
+ "directoryScopeId": directory_scope,
+ "principalId": principal_id,
+ "scheduleInfo": {
+ "startDateTime": "2025-01-01T00:00:00Z",
+ "expiration": {
+ "type": "afterDuration",
+ "duration": "P180D" # 180-day eligible window
+ }
+ }
+ }
+ response = requests.post(url, headers=headers, json=body)
+ return response.json()
 
 # Activate a role (user self-service)
 def activate_role(token, role_definition_id, principal_id, justification,
-                   duration_hours=8):
-    url = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleRequests"
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Content-Type": "application/json"
-    }
-    body = {
-        "action": "selfActivate",
-        "principalId": principal_id,
-        "roleDefinitionId": role_definition_id,
-        "directoryScopeId": "/",
-        "justification": justification,
-        "scheduleInfo": {
-            "startDateTime": None,  # Now
-            "expiration": {
-                "type": "afterDuration",
-                "duration": f"PT{duration_hours}H"
-            }
-        }
-    }
-    response = requests.post(url, headers=headers, json=body)
-    return response.json()
+ duration_hours=8):
+ url = "https://graph.microsoft.com/v1.0/roleManagement/directory/roleAssignmentScheduleRequests"
+ headers = {
+ "Authorization": f"Bearer {token}",
+ "Content-Type": "application/json"
+ }
+ body = {
+ "action": "selfActivate",
+ "principalId": principal_id,
+ "roleDefinitionId": role_definition_id,
+ "directoryScopeId": "/",
+ "justification": justification,
+ "scheduleInfo": {
+ "startDateTime": None, # Now
+ "expiration": {
+ "type": "afterDuration",
+ "duration": f"PT{duration_hours}H"
+ }
+ }
+ }
+ response = requests.post(url, headers=headers, json=body)
+ return response.json()
 ```
 
 ### Step 4: Configure Access Reviews
@@ -232,12 +232,12 @@ Set up recurring access reviews to verify eligible assignments remain appropriat
 
 1. Navigate to Identity Governance > Access Reviews > New Access Review
 2. Configure:
-   - Review scope: Privileged Identity Management role assignments
-   - Roles: Select all critical roles (Global Admin, Security Admin, etc.)
-   - Reviewers: Managers or self-review with justification
-   - Frequency: Quarterly for critical roles, semi-annually for others
-   - Auto-apply results: Remove access for non-responsive reviews
-   - Duration: 14 days for reviewers to respond
+ - Review scope: Privileged Identity Management role assignments
+ - Roles: Select all critical roles (Global Admin, Security Admin, etc.)
+ - Reviewers: Managers or self-review with justification
+ - Frequency: Quarterly for critical roles, semi-annually for others
+ - Auto-apply results: Remove access for non-responsive reviews
+ - Duration: 14 days for reviewers to respond
 
 ### Step 5: Configure Alerts
 

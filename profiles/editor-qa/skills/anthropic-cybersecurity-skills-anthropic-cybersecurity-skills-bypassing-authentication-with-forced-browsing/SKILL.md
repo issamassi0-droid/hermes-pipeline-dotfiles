@@ -1,8 +1,8 @@
 ---
 name: bypassing-authentication-with-forced-browsing
 description: Discovering and accessing unprotected pages, APIs, and administrative
-  interfaces by enumerating URLs and bypassing authentication controls during authorized
-  security assessments.
+ interfaces by enumerating URLs and bypassing authentication controls during authorized
+ security assessments.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -54,28 +54,28 @@ Use ffuf or Gobuster to discover paths not linked in the application's navigatio
 ```bash
 # Directory enumeration with ffuf
 ffuf -u https://target.example.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt \
-  -mc 200,301,302,403 \
-  -fc 404 \
-  -o results-dirs.json -of json \
-  -t 50 -rate 100
+ -w /usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt \
+ -mc 200,301,302,403 \
+ -fc 404 \
+ -o results-dirs.json -of json \
+ -t 50 -rate 100
 
 # File enumeration with common extensions
 ffuf -u https://target.example.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
-  -e .php,.asp,.aspx,.jsp,.html,.js,.json,.xml,.bak,.old,.txt,.cfg,.conf,.env \
-  -mc 200,301,302,403 \
-  -fc 404 \
-  -o results-files.json -of json \
-  -t 50 -rate 100
+ -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
+ -e .php,.asp,.aspx,.jsp,.html,.js,.json,.xml,.bak,.old,.txt,.cfg,.conf,.env \
+ -mc 200,301,302,403 \
+ -fc 404 \
+ -o results-files.json -of json \
+ -t 50 -rate 100
 
 # Gobuster for directory enumeration
 gobuster dir -u https://target.example.com \
-  -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt \
-  -s "200,204,301,302,307,403" \
-  -x php,asp,aspx,jsp,html \
-  -o gobuster-results.txt \
-  -t 50
+ -w /usr/share/seclists/Discovery/Web-Content/directory-list-2.3-medium.txt \
+ -s "200,204,301,302,307,403" \
+ -x php,asp,aspx,jsp,html \
+ -o gobuster-results.txt \
+ -t 50
 ```
 
 ### Step 2: Discover Administrative and Debug Interfaces
@@ -85,9 +85,9 @@ Target common administrative paths and debug endpoints.
 ```bash
 # Admin panel enumeration
 ffuf -u https://target.example.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/common.txt \
-  -mc 200,301,302 \
-  -t 50 -rate 100
+ -w /usr/share/seclists/Discovery/Web-Content/common.txt \
+ -mc 200,301,302 \
+ -t 50 -rate 100
 
 # Common admin paths to check manually:
 # /admin, /administrator, /admin-panel, /wp-admin
@@ -97,15 +97,15 @@ ffuf -u https://target.example.com/FUZZ \
 
 # API endpoint discovery
 ffuf -u https://target.example.com/api/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
-  -mc 200,201,204,301,302,401,403 \
-  -fc 404 \
-  -o api-results.json -of json
+ -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
+ -mc 200,201,204,301,302,401,403 \
+ -fc 404 \
+ -o api-results.json -of json
 
 # Check for Spring Boot Actuator endpoints
 for endpoint in env health info beans configprops mappings trace; do
-  curl -s -o /dev/null -w "%{http_code} /actuator/$endpoint\n" \
-    "https://target.example.com/actuator/$endpoint"
+ curl -s -o /dev/null -w "%{http_code} /actuator/$endpoint\n" \
+ "https://target.example.com/actuator/$endpoint"
 done
 ```
 
@@ -116,12 +116,12 @@ Compare responses between unauthenticated and authenticated requests.
 ```bash
 # Test without authentication
 curl -s -o /dev/null -w "%{http_code}" \
-  "https://target.example.com/admin/dashboard"
+ "https://target.example.com/admin/dashboard"
 
 # Test with valid session cookie
 curl -s -o /dev/null -w "%{http_code}" \
-  -b "session=valid_session_token_here" \
-  "https://target.example.com/admin/dashboard"
+ -b "session=valid_session_token_here" \
+ "https://target.example.com/admin/dashboard"
 
 # Automated check: compare response sizes
 # Unauthenticated request
@@ -129,7 +129,7 @@ curl -s "https://target.example.com/admin/users" | wc -c
 
 # Authenticated request
 curl -s -b "session=valid_token" \
-  "https://target.example.com/admin/users" | wc -c
+ "https://target.example.com/admin/users" | wc -c
 
 # If both return similar content, authentication is not enforced
 
@@ -144,21 +144,21 @@ Some applications only enforce authentication for specific HTTP methods.
 ```bash
 # Test different HTTP methods on protected endpoints
 for method in GET POST PUT DELETE PATCH OPTIONS HEAD TRACE; do
-  echo -n "$method: "
-  curl -s -o /dev/null -w "%{http_code}" \
-    -X "$method" "https://target.example.com/admin/settings"
+ echo -n "$method: "
+ curl -s -o /dev/null -w "%{http_code}" \
+ -X "$method" "https://target.example.com/admin/settings"
 done
 
 # Test HTTP method override headers
 curl -s -o /dev/null -w "%{http_code}" \
-  -X POST \
-  -H "X-HTTP-Method-Override: GET" \
-  "https://target.example.com/admin/settings"
+ -X POST \
+ -H "X-HTTP-Method-Override: GET" \
+ "https://target.example.com/admin/settings"
 
 curl -s -o /dev/null -w "%{http_code}" \
-  -H "X-Original-Method: GET" \
-  -H "X-Rewrite-URL: /admin/settings" \
-  "https://target.example.com/"
+ -H "X-Original-Method: GET" \
+ -H "X-Rewrite-URL: /admin/settings" \
+ "https://target.example.com/"
 ```
 
 ### Step 5: Test Path Traversal and URL Normalization Bypass
@@ -192,20 +192,20 @@ Search for sensitive files inadvertently exposed on the web server.
 ```bash
 # Backup file discovery
 ffuf -u https://target.example.com/FUZZ \
-  -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
-  -e .bak,.old,.orig,.save,.swp,.tmp,.dist,.config,.sql,.gz,.tar,.zip \
-  -mc 200 -t 50 -rate 100
+ -w /usr/share/seclists/Discovery/Web-Content/raft-medium-files.txt \
+ -e .bak,.old,.orig,.save,.swp,.tmp,.dist,.config,.sql,.gz,.tar,.zip \
+ -mc 200 -t 50 -rate 100
 
 # Common sensitive files
 for file in .env .git/config .git/HEAD .svn/entries \
-  web.config wp-config.php.bak config.php.old \
-  database.yml .htpasswd server-status phpinfo.php \
-  robots.txt sitemap.xml crossdomain.xml; do
-  status=$(curl -s -o /dev/null -w "%{http_code}" \
-    "https://target.example.com/$file")
-  if [ "$status" != "404" ]; then
-    echo "FOUND ($status): $file"
-  fi
+ web.config wp-config.php.bak config.php.old \
+ database.yml .htpasswd server-status phpinfo.php \
+ robots.txt sitemap.xml crossdomain.xml; do
+ status=$(curl -s -o /dev/null -w "%{http_code}" \
+ "https://target.example.com/$file")
+ if [ "$status" != "404" ]; then
+ echo "FOUND ($status): $file"
+ fi
 done
 
 # Git repository exposure check

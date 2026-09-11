@@ -1,12 +1,12 @@
 ---
 name: performing-ssl-stripping-attack
 description: >-
-  Simulates SSL stripping / HTTPS downgrade attacks using sslstrip, Bettercap,
-  and mitmproxy in authorized lab environments to test HSTS enforcement,
-  certificate validation, and HTTPS upgrade mechanisms. Use when performing an
-  authorized penetration test to validate HSTS preloading and TLS certificate
-  handling, demonstrate downgrade-attack risk to stakeholders, or train SOC
-  teams to detect SSL stripping indicators in network traffic.
+ Simulates SSL stripping / HTTPS downgrade attacks using sslstrip, Bettercap,
+ and mitmproxy in authorized lab environments to test HSTS enforcement,
+ certificate validation, and HTTPS upgrade mechanisms. Use when performing an
+ authorized penetration test to validate HSTS preloading and TLS certificate
+ handling, demonstrate downgrade-attack risk to stakeholders, or train SOC
+ teams to detect SSL stripping indicators in network traffic.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -151,8 +151,8 @@ sudo bettercap -iface eth0
 
 # Capture evidence of the downgrade
 tshark -i eth0 -f "host 192.168.1.50 and port 80" \
-  -T fields -e frame.time -e ip.src -e ip.dst -e http.host -e http.request.uri \
-  -Y "http.request" > ssl_strip_evidence.txt
+ -T fields -e frame.time -e ip.src -e ip.dst -e http.host -e http.request.uri \
+ -Y "http.request" > ssl_strip_evidence.txt
 
 # Verify what the victim sees vs what goes to the real server
 # Victim to attacker: HTTP (port 80, cleartext)
@@ -164,8 +164,8 @@ tshark -i eth0 -f "dst port 443 and dst host <real_server_ip>" -c 20
 # Check IDS/SIEM for detection
 # Snort rule that should detect SSL stripping indicators:
 # alert tcp any any -> $HOME_NET 80 (msg:"Possible SSL Strip - Login form over HTTP";
-#   flow:to_client,established; content:"type=\"password\""; nocase;
-#   content:"http://"; nocase; sid:9000010;)
+# flow:to_client,established; content:"type=\"password\""; nocase;
+# content:"http://"; nocase; sid:9000010;)
 
 # Check for HSTS missing header alerts
 curl -s http://target-app.example.com | grep -i "password\|login"

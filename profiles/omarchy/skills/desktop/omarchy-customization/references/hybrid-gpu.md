@@ -12,7 +12,7 @@ Applies to: NVIDIA RTX 2060 (discrete, PCI vendor 0x10de) + AMD Renoir iGPU (int
 Detect the active display GPU:
 ```bash
 for card in /sys/class/drm/card*-eDP-*; do
-    [ "$(cat "$card/status" 2>/dev/null)" = "connected" ] && echo "$(basename "$card")"
+ [ "$(cat "$card/status" 2>/dev/null)" = "connected" ] && echo "$(basename "$card")"
 done
 ```
 
@@ -20,15 +20,15 @@ done
 
 **`~/.local/bin/vk-switch`** — toggle Vulkan between AMD and NVIDIA:
 ```bash
-source ~/.local/bin/vk-switch amd     # AMD radeon Vulkan (default, low power)
-source ~/.local/bin/vk-switch nvidia   # NVIDIA Vulkan (performance)
-~/.local/bin/vk-switch status          # show current GPU + ICD
+source ~/.local/bin/vk-switch amd # AMD radeon Vulkan (default, low power)
+source ~/.local/bin/vk-switch nvidia # NVIDIA Vulkan (performance)
+~/.local/bin/vk-switch status # show current GPU + ICD
 ```
 
 **`~/.local/bin/chromium-vk`** — launch Chromium with the selected ICD:
 ```bash
-source ~/.local/bin/chromium-vk amd     # Chromium on AMD Vulkan
-source ~/.local/bin/chromium-vk nvidia  # Chromium on NVIDIA Vulkan
+source ~/.local/bin/chromium-vk amd # Chromium on AMD Vulkan
+source ~/.local/bin/chromium-vk nvidia # Chromium on NVIDIA Vulkan
 ```
 
 Default Vulkan ICD is AMD, exported in `~/.bashrc`:

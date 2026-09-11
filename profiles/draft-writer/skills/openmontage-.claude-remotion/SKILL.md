@@ -42,16 +42,16 @@ import { glitch, lightLeak, clockWipe, checkerboard } from '../../../../lib/tran
 import { slide, fade } from '@remotion/transitions/slide';
 
 <TransitionSeries>
-  <TransitionSeries.Sequence durationInFrames={90}>
-    <TitleSlide />
-  </TransitionSeries.Sequence>
-  <TransitionSeries.Transition
-    presentation={glitch({ intensity: 0.8 })}
-    timing={linearTiming({ durationInFrames: 30 })}
-  />
-  <TransitionSeries.Sequence durationInFrames={120}>
-    <ContentSlide />
-  </TransitionSeries.Sequence>
+ <TransitionSeries.Sequence durationInFrames={90}>
+ <TitleSlide />
+ </TransitionSeries.Sequence>
+ <TransitionSeries.Transition
+ presentation={glitch({ intensity: 0.8 })}
+ timing={linearTiming({ durationInFrames: 30 })}
+ />
+ <TransitionSeries.Sequence durationInFrames={120}>
+ <ContentSlide />
+ </TransitionSeries.Sequence>
 </TransitionSeries>
 ```
 
@@ -154,7 +154,7 @@ If this skill is missing information or could be improved:
 - **Missing a pattern?** Describe what you needed
 - **Found an error?** Let me know what's wrong
 - **Want to contribute?** I can help you:
-  1. Update this skill with improvements
-  2. Create a PR to github.com/digitalsamba/claude-code-video-toolkit
+ 1. Update this skill with improvements
+ 2. Create a PR to github.com/digitalsamba/claude-code-video-toolkit
 
 Just say "improve this skill" and I'll guide you through updating `.claude/skills/remotion/SKILL.md`.

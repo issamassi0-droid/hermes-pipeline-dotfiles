@@ -1,10 +1,10 @@
 ---
 name: implementing-network-traffic-analysis-with-arkime
 description: Queries Arkime (formerly Moloch) full packet capture via its API to search sessions,
-  download PCAPs, detect C2 beaconing through connection interval/jitter stats,
-  spot DNS tunneling via query-length analysis, and flag known-bad TLS certificate
-  issuers, using the bundled scripts/agent.py. Use when investigating suspicious
-  network flows or doing full-packet-capture forensics against an Arkime deployment.
+ download PCAPs, detect C2 beaconing through connection interval/jitter stats,
+ spot DNS tunneling via query-length analysis, and flag known-bad TLS certificate
+ issuers, using the bundled scripts/agent.py. Use when investigating suspicious
+ network flows or doing full-packet-capture forensics against an Arkime deployment.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -53,11 +53,11 @@ mitre_attack:
 1. Install dependencies: `pip install requests`
 2. Configure Arkime viewer URL and credentials.
 3. Run the agent to query Arkime sessions and analyze traffic:
-   - Search sessions by IP, port, protocol, or expression
-   - Download PCAP data for forensic analysis
-   - Detect C2 beaconing via connection interval analysis
-   - Identify DNS tunneling through query length statistics
-   - Flag connections to known-bad TLS certificate issuers
+ - Search sessions by IP, port, protocol, or expression
+ - Download PCAP data for forensic analysis
+ - Detect C2 beaconing via connection interval analysis
+ - Identify DNS tunneling through query length statistics
+ - Flag connections to known-bad TLS certificate issuers
 
 ```bash
 python scripts/agent.py --arkime-url https://arkime.local:8005 --user admin --password secret --output arkime_report.json

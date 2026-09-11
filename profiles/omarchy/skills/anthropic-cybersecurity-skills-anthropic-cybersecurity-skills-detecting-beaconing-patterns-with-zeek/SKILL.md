@@ -1,12 +1,12 @@
 ---
 name: detecting-beaconing-patterns-with-zeek
 description: 'Performs statistical analysis of Zeek conn.log connection intervals
-  to detect C2 beaconing patterns. Uses the ZAT library to load Zeek logs into Pandas
-  DataFrames, calculates inter-arrival time standard deviation, and flags periodic
-  connections with low jitter. Use when hunting for command-and-control callbacks
-  in network data.
+ to detect C2 beaconing patterns. Uses the ZAT library to load Zeek logs into Pandas
+ DataFrames, calculates inter-arrival time standard deviation, and flags periodic
+ connections with low jitter. Use when hunting for command-and-control callbacks
+ in network data.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -64,12 +64,12 @@ conn_df = log_to_df.create_dataframe('/path/to/conn.log')
 
 # Group by src/dst pair and calculate inter-arrival time
 for (src, dst), group in conn_df.groupby(['id.orig_h', 'id.resp_h']):
-    times = group['ts'].sort_values()
-    intervals = times.diff().dt.total_seconds().dropna()
-    if len(intervals) > 10:
-        std_dev = np.std(intervals)
-        mean_interval = np.mean(intervals)
-        # Low std_dev relative to mean = likely beaconing
+ times = group['ts'].sort_values()
+ intervals = times.diff().dt.total_seconds().dropna()
+ if len(intervals) > 10:
+ std_dev = np.std(intervals)
+ mean_interval = np.mean(intervals)
+ # Low std_dev relative to mean = likely beaconing
 ```
 
 Key analysis steps:

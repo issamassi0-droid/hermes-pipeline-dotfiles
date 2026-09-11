@@ -1,10 +1,10 @@
 ---
 name: openai-api
 description: |
-  OpenAI REST API integration guide. Use when: making direct HTTP calls to OpenAI API,
-  understanding API structure without SDK, debugging API requests, learning request/response
-  formats, handling errors and rate limits. Covers: authentication, Chat Completions,
-  Embeddings, Images (DALL-E), Audio (Whisper/TTS), error handling, streaming.
+ OpenAI REST API integration guide. Use when: making direct HTTP calls to OpenAI API,
+ understanding API structure without SDK, debugging API requests, learning request/response
+ formats, handling errors and rate limits. Covers: authentication, Chat Completions,
+ Embeddings, Images (DALL-E), Audio (Whisper/TTS), error handling, streaming.
 ---
 
 # OpenAI REST API
@@ -19,9 +19,9 @@ Base URL: https://api.openai.com/v1
 
 ```bash
 curl https://api.openai.com/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $OPENAI_API_KEY" \
-  -d '{...}'
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $OPENAI_API_KEY" \
+ -d '{...}'
 ```
 
 Optional headers:
@@ -45,26 +45,26 @@ Optional headers:
 
 ```bash
 curl https://api.openai.com/v1/chat/completions \
-  -H "Authorization: Bearer $OPENAI_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-4o",
-    "messages": [
-      {"role": "system", "content": "You are a helpful assistant."},
-      {"role": "user", "content": "Hello!"}
-    ]
-  }'
+ -H "Authorization: Bearer $OPENAI_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "model": "gpt-4o",
+ "messages": [
+ {"role": "system", "content": "You are a helpful assistant."},
+ {"role": "user", "content": "Hello!"}
+ ]
+ }'
 ```
 
 Response structure:
 ```json
 {
-  "id": "chatcmpl-xxx",
-  "choices": [{
-    "message": {"role": "assistant", "content": "Hi! How can I help?"},
-    "finish_reason": "stop"
-  }],
-  "usage": {"prompt_tokens": 10, "completion_tokens": 8, "total_tokens": 18}
+ "id": "chatcmpl-xxx",
+ "choices": [{
+ "message": {"role": "assistant", "content": "Hi! How can I help?"},
+ "finish_reason": "stop"
+ }],
+ "usage": {"prompt_tokens": 10, "completion_tokens": 8, "total_tokens": 18}
 }
 ```
 
@@ -72,9 +72,9 @@ Response structure:
 
 ```bash
 curl https://api.openai.com/v1/embeddings \
-  -H "Authorization: Bearer $OPENAI_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"model": "text-embedding-3-small", "input": "Hello world"}'
+ -H "Authorization: Bearer $OPENAI_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{"model": "text-embedding-3-small", "input": "Hello world"}'
 ```
 
 ### Streaming

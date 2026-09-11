@@ -1,10 +1,10 @@
 ---
 name: triaging-security-incident-with-ir-playbook
 description: Classifies and prioritizes security incidents using structured IR
-  playbooks and SIEM/case-management queries (Splunk, TheHive) to determine severity,
-  assign response teams, and initiate the appropriate response procedures. Use when
-  a new SOC alert needs triage, multiple concurrent incidents require prioritization,
-  or automated triage rules need validation or tuning.
+ playbooks and SIEM/case-management queries (Splunk, TheHive) to determine severity,
+ assign response teams, and initiate the appropriate response procedures. Use when
+ a new SOC alert needs triage, multiple concurrent incidents require prioritization,
+ or automated triage rules need validation or tuning.
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -56,33 +56,33 @@ index=notable status=new severity IN ("critical","high")
 
 # Query TheHive for new cases
 curl -s -H "Authorization: Bearer $THEHIVE_API_KEY" \
-  "https://thehive.local/api/v1/query?name=list-alerts" \
-  -H "Content-Type: application/json" \
-  -d '{"query":[{"_name":"listAlert"},{"_name":"filter","_field":"status","_value":"New"}]}'
+ "https://thehive.local/api/v1/query?name=list-alerts" \
+ -H "Content-Type: application/json" \
+ -d '{"query":[{"_name":"listAlert"},{"_name":"filter","_field":"status","_value":"New"}]}'
 
 # Acknowledge alert in SIEM to prevent duplicate triage
 curl -X POST "https://splunk.local:8089/services/notable_update" \
-  -H "Authorization: Bearer $SPLUNK_TOKEN" \
-  -d "ruleUIDs=$RULE_UID&status=1&comment=Triage+initiated+by+analyst"
+ -H "Authorization: Bearer $SPLUNK_TOKEN" \
+ -d "ruleUIDs=$RULE_UID&status=1&comment=Triage+initiated+by+analyst"
 ```
 
 ### Step 2: Enrich Alert Data
 ```bash
 # Enrich source IP with VirusTotal
 curl -s "https://www.virustotal.com/api/v3/ip_addresses/$SRC_IP" \
-  -H "x-apikey: $VT_API_KEY" | jq '.data.attributes.last_analysis_stats'
+ -H "x-apikey: $VT_API_KEY" | jq '.data.attributes.last_analysis_stats'
 
 # Check IP reputation with AbuseIPDB
 curl -s "https://api.abuseipdb.com/api/v2/check?ipAddress=$SRC_IP&maxAgeInDays=90" \
-  -H "Key: $ABUSEIPDB_KEY" -H "Accept: application/json" | jq '.data'
+ -H "Key: $ABUSEIPDB_KEY" -H "Accept: application/json" | jq '.data'
 
 # Enrich file hash with threat intelligence
 curl -s "https://www.virustotal.com/api/v3/files/$FILE_HASH" \
-  -H "x-apikey: $VT_API_KEY" | jq '.data.attributes.last_analysis_stats'
+ -H "x-apikey: $VT_API_KEY" | jq '.data.attributes.last_analysis_stats'
 
 # Query internal asset database for affected systems
 curl -s "https://cmdb.local/api/assets?ip=$DEST_IP" \
-  -H "Authorization: Bearer $CMDB_TOKEN" | jq '.asset_criticality, .owner, .environment'
+ -H "Authorization: Bearer $CMDB_TOKEN" | jq '.asset_criticality, .owner, .environment'
 ```
 
 ### Step 3: Classify Incident Type
@@ -111,13 +111,13 @@ curl -s "https://attack.mitre.org/api/techniques/$TECHNIQUE_ID" | jq '.name, .ta
 python3 -c "
 severity_score = 0
 # Asset criticality: Critical=4, High=3, Medium=2, Low=1
-severity_score += 4  # Critical server
+severity_score += 4 # Critical server
 # Data sensitivity: PII/PHI=4, PCI=3, Confidential=2, Public=1
-severity_score += 3  # PCI data
+severity_score += 3 # PCI data
 # Scope: Enterprise=4, Department=3, Single system=2, Single user=1
-severity_score += 2  # Single system
+severity_score += 2 # Single system
 # Threat status: Active=4, Recent=3, Historical=2, Potential=1
-severity_score += 4  # Active threat
+severity_score += 4 # Active threat
 
 if severity_score >= 12: print('CRITICAL - P1')
 elif severity_score >= 9: print('HIGH - P2')
@@ -136,27 +136,27 @@ cat /opt/ir/playbooks/unauthorized_access_playbook.yaml
 
 # Create incident ticket in TheHive
 curl -X POST "https://thehive.local/api/v1/case" \
-  -H "Authorization: Bearer $THEHIVE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "IR-2024-XXX: [Incident Type] - [Brief Description]",
-    "description": "Triage summary and initial findings",
-    "severity": 3,
-    "tlp": 2,
-    "pap": 2,
-    "tags": ["ransomware", "triage-complete"],
-    "customFields": {
-      "playbook": {"string": "ransomware_v2"},
-      "affected_systems": {"integer": 5}
-    }
-  }'
+ -H "Authorization: Bearer $THEHIVE_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "title": "IR-2024-XXX: [Incident Type] - [Brief Description]",
+ "description": "Triage summary and initial findings",
+ "severity": 3,
+ "tlp": 2,
+ "pap": 2,
+ "tags": ["ransomware", "triage-complete"],
+ "customFields": {
+ "playbook": {"string": "ransomware_v2"},
+ "affected_systems": {"integer": 5}
+ }
+ }'
 ```
 
 ### Step 6: Assign Response Team
 ```bash
 # Check on-call schedule
 curl -s "https://pagerduty.com/api/v2/oncalls?schedule_ids[]=$SCHEDULE_ID" \
-  -H "Authorization: Token token=$PD_TOKEN" | jq '.oncalls[].user.summary'
+ -H "Authorization: Token token=$PD_TOKEN" | jq '.oncalls[].user.summary'
 
 # Page incident responders based on severity
 # P1/Critical: Page IR lead + senior analysts + CISO
@@ -165,33 +165,33 @@ curl -s "https://pagerduty.com/api/v2/oncalls?schedule_ids[]=$SCHEDULE_ID" \
 # P4/Low: Queue for business hours processing
 
 curl -X POST "https://events.pagerduty.com/v2/enqueue" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "routing_key": "'$PD_ROUTING_KEY'",
-    "event_action": "trigger",
-    "payload": {
-      "summary": "P1 Security Incident: Ransomware detected on PROD-DB-01",
-      "severity": "critical",
-      "source": "SIEM-Splunk",
-      "custom_details": {"incident_id": "IR-2024-042", "playbook": "ransomware_v2"}
-    }
-  }'
+ -H "Content-Type: application/json" \
+ -d '{
+ "routing_key": "'$PD_ROUTING_KEY'",
+ "event_action": "trigger",
+ "payload": {
+ "summary": "P1 Security Incident: Ransomware detected on PROD-DB-01",
+ "severity": "critical",
+ "source": "SIEM-Splunk",
+ "custom_details": {"incident_id": "IR-2024-042", "playbook": "ransomware_v2"}
+ }
+ }'
 ```
 
 ### Step 7: Document Triage Decision and Hand Off
 ```bash
 # Update incident ticket with triage summary
 curl -X PATCH "https://thehive.local/api/v1/case/$CASE_ID" \
-  -H "Authorization: Bearer $THEHIVE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "status": "InProgress",
-    "customFields": {
-      "triage_analyst": {"string": "analyst_name"},
-      "triage_time": {"date": '$(date +%s000)'},
-      "severity_justification": {"string": "Critical asset + active threat + PCI data"}
-    }
-  }'
+ -H "Authorization: Bearer $THEHIVE_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "status": "InProgress",
+ "customFields": {
+ "triage_analyst": {"string": "analyst_name"},
+ "triage_time": {"date": '$(date +%s000)'},
+ "severity_justification": {"string": "Critical asset + active threat + PCI data"}
+ }
+ }'
 ```
 
 ## Key Concepts

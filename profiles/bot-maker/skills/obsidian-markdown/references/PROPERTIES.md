@@ -7,13 +7,13 @@ Properties use YAML frontmatter at the start of a note:
 title: My Note Title
 date: 2024-01-15
 tags:
-  - project
-  - important
+ - project
+ - important
 aliases:
-  - My Note
-  - Alternative Name
+ - My Note
+ - Alternative Name
 cssclasses:
-  - custom-class
+ - custom-class
 status: in-progress
 rating: 4.5
 completed: false
@@ -55,7 +55,7 @@ In frontmatter:
 ```yaml
 ---
 tags:
-  - tag1
-  - nested/tag2
+ - tag1
+ - nested/tag2
 ---
 ```

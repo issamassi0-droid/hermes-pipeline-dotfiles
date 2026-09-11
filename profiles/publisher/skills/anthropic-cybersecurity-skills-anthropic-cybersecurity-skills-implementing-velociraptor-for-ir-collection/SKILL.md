@@ -1,8 +1,8 @@
 ---
 name: implementing-velociraptor-for-ir-collection
 description: Deploy and configure Velociraptor for scalable endpoint forensic artifact
-  collection during incident response using VQL queries, hunts, and pre-built artifact
-  packs across Windows, Linux, and macOS environments.
+ collection during incident response using VQL queries, hunts, and pre-built artifact
+ packs across Windows, Linux, and macOS environments.
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -109,9 +109,9 @@ velociraptor --config client.config.yaml client -v
 ### Docker Deployment
 ```bash
 docker run --name velociraptor \
-  -v /opt/velociraptor:/velociraptor/data \
-  -p 8000:8000 -p 8001:8001 -p 8889:8889 \
-  velocidex/velociraptor
+ -v /opt/velociraptor:/velociraptor/data \
+ -p 8000:8000 -p 8001:8001 -p 8889:8889 \
+ velocidex/velociraptor
 ```
 
 ## Core IR Artifact Collection
@@ -121,8 +121,8 @@ docker run --name velociraptor \
 ```sql
 -- Collect Windows Event Logs
 SELECT * FROM Artifact.Windows.EventLogs.EvtxHunter(
-  EvtxGlob="C:/Windows/System32/winevt/Logs/*.evtx",
-  IDRegex="4624|4625|4648|4672|4688|4698|4769|7045"
+ EvtxGlob="C:/Windows/System32/winevt/Logs/*.evtx",
+ IDRegex="4624|4625|4648|4672|4688|4698|4769|7045"
 )
 
 -- Collect Prefetch files for execution evidence
@@ -139,8 +139,8 @@ SELECT * FROM Artifact.Windows.Forensics.UserAssist()
 
 -- Collect NTFS MFT timestamps
 SELECT * FROM Artifact.Windows.NTFS.MFT(
-  MFTFilename="C:/$MFT",
-  FileRegex=".(exe|dll|ps1|bat|cmd)$"
+ MFTFilename="C:/$MFT",
+ FileRegex=".(exe|dll|ps1|bat|cmd)$"
 )
 
 -- Collect scheduled tasks
@@ -198,13 +198,13 @@ SELECT * FROM Artifact.Linux.Services()
 -- Windows Triage Collection artifact
 -- Collects event logs, prefetch, registry, browser data, and more
 SELECT * FROM Artifact.Windows.KapeFiles.Targets(
-  Device="C:",
-  _AllFiles=FALSE,
-  _EventLogs=TRUE,
-  _Prefetch=TRUE,
-  _RegistryHives=TRUE,
-  _WebBrowsers=TRUE,
-  _WindowsTimeline=TRUE
+ Device="C:",
+ _AllFiles=FALSE,
+ _EventLogs=TRUE,
+ _Prefetch=TRUE,
+ _RegistryHives=TRUE,
+ _WebBrowsers=TRUE,
+ _WindowsTimeline=TRUE
 )
 ```
 
@@ -215,10 +215,10 @@ SELECT * FROM Artifact.Windows.KapeFiles.Targets(
 1. Navigate to Hunt Manager in Velociraptor Web UI
 2. Click "New Hunt"
 3. Configure:
-   - Description: "IR Triage - Case 2025-001"
-   - Include/Exclude labels for targeting
-   - Artifact selection (e.g., Windows.Forensics.Prefetch)
-   - Resource limits (CPU, IOPS, timeout)
+ - Description: "IR Triage - Case 2025-001"
+ - Include/Exclude labels for targeting
+ - Artifact selection (e.g., Windows.Forensics.Prefetch)
+ - Resource limits (CPU, IOPS, timeout)
 4. Launch hunt
 5. Monitor progress in real-time
 ```
@@ -228,12 +228,12 @@ SELECT * FROM Artifact.Windows.KapeFiles.Targets(
 ```sql
 -- Hunt for specific file hash across all endpoints
 SELECT * FROM Artifact.Generic.Detection.HashHunter(
-  Hashes="e99a18c428cb38d5f260853678922e03"
+ Hashes="e99a18c428cb38d5f260853678922e03"
 )
 
 -- Hunt for YARA signatures in memory
 SELECT * FROM Artifact.Windows.Detection.Yara.Process(
-  YaraRule='rule malware { strings: $s1 = "malicious_string" condition: $s1 }'
+ YaraRule='rule malware { strings: $s1 = "malicious_string" condition: $s1 }'
 )
 
 -- Hunt for Sigma rule matches in event logs
@@ -267,20 +267,20 @@ SELECT * FROM watch_registry(key="HKLM/SOFTWARE/Microsoft/Windows/CurrentVersion
 ### Splunk Integration
 ```
 Velociraptor Server --> Elastic/OpenSearch --> Splunk HEC
-                   --> Direct syslog forwarding
-                   --> Velociraptor API --> Custom scripts --> Splunk
+ --> Direct syslog forwarding
+ --> Velociraptor API --> Custom scripts --> Splunk
 ```
 
 ### Elastic Stack Integration
 ```yaml
 # Velociraptor server config for Elastic output
 Monitoring:
-  elastic:
-    addresses:
-      - https://elastic.local:9200
-    username: velociraptor
-    password: secure_password
-    index: velociraptor
+ elastic:
+ addresses:
+ - https://elastic.local:9200
+ username: velociraptor
+ password: secure_password
+ index: velociraptor
 ```
 
 ## MITRE ATT&CK Mapping

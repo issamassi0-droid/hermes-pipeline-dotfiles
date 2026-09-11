@@ -1,14 +1,14 @@
 ---
 name: performing-insider-threat-investigation
 description: 'Investigates insider threat incidents involving employees, contractors,
-  or trusted partners who misuse authorized access to steal data, sabotage systems,
-  or violate security policies, combining digital forensics, user behavior analytics,
-  and HR/legal coordination to build an evidence-based case. Use when DLP alerts flag
-  large data transfers to personal cloud storage or USB devices, when UBA detects
-  anomalous access patterns for a user account, or when investigating employee data
-  theft, privilege misuse, or internal threat detection requests.
+ or trusted partners who misuse authorized access to steal data, sabotage systems,
+ or violate security policies, combining digital forensics, user behavior analytics,
+ and HR/legal coordination to build an evidence-based case. Use when DLP alerts flag
+ large data transfers to personal cloud storage or USB devices, when UBA detects
+ anomalous access patterns for a user account, or when investigating employee data
+ theft, privilege misuse, or internal threat detection requests.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -70,14 +70,14 @@ Document the initial report and validate before proceeding:
 ```
 Investigation Authorization:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Case ID:           INV-2025-042
-Subject:           [Employee Name] - [Title] - [Department]
-Allegation:        Unauthorized transfer of proprietary data to personal cloud storage
-Reported By:       DLP system alert + manager concern
-Legal Approval:    [Counsel Name] - 2025-11-15
-HR Liaison:        [HR Name]
-Scope:             File access and transfer activity from 2025-10-01 to present
-Systems in Scope:  Workstation, email, cloud storage, VPN, DLP logs
+Case ID: INV-2025-042
+Subject: [Employee Name] - [Title] - [Department]
+Allegation: Unauthorized transfer of proprietary data to personal cloud storage
+Reported By: DLP system alert + manager concern
+Legal Approval: [Counsel Name] - 2025-11-15
+HR Liaison: [HR Name]
+Scope: File access and transfer activity from 2025-10-01 to present
+Systems in Scope: Workstation, email, cloud storage, VPN, DLP logs
 ```
 
 ### Step 2: Collect Evidence Covertly
@@ -135,15 +135,15 @@ Build a chronological timeline of the subject's actions:
 
 ```
 Timeline of Activity:
-2025-10-15  Subject submits resignation (2-week notice)
-2025-10-16  First after-hours login at 23:15, accessed engineering Git repository
-2025-10-17  USB device (Kingston DT 64GB) first connected at 23:30
-2025-10-18  DLP alert: 450 files copied to USB, including CAD drawings
-2025-10-19  200+ emails forwarded to personal Gmail account
-2025-10-20  Google Drive desktop client installed, syncing corporate SharePoint
-2025-10-22  Accessed executive SharePoint site (not normally accessed)
-2025-10-25  Second USB device connected, 2.1GB transferred
-2025-10-28  Print job: 847 pages including customer contact database
+2025-10-15 Subject submits resignation (2-week notice)
+2025-10-16 First after-hours login at 23:15, accessed engineering Git repository
+2025-10-17 USB device (Kingston DT 64GB) first connected at 23:30
+2025-10-18 DLP alert: 450 files copied to USB, including CAD drawings
+2025-10-19 200+ emails forwarded to personal Gmail account
+2025-10-20 Google Drive desktop client installed, syncing corporate SharePoint
+2025-10-22 Accessed executive SharePoint site (not normally accessed)
+2025-10-25 Second USB device connected, 2.1GB transferred
+2025-10-28 Print job: 847 pages including customer contact database
 ```
 
 ### Step 5: Assess Impact and Determine Response
@@ -220,13 +220,13 @@ Ensure all evidence meets legal admissibility standards:
 ```
 INSIDER THREAT INVESTIGATION REPORT
 =====================================
-Case ID:          INV-2025-042
-Classification:   CONFIDENTIAL - Need to Know Only
-Subject:          [Name Redacted] - Senior Engineer
+Case ID: INV-2025-042
+Classification: CONFIDENTIAL - Need to Know Only
+Subject: [Name Redacted] - Senior Engineer
 Investigation Period: 2025-10-01 to 2025-10-28
-Investigator:     [Name]
-Legal Counsel:    [Name]
-HR Liaison:       [Name]
+Investigator: [Name]
+Legal Counsel: [Name]
+HR Liaison: [Name]
 
 ALLEGATION
 Unauthorized exfiltration of proprietary source code and customer
@@ -244,10 +244,10 @@ BEHAVIORAL ANALYSIS
 [Baseline vs. anomalous activity comparison]
 
 IMPACT ASSESSMENT
-Data Classification:  Confidential (source code, customer PII)
-Estimated Volume:     7.2 GB exfiltrated
-Regulatory Impact:    Potential GDPR notification (customer PII)
-Business Impact:      Competitive advantage at risk
+Data Classification: Confidential (source code, customer PII)
+Estimated Volume: 7.2 GB exfiltrated
+Regulatory Impact: Potential GDPR notification (customer PII)
+Business Impact: Competitive advantage at risk
 
 TIMELINE
 [Chronological event listing]

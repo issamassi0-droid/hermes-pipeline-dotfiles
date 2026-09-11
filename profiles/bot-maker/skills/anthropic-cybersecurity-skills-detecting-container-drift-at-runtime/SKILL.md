@@ -1,14 +1,14 @@
 ---
 name: detecting-container-drift-at-runtime
 description: >-
-  Detects unauthorized runtime drift in containers by monitoring binary execution, filesystem
-  changes, and configuration deviation from the original immutable image, using Falco and
-  Microsoft Defender for Containers. Use when validating immutable-infrastructure controls,
-  hunting for unexpected package installs or binaries written inside a running container, or
-  determining whether a container diverged from the image it was built from. Keywords: drift,
-  immutable infrastructure, new binary executed, package install, image mismatch, Falco. Do
-  not use for detecting breakout from the container to the host - use
-  detecting-container-escape-attempts.
+ Detects unauthorized runtime drift in containers by monitoring binary execution, filesystem
+ changes, and configuration deviation from the original immutable image, using Falco and
+ Microsoft Defender for Containers. Use when validating immutable-infrastructure controls,
+ hunting for unexpected package installs or binaries written inside a running container, or
+ determining whether a container diverged from the image it was built from. Keywords: drift,
+ immutable infrastructure, new binary executed, package install, image mismatch, Falco. Do
+ not use for detecting breakout from the container to the host - use
+ detecting-container-escape-attempts.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -80,68 +80,68 @@ Container drift occurs when running containers deviate from their original image
 
 ```yaml
 - rule: Drift Detected (Container Image Modified Binary)
-  desc: Detect execution of a binary not present in the original container image
-  condition: >
-    spawned_process and
-    container and
-    not proc.pname in (container_entrypoint) and
-    proc.is_exe_upper_layer = true
-  output: >
-    Drift detected: new binary executed in container
-    (user=%user.name command=%proc.cmdline container=%container.name
-     image=%container.image.repository:%container.image.tag
-     exe_path=%proc.exepath)
-  priority: WARNING
-  tags: [container, drift]
+ desc: Detect execution of a binary not present in the original container image
+ condition: >
+ spawned_process and
+ container and
+ not proc.pname in (container_entrypoint) and
+ proc.is_exe_upper_layer = true
+ output: >
+ Drift detected: new binary executed in container
+ (user=%user.name command=%proc.cmdline container=%container.name
+ image=%container.image.repository:%container.image.tag
+ exe_path=%proc.exepath)
+ priority: WARNING
+ tags: [container, drift]
 
 - rule: Container Shell Spawned
-  desc: Detect interactive shell in a container that should be immutable
-  condition: >
-    spawned_process and
-    container and
-    proc.name in (bash, sh, dash, zsh, csh, ksh) and
-    not proc.pname in (container_entrypoint)
-  output: >
-    Shell spawned in container (user=%user.name shell=%proc.name
-     container=%container.name image=%container.image.repository)
-  priority: WARNING
-  tags: [container, drift, shell]
+ desc: Detect interactive shell in a container that should be immutable
+ condition: >
+ spawned_process and
+ container and
+ proc.name in (bash, sh, dash, zsh, csh, ksh) and
+ not proc.pname in (container_entrypoint)
+ output: >
+ Shell spawned in container (user=%user.name shell=%proc.name
+ container=%container.name image=%container.image.repository)
+ priority: WARNING
+ tags: [container, drift, shell]
 ```
 
 ### Detecting Package Manager Usage
 
 ```yaml
 - rule: Package Manager Execution in Container
-  desc: Detect use of package managers indicating drift
-  condition: >
-    spawned_process and
-    container and
-    proc.name in (apt, apt-get, yum, dnf, apk, pip, pip3, npm, gem, cargo)
-  output: >
-    Package manager executed in container (user=%user.name
-     command=%proc.cmdline container=%container.name
-     image=%container.image.repository)
-  priority: ERROR
-  tags: [container, drift, package-manager]
+ desc: Detect use of package managers indicating drift
+ condition: >
+ spawned_process and
+ container and
+ proc.name in (apt, apt-get, yum, dnf, apk, pip, pip3, npm, gem, cargo)
+ output: >
+ Package manager executed in container (user=%user.name
+ command=%proc.cmdline container=%container.name
+ image=%container.image.repository)
+ priority: ERROR
+ tags: [container, drift, package-manager]
 ```
 
 ### Detecting File System Modifications
 
 ```yaml
 - rule: Container File System Write
-  desc: Detect writes to container upper layer filesystem
-  condition: >
-    open_write and
-    container and
-    fd.typechar = 'f' and
-    not fd.name startswith /tmp and
-    not fd.name startswith /var/log and
-    not fd.name startswith /proc
-  output: >
-    File write in container (user=%user.name file=%fd.name
-     container=%container.name)
-  priority: NOTICE
-  tags: [container, drift, filesystem]
+ desc: Detect writes to container upper layer filesystem
+ condition: >
+ open_write and
+ container and
+ fd.typechar = 'f' and
+ not fd.name startswith /tmp and
+ not fd.name startswith /var/log and
+ not fd.name startswith /proc
+ output: >
+ File write in container (user=%user.name file=%fd.name
+ container=%container.name)
+ priority: NOTICE
+ tags: [container, drift, filesystem]
 ```
 
 ## Implementation with Kubernetes Enforcement
@@ -154,29 +154,29 @@ Prevent drift by making container filesystems immutable:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: immutable-app
+ name: immutable-app
 spec:
-  template:
-    spec:
-      containers:
-        - name: app
-          image: app:v1.0@sha256:abc123...
-          securityContext:
-            readOnlyRootFilesystem: true
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-            - name: cache
-              mountPath: /var/cache
-      volumes:
-        - name: tmp
-          emptyDir:
-            sizeLimit: 100Mi
-        - name: cache
-          emptyDir:
-            sizeLimit: 50Mi
+ template:
+ spec:
+ containers:
+ - name: app
+ image: app:v1.0@sha256:abc123...
+ securityContext:
+ readOnlyRootFilesystem: true
+ allowPrivilegeEscalation: false
+ runAsNonRoot: true
+ volumeMounts:
+ - name: tmp
+ mountPath: /tmp
+ - name: cache
+ mountPath: /var/cache
+ volumes:
+ - name: tmp
+ emptyDir:
+ sizeLimit: 100Mi
+ - name: cache
+ emptyDir:
+ sizeLimit: 50Mi
 ```
 
 ### Pod Security Standards Enforcement
@@ -185,11 +185,11 @@ spec:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: production
-  labels:
-    pod-security.kubernetes.io/enforce: restricted
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/warn: restricted
+ name: production
+ labels:
+ pod-security.kubernetes.io/enforce: restricted
+ pod-security.kubernetes.io/audit: restricted
+ pod-security.kubernetes.io/warn: restricted
 ```
 
 ## Image Digest Verification
@@ -203,16 +203,16 @@ metadata:
 NAMESPACE="production"
 
 kubectl get pods -n "$NAMESPACE" -o json | jq -r '
-  .items[] |
-  .spec.containers[] |
-  "\(.image) \(.imageID)"
+ .items[] |
+ .spec.containers[] |
+ "\(.image) \(.imageID)"
 ' | while read IMAGE IMAGE_ID; do
-  APPROVED_DIGEST=$(kubectl get deploy -n "$NAMESPACE" -o json | \
-    jq -r ".items[].spec.template.spec.containers[] | select(.image==\"$IMAGE\") | .image")
+ APPROVED_DIGEST=$(kubectl get deploy -n "$NAMESPACE" -o json | \
+ jq -r ".items[].spec.template.spec.containers[] | select(.image==\"$IMAGE\") | .image")
 
-  if [[ "$IMAGE" != *"@sha256:"* ]]; then
-    echo "[WARN] Container using mutable tag: $IMAGE"
-  fi
+ if [[ "$IMAGE" != *"@sha256:"* ]]; then
+ echo "[WARN] Container using mutable tag: $IMAGE"
+ fi
 done
 ```
 
@@ -222,15 +222,15 @@ For Azure Kubernetes environments, Microsoft Defender provides built-in binary d
 
 ```json
 {
-  "alertType": "K8S.NODE_ImageBinaryDrift",
-  "severity": "Medium",
-  "description": "Binary executed that was not part of the original container image",
-  "remediationSteps": [
-    "Investigate the binary origin and purpose",
-    "Check if the container was compromised",
-    "Rebuild the container from a clean image",
-    "Enable readOnlyRootFilesystem"
-  ]
+ "alertType": "K8S.NODE_ImageBinaryDrift",
+ "severity": "Medium",
+ "description": "Binary executed that was not part of the original container image",
+ "remediationSteps": [
+ "Investigate the binary origin and purpose",
+ "Check if the container was compromised",
+ "Rebuild the container from a clean image",
+ "Enable readOnlyRootFilesystem"
+ ]
 }
 ```
 

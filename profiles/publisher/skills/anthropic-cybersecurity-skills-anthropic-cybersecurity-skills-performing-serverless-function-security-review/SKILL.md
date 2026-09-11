@@ -1,11 +1,11 @@
 ---
 name: performing-serverless-function-security-review
 description: 'Performing security reviews of serverless functions across AWS Lambda,
-  Azure Functions, and GCP Cloud Functions to identify overly permissive execution
-  roles, insecure environment variables, injection vulnerabilities, and missing runtime
-  protections.
+ Azure Functions, and GCP Cloud Functions to identify overly permissive execution
+ roles, insecure environment variables, injection vulnerabilities, and missing runtime
+ protections.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -60,22 +60,22 @@ List all functions across cloud providers with their runtime, memory, timeout, a
 ```bash
 # AWS Lambda: List all functions with key security attributes
 aws lambda list-functions \
-  --query 'Functions[*].[FunctionName,Runtime,MemorySize,Timeout,Role,VpcConfig.VpcId,Layers[*].Arn]' \
-  --output table
+ --query 'Functions[*].[FunctionName,Runtime,MemorySize,Timeout,Role,VpcConfig.VpcId,Layers[*].Arn]' \
+ --output table
 
 # Check for functions using deprecated runtimes
 aws lambda list-functions \
-  --query 'Functions[?Runtime==`python3.7` || Runtime==`nodejs14.x` || Runtime==`dotnetcore3.1`].[FunctionName,Runtime]' \
-  --output table
+ --query 'Functions[?Runtime==`python3.7` || Runtime==`nodejs14.x` || Runtime==`dotnetcore3.1`].[FunctionName,Runtime]' \
+ --output table
 
 # Azure Functions: List all function apps
 az functionapp list \
-  --query "[].{Name:name, Runtime:siteConfig.linuxFxVersion, ResourceGroup:resourceGroup, HttpsOnly:httpsOnly}" \
-  -o table
+ --query "[].{Name:name, Runtime:siteConfig.linuxFxVersion, ResourceGroup:resourceGroup, HttpsOnly:httpsOnly}" \
+ -o table
 
 # GCP Cloud Functions: List all functions
 gcloud functions list \
-  --format="table(name, runtime, status, httpsTrigger.url, serviceAccountEmail, vpcConnector)"
+ --format="table(name, runtime, status, httpsTrigger.url, serviceAccountEmail, vpcConnector)"
 ```
 
 ### Step 2: Audit Execution Role Permissions
@@ -85,30 +85,30 @@ Review IAM roles attached to functions for overly permissive policies.
 ```bash
 # AWS: Check each Lambda function's execution role
 for func in $(aws lambda list-functions --query 'Functions[*].FunctionName' --output text); do
-  role_arn=$(aws lambda get-function-configuration --function-name "$func" --query 'Role' --output text)
-  role_name=$(echo "$role_arn" | awk -F'/' '{print $NF}')
-  echo "=== $func -> $role_name ==="
+ role_arn=$(aws lambda get-function-configuration --function-name "$func" --query 'Role' --output text)
+ role_name=$(echo "$role_arn" | awk -F'/' '{print $NF}')
+ echo "=== $func -> $role_name ==="
 
-  # List attached policies
-  aws iam list-attached-role-policies --role-name "$role_name" \
-    --query 'AttachedPolicies[*].[PolicyName,PolicyArn]' --output table
+ # List attached policies
+ aws iam list-attached-role-policies --role-name "$role_name" \
+ --query 'AttachedPolicies[*].[PolicyName,PolicyArn]' --output table
 
-  # Check for wildcard actions
-  for policy_arn in $(aws iam list-attached-role-policies --role-name "$role_name" --query 'AttachedPolicies[*].PolicyArn' --output text); do
-    version=$(aws iam get-policy --policy-arn "$policy_arn" --query 'Policy.DefaultVersionId' --output text)
-    aws iam get-policy-version --policy-arn "$policy_arn" --version-id "$version" \
-      --query 'PolicyVersion.Document' --output json | python3 -c "
+ # Check for wildcard actions
+ for policy_arn in $(aws iam list-attached-role-policies --role-name "$role_name" --query 'AttachedPolicies[*].PolicyArn' --output text); do
+ version=$(aws iam get-policy --policy-arn "$policy_arn" --query 'Policy.DefaultVersionId' --output text)
+ aws iam get-policy-version --policy-arn "$policy_arn" --version-id "$version" \
+ --query 'PolicyVersion.Document' --output json | python3 -c "
 import json, sys
 doc = json.load(sys.stdin)
 for stmt in doc.get('Statement', []):
-    actions = stmt.get('Action', [])
-    if isinstance(actions, str): actions = [actions]
-    resources = stmt.get('Resource', [])
-    if isinstance(resources, str): resources = [resources]
-    if '*' in actions or any(a.endswith(':*') for a in actions):
-        print(f'  WARNING: {stmt[\"Effect\"]} {actions} on {resources}')
+ actions = stmt.get('Action', [])
+ if isinstance(actions, str): actions = [actions]
+ resources = stmt.get('Resource', [])
+ if isinstance(resources, str): resources = [resources]
+ if '*' in actions or any(a.endswith(':*') for a in actions):
+ print(f' WARNING: {stmt[\"Effect\"]} {actions} on {resources}')
 " 2>/dev/null
-  done
+ done
 done
 ```
 
@@ -119,37 +119,37 @@ Scan function environment variables for hardcoded credentials, API keys, and dat
 ```bash
 # AWS Lambda: Extract environment variables
 for func in $(aws lambda list-functions --query 'Functions[*].FunctionName' --output text); do
-  envvars=$(aws lambda get-function-configuration --function-name "$func" \
-    --query 'Environment.Variables' --output json 2>/dev/null)
-  if [ "$envvars" != "null" ] && [ -n "$envvars" ]; then
-    echo "=== $func ==="
-    echo "$envvars" | python3 -c "
+ envvars=$(aws lambda get-function-configuration --function-name "$func" \
+ --query 'Environment.Variables' --output json 2>/dev/null)
+ if [ "$envvars" != "null" ] && [ -n "$envvars" ]; then
+ echo "=== $func ==="
+ echo "$envvars" | python3 -c "
 import json, sys, re
 vars = json.load(sys.stdin)
 sensitive_patterns = [
-    r'(?i)(password|secret|key|token|credential|api.?key)',
-    r'(?i)(aws.?access|aws.?secret)',
-    r'(?i)(database.?url|connection.?string|db.?pass)',
-    r'AKIA[0-9A-Z]{16}'
+ r'(?i)(password|secret|key|token|credential|api.?key)',
+ r'(?i)(aws.?access|aws.?secret)',
+ r'(?i)(database.?url|connection.?string|db.?pass)',
+ r'AKIA[0-9A-Z]{16}'
 ]
 for key, value in vars.items():
-    for pattern in sensitive_patterns:
-        if re.search(pattern, key) or re.search(pattern, str(value)):
-            masked = value[:4] + '****' + value[-4:] if len(value) > 8 else '****'
-            print(f'  SENSITIVE: {key} = {masked}')
-            break
+ for pattern in sensitive_patterns:
+ if re.search(pattern, key) or re.search(pattern, str(value)):
+ masked = value[:4] + '****' + value[-4:] if len(value) > 8 else '****'
+ print(f' SENSITIVE: {key} = {masked}')
+ break
 "
-  fi
+ fi
 done
 
 # Azure Functions: Check app settings
 for app in $(az functionapp list --query "[].name" -o tsv); do
-  rg=$(az functionapp show --name "$app" --query "resourceGroup" -o tsv)
-  echo "=== $app ==="
-  az functionapp config appsettings list \
-    --name "$app" --resource-group "$rg" \
-    --query "[?contains(name,'KEY') || contains(name,'SECRET') || contains(name,'PASSWORD')].{Name:name}" \
-    -o table 2>/dev/null
+ rg=$(az functionapp show --name "$app" --query "resourceGroup" -o tsv)
+ echo "=== $app ==="
+ az functionapp config appsettings list \
+ --name "$app" --resource-group "$rg" \
+ --query "[?contains(name,'KEY') || contains(name,'SECRET') || contains(name,'PASSWORD')].{Name:name}" \
+ -o table 2>/dev/null
 done
 ```
 
@@ -160,21 +160,21 @@ Verify that function triggers have appropriate authentication and authorization.
 ```bash
 # AWS: Check for unauthenticated Lambda function URLs
 aws lambda list-function-url-configs \
-  --function-name FUNCTION_NAME \
-  --query 'FunctionUrlConfigs[*].[FunctionUrl,AuthType,Cors]' --output table
+ --function-name FUNCTION_NAME \
+ --query 'FunctionUrlConfigs[*].[FunctionUrl,AuthType,Cors]' --output table
 
 # Check for resource-based policies allowing public invocation
 for func in $(aws lambda list-functions --query 'Functions[*].FunctionName' --output text); do
-  policy=$(aws lambda get-policy --function-name "$func" --query 'Policy' --output text 2>/dev/null)
-  if [ -n "$policy" ]; then
-    echo "$policy" | python3 -c "
+ policy=$(aws lambda get-policy --function-name "$func" --query 'Policy' --output text 2>/dev/null)
+ if [ -n "$policy" ]; then
+ echo "$policy" | python3 -c "
 import json, sys
 doc = json.loads(sys.stdin.read())
 for stmt in doc.get('Statement', []):
-    principal = stmt.get('Principal', {})
-    if principal == '*' or principal == {'AWS': '*'}:
-        print(f'WARNING: $func has public invoke policy: {stmt.get(\"Sid\", \"unnamed\")}')" 2>/dev/null
-  fi
+ principal = stmt.get('Principal', {})
+ if principal == '*' or principal == {'AWS': '*'}:
+ print(f'WARNING: $func has public invoke policy: {stmt.get(\"Sid\", \"unnamed\")}')" 2>/dev/null
+ fi
 done
 
 # GCP: Check for unauthenticated Cloud Functions
@@ -182,10 +182,10 @@ gcloud functions list --format=json | python3 -c "
 import json, sys
 functions = json.load(sys.stdin)
 for func in functions:
-    name = func.get('name', '').split('/')[-1]
-    trigger = func.get('httpsTrigger', {})
-    if trigger and func.get('ingressSettings') == 'ALLOW_ALL':
-        print(f'WARNING: {name} allows all ingress traffic')
+ name = func.get('name', '').split('/')[-1]
+ trigger = func.get('httpsTrigger', {})
+ if trigger and func.get('ingressSettings') == 'ALLOW_ALL':
+ print(f'WARNING: {name} allows all ingress traffic')
 "
 ```
 
@@ -196,7 +196,7 @@ Review function code for common serverless security issues.
 ```bash
 # Download Lambda function code for review
 aws lambda get-function --function-name FUNCTION_NAME \
-  --query 'Code.Location' --output text | xargs curl -o function.zip
+ --query 'Code.Location' --output text | xargs curl -o function.zip
 unzip function.zip -d function-code/
 
 # Scan with Bandit (Python) or ESLint security plugin (Node.js)
@@ -225,17 +225,17 @@ Execute Checkov and Prowler for automated compliance checks on serverless resour
 ```bash
 # Checkov scan for serverless frameworks
 checkov -d ./serverless-project/ \
-  --framework serverless \
-  --output json > checkov-serverless.json
+ --framework serverless \
+ --output json > checkov-serverless.json
 
 # Prowler Lambda-specific checks
 prowler aws \
-  --checks lambda_function_no_secrets_in_variables \
-           lambda_function_url_auth_type \
-           lambda_function_using_supported_runtimes \
-           lambda_function_not_publicly_accessible \
-  -M json-ocsf \
-  -o ./prowler-lambda/
+ --checks lambda_function_no_secrets_in_variables \
+ lambda_function_url_auth_type \
+ lambda_function_using_supported_runtimes \
+ lambda_function_not_publicly_accessible \
+ -M json-ocsf \
+ -o ./prowler-lambda/
 ```
 
 ## Key Concepts
@@ -285,22 +285,22 @@ Review Date: 2026-02-23
 
 CRITICAL FINDINGS:
 [SRVL-001] Overly Permissive Execution Role
-  Function: payment-processor
-  Role: AdministratorAccess (full AWS access)
-  Required Permissions: DynamoDB:PutItem, S3:GetObject (2 actions)
-  Remediation: Create scoped policy with only required permissions
+ Function: payment-processor
+ Role: AdministratorAccess (full AWS access)
+ Required Permissions: DynamoDB:PutItem, S3:GetObject (2 actions)
+ Remediation: Create scoped policy with only required permissions
 
 [SRVL-002] Secrets in Environment Variables
-  Function: payment-processor
-  Variables: DB_PASSWORD, STRIPE_SECRET_KEY, API_KEY
-  Risk: Visible in console, API, and CloudWatch logs
-  Remediation: Migrate to Secrets Manager, remove from env vars
+ Function: payment-processor
+ Variables: DB_PASSWORD, STRIPE_SECRET_KEY, API_KEY
+ Risk: Visible in console, API, and CloudWatch logs
+ Remediation: Migrate to Secrets Manager, remove from env vars
 
 SUMMARY:
-  Functions with admin roles:           3 / 34
-  Functions with secrets in env vars:   8 / 34
-  Functions with deprecated runtimes:   5 / 34
-  Functions with public access:         2 / 34
-  Functions without VPC:               28 / 34
-  Functions with wildcard permissions: 12 / 34
+ Functions with admin roles: 3 / 34
+ Functions with secrets in env vars: 8 / 34
+ Functions with deprecated runtimes: 5 / 34
+ Functions with public access: 2 / 34
+ Functions without VPC: 28 / 34
+ Functions with wildcard permissions: 12 / 34
 ```

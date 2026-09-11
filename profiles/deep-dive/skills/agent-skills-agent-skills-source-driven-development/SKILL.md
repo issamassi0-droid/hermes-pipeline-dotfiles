@@ -28,11 +28,11 @@ Every framework-specific code decision must be backed by official documentation.
 
 ```
 DETECT ──→ FETCH ──→ IMPLEMENT ──→ CITE
-  │          │           │            │
-  ▼          ▼           ▼            ▼
- What       Get the    Follow the   Show your
- stack?     relevant   documented   sources
-            docs       patterns
+ │ │ │ │
+ ▼ ▼ ▼ ▼
+ What Get the Follow the Show your
+ stack? relevant documented sources
+ docs patterns
 ```
 
 ### Step 1: Detect Stack and Versions
@@ -40,12 +40,12 @@ DETECT ──→ FETCH ──→ IMPLEMENT ──→ CITE
 Read the project's dependency file to identify exact versions:
 
 ```
-package.json    → Node/React/Vue/Angular/Svelte
-composer.json   → PHP/Symfony/Laravel
+package.json → Node/React/Vue/Angular/Svelte
+composer.json → PHP/Symfony/Laravel
 requirements.txt / pyproject.toml → Python/Django/Flask
-go.mod          → Go
-Cargo.toml      → Rust
-Gemfile         → Ruby/Rails
+go.mod → Go
+Cargo.toml → Rust
+Gemfile → Ruby/Rails
 ```
 
 State what you found explicitly:
@@ -83,10 +83,10 @@ Fetch the specific documentation page for the feature you're implementing. Not t
 **Be precise with what you fetch:**
 
 ```
-BAD:  Fetch the React homepage
+BAD: Fetch the React homepage
 GOOD: Fetch react.dev/reference/react/useActionState
 
-BAD:  Search "django authentication best practices"
+BAD: Search "django authentication best practices"
 GOOD: Fetch docs.djangoproject.com/en/6.0/topics/auth/
 ```
 

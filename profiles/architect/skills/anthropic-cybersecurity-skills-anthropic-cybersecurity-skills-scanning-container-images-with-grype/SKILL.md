@@ -1,12 +1,12 @@
 ---
 name: scanning-container-images-with-grype
 description: >-
-  Scans container images, filesystems, and SBOMs for known CVEs with Anchore Grype, matching
-  Syft-generated SBOM packages against NVD, GitHub Advisories, and OS-specific feeds with
-  configurable severity thresholds and failure gates. Use when Grype or Syft is the chosen
-  toolchain, when scanning an existing SBOM rather than an image, or when gating a build on
-  severity. Keywords: Grype, Syft, SBOM, NVD, GitHub Advisory, --fail-on, severity threshold.
-  Do not use when the toolchain is Trivy - use scanning-docker-images-with-trivy.
+ Scans container images, filesystems, and SBOMs for known CVEs with Anchore Grype, matching
+ Syft-generated SBOM packages against NVD, GitHub Advisories, and OS-specific feeds with
+ configurable severity thresholds and failure gates. Use when Grype or Syft is the chosen
+ toolchain, when scanning an existing SBOM rather than an image, or when gating a build on
+ severity. Keywords: Grype, Syft, SBOM, NVD, GitHub Advisory, --fail-on, severity threshold.
+ Do not use when the toolchain is Trivy - use scanning-docker-images-with-trivy.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -146,27 +146,27 @@ grype sbom:bom.json
 check-for-app-update: false
 fail-on-severity: "high"
 output: "json"
-scope: "squashed"  # or "all-layers"
+scope: "squashed" # or "all-layers"
 quiet: false
 
 ignore:
-  - vulnerability: CVE-2023-12345
-    reason: "False positive - not exploitable in our context"
-  - vulnerability: CVE-2023-67890
-    fix-state: unknown
+ - vulnerability: CVE-2023-12345
+ reason: "False positive - not exploitable in our context"
+ - vulnerability: CVE-2023-67890
+ fix-state: unknown
 
 db:
-  auto-update: true
-  cache-dir: "/tmp/grype-db"
-  max-allowed-built-age: 120h  # 5 days
+ auto-update: true
+ cache-dir: "/tmp/grype-db"
+ max-allowed-built-age: 120h # 5 days
 
 match:
-  java:
-    using-cpes: true
-  python:
-    using-cpes: true
-  javascript:
-    using-cpes: false
+ java:
+ using-cpes: true
+ python:
+ using-cpes: true
+ javascript:
+ using-cpes: false
 ```
 
 ### CI/CD Integration
@@ -174,30 +174,30 @@ match:
 ```yaml
 # GitHub Actions
 - name: Scan image with Grype
-  uses: anchore/scan-action@v4
-  with:
-    image: "myregistry/myapp:${{ github.sha }}"
-    fail-build: true
-    severity-cutoff: high
-    output-format: sarif
-  id: scan
+ uses: anchore/scan-action@v4
+ with:
+ image: "myregistry/myapp:${{ github.sha }}"
+ fail-build: true
+ severity-cutoff: high
+ output-format: sarif
+ id: scan
 
 - name: Upload SARIF
-  uses: github/codeql-action/upload-sarif@v3
-  with:
-    sarif_file: ${{ steps.scan.outputs.sarif }}
+ uses: github/codeql-action/upload-sarif@v3
+ with:
+ sarif_file: ${{ steps.scan.outputs.sarif }}
 ```
 
 ```yaml
 # GitLab CI
 container_scan:
-  stage: test
-  image: anchore/grype:latest
-  script:
-    - grype ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --fail-on high -o json > grype-report.json
-  artifacts:
-    reports:
-      container_scanning: grype-report.json
+ stage: test
+ image: anchore/grype:latest
+ script:
+ - grype ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} --fail-on high -o json > grype-report.json
+ artifacts:
+ reports:
+ container_scanning: grype-report.json
 ```
 
 ## Database Management

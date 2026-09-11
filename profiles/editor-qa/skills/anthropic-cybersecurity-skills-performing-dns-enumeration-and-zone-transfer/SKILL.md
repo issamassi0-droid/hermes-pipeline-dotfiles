@@ -1,10 +1,10 @@
 ---
 name: performing-dns-enumeration-and-zone-transfer
 description: 'Enumerates DNS records, attempts zone transfers, brute-forces subdomains,
-  and maps DNS infrastructure during authorized reconnaissance to identify attack
-  surface, misconfigurations, and information disclosure in target domains.
+ and maps DNS infrastructure during authorized reconnaissance to identify attack
+ surface, misconfigurations, and information disclosure in target domains.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -138,10 +138,10 @@ dnsrecon -d example.com -t rvl -r 10.10.0.0/24
 
 # PTR record enumeration for IP range
 for ip in $(seq 1 254); do
-  result=$(dig -x 10.10.1.$ip +short 2>/dev/null)
-  if [ -n "$result" ]; then
-    echo "10.10.1.$ip -> $result"
-  fi
+ result=$(dig -x 10.10.1.$ip +short 2>/dev/null)
+ if [ -n "$result" ]; then
+ echo "10.10.1.$ip -> $result"
+ fi
 done
 
 # Use Nmap for reverse DNS on a subnet
@@ -185,10 +185,10 @@ dig TXT example.com +short | grep "v=spf1"
 ```bash
 # Resolve all discovered subdomains to IP addresses
 while read subdomain; do
-  ip=$(dig +short A "$subdomain" | head -1)
-  if [ -n "$ip" ]; then
-    echo "$subdomain,$ip"
-  fi
+ ip=$(dig +short A "$subdomain" | head -1)
+ if [ -n "$ip" ]; then
+ echo "$subdomain,$ip"
+ fi
 done < all_subdomains.txt > resolved_subdomains.csv
 
 # Identify unique IP addresses and their locations

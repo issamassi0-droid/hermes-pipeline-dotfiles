@@ -88,19 +88,19 @@ status: published
 
 11 ملف SOUL، لكل وكيل دوره وأدواته:
 
-| الوكيل | الوزارة | الدور | الأدوات |
+| الوكيل | | الدور | الأدوات |
 |---|---|---|---|
-| @architect | مكتب مجلس الوزراء | المُنسِّق الوحيد | 10 |
-| @omni-researcher | وزارة الاستخبارات | البحث الشامل | 5 |
-| @deep-dive | وزارة الاستخبارات | البحث في يوتيوب | 5 |
-| @strategist | وزارة الاستراتيجية | التحويل لخطة | 5 |
-| @draft-writer | وزارة التأليف | كتابة المسودة | 4 |
-| @editor-qa | المفتش العام | التحقق المستقل | 6 |
-| @publisher | وزارة التوزيع | النشر | 4 |
-| `analytics` | وزارة الإحصاء | قياس الأداء | 5 |
-| `bot-maker` | وزارة التكوين | إنشاء وكلاء | 5 |
-| `omarchy` | وزارة البنية التحتية | إدارة النظام | 5 |
-| `scout` | وزارة الاستخبارات | مراقبة المصادر | 1 |
+| @architect | | المُنسِّق الوحيد | 10 |
+| @omni-researcher | | البحث الشامل | 5 |
+| @deep-dive | | البحث في يوتيوب | 5 |
+| @strategist | | التحويل لخطة | 5 |
+| @draft-writer | | كتابة المسودة | 4 |
+| @editor-qa | | التحقق المستقل | 6 |
+| @publisher | | النشر | 4 |
+| `analytics` | | قياس الأداء | 5 |
+| `bot-maker` | | إنشاء وكلاء | 5 |
+| `omarchy` | | إدارة النظام | 5 |
+| `scout` | | مراقبة المصادر | 1 |
 
 > **نظام التسمية الجديد v1.8.0:** كل وكيل له ثلاثة أسماء:
 > - **تقني** (ملفات، APIs): `orchestrator-agent`, `qa-agent`
@@ -183,7 +183,7 @@ Tier 3: تحليل شامل (~5 دقائق 20 ثانية) — المنظّم ←
 
 **النتيجة الفعلية:**
 ```
-Tier 0 (8K):  78.1% مستخدم → 1,754 توكن متبقي
+Tier 0 (8K): 78.1% مستخدم → 1,754 توكن متبقي
 Tier 1 (32K): 41.2% مستخدم → 18,830 توكن متبقي
 Tier 2 (128K): 29.6% مستخدم → 90,100 توكن متبقي
 Tier 3 (128K): 37.3% مستخدم → 80,253 توكن متبقي
@@ -195,7 +195,7 @@ Tier 3 (128K): 37.3% مستخدم → 80,253 توكن متبقي
 
 **النتيجة الفعلية:**
 ```
-✅ beat:  {"status": "active"}
+✅ beat: {"status": "active"}
 ✅ check: {"status": "healthy", "delta_minutes": 0.6}
 ✅ degraded: {"mode": "DEGRADED", "actions": [...]}
 ```
@@ -388,14 +388,14 @@ python3 ~/.hermes/system/cabinet-office.py override --mission m001 --reason "rej
 ### 6.1 ماذا يحدث عندما تشغّل `run`؟
 
 ```
-[1] context-budget.py     ← هل السياق يكفي؟
-[2] architect-heartbeat   ← هل المنظّم يعمل؟
-[3] model-gateway.sh      ← اختيار النموذج الأنسب
-[4] heartbeat beat        ← تسجيل بدء المهمة
-[5] protocol-engine.py    ← تنفيذ الوكلاء بالترتيب
-[6] output-validator.py   ← التحقق من المخرجات
-[6.5] escalation-health   ← فحص صحي شامل
-[7] تسجيل المهمة           ← ledger/mission-XXX.json
+[1] context-budget.py ← هل السياق يكفي؟
+[2] architect-heartbeat ← هل المنظّم يعمل؟
+[3] model-gateway.sh ← اختيار النموذج الأنسب
+[4] heartbeat beat ← تسجيل بدء المهمة
+[5] protocol-engine.py ← تنفيذ الوكلاء بالترتيب
+[6] output-validator.py ← التحقق من المخرجات
+[6.5] escalation-health ← فحص صحي شامل
+[7] تسجيل المهمة ← ledger/mission-XXX.json
 ```
 
 ---

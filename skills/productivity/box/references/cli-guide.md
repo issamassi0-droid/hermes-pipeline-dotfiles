@@ -104,7 +104,7 @@ On Linux, Box CLI secure storage depends on Secret Service/libsecret support. If
 box folders:items <FOLDER_ID> --json --max-items 100 --fields id,name,type
 box search "quarterly review" --json --limit 20 --fields id,name,type,parent
 box metadata-query enterprise_12345.contractTemplate <ANCESTOR_FOLDER_ID> \
-  --query "status = :status" --query-param status=active --json
+ --query "status = :status" --query-param status=active --json
 ```
 
 Paginate inventories fully before bulk work. Metadata queries require the template scope/key and an ancestor folder ID.

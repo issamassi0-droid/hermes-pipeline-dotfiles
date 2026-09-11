@@ -1,9 +1,9 @@
 ---
 name: db-designer
 description: |
-  Generate database schema from feature descriptions. User doesn't see SQL.
-  Use when: features require data persistence.
-  Triggers: internal use only.
+ Generate database schema from feature descriptions. User doesn't see SQL.
+ Use when: features require data persistence.
+ Triggers: internal use only.
 ---
 
 # Database Designer
@@ -13,19 +13,19 @@ Infer schema from requirements. User never writes SQL.
 ## Process
 
 1. **Analyze requirements**
-   - "Users can save expenses" → users, expenses tables
-   - "Track categories" → categories table
-   - "Monthly reports" → consider aggregation
+ - "Users can save expenses" → users, expenses tables
+ - "Track categories" → categories table
+ - "Monthly reports" → consider aggregation
 
 2. **Design schema**
-   - Tables and columns
-   - Relationships (1:1, 1:N, N:M)
-   - Indexes for performance
+ - Tables and columns
+ - Relationships (1:1, 1:N, N:M)
+ - Indexes for performance
 
 3. **Generate migration**
-   - Create migration file
-   - Apply to database
-   - Update ORM models
+ - Create migration file
+ - Apply to database
+ - Update ORM models
 
 ## Schema Patterns
 
@@ -43,11 +43,11 @@ Infer schema from requirements. User never writes SQL.
 ```sql
 -- Auto-generated, user doesn't see
 create table expenses (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid references users(id),
-  amount decimal not null,
-  category text,
-  created_at timestamptz default now()
+ id uuid primary key default gen_random_uuid(),
+ user_id uuid references users(id),
+ amount decimal not null,
+ category text,
+ created_at timestamptz default now()
 );
 ```
 
@@ -55,18 +55,18 @@ create table expenses (
 ```python
 # Alembic migration auto-generated
 class Expense(Base):
-    id = Column(UUID, primary_key=True)
-    user_id = Column(UUID, ForeignKey('users.id'))
-    amount = Column(Numeric, nullable=False)
+ id = Column(UUID, primary_key=True)
+ user_id = Column(UUID, ForeignKey('users.id'))
+ amount = Column(Numeric, nullable=False)
 ```
 
 ### Drizzle (hono-drizzle)
 ```typescript
 // Schema auto-generated
 export const expenses = pgTable('expenses', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => users.id),
-  amount: numeric('amount').notNull(),
+ id: uuid('id').primaryKey().defaultRandom(),
+ userId: uuid('user_id').references(() => users.id),
+ amount: numeric('amount').notNull(),
 });
 ```
 

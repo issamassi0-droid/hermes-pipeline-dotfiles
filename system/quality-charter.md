@@ -50,9 +50,9 @@ For any mission with stakes >= `high`, verification MUST use a different model f
 
 ## Article IV — The Blind-Spot Coverage Requirement
 
-Every mission must ship with a `coverage.json` file. The Architect is the sole author. It must list, for each ministry involved:
+Every mission must ship with a `coverage.json` file. The Architect is the sole author. It must list, for each involved:
 
-- The ministry's known structural blind spot.
+- The 's known structural blind spot.
 - The specific mechanism that covered it **on this run**.
 - Whether that coverage was verified (not just asserted).
 

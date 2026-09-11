@@ -1,18 +1,18 @@
 ---
 name: deploying-cloud-deception-with-decoy-resources
 description: >-
-  Deploy cloud-native deception across AWS, Azure, and GCP using decoy (honey) resources
-  whose only purpose is to generate a high-fidelity alert the instant an attacker touches
-  them: canary IAM access keys, permission-less decoy users/roles/service principals,
-  honey object-storage buckets, and decoy secrets in Secrets Manager / Key Vault / Secret
-  Manager. Wires detection through CloudTrail + EventBridge, Azure Sentinel honeytoken
-  watchlists + Defender, and GCP Cloud Audit Logs, so any use of a decoy is routed to the
-  SOC with near-zero false positives. Use when protecting cloud accounts and data stores,
-  when an org has only on-prem honeypots and needs cloud coverage, when seeding fake AWS
-  keys to catch credential theft and code-leak exposure, or when detecting cloud
-  reconnaissance and lateral movement. Keywords: cloud deception, canary token AWS, honey
-  S3 bucket, decoy IAM credentials, CloudTrail alert, GuardDuty, Sentinel honeytoken,
-  decoy secret, honey service account, cloud honeypot, breach detection.
+ Deploy cloud-native deception across AWS, Azure, and GCP using decoy (honey) resources
+ whose only purpose is to generate a high-fidelity alert the instant an attacker touches
+ them: canary IAM access keys, permission-less decoy users/roles/service principals,
+ honey object-storage buckets, and decoy secrets in Secrets Manager / Key Vault / Secret
+ Manager. Wires detection through CloudTrail + EventBridge, Azure Sentinel honeytoken
+ watchlists + Defender, and GCP Cloud Audit Logs, so any use of a decoy is routed to the
+ SOC with near-zero false positives. Use when protecting cloud accounts and data stores,
+ when an org has only on-prem honeypots and needs cloud coverage, when seeding fake AWS
+ keys to catch credential theft and code-leak exposure, or when detecting cloud
+ reconnaissance and lateral movement. Keywords: cloud deception, canary token AWS, honey
+ S3 bucket, decoy IAM credentials, CloudTrail alert, GuardDuty, Sentinel honeytoken,
+ decoy secret, honey service account, cloud honeypot, breach detection.
 domain: cybersecurity
 subdomain: deception-technology
 tags:
@@ -71,16 +71,16 @@ Create a decoy IAM user with an explicit deny-all policy, then issue an access k
 ```bash
 aws iam create-user --user-name svc-backup-prod --tags Key=deception,Value=true
 aws iam put-user-policy --user-name svc-backup-prod \
-  --policy-name deny-all \
-  --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Deny","Action":"*","Resource":"*"}]}'
-aws iam create-access-key --user-name svc-backup-prod   # plant the returned AccessKeyId/Secret
+ --policy-name deny-all \
+ --policy-document '{"Version":"2012-10-17","Statement":[{"Effect":"Deny","Action":"*","Resource":"*"}]}'
+aws iam create-access-key --user-name svc-backup-prod # plant the returned AccessKeyId/Secret
 ```
 Any use of this key appears in CloudTrail (even denied calls, which still log `AccessDenied`). Wire an EventBridge rule on CloudTrail to alert:
 ```bash
 aws events put-rule --name decoy-key-used \
-  --event-pattern '{"detail":{"userIdentity":{"userName":["svc-backup-prod"]}}}'
+ --event-pattern '{"detail":{"userIdentity":{"userName":["svc-backup-prod"]}}}'
 aws events put-targets --rule decoy-key-used \
-  --targets "Id"="1","Arn"="arn:aws:sns:us-east-1:111111111111:soc-deception-alerts"
+ --targets "Id"="1","Arn"="arn:aws:sns:us-east-1:111111111111:soc-deception-alerts"
 ```
 
 ### 2B. AWS — honey S3 bucket
@@ -88,17 +88,17 @@ Create a believable bucket, enable object-level data events, and alert on any re
 ```bash
 aws s3api create-bucket --bucket acme-prod-db-backups-2026 --region us-east-1
 aws s3api put-bucket-tagging --bucket acme-prod-db-backups-2026 \
-  --tagging 'TagSet=[{Key=deception,Value=true}]'
+ --tagging 'TagSet=[{Key=deception,Value=true}]'
 # Ensure CloudTrail captures S3 data events for this bucket, then alert on GetObject/ListBucket
 aws events put-rule --name decoy-bucket-access \
-  --event-pattern '{"detail":{"eventSource":["s3.amazonaws.com"],"requestParameters":{"bucketName":["acme-prod-db-backups-2026"]}}}'
+ --event-pattern '{"detail":{"eventSource":["s3.amazonaws.com"],"requestParameters":{"bucketName":["acme-prod-db-backups-2026"]}}}'
 ```
 
 ### 2C. AWS — decoy secret
 ```bash
 aws secretsmanager create-secret --name prod/db/master-password \
-  --secret-string '{"username":"dbadmin","password":"DECOY-DO-NOT-USE"}' \
-  --tags Key=deception,Value=true
+ --secret-string '{"username":"dbadmin","password":"DECOY-DO-NOT-USE"}' \
+ --tags Key=deception,Value=true
 # Alert on GetSecretValue for this secret via EventBridge -> SNS
 ```
 
@@ -112,9 +112,9 @@ Create a decoy Storage account and Key Vault, enable diagnostic logging to the S
 Create a service account with no role bindings (permission-less), generate a key to plant, and alert on its use via Cloud Audit Logs:
 ```bash
 gcloud iam service-accounts create svc-billing-export \
-  --display-name="billing-export"
+ --display-name="billing-export"
 gcloud iam service-accounts keys create decoy-key.json \
-  --iam-account=svc-billing-export@PROJECT.iam.gserviceaccount.com   # plant this key
+ --iam-account=svc-billing-export@PROJECT.iam.gserviceaccount.com # plant this key
 gsutil mb -b on gs://acme-finance-exports-2026
 ```
 Create a log-based metric + alerting policy in Cloud Monitoring that triggers on any audit-log entry where the principal is the decoy service account or the resource is the honey bucket.

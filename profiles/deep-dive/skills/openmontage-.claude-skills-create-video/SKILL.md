@@ -1,15 +1,15 @@
 ---
 name: create-video
 description: |
-  Create videos from a text prompt using HeyGen's Video Agent. Use when: (1) Creating a video from a description or idea, (2) Generating explainer, demo, or marketing videos from a prompt, (3) Making a video without specifying exact avatars, voices, or scenes, (4) Quick video prototyping or drafts, (5) One-shot prompt-to-video generation, (6) User says "make me a video" or "create a video about X".
+ Create videos from a text prompt using HeyGen's Video Agent. Use when: (1) Creating a video from a description or idea, (2) Generating explainer, demo, or marketing videos from a prompt, (3) Making a video without specifying exact avatars, voices, or scenes, (4) Quick video prototyping or drafts, (5) One-shot prompt-to-video generation, (6) User says "make me a video" or "create a video about X".
 homepage: https://docs.heygen.com/reference/generate-video-agent
 allowed-tools: mcp__heygen__*
 metadata:
-  openclaw:
-    requires:
-      env:
-        - HEYGEN_API_KEY
-    primaryEnv: HEYGEN_API_KEY
+ openclaw:
+ requires:
+ env:
+ - HEYGEN_API_KEY
+ primaryEnv: HEYGEN_API_KEY
 ---
 
 # Create Video
@@ -22,9 +22,9 @@ All requests require the `X-Api-Key` header. Set the `HEYGEN_API_KEY` environmen
 
 ```bash
 curl -X POST "https://api.heygen.com/v1/video_agent/generate" \
-  -H "X-Api-Key: $HEYGEN_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"prompt": "Create a 60-second product demo video."}'
+ -H "X-Api-Key: $HEYGEN_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{"prompt": "Create a 60-second product demo video."}'
 ```
 
 ## Tool Selection

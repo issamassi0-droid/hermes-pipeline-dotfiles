@@ -1,17 +1,17 @@
 ---
 name: implementing-kubernetes-pod-security-standards
 description: >-
-  Chooses and applies the correct Kubernetes Pod Security Standard (Privileged,
-  Baseline, Restricted) for a workload: what each profile forbids, how to map
-  existing workloads to a profile, which securityContext fields must change, and
-  how to plan a PodSecurityPolicy-to-PSS migration without breaking running pods.
-  Use when deciding which pod security profile a namespace or workload should run
-  under, auditing which workloads would fail Restricted, planning a PSP migration,
-  or mapping pod security posture to a compliance control. Keywords: Pod Security
-  Standards, PSS, Privileged, Baseline, Restricted, securityContext, runAsNonRoot,
-  drop ALL capabilities, seccomp RuntimeDefault, PSP migration. Do not use for
-  configuring the admission controller that enforces these profiles - use
-  implementing-pod-security-admission-controller.
+ Chooses and applies the correct Kubernetes Pod Security Standard (Privileged,
+ Baseline, Restricted) for a workload: what each profile forbids, how to map
+ existing workloads to a profile, which securityContext fields must change, and
+ how to plan a PodSecurityPolicy-to-PSS migration without breaking running pods.
+ Use when deciding which pod security profile a namespace or workload should run
+ under, auditing which workloads would fail Restricted, planning a PSP migration,
+ or mapping pod security posture to a compliance control. Keywords: Pod Security
+ Standards, PSS, Privileged, Baseline, Restricted, securityContext, runAsNonRoot,
+ drop ALL capabilities, seccomp RuntimeDefault, PSP migration. Do not use for
+ configuring the admission controller that enforces these profiles - use
+ implementing-pod-security-admission-controller.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -86,14 +86,14 @@ labels, `AdmissionConfiguration`, exemptions, or debugging a pod PSA rejected. U
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: production
-  labels:
-    pod-security.kubernetes.io/enforce: restricted
-    pod-security.kubernetes.io/enforce-version: latest
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/audit-version: latest
-    pod-security.kubernetes.io/warn: restricted
-    pod-security.kubernetes.io/warn-version: latest
+ name: production
+ labels:
+ pod-security.kubernetes.io/enforce: restricted
+ pod-security.kubernetes.io/enforce-version: latest
+ pod-security.kubernetes.io/audit: restricted
+ pod-security.kubernetes.io/audit-version: latest
+ pod-security.kubernetes.io/warn: restricted
+ pod-security.kubernetes.io/warn-version: latest
 ```
 
 ```yaml
@@ -101,14 +101,14 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: staging
-  labels:
-    pod-security.kubernetes.io/enforce: baseline
-    pod-security.kubernetes.io/enforce-version: latest
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/audit-version: latest
-    pod-security.kubernetes.io/warn: restricted
-    pod-security.kubernetes.io/warn-version: latest
+ name: staging
+ labels:
+ pod-security.kubernetes.io/enforce: baseline
+ pod-security.kubernetes.io/enforce-version: latest
+ pod-security.kubernetes.io/audit: restricted
+ pod-security.kubernetes.io/audit-version: latest
+ pod-security.kubernetes.io/warn: restricted
+ pod-security.kubernetes.io/warn-version: latest
 ```
 
 ```yaml
@@ -116,10 +116,10 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: kube-system
-  labels:
-    pod-security.kubernetes.io/enforce: privileged
-    pod-security.kubernetes.io/enforce-version: latest
+ name: kube-system
+ labels:
+ pod-security.kubernetes.io/enforce: privileged
+ pod-security.kubernetes.io/enforce-version: latest
 ```
 
 ### Step 2: Apply Labels to Existing Namespaces
@@ -127,17 +127,17 @@ metadata:
 ```bash
 # Apply restricted enforcement to production
 kubectl label namespace production \
-  pod-security.kubernetes.io/enforce=restricted \
-  pod-security.kubernetes.io/audit=restricted \
-  pod-security.kubernetes.io/warn=restricted \
-  --overwrite
+ pod-security.kubernetes.io/enforce=restricted \
+ pod-security.kubernetes.io/audit=restricted \
+ pod-security.kubernetes.io/warn=restricted \
+ --overwrite
 
 # Apply baseline to staging with restricted warnings
 kubectl label namespace staging \
-  pod-security.kubernetes.io/enforce=baseline \
-  pod-security.kubernetes.io/audit=restricted \
-  pod-security.kubernetes.io/warn=restricted \
-  --overwrite
+ pod-security.kubernetes.io/enforce=baseline \
+ pod-security.kubernetes.io/audit=restricted \
+ pod-security.kubernetes.io/warn=restricted \
+ --overwrite
 
 # Check labels on all namespaces
 kubectl get namespaces -L pod-security.kubernetes.io/enforce
@@ -150,59 +150,59 @@ kubectl get namespaces -L pod-security.kubernetes.io/enforce
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: secure-app
-  namespace: production
+ name: secure-app
+ namespace: production
 spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: secure-app
-  template:
-    metadata:
-      labels:
-        app: secure-app
-    spec:
-      automountServiceAccountToken: false
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65534
-        runAsGroup: 65534
-        fsGroup: 65534
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: app
-          image: myregistry.com/myapp:v1.0.0@sha256:abc123
-          ports:
-            - containerPort: 8080
-              protocol: TCP
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop:
-                - ALL
-            runAsNonRoot: true
-            runAsUser: 65534
-          resources:
-            requests:
-              memory: "64Mi"
-              cpu: "100m"
-            limits:
-              memory: "256Mi"
-              cpu: "500m"
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-            - name: cache
-              mountPath: /var/cache
-      volumes:
-        - name: tmp
-          emptyDir:
-            sizeLimit: 100Mi
-        - name: cache
-          emptyDir:
-            sizeLimit: 50Mi
+ replicas: 3
+ selector:
+ matchLabels:
+ app: secure-app
+ template:
+ metadata:
+ labels:
+ app: secure-app
+ spec:
+ automountServiceAccountToken: false
+ securityContext:
+ runAsNonRoot: true
+ runAsUser: 65534
+ runAsGroup: 65534
+ fsGroup: 65534
+ seccompProfile:
+ type: RuntimeDefault
+ containers:
+ - name: app
+ image: myregistry.com/myapp:v1.0.0@sha256:abc123
+ ports:
+ - containerPort: 8080
+ protocol: TCP
+ securityContext:
+ allowPrivilegeEscalation: false
+ readOnlyRootFilesystem: true
+ capabilities:
+ drop:
+ - ALL
+ runAsNonRoot: true
+ runAsUser: 65534
+ resources:
+ requests:
+ memory: "64Mi"
+ cpu: "100m"
+ limits:
+ memory: "256Mi"
+ cpu: "500m"
+ volumeMounts:
+ - name: tmp
+ mountPath: /tmp
+ - name: cache
+ mountPath: /var/cache
+ volumes:
+ - name: tmp
+ emptyDir:
+ sizeLimit: 100Mi
+ - name: cache
+ emptyDir:
+ sizeLimit: 50Mi
 ```
 
 ### Step 4: Gradual Migration Strategy
@@ -210,22 +210,22 @@ spec:
 ```bash
 # Phase 1: Audit mode - discover violations without blocking
 kubectl label namespace my-namespace \
-  pod-security.kubernetes.io/audit=restricted \
-  pod-security.kubernetes.io/warn=restricted
+ pod-security.kubernetes.io/audit=restricted \
+ pod-security.kubernetes.io/warn=restricted
 
 # Check audit logs for violations
 kubectl logs -n kube-system -l component=kube-apiserver | grep "pod-security"
 
 # Phase 2: Enforce baseline, warn on restricted
 kubectl label namespace my-namespace \
-  pod-security.kubernetes.io/enforce=baseline \
-  pod-security.kubernetes.io/warn=restricted \
-  --overwrite
+ pod-security.kubernetes.io/enforce=baseline \
+ pod-security.kubernetes.io/warn=restricted \
+ --overwrite
 
 # Phase 3: Full restricted enforcement
 kubectl label namespace my-namespace \
-  pod-security.kubernetes.io/enforce=restricted \
-  --overwrite
+ pod-security.kubernetes.io/enforce=restricted \
+ --overwrite
 ```
 
 ### Step 5: Dry-Run Enforcement Testing
@@ -233,13 +233,13 @@ kubectl label namespace my-namespace \
 ```bash
 # Test what would happen with restricted enforcement
 kubectl label --dry-run=server --overwrite namespace my-namespace \
-  pod-security.kubernetes.io/enforce=restricted
+ pod-security.kubernetes.io/enforce=restricted
 
 # Example output:
 # Warning: existing pods in namespace "my-namespace" violate the new
 # PodSecurity enforce level "restricted:latest"
 # Warning: nginx-xxx: allowPrivilegeEscalation != false,
-#   unrestricted capabilities, runAsNonRoot != true, seccompProfile
+# unrestricted capabilities, runAsNonRoot != true, seccompProfile
 ```
 
 ## Baseline Profile Restrictions

@@ -74,101 +74,101 @@ from stix2 import MemoryStore, Filter
 from collections import defaultdict
 
 class AttributionAnalyzer:
-    def __init__(self):
-        self.evidence = []
-        self.hypotheses = {}
+ def __init__(self):
+ self.evidence = []
+ self.hypotheses = {}
 
-    def add_evidence(self, category, description, value, confidence):
-        self.evidence.append({
-            "category": category,
-            "description": description,
-            "value": value,
-            "confidence": confidence,
-            "timestamp": None,
-        })
+ def add_evidence(self, category, description, value, confidence):
+ self.evidence.append({
+ "category": category,
+ "description": description,
+ "value": value,
+ "confidence": confidence,
+ "timestamp": None,
+ })
 
-    def add_hypothesis(self, actor_name, actor_id=""):
-        self.hypotheses[actor_name] = {
-            "actor_id": actor_id,
-            "consistent_evidence": [],
-            "inconsistent_evidence": [],
-            "neutral_evidence": [],
-            "score": 0,
-        }
+ def add_hypothesis(self, actor_name, actor_id=""):
+ self.hypotheses[actor_name] = {
+ "actor_id": actor_id,
+ "consistent_evidence": [],
+ "inconsistent_evidence": [],
+ "neutral_evidence": [],
+ "score": 0,
+ }
 
-    def evaluate_evidence(self, evidence_idx, actor_name, assessment):
-        """Assess evidence against a hypothesis: consistent/inconsistent/neutral."""
-        if assessment == "consistent":
-            self.hypotheses[actor_name]["consistent_evidence"].append(evidence_idx)
-            self.hypotheses[actor_name]["score"] += self.evidence[evidence_idx]["confidence"]
-        elif assessment == "inconsistent":
-            self.hypotheses[actor_name]["inconsistent_evidence"].append(evidence_idx)
-            self.hypotheses[actor_name]["score"] -= self.evidence[evidence_idx]["confidence"] * 2
-        else:
-            self.hypotheses[actor_name]["neutral_evidence"].append(evidence_idx)
+ def evaluate_evidence(self, evidence_idx, actor_name, assessment):
+ """Assess evidence against a hypothesis: consistent/inconsistent/neutral."""
+ if assessment == "consistent":
+ self.hypotheses[actor_name]["consistent_evidence"].append(evidence_idx)
+ self.hypotheses[actor_name]["score"] += self.evidence[evidence_idx]["confidence"]
+ elif assessment == "inconsistent":
+ self.hypotheses[actor_name]["inconsistent_evidence"].append(evidence_idx)
+ self.hypotheses[actor_name]["score"] -= self.evidence[evidence_idx]["confidence"] * 2
+ else:
+ self.hypotheses[actor_name]["neutral_evidence"].append(evidence_idx)
 
-    def rank_hypotheses(self):
-        """Rank hypotheses by attribution score."""
-        ranked = sorted(
-            self.hypotheses.items(),
-            key=lambda x: x[1]["score"],
-            reverse=True,
-        )
-        return [
-            {
-                "actor": name,
-                "score": data["score"],
-                "consistent": len(data["consistent_evidence"]),
-                "inconsistent": len(data["inconsistent_evidence"]),
-                "confidence": self._score_to_confidence(data["score"]),
-            }
-            for name, data in ranked
-        ]
+ def rank_hypotheses(self):
+ """Rank hypotheses by attribution score."""
+ ranked = sorted(
+ self.hypotheses.items(),
+ key=lambda x: x[1]["score"],
+ reverse=True,
+ )
+ return [
+ {
+ "actor": name,
+ "score": data["score"],
+ "consistent": len(data["consistent_evidence"]),
+ "inconsistent": len(data["inconsistent_evidence"]),
+ "confidence": self._score_to_confidence(data["score"]),
+ }
+ for name, data in ranked
+ ]
 
-    def _score_to_confidence(self, score):
-        if score >= 80:
-            return "HIGH"
-        elif score >= 40:
-            return "MODERATE"
-        else:
-            return "LOW"
+ def _score_to_confidence(self, score):
+ if score >= 80:
+ return "HIGH"
+ elif score >= 40:
+ return "MODERATE"
+ else:
+ return "LOW"
 ```
 
 ### Step 2: Infrastructure Overlap Analysis
 
 ```python
 def analyze_infrastructure_overlap(campaign_a_infra, campaign_b_infra):
-    """Compare infrastructure between two campaigns for attribution."""
-    overlap = {
-        "shared_ips": set(campaign_a_infra.get("ips", [])).intersection(
-            campaign_b_infra.get("ips", [])
-        ),
-        "shared_domains": set(campaign_a_infra.get("domains", [])).intersection(
-            campaign_b_infra.get("domains", [])
-        ),
-        "shared_asns": set(campaign_a_infra.get("asns", [])).intersection(
-            campaign_b_infra.get("asns", [])
-        ),
-        "shared_registrars": set(campaign_a_infra.get("registrars", [])).intersection(
-            campaign_b_infra.get("registrars", [])
-        ),
-    }
+ """Compare infrastructure between two campaigns for attribution."""
+ overlap = {
+ "shared_ips": set(campaign_a_infra.get("ips", [])).intersection(
+ campaign_b_infra.get("ips", [])
+ ),
+ "shared_domains": set(campaign_a_infra.get("domains", [])).intersection(
+ campaign_b_infra.get("domains", [])
+ ),
+ "shared_asns": set(campaign_a_infra.get("asns", [])).intersection(
+ campaign_b_infra.get("asns", [])
+ ),
+ "shared_registrars": set(campaign_a_infra.get("registrars", [])).intersection(
+ campaign_b_infra.get("registrars", [])
+ ),
+ }
 
-    overlap_score = 0
-    if overlap["shared_ips"]:
-        overlap_score += 30
-    if overlap["shared_domains"]:
-        overlap_score += 25
-    if overlap["shared_asns"]:
-        overlap_score += 15
-    if overlap["shared_registrars"]:
-        overlap_score += 10
+ overlap_score = 0
+ if overlap["shared_ips"]:
+ overlap_score += 30
+ if overlap["shared_domains"]:
+ overlap_score += 25
+ if overlap["shared_asns"]:
+ overlap_score += 15
+ if overlap["shared_registrars"]:
+ overlap_score += 10
 
-    return {
-        "overlap": {k: list(v) for k, v in overlap.items()},
-        "overlap_score": overlap_score,
-        "assessment": "STRONG" if overlap_score >= 40 else "MODERATE" if overlap_score >= 20 else "WEAK",
-    }
+ return {
+ "overlap": {k: list(v) for k, v in overlap.items()},
+ "overlap_score": overlap_score,
+ "assessment": "STRONG" if overlap_score >= 40 else "MODERATE" if overlap_score >= 20 else "WEAK",
+ }
 ```
 
 ### Step 3: TTP Comparison Across Campaigns
@@ -177,51 +177,51 @@ def analyze_infrastructure_overlap(campaign_a_infra, campaign_b_infra):
 from attackcti import attack_client
 
 def compare_campaign_ttps(campaign_techniques, known_actor_techniques):
-    """Compare campaign TTPs against known threat actor profiles."""
-    campaign_set = set(campaign_techniques)
-    actor_set = set(known_actor_techniques)
+ """Compare campaign TTPs against known threat actor profiles."""
+ campaign_set = set(campaign_techniques)
+ actor_set = set(known_actor_techniques)
 
-    common = campaign_set.intersection(actor_set)
-    unique_campaign = campaign_set - actor_set
-    unique_actor = actor_set - campaign_set
+ common = campaign_set.intersection(actor_set)
+ unique_campaign = campaign_set - actor_set
+ unique_actor = actor_set - campaign_set
 
-    jaccard = len(common) / len(campaign_set.union(actor_set)) if campaign_set.union(actor_set) else 0
+ jaccard = len(common) / len(campaign_set.union(actor_set)) if campaign_set.union(actor_set) else 0
 
-    return {
-        "common_techniques": sorted(common),
-        "common_count": len(common),
-        "unique_to_campaign": sorted(unique_campaign),
-        "unique_to_actor": sorted(unique_actor),
-        "jaccard_similarity": round(jaccard, 3),
-        "overlap_percentage": round(len(common) / len(campaign_set) * 100, 1) if campaign_set else 0,
-    }
+ return {
+ "common_techniques": sorted(common),
+ "common_count": len(common),
+ "unique_to_campaign": sorted(unique_campaign),
+ "unique_to_actor": sorted(unique_actor),
+ "jaccard_similarity": round(jaccard, 3),
+ "overlap_percentage": round(len(common) / len(campaign_set) * 100, 1) if campaign_set else 0,
+ }
 ```
 
 ### Step 4: Generate Attribution Report
 
 ```python
 def generate_attribution_report(analyzer):
-    """Generate structured attribution assessment report."""
-    rankings = analyzer.rank_hypotheses()
+ """Generate structured attribution assessment report."""
+ rankings = analyzer.rank_hypotheses()
 
-    report = {
-        "assessment_date": "2026-02-23",
-        "total_evidence_items": len(analyzer.evidence),
-        "hypotheses_evaluated": len(analyzer.hypotheses),
-        "rankings": rankings,
-        "primary_attribution": rankings[0] if rankings else None,
-        "evidence_summary": [
-            {
-                "index": i,
-                "category": e["category"],
-                "description": e["description"],
-                "confidence": e["confidence"],
-            }
-            for i, e in enumerate(analyzer.evidence)
-        ],
-    }
+ report = {
+ "assessment_date": "2026-02-23",
+ "total_evidence_items": len(analyzer.evidence),
+ "hypotheses_evaluated": len(analyzer.hypotheses),
+ "rankings": rankings,
+ "primary_attribution": rankings[0] if rankings else None,
+ "evidence_summary": [
+ {
+ "index": i,
+ "category": e["category"],
+ "description": e["description"],
+ "confidence": e["confidence"],
+ }
+ for i, e in enumerate(analyzer.evidence)
+ ],
+ }
 
-    return report
+ return report
 ```
 
 ## Validation Criteria

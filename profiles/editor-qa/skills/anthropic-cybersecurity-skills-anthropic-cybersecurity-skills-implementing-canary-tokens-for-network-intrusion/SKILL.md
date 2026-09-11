@@ -1,13 +1,13 @@
 ---
 name: implementing-canary-tokens-for-network-intrusion
 description: 'Deploys DNS, HTTP, and AWS API key canary tokens across network infrastructure
-  to detect unauthorized access and lateral movement. Integrates with webhook alerting
-  (Slack, Teams, email, generic HTTP) for real-time intrusion notifications. Provides
-  automated token generation, placement strategies, and monitoring for enterprise
-  network environments. Use when building deception-based network intrusion detection
-  with Canarytokens.org and Thinkst Canary platforms.
+ to detect unauthorized access and lateral movement. Integrates with webhook alerting
+ (Slack, Teams, email, generic HTTP) for real-time intrusion notifications. Provides
+ automated token generation, placement strategies, and monitoring for enterprise
+ network environments. Use when building deception-based network intrusion detection
+ with Canarytokens.org and Thinkst Canary platforms.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -76,14 +76,14 @@ attackers by their behavior (accessing bait resources) rather than matching know
 
 ```
 [Attacker Action] --> [Token Triggered] --> [Canarytokens Server]
-                                                    |
-                                            [Webhook POST]
-                                                    |
-                          +-------------------------+-------------------------+
-                          |                         |                         |
-                    [Slack Alert]           [Email Alert]             [SIEM Ingestion]
-                          |                         |                         |
-                    [SOC Analyst]           [On-Call Page]           [Correlation Rule]
+ |
+ [Webhook POST]
+ |
+ +-------------------------+-------------------------+
+ | | |
+ [Slack Alert] [Email Alert] [SIEM Ingestion]
+ | | |
+ [SOC Analyst] [On-Call Page] [Correlation Rule]
 ```
 
 ## Instructions
@@ -99,10 +99,10 @@ import requests
 
 # Create DNS canary token via Canarytokens.org
 response = requests.post("https://canarytokens.org/generate", data={
-    "type": "dns",
-    "email": "soc@company.com",
-    "memo": "Production database server - /etc/app/db.conf",
-    "webhook_url": "https://hooks.slack.com/services/T.../B.../xxx"
+ "type": "dns",
+ "email": "soc@company.com",
+ "memo": "Production database server - /etc/app/db.conf",
+ "webhook_url": "https://hooks.slack.com/services/T.../B.../xxx"
 }, timeout=15)
 
 token_data = response.json()
@@ -125,10 +125,10 @@ source IP, User-Agent, and other HTTP headers of the requester.
 ```python
 # Create HTTP token
 response = requests.post("https://canarytokens.org/generate", data={
-    "type": "http",
-    "email": "soc@company.com",
-    "memo": "Internal wiki - IT admin passwords page",
-    "webhook_url": "https://hooks.slack.com/services/T.../B.../xxx"
+ "type": "http",
+ "email": "soc@company.com",
+ "memo": "Internal wiki - IT admin passwords page",
+ "webhook_url": "https://hooks.slack.com/services/T.../B.../xxx"
 }, timeout=15)
 
 http_url = response.json()["url"]
@@ -151,10 +151,10 @@ AWS API endpoint.
 ```python
 # Create AWS API key canary token
 response = requests.post("https://canarytokens.org/generate", data={
-    "type": "aws_keys",
-    "email": "soc@company.com",
-    "memo": "DevOps jump box - /home/deploy/.aws/credentials",
-    "webhook_url": "https://hooks.slack.com/services/T.../B.../xxx"
+ "type": "aws_keys",
+ "email": "soc@company.com",
+ "memo": "DevOps jump box - /home/deploy/.aws/credentials",
+ "webhook_url": "https://hooks.slack.com/services/T.../B.../xxx"
 }, timeout=15)
 
 aws_token = response.json()
@@ -184,21 +184,21 @@ Set up real-time alerting to your SOC through multiple channels:
 ```python
 # Slack webhook integration
 def send_slack_alert(webhook_url, alert_data):
-    """Forward canary token alert to Slack channel."""
-    payload = {
-        "text": f":rotating_light: *Canary Token Triggered*",
-        "attachments": [{
-            "color": "#FF0000",
-            "fields": [
-                {"title": "Token Memo", "value": alert_data.get("memo", "Unknown"), "short": True},
-                {"title": "Source IP", "value": alert_data.get("src_ip", "Unknown"), "short": True},
-                {"title": "Token Type", "value": alert_data.get("channel", "Unknown"), "short": True},
-                {"title": "Triggered At", "value": alert_data.get("time", "Unknown"), "short": True},
-            ],
-            "footer": "Canarytokens Alert System",
-        }]
-    }
-    requests.post(webhook_url, json=payload, timeout=10)
+ """Forward canary token alert to Slack channel."""
+ payload = {
+ "text": f":rotating_light: *Canary Token Triggered*",
+ "attachments": [{
+ "color": "#FF0000",
+ "fields": [
+ {"title": "Token Memo", "value": alert_data.get("memo", "Unknown"), "short": True},
+ {"title": "Source IP", "value": alert_data.get("src_ip", "Unknown"), "short": True},
+ {"title": "Token Type", "value": alert_data.get("channel", "Unknown"), "short": True},
+ {"title": "Triggered At", "value": alert_data.get("time", "Unknown"), "short": True},
+ ],
+ "footer": "Canarytokens Alert System",
+ }]
+ }
+ requests.post(webhook_url, json=payload, timeout=10)
 ```
 
 ```python
@@ -211,17 +211,17 @@ logging.basicConfig(filename="/var/log/canary_alerts.json", level=logging.INFO)
 
 @app.route("/canary-webhook", methods=["POST"])
 def receive_alert():
-    alert = request.json or request.form.to_dict()
-    logging.info(json.dumps({
-        "event_type": "canarytoken_triggered",
-        "memo": alert.get("memo"),
-        "src_ip": alert.get("src_ip"),
-        "token_type": alert.get("channel"),
-        "time": alert.get("time"),
-        "manage_url": alert.get("manage_url"),
-        "additional_data": alert.get("additional_data", {}),
-    }))
-    return jsonify({"status": "received"}), 200
+ alert = request.json or request.form.to_dict()
+ logging.info(json.dumps({
+ "event_type": "canarytoken_triggered",
+ "memo": alert.get("memo"),
+ "src_ip": alert.get("src_ip"),
+ "token_type": alert.get("channel"),
+ "time": alert.get("time"),
+ "manage_url": alert.get("manage_url"),
+ "additional_data": alert.get("additional_data", {}),
+ }))
+ return jsonify({"status": "received"}), 200
 ```
 
 ### Step 5: Enterprise Deployment with Thinkst Canary API
@@ -234,27 +234,27 @@ import canarytools
 
 # Connect to Thinkst Canary console
 console = canarytools.Console(
-    domain="yourcompany",
-    api_key="your_api_auth_token"
+ domain="yourcompany",
+ api_key="your_api_auth_token"
 )
 
 # Create tokens programmatically at scale
 token_types = {
-    "dns": "DNS beacon in config files",
-    "aws-id": "AWS credentials on jump servers",
-    "http": "Web bug in internal documentation",
-    "doc-msword": "Word document in finance share",
-    "slack-api": "Fake Slack bot token in source code",
+ "dns": "DNS beacon in config files",
+ "aws-id": "AWS credentials on jump servers",
+ "http": "Web bug in internal documentation",
+ "doc-msword": "Word document in finance share",
+ "slack-api": "Fake Slack bot token in source code",
 }
 
 for kind, memo in token_types.items():
-    result = console.tokens.create(memo=memo, kind=kind)
-    print(f"[+] Created {kind} token: {result}")
+ result = console.tokens.create(memo=memo, kind=kind)
+ print(f"[+] Created {kind} token: {result}")
 
 # Monitor for triggered alerts
 alerts = console.tokens.alerts()
 for alert in alerts:
-    print(f"[ALERT] {alert.memo} triggered from {alert.src_ip}")
+ print(f"[ALERT] {alert.memo} triggered from {alert.src_ip}")
 ```
 
 ### Step 6: Token Placement Strategy by Network Zone
@@ -289,9 +289,9 @@ for alert in alerts:
 ```python
 # Deploy a comprehensive canary token network
 python scripts/agent.py --action full_deploy \
-    --email soc@company.com \
-    --webhook https://hooks.slack.com/services/T.../B.../xxx \
-    --output deployment_report.json
+ --email soc@company.com \
+ --webhook https://hooks.slack.com/services/T.../B.../xxx \
+ --output deployment_report.json
 ```
 
 ### Monitor Triggered Tokens
@@ -299,8 +299,8 @@ python scripts/agent.py --action full_deploy \
 ```python
 # Check for triggered alerts
 python scripts/agent.py --action monitor \
-    --console-domain yourcompany \
-    --api-key YOUR_AUTH_TOKEN
+ --console-domain yourcompany \
+ --api-key YOUR_AUTH_TOKEN
 ```
 
 ### Generate Token Inventory
@@ -308,7 +308,7 @@ python scripts/agent.py --action monitor \
 ```python
 # Create inventory of all deployed tokens
 python scripts/agent.py --action inventory \
-    --output token_inventory.json
+ --output token_inventory.json
 ```
 
 ## Validation Checklist

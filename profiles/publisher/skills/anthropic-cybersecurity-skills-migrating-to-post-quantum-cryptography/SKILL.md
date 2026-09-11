@@ -43,25 +43,25 @@ This skill maps to ATT&CK **T1573 – Encrypted Channel**: the same cryptographi
 ## Prerequisites
 
 - OpenSSL **3.5.0 or later**, which ships native ML-KEM, ML-DSA, and SLH-DSA support:
-  ```bash
-  openssl version            # expect 3.5.0+
-  openssl list -kem-algorithms | grep -i mlkem
-  openssl list -signature-algorithms | grep -i mldsa
-  ```
+ ```bash
+ openssl version # expect 3.5.0+
+ openssl list -kem-algorithms | grep -i mlkem
+ openssl list -signature-algorithms | grep -i mldsa
+ ```
 - For OpenSSL 3.0–3.4, the Open Quantum Safe **oqs-provider** plus **liboqs**:
-  ```bash
-  git clone https://github.com/open-quantum-safe/liboqs && \
-    cmake -S liboqs -B liboqs/build && cmake --build liboqs/build && \
-    sudo cmake --install liboqs/build
-  git clone https://github.com/open-quantum-safe/oqs-provider && \
-    cmake -S oqs-provider -B oqs-provider/_build && \
-    cmake --build oqs-provider/_build && \
-    sudo cmake --install oqs-provider/_build
-  ```
+ ```bash
+ git clone https://github.com/open-quantum-safe/liboqs && \
+ cmake -S liboqs -B liboqs/build && cmake --build liboqs/build && \
+ sudo cmake --install liboqs/build
+ git clone https://github.com/open-quantum-safe/oqs-provider && \
+ cmake -S oqs-provider -B oqs-provider/_build && \
+ cmake --build oqs-provider/_build && \
+ sudo cmake --install oqs-provider/_build
+ ```
 - Python 3.8+ for the inventory helper:
-  ```bash
-  python3 -m pip install cryptography
-  ```
+ ```bash
+ python3 -m pip install cryptography
+ ```
 - (Optional) A CBOM generator: CycloneDX `cdxgen`, or `cbomkit-theia` for container/directory crypto discovery.
 
 ## Objectives
@@ -133,7 +133,7 @@ openssl pkey -in mldsa65.key -pubout -out mldsa65.pub
 ```bash
 # Self-signed ML-DSA-65 certificate for testing
 openssl req -new -x509 -key mldsa65.key -out mldsa65.crt -days 365 \
-  -subj "/CN=pqc-test.example.com"
+ -subj "/CN=pqc-test.example.com"
 openssl x509 -in mldsa65.crt -noout -text | grep -A1 'Signature Algorithm'
 ```
 
@@ -150,11 +150,11 @@ Run a TLS 1.3 server and force the hybrid group `X25519MLKEM768` (classical X255
 ```bash
 # Server (use a classical or ML-DSA cert/key)
 openssl s_server -accept 4433 -www -tls1_3 \
-  -cert mldsa65.crt -key mldsa65.key -groups X25519MLKEM768
+ -cert mldsa65.crt -key mldsa65.key -groups X25519MLKEM768
 
 # Client — negotiate the hybrid group and confirm it was used
 openssl s_client -connect localhost:4433 -tls1_3 -groups X25519MLKEM768 \
-  </dev/null 2>/dev/null | grep -E 'Negotiated|Server Temp Key|Cipher'
+ </dev/null 2>/dev/null | grep -E 'Negotiated|Server Temp Key|Cipher'
 ```
 For external endpoints, confirm support against a public PQC test server:
 ```bash
@@ -165,11 +165,11 @@ openssl s_client -groups X25519MLKEM768 -tls1_3 -connect pq.cloudflareresearch.c
 Configure the web server / load balancer to offer the hybrid group while keeping classical fallback for old clients. NGINX with OpenSSL 3.5+:
 ```nginx
 server {
-    listen 443 ssl;
-    ssl_protocols TLSv1.3;
-    ssl_ecdh_curve X25519MLKEM768:X25519:secp256r1;   # hybrid first, classical fallback
-    ssl_certificate     /etc/nginx/certs/server.crt;
-    ssl_certificate_key /etc/nginx/certs/server.key;
+ listen 443 ssl;
+ ssl_protocols TLSv1.3;
+ ssl_ecdh_curve X25519MLKEM768:X25519:secp256r1; # hybrid first, classical fallback
+ ssl_certificate /etc/nginx/certs/server.crt;
+ ssl_certificate_key /etc/nginx/certs/server.key;
 }
 ```
 Reload and verify with the s_client command from step 7 against the live host.

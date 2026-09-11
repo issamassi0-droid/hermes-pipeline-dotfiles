@@ -36,12 +36,12 @@ Generate with the TTS selector:
 from tools.audio.tts_selector import TTSSelector
 
 result = TTSSelector().execute({
-    "preferred_provider": "doubao",
-    "text": "如果 AI 真的会改变未来，普通人到底该怎么参与？",
-    "voice_id": "zh_female_vv_uranus_bigtts",
-    "output_path": "projects/my-video/assets/audio/narration.mp3",
-    "speech_rate": 0,
-    "enable_timestamp": True,
+ "preferred_provider": "doubao",
+ "text": "如果 AI 真的会改变未来，普通人到底该怎么参与？",
+ "voice_id": "zh_female_vv_uranus_bigtts",
+ "output_path": "projects/my-video/assets/audio/narration.mp3",
+ "speech_rate": 0,
+ "enable_timestamp": True,
 })
 ```
 
@@ -51,9 +51,9 @@ Or call the provider directly:
 from tools.audio.doubao_tts import DoubaoTTS
 
 result = DoubaoTTS().execute({
-    "text": "短样本试听文本。",
-    "voice_id": "zh_female_vv_uranus_bigtts",
-    "output_path": "projects/my-video/assets/audio/doubao_sample.mp3",
+ "text": "短样本试听文本。",
+ "voice_id": "zh_female_vv_uranus_bigtts",
+ "output_path": "projects/my-video/assets/audio/doubao_sample.mp3",
 })
 ```
 

@@ -34,36 +34,36 @@ mitre_attack:
 - T1204.001
 - T1589
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - initial-access
-  - resource-development
-  techniques:
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: F1029
-    name: Gather Customer Information
-    tactic: reconnaissance
-    source: f3
-  - id: F1032
-    name: Impersonate Official
-    tactic: initial-access
-    source: f3
-  - id: T1557
-    name: Adversary-in-the-Middle
-    tactic: initial-access
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - initial-access
+ - resource-development
+ techniques:
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: F1029
+ name: Gather Customer Information
+ tactic: reconnaissance
+ source: f3
+ - id: F1032
+ name: Impersonate Official
+ tactic: initial-access
+ source: f3
+ - id: T1557
+ name: Adversary-in-the-Middle
+ tactic: initial-access
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
 ---
 
 # Conducting Social Engineering Penetration Test
@@ -169,20 +169,20 @@ evilginx2
 
 ```json
 {
-  "campaign": {
-    "name": "IT Security Update - Q1 2025",
-    "template": {
-      "name": "Mandatory Security Training",
-      "subject": "Action Required: Complete Security Awareness Training by Friday",
-      "html": "<html>...[branded email with urgency]...</html>",
-      "from": "IT Security Team <security@targetcorp-secure.com>"
-    },
-    "landing_page": "Office 365 Login Clone",
-    "sending_profile": "Phishing SMTP",
-    "groups": ["All Employees - Batch 1"],
-    "launch_date": "2025-03-10T09:00:00Z",
-    "send_by_date": "2025-03-10T12:00:00Z"
-  }
+ "campaign": {
+ "name": "IT Security Update - Q1 2025",
+ "template": {
+ "name": "Mandatory Security Training",
+ "subject": "Action Required: Complete Security Awareness Training by Friday",
+ "html": "<html>...[branded email with urgency]...</html>",
+ "from": "IT Security Team <security@targetcorp-secure.com>"
+ },
+ "landing_page": "Office 365 Login Clone",
+ "sending_profile": "Phishing SMTP",
+ "groups": ["All Employees - Batch 1"],
+ "launch_date": "2025-03-10T09:00:00Z",
+ "send_by_date": "2025-03-10T12:00:00Z"
+ }
 }
 ```
 
@@ -306,7 +306,7 @@ Phishing Campaign Results:
 ├── Emails Opened: 142 (72.8%)
 ├── Links Clicked: 68 (34.9%)
 ├── Credentials Submitted: 31 (15.9%)
-├── MFA Bypassed: 8 (4.1%)  [Evilginx]
+├── MFA Bypassed: 8 (4.1%) [Evilginx]
 ├── Reported to SOC: 12 (6.2%)
 └── No Action: 53 (27.2%)
 

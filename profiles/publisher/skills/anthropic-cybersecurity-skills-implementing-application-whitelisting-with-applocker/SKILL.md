@@ -1,13 +1,13 @@
 ---
 name: implementing-application-whitelisting-with-applocker
 description: 'Implements application whitelisting using Windows AppLocker to restrict
-  unauthorized software execution on endpoints, reducing attack surface from malware,
-  unauthorized tools, and shadow IT. Use when enforcing application control policies,
-  meeting compliance requirements for software restriction, or preventing execution
-  of unsigned or untrusted binaries. Activates for requests involving AppLocker, application
-  whitelisting, software restriction, or executable control.
+ unauthorized software execution on endpoints, reducing attack surface from malware,
+ unauthorized tools, and shadow IT. Use when enforcing application control policies,
+ meeting compliance requirements for software restriction, or preventing execution
+ of unsigned or untrusted binaries. Activates for requests involving AppLocker, application
+ whitelisting, software restriction, or executable control.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -60,14 +60,14 @@ Before creating AppLocker rules, catalog all legitimate software:
 ```powershell
 # Generate application inventory on reference endpoint
 Get-AppLockerFileInformation -Directory "C:\Program Files" -Recurse `
-  -FileType Exe | Export-Csv "C:\AppLocker\app_inventory_progfiles.csv" -NoTypeInformation
+ -FileType Exe | Export-Csv "C:\AppLocker\app_inventory_progfiles.csv" -NoTypeInformation
 
 Get-AppLockerFileInformation -Directory "C:\Program Files (x86)" -Recurse `
-  -FileType Exe | Export-Csv "C:\AppLocker\app_inventory_progfiles86.csv" -NoTypeInformation
+ -FileType Exe | Export-Csv "C:\AppLocker\app_inventory_progfiles86.csv" -NoTypeInformation
 
 # Include Windows system executables
 Get-AppLockerFileInformation -Directory "C:\Windows" -Recurse `
-  -FileType Exe | Export-Csv "C:\AppLocker\app_inventory_windows.csv" -NoTypeInformation
+ -FileType Exe | Export-Csv "C:\AppLocker\app_inventory_windows.csv" -NoTypeInformation
 ```
 
 ### Step 2: Create AppLocker Policy with Default Rules
@@ -75,7 +75,7 @@ Get-AppLockerFileInformation -Directory "C:\Windows" -Recurse `
 ```powershell
 # In Group Policy Editor (gpedit.msc) or GPMC:
 # Navigate to: Computer Configuration → Policies → Windows Settings
-#   → Security Settings → Application Control Policies → AppLocker
+# → Security Settings → Application Control Policies → AppLocker
 
 # Enable default rules for each rule collection:
 # - Executable Rules: Allow Everyone to run files in Program Files and Windows
@@ -95,29 +95,29 @@ Publisher rules are the most maintainable since they survive application updates
 ```xml
 <!-- Example AppLocker policy XML for publisher rules -->
 <RuleCollection Type="Exe" EnforcementMode="AuditOnly">
-  <!-- Default: Allow Windows binaries -->
-  <FilePublisherRule Id="a9e18c21-ff54-4677-b3ac-4b9a03261f6c"
-    Name="Allow Microsoft signed" Description="Allow all Microsoft-signed executables"
-    UserOrGroupSid="S-1-1-0" Action="Allow">
-    <Conditions>
-      <FilePublisherCondition PublisherName="O=MICROSOFT CORPORATION*"
-        ProductName="*" BinaryName="*">
-        <BinaryVersionRange LowSection="*" HighSection="*"/>
-      </FilePublisherCondition>
-    </Conditions>
-  </FilePublisherRule>
+ <!-- Default: Allow Windows binaries -->
+ <FilePublisherRule Id="a9e18c21-ff54-4677-b3ac-4b9a03261f6c"
+ Name="Allow Microsoft signed" Description="Allow all Microsoft-signed executables"
+ UserOrGroupSid="S-1-1-0" Action="Allow">
+ <Conditions>
+ <FilePublisherCondition PublisherName="O=MICROSOFT CORPORATION*"
+ ProductName="*" BinaryName="*">
+ <BinaryVersionRange LowSection="*" HighSection="*"/>
+ </FilePublisherCondition>
+ </Conditions>
+ </FilePublisherRule>
 
-  <!-- Allow specific third-party vendor -->
-  <FilePublisherRule Id="b2e28c32-aa65-5788-c4bd-5c0b14372e7d"
-    Name="Allow Adobe Acrobat" Description="Allow Adobe-signed Acrobat executables"
-    UserOrGroupSid="S-1-1-0" Action="Allow">
-    <Conditions>
-      <FilePublisherCondition PublisherName="O=ADOBE INC.*"
-        ProductName="ADOBE ACROBAT*" BinaryName="*">
-        <BinaryVersionRange LowSection="*" HighSection="*"/>
-      </FilePublisherCondition>
-    </Conditions>
-  </FilePublisherRule>
+ <!-- Allow specific third-party vendor -->
+ <FilePublisherRule Id="b2e28c32-aa65-5788-c4bd-5c0b14372e7d"
+ Name="Allow Adobe Acrobat" Description="Allow Adobe-signed Acrobat executables"
+ UserOrGroupSid="S-1-1-0" Action="Allow">
+ <Conditions>
+ <FilePublisherCondition PublisherName="O=ADOBE INC.*"
+ ProductName="ADOBE ACROBAT*" BinaryName="*">
+ <BinaryVersionRange LowSection="*" HighSection="*"/>
+ </FilePublisherCondition>
+ </Conditions>
+ </FilePublisherRule>
 </RuleCollection>
 ```
 
@@ -128,15 +128,15 @@ Publisher rules are the most maintainable since they survive application updates
 # These are legitimate Windows tools frequently used by attackers
 
 $denyPaths = @(
-    "%SYSTEM32%\mshta.exe",
-    "%SYSTEM32%\wscript.exe",
-    "%SYSTEM32%\cscript.exe",
-    "%SYSTEM32%\regsvr32.exe",
-    "%SYSTEM32%\certutil.exe",
-    "%SYSTEM32%\msbuild.exe",
-    "%SYSTEM32%\installutil.exe",
-    "%WINDIR%\Microsoft.NET\Framework\*\msbuild.exe",
-    "%WINDIR%\Microsoft.NET\Framework64\*\msbuild.exe"
+ "%SYSTEM32%\mshta.exe",
+ "%SYSTEM32%\wscript.exe",
+ "%SYSTEM32%\cscript.exe",
+ "%SYSTEM32%\regsvr32.exe",
+ "%SYSTEM32%\certutil.exe",
+ "%SYSTEM32%\msbuild.exe",
+ "%SYSTEM32%\installutil.exe",
+ "%WINDIR%\Microsoft.NET\Framework\*\msbuild.exe",
+ "%WINDIR%\Microsoft.NET\Framework64\*\msbuild.exe"
 )
 
 # Create deny rules in AppLocker policy for standard users
@@ -150,19 +150,19 @@ $denyPaths = @(
 Script Rules (critical for preventing script-based attacks):
 
 Allow:
-  - Scripts in C:\Program Files\* (publisher or path-based)
-  - Scripts in C:\Windows\* (default Windows scripts)
-  - Approved admin scripts from \\fileserver\scripts\*
+ - Scripts in C:\Program Files\* (publisher or path-based)
+ - Scripts in C:\Windows\* (default Windows scripts)
+ - Approved admin scripts from \\fileserver\scripts\*
 
 Deny (for standard users):
-  - PowerShell scripts from user-writable directories
-  - VBScript from %TEMP%, %APPDATA%, %USERPROFILE%\Downloads
-  - JavaScript (.js) from any user-writable location
+ - PowerShell scripts from user-writable directories
+ - VBScript from %TEMP%, %APPDATA%, %USERPROFILE%\Downloads
+ - JavaScript (.js) from any user-writable location
 
 DLL Rules (optional, high performance impact):
-  - Enable only in high-security environments
-  - Allow signed DLLs from Program Files and Windows directories
-  - Performance impact: 5-10% CPU increase during DLL loading
+ - Enable only in high-security environments
+ - Allow signed DLLs from Program Files and Windows directories
+ - Performance impact: 5-10% CPU increase during DLL loading
 ```
 
 ### Step 6: Deploy in Audit Mode First
@@ -182,14 +182,14 @@ Start-Service AppIDSvc
 
 # Link GPO to test OU
 New-GPLink -Name "AppLocker-Audit-Policy" `
-  -Target "OU=AppLocker-Pilot,DC=corp,DC=example,DC=com"
+ -Target "OU=AppLocker-Pilot,DC=corp,DC=example,DC=com"
 
 # Monitor audit logs for 2-4 weeks
 # Event Log: Applications and Services Logs → Microsoft → Windows → AppLocker
 # Event IDs:
-#   8003 = EXE/DLL would be blocked
-#   8006 = Script/MSI would be blocked
-#   8023 = Packaged app would be blocked
+# 8003 = EXE/DLL would be blocked
+# 8006 = Script/MSI would be blocked
+# 8023 = Packaged app would be blocked
 ```
 
 ### Step 7: Analyze Audit Logs and Refine Rules
@@ -197,18 +197,18 @@ New-GPLink -Name "AppLocker-Audit-Policy" `
 ```powershell
 # Export AppLocker audit events
 Get-WinEvent -LogName "Microsoft-Windows-AppLocker/EXE and DLL" `
-  -FilterXPath "*[System[EventID=8003]]" |
-  Select-Object TimeCreated,
-    @{N='User';E={$_.Properties[0].Value}},
-    @{N='FilePath';E={$_.Properties[1].Value}},
-    @{N='FileHash';E={$_.Properties[4].Value}} |
-  Export-Csv "C:\AppLocker\audit_blocked_exes.csv" -NoTypeInformation
+ -FilterXPath "*[System[EventID=8003]]" |
+ Select-Object TimeCreated,
+ @{N='User';E={$_.Properties[0].Value}},
+ @{N='FilePath';E={$_.Properties[1].Value}},
+ @{N='FileHash';E={$_.Properties[4].Value}} |
+ Export-Csv "C:\AppLocker\audit_blocked_exes.csv" -NoTypeInformation
 
 # Review blocked applications
 # For each blocked legitimate application:
-#   1. Create a publisher rule (if signed) or path rule (if unsigned)
-#   2. Add to AppLocker policy
-#   3. Re-audit for 1 additional week
+# 1. Create a publisher rule (if signed) or path rule (if unsigned)
+# 2. Add to AppLocker policy
+# 3. Re-audit for 1 additional week
 ```
 
 ### Step 8: Switch to Enforce Mode

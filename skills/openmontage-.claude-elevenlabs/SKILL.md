@@ -17,15 +17,15 @@ import os
 client = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
 
 audio = client.text_to_speech.convert(
-    text="Welcome to my video!",
-    voice_id="JBFqnCBsd6RMkjVDRZzb",
-    model_id="eleven_multilingual_v2",
-    voice_settings=VoiceSettings(
-        stability=0.5,
-        similarity_boost=0.75,
-        style=0.5,
-        speed=1.0
-    )
+ text="Welcome to my video!",
+ voice_id="JBFqnCBsd6RMkjVDRZzb",
+ model_id="eleven_multilingual_v2",
+ voice_settings=VoiceSettings(
+ stability=0.5,
+ similarity_boost=0.75,
+ style=0.5,
+ speed=1.0
+ )
 )
 save(audio, "voiceover.mp3")
 ```
@@ -87,11 +87,11 @@ Max 3 seconds per break. Excessive breaks can cause speed artifacts.
 
 ```python
 with open("sample.mp3", "rb") as f:
-    voice = client.voices.ivc.create(
-        name="My Voice",
-        files=[f],
-        remove_background_noise=True
-    )
+ voice = client.voices.ivc.create(
+ name="My Voice",
+ files=[f],
+ remove_background_noise=True
+ )
 print(f"Voice ID: {voice.voice_id}")
 ```
 
@@ -109,13 +109,13 @@ Max 22 seconds per generation.
 
 ```python
 result = client.text_to_sound_effects.convert(
-    text="Thunder rumbling followed by heavy rain",
-    duration_seconds=10,
-    prompt_influence=0.3
+ text="Thunder rumbling followed by heavy rain",
+ duration_seconds=10,
+ prompt_influence=0.3
 )
 with open("thunder.mp3", "wb") as f:
-    for chunk in result:
-        f.write(chunk)
+ for chunk in result:
+ f.write(chunk)
 ```
 
 **Prompt tips:** Be specific — "Heavy footsteps on wooden floorboards, slow and deliberate, with creaking"
@@ -126,13 +126,13 @@ with open("thunder.mp3", "wb") as f:
 
 ```python
 result = client.music.compose(
-    prompt="Upbeat indie rock, catchy guitar riff, energetic drums, travel vlog",
-    music_length_ms=60000,
-    force_instrumental=True
+ prompt="Upbeat indie rock, catchy guitar riff, energetic drums, travel vlog",
+ music_length_ms=60000,
+ force_instrumental=True
 )
 with open("music.mp3", "wb") as f:
-    for chunk in result:
-        f.write(chunk)
+ for chunk in result:
+ f.write(chunk)
 ```
 
 **Prompt structure:** Genre, mood, instruments, tempo, use case. Add "no vocals" or use `force_instrumental=True` for background music.
@@ -143,9 +143,9 @@ with open("music.mp3", "wb") as f:
 
 ```
 VOICEOVER-SCRIPT.md → voiceover.py → public/audio/ → Remotion composition
-        ↓                  ↓               ↓                 ↓
-  Scene narration    Generate MP3    Audio files     <Audio> component
-  with durations     per scene       with timing     synced to scenes
+ ↓ ↓ ↓ ↓
+ Scene narration Generate MP3 Audio files <Audio> component
+ with durations per scene with timing synced to scenes
 ```
 
 ### Step 1: Generate Per-Scene Audio
@@ -158,21 +158,21 @@ python tools/voiceover.py --scene-dir public/audio/scenes --json
 
 # Output:
 # public/audio/scenes/
-#   ├── scene-01-title.mp3
-#   ├── scene-02-problem.mp3
-#   ├── scene-03-solution.mp3
-#   └── manifest.json  (durations for each file)
+# ├── scene-01-title.mp3
+# ├── scene-02-problem.mp3
+# ├── scene-03-solution.mp3
+# └── manifest.json (durations for each file)
 ```
 
 The `manifest.json` contains timing info:
 ```json
 {
-  "scenes": [
-    { "file": "scene-01-title.mp3", "duration": 4.2 },
-    { "file": "scene-02-problem.mp3", "duration": 12.8 },
-    { "file": "scene-03-solution.mp3", "duration": 15.3 }
-  ],
-  "totalDuration": 32.3
+ "scenes": [
+ { "file": "scene-01-title.mp3", "duration": 4.2 },
+ { "file": "scene-02-problem.mp3", "duration": 12.8 },
+ { "file": "scene-03-solution.mp3", "duration": 15.3 }
+ ],
+ "totalDuration": 32.3
 }
 ```
 
@@ -189,34 +189,34 @@ import { SolutionSlide } from './scenes/SolutionSlide';
 
 // Scene durations (from manifest.json, converted to frames at 30fps)
 const SCENE_DURATIONS = {
-  title: Math.ceil(4.2 * 30),      // 126 frames
-  problem: Math.ceil(12.8 * 30),   // 384 frames
-  solution: Math.ceil(15.3 * 30),  // 459 frames
+ title: Math.ceil(4.2 * 30), // 126 frames
+ problem: Math.ceil(12.8 * 30), // 384 frames
+ solution: Math.ceil(15.3 * 30), // 459 frames
 };
 
 export const MainComposition: React.FC = () => {
-  return (
-    <>
-      {/* Scene sequence */}
-      <Series>
-        <Series.Sequence durationInFrames={SCENE_DURATIONS.title}>
-          <TitleSlide />
-        </Series.Sequence>
-        <Series.Sequence durationInFrames={SCENE_DURATIONS.problem}>
-          <ProblemSlide />
-        </Series.Sequence>
-        <Series.Sequence durationInFrames={SCENE_DURATIONS.solution}>
-          <SolutionSlide />
-        </Series.Sequence>
-      </Series>
+ return (
+ <>
+ {/* Scene sequence */}
+ <Series>
+ <Series.Sequence durationInFrames={SCENE_DURATIONS.title}>
+ <TitleSlide />
+ </Series.Sequence>
+ <Series.Sequence durationInFrames={SCENE_DURATIONS.problem}>
+ <ProblemSlide />
+ </Series.Sequence>
+ <Series.Sequence durationInFrames={SCENE_DURATIONS.solution}>
+ <SolutionSlide />
+ </Series.Sequence>
+ </Series>
 
-      {/* Audio track - plays continuously across all scenes */}
-      <Audio src={staticFile('audio/voiceover.mp3')} volume={1} />
+ {/* Audio track - plays continuously across all scenes */}
+ <Audio src={staticFile('audio/voiceover.mp3')} volume={1} />
 
-      {/* Optional: Background music at lower volume */}
-      <Audio src={staticFile('audio/music.mp3')} volume={0.15} />
-    </>
-  );
+ {/* Optional: Background music at lower volume */}
+ <Audio src={staticFile('audio/music.mp3')} volume={0.15} />
+ </>
+ );
 };
 ```
 
@@ -229,17 +229,17 @@ For more control, add audio to each scene individually:
 import { Audio, staticFile, useCurrentFrame } from 'remotion';
 
 export const ProblemSlide: React.FC = () => {
-  const frame = useCurrentFrame();
+ const frame = useCurrentFrame();
 
-  return (
-    <div style={{ /* slide styles */ }}>
-      <h1>The Problem</h1>
-      {/* Scene content */}
+ return (
+ <div style={{ /* slide styles */ }}>
+ <h1>The Problem</h1>
+ {/* Scene content */}
 
-      {/* Audio starts when this scene starts (frame 0 of this sequence) */}
-      <Audio src={staticFile('audio/scenes/scene-02-problem.mp3')} />
-    </div>
-  );
+ {/* Audio starts when this scene starts (frame 0 of this sequence) */}
+ <Audio src={staticFile('audio/scenes/scene-02-problem.mp3')} />
+ </div>
+ );
 };
 ```
 
@@ -255,9 +255,9 @@ const FPS = 30;
 
 // Convert audio durations to frame counts
 export const sceneDurations = manifest.scenes.reduce((acc, scene) => {
-  const name = scene.file.replace(/^scene-\d+-/, '').replace('.mp3', '');
-  acc[name] = Math.ceil(scene.duration * FPS);
-  return acc;
+ const name = scene.file.replace(/^scene-\d+-/, '').replace('.mp3', '');
+ acc[name] = Math.ceil(scene.duration * FPS);
+ return acc;
 }, {} as Record<string, number>);
 
 // Usage in composition:
@@ -271,24 +271,24 @@ import { Audio, Sequence, interpolate, useCurrentFrame } from 'remotion';
 
 // Fade in audio
 export const FadeInAudio: React.FC<{ src: string; fadeFrames?: number }> = ({
-  src,
-  fadeFrames = 30
+ src,
+ fadeFrames = 30
 }) => {
-  const frame = useCurrentFrame();
-  const volume = interpolate(frame, [0, fadeFrames], [0, 1], {
-    extrapolateRight: 'clamp',
-  });
-  return <Audio src={src} volume={volume} />;
+ const frame = useCurrentFrame();
+ const volume = interpolate(frame, [0, fadeFrames], [0, 1], {
+ extrapolateRight: 'clamp',
+ });
+ return <Audio src={src} volume={volume} />;
 };
 
 // Delayed audio start
 export const DelayedAudio: React.FC<{ src: string; delayFrames: number }> = ({
-  src,
-  delayFrames
+ src,
+ delayFrames
 }) => (
-  <Sequence from={delayFrames}>
-    <Audio src={src} />
-  </Sequence>
+ <Sequence from={delayFrames}>
+ <Audio src={src} />
+ </Sequence>
 );
 
 // Usage:
@@ -304,22 +304,22 @@ When a scene has both voiceover and demo video:
 import { Audio, OffthreadVideo, staticFile, useVideoConfig } from 'remotion';
 
 export const DemoScene: React.FC = () => {
-  const { durationInFrames, fps } = useVideoConfig();
+ const { durationInFrames, fps } = useVideoConfig();
 
-  // Calculate playback rate to fit demo into voiceover duration
-  const demoDuration = 45; // seconds (original demo length)
-  const sceneDuration = durationInFrames / fps; // seconds (from voiceover)
-  const playbackRate = demoDuration / sceneDuration;
+ // Calculate playback rate to fit demo into voiceover duration
+ const demoDuration = 45; // seconds (original demo length)
+ const sceneDuration = durationInFrames / fps; // seconds (from voiceover)
+ const playbackRate = demoDuration / sceneDuration;
 
-  return (
-    <>
-      <OffthreadVideo
-        src={staticFile('demos/feature-demo.mp4')}
-        playbackRate={playbackRate}
-      />
-      <Audio src={staticFile('audio/scenes/scene-04-demo.mp3')} />
-    </>
-  );
+ return (
+ <>
+ <OffthreadVideo
+ src={staticFile('demos/feature-demo.mp4')}
+ playbackRate={playbackRate}
+ />
+ <Audio src={staticFile('audio/scenes/scene-04-demo.mp3')} />
+ </>
+ );
 };
 ```
 
@@ -330,23 +330,23 @@ import { Audio, staticFile, delayRender, continueRender } from 'remotion';
 import { useEffect, useState } from 'react';
 
 export const SafeAudio: React.FC<{ src: string }> = ({ src }) => {
-  const [handle] = useState(() => delayRender());
-  const [audioReady, setAudioReady] = useState(false);
+ const [handle] = useState(() => delayRender());
+ const [audioReady, setAudioReady] = useState(false);
 
-  useEffect(() => {
-    const audio = new window.Audio(src);
-    audio.oncanplaythrough = () => {
-      setAudioReady(true);
-      continueRender(handle);
-    };
-    audio.onerror = () => {
-      console.error(`Failed to load audio: ${src}`);
-      continueRender(handle); // Continue without audio rather than hang
-    };
-  }, [src, handle]);
+ useEffect(() => {
+ const audio = new window.Audio(src);
+ audio.oncanplaythrough = () => {
+ setAudioReady(true);
+ continueRender(handle);
+ };
+ audio.onerror = () => {
+ console.error(`Failed to load audio: ${src}`);
+ continueRender(handle); // Continue without audio rather than hang
+ };
+ }, [src, handle]);
 
-  if (!audioReady) return null;
-  return <Audio src={src} />;
+ if (!audioReady) return null;
+ return <Audio src={src} />;
 };
 ```
 

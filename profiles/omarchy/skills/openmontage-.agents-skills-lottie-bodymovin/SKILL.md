@@ -36,8 +36,8 @@ setTimeout(() => anim.playSegments([10, 50], true), 200);
 ```javascript
 // Layer multiple Lotties
 <div className="scene">
-  <Lottie animationData={background} style={{ opacity: 0.6 }} />
-  <Lottie animationData={hero} style={{ zIndex: 10 }} />
+ <Lottie animationData={background} style={{ opacity: 0.6 }} />
+ <Lottie animationData={hero} style={{ zIndex: 10 }} />
 </div>
 ```
 
@@ -86,21 +86,21 @@ In After Effects:
 ```javascript
 // Trigger secondary animation
 mainAnim.addEventListener('complete', () => {
-  secondaryAnim.play();
+ secondaryAnim.play();
 });
 
 // Or sync with frame
 mainAnim.addEventListener('enterFrame', (e) => {
-  if (e.currentTime > 15) particleAnim.play();
+ if (e.currentTime > 15) particleAnim.play();
 });
 ```
 
 ## 9. Timing
 
 ```javascript
-anim.setSpeed(0.5);  // half speed - dramatic
-anim.setSpeed(1);    // normal
-anim.setSpeed(2);    // double speed - snappy
+anim.setSpeed(0.5); // half speed - dramatic
+anim.setSpeed(1); // normal
+anim.setSpeed(2); // double speed - snappy
 
 // Or control frame rate in AE export
 // 24fps = cinematic, 30fps = smooth, 60fps = fluid
@@ -133,9 +133,9 @@ Design principles in AE:
 ```javascript
 // React Lottie with hover
 <Lottie
-  animationData={data}
-  onMouseEnter={() => anim.setDirection(1)}
-  onMouseLeave={() => anim.setDirection(-1)}
+ animationData={data}
+ onMouseEnter={() => anim.setDirection(1)}
+ onMouseLeave={() => anim.setDirection(-1)}
 />
 ```
 
@@ -146,10 +146,10 @@ import Lottie from 'lottie-react';
 import animationData from './animation.json';
 
 <Lottie
-  animationData={animationData}
-  loop={true}
-  autoplay={true}
-  style={{ width: 200, height: 200 }}
+ animationData={animationData}
+ loop={true}
+ autoplay={true}
+ style={{ width: 200, height: 200 }}
 />
 ```
 

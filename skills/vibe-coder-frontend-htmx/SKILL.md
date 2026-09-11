@@ -1,9 +1,9 @@
 ---
 name: frontend-htmx
 description: |
-  Axum + Askama + HTMX stack for single-binary web apps.
-  Use when: building server-rendered UI, lightweight frontends, single deployable binary.
-  Triggers: "htmx", "askama", "templates", "server-rendered", "single binary frontend".
+ Axum + Askama + HTMX stack for single-binary web apps.
+ Use when: building server-rendered UI, lightweight frontends, single deployable binary.
+ Triggers: "htmx", "askama", "templates", "server-rendered", "single binary frontend".
 ---
 
 # Frontend: Axum + Askama + HTMX
@@ -25,8 +25,8 @@ Single binary web apps. No node_modules, no build pipeline.
 [dependencies]
 askama = "0.12"
 askama_axum = "0.4"
-axum-htmx = "0.6"              # HTMX header extractors
-tower-http = { version = "0.6", features = ["fs"] }  # Static files (dev only)
+axum-htmx = "0.6" # HTMX header extractors
+tower-http = { version = "0.6", features = ["fs"] } # Static files (dev only)
 
 # HTMX served from CDN or embedded
 # https://unpkg.com/htmx.org@2.0.4/dist/htmx.min.js
@@ -36,20 +36,20 @@ tower-http = { version = "0.6", features = ["fs"] }  # Static files (dev only)
 
 ```
 src/
-├── lib.rs                 # API + create_app()
-├── main.rs                # Server entry
-├── error.rs               # AppError
+├── lib.rs # API + create_app()
+├── main.rs # Server entry
+├── error.rs # AppError
 └── templates/
-    ├── mod.rs             # Template structs
-    ├── base.html          # Layout with HTMX
-    ├── pages/
-    │   ├── index.html     # Home page
-    │   └── notes.html     # Notes list page
-    └── partials/
-        ├── note_item.html # Single note (for HTMX swap)
-        ├── note_list.html # Notes list partial
-        └── note_form.html # Create/edit form
-templates/                 # Askama looks here by default
+ ├── mod.rs # Template structs
+ ├── base.html # Layout with HTMX
+ ├── pages/
+ │ ├── index.html # Home page
+ │ └── notes.html # Notes list page
+ └── partials/
+ ├── note_item.html # Single note (for HTMX swap)
+ ├── note_list.html # Notes list partial
+ └── note_form.html # Create/edit form
+templates/ # Askama looks here by default
 └── (symlink to src/templates or copy)
 ```
 
@@ -60,19 +60,19 @@ templates/                 # Askama looks here by default
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}App{% endblock %}</title>
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-    <style>
-        /* Minimal CSS - extend as needed */
-        body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 1rem; }
-        .htmx-request { opacity: 0.5; }
-    </style>
-    {% block head %}{% endblock %}
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>{% block title %}App{% endblock %}</title>
+ <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+ <style>
+ /* Minimal CSS - extend as needed */
+ body { font-family: system-ui; max-width: 800px; margin: 0 auto; padding: 1rem; }
+ .htmx-request { opacity: 0.5; }
+ </style>
+ {% block head %}{% endblock %}
 </head>
 <body>
-    {% block content %}{% endblock %}
+ {% block content %}{% endblock %}
 </body>
 </html>
 ```
@@ -86,31 +86,31 @@ use askama::Template;
 #[derive(Template)]
 #[template(path = "pages/index.html")]
 pub struct IndexTemplate {
-    pub title: String,
+ pub title: String,
 }
 
 #[derive(Template)]
 #[template(path = "pages/notes.html")]
 pub struct NotesPageTemplate {
-    pub notes: Vec<Note>,
+ pub notes: Vec<Note>,
 }
 
 #[derive(Template)]
 #[template(path = "partials/note_item.html")]
 pub struct NoteItemTemplate {
-    pub note: Note,
+ pub note: Note,
 }
 
 #[derive(Template)]
 #[template(path = "partials/note_list.html")]
 pub struct NoteListTemplate {
-    pub notes: Vec<Note>,
+ pub notes: Vec<Note>,
 }
 
 #[derive(Template)]
 #[template(path = "partials/note_form.html")]
 pub struct NoteFormTemplate {
-    pub note: Option<Note>,  // None for create, Some for edit
+ pub note: Option<Note>, // None for create, Some for edit
 }
 ```
 
@@ -127,17 +127,17 @@ pub struct NoteFormTemplate {
 
 <!-- Form: POST creates note, swaps into list -->
 <form hx-post="/notes"
-      hx-target="#notes-list"
-      hx-swap="afterbegin"
-      hx-on::after-request="this.reset()">
-    <input type="text" name="title" placeholder="Title" required>
-    <input type="text" name="content" placeholder="Content" required>
-    <button type="submit">Add</button>
+ hx-target="#notes-list"
+ hx-swap="afterbegin"
+ hx-on::after-request="this.reset()">
+ <input type="text" name="title" placeholder="Title" required>
+ <input type="text" name="content" placeholder="Content" required>
+ <button type="submit">Add</button>
 </form>
 
 <!-- Notes list container -->
 <div id="notes-list" hx-get="/notes/list" hx-trigger="load">
-    Loading...
+ Loading...
 </div>
 {% endblock %}
 ```
@@ -147,13 +147,13 @@ pub struct NoteFormTemplate {
 ```html
 <!-- templates/partials/note_item.html -->
 <div id="note-{{ note.id }}" class="note">
-    <strong>{{ note.title }}</strong>
-    <p>{{ note.content }}</p>
-    <button hx-delete="/notes/{{ note.id }}"
-            hx-target="#note-{{ note.id }}"
-            hx-swap="outerHTML">
-        Delete
-    </button>
+ <strong>{{ note.title }}</strong>
+ <p>{{ note.content }}</p>
+ <button hx-delete="/notes/{{ note.id }}"
+ hx-target="#note-{{ note.id }}"
+ hx-swap="outerHTML">
+ Delete
+ </button>
 </div>
 ```
 
@@ -174,67 +174,67 @@ pub struct NoteFormTemplate {
 use askama::Template;
 use askama_axum::IntoResponse;
 use axum::{
-    extract::{Path, State},
-    http::StatusCode,
-    response::Html,
-    routing::{delete, get, post},
-    Form, Router,
+ extract::{Path, State},
+ http::StatusCode,
+ response::Html,
+ routing::{delete, get, post},
+ Form, Router,
 };
 use axum_htmx::HxRequest;
 
 // Page handler - returns full HTML page
 pub async fn notes_page() -> impl IntoResponse {
-    NotesPageTemplate { notes: vec![] }
+ NotesPageTemplate { notes: vec![] }
 }
 
 // Partial handler - returns HTML fragment for HTMX
 pub async fn notes_list(State(db): State<AppState>) -> impl IntoResponse {
-    let notes = db.get_all_notes().await;
-    NoteListTemplate { notes }
+ let notes = db.get_all_notes().await;
+ NoteListTemplate { notes }
 }
 
 // Create handler - returns new item partial
 pub async fn create_note(
-    State(db): State<AppState>,
-    Form(input): Form<CreateNote>,
+ State(db): State<AppState>,
+ Form(input): Form<CreateNote>,
 ) -> impl IntoResponse {
-    let note = db.create_note(input).await;
-    (StatusCode::CREATED, NoteItemTemplate { note })
+ let note = db.create_note(input).await;
+ (StatusCode::CREATED, NoteItemTemplate { note })
 }
 
 // Delete handler - returns empty (HTMX removes element)
 pub async fn delete_note(
-    State(db): State<AppState>,
-    Path(id): Path<i64>,
+ State(db): State<AppState>,
+ Path(id): Path<i64>,
 ) -> impl IntoResponse {
-    db.delete_note(id).await;
-    StatusCode::OK
+ db.delete_note(id).await;
+ StatusCode::OK
 }
 
 // Conditional: full page vs partial based on HX-Request header
 pub async fn smart_notes(
-    HxRequest(is_htmx): HxRequest,
-    State(db): State<AppState>,
+ HxRequest(is_htmx): HxRequest,
+ State(db): State<AppState>,
 ) -> impl IntoResponse {
-    let notes = db.get_all_notes().await;
-    if is_htmx {
-        // HTMX request - return partial
-        NoteListTemplate { notes }.into_response()
-    } else {
-        // Full page request
-        NotesPageTemplate { notes }.into_response()
-    }
+ let notes = db.get_all_notes().await;
+ if is_htmx {
+ // HTMX request - return partial
+ NoteListTemplate { notes }.into_response()
+ } else {
+ // Full page request
+ NotesPageTemplate { notes }.into_response()
+ }
 }
 
 pub fn create_app() -> Router<AppState> {
-    Router::new()
-        // Pages
-        .route("/", get(notes_page))
-        // Partials (HTMX targets)
-        .route("/notes/list", get(notes_list))
-        // API actions
-        .route("/notes", post(create_note))
-        .route("/notes/:id", delete(delete_note))
+ Router::new()
+ // Pages
+ .route("/", get(notes_page))
+ // Partials (HTMX targets)
+ .route("/notes/list", get(notes_list))
+ // API actions
+ .route("/notes", post(create_note))
+ .route("/notes/:id", delete(delete_note))
 }
 ```
 
@@ -261,25 +261,25 @@ pub fn create_app() -> Router<AppState> {
 
 <!-- Delete with confirmation -->
 <button hx-delete="/items/1"
-        hx-confirm="Are you sure?"
-        hx-target="closest .item"
-        hx-swap="outerHTML">
+ hx-confirm="Are you sure?"
+ hx-target="closest .item"
+ hx-swap="outerHTML">
 
 <!-- Inline editing -->
 <span hx-get="/items/1/edit" hx-trigger="click" hx-swap="outerHTML">
-    Click to edit
+ Click to edit
 </span>
 
 <!-- Search with debounce -->
 <input type="search"
-       hx-get="/search"
-       hx-trigger="keyup changed delay:300ms"
-       hx-target="#results">
+ hx-get="/search"
+ hx-trigger="keyup changed delay:300ms"
+ hx-target="#results">
 
 <!-- Infinite scroll -->
 <div hx-get="/items?page=2"
-     hx-trigger="revealed"
-     hx-swap="afterend">
+ hx-trigger="revealed"
+ hx-swap="afterend">
 ```
 
 ### Response Headers (axum-htmx)
@@ -289,17 +289,17 @@ use axum_htmx::{HxRedirect, HxRefresh, HxTrigger};
 
 // Redirect after action
 pub async fn logout() -> impl IntoResponse {
-    (HxRedirect("/login".parse().unwrap()), StatusCode::OK)
+ (HxRedirect("/login".parse().unwrap()), StatusCode::OK)
 }
 
 // Trigger client-side event
 pub async fn save() -> impl IntoResponse {
-    (HxTrigger::normal("saved"), "OK")
+ (HxTrigger::normal("saved"), "OK")
 }
 
 // Refresh page
 pub async fn reset() -> impl IntoResponse {
-    HxRefresh(true)
+ HxRefresh(true)
 }
 ```
 
@@ -308,49 +308,49 @@ pub async fn reset() -> impl IntoResponse {
 ```rust
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use axum_test::TestServer;
+ use super::*;
+ use axum_test::TestServer;
 
-    #[tokio::test]
-    async fn test_notes_page_returns_html() {
-        let app = create_app();
-        let server = TestServer::new(app).unwrap();
+ #[tokio::test]
+ async fn test_notes_page_returns_html() {
+ let app = create_app();
+ let server = TestServer::new(app).unwrap();
 
-        let response = server.get("/").await;
+ let response = server.get("/").await;
 
-        response.assert_status_ok();
-        response.assert_text_contains("<title>Notes</title>");
-        response.assert_text_contains("hx-get");
-    }
+ response.assert_status_ok();
+ response.assert_text_contains("<title>Notes</title>");
+ response.assert_text_contains("hx-get");
+ }
 
-    #[tokio::test]
-    async fn test_htmx_partial_returns_fragment() {
-        let app = create_app();
-        let server = TestServer::new(app).unwrap();
+ #[tokio::test]
+ async fn test_htmx_partial_returns_fragment() {
+ let app = create_app();
+ let server = TestServer::new(app).unwrap();
 
-        let response = server
-            .get("/notes/list")
-            .add_header("HX-Request", "true")
-            .await;
+ let response = server
+ .get("/notes/list")
+ .add_header("HX-Request", "true")
+ .await;
 
-        response.assert_status_ok();
-        // Should NOT contain full HTML structure
-        assert!(!response.text().contains("<!DOCTYPE"));
-    }
+ response.assert_status_ok();
+ // Should NOT contain full HTML structure
+ assert!(!response.text().contains("<!DOCTYPE"));
+ }
 
-    #[tokio::test]
-    async fn test_create_note_returns_partial() {
-        let app = create_app();
-        let server = TestServer::new(app).unwrap();
+ #[tokio::test]
+ async fn test_create_note_returns_partial() {
+ let app = create_app();
+ let server = TestServer::new(app).unwrap();
 
-        let response = server
-            .post("/notes")
-            .form(&[("title", "Test"), ("content", "Content")])
-            .await;
+ let response = server
+ .post("/notes")
+ .form(&[("title", "Test"), ("content", "Content")])
+ .await;
 
-        response.assert_status(StatusCode::CREATED);
-        response.assert_text_contains("Test");
-    }
+ response.assert_status(StatusCode::CREATED);
+ response.assert_text_contains("Test");
+ }
 }
 ```
 
@@ -367,10 +367,10 @@ use axum::response::Html;
 const HTMX_JS: &str = include_str!("static/htmx.min.js");
 
 pub async fn htmx_js() -> impl IntoResponse {
-    (
-        [("content-type", "application/javascript")],
-        HTMX_JS,
-    )
+ (
+ [("content-type", "application/javascript")],
+ HTMX_JS,
+ )
 }
 
 // Add route
@@ -413,11 +413,11 @@ use axum::{routing::get, Router};
 <!DOCTYPE html>
 <html>
 <head>
-    <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+ <script src="https://unpkg.com/htmx.org@2.0.4"></script>
 </head>
 <body>
-    <h1>{{ title }}</h1>
-    <button hx-get="/click" hx-swap="outerHTML">Click me</button>
+ <h1>{{ title }}</h1>
+ <button hx-get="/click" hx-swap="outerHTML">Click me</button>
 </body>
 </html>
 "#, ext = "html")]
@@ -430,23 +430,23 @@ struct ButtonTemplate { count: i32 }
 static COUNTER: std::sync::atomic::AtomicI32 = std::sync::atomic::AtomicI32::new(0);
 
 async fn index() -> IndexTemplate {
-    IndexTemplate { title: "HTMX Demo".into() }
+ IndexTemplate { title: "HTMX Demo".into() }
 }
 
 async fn click() -> ButtonTemplate {
-    let count = COUNTER.fetch_add(1, std::sync::atomic::Ordering::SeqCst) + 1;
-    ButtonTemplate { count }
+ let count = COUNTER.fetch_add(1, std::sync::atomic::Ordering::SeqCst) + 1;
+ ButtonTemplate { count }
 }
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new()
-        .route("/", get(index))
-        .route("/click", get(click));
+ let app = Router::new()
+ .route("/", get(index))
+ .route("/click", get(click));
 
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
-    println!("Listening on http://localhost:3000");
-    axum::serve(listener, app).await.unwrap();
+ let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+ println!("Listening on http://localhost:3000");
+ axum::serve(listener, app).await.unwrap();
 }
 ```
 

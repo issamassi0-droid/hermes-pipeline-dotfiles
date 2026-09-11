@@ -1,10 +1,10 @@
 ---
 name: building-role-mining-for-rbac-optimization
 description: Apply bottom-up and top-down role mining techniques, including clustering
-  algorithms and formal concept analysis, to discover optimal RBAC roles from existing
-  user-permission assignments, consolidating overlapping roles and enforcing least
-  privilege. Use when an identity program needs to reduce role explosion or redesign
-  its RBAC role set from access data.
+ algorithms and formal concept analysis, to discover optimal RBAC roles from existing
+ user-permission assignments, consolidating overlapping roles and enforcing least
+ privilege. Use when an identity program needs to reduce role explosion or redesign
+ its RBAC role set from access data.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -95,10 +95,10 @@ assignments = pd.read_csv("user_permissions.csv")
 
 # Create binary user-permission matrix (UPA matrix)
 upa_matrix = assignments.pivot_table(
-    index="user_id",
-    columns="permission_id",
-    aggfunc="size",
-    fill_value=0
+ index="user_id",
+ columns="permission_id",
+ aggfunc="size",
+ fill_value=0
 )
 upa_matrix = (upa_matrix > 0).astype(int)
 
@@ -115,120 +115,120 @@ from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import silhouette_score
 
 def find_optimal_clusters(matrix, max_k=50):
-    """Find optimal number of roles using silhouette analysis."""
-    scores = []
-    for k in range(2, min(max_k, matrix.shape[0])):
-        clustering = AgglomerativeClustering(
-            n_clusters=k, metric="jaccard", linkage="average"
-        )
-        labels = clustering.fit_predict(matrix)
-        score = silhouette_score(matrix, labels, metric="jaccard")
-        scores.append((k, score))
+ """Find optimal number of roles using silhouette analysis."""
+ scores = []
+ for k in range(2, min(max_k, matrix.shape[0])):
+ clustering = AgglomerativeClustering(
+ n_clusters=k, metric="jaccard", linkage="average"
+ )
+ labels = clustering.fit_predict(matrix)
+ score = silhouette_score(matrix, labels, metric="jaccard")
+ scores.append((k, score))
 
-    optimal_k = max(scores, key=lambda x: x[1])[0]
-    return optimal_k, scores
+ optimal_k = max(scores, key=lambda x: x[1])[0]
+ return optimal_k, scores
 
 def mine_roles_clustering(upa_matrix, n_clusters):
-    """Mine roles using hierarchical clustering on Jaccard distance."""
-    clustering = AgglomerativeClustering(
-        n_clusters=n_clusters, metric="jaccard", linkage="average"
-    )
-    user_matrix = upa_matrix.values
-    labels = clustering.fit_predict(user_matrix)
+ """Mine roles using hierarchical clustering on Jaccard distance."""
+ clustering = AgglomerativeClustering(
+ n_clusters=n_clusters, metric="jaccard", linkage="average"
+ )
+ user_matrix = upa_matrix.values
+ labels = clustering.fit_predict(user_matrix)
 
-    roles = {}
-    for cluster_id in range(n_clusters):
-        cluster_users = upa_matrix.index[labels == cluster_id]
-        cluster_permissions = upa_matrix.loc[cluster_users]
+ roles = {}
+ for cluster_id in range(n_clusters):
+ cluster_users = upa_matrix.index[labels == cluster_id]
+ cluster_permissions = upa_matrix.loc[cluster_users]
 
-        # Core role = permissions held by >80% of cluster members
-        permission_frequency = cluster_permissions.mean()
-        core_permissions = permission_frequency[permission_frequency >= 0.8].index.tolist()
+ # Core role = permissions held by >80% of cluster members
+ permission_frequency = cluster_permissions.mean()
+ core_permissions = permission_frequency[permission_frequency >= 0.8].index.tolist()
 
-        roles[f"Role_{cluster_id}"] = {
-            "permissions": core_permissions,
-            "user_count": len(cluster_users),
-            "users": cluster_users.tolist(),
-            "coverage": permission_frequency[permission_frequency >= 0.8].mean()
-        }
+ roles[f"Role_{cluster_id}"] = {
+ "permissions": core_permissions,
+ "user_count": len(cluster_users),
+ "users": cluster_users.tolist(),
+ "coverage": permission_frequency[permission_frequency >= 0.8].mean()
+ }
 
-    return roles, labels
+ return roles, labels
 ```
 
 ### Step 3: Formal Concept Analysis
 
 ```python
 def mine_roles_fca(upa_matrix, min_support=3):
-    """Mine roles using Formal Concept Analysis (frequent closed itemsets)."""
-    from itertools import combinations
+ """Mine roles using Formal Concept Analysis (frequent closed itemsets)."""
+ from itertools import combinations
 
-    users = upa_matrix.index.tolist()
-    permissions = upa_matrix.columns.tolist()
+ users = upa_matrix.index.tolist()
+ permissions = upa_matrix.columns.tolist()
 
-    concepts = []
+ concepts = []
 
-    # Find all maximal permission sets shared by at least min_support users
-    for size in range(len(permissions), 0, -1):
-        for perm_combo in combinations(permissions, size):
-            perm_set = set(perm_combo)
-            # Find users who have ALL permissions in this set
-            matching_users = []
-            for user in users:
-                user_perms = set(upa_matrix.columns[upa_matrix.loc[user] == 1])
-                if perm_set.issubset(user_perms):
-                    matching_users.append(user)
+ # Find all maximal permission sets shared by at least min_support users
+ for size in range(len(permissions), 0, -1):
+ for perm_combo in combinations(permissions, size):
+ perm_set = set(perm_combo)
+ # Find users who have ALL permissions in this set
+ matching_users = []
+ for user in users:
+ user_perms = set(upa_matrix.columns[upa_matrix.loc[user] == 1])
+ if perm_set.issubset(user_perms):
+ matching_users.append(user)
 
-            if len(matching_users) >= min_support:
-                # Check if this is a closed concept (no superset with same extent)
-                is_closed = True
-                for concept in concepts:
-                    if set(matching_users) == set(concept["users"]) and \
-                       perm_set.issubset(set(concept["permissions"])):
-                        is_closed = False
-                        break
+ if len(matching_users) >= min_support:
+ # Check if this is a closed concept (no superset with same extent)
+ is_closed = True
+ for concept in concepts:
+ if set(matching_users) == set(concept["users"]) and \
+ perm_set.issubset(set(concept["permissions"])):
+ is_closed = False
+ break
 
-                if is_closed:
-                    concepts.append({
-                        "permissions": list(perm_set),
-                        "users": matching_users,
-                        "support": len(matching_users)
-                    })
+ if is_closed:
+ concepts.append({
+ "permissions": list(perm_set),
+ "users": matching_users,
+ "support": len(matching_users)
+ })
 
-        if len(concepts) > 100:  # Limit for performance
-            break
+ if len(concepts) > 100: # Limit for performance
+ break
 
-    return concepts
+ return concepts
 ```
 
 ### Step 4: Evaluate and Select Roles
 
 ```python
 def evaluate_role_set(roles, upa_matrix):
-    """Evaluate the quality of a mined role set."""
-    total_assignments = upa_matrix.values.sum()
-    covered_assignments = 0
-    extra_assignments = 0
+ """Evaluate the quality of a mined role set."""
+ total_assignments = upa_matrix.values.sum()
+ covered_assignments = 0
+ extra_assignments = 0
 
-    for role_name, role_data in roles.items():
-        role_perms = set(role_data["permissions"])
-        for user in role_data["users"]:
-            user_perms = set(upa_matrix.columns[upa_matrix.loc[user] == 1])
-            covered = role_perms.intersection(user_perms)
-            extra = role_perms - user_perms
-            covered_assignments += len(covered)
-            extra_assignments += len(extra)
+ for role_name, role_data in roles.items():
+ role_perms = set(role_data["permissions"])
+ for user in role_data["users"]:
+ user_perms = set(upa_matrix.columns[upa_matrix.loc[user] == 1])
+ covered = role_perms.intersection(user_perms)
+ extra = role_perms - user_perms
+ covered_assignments += len(covered)
+ extra_assignments += len(extra)
 
-    metrics = {
-        "total_roles": len(roles),
-        "total_assignments": total_assignments,
-        "covered_assignments": covered_assignments,
-        "coverage_rate": covered_assignments / total_assignments if total_assignments else 0,
-        "extra_permissions": extra_assignments,
-        "deviation_rate": extra_assignments / (covered_assignments + extra_assignments) if (covered_assignments + extra_assignments) else 0,
-        "avg_role_size": np.mean([len(r["permissions"]) for r in roles.values()]),
-        "avg_users_per_role": np.mean([r["user_count"] for r in roles.values()]),
-    }
-    return metrics
+ metrics = {
+ "total_roles": len(roles),
+ "total_assignments": total_assignments,
+ "covered_assignments": covered_assignments,
+ "coverage_rate": covered_assignments / total_assignments if total_assignments else 0,
+ "extra_permissions": extra_assignments,
+ "deviation_rate": extra_assignments / (covered_assignments + extra_assignments) if (covered_assignments + extra_assignments) else 0,
+ "avg_role_size": np.mean([len(r["permissions"]) for r in roles.values()]),
+ "avg_users_per_role": np.mean([r["user_count"] for r in roles.values()]),
+ }
+ return metrics
 ```
 
 ### Step 5: Business Validation

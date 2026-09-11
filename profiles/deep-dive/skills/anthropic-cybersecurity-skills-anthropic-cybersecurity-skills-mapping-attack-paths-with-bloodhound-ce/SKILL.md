@@ -49,21 +49,21 @@ As of recent CE releases, when both an AD domain and its synced Entra ID tenant 
 - A foothold: any valid domain user (for SharpHound) and/or valid Entra credentials or a token (for AzureHound)
 - Docker + Docker Compose on the analysis workstation
 - The collectors:
-  ```bash
-  # Deploy BloodHound CE (pulls Postgres, Neo4j, and the BloodHound API)
-  curl -L https://ghst.ly/getbhce -o docker-compose.yml
-  docker compose pull
-  docker compose up -d
-  # Reveal the randomly generated initial admin password
-  docker compose logs bloodhound | grep -i "Initial Password"
+ ```bash
+ # Deploy BloodHound CE (pulls Postgres, Neo4j, and the BloodHound API)
+ curl -L https://ghst.ly/getbhce -o docker-compose.yml
+ docker compose pull
+ docker compose up -d
+ # Reveal the randomly generated initial admin password
+ docker compose logs bloodhound | grep -i "Initial Password"
 
-  # AzureHound (download the release binary for your OS from the GitHub releases page)
-  #   https://github.com/SpecterOps/AzureHound/releases
-  chmod +x ./azurehound
+ # AzureHound (download the release binary for your OS from the GitHub releases page)
+ # https://github.com/SpecterOps/AzureHound/releases
+ chmod +x ./azurehound
 
-  # SharpHound CE collector: download SharpHound.zip from the BloodHound CE
-  # web UI (Administration -> Download Collectors), transfer to a domain-joined host.
-  ```
+ # SharpHound CE collector: download SharpHound.zip from the BloodHound CE
+ # web UI (Administration -> Download Collectors), transfer to a domain-joined host.
+ ```
 
 ## Objectives
 
@@ -91,7 +91,7 @@ Bring up the stack, retrieve the generated password, and reset it on first login
 ```bash
 docker compose up -d
 docker compose logs bloodhound 2>&1 | grep -i "Initial Password"
-# Browse to http://localhost:8080  (default user: admin)
+# Browse to http://localhost:8080 (default user: admin)
 ```
 
 ### Step 2: Collect on-prem AD data with SharpHound
@@ -135,18 +135,18 @@ Upload the SharpHound ZIP and the AzureHound JSON through **Administration -> Fi
 ```bash
 # API ingest (after obtaining a JWT from /api/v2/login)
 TOKEN=$(curl -s http://localhost:8080/api/v2/login \
-  -H 'Content-Type: application/json' \
-  -d '{"login_method":"secret","username":"admin","secret":"<password>"}' \
-  | python -c "import sys,json;print(json.load(sys.stdin)['data']['session_token'])")
+ -H 'Content-Type: application/json' \
+ -d '{"login_method":"secret","username":"admin","secret":"<password>"}' \
+ | python -c "import sys,json;print(json.load(sys.stdin)['data']['session_token'])")
 
 # Start a file-upload job, then PUT the collector ZIP/JSON to it
 JOB=$(curl -s -X POST http://localhost:8080/api/v2/file-upload/start \
-  -H "Authorization: Bearer $TOKEN" | python -c "import sys,json;print(json.load(sys.stdin)['data']['id'])")
+ -H "Authorization: Bearer $TOKEN" | python -c "import sys,json;print(json.load(sys.stdin)['data']['id'])")
 curl -s -X PUT "http://localhost:8080/api/v2/file-upload/$JOB" \
-  -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/zip' \
-  --data-binary @C:/Temp/BloodHound.zip
+ -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/zip' \
+ --data-binary @C:/Temp/BloodHound.zip
 curl -s -X POST "http://localhost:8080/api/v2/file-upload/$JOB/end" \
-  -H "Authorization: Bearer $TOKEN"
+ -H "Authorization: Bearer $TOKEN"
 ```
 
 ### Step 5: Mark owned principals

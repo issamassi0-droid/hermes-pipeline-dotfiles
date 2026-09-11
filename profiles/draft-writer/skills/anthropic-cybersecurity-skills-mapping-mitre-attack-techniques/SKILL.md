@@ -1,13 +1,13 @@
 ---
 name: mapping-mitre-attack-techniques
 description: 'Maps observed adversary behaviors, security alerts, and detection rules
-  to MITRE ATT&CK techniques and sub-techniques to quantify detection coverage and
-  guide control prioritization. Use when building an ATT&CK-based coverage heatmap,
-  tagging SIEM alerts with technique IDs, aligning security controls to adversary
-  playbooks, or reporting threat exposure to executives. Activates for requests involving
-  ATT&CK Navigator, Sigma rules, MITRE D3FEND, or coverage gap analysis.
+ to MITRE ATT&CK techniques and sub-techniques to quantify detection coverage and
+ guide control prioritization. Use when building an ATT&CK-based coverage heatmap,
+ tagging SIEM alerts with technique IDs, aligning security controls to adversary
+ playbooks, or reporting threat exposure to executives. Activates for requests involving
+ ATT&CK Navigator, Sigma rules, MITRE D3FEND, or coverage gap analysis.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -72,7 +72,7 @@ Use this skill when:
 Download the latest ATT&CK STIX bundle for the relevant matrix (Enterprise, Mobile, ICS):
 ```bash
 curl -o enterprise-attack.json \
-  https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json
+ https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json
 ```
 
 Use the mitreattack-python library to query techniques programmatically:
@@ -82,7 +82,7 @@ from mitreattack.stix20 import MitreAttackData
 mitre = MitreAttackData("enterprise-attack.json")
 techniques = mitre.get_techniques(remove_revoked_deprecated=True)
 for t in techniques[:5]:
-    print(t["external_references"][0]["external_id"], t["name"])
+ print(t["external_references"][0]["external_id"], t["name"])
 ```
 
 ### Step 2: Map Existing Detections to Techniques
@@ -90,9 +90,9 @@ for t in techniques[:5]:
 For each SIEM rule or Sigma file, assign ATT&CK technique IDs. Sigma rules support native ATT&CK tagging:
 ```yaml
 tags:
-  - attack.execution
-  - attack.t1059.001  # PowerShell
-  - attack.t1059.003  # Windows Command Shell
+ - attack.execution
+ - attack.t1059.001 # PowerShell
+ - attack.t1059.003 # Windows Command Shell
 ```
 
 Create a coverage matrix: list each technique ID and mark as: Detected (alert fires), Logged (data present but no alert), Blind (no data source).
@@ -105,7 +105,7 @@ groups = mitre.get_groups()
 apt29 = mitre.get_object_by_attack_id("G0016", "groups")
 apt29_techniques = mitre.get_techniques_used_by_group(apt29)
 for t in apt29_techniques:
-    print(t["object"]["external_references"][0]["external_id"])
+ print(t["object"]["external_references"][0]["external_id"])
 ```
 
 Prioritize adding detection for techniques used by high-priority threat groups where your coverage is blind.
@@ -117,18 +117,18 @@ Export coverage scores as ATT&CK Navigator JSON layer:
 import json
 
 layer = {
-    "name": "SOC Detection Coverage Q1 2025",
-    "versions": {"attack": "14", "navigator": "4.9", "layer": "4.5"},
-    "domain": "enterprise-attack",
-    "techniques": [
-        {"techniqueID": "T1059.001", "score": 100, "comment": "Splunk rule: PS_Encoded_Command"},
-        {"techniqueID": "T1071.001", "score": 50, "comment": "Logged only, no alert"},
-        {"techniqueID": "T1055", "score": 0, "comment": "No coverage — blind spot"}
-    ],
-    "gradient": {"colors": ["#ff6666", "#ffe766", "#8ec843"], "minValue": 0, "maxValue": 100}
+ "name": "SOC Detection Coverage Q1 2025",
+ "versions": {"attack": "14", "navigator": "4.9", "layer": "4.5"},
+ "domain": "enterprise-attack",
+ "techniques": [
+ {"techniqueID": "T1059.001", "score": 100, "comment": "Splunk rule: PS_Encoded_Command"},
+ {"techniqueID": "T1071.001", "score": 50, "comment": "Logged only, no alert"},
+ {"techniqueID": "T1055", "score": 0, "comment": "No coverage — blind spot"}
+ ],
+ "gradient": {"colors": ["#ff6666", "#ffe766", "#8ec843"], "minValue": 0, "maxValue": 100}
 }
 with open("coverage_layer.json", "w") as f:
-    json.dump(layer, f)
+ json.dump(layer, f)
 ```
 
 Import layer into ATT&CK Navigator (https://mitre-attack.github.io/attack-navigator/) for visualization.

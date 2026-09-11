@@ -1,7 +1,7 @@
 ---
 name: implementing-aqua-security-for-container-scanning
 description: Deploy Aqua Security's Trivy scanner to detect vulnerabilities, misconfigurations,
-  secrets, and license issues in container images across CI/CD pipelines and registries.
+ secrets, and license issues in container images across CI/CD pipelines and registries.
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -92,10 +92,10 @@ The Trivy Operator runs inside a Kubernetes cluster and continuously scans workl
 helm repo add aqua https://aquasecurity.github.io/helm-charts/
 helm repo update
 helm install trivy-operator aqua/trivy-operator \
-  --namespace trivy-system \
-  --create-namespace \
-  --set trivy.severity="HIGH,CRITICAL" \
-  --set operator.scanJobTimeout="5m"
+ --namespace trivy-system \
+ --create-namespace \
+ --set trivy.severity="HIGH,CRITICAL" \
+ --set operator.scanJobTimeout="5m"
 ```
 
 The operator creates VulnerabilityReport and ConfigAuditReport custom resources for each workload.
@@ -120,82 +120,82 @@ trivy config ./k8s-manifests/
 ```yaml
 name: Container Security Scan
 on:
-  push:
-    branches: [main]
-  pull_request:
+ push:
+ branches: [main]
+ pull_request:
 
 jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ scan:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t myapp:${{ github.sha }} .
+ - name: Build Docker image
+ run: docker build -t myapp:${{ github.sha }} .
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'myapp:${{ github.sha }}'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
+ - name: Run Trivy vulnerability scanner
+ uses: aquasecurity/trivy-action@master
+ with:
+ image-ref: 'myapp:${{ github.sha }}'
+ format: 'sarif'
+ output: 'trivy-results.sarif'
+ severity: 'CRITICAL,HIGH'
+ exit-code: '1'
 
-      - name: Upload Trivy scan results to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
+ - name: Upload Trivy scan results to GitHub Security tab
+ uses: github/codeql-action/upload-sarif@v3
+ if: always()
+ with:
+ sarif_file: 'trivy-results.sarif'
 ```
 
 ### GitLab CI
 
 ```yaml
 container_scanning:
-  stage: security
-  image:
-    name: aquasec/trivy:latest
-    entrypoint: [""]
-  variables:
-    FULL_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
-  script:
-    - trivy image --exit-code 0 --format template --template "@/contrib/gitlab.tpl"
-      --output gl-container-scanning-report.json $FULL_IMAGE_NAME
-    - trivy image --exit-code 1 --severity CRITICAL $FULL_IMAGE_NAME
-  artifacts:
-    reports:
-      container_scanning: gl-container-scanning-report.json
+ stage: security
+ image:
+ name: aquasec/trivy:latest
+ entrypoint: [""]
+ variables:
+ FULL_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+ script:
+ - trivy image --exit-code 0 --format template --template "@/contrib/gitlab.tpl"
+ --output gl-container-scanning-report.json $FULL_IMAGE_NAME
+ - trivy image --exit-code 1 --severity CRITICAL $FULL_IMAGE_NAME
+ artifacts:
+ reports:
+ container_scanning: gl-container-scanning-report.json
 ```
 
 ### Jenkins Pipeline
 
 ```groovy
 pipeline {
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                sh 'docker build -t myapp:${BUILD_NUMBER} .'
-            }
-        }
-        stage('Security Scan') {
-            steps {
-                sh '''
-                    trivy image --exit-code 1 \
-                      --severity HIGH,CRITICAL \
-                      --format json \
-                      --output trivy-report.json \
-                      myapp:${BUILD_NUMBER}
-                '''
-            }
-            post {
-                always {
-                    archiveArtifacts artifacts: 'trivy-report.json'
-                }
-            }
-        }
-    }
+ agent any
+ stages {
+ stage('Build') {
+ steps {
+ sh 'docker build -t myapp:${BUILD_NUMBER} .'
+ }
+ }
+ stage('Security Scan') {
+ steps {
+ sh '''
+ trivy image --exit-code 1 \
+ --severity HIGH,CRITICAL \
+ --format json \
+ --output trivy-report.json \
+ myapp:${BUILD_NUMBER}
+ '''
+ }
+ post {
+ always {
+ archiveArtifacts artifacts: 'trivy-report.json'
+ }
+ }
+ }
+ }
 }
 ```
 
@@ -209,15 +209,15 @@ Create `.trivy/policy.rego` for custom policy enforcement:
 package trivy
 
 deny[msg] {
-    input.Results[_].Vulnerabilities[_].Severity == "CRITICAL"
-    msg := "Critical vulnerabilities found in image"
+ input.Results[_].Vulnerabilities[_].Severity == "CRITICAL"
+ msg := "Critical vulnerabilities found in image"
 }
 
 deny[msg] {
-    input.Results[_].Vulnerabilities[vuln]
-    vuln.FixedVersion != ""
-    vuln.Severity == "HIGH"
-    msg := sprintf("Fixable HIGH vulnerability: %s", [vuln.VulnerabilityID])
+ input.Results[_].Vulnerabilities[vuln]
+ vuln.FixedVersion != ""
+ vuln.Severity == "HIGH"
+ msg := sprintf("Fixable HIGH vulnerability: %s", [vuln.VulnerabilityID])
 }
 ```
 

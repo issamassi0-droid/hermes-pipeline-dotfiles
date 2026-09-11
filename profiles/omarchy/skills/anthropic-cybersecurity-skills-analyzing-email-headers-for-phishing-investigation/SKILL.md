@@ -1,10 +1,10 @@
 ---
 name: analyzing-email-headers-for-phishing-investigation
 description: Parse and analyze email headers (Received chain, Return-Path, Message-ID)
-  to trace the true origin of a phishing email and validate SPF, DKIM, and DMARC
-  results to confirm or rule out sender spoofing. Use when triaging a suspicious or
-  reported email, investigating a phishing incident, or verifying whether a message's
-  sender domain was spoofed.
+ to trace the true origin of a phishing email and validate SPF, DKIM, and DMARC
+ results to confirm or rule out sender spoofing. Use when triaging a suspicious or
+ reported email, investigating a phishing incident, or verifying whether a message's
+ sender domain was spoofed.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -29,37 +29,37 @@ mitre_attack:
 - T1566.002
 - T1598.003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - initial-access
-  - stealth
-  - resource-development
-  techniques:
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1672
-    name: Email Spoofing
-    tactic: stealth
-    source: attack
-  - id: F1032
-    name: Impersonate Official
-    tactic: initial-access
-    source: f3
-  - id: T1583.001
-    name: 'Acquire Infrastructure: Domains'
-    tactic: resource-development
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - initial-access
+ - stealth
+ - resource-development
+ techniques:
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1672
+ name: Email Spoofing
+ tactic: stealth
+ source: attack
+ - id: F1032
+ name: Impersonate Official
+ tactic: initial-access
+ source: f3
+ - id: T1583.001
+ name: 'Acquire Infrastructure: Domains'
+ tactic: resource-development
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
 ---
 
 # Analyzing Email Headers for Phishing Investigation
@@ -90,7 +90,7 @@ mitre_f3:
 
 # If working with EML file from forensic image
 cp /mnt/evidence/Users/suspect/AppData/Local/Microsoft/Outlook/phishing_email.eml \
-   /cases/case-2024-001/email/
+ /cases/case-2024-001/email/
 
 # If working with PST file, extract individual messages
 pip install pypff
@@ -102,16 +102,16 @@ pst.open("/cases/case-2024-001/email/outlook.pst")
 root = pst.get_root_folder()
 
 def extract_messages(folder, path=""):
-    for i in range(folder.get_number_of_sub_messages()):
-        msg = folder.get_sub_message(i)
-        headers = msg.get_transport_headers()
-        subject = msg.get_subject()
-        if headers:
-            filename = f"/cases/case-2024-001/email/msg_{i}_{subject[:30]}.txt"
-            with open(filename, 'w') as f:
-                f.write(headers)
-    for i in range(folder.get_number_of_sub_folders()):
-        extract_messages(folder.get_sub_folder(i))
+ for i in range(folder.get_number_of_sub_messages()):
+ msg = folder.get_sub_message(i)
+ headers = msg.get_transport_headers()
+ subject = msg.get_subject()
+ if headers:
+ filename = f"/cases/case-2024-001/email/msg_{i}_{subject[:30]}.txt"
+ with open(filename, 'w') as f:
+ f.write(headers)
+ for i in range(folder.get_number_of_sub_folders()):
+ extract_messages(folder.get_sub_folder(i))
 
 extract_messages(root)
 PYEOF
@@ -126,30 +126,30 @@ import email
 from email import policy
 
 with open('/cases/case-2024-001/email/phishing_email.eml', 'r') as f:
-    msg = email.message_from_file(f, policy=policy.default)
+ msg = email.message_from_file(f, policy=policy.default)
 
 print("=== KEY HEADER FIELDS ===")
-print(f"From:          {msg['From']}")
-print(f"To:            {msg['To']}")
-print(f"Subject:       {msg['Subject']}")
-print(f"Date:          {msg['Date']}")
-print(f"Message-ID:    {msg['Message-ID']}")
-print(f"Reply-To:      {msg['Reply-To']}")
-print(f"Return-Path:   {msg['Return-Path']}")
-print(f"X-Mailer:      {msg['X-Mailer']}")
+print(f"From: {msg['From']}")
+print(f"To: {msg['To']}")
+print(f"Subject: {msg['Subject']}")
+print(f"Date: {msg['Date']}")
+print(f"Message-ID: {msg['Message-ID']}")
+print(f"Reply-To: {msg['Reply-To']}")
+print(f"Return-Path: {msg['Return-Path']}")
+print(f"X-Mailer: {msg['X-Mailer']}")
 print(f"X-Originating-IP: {msg['X-Originating-IP']}")
 
 print("\n=== RECEIVED HEADERS (bottom-up = chronological) ===")
 received_headers = msg.get_all('Received')
 if received_headers:
-    for i, header in enumerate(reversed(received_headers)):
-        print(f"\nHop {i+1}: {header.strip()}")
+ for i, header in enumerate(reversed(received_headers)):
+ print(f"\nHop {i+1}: {header.strip()}")
 
 print("\n=== AUTHENTICATION RESULTS ===")
 auth_results = msg.get_all('Authentication-Results')
 if auth_results:
-    for result in auth_results:
-        print(result)
+ for result in auth_results:
+ print(result)
 
 print(f"\nARC-Authentication-Results: {msg.get('ARC-Authentication-Results', 'Not present')}")
 print(f"Received-SPF: {msg.get('Received-SPF', 'Not present')}")
@@ -181,12 +181,12 @@ SENDING_IP="203.0.113.45"
 
 # Manual SPF check using python
 python3 << 'PYEOF'
-import spf  # pip install pyspf
+import spf # pip install pyspf
 
 result, explanation = spf.check2(
-    i='203.0.113.45',
-    s='sender@example-corp.com',
-    h='mail.example-corp.com'
+ i='203.0.113.45',
+ s='sender@example-corp.com',
+ h='mail.example-corp.com'
 )
 print(f"SPF Result: {result}")
 print(f"Explanation: {explanation}")
@@ -196,7 +196,7 @@ PYEOF
 # Check if sending IP is in known malicious IP lists
 # Query AbuseIPDB or VirusTotal
 curl -s "https://api.abuseipdb.com/api/v2/check?ipAddress=${SENDING_IP}" \
-   -H "Key: YOUR_API_KEY" -H "Accept: application/json" | python3 -m json.tool
+ -H "Key: YOUR_API_KEY" -H "Accept: application/json" | python3 -m json.tool
 ```
 
 ### Step 4: Analyze Sender Domain and Infrastructure
@@ -217,7 +217,7 @@ dig -x $SENDING_IP +short
 # Check for lookalike/typosquatting domains
 # Compare with legitimate domain using visual similarity
 python3 << 'PYEOF'
-import Levenshtein  # pip install python-Levenshtein
+import Levenshtein # pip install python-Levenshtein
 
 legitimate = "microsoft.com"
 suspicious = "micr0soft.com"
@@ -227,24 +227,24 @@ ratio = Levenshtein.ratio(legitimate, suspicious)
 print(f"Edit distance: {distance}")
 print(f"Similarity ratio: {ratio:.2%}")
 if ratio > 0.8:
-    print("WARNING: Likely typosquatting/lookalike domain!")
+ print("WARNING: Likely typosquatting/lookalike domain!")
 PYEOF
 
 # Check domain reputation on VirusTotal
 curl -s "https://www.virustotal.com/api/v3/domains/${SENDER_DOMAIN}" \
-   -H "x-apikey: YOUR_VT_API_KEY" | python3 -m json.tool
+ -H "x-apikey: YOUR_VT_API_KEY" | python3 -m json.tool
 
 # Check if the Reply-To differs from From (common phishing indicator)
 python3 -c "
 import email
 with open('/cases/case-2024-001/email/phishing_email.eml') as f:
-    msg = email.message_from_file(f)
+ msg = email.message_from_file(f)
 from_addr = email.utils.parseaddr(msg['From'])[1]
 reply_to = email.utils.parseaddr(msg.get('Reply-To', msg['From']))[1]
 if from_addr != reply_to:
-    print(f'WARNING: From ({from_addr}) != Reply-To ({reply_to})')
+ print(f'WARNING: From ({from_addr}) != Reply-To ({reply_to})')
 else:
-    print('From and Reply-To match')
+ print('From and Reply-To match')
 "
 ```
 
@@ -258,35 +258,35 @@ import re
 from email import policy
 
 with open('/cases/case-2024-001/email/phishing_email.eml', 'r') as f:
-    msg = email.message_from_file(f, policy=policy.default)
+ msg = email.message_from_file(f, policy=policy.default)
 
 body = msg.get_body(preferencelist=('html', 'plain'))
 if body:
-    content = body.get_content()
-    urls = re.findall(r'https?://[^\s<>"\']+', content)
-    print("=== URLs FOUND IN EMAIL BODY ===")
-    for url in set(urls):
-        print(f"  {url}")
+ content = body.get_content()
+ urls = re.findall(r'https?://[^\s<>"\']+', content)
+ print("=== URLs FOUND IN EMAIL BODY ===")
+ for url in set(urls):
+ print(f" {url}")
 
-    # Check for URL obfuscation (display text != href)
-    href_pattern = re.findall(r'<a[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', content, re.DOTALL)
-    print("\n=== HYPERLINK ANALYSIS ===")
-    for href, text in href_pattern:
-        display_url = re.findall(r'https?://[^\s<]+', text)
-        if display_url and display_url[0] != href:
-            print(f"  MISMATCH: Display='{display_url[0]}' -> Actual='{href}'")
+ # Check for URL obfuscation (display text != href)
+ href_pattern = re.findall(r'<a[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>', content, re.DOTALL)
+ print("\n=== HYPERLINK ANALYSIS ===")
+ for href, text in href_pattern:
+ display_url = re.findall(r'https?://[^\s<]+', text)
+ if display_url and display_url[0] != href:
+ print(f" MISMATCH: Display='{display_url[0]}' -> Actual='{href}'")
 
 # Extract and hash attachments
 print("\n=== ATTACHMENTS ===")
 for part in msg.walk():
-    if part.get_content_disposition() == 'attachment':
-        filename = part.get_filename()
-        content = part.get_payload(decode=True)
-        import hashlib
-        sha256 = hashlib.sha256(content).hexdigest()
-        print(f"  File: {filename}, Size: {len(content)}, SHA-256: {sha256}")
-        with open(f'/cases/case-2024-001/email/attachments/{filename}', 'wb') as af:
-            af.write(content)
+ if part.get_content_disposition() == 'attachment':
+ filename = part.get_filename()
+ content = part.get_payload(decode=True)
+ import hashlib
+ sha256 = hashlib.sha256(content).hexdigest()
+ print(f" File: {filename}, Size: {len(content)}, SHA-256: {sha256}")
+ with open(f'/cases/case-2024-001/email/attachments/{filename}', 'wb') as af:
+ af.write(content)
 PYEOF
 
 # Submit attachment hashes to VirusTotal
@@ -337,29 +337,29 @@ Attacker uses a legitimate email marketing service to send phishing, SPF and DKI
 
 ```
 Email Header Analysis Report:
-  Subject:     "Urgent: Invoice Payment Required"
-  From:        accounting@examp1e-corp.com (SPOOFED)
-  Reply-To:    payments.urgent@gmail.com (MISMATCH)
-  Return-Path: <bounce@mail-server.xyz>
-  Date:        2024-01-15 09:23:45 UTC
+ Subject: "Urgent: Invoice Payment Required"
+ From: accounting@examp1e-corp.com (SPOOFED)
+ Reply-To: payments.urgent@gmail.com (MISMATCH)
+ Return-Path: <bounce@mail-server.xyz>
+ Date: 2024-01-15 09:23:45 UTC
 
-  Delivery Path (4 hops):
-    Hop 1: mail-server.xyz [203.0.113.45] -> relay1.isp.com
-    Hop 2: relay1.isp.com -> mx.target-company.com
-    Hop 3: mx.target-company.com -> internal-filter.target.com
-    Hop 4: internal-filter.target.com -> mailbox
+ Delivery Path (4 hops):
+ Hop 1: mail-server.xyz [203.0.113.45] -> relay1.isp.com
+ Hop 2: relay1.isp.com -> mx.target-company.com
+ Hop 3: mx.target-company.com -> internal-filter.target.com
+ Hop 4: internal-filter.target.com -> mailbox
 
-  Authentication:
-    SPF:    FAIL (203.0.113.45 not authorized for examp1e-corp.com)
-    DKIM:   NONE (no signature present)
-    DMARC:  FAIL (p=none, no enforcement)
+ Authentication:
+ SPF: FAIL (203.0.113.45 not authorized for examp1e-corp.com)
+ DKIM: NONE (no signature present)
+ DMARC: FAIL (p=none, no enforcement)
 
-  Indicators of Phishing:
-    - Lookalike domain (examp1e-corp.com vs example-corp.com, 96% similar)
-    - From/Reply-To mismatch
-    - Domain registered 2 days before email sent
-    - URL in body points to credential harvesting page
-    - Attachment: invoice.xlsm (SHA-256: a3f2...) - Known malware on VT
+ Indicators of Phishing:
+ - Lookalike domain (examp1e-corp.com vs example-corp.com, 96% similar)
+ - From/Reply-To mismatch
+ - Domain registered 2 days before email sent
+ - URL in body points to credential harvesting page
+ - Attachment: invoice.xlsm (SHA-256: a3f2...) - Known malware on VT
 
-  Risk Level: HIGH
+ Risk Level: HIGH
 ```

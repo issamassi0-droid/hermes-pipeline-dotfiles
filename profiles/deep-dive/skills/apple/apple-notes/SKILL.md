@@ -6,11 +6,11 @@ author: Hermes Agent
 license: MIT
 platforms: [macos]
 metadata:
-  hermes:
-    tags: [Notes, Apple, macOS, note-taking]
-    related_skills: [obsidian]
+ hermes:
+ tags: [Notes, Apple, macOS, note-taking]
+ related_skills: [obsidian]
 prerequisites:
-  commands: [memo]
+ commands: [memo]
 ---
 
 # Apple Notes
@@ -41,16 +41,16 @@ Use `memo` to manage Apple Notes directly from the terminal. Notes sync across a
 ### View Notes
 
 ```bash
-memo notes                        # List all notes
-memo notes -f "Folder Name"       # Filter by folder
-memo notes -s "query"             # Search notes (fuzzy)
+memo notes # List all notes
+memo notes -f "Folder Name" # Filter by folder
+memo notes -s "query" # Search notes (fuzzy)
 ```
 
 ### Create Notes
 
 ```bash
-memo notes -a                     # Add a note (opens your $EDITOR)
-memo notes -a -f "Folder Name"    # Add a note into a specific folder
+memo notes -a # Add a note (opens your $EDITOR)
+memo notes -a -f "Folder Name" # Add a note into a specific folder
 ```
 
 `-a`/`--add` is a bare flag — it opens your `$EDITOR` to compose the note; it does
@@ -60,25 +60,25 @@ first (e.g. `export EDITOR=vim`).
 ### Edit Notes
 
 ```bash
-memo notes -e                     # Interactive selection to edit
+memo notes -e # Interactive selection to edit
 ```
 
 ### Delete Notes
 
 ```bash
-memo notes -d                     # Interactive selection to delete
+memo notes -d # Interactive selection to delete
 ```
 
 ### Move Notes
 
 ```bash
-memo notes -m                     # Move note to folder (interactive)
+memo notes -m # Move note to folder (interactive)
 ```
 
 ### Export Notes
 
 ```bash
-memo notes -ex                    # Export to HTML/Markdown
+memo notes -ex # Export to HTML/Markdown
 ```
 
 ## Limitations

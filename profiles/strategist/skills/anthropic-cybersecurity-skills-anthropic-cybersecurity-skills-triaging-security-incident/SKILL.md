@@ -1,10 +1,10 @@
 ---
 name: triaging-security-incident
 description: 'Performs initial triage of security incidents using the NIST SP
-  800-61r3 and SANS PICERL frameworks, classifying incident type, assigning priority
-  by business impact, and routing to the appropriate response team. Use when a
-  SIEM/EDR alert needs human classification, concurrent alerts must be prioritized,
-  or a user report or threat-intel IOC match requires initial incident categorization.'
+ 800-61r3 and SANS PICERL frameworks, classifying incident type, assigning priority
+ by business impact, and routing to the appropriate response team. Use when a
+ SIEM/EDR alert needs human classification, concurrent alerts must be prioritized,
+ or a user report or threat-intel IOC match requires initial incident categorization.'
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -67,14 +67,14 @@ Gather all available context from the triggering alert before making classificat
 
 ```
 Example SIEM alert context:
-Source:       CrowdStrike Falcon
-Detection:    Suspicious PowerShell Execution (T1059.001)
-Host:         WORKSTATION-FIN-042
-User:         jsmith@corp.example.com
-Timestamp:    2025-11-15T14:23:17Z
-Severity:     High (detection rule confidence: 92%)
-Process:      powershell.exe -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoA...
-Parent:       outlook.exe (PID 4812)
+Source: CrowdStrike Falcon
+Detection: Suspicious PowerShell Execution (T1059.001)
+Host: WORKSTATION-FIN-042
+User: jsmith@corp.example.com
+Timestamp: 2025-11-15T14:23:17Z
+Severity: High (detection rule confidence: 92%)
+Process: powershell.exe -enc SQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoA...
+Parent: outlook.exe (PID 4812)
 ```
 
 ### Step 2: Classify the Incident Type
@@ -98,9 +98,9 @@ Calculate severity by combining asset criticality with threat severity:
 Severity = f(Asset Criticality, Threat Type, Data Sensitivity, Lateral Movement Potential)
 
 Critical (P1): Crown jewel systems compromised, active data exfiltration, ransomware spreading
-High (P2):     Production system compromise, confirmed malware execution, privileged account takeover
-Medium (P3):   Non-production compromise, unsuccessful exploitation attempt, single endpoint malware
-Low (P4):      Reconnaissance activity, policy violation, benign true positive
+High (P2): Production system compromise, confirmed malware execution, privileged account takeover
+Medium (P3): Non-production compromise, unsuccessful exploitation attempt, single endpoint malware
+Low (P4): Reconnaissance activity, policy violation, benign true positive
 ```
 
 Response SLA targets:
@@ -126,17 +126,17 @@ Create a structured triage record and route to the appropriate response tier:
 ```
 Incident Triage Record
 ━━━━━━━━━━━━━━━━━━━━━
-Ticket ID:       INC-2025-1547
-Triage Analyst:  [analyst name]
-Triage Time:     2025-11-15T14:35:00Z (12 min from alert)
-Classification:  Malicious Code - Macro-based initial access
-Severity:        P2 - High
+Ticket ID: INC-2025-1547
+Triage Analyst: [analyst name]
+Triage Time: 2025-11-15T14:35:00Z (12 min from alert)
+Classification: Malicious Code - Macro-based initial access
+Severity: P2 - High
 Affected Assets: WORKSTATION-FIN-042 (Finance dept, handles PII)
-Affected Users:  jsmith@corp.example.com
+Affected Users: jsmith@corp.example.com
 IOCs Identified: powershell.exe spawned by outlook.exe, encoded command
-TI Matches:      Base64 payload matches known Qakbot loader pattern
-Escalation:      Tier 2 - Malware IR team
-Recommended:     Isolate endpoint, preserve memory dump, block sender domain
+TI Matches: Base64 payload matches known Qakbot loader pattern
+Escalation: Tier 2 - Malware IR team
+Recommended: Isolate endpoint, preserve memory dump, block sender domain
 ```
 
 ### Step 6: Initiate Containment Hold
@@ -192,29 +192,29 @@ If severity is P1 or P2, initiate immediate containment actions while awaiting f
 ```
 INCIDENT TRIAGE REPORT
 ======================
-Ticket:          INC-[YYYY]-[NNNN]
-Date/Time:       [ISO 8601 timestamp]
-Triage Analyst:  [Name]
-Time to Triage:  [minutes from alert to classification]
+Ticket: INC-[YYYY]-[NNNN]
+Date/Time: [ISO 8601 timestamp]
+Triage Analyst: [Name]
+Time to Triage: [minutes from alert to classification]
 
 CLASSIFICATION
-Type:            [NIST category]
-Severity:        [P1-P4] - [Critical/High/Medium/Low]
-Confidence:      [High/Medium/Low]
-MITRE ATT&CK:   [Technique ID and name]
+Type: [NIST category]
+Severity: [P1-P4] - [Critical/High/Medium/Low]
+Confidence: [High/Medium/Low]
+MITRE ATT&CK: [Technique ID and name]
 
 AFFECTED SCOPE
-Assets:          [hostname(s), IP(s)]
-Users:           [account(s)]
-Data at Risk:    [classification level]
-Business Unit:   [department]
+Assets: [hostname(s), IP(s)]
+Users: [account(s)]
+Data at Risk: [classification level]
+Business Unit: [department]
 
 EVIDENCE SUMMARY
 [Bullet list of key observations]
 
 ENRICHMENT RESULTS
-TI Matches:      [Yes/No - details]
-Historical:      [Related prior incidents]
+TI Matches: [Yes/No - details]
+Historical: [Related prior incidents]
 Asset Criticality: [rating]
 
 RECOMMENDED ACTIONS
@@ -223,6 +223,6 @@ RECOMMENDED ACTIONS
 3. [Escalation target]
 
 ESCALATION
-Routed To:       [Team/Individual]
-SLA Target:      [Containment deadline]
+Routed To: [Team/Individual]
+SLA Target: [Containment deadline]
 ```

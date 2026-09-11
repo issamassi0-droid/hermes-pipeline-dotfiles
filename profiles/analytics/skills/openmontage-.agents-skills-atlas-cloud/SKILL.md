@@ -15,10 +15,10 @@ are accepted for compatibility.
 ## Preflight every paid call
 
 1. Read `tool.get_info()["model_catalog"]`; do not infer availability from a
-   search collection or invent a task suffix.
+ search collection or invent a task suffix.
 2. Select an exact model id and operation supported by that catalog.
 3. Announce the Atlas tool, provider, exact model, request count, and estimated
-   cost before submitting.
+ cost before submitting.
 4. Use local-path inputs when convenient. The tool uploads them through Atlas.
 5. Save outputs inside the active `projects/<project-id>/` tree and inspect them.
 
@@ -35,14 +35,14 @@ Use canonical OpenMontage fields:
 
 ```python
 tool.execute({
-    "prompt": "...",
-    "model": "minimax/h3/reference-to-video",
-    "operation": "reference_to_video",
-    "duration": 10,
-    "resolution": "2K",
-    "reference_images": ["projects/demo/character.png"],
-    "reference_audios": ["projects/demo/performance.wav"],
-    "output_path": "projects/demo/h3.mp4",
+ "prompt": "...",
+ "model": "minimax/h3/reference-to-video",
+ "operation": "reference_to_video",
+ "duration": 10,
+ "resolution": "2K",
+ "reference_images": ["projects/demo/character.png"],
+ "reference_audios": ["projects/demo/performance.wav"],
+ "output_path": "projects/demo/h3.mp4",
 })
 ```
 
@@ -67,12 +67,12 @@ be supplied as `image_path`, `image_paths`, `image_url`, or `image_urls`.
 
 ```python
 tool.execute({
-    "prompt": "Replace the packaging with matte cobalt glass; preserve the logo",
-    "model": "google/nano-banana-2/edit",
-    "generation_mode": "edit",
-    "image_paths": ["projects/campaign/source.png"],
-    "resolution": "2k",
-    "output_path": "projects/campaign/revised.png",
+ "prompt": "Replace the packaging with matte cobalt glass; preserve the logo",
+ "model": "google/nano-banana-2/edit",
+ "generation_mode": "edit",
+ "image_paths": ["projects/campaign/source.png"],
+ "resolution": "2k",
+ "output_path": "projects/campaign/revised.png",
 })
 ```
 

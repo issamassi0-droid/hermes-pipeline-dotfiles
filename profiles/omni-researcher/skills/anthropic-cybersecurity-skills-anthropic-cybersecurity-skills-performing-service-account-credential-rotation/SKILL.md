@@ -1,9 +1,9 @@
 ---
 name: performing-service-account-credential-rotation
 description: Automates credential rotation for service accounts across Active Directory,
-  cloud platforms, and application databases to eliminate stale secrets and reduce
-  compromise risk. Use when rotating or automating rotation of service account passwords,
-  API keys, or secrets stored in a vault.
+ cloud platforms, and application databases to eliminate stale secrets and reduce
+ compromise risk. Use when rotating or automating rotation of service account passwords,
+ API keys, or secrets stored in a vault.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -28,32 +28,32 @@ mitre_attack:
 - T1098
 - T1003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - stealth
-  techniques:
-  - id: F1006.001
-    name: 'Account Takeover: Exposed API Key'
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: F1005
-    name: Account Manipulation
-    tactic: positioning
-    source: f3
-  - id: F1023
-    name: Device Fingerprint Spoofing
-    tactic: stealth
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - stealth
+ techniques:
+ - id: F1006.001
+ name: 'Account Takeover: Exposed API Key'
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: F1005
+ name: Account Manipulation
+ tactic: positioning
+ source: f3
+ - id: F1023
+ name: Device Fingerprint Spoofing
+ tactic: stealth
+ source: f3
 ---
 
 # Performing Service Account Credential Rotation
@@ -104,25 +104,25 @@ Windows gMSAs provide automatic password management by Active Directory:
 
 ```
 Secrets Manager / Vault
-        │
-        ├── Rotation Trigger (schedule or on-demand)
-        │
-        ├── Generate new credential
-        │
-        ├── Update credential at source (AD, cloud IAM, database)
-        │
-        ├── Update credential in all consumers:
-        │   ├── Application configuration
-        │   ├── CI/CD pipeline secrets
-        │   ├── Kubernetes secrets
-        │   └── Other dependent services
-        │
-        ├── Verify service health
-        │   ├── Health check endpoints
-        │   ├── Authentication test
-        │   └── Functional smoke test
-        │
-        └── Revoke old credential (after grace period)
+ │
+ ├── Rotation Trigger (schedule or on-demand)
+ │
+ ├── Generate new credential
+ │
+ ├── Update credential at source (AD, cloud IAM, database)
+ │
+ ├── Update credential in all consumers:
+ │ ├── Application configuration
+ │ ├── CI/CD pipeline secrets
+ │ ├── Kubernetes secrets
+ │ └── Other dependent services
+ │
+ ├── Verify service health
+ │ ├── Health check endpoints
+ │ ├── Authentication test
+ │ └── Functional smoke test
+ │
+ └── Revoke old credential (after grace period)
 ```
 
 ## Workflow
@@ -139,8 +139,8 @@ Get-ADUser -Filter {ServicePrincipalName -ne "$null"} -Properties ServicePrincip
 # Find accounts with passwords older than 90 days
 $threshold = (Get-Date).AddDays(-90)
 Get-ADUser -Filter {PasswordLastSet -lt $threshold -and Enabled -eq $true} -Properties PasswordLastSet,ServicePrincipalName |
-    Where-Object {$_.ServicePrincipalName} |
-    Select-Object Name, PasswordLastSet, ServicePrincipalName
+ Where-Object {$_.ServicePrincipalName} |
+ Select-Object Name, PasswordLastSet, ServicePrincipalName
 ```
 
 ### Step 2: Implement gMSA for Windows Services
@@ -151,9 +151,9 @@ Add-KdsRootKey -EffectiveImmediately
 
 # Create the gMSA account
 New-ADServiceAccount -Name "svc-webapp-gmsa" `
-    -DNSHostName "svc-webapp-gmsa.corp.example.com" `
-    -PrincipalsAllowedToRetrieveManagedPassword "WebServerGroup" `
-    -KerberosEncryptionType AES128,AES256
+ -DNSHostName "svc-webapp-gmsa.corp.example.com" `
+ -PrincipalsAllowedToRetrieveManagedPassword "WebServerGroup" `
+ -KerberosEncryptionType AES128,AES256
 
 # Install on target server
 Install-ADServiceAccount -Identity "svc-webapp-gmsa"
@@ -172,36 +172,36 @@ import boto3
 import json
 
 def rotate_iam_access_key(secret_arn, iam_username):
-    """Rotate an IAM user's access key via Secrets Manager."""
-    iam = boto3.client("iam")
-    sm = boto3.client("secretsmanager")
+ """Rotate an IAM user's access key via Secrets Manager."""
+ iam = boto3.client("iam")
+ sm = boto3.client("secretsmanager")
 
-    # Create new access key
-    new_key = iam.create_access_key(UserName=iam_username)
-    new_access_key = new_key["AccessKey"]["AccessKeyId"]
-    new_secret_key = new_key["AccessKey"]["SecretAccessKey"]
+ # Create new access key
+ new_key = iam.create_access_key(UserName=iam_username)
+ new_access_key = new_key["AccessKey"]["AccessKeyId"]
+ new_secret_key = new_key["AccessKey"]["SecretAccessKey"]
 
-    # Store new credentials in Secrets Manager
-    sm.put_secret_value(
-        SecretId=secret_arn,
-        SecretString=json.dumps({
-            "accessKeyId": new_access_key,
-            "secretAccessKey": new_secret_key,
-            "username": iam_username,
-        })
-    )
+ # Store new credentials in Secrets Manager
+ sm.put_secret_value(
+ SecretId=secret_arn,
+ SecretString=json.dumps({
+ "accessKeyId": new_access_key,
+ "secretAccessKey": new_secret_key,
+ "username": iam_username,
+ })
+ )
 
-    # List old access keys and deactivate them
-    keys = iam.list_access_keys(UserName=iam_username)
-    for key in keys["AccessKeyMetadata"]:
-        if key["AccessKeyId"] != new_access_key and key["Status"] == "Active":
-            iam.update_access_key(
-                UserName=iam_username,
-                AccessKeyId=key["AccessKeyId"],
-                Status="Inactive"
-            )
+ # List old access keys and deactivate them
+ keys = iam.list_access_keys(UserName=iam_username)
+ for key in keys["AccessKeyMetadata"]:
+ if key["AccessKeyId"] != new_access_key and key["Status"] == "Active":
+ iam.update_access_key(
+ UserName=iam_username,
+ AccessKeyId=key["AccessKeyId"],
+ Status="Inactive"
+ )
 
-    return {"new_key_id": new_access_key, "old_keys_deactivated": True}
+ return {"new_key_id": new_access_key, "old_keys_deactivated": True}
 ```
 
 ### Step 4: Database Credential Rotation with Vault
@@ -210,39 +210,39 @@ def rotate_iam_access_key(secret_arn, iam_username):
 import hvac
 
 def configure_vault_database_rotation(vault_url, vault_token, db_config):
-    """Configure HashiCorp Vault for automatic database credential rotation."""
-    client = hvac.Client(url=vault_url, token=vault_token)
+ """Configure HashiCorp Vault for automatic database credential rotation."""
+ client = hvac.Client(url=vault_url, token=vault_token)
 
-    # Enable database secrets engine
-    client.sys.enable_secrets_engine(
-        backend_type="database",
-        path="database"
-    )
+ # Enable database secrets engine
+ client.sys.enable_secrets_engine(
+ backend_type="database",
+ path="database"
+ )
 
-    # Configure database connection
-    client.secrets.database.configure(
-        name=db_config["name"],
-        plugin_name="postgresql-database-plugin",
-        connection_url=f"postgresql://{{{{username}}}}:{{{{password}}}}@"
-                       f"{db_config['host']}:{db_config['port']}/{db_config['database']}",
-        allowed_roles=[db_config["role_name"]],
-        username=db_config["admin_user"],
-        password=db_config["admin_password"],
-    )
+ # Configure database connection
+ client.secrets.database.configure(
+ name=db_config["name"],
+ plugin_name="postgresql-database-plugin",
+ connection_url=f"postgresql://{{{{username}}}}:{{{{password}}}}@"
+ f"{db_config['host']}:{db_config['port']}/{db_config['database']}",
+ allowed_roles=[db_config["role_name"]],
+ username=db_config["admin_user"],
+ password=db_config["admin_password"],
+ )
 
-    # Create a role for dynamic credentials
-    client.secrets.database.create_role(
-        name=db_config["role_name"],
-        db_name=db_config["name"],
-        creation_statements=[
-            "CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}';",
-            f"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO \"{{{{name}}}}\";"
-        ],
-        default_ttl="1h",
-        max_ttl="24h",
-    )
+ # Create a role for dynamic credentials
+ client.secrets.database.create_role(
+ name=db_config["role_name"],
+ db_name=db_config["name"],
+ creation_statements=[
+ "CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}';",
+ f"GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO \"{{{{name}}}}\";"
+ ],
+ default_ttl="1h",
+ max_ttl="24h",
+ )
 
-    return {"status": "configured", "role": db_config["role_name"]}
+ return {"status": "configured", "role": db_config["role_name"]}
 ```
 
 ### Step 5: Post-Rotation Verification
@@ -254,34 +254,34 @@ import requests
 import time
 
 def verify_service_health(service_endpoints, max_retries=3, delay=10):
-    """Check that services are healthy after credential rotation."""
-    results = []
-    for endpoint in service_endpoints:
-        for attempt in range(max_retries):
-            try:
-                response = requests.get(
-                    endpoint["health_url"],
-                    timeout=10,
-                    headers=endpoint.get("headers", {})
-                )
-                healthy = response.status_code == 200
-                results.append({
-                    "service": endpoint["name"],
-                    "status": "healthy" if healthy else f"unhealthy ({response.status_code})",
-                    "attempt": attempt + 1,
-                })
-                if healthy:
-                    break
-            except requests.RequestException as e:
-                results.append({
-                    "service": endpoint["name"],
-                    "status": f"error: {str(e)}",
-                    "attempt": attempt + 1,
-                })
-            if attempt < max_retries - 1:
-                time.sleep(delay)
+ """Check that services are healthy after credential rotation."""
+ results = []
+ for endpoint in service_endpoints:
+ for attempt in range(max_retries):
+ try:
+ response = requests.get(
+ endpoint["health_url"],
+ timeout=10,
+ headers=endpoint.get("headers", {})
+ )
+ healthy = response.status_code == 200
+ results.append({
+ "service": endpoint["name"],
+ "status": "healthy" if healthy else f"unhealthy ({response.status_code})",
+ "attempt": attempt + 1,
+ })
+ if healthy:
+ break
+ except requests.RequestException as e:
+ results.append({
+ "service": endpoint["name"],
+ "status": f"error: {str(e)}",
+ "attempt": attempt + 1,
+ })
+ if attempt < max_retries - 1:
+ time.sleep(delay)
 
-    return results
+ return results
 ```
 
 ## Validation Checklist

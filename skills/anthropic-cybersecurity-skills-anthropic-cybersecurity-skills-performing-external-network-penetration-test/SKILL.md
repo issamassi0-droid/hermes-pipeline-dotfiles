@@ -1,8 +1,8 @@
 ---
 name: performing-external-network-penetration-test
 description: Conduct a comprehensive external network penetration test to identify
-  vulnerabilities in internet-facing infrastructure using PTES methodology, reconnaissance,
-  scanning, exploitation, and reporting.
+ vulnerabilities in internet-facing infrastructure using PTES methodology, reconnaissance,
+ scanning, exploitation, and reporting.
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -59,12 +59,12 @@ An external network penetration test simulates a real-world attacker targeting a
 
 ```
 Scope:
-  - Target IP ranges: 203.0.113.0/24, 198.51.100.0/24
-  - Domains: *.target.com, *.target.io
-  - Exclusions: 203.0.113.50 (production DB), *.staging.target.com
-  - Testing window: Mon-Fri 22:00-06:00 UTC
-  - Emergency contact: SOC Lead — +1-555-0100
-  - Authorization ID: PENTEST-2025-EXT-042
+ - Target IP ranges: 203.0.113.0/24, 198.51.100.0/24
+ - Domains: *.target.com, *.target.io
+ - Exclusions: 203.0.113.50 (production DB), *.staging.target.com
+ - Testing window: Mon-Fri 22:00-06:00 UTC
+ - Emergency contact: SOC Lead — +1-555-0100
+ - Authorization ID: PENTEST-2025-EXT-042
 ```
 
 ### Legal Documentation Checklist
@@ -152,28 +152,28 @@ wappalyzer https://target.com
 ```bash
 # Nessus scan (via CLI)
 nessuscli scan --new --name "External-Pentest-2025" \
-  --targets 203.0.113.0/24 \
-  --policy "Advanced Network Scan"
+ --targets 203.0.113.0/24 \
+ --policy "Advanced Network Scan"
 
 # OpenVAS scan
 gvm-cli socket --xml '<create_task>
-  <name>External Pentest</name>
-  <target id="target-uuid"/>
-  <config id="daba56c8-73ec-11df-a475-002264764cea"/>
+ <name>External Pentest</name>
+ <target id="target-uuid"/>
+ <config id="daba56c8-73ec-11df-a475-002264764cea"/>
 </create_task>'
 
 # Nuclei vulnerability scanner
 nuclei -l all_subs.txt -t cves/ -t exposures/ -t misconfigurations/ \
-  -severity critical,high -o nuclei_results.txt
+ -severity critical,high -o nuclei_results.txt
 
 # Nikto web server scan
 nikto -h https://target.com -output nikto_results.html -Format htm
 
 # Directory and file enumeration
 gobuster dir -u https://target.com -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt \
-  -x php,asp,aspx,jsp,html,txt -o gobuster_results.txt
+ -x php,asp,aspx,jsp,html,txt -o gobuster_results.txt
 feroxbuster -u https://target.com -w /usr/share/seclists/Discovery/Web-Content/raft-large-words.txt \
-  --depth 3 -o ferox_results.txt
+ --depth 3 -o ferox_results.txt
 ```
 
 ### Manual Vulnerability Validation
@@ -185,8 +185,8 @@ searchsploit openssh 8.2
 
 # Test for default credentials
 hydra -L /usr/share/seclists/Usernames/top-usernames-shortlist.txt \
-  -P /usr/share/seclists/Passwords/Common-Credentials/top-20-common-SSH-passwords.txt \
-  ssh://203.0.113.10 -t 4
+ -P /usr/share/seclists/Passwords/Common-Credentials/top-20-common-SSH-passwords.txt \
+ ssh://203.0.113.10 -t 4
 
 # Test VPN endpoints
 ike-scan 203.0.113.20
@@ -299,30 +299,30 @@ meterpreter> keyscan_start
 
 ```
 1. Executive Summary
-   - Scope and objectives
-   - Key findings summary
-   - Risk rating overview
-   - Strategic recommendations
+ - Scope and objectives
+ - Key findings summary
+ - Risk rating overview
+ - Strategic recommendations
 
 2. Technical Findings
-   For each finding:
-   - Title and CVSS score
-   - Affected asset(s)
-   - Description and impact
-   - Steps to reproduce (with screenshots)
-   - Evidence/proof of exploitation
-   - Remediation recommendation
-   - References (CVE, CWE)
+ For each finding:
+ - Title and CVSS score
+ - Affected asset(s)
+ - Description and impact
+ - Steps to reproduce (with screenshots)
+ - Evidence/proof of exploitation
+ - Remediation recommendation
+ - References (CVE, CWE)
 
 3. Methodology
-   - Tools used
-   - Testing timeline
-   - Frameworks followed (PTES, OWASP)
+ - Tools used
+ - Testing timeline
+ - Frameworks followed (PTES, OWASP)
 
 4. Appendices
-   - Full scan results
-   - Network diagrams
-   - Raw tool output
+ - Full scan results
+ - Network diagrams
+ - Raw tool output
 ```
 
 ## Remediation Priority Matrix

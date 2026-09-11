@@ -1,11 +1,11 @@
 ---
 name: implementing-attack-path-analysis-with-xm-cyber
 description: Deploys XM Cyber's continuous exposure management platform to build
-  attack graphs that chain vulnerabilities, misconfigurations, identity risks, and
-  credential weaknesses toward critical assets, identifying the small fraction of
-  exposures sitting on converging "choke points". Use when mapping attack paths
-  across an environment or prioritizing remediation within a continuous threat exposure
-  management (CTEM) program.
+ attack graphs that chain vulnerabilities, misconfigurations, identity risks, and
+ credential weaknesses toward critical assets, identifying the small fraction of
+ exposures sitting on converging "choke points". Use when mapping attack paths
+ across an environment or prioritizing remediation within a continuous threat exposure
+ management (CTEM) program.
 domain: cybersecurity
 subdomain: vulnerability-management
 tags:
@@ -79,14 +79,14 @@ Unlike point-in-time vulnerability scanning, XM Cyber continuously models all po
 A choke point is a single entity (host, identity, credential, misconfiguration) that sits at the intersection of multiple attack paths leading to critical assets. Fixing a choke point eliminates many attack paths simultaneously, providing maximum risk reduction per remediation effort.
 
 ```
-Attack Path 1:  Web Server -> SQL Injection -> DB Admin Creds
-                                                    \
-Attack Path 2:  VPN -> Stolen Creds -> File Server   -> Domain Controller
-                                                    /     (Critical Asset)
-Attack Path 3:  Workstation -> Mimikatz -> Cached Creds
-                                    ^
-                              CHOKE POINT
-                     (Cached Domain Admin credential)
+Attack Path 1: Web Server -> SQL Injection -> DB Admin Creds
+ \
+Attack Path 2: VPN -> Stolen Creds -> File Server -> Domain Controller
+ / (Critical Asset)
+Attack Path 3: Workstation -> Mimikatz -> Cached Creds
+ ^
+ CHOKE POINT
+ (Cached Domain Admin credential)
 ```
 
 ### Exposure Categories
@@ -105,77 +105,77 @@ Attack Path 3:  Workstation -> Mimikatz -> Cached Creds
 
 ```
 Critical Asset Definition:
-    Tier 1 - Crown Jewels:
-        - Domain Controllers (Active Directory)
-        - Database servers with PII/financial data
-        - ERP systems (SAP, Oracle)
-        - Certificate Authority servers
-        - Backup infrastructure (Veeam, Commvault)
+ Tier 1 - Crown Jewels:
+ - Domain Controllers (Active Directory)
+ - Database servers with PII/financial data
+ - ERP systems (SAP, Oracle)
+ - Certificate Authority servers
+ - Backup infrastructure (Veeam, Commvault)
 
-    Tier 2 - High Value:
-        - Email servers (Exchange)
-        - File servers with IP/trade secrets
-        - CI/CD pipeline servers
-        - Jump servers / PAM vaults
+ Tier 2 - High Value:
+ - Email servers (Exchange)
+ - File servers with IP/trade secrets
+ - CI/CD pipeline servers
+ - Jump servers / PAM vaults
 
-    Tier 3 - Supporting Infrastructure:
-        - DNS/DHCP servers
-        - Monitoring systems
-        - Logging infrastructure
+ Tier 3 - Supporting Infrastructure:
+ - DNS/DHCP servers
+ - Monitoring systems
+ - Logging infrastructure
 ```
 
 ### Step 2: Deploy XM Cyber Sensors
 
 ```
 Deployment Architecture:
-    On-Premises:
-        - Install XM Cyber sensor on management server
-        - Configure AD integration (read-only service account)
-        - Enable network discovery protocols
-        - Set scanning scope (IP ranges, AD OUs)
+ On-Premises:
+ - Install XM Cyber sensor on management server
+ - Configure AD integration (read-only service account)
+ - Enable network discovery protocols
+ - Set scanning scope (IP ranges, AD OUs)
 
-    Cloud (AWS):
-        - Deploy XM Cyber CloudConnect via CloudFormation
-        - Configure IAM role with read-only permissions
-        - Enable cross-account scanning for multi-account orgs
+ Cloud (AWS):
+ - Deploy XM Cyber CloudConnect via CloudFormation
+ - Configure IAM role with read-only permissions
+ - Enable cross-account scanning for multi-account orgs
 
-    Cloud (Azure):
-        - Deploy via Azure Marketplace
-        - Configure Entra ID (Azure AD) integration
-        - Grant Reader role on subscriptions
+ Cloud (Azure):
+ - Deploy via Azure Marketplace
+ - Configure Entra ID (Azure AD) integration
+ - Grant Reader role on subscriptions
 
-    Hybrid:
-        - Configure cross-environment path analysis
-        - Map on-premises to cloud trust relationships
-        - Enable identity correlation across environments
+ Hybrid:
+ - Configure cross-environment path analysis
+ - Map on-premises to cloud trust relationships
+ - Enable identity correlation across environments
 ```
 
 ### Step 3: Configure Attack Scenarios
 
 ```
 Scenario 1: External Attacker to Domain Admin
-    Starting Point:  Internet-facing assets
-    Target:          Domain Admin privileges
-    Attack Techniques: Exploit public CVEs, credential theft,
-                      lateral movement, privilege escalation
+ Starting Point: Internet-facing assets
+ Target: Domain Admin privileges
+ Attack Techniques: Exploit public CVEs, credential theft,
+ lateral movement, privilege escalation
 
 Scenario 2: Insider Threat to Financial Data
-    Starting Point:  Any corporate workstation
-    Target:          Financial database servers
-    Attack Techniques: Credential harvesting, share enumeration,
-                      privilege escalation, data access
+ Starting Point: Any corporate workstation
+ Target: Financial database servers
+ Attack Techniques: Credential harvesting, share enumeration,
+ privilege escalation, data access
 
 Scenario 3: Cloud Account Takeover
-    Starting Point:  Compromised cloud IAM user
-    Target:          Production cloud infrastructure
-    Attack Techniques: IAM privilege escalation, cross-account
-                      pivot, storage access, compute compromise
+ Starting Point: Compromised cloud IAM user
+ Target: Production cloud infrastructure
+ Attack Techniques: IAM privilege escalation, cross-account
+ pivot, storage access, compute compromise
 
 Scenario 4: Ransomware Propagation
-    Starting Point:  Phished workstation
-    Target:          Maximum host compromise (lateral spread)
-    Attack Techniques: Credential reuse, SMB exploitation,
-                      PsExec/WMI lateral movement
+ Starting Point: Phished workstation
+ Target: Maximum host compromise (lateral spread)
+ Attack Techniques: Credential reuse, SMB exploitation,
+ PsExec/WMI lateral movement
 ```
 
 ### Step 4: Analyze Attack Path Results
@@ -183,36 +183,36 @@ Scenario 4: Ransomware Propagation
 ```python
 # Interpreting XM Cyber attack path analysis results
 def analyze_choke_points(attack_graph_results):
-    """Analyze attack graph results for priority remediation."""
+ """Analyze attack graph results for priority remediation."""
 
-    choke_points = []
-    for entity in attack_graph_results.get("entities", []):
-        if entity.get("is_choke_point"):
-            choke_points.append({
-                "entity_name": entity["name"],
-                "entity_type": entity["type"],
-                "attack_paths_blocked": entity["paths_through"],
-                "critical_assets_protected": entity["protects_assets"],
-                "remediation_complexity": entity["fix_complexity"],
-                "exposure_type": entity["exposure_category"],
-            })
+ choke_points = []
+ for entity in attack_graph_results.get("entities", []):
+ if entity.get("is_choke_point"):
+ choke_points.append({
+ "entity_name": entity["name"],
+ "entity_type": entity["type"],
+ "attack_paths_blocked": entity["paths_through"],
+ "critical_assets_protected": entity["protects_assets"],
+ "remediation_complexity": entity["fix_complexity"],
+ "exposure_type": entity["exposure_category"],
+ })
 
-    # Sort by impact (paths blocked * assets protected)
-    choke_points.sort(
-        key=lambda x: x["attack_paths_blocked"] * len(x["critical_assets_protected"]),
-        reverse=True
-    )
+ # Sort by impact (paths blocked * assets protected)
+ choke_points.sort(
+ key=lambda x: x["attack_paths_blocked"] * len(x["critical_assets_protected"]),
+ reverse=True
+ )
 
-    print(f"Total choke points identified: {len(choke_points)}")
-    print(f"\nTop 10 choke points for maximum risk reduction:")
-    for i, cp in enumerate(choke_points[:10], 1):
-        print(f"  {i}. {cp['entity_name']} ({cp['entity_type']})")
-        print(f"     Paths blocked: {cp['attack_paths_blocked']}")
-        print(f"     Assets protected: {len(cp['critical_assets_protected'])}")
-        print(f"     Exposure type: {cp['exposure_type']}")
-        print(f"     Fix complexity: {cp['remediation_complexity']}")
+ print(f"Total choke points identified: {len(choke_points)}")
+ print(f"\nTop 10 choke points for maximum risk reduction:")
+ for i, cp in enumerate(choke_points[:10], 1):
+ print(f" {i}. {cp['entity_name']} ({cp['entity_type']})")
+ print(f" Paths blocked: {cp['attack_paths_blocked']}")
+ print(f" Assets protected: {len(cp['critical_assets_protected'])}")
+ print(f" Exposure type: {cp['exposure_type']}")
+ print(f" Fix complexity: {cp['remediation_complexity']}")
 
-    return choke_points
+ return choke_points
 ```
 
 ### Step 5: Prioritize Remediation by Impact
@@ -221,24 +221,24 @@ def analyze_choke_points(attack_graph_results):
 Remediation Priority Matrix:
 
 Priority 1 (Immediate - 48h):
-    - Choke points on paths to Tier 1 assets
-    - Identity exposures (cached Domain Admin creds)
-    - Internet-facing vulnerabilities with attack paths
+ - Choke points on paths to Tier 1 assets
+ - Identity exposures (cached Domain Admin creds)
+ - Internet-facing vulnerabilities with attack paths
 
 Priority 2 (Urgent - 7 days):
-    - Choke points on paths to Tier 2 assets
-    - Cloud IAM misconfigurations with privilege escalation
-    - Network segmentation gaps enabling lateral movement
+ - Choke points on paths to Tier 2 assets
+ - Cloud IAM misconfigurations with privilege escalation
+ - Network segmentation gaps enabling lateral movement
 
 Priority 3 (Important - 30 days):
-    - Remaining choke points
-    - Misconfigurations reducing defense depth
-    - Non-critical software vulnerabilities on attack paths
+ - Remaining choke points
+ - Misconfigurations reducing defense depth
+ - Non-critical software vulnerabilities on attack paths
 
 Priority 4 (Standard - 90 days):
-    - Exposures NOT on any attack path to critical assets
-    - Informational findings
-    - Hardening recommendations
+ - Exposures NOT on any attack path to critical assets
+ - Informational findings
+ - Hardening recommendations
 ```
 
 ## Best Practices

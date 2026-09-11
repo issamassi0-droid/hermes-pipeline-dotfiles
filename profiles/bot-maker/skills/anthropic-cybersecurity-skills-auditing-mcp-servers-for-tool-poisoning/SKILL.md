@@ -46,7 +46,7 @@ Beyond poisoning, MCP servers introduce classic infrastructure risks: **tool sha
 
 ```bash
 # uv provides uvx (recommended runner for mcp-scan)
-curl -LsSf https://astral.sh/uv/install.sh | sh    # or: pipx install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh # or: pipx install uv
 
 # mcp-scan (Invariant Labs) — no global install needed with uvx
 uvx mcp-scan@latest --help
@@ -121,14 +121,14 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 async def main():
-    params = StdioServerParameters(command="node", args=["./suspect-mcp-server.js"])
-    async with stdio_client(params) as (read, write):
-        async with ClientSession(read, write) as session:
-            await session.initialize()
-            tools = await session.list_tools()
-            for t in tools.tools:
-                print(f"{t.name}: {len(t.description or '')} chars")
-                print((t.description or "")[:400])
+ params = StdioServerParameters(command="node", args=["./suspect-mcp-server.js"])
+ async with stdio_client(params) as (read, write):
+ async with ClientSession(read, write) as session:
+ await session.initialize()
+ tools = await session.list_tools()
+ for t in tools.tools:
+ print(f"{t.name}: {len(t.description or '')} chars")
+ print((t.description or "")[:400])
 
 asyncio.run(main())
 ```
@@ -143,19 +143,19 @@ from mcp import ClientSession, StdioServerParameters
 from mcp.client.stdio import stdio_client
 
 SSRF_TARGETS = [
-    "http://169.254.169.254/latest/meta-data/",   # AWS IMDS
-    "http://127.0.0.1:22/", "http://localhost:6379/", "file:///etc/passwd",
+ "http://169.254.169.254/latest/meta-data/", # AWS IMDS
+ "http://127.0.0.1:22/", "http://localhost:6379/", "file:///etc/passwd",
 ]
 
 async def main():
-    params = StdioServerParameters(command="node", args=["./suspect-mcp-server.js"])
-    async with stdio_client(params) as (r, w):
-        async with ClientSession(r, w) as s:
-            await s.initialize()
-            for url in SSRF_TARGETS:
-                res = await s.call_tool("fetch_url", {"url": url})
-                body = str(res.content)[:200]
-                print(f"[SSRF?] {url} -> {body}")
+ params = StdioServerParameters(command="node", args=["./suspect-mcp-server.js"])
+ async with stdio_client(params) as (r, w):
+ async with ClientSession(r, w) as s:
+ await s.initialize()
+ for url in SSRF_TARGETS:
+ res = await s.call_tool("fetch_url", {"url": url})
+ body = str(res.content)[:200]
+ print(f"[SSRF?] {url} -> {body}")
 
 asyncio.run(main())
 ```

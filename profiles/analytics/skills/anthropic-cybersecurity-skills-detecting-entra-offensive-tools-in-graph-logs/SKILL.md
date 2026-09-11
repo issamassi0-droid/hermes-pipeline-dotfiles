@@ -41,19 +41,19 @@ The activity being detected maps to MITRE ATT&CK **T1078.004 – Valid Accounts:
 ## Prerequisites
 
 - A Microsoft Sentinel workspace (or Log Analytics) ingesting:
-  - **MicrosoftGraphActivityLogs** (diagnostic setting on Microsoft Entra ID -> graph.microsoft.com)
-  - **AADGraphActivityLogs** (diagnostic setting on Microsoft Entra ID -> legacy Azure AD Graph)
+ - **MicrosoftGraphActivityLogs** (diagnostic setting on Microsoft Entra ID -> graph.microsoft.com)
+ - **AADGraphActivityLogs** (diagnostic setting on Microsoft Entra ID -> legacy Azure AD Graph)
 - `SigninLogs` and `AADNonInteractiveUserSignInLogs` for correlation
 - Microsoft Sentinel Reader/Responder (or Log Analytics Reader) RBAC to run KQL
 - Familiarity with Kusto Query Language (KQL)
 - Enable the diagnostic settings (Azure Portal -> Microsoft Entra ID -> Diagnostic settings -> send `MicrosoftGraphActivityLogs` and `AADGraphActivityLogs` to your workspace), or via CLI:
-  ```bash
-  az monitor diagnostic-settings create \
-    --name "entra-graph-logs" \
-    --resource "/providers/microsoft.aadiam/diagnosticSettings" \
-    --logs '[{"category":"MicrosoftGraphActivityLogs","enabled":true},{"category":"AADGraphActivityLogs","enabled":true}]' \
-    --workspace "<log-analytics-workspace-id>"
-  ```
+ ```bash
+ az monitor diagnostic-settings create \
+ --name "entra-graph-logs" \
+ --resource "/providers/microsoft.aadiam/diagnosticSettings" \
+ --logs '[{"category":"MicrosoftGraphActivityLogs","enabled":true},{"category":"AADGraphActivityLogs","enabled":true}]' \
+ --workspace "<log-analytics-workspace-id>"
+ ```
 
 ## Objectives
 
@@ -101,7 +101,7 @@ AADInternals leaves toolkit/library strings; AzureHound's Go HTTP client and Blo
 union MicrosoftGraphActivityLogs, AADGraphActivityLogs
 | where TimeGenerated > ago(7d)
 | where UserAgent has_any ("AADInternals", "aad-internals", "azurehound",
-                           "BloodHound", "python-requests", "Go-http-client")
+ "BloodHound", "python-requests", "Go-http-client")
 | project TimeGenerated, UserAgent, CallerIpAddress, AppId, UserId, RequestUri
 | sort by TimeGenerated desc
 ```
@@ -115,16 +115,16 @@ AADGraphActivityLogs
 | where RequestMethod == "GET"
 | extend TopLevelResource = tolower(tostring(split(split(RequestUri, "?")[0], "/")[3]))
 | summarize
-    TopLevelResources = make_set(TopLevelResource),
-    AppIds = make_set(AppId),
-    CallerIPs = make_set(CallerIpAddress),
-    UserAgents = make_set(UserAgent),
-    StartTime = min(TimeGenerated),
-    EndTime = max(TimeGenerated)
-    by UserId, bin(TimeGenerated, 5m)
+ TopLevelResources = make_set(TopLevelResource),
+ AppIds = make_set(AppId),
+ CallerIPs = make_set(CallerIpAddress),
+ UserAgents = make_set(UserAgent),
+ StartTime = min(TimeGenerated),
+ EndTime = max(TimeGenerated)
+ by UserId, bin(TimeGenerated, 5m)
 | where TopLevelResources has_all ("users", "tenantdetails", "groups", "applications",
-    "serviceprincipals", "devices", "directoryroles", "roledefinitions", "contacts",
-    "oauth2permissiongrants", "authorizationpolicy")
+ "serviceprincipals", "devices", "directoryroles", "roledefinitions", "contacts",
+ "oauth2permissiongrants", "authorizationpolicy")
 | project StartTime, EndTime, UserId, AppIds, CallerIPs, UserAgents
 ```
 
@@ -136,7 +136,7 @@ MicrosoftGraphActivityLogs
 | where TimeGenerated > ago(1d)
 | where RequestMethod == "GET"
 | where RequestUri has_any ("/users", "/groups", "/servicePrincipals", "/applications",
-                            "/directoryRoles", "/roleManagement")
+ "/directoryRoles", "/roleManagement")
 | summarize Reads=count(), Resources=dcount(RequestUri) by UserId, AppId, CallerIpAddress, bin(TimeGenerated, 10m)
 | where Reads > 200
 | sort by Reads desc
@@ -151,12 +151,12 @@ AADGraphActivityLogs
 | where UserAgent contains "aiohttp"
 | extend TokenId = trim_end("=", tostring(SignInActivityId))
 | join kind=leftouter (
-    SigninLogs
-    | extend TokenId = tostring(UniqueTokenIdentifier)
-    | project TokenId, UserPrincipalName, IPAddress, AppDisplayName, ConditionalAccessStatus, DeviceDetail
+ SigninLogs
+ | extend TokenId = tostring(UniqueTokenIdentifier)
+ | project TokenId, UserPrincipalName, IPAddress, AppDisplayName, ConditionalAccessStatus, DeviceDetail
 ) on TokenId
 | project TimeGenerated, UserId, UserPrincipalName, CallerIpAddress, IPAddress,
-          AppDisplayName, ConditionalAccessStatus, UserAgent
+ AppDisplayName, ConditionalAccessStatus, UserAgent
 ```
 
 ### Step 7: Operationalize as analytics rules

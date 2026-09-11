@@ -1,13 +1,13 @@
 ---
 name: detecting-container-runtime-threats-with-falco
 description: >-
-  Deploys and operates Falco with the modern eBPF driver in Kubernetes and Docker, covering
-  driver selection, Helm installation, output channels, and the built-in ruleset that detects
-  container escape, namespace abuse, privileged mounts, and anomalous syscalls. Use when
-  standing Falco up on a cluster, choosing between the eBPF and kernel-module drivers, routing
-  Falco alerts into a SIEM or Falcosidekick, or upgrading an existing deployment. Keywords:
-  Falco, modern_ebpf, kernel module, Helm, Falcosidekick, runtime security, syscall. Do not
-  use for authoring individual escape rules - use detecting-container-escape-with-falco-rules.
+ Deploys and operates Falco with the modern eBPF driver in Kubernetes and Docker, covering
+ driver selection, Helm installation, output channels, and the built-in ruleset that detects
+ container escape, namespace abuse, privileged mounts, and anomalous syscalls. Use when
+ standing Falco up on a cluster, choosing between the eBPF and kernel-module drivers, routing
+ Falco alerts into a SIEM or Falcosidekick, or upgrading an existing deployment. Keywords:
+ Falco, modern_ebpf, kernel module, Helm, Falcosidekick, runtime security, syscall. Do not
+ use for authoring individual escape rules - use detecting-container-escape-with-falco-rules.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -48,25 +48,25 @@ This skill covers authoring and deploying custom Falco rules to detect the conta
 
 - A Linux host (kernel >= 5.8 for modern eBPF) or Kubernetes cluster you administer
 - Falco install:
-  ```bash
-  # Helm (Kubernetes, modern eBPF, JSON output for SIEM ingest)
-  helm repo add falcosecurity https://falcosecurity.github.io/charts
-  helm repo update
-  helm install falco falcosecurity/falco \
-    --namespace falco --create-namespace \
-    --set driver.kind=modern_ebpf \
-    --set collectors.containerd.enabled=true \
-    --set falco.json_output=true \
-    --set tty=true
+ ```bash
+ # Helm (Kubernetes, modern eBPF, JSON output for SIEM ingest)
+ helm repo add falcosecurity https://falcosecurity.github.io/charts
+ helm repo update
+ helm install falco falcosecurity/falco \
+ --namespace falco --create-namespace \
+ --set driver.kind=modern_ebpf \
+ --set collectors.containerd.enabled=true \
+ --set falco.json_output=true \
+ --set tty=true
 
-  # Linux package install (Debian/Ubuntu)
-  curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
-    sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
-  echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] \
-    https://download.falco.org/packages/deb stable main" | \
-    sudo tee /etc/apt/sources.list.d/falcosecurity.list
-  sudo apt-get update -y && sudo apt-get install -y falco
-  ```
+ # Linux package install (Debian/Ubuntu)
+ curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
+ sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
+ echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] \
+ https://download.falco.org/packages/deb stable main" | \
+ sudo tee /etc/apt/sources.list.d/falcosecurity.list
+ sudo apt-get update -y && sudo apt-get install -y falco
+ ```
 - Basic familiarity with Falco fields (`evt.type`, `proc.name`, `container.id`, `fd.name`)
 
 ## Objectives
@@ -110,114 +110,114 @@ Custom rules live in `/etc/falco/falco_rules.local.yaml` or `/etc/falco/rules.d/
 ```yaml
 # /etc/falco/rules.d/custom-escape.yaml
 - list: shell_binaries
-  items: [bash, sh, zsh, dash, ash, ksh]
+ items: [bash, sh, zsh, dash, ash, ksh]
 
 - macro: spawned_process
-  condition: evt.type in (execve, execveat) and evt.dir = <
+ condition: evt.type in (execve, execveat) and evt.dir = <
 
 - macro: container
-  condition: container.id != host
+ condition: container.id != host
 ```
 
 ### Step 3: Write a Container-Escape Detection Rule (release_agent / cgroup)
 
 ```yaml
 - rule: Container Escape via cgroup release_agent
-  desc: >
-    Detect a process inside a container writing to a cgroup release_agent or
-    notify_on_release file, a classic privileged-container breakout primitive.
-  condition: >
-    container
-    and spawned_process
-    and (evt.type in (open, openat, openat2) or evt.type=write)
-    and (fd.name endswith "release_agent"
-         or fd.name endswith "notify_on_release")
-    and evt.is_open_write=true
-  output: >
-    Container escape attempt via cgroup release_agent
-    (user=%user.name command=%proc.cmdline file=%fd.name
-     container=%container.name image=%container.image.repository)
-  priority: CRITICAL
-  tags: [container, mitre_privilege_escalation, T1611]
+ desc: >
+ Detect a process inside a container writing to a cgroup release_agent or
+ notify_on_release file, a classic privileged-container breakout primitive.
+ condition: >
+ container
+ and spawned_process
+ and (evt.type in (open, openat, openat2) or evt.type=write)
+ and (fd.name endswith "release_agent"
+ or fd.name endswith "notify_on_release")
+ and evt.is_open_write=true
+ output: >
+ Container escape attempt via cgroup release_agent
+ (user=%user.name command=%proc.cmdline file=%fd.name
+ container=%container.name image=%container.image.repository)
+ priority: CRITICAL
+ tags: [container, mitre_privilege_escalation, T1611]
 ```
 
 ### Step 4: Detect Namespace Breakout (setns / nsenter)
 
 ```yaml
 - rule: Namespace Change via setns to Host
-  desc: >
-    Detect setns/nsenter used to enter the host namespace (e.g. nsenter -t 1),
-    a common container-to-host escape technique.
-  condition: >
-    evt.type = setns
-    and container
-    and proc.name in (nsenter, unshare)
-  output: >
-    Namespace breakout via setns/nsenter
-    (user=%user.name proc=%proc.name cmd=%proc.cmdline
-     container=%container.name image=%container.image.repository)
-  priority: CRITICAL
-  tags: [container, mitre_privilege_escalation, T1611]
+ desc: >
+ Detect setns/nsenter used to enter the host namespace (e.g. nsenter -t 1),
+ a common container-to-host escape technique.
+ condition: >
+ evt.type = setns
+ and container
+ and proc.name in (nsenter, unshare)
+ output: >
+ Namespace breakout via setns/nsenter
+ (user=%user.name proc=%proc.name cmd=%proc.cmdline
+ container=%container.name image=%container.image.repository)
+ priority: CRITICAL
+ tags: [container, mitre_privilege_escalation, T1611]
 ```
 
 ### Step 5: Detect Privileged Mount and Docker Socket Abuse
 
 ```yaml
 - rule: Mount Launched in Privileged Container
-  desc: Detect the mount binary running inside a privileged container.
-  condition: >
-    spawned_process
-    and container
-    and container.privileged = true
-    and proc.name = mount
-  output: >
-    Mount executed in privileged container
-    (cmd=%proc.cmdline container=%container.name image=%container.image.repository)
-  priority: WARNING
-  tags: [container, mitre_privilege_escalation, T1611]
+ desc: Detect the mount binary running inside a privileged container.
+ condition: >
+ spawned_process
+ and container
+ and container.privileged = true
+ and proc.name = mount
+ output: >
+ Mount executed in privileged container
+ (cmd=%proc.cmdline container=%container.name image=%container.image.repository)
+ priority: WARNING
+ tags: [container, mitre_privilege_escalation, T1611]
 
 - rule: Docker Socket Accessed From Container
-  desc: A container process reads/writes the host Docker daemon socket.
-  condition: >
-    container
-    and (evt.type in (open, openat, openat2, connect))
-    and fd.name = /var/run/docker.sock
-  output: >
-    Container touched docker.sock - possible daemon-API escape
-    (proc=%proc.name cmd=%proc.cmdline container=%container.name)
-  priority: CRITICAL
-  tags: [container, mitre_execution, T1610]
+ desc: A container process reads/writes the host Docker daemon socket.
+ condition: >
+ container
+ and (evt.type in (open, openat, openat2, connect))
+ and fd.name = /var/run/docker.sock
+ output: >
+ Container touched docker.sock - possible daemon-API escape
+ (proc=%proc.name cmd=%proc.cmdline container=%container.name)
+ priority: CRITICAL
+ tags: [container, mitre_execution, T1610]
 ```
 
 ### Step 6: Detect Reverse Shells and Sensitive File Reads
 
 ```yaml
 - rule: Reverse Shell From Container
-  desc: A shell in a container with stdin/stdout wired to a network socket.
-  condition: >
-    spawned_process
-    and container
-    and proc.name in (shell_binaries)
-    and (fd.num in (0, 1, 2))
-    and fd.type in (ipv4, ipv6)
-  output: >
-    Reverse shell detected in container
-    (proc=%proc.cmdline connection=%fd.name container=%container.name)
-  priority: CRITICAL
-  tags: [container, mitre_execution, T1059.004]
+ desc: A shell in a container with stdin/stdout wired to a network socket.
+ condition: >
+ spawned_process
+ and container
+ and proc.name in (shell_binaries)
+ and (fd.num in (0, 1, 2))
+ and fd.type in (ipv4, ipv6)
+ output: >
+ Reverse shell detected in container
+ (proc=%proc.cmdline connection=%fd.name container=%container.name)
+ priority: CRITICAL
+ tags: [container, mitre_execution, T1059.004]
 
 - rule: Read Sensitive Host File From Container
-  desc: Container reads /etc/shadow or similar after a likely escape.
-  condition: >
-    container
-    and (evt.type in (open, openat, openat2))
-    and evt.is_open_read=true
-    and fd.name in (/etc/shadow, /etc/sudoers, /root/.ssh/id_rsa)
-  output: >
-    Sensitive file read from container (file=%fd.name proc=%proc.cmdline
-     container=%container.name)
-  priority: WARNING
-  tags: [container, mitre_credential_access]
+ desc: Container reads /etc/shadow or similar after a likely escape.
+ condition: >
+ container
+ and (evt.type in (open, openat, openat2))
+ and evt.is_open_read=true
+ and fd.name in (/etc/shadow, /etc/sudoers, /root/.ssh/id_rsa)
+ output: >
+ Sensitive file read from container (file=%fd.name proc=%proc.cmdline
+ container=%container.name)
+ priority: WARNING
+ tags: [container, mitre_credential_access]
 ```
 
 ### Step 7: Validate Rule Syntax and Load
@@ -231,7 +231,7 @@ sudo falco -r /etc/falco/rules.d/custom-escape.yaml
 
 # Helm: ship custom rules via values (mounted into /etc/falco/rules.d)
 helm upgrade falco falcosecurity/falco -n falco --reuse-values \
-  --set-file "customRules.custom-escape\.yaml"=./custom-escape.yaml
+ --set-file "customRules.custom-escape\.yaml"=./custom-escape.yaml
 ```
 
 ### Step 8: Trigger and Confirm (Purple-Team)
@@ -252,9 +252,9 @@ kubectl logs -n falco -l app.kubernetes.io/name=falco | grep -i "Namespace break
 ```bash
 # Deploy Falcosidekick to fan out alerts (Elastic, Slack, Splunk, etc.)
 helm upgrade falco falcosecurity/falco -n falco --reuse-values \
-  --set falcosidekick.enabled=true \
-  --set falcosidekick.config.elasticsearch.hostport=https://elastic:9200 \
-  --set falcosidekick.config.elasticsearch.index=falco
+ --set falcosidekick.enabled=true \
+ --set falcosidekick.config.elasticsearch.hostport=https://elastic:9200 \
+ --set falcosidekick.config.elasticsearch.index=falco
 ```
 
 ## Tools and Resources

@@ -1,7 +1,7 @@
 ---
 name: analyzing-active-directory-acl-abuse
 description: Detect dangerous ACL misconfigurations in Active Directory using ldap3
-  to identify GenericAll, WriteDACL, and WriteOwner abuse paths
+ to identify GenericAll, WriteDACL, and WriteOwner abuse paths
 domain: cybersecurity
 subdomain: identity-security
 tags:
@@ -70,21 +70,21 @@ This skill uses the ldap3 Python library to connect to a Domain Controller, quer
 
 ```json
 {
-  "domain": "corp.example.com",
-  "objects_scanned": 1247,
-  "dangerous_aces_found": 8,
-  "findings": [
-    {
-      "severity": "critical",
-      "target_object": "CN=Domain Admins,CN=Users,DC=corp,DC=example,DC=com",
-      "target_type": "group",
-      "trustee": "CORP\\helpdesk-team",
-      "permission": "GenericAll",
-      "access_mask": "0x10000000",
-      "ace_type": "ACCESS_ALLOWED",
-      "attack_path": "GenericAll on Domain Admins group allows adding arbitrary members",
-      "remediation": "Remove GenericAll ACE for helpdesk-team on Domain Admins"
-    }
-  ]
+ "domain": "corp.example.com",
+ "objects_scanned": 1247,
+ "dangerous_aces_found": 8,
+ "findings": [
+ {
+ "severity": "critical",
+ "target_object": "CN=Domain Admins,CN=Users,DC=corp,DC=example,DC=com",
+ "target_type": "group",
+ "trustee": "CORP\\helpdesk-team",
+ "permission": "GenericAll",
+ "access_mask": "0x10000000",
+ "ace_type": "ACCESS_ALLOWED",
+ "attack_path": "GenericAll on Domain Admins group allows adding arbitrary members",
+ "remediation": "Remove GenericAll ACE for helpdesk-team on Domain Admins"
+ }
+ ]
 }
 ```

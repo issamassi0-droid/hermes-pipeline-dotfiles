@@ -6,9 +6,9 @@ author: Hermes Agent + Teknium
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Coding-Agent, Claude, Anthropic, Code-Review, Refactoring, PTY, Automation]
-    related_skills: [codex, hermes-agent, opencode]
+ hermes:
+ tags: [Coding-Agent, Claude, Anthropic, Code-Review, Refactoring, PTY, Automation]
+ related_skills: [codex, hermes-agent, opencode]
 ---
 
 # Claude Code — Hermes Orchestration Guide
@@ -84,15 +84,15 @@ Claude Code presents up to two confirmation dialogs on first launch. You MUST ha
 
 ### Dialog 1: Workspace Trust (first visit to a directory)
 ```
-❯ 1. Yes, I trust this folder    ← DEFAULT (just press Enter)
-  2. No, exit
+❯ 1. Yes, I trust this folder ← DEFAULT (just press Enter)
+ 2. No, exit
 ```
 **Handling:** `tmux send-keys -t <session> Enter` — default selection is correct.
 
 ### Dialog 2: Bypass Permissions Warning (only with --dangerously-skip-permissions)
 ```
-❯ 1. No, exit                    ← DEFAULT (WRONG choice!)
-  2. Yes, I accept
+❯ 1. No, exit ← DEFAULT (WRONG choice!)
+ 2. Yes, I accept
 ```
 **Handling:** Must navigate DOWN first, then Enter:
 ```
@@ -150,17 +150,17 @@ terminal(command="claude -p 'Analyze auth.py for security issues' --output-forma
 Returns a JSON object with:
 ```json
 {
-  "type": "result",
-  "subtype": "success",
-  "result": "The analysis text...",
-  "session_id": "75e2167f-...",
-  "num_turns": 3,
-  "total_cost_usd": 0.0787,
-  "duration_ms": 10276,
-  "stop_reason": "end_turn",
-  "terminal_reason": "completed",
-  "usage": { "input_tokens": 5, "output_tokens": 603, ... },
-  "modelUsage": { "claude-sonnet-4-6": { "costUSD": 0.078, "contextWindow": 200000 } }
+ "type": "result",
+ "subtype": "success",
+ "result": "The analysis text...",
+ "session_id": "75e2167f-...",
+ "num_turns": 3,
+ "total_cost_usd": 0.0787,
+ "duration_ms": 10276,
+ "stop_reason": "end_turn",
+ "terminal_reason": "completed",
+ "usage": { "input_tokens": 5, "output_tokens": 603, ... },
+ "modelUsage": { "claude-sonnet-4-6": { "costUSD": 0.078, "contextWindow": 200000 } }
 }
 ```
 
@@ -175,7 +175,7 @@ terminal(command="claude -p 'Write a summary' --output-format stream-json --verb
 Returns newline-delimited JSON events. Filter with jq for live text:
 ```
 claude -p "Explain X" --output-format stream-json --verbose --include-partial-messages | \
-  jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
+ jq -rj 'select(.type == "stream_event" and .event.delta.type? == "text_delta") | .event.delta.text'
 ```
 
 Stream events include `system/api_retry` with `attempt`, `max_retries`, and `error` fields (e.g., `rate_limit`, `billing_error`).
@@ -321,16 +321,16 @@ Automatically falls back to the specified model when the default is overloaded (
 
 ### Tool Name Syntax for --allowedTools / --disallowedTools
 ```
-Read                    # All file reading
-Edit                    # File editing (existing files)
-Write                   # File creation (new files)
-Bash                    # All shell commands
-Bash(git *)             # Only git commands
-Bash(git commit *)      # Only git commit commands
-Bash(npm run lint:*)    # Pattern matching with wildcards
-WebSearch               # Web search capability
-WebFetch                # Web page fetching
-mcp__<server>__<tool>   # Specific MCP tool
+Read # All file reading
+Edit # File editing (existing files)
+Write # File creation (new files)
+Bash # All shell commands
+Bash(git *) # Only git commands
+Bash(git commit *) # Only git commit commands
+Bash(npm run lint:*) # Pattern matching with wildcards
+WebSearch # Web search capability
+WebFetch # Web page fetching
+mcp__<server>__<tool> # Specific MCP tool
 ```
 
 ## Settings & Configuration
@@ -344,11 +344,11 @@ mcp__<server>__<tool>   # Specific MCP tool
 ### Permissions in Settings
 ```json
 {
-  "permissions": {
-    "allow": ["Bash(npm run lint:*)", "WebSearch", "Read"],
-    "ask": ["Write(*.ts)", "Bash(git push*)"],
-    "deny": ["Read(.env)", "Bash(rm -rf *)"]
-  }
+ "permissions": {
+ "allow": ["Bash(npm run lint:*)", "WebSearch", "Read"],
+ "ask": ["Write(*.ts)", "Bash(git push*)"],
+ "deny": ["Read(.env)", "Bash(rm -rf *)"]
+ }
 }
 ```
 
@@ -477,7 +477,7 @@ terminal(command="cd /path/to/repo && git diff main...feature-branch | claude -p
 ```
 terminal(command="tmux new-session -d -s review -x 140 -y 40")
 terminal(command="tmux send-keys -t review 'cd /path/to/repo && claude -w pr-review' Enter")
-terminal(command="sleep 5 && tmux send-keys -t review Enter")  # Trust dialog
+terminal(command="sleep 5 && tmux send-keys -t review Enter") # Trust dialog
 terminal(command="sleep 2 && tmux send-keys -t review 'Review all changes vs main. Check for bugs, security issues, race conditions, and missing tests.' Enter")
 terminal(command="sleep 30 && tmux capture-pane -t review -p -S -60")
 ```
@@ -589,19 +589,19 @@ Configure in `.claude/settings.json` (project) or `~/.claude/settings.json` (glo
 
 ```json
 {
-  "hooks": {
-    "PostToolUse": [{
-      "matcher": "Write(*.py)",
-      "hooks": [{"type": "command", "command": "ruff check --fix $CLAUDE_FILE_PATHS"}]
-    }],
-    "PreToolUse": [{
-      "matcher": "Bash",
-      "hooks": [{"type": "command", "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'rm -rf'; then echo 'Blocked!' && exit 2; fi"}]
-    }],
-    "Stop": [{
-      "hooks": [{"type": "command", "command": "echo 'Claude finished a response' >> /tmp/claude-activity.log"}]
-    }]
-  }
+ "hooks": {
+ "PostToolUse": [{
+ "matcher": "Write(*.py)",
+ "hooks": [{"type": "command", "command": "ruff check --fix $CLAUDE_FILE_PATHS"}]
+ }],
+ "PreToolUse": [{
+ "matcher": "Bash",
+ "hooks": [{"type": "command", "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -q 'rm -rf'; then echo 'Blocked!' && exit 2; fi"}]
+ }],
+ "Stop": [{
+ "hooks": [{"type": "command", "command": "echo 'Claude finished a response' >> /tmp/claude-activity.log"}]
+ }]
+ }
 }
 ```
 
@@ -627,10 +627,10 @@ Configure in `.claude/settings.json` (project) or `~/.claude/settings.json` (glo
 ### Security Hook Examples
 ```json
 {
-  "PreToolUse": [{
-    "matcher": "Bash",
-    "hooks": [{"type": "command", "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'rm -rf|git push.*--force|:(){ :|:& };:'; then echo 'Dangerous command blocked!' && exit 2; fi"}]
-  }]
+ "PreToolUse": [{
+ "matcher": "Bash",
+ "hooks": [{"type": "command", "command": "if echo \"$CLAUDE_TOOL_INPUT\" | grep -qE 'rm -rf|git push.*--force|:(){ :|:& };:'; then echo 'Dangerous command blocked!' && exit 2; fi"}]
+ }]
 }
 ```
 

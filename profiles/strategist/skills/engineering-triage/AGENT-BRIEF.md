@@ -88,14 +88,14 @@ and append "..." to indicate truncation.
 
 **Key interfaces:**
 - The `SkillMetadata` type's `description` field: no type change needed,
-  but the validation/processing logic that populates it needs to respect
-  word boundaries
+ but the validation/processing logic that populates it needs to respect
+ word boundaries
 - Any function that reads SKILL.md frontmatter and extracts the description
 
 **Acceptance criteria:**
 - [ ] Descriptions under 1024 chars are unchanged
 - [ ] Descriptions over 1024 chars are truncated at the last word boundary
-      before 1024 chars
+ before 1024 chars
 - [ ] Truncated descriptions end with "..."
 - [ ] The total length including "..." does not exceed 1024 chars
 
@@ -126,18 +126,18 @@ checked for matches.
 
 **Key interfaces:**
 - Markdown file format in `.out-of-scope/`: each file should have a
-  `# Concept Name` heading, a `**Decision:**` line, a `**Reason:**` line,
-  and a `**Prior requests:**` list with issue links
+ `# Concept Name` heading, a `**Decision:**` line, a `**Reason:**` line,
+ and a `**Prior requests:**` list with issue links
 - The triage workflow should read all `.out-of-scope/*.md` files early
-  and match incoming issues against them by concept similarity
+ and match incoming issues against them by concept similarity
 
 **Acceptance criteria:**
 - [ ] Closing a feature as wontfix creates/updates a file in `.out-of-scope/`
 - [ ] The file includes the decision, reasoning, and link to the closed issue
 - [ ] If a matching `.out-of-scope/` file already exists, the new issue is
-      appended to its "Prior requests" list rather than creating a duplicate
+ appended to its "Prior requests" list rather than creating a duplicate
 - [ ] During triage, existing `.out-of-scope/` files are checked and surfaced
-      when a new issue matches a prior rejection
+ when a new issue matches a prior rejection
 
 **Out of scope:**
 - Automated matching (human confirms the match)
@@ -168,7 +168,7 @@ is untouched when the flag is absent.
 
 **Key interfaces:**
 - The command's error path should emit `{ "error": string }` under `--json`
-  instead of the plain-text error
+ instead of the plain-text error
 - Reuse the existing serializer the PR already added; don't introduce a second
 
 **Acceptance criteria:**

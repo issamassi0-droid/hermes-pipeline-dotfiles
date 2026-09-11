@@ -2,12 +2,12 @@
 name: video-toolkit
 description: Create professional videos autonomously using claude-code-video-toolkit — AI voiceovers, image generation, music, talking heads, and Remotion rendering.
 metadata:
-  openclaw:
-    emoji: "🎬"
-    skillKey: "video-toolkit"
-    os: ["darwin", "linux"]
-    requires:
-      bins: ["node", "python3", "ffmpeg", "npm"]
+ openclaw:
+ emoji: "🎬"
+ skillKey: "video-toolkit"
+ os: ["darwin", "linux"]
+ requires:
+ bins: ["node", "python3", "ffmpeg", "npm"]
 ---
 
 # Video Toolkit
@@ -57,7 +57,7 @@ If Modal endpoints are configured, you're ready. If not, **ask the user to provi
 
 ```bash
 pip3 install --break-system-packages modal
-python3 -m modal setup   # Opens browser for authentication
+python3 -m modal setup # Opens browser for authentication
 
 # Deploy each tool — capture the endpoint URL from output
 cd ~/.openclaw/workspace/claude-code-video-toolkit
@@ -68,7 +68,7 @@ modal deploy docker/modal-sadtalker/app.py
 modal deploy docker/modal-image-edit/app.py
 modal deploy docker/modal-upscale/app.py
 modal deploy docker/modal-propainter/app.py
-modal deploy docker/modal-ltx2/app.py      # Requires: modal secret create huggingface-token HF_TOKEN=hf_...
+modal deploy docker/modal-ltx2/app.py # Requires: modal secret create huggingface-token HF_TOKEN=hf_...
 ```
 
 **LTX-2 prerequisite:** Before deploying LTX-2, create a HuggingFace secret and accept the [Gemma 3 license](https://huggingface.co/google/gemma-3-12b-it-qat-q4_0-unquantized):
@@ -137,22 +137,22 @@ Edit `projects/PROJECT_NAME/src/config/demo-config.ts`:
 
 ```typescript
 export const demoConfig: ProductDemoConfig = {
-  product: {
-    name: 'My Product',
-    tagline: 'What it does in one line',
-    website: 'example.com',
-  },
-  scenes: [
-    { type: 'title', durationSeconds: 9, content: { headline: '...', subheadline: '...' } },
-    { type: 'problem', durationSeconds: 14, content: { headline: '...', problems: ['...', '...'] } },
-    { type: 'solution', durationSeconds: 13, content: { headline: '...', highlights: ['...', '...'] } },
-    { type: 'stats', durationSeconds: 12, content: { stats: [{value: '99%', label: '...'}, ...] } },
-    { type: 'cta', durationSeconds: 10, content: { headline: '...', links: ['...'] } },
-  ],
-  audio: {
-    backgroundMusicFile: 'audio/bg-music.mp3',
-    backgroundMusicVolume: 0.12,
-  },
+ product: {
+ name: 'My Product',
+ tagline: 'What it does in one line',
+ website: 'example.com',
+ },
+ scenes: [
+ { type: 'title', durationSeconds: 9, content: { headline: '...', subheadline: '...' } },
+ { type: 'problem', durationSeconds: 14, content: { headline: '...', problems: ['...', '...'] } },
+ { type: 'solution', durationSeconds: 13, content: { headline: '...', highlights: ['...', '...'] } },
+ { type: 'stats', durationSeconds: 12, content: { stats: [{value: '99%', label: '...'}, ...] } },
+ { type: 'cta', durationSeconds: 10, content: { headline: '...', links: ['...'] } },
+ ],
+ audio: {
+ backgroundMusicFile: 'audio/bg-music.mp3',
+ backgroundMusicVolume: 0.12,
+ },
 };
 ```
 
@@ -187,10 +187,10 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/music_gen.py \
-  --preset corporate-bg \
-  --duration 90 \
-  --output projects/PROJECT_NAME/public/audio/bg-music.mp3 \
-  --cloud modal
+ --preset corporate-bg \
+ --duration 90 \
+ --output projects/PROJECT_NAME/public/audio/bg-music.mp3 \
+ --cloud modal
 ```
 
 Presets: `corporate-bg`, `upbeat-tech`, `ambient`, `dramatic`, `tension`, `hopeful`, `cta`, `lofi`.
@@ -204,17 +204,17 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 
 # Scene 01
 python3 tools/qwen3_tts.py \
-  --text "The voiceover text for scene one." \
-  --speaker Ryan --tone warm \
-  --output projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
-  --cloud modal
+ --text "The voiceover text for scene one." \
+ --speaker Ryan --tone warm \
+ --output projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
+ --cloud modal
 
 # Scene 02
 python3 tools/qwen3_tts.py \
-  --text "The voiceover text for scene two." \
-  --speaker Ryan --tone warm \
-  --output projects/PROJECT_NAME/public/audio/scenes/02.mp3 \
-  --cloud modal
+ --text "The voiceover text for scene two." \
+ --speaker Ryan --tone warm \
+ --output projects/PROJECT_NAME/public/audio/scenes/02.mp3 \
+ --cloud modal
 
 # ... repeat for each scene
 ```
@@ -226,11 +226,11 @@ For voice cloning (needs a reference recording):
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/qwen3_tts.py \
-  --text "Text to speak" \
-  --ref-audio assets/voices/reference.m4a \
-  --ref-text "Exact transcript of the reference audio" \
-  --output projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
-  --cloud modal
+ --text "Text to speak" \
+ --ref-audio assets/voices/reference.m4a \
+ --ref-text "Exact transcript of the reference audio" \
+ --output projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
+ --cloud modal
 ```
 
 #### 4c. Scene Images
@@ -238,10 +238,10 @@ python3 tools/qwen3_tts.py \
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/flux2.py \
-  --prompt "Dark tech background with blue geometric grid, cinematic lighting" \
-  --width 1920 --height 1080 \
-  --output projects/PROJECT_NAME/public/images/title-bg.png \
-  --cloud modal
+ --prompt "Dark tech background with blue geometric grid, cinematic lighting" \
+ --width 1920 --height 1080 \
+ --output projects/PROJECT_NAME/public/images/title-bg.png \
+ --cloud modal
 ```
 
 Image presets (use `--preset` instead of `--prompt --width --height`):
@@ -250,9 +250,9 @@ Image presets (use `--preset` instead of `--prompt --width --height`):
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/flux2.py \
-  --preset title-bg \
-  --output projects/PROJECT_NAME/public/images/title-bg.png \
-  --cloud modal
+ --preset title-bg \
+ --output projects/PROJECT_NAME/public/images/title-bg.png \
+ --cloud modal
 ```
 
 #### 4d. Video Clips — B-Roll & Animated Backgrounds (optional)
@@ -264,22 +264,22 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 
 # B-roll clip from text
 python3 tools/ltx2.py \
-  --prompt "Aerial drone shot over a European city at golden hour, cinematic wide angle" \
-  --output projects/PROJECT_NAME/public/videos/broll-europe.mp4 \
-  --cloud modal
+ --prompt "Aerial drone shot over a European city at golden hour, cinematic wide angle" \
+ --output projects/PROJECT_NAME/public/videos/broll-europe.mp4 \
+ --cloud modal
 
 # Animate a slide/screenshot (image-to-video)
 python3 tools/ltx2.py \
-  --prompt "Gentle particle effects, soft ambient light shifts, very slight camera drift" \
-  --input projects/PROJECT_NAME/public/images/title-bg.png \
-  --output projects/PROJECT_NAME/public/videos/animated-title.mp4 \
-  --cloud modal
+ --prompt "Gentle particle effects, soft ambient light shifts, very slight camera drift" \
+ --input projects/PROJECT_NAME/public/images/title-bg.png \
+ --output projects/PROJECT_NAME/public/videos/animated-title.mp4 \
+ --cloud modal
 
 # Abstract intro/outro background
 python3 tools/ltx2.py \
-  --prompt "Dark moody abstract background with flowing blue light streaks, bokeh particles, cinematic" \
-  --output projects/PROJECT_NAME/public/videos/intro-bg.mp4 \
-  --cloud modal
+ --prompt "Dark moody abstract background with flowing blue light streaks, bokeh particles, cinematic" \
+ --output projects/PROJECT_NAME/public/videos/intro-bg.mp4 \
+ --cloud modal
 ```
 
 Use in Remotion compositions with `<OffthreadVideo>`:
@@ -304,18 +304,18 @@ cd ~/.openclaw/workspace/claude-code-video-toolkit
 
 # 1. Generate portrait
 python3 tools/flux2.py \
-  --prompt "Professional presenter portrait, clean style, dark background, facing camera, upper body" \
-  --width 1024 --height 576 \
-  --output projects/PROJECT_NAME/public/images/presenter.png \
-  --cloud modal
+ --prompt "Professional presenter portrait, clean style, dark background, facing camera, upper body" \
+ --width 1024 --height 576 \
+ --output projects/PROJECT_NAME/public/images/presenter.png \
+ --cloud modal
 
 # 2. Generate per-scene narrator clips (one per scene, NOT one long video)
 python3 tools/sadtalker.py \
-  --image projects/PROJECT_NAME/public/images/presenter.png \
-  --audio projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
-  --preprocess full --still --expression-scale 0.8 \
-  --output projects/PROJECT_NAME/public/narrator-01.mp4 \
-  --cloud modal
+ --image projects/PROJECT_NAME/public/images/presenter.png \
+ --audio projects/PROJECT_NAME/public/audio/scenes/01.mp3 \
+ --preprocess full --still --expression-scale 0.8 \
+ --output projects/PROJECT_NAME/public/narrator-01.mp4 \
+ --cloud modal
 
 # Repeat for each scene that needs a narrator
 ```
@@ -334,10 +334,10 @@ Create scene variants from existing images:
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/image_edit.py \
-  --input projects/PROJECT_NAME/public/images/title-bg.png \
-  --prompt "Make it darker with red tones, more ominous" \
-  --output projects/PROJECT_NAME/public/images/problem-bg.png \
-  --cloud modal
+ --input projects/PROJECT_NAME/public/images/title-bg.png \
+ --prompt "Make it darker with red tones, more ominous" \
+ --output projects/PROJECT_NAME/public/images/problem-bg.png \
+ --cloud modal
 ```
 
 #### 4f. Upscaling (optional)
@@ -345,9 +345,9 @@ python3 tools/image_edit.py \
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 python3 tools/upscale.py \
-  --input projects/PROJECT_NAME/public/images/some-image.png \
-  --output projects/PROJECT_NAME/public/images/some-image-4x.png \
-  --scale 4 --cloud modal
+ --input projects/PROJECT_NAME/public/images/some-image.png \
+ --output projects/PROJECT_NAME/public/images/some-image-4x.png \
+ --scale 4 --cloud modal
 ```
 
 ### Step 5: Sync Timing
@@ -357,7 +357,7 @@ python3 tools/upscale.py \
 ```bash
 cd ~/.openclaw/workspace/claude-code-video-toolkit
 for f in projects/PROJECT_NAME/public/audio/scenes/*.mp3; do
-  echo "$(basename $f): $(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f")s"
+ echo "$(basename $f): $(ffprobe -v error -show_entries format=duration -of csv=p=0 "$f")s"
 done
 ```
 
@@ -394,7 +394,7 @@ Use per-scene audio with a 1-second delay (`from={30}` = 30 frames = 1s at 30fps
 
 ```tsx
 <Sequence from={30}>
-  <Audio src={staticFile('audio/scenes/01.mp3')} volume={1} />
+ <Audio src={staticFile('audio/scenes/01.mp3')} volume={1} />
 </Sequence>
 ```
 
@@ -402,11 +402,11 @@ Use per-scene audio with a 1-second delay (`from={30}` = 30 frames = 1s at 30fps
 
 ```tsx
 <Sequence from={30}>
-  <OffthreadVideo
-    src={staticFile('narrator-01.mp4')}
-    style={{ width: 320, height: 180, objectFit: 'cover' }}
-    muted
-  />
+ <OffthreadVideo
+ src={staticFile('narrator-01.mp4')}
+ style={{ width: 320, height: 180, objectFit: 'cover' }}
+ muted
+ />
 </Sequence>
 ```
 

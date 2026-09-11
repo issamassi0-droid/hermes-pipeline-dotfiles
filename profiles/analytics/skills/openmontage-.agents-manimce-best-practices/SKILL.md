@@ -1,11 +1,11 @@
 ---
 name: manimce-best-practices
 description: |
-  Trigger when: (1) User mentions "manim" or "Manim Community" or "ManimCE", (2) Code contains `from manim import *`, (3) User runs `manim` CLI commands, (4) Working with Scene, MathTex, Create(), or ManimCE-specific classes.
+ Trigger when: (1) User mentions "manim" or "Manim Community" or "ManimCE", (2) Code contains `from manim import *`, (3) User runs `manim` CLI commands, (4) Working with Scene, MathTex, Create(), or ManimCE-specific classes.
 
-  Best practices for Manim Community Edition - the community-maintained Python animation engine. Covers Scene structure, animations, LaTeX/MathTex, 3D with ThreeDScene, camera control, styling, and CLI usage.
+ Best practices for Manim Community Edition - the community-maintained Python animation engine. Covers Scene structure, animations, LaTeX/MathTex, 3D with ThreeDScene, camera control, styling, and CLI usage.
 
-  NOT for ManimGL/3b1b version (which uses `manimlib` imports and `manimgl` CLI).
+ NOT for ManimGL/3b1b version (which uses `manimlib` imports and `manimgl` CLI).
 ---
 
 ## How to use
@@ -78,18 +78,18 @@ Copy and modify these templates to start new projects:
 from manim import *
 
 class MyScene(Scene):
-    def construct(self):
-        # Create mobjects
-        circle = Circle()
+ def construct(self):
+ # Create mobjects
+ circle = Circle()
 
-        # Add to scene (static)
-        self.add(circle)
+ # Add to scene (static)
+ self.add(circle)
 
-        # Or animate
-        self.play(Create(circle))
+ # Or animate
+ self.play(Create(circle))
 
-        # Wait
-        self.wait(1)
+ # Wait
+ self.wait(1)
 ```
 
 ### Render Command
@@ -118,8 +118,8 @@ Use the `%%manim` cell magic:
 ```python
 %%manim -qm MyScene
 class MyScene(Scene):
-    def construct(self):
-        self.play(Create(Circle()))
+ def construct(self):
+ self.play(Create(Circle()))
 ```
 
 ### Common Pitfalls to Avoid
@@ -143,9 +143,9 @@ manim checkhealth
 ### Useful Commands
 
 ```bash
-manim -pql scene.py Scene    # Preview low quality (development)
-manim -pqh scene.py Scene    # Preview high quality
-manim --format gif scene.py  # Output as GIF
-manim checkhealth            # Verify installation
-manim plugins -l             # List plugins
+manim -pql scene.py Scene # Preview low quality (development)
+manim -pqh scene.py Scene # Preview high quality
+manim --format gif scene.py # Output as GIF
+manim checkhealth # Verify installation
+manim plugins -l # List plugins
 ```

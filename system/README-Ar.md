@@ -80,29 +80,29 @@ python3 system/cabinet-office.py override --mission m001 --reason "rejected draf
 
 ```
 system/
-├── registry.json                    # سجل 11 وكيل
-├── protocol.md                      # بروتوكول التواصل
-├── routing.yaml                     # قواعد التوجيه
-├── quality-charter.md               # ميثاق الجودة
-├── ledger-schema.json               # مخطط المهام
-├── evolution.md                     # حلقة التطور
-├── constitutional.md                # المبادئ السبعة
-├── quality-metrics.md               # مقاييس الجودة
-├── escalation-criteria.md           # محفزات التصعيد
-├── architect-failover.md            # تجاوز فشل المنظّم
-├── system-health.md                 # لوحة الصحة
-├── model-gateway.md + .sh           # بوابة النماذج
-├── model-registry.json              # سجل النماذج
-├── cabinet-office.py                # واجهة موحدة (12 أمر)
-├── bootstrap.sh                     # تشغيل/تحقق
+├── registry.json # سجل 11 وكيل
+├── protocol.md # بروتوكول التواصل
+├── routing.yaml # قواعد التوجيه
+├── quality-charter.md # ميثاق الجودة
+├── ledger-schema.json # مخطط المهام
+├── evolution.md # حلقة التطور
+├── constitutional.md # المبادئ السبعة
+├── quality-metrics.md # مقاييس الجودة
+├── escalation-criteria.md # محفزات التصعيد
+├── architect-failover.md # تجاوز فشل المنظّم
+├── system-health.md # لوحة الصحة
+├── model-gateway.md + .sh # بوابة النماذج
+├── model-registry.json # سجل النماذج
+├── cabinet-office.py # واجهة موحدة (12 أمر)
+├── bootstrap.sh # تشغيل/تحقق
 └── scripts/
-    ├── protocol-engine.py           # محرك البروتوكول
-    ├── context-budget.py            # حاسبة السياق
-    ├── architect-heartbeat.py       # نبض الموجه
-    ├── output-validator.py          # مُحقّق المخرجات
-    ├── dedup.py + dedup-v2.py       # إزالة التكرار
-    ├── quality-assessment-v2.py     # تقييم الجودة
-    └── escalation-system-health.py  # تصعيد + صحة
+ ├── protocol-engine.py # محرك البروتوكول
+ ├── context-budget.py # حاسبة السياق
+ ├── architect-heartbeat.py # نبض الموجه
+ ├── output-validator.py # مُحقّق المخرجات
+ ├── dedup.py + dedup-v2.py # إزالة التكرار
+ ├── quality-assessment-v2.py # تقييم الجودة
+ └── escalation-system-health.py # تصعيد + صحة
 ```
 
 ---

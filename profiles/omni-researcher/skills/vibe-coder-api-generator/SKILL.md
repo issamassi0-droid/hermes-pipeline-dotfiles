@@ -1,9 +1,9 @@
 ---
 name: api-generator
 description: |
-  Generate CRUD API endpoints automatically. User doesn't see routes.
-  Use when: features need backend logic.
-  Triggers: internal use only.
+ Generate CRUD API endpoints automatically. User doesn't see routes.
+ Use when: features need backend logic.
+ Triggers: internal use only.
 ---
 
 # API Generator
@@ -13,23 +13,23 @@ Create endpoints from requirements. User never writes routes.
 ## Process
 
 1. **Identify resources**
-   - "Manage expenses" → /api/expenses
-   - "User profile" → /api/users/me
+ - "Manage expenses" → /api/expenses
+ - "User profile" → /api/users/me
 
 2. **Generate CRUD**
-   - GET (list, single)
-   - POST (create)
-   - PUT/PATCH (update)
-   - DELETE (remove)
+ - GET (list, single)
+ - POST (create)
+ - PUT/PATCH (update)
+ - DELETE (remove)
 
 3. **Add validation**
-   - Input schemas
-   - Error handling
-   - Auth middleware
+ - Input schemas
+ - Error handling
+ - Auth middleware
 
 4. **Generate OpenAPI**
-   - Auto-document all endpoints
-   - For future integrations
+ - Auto-document all endpoints
+ - For future integrations
 
 ## Template-Specific
 
@@ -37,14 +37,14 @@ Create endpoints from requirements. User never writes routes.
 ```typescript
 // app/api/expenses/route.ts
 export async function GET() {
-  const expenses = await db.expenses.findMany();
-  return Response.json(expenses);
+ const expenses = await db.expenses.findMany();
+ return Response.json(expenses);
 }
 
 export async function POST(req: Request) {
-  const data = await req.json();
-  const expense = await db.expenses.create({ data });
-  return Response.json(expense);
+ const data = await req.json();
+ const expense = await db.expenses.create({ data });
+ return Response.json(expense);
 }
 ```
 
@@ -52,27 +52,27 @@ export async function POST(req: Request) {
 ```python
 @router.get("/expenses")
 async def list_expenses(db: Session = Depends(get_db)):
-    return db.query(Expense).all()
+ return db.query(Expense).all()
 
 @router.post("/expenses")
 async def create_expense(data: ExpenseCreate, db: Session = Depends(get_db)):
-    expense = Expense(**data.dict())
-    db.add(expense)
-    db.commit()
-    return expense
+ expense = Expense(**data.dict())
+ db.add(expense)
+ db.commit()
+ return expense
 ```
 
 ### Hono
 ```typescript
 app.get('/expenses', async (c) => {
-  const expenses = await db.select().from(expensesTable);
-  return c.json(expenses);
+ const expenses = await db.select().from(expensesTable);
+ return c.json(expenses);
 });
 
 app.post('/expenses', async (c) => {
-  const data = await c.req.json();
-  const [expense] = await db.insert(expensesTable).values(data).returning();
-  return c.json(expense);
+ const data = await c.req.json();
+ const [expense] = await db.insert(expensesTable).values(data).returning();
+ return c.json(expense);
 });
 ```
 

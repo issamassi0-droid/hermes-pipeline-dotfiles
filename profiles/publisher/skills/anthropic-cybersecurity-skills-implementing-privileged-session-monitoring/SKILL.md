@@ -1,13 +1,13 @@
 ---
 name: implementing-privileged-session-monitoring
 description: 'Implements privileged session monitoring and recording using PAM
-  solutions, focusing on CyberArk Privileged Session Manager (PSM) and open-source
-  alternatives, covering session recording configuration, keystroke logging, real-time
-  monitoring, risk-based session analysis, and compliance audit trail generation.
-  Use when configuring CyberArk PSM, recording administrator sessions, or building
-  compliance audit trails for privileged access.
+ solutions, focusing on CyberArk Privileged Session Manager (PSM) and open-source
+ alternatives, covering session recording configuration, keystroke logging, real-time
+ monitoring, risk-based session analysis, and compliance audit trail generation.
+ Use when configuring CyberArk PSM, recording administrator sessions, or building
+ compliance audit trails for privileged access.
 
-  '
+ '
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -64,13 +64,13 @@ Ensure no direct privileged access bypasses the recording proxy:
 ```
 Architecture Overview:
 
-  Admin User ──> PVWA (Web Portal) ──> PSM (Jump Server) ──> Target Server
-       │                                     │                     │
-       │         Credentials never           │   Session is        │
-       │         exposed to admin            │   recorded and      │
-       │                                     │   stored in Vault   │
-       └── MFA + AD Auth ──────────────────> │                     │
-                                              └── RDP/SSH proxy ──>│
+ Admin User ──> PVWA (Web Portal) ──> PSM (Jump Server) ──> Target Server
+ │ │ │
+ │ Credentials never │ Session is │
+ │ exposed to admin │ recorded and │
+ │ │ stored in Vault │
+ └── MFA + AD Auth ──────────────────> │ │
+ └── RDP/SSH proxy ──>│
 
 Network Controls:
 - Firewall: DENY direct RDP (3389) and SSH (22) to target servers from user networks
@@ -87,30 +87,30 @@ Define how PSM connects to target systems. In the PVWA administration console:
 PVWA > Administration > Configuration > Connection Components
 
 For Windows RDP targets:
-  Connection Component: PSM-RDP
-  Protocol: RDP
-  Client Application: mstsc.exe
-  Recording Settings:
-    Record Sessions: Yes
-    Recording Format: AVI (video) + Keystrokes (text)
-    Record Windows Titles: Yes
+ Connection Component: PSM-RDP
+ Protocol: RDP
+ Client Application: mstsc.exe
+ Recording Settings:
+ Record Sessions: Yes
+ Recording Format: AVI (video) + Keystrokes (text)
+ Record Windows Titles: Yes
 
 For Linux SSH targets:
-  Connection Component: PSM-SSH
-  Protocol: SSH
-  Client Application: PSM-SecureCRT or PSM-Putty
-  Recording Settings:
-    Record Sessions: Yes
-    Recording Format: AVI + Text commands
-    Record Unix Commands: Yes
+ Connection Component: PSM-SSH
+ Protocol: SSH
+ Client Application: PSM-SecureCRT or PSM-Putty
+ Recording Settings:
+ Record Sessions: Yes
+ Recording Format: AVI + Text commands
+ Record Unix Commands: Yes
 
 For Database targets (SQL Server Management Studio):
-  Connection Component: PSM-SSMS
-  Protocol: Custom
-  Client Application: SSMS.exe
-  Recording Settings:
-    Record Sessions: Yes
-    Record SQL Queries: Yes (via keystroke logging)
+ Connection Component: PSM-SSMS
+ Protocol: Custom
+ Client Application: SSMS.exe
+ Recording Settings:
+ Record Sessions: Yes
+ Record SQL Queries: Yes (via keystroke logging)
 ```
 
 ### Step 3: Configure Session Recording Policies
@@ -121,39 +121,39 @@ Define recording rules based on risk level and compliance requirements:
 PVWA > Administration > Platform Management > [Platform] > Session Management
 
 Session Recording Settings:
-  Enable Session Recording: Yes
-  Recording Type: Record and Save (not just Monitor)
+ Enable Session Recording: Yes
+ Recording Type: Record and Save (not just Monitor)
 
-  Keystroke Logging:
-    Enable Transcript: Yes
-    Enable Window Events: Yes
+ Keystroke Logging:
+ Enable Transcript: Yes
+ Enable Window Events: Yes
 
-  Storage:
-    Recordings Storage Location: Vault (encrypted, tamper-proof)
-    Retention Period: 90 days (adjust per compliance requirement)
+ Storage:
+ Recordings Storage Location: Vault (encrypted, tamper-proof)
+ Retention Period: 90 days (adjust per compliance requirement)
 
-    PCI-DSS:  Retain for 1 year, available for 3 months
-    SOX:      Retain for 7 years
-    HIPAA:    Retain for 6 years
+ PCI-DSS: Retain for 1 year, available for 3 months
+ SOX: Retain for 7 years
+ HIPAA: Retain for 6 years
 
-  Compression:
-    Enable Recording Compression: Yes
-    Compression Level: Medium (balance storage vs. quality)
+ Compression:
+ Enable Recording Compression: Yes
+ Compression Level: Medium (balance storage vs. quality)
 ```
 
 For granular control, configure per-safe recording policies:
 
 ```
 Safe: Production-Servers-Admin
-  Record all sessions: Yes
+ Record all sessions: Yes
 
 Safe: Development-Servers
-  Record all sessions: No (optional for non-production)
+ Record all sessions: No (optional for non-production)
 
 Safe: Third-Party-Vendor-Access
-  Record all sessions: Yes
-  Enable real-time monitoring: Yes
-  Require dual authorization: Yes
+ Record all sessions: Yes
+ Enable real-time monitoring: Yes
+ Require dual authorization: Yes
 ```
 
 ### Step 4: Enable Real-Time Session Monitoring
@@ -164,44 +164,44 @@ Configure live session monitoring for SOC analysts:
 PVWA > Monitoring > Privileged Session Monitoring
 
 Live Monitoring Dashboard:
-  - Active Sessions: Shows all current privileged sessions in real-time
-  - Session Details: User, target, duration, risk score
-  - Actions Available:
-    - Watch: View the session in real-time (read-only)
-    - Suspend: Temporarily freeze the session
-    - Terminate: Immediately end the session
+ - Active Sessions: Shows all current privileged sessions in real-time
+ - Session Details: User, target, duration, risk score
+ - Actions Available:
+ - Watch: View the session in real-time (read-only)
+ - Suspend: Temporarily freeze the session
+ - Terminate: Immediately end the session
 
 Configure monitoring alerts in CyberArk Privileged Threat Analytics (PTA):
 
 PTA > Configuration > Security Events
 
 Rule: High-Risk Command Detected
-  Trigger: Unix command matches pattern
-  Patterns:
-    - rm -rf /
-    - chmod 777
-    - iptables -F
-    - useradd
-    - passwd root
-    - dd if=/dev/
-    - wget http* | sh
-    - curl * | bash
-    - nc -e /bin/sh
-    - python -c 'import socket,subprocess'
-  Action: Alert SOC + Flag session as high-risk
+ Trigger: Unix command matches pattern
+ Patterns:
+ - rm -rf /
+ - chmod 777
+ - iptables -F
+ - useradd
+ - passwd root
+ - dd if=/dev/
+ - wget http* | sh
+ - curl * | bash
+ - nc -e /bin/sh
+ - python -c 'import socket,subprocess'
+ Action: Alert SOC + Flag session as high-risk
 
 Rule: Credential Access Attempt
-  Trigger: Windows process matches
-  Patterns:
-    - mimikatz.exe
-    - procdump.exe targeting lsass
-    - ntdsutil.exe
-    - secretsdump
-  Action: Terminate session + Alert SOC + Lock account
+ Trigger: Windows process matches
+ Patterns:
+ - mimikatz.exe
+ - procdump.exe targeting lsass
+ - ntdsutil.exe
+ - secretsdump
+ Action: Terminate session + Alert SOC + Lock account
 
 Rule: Unusual Session Duration
-  Trigger: Session duration exceeds 4 hours
-  Action: Alert SOC for review
+ Trigger: Session duration exceeds 4 hours
+ Action: Alert SOC for review
 ```
 
 ### Step 5: Configure Session Review Workflow
@@ -212,26 +212,26 @@ Set up the post-session review process for auditors:
 PVWA > Recordings > Search and Review
 
 Search Filters:
-  - Date range
-  - Target server
-  - User who initiated the session
-  - Safe name
-  - Session risk score (from PTA)
-  - Session duration
+ - Date range
+ - Target server
+ - User who initiated the session
+ - Safe name
+ - Session risk score (from PTA)
+ - Session duration
 
 Review Workflow:
-  1. Auditor opens recorded session in PVWA HTML5 player
-  2. Video playback with timeline scrubbing
-  3. Keystroke transcript displayed alongside video
-  4. Window title log shows which applications were opened
-  5. Risk events are highlighted on the timeline with markers
-  6. Auditor marks session as: Reviewed-OK, Reviewed-Suspicious, or Requires-Investigation
+ 1. Auditor opens recorded session in PVWA HTML5 player
+ 2. Video playback with timeline scrubbing
+ 3. Keystroke transcript displayed alongside video
+ 4. Window title log shows which applications were opened
+ 5. Risk events are highlighted on the timeline with markers
+ 6. Auditor marks session as: Reviewed-OK, Reviewed-Suspicious, or Requires-Investigation
 
 Fast-Forward Features:
-  - Jump to keystrokes (skip idle time)
-  - Jump to risk events (flagged by PTA)
-  - Text search within keystroke transcript
-  - Filter by window title changes
+ - Jump to keystrokes (skip idle time)
+ - Jump to risk events (flagged by PTA)
+ - Text search within keystroke transcript
+ - Filter by window title changes
 ```
 
 ### Step 6: Open-Source Alternative — Teleport for Session Recording
@@ -241,31 +241,31 @@ For environments without CyberArk, Teleport provides session recording for SSH, 
 ```yaml
 # /etc/teleport.yaml - Session recording configuration
 teleport:
-  nodename: teleport-proxy.corp.internal
-  data_dir: /var/lib/teleport
+ nodename: teleport-proxy.corp.internal
+ data_dir: /var/lib/teleport
 
 auth_service:
-  enabled: yes
-  session_recording: "node-sync"  # Record at the node level, sync to auth server
+ enabled: yes
+ session_recording: "node-sync" # Record at the node level, sync to auth server
 
-  # Session recording storage (S3 for production)
-  audit_sessions_uri: "s3://teleport-session-recordings/sessions?region=us-east-1"
+ # Session recording storage (S3 for production)
+ audit_sessions_uri: "s3://teleport-session-recordings/sessions?region=us-east-1"
 
-  # Enhanced session recording (captures commands even in nested shells)
-  enhanced_recording:
-    enabled: true
-    command_events: true
-    network_events: true
-    disk_events: true
+ # Enhanced session recording (captures commands even in nested shells)
+ enhanced_recording:
+ enabled: true
+ command_events: true
+ network_events: true
+ disk_events: true
 
 ssh_service:
-  enabled: yes
-  enhanced_recording:
-    enabled: true
+ enabled: yes
+ enhanced_recording:
+ enabled: true
 
 proxy_service:
-  enabled: yes
-  web_listen_addr: 0.0.0.0:443
+ enabled: yes
+ web_listen_addr: 0.0.0.0:443
 ```
 
 Query recorded sessions with `tsh`:
@@ -290,26 +290,26 @@ Send session events and alerts to the SIEM for correlation with other security d
 
 ```
 CyberArk PTA Integration:
-  SIEM Connector: Syslog (CEF format) or REST API
-  Target: Splunk, Microsoft Sentinel, QRadar, or Elastic
+ SIEM Connector: Syslog (CEF format) or REST API
+ Target: Splunk, Microsoft Sentinel, QRadar, or Elastic
 
 Events Forwarded:
-  - Session start/stop with user, target, and duration
-  - High-risk command detection alerts
-  - Session termination events
-  - Failed connection attempts
-  - Dual-authorization requests and approvals/denials
+ - Session start/stop with user, target, and duration
+ - High-risk command detection alerts
+ - Session termination events
+ - Failed connection attempts
+ - Dual-authorization requests and approvals/denials
 
 Syslog Configuration (PTA):
-  PTA > Configuration > SIEM Integration
-  Protocol: TCP + TLS
-  Destination: siem.corp.internal:6514
-  Format: CEF (Common Event Format)
+ PTA > Configuration > SIEM Integration
+ Protocol: TCP + TLS
+ Destination: siem.corp.internal:6514
+ Format: CEF (Common Event Format)
 
 Example CEF Event:
-  CEF:0|CyberArk|PTA|12.6|HighRiskCommand|High Risk Command Detected|8|
-  src=10.1.5.42 suser=admin1 dhost=prod-db-01 cs1=rm -rf /var/log
-  cs2=PSM-SSH cs3=Production-Servers-Admin
+ CEF:0|CyberArk|PTA|12.6|HighRiskCommand|High Risk Command Detected|8|
+ src=10.1.5.42 suser=admin1 dhost=prod-db-01 cs1=rm -rf /var/log
+ cs2=PSM-SSH cs3=Production-Servers-Admin
 ```
 
 ## Key Concepts

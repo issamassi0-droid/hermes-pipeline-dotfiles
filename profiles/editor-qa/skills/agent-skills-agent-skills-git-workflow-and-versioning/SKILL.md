@@ -20,9 +20,9 @@ Always. Every code change flows through git.
 Keep `main` always deployable. Work in short-lived feature branches that merge back within 1-3 days. Long-lived development branches are hidden costs — they diverge, create merge conflicts, and delay integration. DORA research consistently shows trunk-based development correlates with high-performing engineering teams.
 
 ```
-main ──●──●──●──●──●──●──●──●──●──  (always deployable)
-        ╲      ╱  ╲    ╱
-         ●──●─╱    ●──╱    ← short-lived feature branches (1-3 days)
+main ──●──●──●──●──●──●──●──●──●── (always deployable)
+ ╲ ╱ ╲ ╱
+ ●──●─╱ ●──╱ ← short-lived feature branches (1-3 days)
 ```
 
 This is the recommended default. Teams using gitflow or long-lived branches can adapt the principles (atomic commits, small changes, descriptive messages) to their branching model — the commit discipline matters more than the specific branching strategy.
@@ -37,10 +37,10 @@ Each successful increment gets its own commit. Don't accumulate large uncommitte
 
 ```
 Work pattern:
-  Implement slice → Test → Verify → Commit → Next slice
+ Implement slice → Test → Verify → Commit → Next slice
 
 Not this:
-  Implement everything → Hope it works → Giant commit
+ Implement everything → Hope it works → Giant commit
 ```
 
 Commits are save points. If the next change breaks something, you can revert to the last known-good state instantly.
@@ -113,8 +113,8 @@ git commit -m "refactor validation and add phone number field"
 Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See the splitting strategies in `code-review-and-quality` for how to break down large changes.
 
 ```
-~100 lines  → Easy to review, easy to revert
-~300 lines  → Acceptable for a single logical change
+~100 lines → Easy to review, easy to revert
+~300 lines → Acceptable for a single logical change
 ~1000 lines → Split into smaller changes
 ```
 
@@ -124,10 +124,10 @@ Target ~100 lines per commit/PR. Changes over ~1000 lines should be split. See t
 
 ```
 main (always deployable)
-  │
-  ├── feature/task-creation    ← One feature per branch
-  ├── feature/user-settings    ← Parallel work
-  └── fix/duplicate-tasks      ← Bug fixes
+ │
+ ├── feature/task-creation ← One feature per branch
+ ├── feature/user-settings ← Parallel work
+ └── fix/duplicate-tasks ← Bug fixes
 ```
 
 - Branch from `main` (or the team's default branch)
@@ -138,10 +138,10 @@ main (always deployable)
 ### Branch Naming
 
 ```
-feature/<short-description>   → feature/task-creation
-fix/<short-description>       → fix/duplicate-tasks
-chore/<short-description>     → chore/update-deps
-refactor/<short-description>  → refactor/auth-module
+feature/<short-description> → feature/task-creation
+fix/<short-description> → fix/duplicate-tasks
+chore/<short-description> → chore/update-deps
+refactor/<short-description> → refactor/auth-module
 ```
 
 ## Working with Worktrees
@@ -156,9 +156,9 @@ git worktree add ../project-feature-b feature/user-settings
 # Each worktree is a separate directory with its own branch
 # Agents can work in parallel without interfering
 ls ../
-  project/              ← main branch
-  project-feature-a/    ← task-creation branch
-  project-feature-b/    ← user-settings branch
+ project/ ← main branch
+ project-feature-a/ ← task-creation branch
+ project-feature-b/ ← user-settings branch
 
 # When done, merge and clean up
 git worktree remove ../project-feature-a
@@ -174,16 +174,16 @@ Benefits:
 
 ```
 Agent starts work
-    │
-    ├── Makes a change
-    │   ├── Test passes? → Commit → Continue
-    │   └── Test fails? → Revert to last commit → Investigate
-    │
-    ├── Makes another change
-    │   ├── Test passes? → Commit → Continue
-    │   └── Test fails? → Revert to last commit → Investigate
-    │
-    └── Feature complete → All commits form a clean history
+ │
+ ├── Makes a change
+ │ ├── Test passes? → Commit → Continue
+ │ └── Test fails? → Revert to last commit → Investigate
+ │
+ ├── Makes another change
+ │ ├── Test passes? → Commit → Continue
+ │ └── Test fails? → Revert to last commit → Investigate
+ │
+ └── Feature complete → All commits form a clean history
 ```
 
 This pattern means you never lose more than one increment of work. If an agent goes off the rails, `git reset --hard HEAD` takes you back to the last successful state.
@@ -234,10 +234,10 @@ Automate this with git hooks:
 ```json
 // package.json (using lint-staged + husky)
 {
-  "lint-staged": {
-    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-    "*.{json,md}": ["prettier --write"]
-  }
+ "lint-staged": {
+ "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
+ "*.{json,md}": ["prettier --write"]
+ }
 }
 ```
 
@@ -276,9 +276,9 @@ Commits are how *you* track change; a **version** is how your *consumers* track 
 For anything with consumers, version `MAJOR.MINOR.PATCH` and let the number carry meaning:
 
 ```
-  MAJOR  breaking change — consumers must change their code to upgrade
-  MINOR  new functionality, backward-compatible — safe to upgrade
-  PATCH  bug fix, backward-compatible — safe to upgrade
+ MAJOR breaking change — consumers must change their code to upgrade
+ MINOR new functionality, backward-compatible — safe to upgrade
+ PATCH bug fix, backward-compatible — safe to upgrade
 ```
 
 The number is a promise, so make the code match it. A "patch" that changes behavior consumers relied on is a major change wearing a disguise (Hyrum's Law — see the `api-and-interface-design` skill). When unsure whether a change is breaking, assume it is; a surprise major is far cheaper than a broken consumer.

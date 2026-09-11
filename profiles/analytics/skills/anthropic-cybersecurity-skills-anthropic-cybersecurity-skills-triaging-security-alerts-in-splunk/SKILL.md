@@ -1,12 +1,12 @@
 ---
 name: triaging-security-alerts-in-splunk
 description: 'Triages security alerts in Splunk Enterprise Security by classifying
-  severity, investigating notable events, correlating related telemetry, and making
-  escalation or closure decisions using SPL queries and the Incident Review dashboard.
-  Use when SOC analysts face queued alerts from correlation searches, need to prioritize
-  investigation order, or must document triage decisions for handoff to Tier 2/3 analysts.
+ severity, investigating notable events, correlating related telemetry, and making
+ escalation or closure decisions using SPL queries and the Incident Review dashboard.
+ Use when SOC analysts face queued alerts from correlation searches, need to prioritize
+ investigation order, or must document triage decisions for handoff to Tier 2/3 analysts.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -140,8 +140,8 @@ Update via Splunk ES UI or REST API:
 
 ```spl
 | sendalert update_notable_event param.status="2" param.urgency="critical"
-  param.comment="Confirmed brute force from compromised workstation. Escalated to IR-2024-0431."
-  param.owner="analyst_jdoe"
+ param.comment="Confirmed brute force from compromised workstation. Escalated to IR-2024-0431."
+ param.owner="analyst_jdoe"
 ```
 
 ### Step 6: Document Triage Findings
@@ -169,7 +169,7 @@ Monitor triage performance over time:
 | where status_end > 0
 | eval triage_time = status_end - _time
 | stats avg(triage_time) AS avg_triage_sec, median(triage_time) AS med_triage_sec,
-        count by rule_name, status_label
+ count by rule_name, status_label
 | eval avg_triage_min = round(avg_triage_sec/60, 1)
 | sort - count
 | table rule_name, status_label, count, avg_triage_min
@@ -206,19 +206,19 @@ Monitor triage performance over time:
 ```
 TRIAGE REPORT — Notable Event #NE-2024-08921
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Alert:        Brute Force Access Behavior Detected
-Time:         2024-03-15 14:23:07 UTC
-Source:       192.168.1.105 (WORKSTATION-042, Finance Dept)
-Destination:  10.0.5.20 (DC-PRIMARY, Domain Controller)
-User:         jsmith (Finance Analyst)
+Alert: Brute Force Access Behavior Detected
+Time: 2024-03-15 14:23:07 UTC
+Source: 192.168.1.105 (WORKSTATION-042, Finance Dept)
+Destination: 10.0.5.20 (DC-PRIMARY, Domain Controller)
+User: jsmith (Finance Analyst)
 
 Investigation:
-  - 847 failed logons (4625) in 12 minutes from src
-  - Successful logon (4624) at 14:35:02 after brute force
-  - No proxy/DNS anomalies from src in prior 24h
-  - Source not on threat intel lists
+ - 847 failed logons (4625) in 12 minutes from src
+ - Successful logon (4624) at 14:35:02 after brute force
+ - No proxy/DNS anomalies from src in prior 24h
+ - Source not on threat intel lists
 
-Disposition:  TRUE POSITIVE — Compromised credential
-Action:       Escalated to Tier 2, ticket IR-2024-0431 created
-              Account jsmith disabled pending password reset
+Disposition: TRUE POSITIVE — Compromised credential
+Action: Escalated to Tier 2, ticket IR-2024-0431 created
+ Account jsmith disabled pending password reset
 ```

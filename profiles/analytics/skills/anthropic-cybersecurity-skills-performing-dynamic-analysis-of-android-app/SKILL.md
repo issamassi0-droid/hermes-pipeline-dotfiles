@@ -1,14 +1,14 @@
 ---
 name: performing-dynamic-analysis-of-android-app
 description: 'Performs runtime dynamic analysis of Android applications using Frida,
-  Objection, and Android Debug Bridge to observe application behavior during execution,
-  intercept function calls, modify runtime values, and identify vulnerabilities that
-  static analysis misses. Use when testing Android apps for runtime security flaws,
-  hooking sensitive methods, bypassing client-side protections, or analyzing obfuscated
-  applications. Activates for requests involving Android dynamic analysis, runtime
-  hooking, Frida Android instrumentation, or live app behavior analysis.
+ Objection, and Android Debug Bridge to observe application behavior during execution,
+ intercept function calls, modify runtime values, and identify vulnerabilities that
+ static analysis misses. Use when testing Android apps for runtime security flaws,
+ hooking sensitive methods, bypassing client-side protections, or analyzing obfuscated
+ applications. Activates for requests involving Android dynamic analysis, runtime
+ hooking, Frida Android instrumentation, or live app behavior analysis.
 
-  '
+ '
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -115,25 +115,25 @@ android hooking watch class java.net.URL --dump-args
 ```javascript
 // hook_crypto.js - Intercept encryption/decryption operations
 Java.perform(function() {
-    var Cipher = Java.use("javax.crypto.Cipher");
+ var Cipher = Java.use("javax.crypto.Cipher");
 
-    Cipher.doFinal.overload("[B").implementation = function(input) {
-        var mode = this.getAlgorithm();
-        console.log("[Cipher] Algorithm: " + mode);
-        console.log("[Cipher] Input: " + bytesToHex(input));
+ Cipher.doFinal.overload("[B").implementation = function(input) {
+ var mode = this.getAlgorithm();
+ console.log("[Cipher] Algorithm: " + mode);
+ console.log("[Cipher] Input: " + bytesToHex(input));
 
-        var result = this.doFinal(input);
-        console.log("[Cipher] Output: " + bytesToHex(result));
-        return result;
-    };
+ var result = this.doFinal(input);
+ console.log("[Cipher] Output: " + bytesToHex(result));
+ return result;
+ };
 
-    function bytesToHex(bytes) {
-        var hex = [];
-        for (var i = 0; i < bytes.length; i++) {
-            hex.push(("0" + (bytes[i] & 0xFF).toString(16)).slice(-2));
-        }
-        return hex.join("");
-    }
+ function bytesToHex(bytes) {
+ var hex = [];
+ for (var i = 0; i < bytes.length; i++) {
+ hex.push(("0" + (bytes[i] & 0xFF).toString(16)).slice(-2));
+ }
+ return hex.join("");
+ }
 });
 ```
 
@@ -147,32 +147,32 @@ frida -U -f com.target.app -l hook_crypto.js --no-pause
 ```javascript
 // root_bypass.js - Common root detection bypass
 Java.perform(function() {
-    // Bypass RootBeer library
-    var RootBeer = Java.use("com.scottyab.rootbeer.RootBeer");
-    RootBeer.isRooted.implementation = function() {
-        console.log("[RootBeer] isRooted() bypassed");
-        return false;
-    };
+ // Bypass RootBeer library
+ var RootBeer = Java.use("com.scottyab.rootbeer.RootBeer");
+ RootBeer.isRooted.implementation = function() {
+ console.log("[RootBeer] isRooted() bypassed");
+ return false;
+ };
 
-    // Bypass generic file-based root checks
-    var File = Java.use("java.io.File");
-    var originalExists = File.exists;
-    File.exists.implementation = function() {
-        var path = this.getAbsolutePath();
-        var rootPaths = ["/system/app/Superuser.apk", "/system/xbin/su",
-                         "/sbin/su", "/system/bin/su", "/data/local/bin/su"];
-        if (rootPaths.indexOf(path) >= 0) {
-            console.log("[Root] Blocked check for: " + path);
-            return false;
-        }
-        return originalExists.call(this);
-    };
+ // Bypass generic file-based root checks
+ var File = Java.use("java.io.File");
+ var originalExists = File.exists;
+ File.exists.implementation = function() {
+ var path = this.getAbsolutePath();
+ var rootPaths = ["/system/app/Superuser.apk", "/system/xbin/su",
+ "/sbin/su", "/system/bin/su", "/data/local/bin/su"];
+ if (rootPaths.indexOf(path) >= 0) {
+ console.log("[Root] Blocked check for: " + path);
+ return false;
+ }
+ return originalExists.call(this);
+ };
 
-    // Bypass SafetyNet/Play Integrity
-    try {
-        var SafetyNet = Java.use("com.google.android.gms.safetynet.SafetyNetApi");
-        console.log("[SafetyNet] Class found - may need additional bypass");
-    } catch(e) {}
+ // Bypass SafetyNet/Play Integrity
+ try {
+ var SafetyNet = Java.use("com.google.android.gms.safetynet.SafetyNetApi");
+ console.log("[SafetyNet] Class found - may need additional bypass");
+ } catch(e) {}
 });
 ```
 
@@ -181,30 +181,30 @@ Java.perform(function() {
 ```javascript
 // network_monitor.js - Monitor all HTTP requests
 Java.perform(function() {
-    // Hook OkHttp3
-    try {
-        var OkHttpClient = Java.use("okhttp3.OkHttpClient");
-        var Interceptor = Java.use("okhttp3.Interceptor");
-        var Chain = Java.use("okhttp3.Interceptor$Chain");
+ // Hook OkHttp3
+ try {
+ var OkHttpClient = Java.use("okhttp3.OkHttpClient");
+ var Interceptor = Java.use("okhttp3.Interceptor");
+ var Chain = Java.use("okhttp3.Interceptor$Chain");
 
-        console.log("[OkHttp] Monitoring network requests...");
+ console.log("[OkHttp] Monitoring network requests...");
 
-        var Request = Java.use("okhttp3.Request");
-        Request.url.implementation = function() {
-            var url = this.url();
-            console.log("[OkHttp] URL: " + url.toString());
-            return url;
-        };
-    } catch(e) {
-        console.log("[OkHttp] Not found, trying HttpURLConnection");
-    }
+ var Request = Java.use("okhttp3.Request");
+ Request.url.implementation = function() {
+ var url = this.url();
+ console.log("[OkHttp] URL: " + url.toString());
+ return url;
+ };
+ } catch(e) {
+ console.log("[OkHttp] Not found, trying HttpURLConnection");
+ }
 
-    // Hook HttpURLConnection
-    var URL = Java.use("java.net.URL");
-    URL.openConnection.overload().implementation = function() {
-        console.log("[URL] Opening: " + this.toString());
-        return this.openConnection();
-    };
+ // Hook HttpURLConnection
+ var URL = Java.use("java.net.URL");
+ URL.openConnection.overload().implementation = function() {
+ console.log("[URL] Opening: " + this.toString());
+ return this.openConnection();
+ };
 });
 ```
 

@@ -1,11 +1,11 @@
 ---
 name: performing-memory-forensics-with-volatility3
 description: Analyze volatile memory (RAM) dumps using the Volatility 3 framework
-  to extract running processes, network connections, loaded modules, credentials,
-  and encryption keys, and to detect process hollowing, DLL injection, or hidden
-  processes/rootkits. Use during incident response on a compromised or suspect system
-  when disk-based forensics alone is insufficient and volatile evidence of malware
-  or intrusion must be recovered from memory.
+ to extract running processes, network connections, loaded modules, credentials,
+ and encryption keys, and to detect process hollowing, DLL injection, or hidden
+ processes/rootkits. Use during incident response on a compromised or suspect system
+ when disk-based forensics alone is insufficient and volatile evidence of malware
+ or intrusion must be recovered from memory.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -89,21 +89,21 @@ vol -f /cases/case-2024-001/memory/memory.raw banners
 vol -f /cases/case-2024-001/memory/memory.raw windows.info
 
 # Output example:
-# Variable        Value
-# Kernel Base     0xf8047e200000
-# DTB             0x1ad000
-# Symbols         ntkrnlmp.pdb/GUID
-# Is64Bit         True
-# IsPAE           False
-# primary layer   Intel32e
-# KdVersionBlock  0xf8047ee232c0
-# Major/Minor     15.19041
-# Machine Type    34404
+# Variable Value
+# Kernel Base 0xf8047e200000
+# DTB 0x1ad000
+# Symbols ntkrnlmp.pdb/GUID
+# Is64Bit True
+# IsPAE False
+# primary layer Intel32e
+# KdVersionBlock 0xf8047ee232c0
+# Major/Minor 15.19041
+# Machine Type 34404
 # KeNumberProcessors 4
-# SystemTime      2024-01-18 14:32:15 UTC
-# NtBuildLab      19041.1.amd64fre.vb_release.191206-1406
-# NtProductType   NtProductWinNt
-# NtSystemRoot    C:\WINDOWS
+# SystemTime 2024-01-18 14:32:15 UTC
+# NtBuildLab 19041.1.amd64fre.vb_release.191206-1406
+# NtProductType NtProductWinNt
+# NtSystemRoot C:\WINDOWS
 # PE MajorOperatingSystemVersion 10
 # PE MinorOperatingSystemVersion 0
 
@@ -125,7 +125,7 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.psscan | tee /cases/case-2
 
 # Compare pslist vs psscan to find hidden processes
 diff <(vol -f memory.raw windows.pslist | awk '{print $1}' | sort) \
-     <(vol -f memory.raw windows.psscan | awk '{print $1}' | sort)
+ <(vol -f memory.raw windows.psscan | awk '{print $1}' | sort)
 
 # List DLLs loaded by a suspicious process (PID 4532)
 vol -f /cases/case-2024-001/memory/memory.raw windows.dlllist --pid 4532
@@ -135,7 +135,7 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.malfind | tee /cases/case-
 
 # Dump suspicious process memory for further analysis
 vol -f /cases/case-2024-001/memory/memory.raw windows.memmap --pid 4532 --dump \
-   -o /cases/case-2024-001/analysis/dumps/
+ -o /cases/case-2024-001/analysis/dumps/
 ```
 
 ### Step 4: Analyze Network Connections and Registry
@@ -158,7 +158,7 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.registry.hivelist
 
 # Extract specific registry keys
 vol -f /cases/case-2024-001/memory/memory.raw windows.registry.printkey \
-   --key "Software\Microsoft\Windows\CurrentVersion\Run"
+ --key "Software\Microsoft\Windows\CurrentVersion\Run"
 
 # Check services
 vol -f /cases/case-2024-001/memory/memory.raw windows.svcscan | tee /cases/case-2024-001/analysis/services.txt
@@ -178,7 +178,7 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.cachedump
 
 # Search for plaintext strings in process memory
 vol -f /cases/case-2024-001/memory/memory.raw windows.strings --pid 4532 \
-   | grep -iE '(password|credential|token|api.key)'
+ | grep -iE '(password|credential|token|api.key)'
 
 # Extract command history from cmd.exe/powershell
 vol -f /cases/case-2024-001/memory/memory.raw windows.cmdline | tee /cases/case-2024-001/analysis/cmdline.txt
@@ -192,11 +192,11 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.envars --pid 4532
 ```bash
 # Scan memory with YARA rules
 vol -f /cases/case-2024-001/memory/memory.raw yarascan \
-   --yara-file /opt/yara-rules/malware_index.yar | tee /cases/case-2024-001/analysis/yara_hits.txt
+ --yara-file /opt/yara-rules/malware_index.yar | tee /cases/case-2024-001/analysis/yara_hits.txt
 
 # Scan specific process memory
 vol -f /cases/case-2024-001/memory/memory.raw yarascan \
-   --yara-file /opt/yara-rules/apt_rules.yar --pid 4532
+ --yara-file /opt/yara-rules/apt_rules.yar --pid 4532
 
 # Check loaded kernel modules for rootkits
 vol -f /cases/case-2024-001/memory/memory.raw windows.modules | tee /cases/case-2024-001/analysis/modules.txt
@@ -209,7 +209,7 @@ vol -f /cases/case-2024-001/memory/memory.raw windows.ssdt | grep -v "ntoskrnl\|
 
 # Dump a suspicious executable from memory
 vol -f /cases/case-2024-001/memory/memory.raw windows.dumpfiles --pid 4532 \
-   -o /cases/case-2024-001/analysis/extracted/
+ -o /cases/case-2024-001/analysis/extracted/
 ```
 
 ### Step 7: Compile Findings into a Report
@@ -278,28 +278,28 @@ Extract encryption keys from ransomware process memory before system shutdown, i
 
 ```
 Memory Forensics Analysis:
-  Image:            memory.raw (16 GB)
-  OS Identified:    Windows 10 x64 Build 19041
-  Capture Time:     2024-01-18 14:32:15 UTC
+ Image: memory.raw (16 GB)
+ OS Identified: Windows 10 x64 Build 19041
+ Capture Time: 2024-01-18 14:32:15 UTC
 
-  Process Analysis:
-    Total Processes:    87
-    Hidden Processes:   2 (PIDs: 4532, 6128)
-    Injected Processes: 3 (malfind detections)
-    Suspicious:         svchost.exe (PID 4532) - injected code at 0x7FFE0000
+ Process Analysis:
+ Total Processes: 87
+ Hidden Processes: 2 (PIDs: 4532, 6128)
+ Injected Processes: 3 (malfind detections)
+ Suspicious: svchost.exe (PID 4532) - injected code at 0x7FFE0000
 
-  Network Connections:
-    Total:        45
-    Established:  12
-    Suspicious:   3 (C2 connections to 185.xx.xx.xx:443)
+ Network Connections:
+ Total: 45
+ Established: 12
+ Suspicious: 3 (C2 connections to 185.xx.xx.xx:443)
 
-  Credentials Found:
-    NTLM Hashes:      4 accounts
-    Cached Creds:      2 domain accounts
+ Credentials Found:
+ NTLM Hashes: 4 accounts
+ Cached Creds: 2 domain accounts
 
-  YARA Matches:
-    CobaltStrike_Beacon:  PID 4532 (3 hits)
-    Mimikatz_Memory:      PID 6128 (1 hit)
+ YARA Matches:
+ CobaltStrike_Beacon: PID 4532 (3 hits)
+ Mimikatz_Memory: PID 6128 (1 hit)
 
-  Extracted Artifacts:   15 files dumped to /analysis/extracted/
+ Extracted Artifacts: 15 files dumped to /analysis/extracted/
 ```

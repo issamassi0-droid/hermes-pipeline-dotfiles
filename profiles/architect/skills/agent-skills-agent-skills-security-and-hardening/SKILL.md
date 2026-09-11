@@ -101,15 +101,15 @@ const isValid = await compare(plaintext, hashedPassword);
 
 // Session management
 app.use(session({
-  secret: process.env.SESSION_SECRET,  // From environment, not code
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    httpOnly: true,     // Not accessible via JavaScript
-    secure: true,       // HTTPS only
-    sameSite: 'lax',    // CSRF protection
-    maxAge: 24 * 60 * 60 * 1000,  // 24 hours
-  },
+ secret: process.env.SESSION_SECRET, // From environment, not code
+ resave: false,
+ saveUninitialized: false,
+ cookie: {
+ httpOnly: true, // Not accessible via JavaScript
+ secure: true, // HTTPS only
+ sameSite: 'lax', // CSRF protection
+ maxAge: 24 * 60 * 60 * 1000, // 24 hours
+ },
 }));
 ```
 
@@ -132,18 +132,18 @@ const clean = DOMPurify.sanitize(userInput);
 ```typescript
 // Always check authorization, not just authentication
 app.patch('/api/tasks/:id', authenticate, async (req, res) => {
-  const task = await taskService.findById(req.params.id);
+ const task = await taskService.findById(req.params.id);
 
-  // Check that the authenticated user owns this resource
-  if (task.ownerId !== req.user.id) {
-    return res.status(403).json({
-      error: { code: 'FORBIDDEN', message: 'Not authorized to modify this task' }
-    });
-  }
+ // Check that the authenticated user owns this resource
+ if (task.ownerId !== req.user.id) {
+ return res.status(403).json({
+ error: { code: 'FORBIDDEN', message: 'Not authorized to modify this task' }
+ });
+ }
 
-  // Proceed with update
-  const updated = await taskService.update(req.params.id, req.body);
-  return res.json(updated);
+ // Proceed with update
+ const updated = await taskService.update(req.params.id, req.body);
+ return res.json(updated);
 });
 ```
 
@@ -156,19 +156,19 @@ app.use(helmet());
 
 // Content Security Policy
 app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'"],
-    scriptSrc: ["'self'"],
-    styleSrc: ["'self'", "'unsafe-inline'"],  // Tighten if possible
-    imgSrc: ["'self'", 'data:', 'https:'],
-    connectSrc: ["'self'"],
-  },
+ directives: {
+ defaultSrc: ["'self'"],
+ scriptSrc: ["'self'"],
+ styleSrc: ["'self'", "'unsafe-inline'"], // Tighten if possible
+ imgSrc: ["'self'", 'data:', 'https:'],
+ connectSrc: ["'self'"],
+ },
 }));
 
 // CORS — restrict to known origins
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:3000',
-  credentials: true,
+ origin: process.env.ALLOWED_ORIGINS?.split(',') || 'http://localhost:3000',
+ credentials: true,
 }));
 ```
 
@@ -177,8 +177,8 @@ app.use(cors({
 ```typescript
 // Never return sensitive fields in API responses
 function sanitizeUser(user: UserRecord): PublicUser {
-  const { passwordHash, resetToken, ...publicFields } = user;
-  return publicFields;
+ const { passwordHash, resetToken, ...publicFields } = user;
+ return publicFields;
 }
 
 // Use environment variables for secrets
@@ -201,15 +201,15 @@ import ipaddr from 'ipaddr.js';
 const ALLOWED_HOSTS = new Set(['hooks.example.com']);
 
 async function assertSafeUrl(raw: string): Promise<URL> {
-  const url = new URL(raw);
-  if (url.protocol !== 'https:') throw new Error('https only');
-  if (!ALLOWED_HOSTS.has(url.hostname)) throw new Error('host not allowed');
-  // Resolve ALL records; a single private/reserved address fails the check.
-  const addrs = await lookup(url.hostname, { all: true });
-  if (addrs.some((a) => ipaddr.parse(a.address).range() !== 'unicast')) {
-    throw new Error('private/reserved IP');
-  }
-  return url;
+ const url = new URL(raw);
+ if (url.protocol !== 'https:') throw new Error('https only');
+ if (!ALLOWED_HOSTS.has(url.hostname)) throw new Error('host not allowed');
+ // Resolve ALL records; a single private/reserved address fails the check.
+ const addrs = await lookup(url.hostname, { all: true });
+ if (addrs.some((a) => ipaddr.parse(a.address).range() !== 'unicast')) {
+ throw new Error('private/reserved IP');
+ }
+ return url;
 }
 
 await fetch(await assertSafeUrl(req.body.webhookUrl), { redirect: 'error' });
@@ -227,27 +227,27 @@ The `range() !== 'unicast'` check covers loopback, link-local `169.254.169.254` 
 import { z } from 'zod';
 
 const CreateTaskSchema = z.object({
-  title: z.string().min(1).max(200).trim(),
-  description: z.string().max(2000).optional(),
-  priority: z.enum(['low', 'medium', 'high']).default('medium'),
-  dueDate: z.string().datetime().optional(),
+ title: z.string().min(1).max(200).trim(),
+ description: z.string().max(2000).optional(),
+ priority: z.enum(['low', 'medium', 'high']).default('medium'),
+ dueDate: z.string().datetime().optional(),
 });
 
 // Validate at the route handler
 app.post('/api/tasks', async (req, res) => {
-  const result = CreateTaskSchema.safeParse(req.body);
-  if (!result.success) {
-    return res.status(422).json({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Invalid input',
-        details: result.error.flatten(),
-      },
-    });
-  }
-  // result.data is now typed and validated
-  const task = await taskService.create(result.data);
-  return res.status(201).json(task);
+ const result = CreateTaskSchema.safeParse(req.body);
+ if (!result.success) {
+ return res.status(422).json({
+ error: {
+ code: 'VALIDATION_ERROR',
+ message: 'Invalid input',
+ details: result.error.flatten(),
+ },
+ });
+ }
+ // result.data is now typed and validated
+ const task = await taskService.create(result.data);
+ return res.status(201).json(task);
 });
 ```
 
@@ -259,13 +259,13 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 
 function validateUpload(file: UploadedFile) {
-  if (!ALLOWED_TYPES.includes(file.mimetype)) {
-    throw new ValidationError('File type not allowed');
-  }
-  if (file.size > MAX_SIZE) {
-    throw new ValidationError('File too large (max 5MB)');
-  }
-  // Don't trust the file extension — check magic bytes if critical
+ if (!ALLOWED_TYPES.includes(file.mimetype)) {
+ throw new ValidationError('File type not allowed');
+ }
+ if (file.size > MAX_SIZE) {
+ throw new ValidationError('File too large (max 5MB)');
+ }
+ // Don't trust the file extension — check magic bytes if critical
 }
 ```
 
@@ -276,17 +276,17 @@ Package-manager audits report known advisories; they do not prove a package is t
 ```
 The native package-manager audit reports a vulnerability
 ├── Severity: critical or high
-│   ├── Is the vulnerable code reachable in runtime, build, test, or deployment paths?
-│   │   ├── YES --> Fix immediately (update, patch, or replace the dependency)
-│   │   └── NO (confirmed unused across those paths) --> Fix soon, but not a blocker
-│   └── Is a fix available?
-│       ├── YES --> Update to the patched version
-│       └── NO --> Check for workarounds, consider replacing the dependency, or add to allowlist with a review date
+│ ├── Is the vulnerable code reachable in runtime, build, test, or deployment paths?
+│ │ ├── YES --> Fix immediately (update, patch, or replace the dependency)
+│ │ └── NO (confirmed unused across those paths) --> Fix soon, but not a blocker
+│ └── Is a fix available?
+│ ├── YES --> Update to the patched version
+│ └── NO --> Check for workarounds, consider replacing the dependency, or add to allowlist with a review date
 ├── Severity: moderate
-│   ├── Reachable in production? --> Fix in the next release cycle
-│   └── Dev-only? --> Fix when convenient, track in backlog
+│ ├── Reachable in production? --> Fix in the next release cycle
+│ └── Dev-only? --> Fix when convenient, track in backlog
 └── Severity: low
-    └── Track and fix during regular dependency updates
+ └── Track and fix during regular dependency updates
 ```
 
 **Key questions:**
@@ -316,16 +316,16 @@ import rateLimit from 'express-rate-limit';
 
 // General API rate limit
 app.use('/api/', rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100,                   // 100 requests per window
-  standardHeaders: true,
-  legacyHeaders: false,
+ windowMs: 15 * 60 * 1000, // 15 minutes
+ max: 100, // 100 requests per window
+ standardHeaders: true,
+ legacyHeaders: false,
 }));
 
 // Stricter limit for auth endpoints
 app.use('/api/auth/', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 10,  // 10 attempts per 15 minutes
+ windowMs: 15 * 60 * 1000,
+ max: 10, // 10 attempts per 15 minutes
 }));
 ```
 
@@ -336,8 +336,8 @@ import { Ratelimit } from '@upstash/ratelimit';
 import { Redis } from '@upstash/redis';
 
 const authLimiter = new Ratelimit({
-  redis: Redis.fromEnv(),                       // UPSTASH_REDIS_REST_URL + _TOKEN
-  limiter: Ratelimit.slidingWindow(10, '15 m'), // 10 attempts per 15 minutes, across all instances
+ redis: Redis.fromEnv(), // UPSTASH_REDIS_REST_URL + _TOKEN
+ limiter: Ratelimit.slidingWindow(10, '15 m'), // 10 attempts per 15 minutes, across all instances
 });
 const { success } = await authLimiter.limit(`login:${req.ip}`);
 if (!success) return res.status(429).end();
@@ -347,16 +347,16 @@ if (!success) return res.status(429).end();
 
 ```
 .env files:
-  ├── .env.example  → Committed (template with placeholder values)
-  ├── .env          → NOT committed (contains real secrets)
-  └── .env.local    → NOT committed (local overrides)
+ ├── .env.example → Committed (template with placeholder values)
+ ├── .env → NOT committed (contains real secrets)
+ └── .env.local → NOT committed (local overrides)
 
 .gitignore must include:
-  .env
-  .env.local
-  .env.*.local
-  *.pem
-  *.key
+ .env
+ .env.local
+ .env.*.local
+ *.pem
+ *.key
 ```
 
 **Always check before committing:**
@@ -402,15 +402,15 @@ If your app calls an LLM — chatbots, summarizers, agents, RAG — it inherits 
 ```typescript
 // BAD: trusting model output as a command or as markup
 const sql = await llm.generate(`Write SQL for: ${userQuestion}`);
-await db.query(sql);                                   // arbitrary query execution
-container.innerHTML = await llm.reply(userMessage);   // stored XSS, via the model
+await db.query(sql); // arbitrary query execution
+container.innerHTML = await llm.reply(userMessage); // stored XSS, via the model
 
 // GOOD: model output is data — parse defensively, then validate, then encode
 let intent;
 try {
-  intent = CommandSchema.parse(JSON.parse(await llm.replyJson(userMessage)));
+ intent = CommandSchema.parse(JSON.parse(await llm.replyJson(userMessage)));
 } catch {
-  throw new ValidationError('unexpected model output'); // JSON.parse or schema failed
+ throw new ValidationError('unexpected model output'); // JSON.parse or schema failed
 }
 await runAllowlistedAction(intent.action, intent.params);
 container.textContent = await llm.reply(userMessage);

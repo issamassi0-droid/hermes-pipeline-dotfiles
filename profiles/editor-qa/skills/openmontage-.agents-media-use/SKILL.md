@@ -21,12 +21,12 @@ Returns one line: `resolved <id> → <path> (<type>, <metadata>)`
 
 ### Types
 
-| Type    | What it finds       | Provider                                 |
+| Type | What it finds | Provider |
 | ------- | ------------------- | ---------------------------------------- |
-| `bgm`   | Background music    | HeyGen audio catalog (10k+ tracks)       |
-| `sfx`   | Sound effects       | Bundled 19-file library + HeyGen catalog |
-| `image` | Photos, backgrounds | HeyGen asset search (75k+ vectors)       |
-| `icon`  | Icons, logos        | HeyGen asset search (type=icon)          |
+| `bgm` | Background music | HeyGen audio catalog (10k+ tracks) |
+| `sfx` | Sound effects | Bundled 19-file library + HeyGen catalog |
+| `image` | Photos, backgrounds | HeyGen asset search (75k+ vectors) |
+| `icon` | Icons, logos | HeyGen asset search (type=icon) |
 
 ### Examples
 
@@ -50,14 +50,14 @@ node <SKILL_DIR>/scripts/resolve.mjs --type icon --intent "rocket" --project .
 
 ### Flags
 
-| Flag            | Description                                |
+| Flag | Description |
 | --------------- | ------------------------------------------ |
-| `--type, -t`    | Media type: bgm, sfx, image, icon          |
-| `--intent, -i`  | What you need (natural language)           |
-| `--entity, -e`  | Entity name for cache matching (optional)  |
-| `--project, -p` | Project directory (default: .)             |
-| `--adopt`       | Bulk-import existing assets/ into manifest |
-| `--json`        | Output JSON instead of one-line result     |
+| `--type, -t` | Media type: bgm, sfx, image, icon |
+| `--intent, -i` | What you need (natural language) |
+| `--entity, -e` | Entity name for cache matching (optional) |
+| `--project, -p` | Project directory (default: .) |
+| `--adopt` | Bulk-import existing assets/ into manifest |
+| `--json` | Output JSON instead of one-line result |
 
 ## How it works
 
@@ -76,8 +76,8 @@ Most HyperFrames projects already have assets in `assets/`. media-use adopts the
 ```bash
 node <SKILL_DIR>/scripts/resolve.mjs --adopt --project .
 # → adopted 9 assets from assets/
-#   bgm_001 → assets/bgm/mango-fizz.mp3 (bgm, 146.6s)
-#   image_001 → assets/images/avatar.jpg (image, 400×400)
+# bgm_001 → assets/bgm/mango-fizz.mp3 (bgm, 146.6s)
+# image_001 → assets/images/avatar.jpg (image, 400×400)
 ```
 
 `ffprobe` extracts real duration and dimensions. During resolve, unregistered files in `assets/` matching the intent are adopted on the fly.
@@ -89,11 +89,11 @@ After resolve or adopt, read `.media/index.md` for the full inventory:
 ```
 # .media · 4 assets
 
-id         type   dur   dims       path                          description
-bgm_001    bgm    25s   —          .media/audio/bgm/bgm_001.mp3  upbeat tech launch
-sfx_001    sfx    0.6s  —          .media/audio/sfx/sfx_001.mp3  whoosh
-image_001  image  —     1920×1080  .media/images/image_001.jpg   gradient tech background
-icon_001   icon   —     200×200    .media/images/icon_001.png    rocket
+id type dur dims path description
+bgm_001 bgm 25s —media/audio/bgm/bgm_001.mp3 upbeat tech launch
+sfx_001 sfx 0.6s —media/audio/sfx/sfx_001.mp3 whoosh
+image_001 image — 1920×1080 .media/images/image_001.jpg gradient tech background
+icon_001 icon — 200×200 .media/images/icon_001.png rocket
 ```
 
 ## Cross-project reuse
@@ -108,17 +108,17 @@ Assets are cached automatically on resolve. Subsequent resolves for the same pro
 
 ## CLI tools used
 
-| Tool      | Purpose                                    | Required?     |
+| Tool | Purpose | Required? |
 | --------- | ------------------------------------------ | ------------- |
-| `ffprobe` | Probe duration, dimensions, codec on adopt | Yes           |
-| `heygen`  | Audio catalog, asset search                | For providers |
+| `ffprobe` | Probe duration, dimensions, codec on adopt | Yes |
+| `heygen` | Audio catalog, asset search | For providers |
 
 Install the `heygen` CLI (single static binary, no runtime) and authenticate:
 
 ```bash
-curl -fsSL https://static.heygen.ai/cli/install.sh | bash   # installs latest to ~/.local/bin
-heygen update                                               # if already installed: needs >= v0.1.6
-export HEYGEN_API_KEY=<your-key>                            # or: heygen auth login --key <key>
+curl -fsSL https://static.heygen.ai/cli/install.sh | bash # installs latest to ~/.local/bin
+heygen update # if already installed: needs >= v0.1.6
+export HEYGEN_API_KEY=<your-key> # or: heygen auth login --key <key>
 ```
 
 Requires **heygen >= v0.1.6** — the providers tag requests with the allowlisted `--headers 'X-HeyGen-Client-Source: media-use'` flag, added in v0.1.6. `asset search` is a pre-launch command hidden from `heygen --help`, but it runs. Without a `heygen` on PATH (or a valid key) the providers print a one-line diagnostic to stderr and resolve falls through to "no provider could resolve".

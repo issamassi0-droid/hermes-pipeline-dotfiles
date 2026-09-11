@@ -17,13 +17,13 @@ state deterministic from time/frame values when rendering previews.
 
 ```js
 function setup() {
-  createCanvas(1920, 1080);
+ createCanvas(1920, 1080);
 }
 
 function draw() {
-  const t = millis() / 1000;
-  clear();
-  drawCharacter(width / 2, height / 2 + sin(t * 8) * 8);
+ const t = millis() / 1000;
+ clear();
+ drawCharacter(width / 2, height / 2 + sin(t * 8) * 8);
 }
 ```
 
@@ -38,7 +38,7 @@ function draw() {
 
 - Complex facial acting where SVG/layered rig parts are easier to inspect.
 - Final renders that need exact frame determinism unless the runtime exposes
-  frame-index control.
+ frame-index control.
 
 ## Sources
 

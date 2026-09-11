@@ -1,8 +1,8 @@
 ---
 name: performing-thick-client-application-penetration-test
 description: Conduct a thick client application penetration test to identify insecure
-  local storage, hardcoded credentials, DLL hijacking, memory manipulation, and insecure
-  API communication in desktop applications using dnSpy, Procmon, and Burp Suite.
+ local storage, hardcoded credentials, DLL hijacking, memory manipulation, and insecure
+ API communication in desktop applications using dnSpy, Procmon, and Burp Suite.
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -76,7 +76,7 @@ file application.exe
 
 # Check for .NET framework
 Get-ChildItem -Path "C:\Program Files\TargetApp" -Recurse -Filter "*.dll" |
-  ForEach-Object { [System.Reflection.AssemblyName]::GetAssemblyName($_.FullName).FullName }
+ ForEach-Object { [System.Reflection.AssemblyName]::GetAssemblyName($_.FullName).FullName }
 
 # Strings analysis
 strings application.exe | findstr -i "password\|secret\|api\|key\|token\|jdbc\|connection"
@@ -100,11 +100,11 @@ strings application.exe | findstr -i "cert\|pin\|ssl\|tls"
 1. Launch dnSpy
 2. File > Open > Select application.exe and DLLs
 3. Search for:
-   - "password", "secret", "connectionString"
-   - Authentication methods
-   - Encryption/decryption functions
-   - API endpoints and keys
-   - License validation logic
+ - "password", "secret", "connectionString"
+ - Authentication methods
+ - Encryption/decryption functions
+ - API endpoints and keys
+ - License validation logic
 
 # Look for:
 - Hardcoded credentials in source
@@ -121,8 +121,8 @@ strings application.exe | findstr -i "cert\|pin\|ssl\|tls"
 ```powershell
 # Monitor file system activity with Procmon
 # Filters:
-#   Process Name = application.exe
-#   Operation = CreateFile, WriteFile, ReadFile, RegSetValue
+# Process Name = application.exe
+# Operation = CreateFile, WriteFile, ReadFile, RegSetValue
 
 # Key observations:
 # - Where does the app store data? (AppData, temp, registry)

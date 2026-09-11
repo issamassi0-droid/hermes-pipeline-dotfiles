@@ -1,7 +1,7 @@
 ---
 name: performing-subdomain-enumeration-with-subfinder
 description: Enumerate subdomains of target domains using ProjectDiscovery's Subfinder
-  passive reconnaissance tool to map the attack surface during security assessments.
+ passive reconnaissance tool to map the attack surface during security assessments.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -59,15 +59,15 @@ subfinder -version
 mkdir -p $HOME/.config/subfinder
 cat > $HOME/.config/subfinder/provider-config.yaml << 'EOF'
 shodan:
-  - YOUR_SHODAN_API_KEY
+ - YOUR_SHODAN_API_KEY
 censys:
-  - YOUR_CENSYS_API_ID:YOUR_CENSYS_API_SECRET
+ - YOUR_CENSYS_API_ID:YOUR_CENSYS_API_SECRET
 virustotal:
-  - YOUR_VT_API_KEY
+ - YOUR_VT_API_KEY
 securitytrails:
-  - YOUR_ST_API_KEY
+ - YOUR_ST_API_KEY
 chaos:
-  - YOUR_CHAOS_API_KEY
+ - YOUR_CHAOS_API_KEY
 EOF
 ```
 

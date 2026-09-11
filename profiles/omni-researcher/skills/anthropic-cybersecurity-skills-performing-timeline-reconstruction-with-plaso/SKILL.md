@@ -1,12 +1,12 @@
 ---
 name: performing-timeline-reconstruction-with-plaso
 description: >-
-  Builds comprehensive forensic super-timelines using Plaso (log2timeline and
-  psort) to correlate events across file system metadata, event logs, browser
-  history, and registry artifacts into a unified chronological view. Use
-  during complex forensic investigations that need cross-source event
-  correlation, or when standard log analysis is insufficient to establish the
-  sequence of activities for reporting findings.
+ Builds comprehensive forensic super-timelines using Plaso (log2timeline and
+ psort) to correlate events across file system metadata, event logs, browser
+ history, and registry artifacts into a unified chronological view. Use
+ during complex forensic investigations that need cross-source event
+ correlation, or when standard log analysis is insufficient to establish the
+ sequence of activities for reporting findings.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -80,14 +80,14 @@ img_stat /cases/case-2024-001/images/evidence.dd
 ```bash
 # Basic processing of a disk image (all parsers)
 log2timeline.py \
-   --storage-file /cases/case-2024-001/timeline/evidence.plaso \
-   /cases/case-2024-001/images/evidence.dd
+ --storage-file /cases/case-2024-001/timeline/evidence.plaso \
+ /cases/case-2024-001/images/evidence.dd
 
 # Process with specific parsers for faster targeted analysis
 log2timeline.py \
-   --parsers "winevtx,prefetch,mft,usnjrnl,lnk,recycle_bin,chrome_history,firefox_history,winreg" \
-   --storage-file /cases/case-2024-001/timeline/evidence.plaso \
-   /cases/case-2024-001/images/evidence.dd
+ --parsers "winevtx,prefetch,mft,usnjrnl,lnk,recycle_bin,chrome_history,firefox_history,winreg" \
+ --storage-file /cases/case-2024-001/timeline/evidence.plaso \
+ /cases/case-2024-001/images/evidence.dd
 
 # Process with a filter file to focus on specific paths
 cat << 'EOF' > /cases/case-2024-001/timeline/filter.txt
@@ -102,23 +102,23 @@ cat << 'EOF' > /cases/case-2024-001/timeline/filter.txt
 EOF
 
 log2timeline.py \
-   --filter-file /cases/case-2024-001/timeline/filter.txt \
-   --storage-file /cases/case-2024-001/timeline/evidence.plaso \
-   /cases/case-2024-001/images/evidence.dd
+ --filter-file /cases/case-2024-001/timeline/filter.txt \
+ --storage-file /cases/case-2024-001/timeline/evidence.plaso \
+ /cases/case-2024-001/images/evidence.dd
 
 # Using Docker
 docker run --rm -v /cases:/cases log2timeline/plaso log2timeline \
-   --storage-file /cases/case-2024-001/timeline/evidence.plaso \
-   /cases/case-2024-001/images/evidence.dd
+ --storage-file /cases/case-2024-001/timeline/evidence.plaso \
+ /cases/case-2024-001/images/evidence.dd
 
 # Process multiple evidence sources into one timeline
 log2timeline.py \
-   --storage-file /cases/case-2024-001/timeline/combined.plaso \
-   /cases/case-2024-001/images/workstation.dd
+ --storage-file /cases/case-2024-001/timeline/combined.plaso \
+ /cases/case-2024-001/images/workstation.dd
 
 log2timeline.py \
-   --storage-file /cases/case-2024-001/timeline/combined.plaso \
-   /cases/case-2024-001/images/server.dd
+ --storage-file /cases/case-2024-001/timeline/combined.plaso \
+ /cases/case-2024-001/images/server.dd
 ```
 
 ### Step 3: Filter and Export Timeline with psort
@@ -126,41 +126,41 @@ log2timeline.py \
 ```bash
 # Export full timeline to CSV (super-timeline format)
 psort.py \
-   -o l2tcsv \
-   -w /cases/case-2024-001/timeline/full_timeline.csv \
-   /cases/case-2024-001/timeline/evidence.plaso
+ -o l2tcsv \
+ -w /cases/case-2024-001/timeline/full_timeline.csv \
+ /cases/case-2024-001/timeline/evidence.plaso
 
 # Export with date range filter (focus on incident window)
 psort.py \
-   -o l2tcsv \
-   -w /cases/case-2024-001/timeline/incident_window.csv \
-   /cases/case-2024-001/timeline/evidence.plaso \
-   "date > '2024-01-15 00:00:00' AND date < '2024-01-20 23:59:59'"
+ -o l2tcsv \
+ -w /cases/case-2024-001/timeline/incident_window.csv \
+ /cases/case-2024-001/timeline/evidence.plaso \
+ "date > '2024-01-15 00:00:00' AND date < '2024-01-20 23:59:59'"
 
 # Export in JSON Lines format (for ingestion into SIEM/Timesketch)
 psort.py \
-   -o json_line \
-   -w /cases/case-2024-001/timeline/timeline.jsonl \
-   /cases/case-2024-001/timeline/evidence.plaso
+ -o json_line \
+ -w /cases/case-2024-001/timeline/timeline.jsonl \
+ /cases/case-2024-001/timeline/evidence.plaso
 
 # Export with specific source type filters
 psort.py \
-   -o l2tcsv \
-   -w /cases/case-2024-001/timeline/registry_events.csv \
-   /cases/case-2024-001/timeline/evidence.plaso \
-   "source_short == 'REG'"
+ -o l2tcsv \
+ -w /cases/case-2024-001/timeline/registry_events.csv \
+ /cases/case-2024-001/timeline/evidence.plaso \
+ "source_short == 'REG'"
 
 psort.py \
-   -o l2tcsv \
-   -w /cases/case-2024-001/timeline/evtx_events.csv \
-   /cases/case-2024-001/timeline/evidence.plaso \
-   "source_short == 'EVT'"
+ -o l2tcsv \
+ -w /cases/case-2024-001/timeline/evtx_events.csv \
+ /cases/case-2024-001/timeline/evidence.plaso \
+ "source_short == 'EVT'"
 
 # Export for Timeline Explorer (dynamic CSV)
 psort.py \
-   -o dynamic \
-   -w /cases/case-2024-001/timeline/timeline_explorer.csv \
-   /cases/case-2024-001/timeline/evidence.plaso
+ -o dynamic \
+ -w /cases/case-2024-001/timeline/timeline_explorer.csv \
+ /cases/case-2024-001/timeline/evidence.plaso
 ```
 
 ### Step 4: Analyze Timeline with Timesketch
@@ -173,20 +173,20 @@ docker compose up -d
 
 # Import Plaso file into Timesketch via CLI
 timesketch_importer \
-   --host http://localhost:5000 \
-   --username analyst \
-   --password password \
-   --sketch_id 1 \
-   --timeline_name "Case 2024-001 Workstation" \
-   /cases/case-2024-001/timeline/evidence.plaso
+ --host http://localhost:5000 \
+ --username analyst \
+ --password password \
+ --sketch_id 1 \
+ --timeline_name "Case 2024-001 Workstation" \
+ /cases/case-2024-001/timeline/evidence.plaso
 
 # Alternatively, import JSONL
 timesketch_importer \
-   --host http://localhost:5000 \
-   --username analyst \
-   --sketch_id 1 \
-   --timeline_name "Case 2024-001" \
-   /cases/case-2024-001/timeline/timeline.jsonl
+ --host http://localhost:5000 \
+ --username analyst \
+ --sketch_id 1 \
+ --timeline_name "Case 2024-001" \
+ /cases/case-2024-001/timeline/timeline.jsonl
 
 # In Timesketch web UI:
 # 1. Search for events: "data_type:windows:evtx:record AND event_identifier:4624"
@@ -210,46 +210,46 @@ events_by_hour = defaultdict(list)
 source_counts = defaultdict(int)
 
 with open('/cases/case-2024-001/timeline/incident_window.csv', 'r', errors='ignore') as f:
-    reader = csv.DictReader(f)
-    total = 0
-    for row in reader:
-        total += 1
-        timestamp = row.get('datetime', row.get('date', ''))
-        source = row.get('source_short', row.get('source', 'Unknown'))
-        description = row.get('message', row.get('desc', ''))
+ reader = csv.DictReader(f)
+ total = 0
+ for row in reader:
+ total += 1
+ timestamp = row.get('datetime', row.get('date', ''))
+ source = row.get('source_short', row.get('source', 'Unknown'))
+ description = row.get('message', row.get('desc', ''))
 
-        source_counts[source] += 1
+ source_counts[source] += 1
 
-        # Group by hour for activity patterns
-        try:
-            dt = datetime.strptime(timestamp[:19], '%Y-%m-%dT%H:%M:%S')
-            hour_key = dt.strftime('%Y-%m-%d %H:00')
-            events_by_hour[hour_key].append({
-                'time': timestamp,
-                'source': source,
-                'description': description[:200]
-            })
-        except (ValueError, TypeError):
-            pass
+ # Group by hour for activity patterns
+ try:
+ dt = datetime.strptime(timestamp[:19], '%Y-%m-%dT%H:%M:%S')
+ hour_key = dt.strftime('%Y-%m-%d %H:00')
+ events_by_hour[hour_key].append({
+ 'time': timestamp,
+ 'source': source,
+ 'description': description[:200]
+ })
+ except (ValueError, TypeError):
+ pass
 
 print(f"Total events in incident window: {total}\n")
 
 print("=== EVENTS BY SOURCE TYPE ===")
 for source, count in sorted(source_counts.items(), key=lambda x: x[1], reverse=True):
-    print(f"  {source}: {count}")
+ print(f" {source}: {count}")
 
 print("\n=== ACTIVITY BY HOUR ===")
 for hour in sorted(events_by_hour.keys()):
-    count = len(events_by_hour[hour])
-    bar = '#' * min(count // 10, 50)
-    print(f"  {hour}: {count:>6} events {bar}")
+ count = len(events_by_hour[hour])
+ bar = '#' * min(count // 10, 50)
+ print(f" {hour}: {count:>6} events {bar}")
 
 # Find hours with unusual activity spikes
 avg = total / max(len(events_by_hour), 1)
 print(f"\n=== ANOMALOUS HOURS (>{avg*3:.0f} events) ===")
 for hour in sorted(events_by_hour.keys()):
-    if len(events_by_hour[hour]) > avg * 3:
-        print(f"  {hour}: {len(events_by_hour[hour])} events (SPIKE)")
+ if len(events_by_hour[hour]) > avg * 3:
+ print(f" {hour}: {len(events_by_hour[hour])} events (SPIKE)")
 PYEOF
 ```
 
@@ -297,39 +297,39 @@ Filter timeline to non-business hours only, identify file access patterns outsid
 
 ```
 Timeline Reconstruction Summary:
-  Evidence Sources:
-    Disk Image: evidence.dd (500 GB, NTFS)
-    Plaso Storage: evidence.plaso (2.3 GB)
+ Evidence Sources:
+ Disk Image: evidence.dd (500 GB, NTFS)
+ Plaso Storage: evidence.plaso (2.3 GB)
 
-  Processing Statistics:
-    Total events extracted: 4,567,890
-    Parsers used: 45 (winevtx, prefetch, mft, usnjrnl, lnk, chrome, firefox, winreg, ...)
-    Processing time: 3h 45m
+ Processing Statistics:
+ Total events extracted: 4,567,890
+ Parsers used: 45 (winevtx, prefetch, mft, usnjrnl, lnk, chrome, firefox, winreg, ...)
+ Processing time: 3h 45m
 
-  Incident Window (2024-01-15 to 2024-01-20):
-    Events in window: 234,567
-    Event Sources:
-      MFT:          89,234
-      Event Logs:   45,678
-      USN Journal:  56,789
-      Registry:     23,456
-      Prefetch:     1,234
-      Browser:      5,678
-      LNK Files:    2,345
-      Other:        10,153
+ Incident Window (2024-01-15 to 2024-01-20):
+ Events in window: 234,567
+ Event Sources:
+ MFT: 89,234
+ Event Logs: 45,678
+ USN Journal: 56,789
+ Registry: 23,456
+ Prefetch: 1,234
+ Browser: 5,678
+ LNK Files: 2,345
+ Other: 10,153
 
-  Key Timeline Events:
-    2024-01-15 14:32 - Phishing email opened (browser)
-    2024-01-15 14:33 - Malicious document downloaded
-    2024-01-15 14:35 - PowerShell executed (Prefetch + Event Log)
-    2024-01-15 14:36 - C2 connection established (Registry + Event Log)
-    2024-01-16 02:30 - Mimikatz execution (Prefetch)
-    2024-01-16 02:45 - Lateral movement to DC (Event Log)
-    2024-01-17 03:00 - Data exfiltration (MFT + USN Journal)
-    2024-01-18 03:00 - Log clearing (Event Log)
+ Key Timeline Events:
+ 2024-01-15 14:32 - Phishing email opened (browser)
+ 2024-01-15 14:33 - Malicious document downloaded
+ 2024-01-15 14:35 - PowerShell executed (Prefetch + Event Log)
+ 2024-01-15 14:36 - C2 connection established (Registry + Event Log)
+ 2024-01-16 02:30 - Mimikatz execution (Prefetch)
+ 2024-01-16 02:45 - Lateral movement to DC (Event Log)
+ 2024-01-17 03:00 - Data exfiltration (MFT + USN Journal)
+ 2024-01-18 03:00 - Log clearing (Event Log)
 
-  Exported Files:
-    Full Timeline:     /timeline/full_timeline.csv (4.5M rows)
-    Incident Window:   /timeline/incident_window.csv (234K rows)
-    Timesketch Import: /timeline/timeline.jsonl
+ Exported Files:
+ Full Timeline: /timeline/full_timeline.csv (4.5M rows)
+ Incident Window: /timeline/incident_window.csv (234K rows)
+ Timesketch Import: /timeline/timeline.jsonl
 ```

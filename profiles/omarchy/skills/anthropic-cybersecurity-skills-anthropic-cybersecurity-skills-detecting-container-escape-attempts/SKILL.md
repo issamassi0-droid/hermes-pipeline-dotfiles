@@ -1,15 +1,15 @@
 ---
 name: detecting-container-escape-attempts
 description: >-
-  Detects container escape at runtime across tooling - namespace manipulation, capability
-  abuse, kernel exploits, sensitive host mounts, and anomalous syscalls - and explains which
-  signals matter regardless of whether Falco, Sysdig, auditd, or an EDR is doing the
-  collection. Use when deciding what breakout behaviour to monitor, investigating a suspected
-  Docker or Kubernetes breakout, or comparing escape coverage across runtime sensors.
-  Keywords: container escape, breakout, namespaces, CAP_SYS_ADMIN, privileged, hostPath,
-  kernel exploit, syscall. Do not use for Falco rule syntax itself - use
-  detecting-container-escape-with-falco-rules; for a static configuration sweep use
-  performing-container-escape-detection.
+ Detects container escape at runtime across tooling - namespace manipulation, capability
+ abuse, kernel exploits, sensitive host mounts, and anomalous syscalls - and explains which
+ signals matter regardless of whether Falco, Sysdig, auditd, or an EDR is doing the
+ collection. Use when deciding what breakout behaviour to monitor, investigating a suspected
+ Docker or Kubernetes breakout, or comparing escape coverage across runtime sensors.
+ Keywords: container escape, breakout, namespaces, CAP_SYS_ADMIN, privileged, hostPath,
+ kernel exploit, syscall. Do not use for Falco rule syntax itself - use
+ detecting-container-escape-with-falco-rules; for a static configuration sweep use
+ performing-container-escape-detection.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -90,28 +90,28 @@ Container escape is a critical attack technique where an adversary breaks out of
 ```yaml
 # falco-values.yaml for Helm deployment
 falco:
-  driver:
-    kind: ebpf   # or modern_ebpf for kernel 5.8+
-  rules_files:
-    - /etc/falco/falco_rules.yaml
-    - /etc/falco/falco_rules.local.yaml
-    - /etc/falco/rules.d
-  json_output: true
-  json_include_output_property: true
-  http_output:
-    enabled: true
-    url: "http://falcosidekick:2801"
-  grpc:
-    enabled: true
-  priority: warning
+ driver:
+ kind: ebpf # or modern_ebpf for kernel 5.8+
+ rules_files:
+ - /etc/falco/falco_rules.yaml
+ - /etc/falco/falco_rules.local.yaml
+ - /etc/falco/rules.d
+ json_output: true
+ json_include_output_property: true
+ http_output:
+ enabled: true
+ url: "http://falcosidekick:2801"
+ grpc:
+ enabled: true
+ priority: warning
 ```
 
 ```bash
 # Install Falco via Helm
 helm repo add falcosecurity https://falcosecurity.github.io/charts
 helm install falco falcosecurity/falco \
-  --namespace falco-system --create-namespace \
-  -f falco-values.yaml
+ --namespace falco-system --create-namespace \
+ -f falco-values.yaml
 ```
 
 ### Step 2: Custom Falco Rules for Escape Detection
@@ -121,142 +121,142 @@ helm install falco falcosecurity/falco \
 
 # Detect container escape via privileged container
 - rule: Container Escape via Privileged Mode
-  desc: Detect attempts to escape container using privileged capabilities
-  condition: >
-    spawned_process and container and
-    (proc.name in (nsenter, unshare, mount, umount, modprobe, insmod) or
-     (proc.name = chroot and proc.args contains "/host"))
-  output: >
-    Container escape attempt via privileged operation
-    (user=%user.name container=%container.name image=%container.image.repository
-     command=%proc.cmdline pid=%proc.pid %container.info)
-  priority: CRITICAL
-  tags: [container, escape, T1611]
+ desc: Detect attempts to escape container using privileged capabilities
+ condition: >
+ spawned_process and container and
+ (proc.name in (nsenter, unshare, mount, umount, modprobe, insmod) or
+ (proc.name = chroot and proc.args contains "/host"))
+ output: >
+ Container escape attempt via privileged operation
+ (user=%user.name container=%container.name image=%container.image.repository
+ command=%proc.cmdline pid=%proc.pid %container.info)
+ priority: CRITICAL
+ tags: [container, escape, T1611]
 
 # Detect Docker socket access from container
 - rule: Container Access to Docker Socket
-  desc: Detect container reading/writing to Docker socket
-  condition: >
-    (open_read or open_write) and container and
-    fd.name = /var/run/docker.sock
-  output: >
-    Docker socket accessed from container
-    (user=%user.name container=%container.name image=%container.image.repository
-     fd=%fd.name command=%proc.cmdline %container.info)
-  priority: CRITICAL
-  tags: [container, escape, docker_socket]
+ desc: Detect container reading/writing to Docker socket
+ condition: >
+ (open_read or open_write) and container and
+ fd.name = /var/run/docker.sock
+ output: >
+ Docker socket accessed from container
+ (user=%user.name container=%container.name image=%container.image.repository
+ fd=%fd.name command=%proc.cmdline %container.info)
+ priority: CRITICAL
+ tags: [container, escape, docker_socket]
 
 # Detect sensitive proc filesystem access
 - rule: Container Access to Sensitive Proc Paths
-  desc: Detect container accessing host-sensitive proc paths
-  condition: >
-    open_read and container and
-    (fd.name startswith /proc/sysrq-trigger or
-     fd.name startswith /proc/kcore or
-     fd.name startswith /proc/kmsg or
-     fd.name startswith /proc/kallsyms or
-     fd.name startswith /sys/kernel)
-  output: >
-    Sensitive proc/sys access from container
-    (user=%user.name container=%container.name path=%fd.name
-     command=%proc.cmdline %container.info)
-  priority: CRITICAL
-  tags: [container, escape, proc_access]
+ desc: Detect container accessing host-sensitive proc paths
+ condition: >
+ open_read and container and
+ (fd.name startswith /proc/sysrq-trigger or
+ fd.name startswith /proc/kcore or
+ fd.name startswith /proc/kmsg or
+ fd.name startswith /proc/kallsyms or
+ fd.name startswith /sys/kernel)
+ output: >
+ Sensitive proc/sys access from container
+ (user=%user.name container=%container.name path=%fd.name
+ command=%proc.cmdline %container.info)
+ priority: CRITICAL
+ tags: [container, escape, proc_access]
 
 # Detect cgroup escape technique
 - rule: Container Cgroup Escape Attempt
-  desc: Detect writing to cgroup release_agent (escape technique)
-  condition: >
-    open_write and container and
-    (fd.name contains release_agent or
-     fd.name contains notify_on_release)
-  output: >
-    Cgroup escape attempt detected
-    (user=%user.name container=%container.name path=%fd.name
-     command=%proc.cmdline %container.info)
-  priority: CRITICAL
-  tags: [container, escape, cgroup]
+ desc: Detect writing to cgroup release_agent (escape technique)
+ condition: >
+ open_write and container and
+ (fd.name contains release_agent or
+ fd.name contains notify_on_release)
+ output: >
+ Cgroup escape attempt detected
+ (user=%user.name container=%container.name path=%fd.name
+ command=%proc.cmdline %container.info)
+ priority: CRITICAL
+ tags: [container, escape, cgroup]
 
 # Detect kernel module loading from container
 - rule: Container Loading Kernel Module
-  desc: Detect container attempting to load kernel modules
-  condition: >
-    spawned_process and container and
-    (proc.name in (modprobe, insmod, rmmod) or
-     (evt.type = init_module or evt.type = finit_module))
-  output: >
-    Kernel module load attempt from container
-    (user=%user.name container=%container.name command=%proc.cmdline
-     %container.info)
-  priority: CRITICAL
-  tags: [container, escape, kernel_module]
+ desc: Detect container attempting to load kernel modules
+ condition: >
+ spawned_process and container and
+ (proc.name in (modprobe, insmod, rmmod) or
+ (evt.type = init_module or evt.type = finit_module))
+ output: >
+ Kernel module load attempt from container
+ (user=%user.name container=%container.name command=%proc.cmdline
+ %container.info)
+ priority: CRITICAL
+ tags: [container, escape, kernel_module]
 
 # Detect namespace manipulation
 - rule: Container Namespace Manipulation
-  desc: Detect setns/unshare syscalls from container
-  condition: >
-    container and (evt.type = setns or evt.type = unshare) and
-    not proc.name in (containerd-shim, runc)
-  output: >
-    Namespace manipulation from container
-    (user=%user.name container=%container.name syscall=%evt.type
-     command=%proc.cmdline %container.info)
-  priority: CRITICAL
-  tags: [container, escape, namespace]
+ desc: Detect setns/unshare syscalls from container
+ condition: >
+ container and (evt.type = setns or evt.type = unshare) and
+ not proc.name in (containerd-shim, runc)
+ output: >
+ Namespace manipulation from container
+ (user=%user.name container=%container.name syscall=%evt.type
+ command=%proc.cmdline %container.info)
+ priority: CRITICAL
+ tags: [container, escape, namespace]
 
 # Detect mount operations from container
 - rule: Container Mount Sensitive Filesystem
-  desc: Detect container mounting host filesystems
-  condition: >
-    spawned_process and container and proc.name = mount and
-    (proc.args contains "/dev/" or proc.args contains "proc" or
-     proc.args contains "sysfs")
-  output: >
-    Sensitive mount operation from container
-    (user=%user.name container=%container.name command=%proc.cmdline
-     %container.info)
-  priority: HIGH
-  tags: [container, escape, mount]
+ desc: Detect container mounting host filesystems
+ condition: >
+ spawned_process and container and proc.name = mount and
+ (proc.args contains "/dev/" or proc.args contains "proc" or
+ proc.args contains "sysfs")
+ output: >
+ Sensitive mount operation from container
+ (user=%user.name container=%container.name command=%proc.cmdline
+ %container.info)
+ priority: HIGH
+ tags: [container, escape, mount]
 ```
 
 ### Step 3: Configure Seccomp Profile for Escape Prevention
 
 ```json
 {
-  "defaultAction": "SCMP_ACT_ERRNO",
-  "archMap": [
-    { "architecture": "SCMP_ARCH_X86_64", "subArchitectures": ["SCMP_ARCH_X86", "SCMP_ARCH_X32"] }
-  ],
-  "syscalls": [
-    {
-      "names": [
-        "read", "write", "open", "close", "stat", "fstat", "lstat",
-        "poll", "lseek", "mmap", "mprotect", "munmap", "brk",
-        "rt_sigaction", "rt_sigprocmask", "ioctl", "access",
-        "pipe", "select", "sched_yield", "dup", "dup2",
-        "nanosleep", "getpid", "socket", "connect", "accept",
-        "sendto", "recvfrom", "bind", "listen", "getsockname",
-        "getpeername", "socketpair", "setsockopt", "getsockopt",
-        "clone", "fork", "vfork", "execve", "exit", "wait4",
-        "kill", "getuid", "getgid", "geteuid", "getegid",
-        "epoll_create", "epoll_wait", "epoll_ctl", "epoll_create1",
-        "futex", "set_tid_address", "set_robust_list",
-        "openat", "newfstatat", "readlinkat", "fchownat",
-        "clock_gettime", "clock_getres", "clock_nanosleep",
-        "getrandom", "memfd_create", "statx", "rseq"
-      ],
-      "action": "SCMP_ACT_ALLOW"
-    },
-    {
-      "names": ["unshare", "setns", "mount", "umount2", "pivot_root",
-                "init_module", "finit_module", "delete_module",
-                "kexec_load", "kexec_file_load", "ptrace",
-                "reboot", "swapon", "swapoff", "sethostname",
-                "setdomainname", "keyctl", "bpf"],
-      "action": "SCMP_ACT_LOG",
-      "comment": "Log escape-relevant syscalls for detection"
-    }
-  ]
+ "defaultAction": "SCMP_ACT_ERRNO",
+ "archMap": [
+ { "architecture": "SCMP_ARCH_X86_64", "subArchitectures": ["SCMP_ARCH_X86", "SCMP_ARCH_X32"] }
+ ],
+ "syscalls": [
+ {
+ "names": [
+ "read", "write", "open", "close", "stat", "fstat", "lstat",
+ "poll", "lseek", "mmap", "mprotect", "munmap", "brk",
+ "rt_sigaction", "rt_sigprocmask", "ioctl", "access",
+ "pipe", "select", "sched_yield", "dup", "dup2",
+ "nanosleep", "getpid", "socket", "connect", "accept",
+ "sendto", "recvfrom", "bind", "listen", "getsockname",
+ "getpeername", "socketpair", "setsockopt", "getsockopt",
+ "clone", "fork", "vfork", "execve", "exit", "wait4",
+ "kill", "getuid", "getgid", "geteuid", "getegid",
+ "epoll_create", "epoll_wait", "epoll_ctl", "epoll_create1",
+ "futex", "set_tid_address", "set_robust_list",
+ "openat", "newfstatat", "readlinkat", "fchownat",
+ "clock_gettime", "clock_getres", "clock_nanosleep",
+ "getrandom", "memfd_create", "statx", "rseq"
+ ],
+ "action": "SCMP_ACT_ALLOW"
+ },
+ {
+ "names": ["unshare", "setns", "mount", "umount2", "pivot_root",
+ "init_module", "finit_module", "delete_module",
+ "kexec_load", "kexec_file_load", "ptrace",
+ "reboot", "swapon", "swapoff", "sethostname",
+ "setdomainname", "keyctl", "bpf"],
+ "action": "SCMP_ACT_LOG",
+ "comment": "Log escape-relevant syscalls for detection"
+ }
+ ]
 }
 ```
 
@@ -287,23 +287,23 @@ helm install falco falcosecurity/falco \
 ```yaml
 # Falcosidekick configuration for alert routing
 config:
-  slack:
-    webhookurl: "https://hooks.slack.com/services/xxx"
-    minimumpriority: "critical"
-    messageformat: |
-      *Container Escape Alert*
-      Rule: {{ .Rule }}
-      Priority: {{ .Priority }}
-      Output: {{ .Output }}
+ slack:
+ webhookurl: "https://hooks.slack.com/services/xxx"
+ minimumpriority: "critical"
+ messageformat: |
+ *Container Escape Alert*
+ Rule: {{ .Rule }}
+ Priority: {{ .Priority }}
+ Output: {{ .Output }}
 
-  elasticsearch:
-    hostport: "https://elasticsearch:9200"
-    index: "falco-alerts"
-    minimumpriority: "warning"
+ elasticsearch:
+ hostport: "https://elasticsearch:9200"
+ index: "falco-alerts"
+ minimumpriority: "warning"
 
-  pagerduty:
-    routingkey: "xxxx"
-    minimumpriority: "critical"
+ pagerduty:
+ routingkey: "xxxx"
+ minimumpriority: "critical"
 ```
 
 ## Validation Commands
@@ -311,9 +311,9 @@ config:
 ```bash
 # Test Falco rules with event generator
 kubectl run falco-event-generator \
-  --image=falcosecurity/event-generator \
-  --restart=Never \
-  -- run syscall --action PtraceAttachContainer
+ --image=falcosecurity/event-generator \
+ --restart=Never \
+ -- run syscall --action PtraceAttachContainer
 
 # Check Falco alerts
 kubectl logs -n falco-system -l app.kubernetes.io/name=falco --tail=50

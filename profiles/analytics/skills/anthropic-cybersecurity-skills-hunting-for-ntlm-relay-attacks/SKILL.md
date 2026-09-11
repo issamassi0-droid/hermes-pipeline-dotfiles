@@ -1,10 +1,10 @@
 ---
 name: hunting-for-ntlm-relay-attacks
 description: Detects NTLM relay attacks (MITRE T1557.001) by analyzing Windows Event
-  ID 4624 logon type 3 with NTLMSSP authentication, flagging IP-to-hostname mismatches,
-  Responder/LLMNR poisoning signatures, SMB signing status, and anomalous cross-domain
-  authentication patterns. Use when investigating credential-relay activity in Active
-  Directory or building detections for NTLM relay and coercion-based attacks.
+ ID 4624 logon type 3 with NTLMSSP authentication, flagging IP-to-hostname mismatches,
+ Responder/LLMNR poisoning signatures, SMB signing status, and anomalous cross-domain
+ authentication patterns. Use when investigating credential-relay activity in Active
+ Directory or building detections for NTLM relay and coercion-based attacks.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:

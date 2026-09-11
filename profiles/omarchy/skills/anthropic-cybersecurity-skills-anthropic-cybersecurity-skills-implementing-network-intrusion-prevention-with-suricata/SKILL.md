@@ -1,10 +1,10 @@
 ---
 name: implementing-network-intrusion-prevention-with-suricata
 description: Deploys and configures Suricata as an inline network intrusion prevention system,
-  covering IPS mode setup (NFQueue), custom rule writing, Emerging Threats ruleset
-  management, performance tuning, and logging integration. Use when deploying real-time
-  inline traffic inspection to actively block malicious traffic, or when tuning
-  Suricata rules and performance for production IDS/IPS deployment.
+ covering IPS mode setup (NFQueue), custom rule writing, Emerging Threats ruleset
+ management, performance tuning, and logging integration. Use when deploying real-time
+ inline traffic inspection to actively block malicious traffic, or when tuning
+ Suricata rules and performance for production IDS/IPS deployment.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -109,103 +109,103 @@ Edit `/etc/suricata/suricata.yaml`:
 ---
 
 vars:
-  address-groups:
-    HOME_NET: "[10.0.0.0/8,172.16.0.0/12,192.168.0.0/16]"
-    EXTERNAL_NET: "!$HOME_NET"
-    HTTP_SERVERS: "$HOME_NET"
-    DNS_SERVERS: "[10.0.1.10/32,10.0.1.11/32]"
-    SMTP_SERVERS: "$HOME_NET"
+ address-groups:
+ HOME_NET: "[10.0.0.0/8,172.16.0.0/12,192.168.0.0/16]"
+ EXTERNAL_NET: "!$HOME_NET"
+ HTTP_SERVERS: "$HOME_NET"
+ DNS_SERVERS: "[10.0.1.10/32,10.0.1.11/32]"
+ SMTP_SERVERS: "$HOME_NET"
 
-  port-groups:
-    HTTP_PORTS: "80"
-    SHELLCODE_PORTS: "!80"
-    SSH_PORTS: "22"
-    DNS_PORTS: "53"
+ port-groups:
+ HTTP_PORTS: "80"
+ SHELLCODE_PORTS: "!80"
+ SSH_PORTS: "22"
+ DNS_PORTS: "53"
 
 # IPS mode with NFQUEUE
 nfq:
-  mode: accept
-  repeat-mark: 1
-  repeat-mask: 1
-  route-queue: 2
-  fail-open: yes
+ mode: accept
+ repeat-mark: 1
+ repeat-mask: 1
+ route-queue: 2
+ fail-open: yes
 
 # Threading configuration
 threading:
-  set-cpu-affinity: yes
-  cpu-affinity:
-    - management-cpu-set:
-        cpu: [0]
-    - receive-cpu-set:
-        cpu: [1,2]
-    - worker-cpu-set:
-        cpu: [3,4,5,6,7]
-        mode: exclusive
+ set-cpu-affinity: yes
+ cpu-affinity:
+ - management-cpu-set:
+ cpu: [0]
+ - receive-cpu-set:
+ cpu: [1,2]
+ - worker-cpu-set:
+ cpu: [3,4,5,6,7]
+ mode: exclusive
 
 # Detection engine
 detect-engine:
-  - profile: high
-  - custom-values:
-      toclient-groups: 50
-      toserver-groups: 50
-  - sgh-mpm-context: auto
-  - inspection-recursion-limit: 3000
+ - profile: high
+ - custom-values:
+ toclient-groups: 50
+ toserver-groups: 50
+ - sgh-mpm-context: auto
+ - inspection-recursion-limit: 3000
 
 # Stream engine
 stream:
-  memcap: 512mb
-  checksum-validation: yes
-  inline: auto
-  reassembly:
-    memcap: 1gb
-    depth: 1mb
-    toserver-chunk-size: 2560
-    toclient-chunk-size: 2560
+ memcap: 512mb
+ checksum-validation: yes
+ inline: auto
+ reassembly:
+ memcap: 1gb
+ depth: 1mb
+ toserver-chunk-size: 2560
+ toclient-chunk-size: 2560
 
 # Logging configuration
 outputs:
-  - eve-log:
-      enabled: yes
-      filetype: regular
-      filename: /var/log/suricata/eve.json
-      types:
-        - alert:
-            payload: yes
-            payload-buffer-size: 4kb
-            payload-printable: yes
-            packet: yes
-            metadata: yes
-            tagged-packets: yes
-        - http:
-            extended: yes
-        - dns:
-            query: yes
-            answer: yes
-        - tls:
-            extended: yes
-        - files:
-            force-magic: yes
-            force-hash: [md5, sha256]
-        - flow
-        - netflow
-        - stats:
-            totals: yes
-            threads: no
-            deltas: yes
+ - eve-log:
+ enabled: yes
+ filetype: regular
+ filename: /var/log/suricata/eve.json
+ types:
+ - alert:
+ payload: yes
+ payload-buffer-size: 4kb
+ payload-printable: yes
+ packet: yes
+ metadata: yes
+ tagged-packets: yes
+ - http:
+ extended: yes
+ - dns:
+ query: yes
+ answer: yes
+ - tls:
+ extended: yes
+ - files:
+ force-magic: yes
+ force-hash: [md5, sha256]
+ - flow
+ - netflow
+ - stats:
+ totals: yes
+ threads: no
+ deltas: yes
 
-  - fast:
-      enabled: yes
-      filename: /var/log/suricata/fast.log
+ - fast:
+ enabled: yes
+ filename: /var/log/suricata/fast.log
 
-  - stats:
-      enabled: yes
-      filename: /var/log/suricata/stats.log
-      interval: 30
+ - stats:
+ enabled: yes
+ filename: /var/log/suricata/stats.log
+ interval: 30
 
 # Rule files
 default-rule-path: /var/lib/suricata/rules
 rule-files:
-  - suricata.rules
+ - suricata.rules
 ```
 
 ### Step 3: Configure NFQUEUE for Inline IPS
@@ -231,20 +231,20 @@ Alternative: AF_PACKET inline mode between two interfaces:
 ```yaml
 # In suricata.yaml
 af-packet:
-  - interface: eth0
-    cluster-id: 98
-    cluster-type: cluster_flow
-    defrag: yes
-    use-mmap: yes
-    copy-mode: ips
-    copy-iface: eth1
-  - interface: eth1
-    cluster-id: 97
-    cluster-type: cluster_flow
-    defrag: yes
-    use-mmap: yes
-    copy-mode: ips
-    copy-iface: eth0
+ - interface: eth0
+ cluster-id: 98
+ cluster-type: cluster_flow
+ defrag: yes
+ use-mmap: yes
+ copy-mode: ips
+ copy-iface: eth1
+ - interface: eth1
+ cluster-id: 97
+ cluster-type: cluster_flow
+ defrag: yes
+ use-mmap: yes
+ copy-mode: ips
+ copy-iface: eth0
 ```
 
 ### Step 4: Manage Rules with Suricata-Update

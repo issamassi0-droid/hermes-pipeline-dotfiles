@@ -1,13 +1,13 @@
 ---
 name: performing-kubernetes-etcd-security-assessment
 description: >-
-  Assesses the security posture of the etcd cluster backing Kubernetes: encryption at rest,
-  TLS peer and client transport, access control, backup encryption, and network isolation. Use
-  when auditing or hardening a control plane, reviewing whether Secrets are encrypted at rest,
-  or protecting etcd backups, since etcd stores Secrets, RBAC policy, and ConfigMaps in
-  plaintext by default. Keywords: etcd, EncryptionConfiguration, encryption at rest, peer TLS,
-  snapshot, backup, control plane. Do not use for broad cluster-wide CIS checks - use
-  performing-kubernetes-cis-benchmark-with-kube-bench.
+ Assesses the security posture of the etcd cluster backing Kubernetes: encryption at rest,
+ TLS peer and client transport, access control, backup encryption, and network isolation. Use
+ when auditing or hardening a control plane, reviewing whether Secrets are encrypted at rest,
+ or protecting etcd backups, since etcd stores Secrets, RBAC policy, and ConfigMaps in
+ plaintext by default. Keywords: etcd, EncryptionConfiguration, encryption at rest, peer TLS,
+ snapshot, backup, control plane. Do not use for broad cluster-wide CIS checks - use
+ performing-kubernetes-cis-benchmark-with-kube-bench.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -76,15 +76,15 @@ Expected secure configuration:
 apiVersion: apiserver.config.k8s.io/v1
 kind: EncryptionConfiguration
 resources:
-  - resources:
-      - secrets
-      - configmaps
-    providers:
-      - aescbc:
-          keys:
-            - name: key1
-              secret: <base64-encoded-32-byte-key>
-      - identity: {}  # Fallback for reading unencrypted data
+ - resources:
+ - secrets
+ - configmaps
+ providers:
+ - aescbc:
+ keys:
+ - name: key1
+ secret: <base64-encoded-32-byte-key>
+ - identity: {} # Fallback for reading unencrypted data
 ```
 
 Verify secrets are actually encrypted in etcd:
@@ -92,11 +92,11 @@ Verify secrets are actually encrypted in etcd:
 ```bash
 # Read a secret directly from etcd
 ETCDCTL_API=3 etcdctl \
-  --endpoints=https://127.0.0.1:2379 \
-  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-  --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key \
-  get /registry/secrets/default/my-secret | hexdump -C | head -20
+ --endpoints=https://127.0.0.1:2379 \
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+ --cert=/etc/kubernetes/pki/etcd/server.crt \
+ --key=/etc/kubernetes/pki/etcd/server.key \
+ get /registry/secrets/default/my-secret | hexdump -C | head -20
 
 # If encrypted, output starts with "k8s:enc:aescbc:v1:key1"
 # If NOT encrypted, you'll see plaintext key-value pairs
@@ -107,10 +107,10 @@ ETCDCTL_API=3 etcdctl \
 ```bash
 # Verify etcd uses TLS for client connections
 ETCDCTL_API=3 etcdctl endpoint health \
-  --endpoints=https://127.0.0.1:2379 \
-  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-  --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key
+ --endpoints=https://127.0.0.1:2379 \
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+ --cert=/etc/kubernetes/pki/etcd/server.crt \
+ --key=/etc/kubernetes/pki/etcd/server.key
 
 # Check peer TLS configuration
 ps aux | grep etcd | tr ' ' '\n' | grep -E "peer-cert|peer-key|peer-trusted-ca"
@@ -154,10 +154,10 @@ ss -tlnp | grep 2379
 ```bash
 # Create an encrypted etcd backup
 ETCDCTL_API=3 etcdctl snapshot save /backup/etcd-snapshot.db \
-  --endpoints=https://127.0.0.1:2379 \
-  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-  --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key
+ --endpoints=https://127.0.0.1:2379 \
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+ --cert=/etc/kubernetes/pki/etcd/server.crt \
+ --key=/etc/kubernetes/pki/etcd/server.key
 
 # Encrypt the backup file
 gpg --symmetric --cipher-algo AES256 /backup/etcd-snapshot.db
@@ -201,22 +201,22 @@ cat > /etc/kubernetes/enc/encryption-config.yaml <<EOF
 apiVersion: apiserver.config.k8s.io/v1
 kind: EncryptionConfiguration
 resources:
-  - resources:
-      - secrets
-    providers:
-      - aescbc:
-          keys:
-            - name: key2
-              secret: ${NEW_KEY}
-            - name: key1
-              secret: <old-key>
-      - identity: {}
+ - resources:
+ - secrets
+ providers:
+ - aescbc:
+ keys:
+ - name: key2
+ secret: ${NEW_KEY}
+ - name: key1
+ secret: <old-key>
+ - identity: {}
 EOF
 
 # 3. Restart API server to pick up new config
 # 4. Re-encrypt all secrets with new key
 kubectl get secrets --all-namespaces -o json | \
-  kubectl replace -f -
+ kubectl replace -f -
 
 # 5. Remove old key from EncryptionConfiguration
 # 6. Restart API server again

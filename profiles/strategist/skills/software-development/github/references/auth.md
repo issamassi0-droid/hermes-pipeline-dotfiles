@@ -41,9 +41,9 @@ Tell the user to go to: **https://github.com/settings/tokens**
 - Click "Generate new token (classic)"
 - Give it a name like "hermes-agent"
 - Select scopes:
-  - `repo` (full repository access — read, write, push, PRs)
-  - `workflow` (trigger and manage GitHub Actions)
-  - `read:org` (if working with organization repos)
+ - `repo` (full repository access — read, write, push, PRs)
+ - `workflow` (trigger and manage GitHub Actions)
+ - `read:org` (if working with organization repos)
 - Set expiration (90 days is a good default)
 - Copy the token — it won't be shown again
 
@@ -165,36 +165,36 @@ Fallback when interactive login is impractical (agent-driven sessions, no browse
 ```bash
 # 1. Request a device code (gh's official client_id)
 RESP=$(curl -s -X POST -H "Accept: application/json" \
-  -d "client_id=178c6fc778ccc68e1d6a&scope=repo,read:org,gist" \
-  https://github.com/login/device/code)
+ -d "client_id=178c6fc778ccc68e1d6a&scope=repo,read:org,gist" \
+ https://github.com/login/device/code)
 DEVICE_CODE=$(echo "$RESP" | sed 's/.*"device_code":"\([^"]*\)".*/\1/')
 USER_CODE=$(echo "$RESP" | sed 's/.*"user_code":"\([^"]*\)".*/\1/')
 INTERVAL=$(echo "$RESP" | sed 's/.*"interval":\([0-9]*\).*/\1/'); INTERVAL=${INTERVAL:-5}
 echo "Tell the user: go to https://github.com/login/device and enter code: $USER_CODE"
 
 # 2. Poll for the token (respect interval; +5s on slow_down; ~15 min expiry).
-#    Run this loop as a background process and show the user the code first.
+# Run this loop as a background process and show the user the code first.
 while true; do
-  sleep "$INTERVAL"
-  POLL=$(curl -s -X POST -H "Accept: application/json" \
-    -d "client_id=178c6fc778ccc68e1d6a&device_code=${DEVICE_CODE}&grant_type=urn:ietf:params:oauth:grant-type:device_code" \
-    https://github.com/login/oauth/access_token)
-  case "$POLL" in
-    *access_token*)
-      # Never echo the token; pipe it straight into gh.
-      # timeout guards the headless-keyring hang (see pitfall below) —
-      # on exit 124, fall back to writing ~/.config/gh/hosts.yml directly.
-      echo "$POLL" | sed 's/.*"access_token":"\([^"]*\)".*/\1/' | timeout 20 gh auth login --with-token \
-        || { echo "WITH_TOKEN_HUNG_OR_FAILED — use the hosts.yml fallback below"; exit 1; }
-      gh auth setup-git
-      gh auth status
-      echo "LOGIN_COMPLETE"; break ;;
-    *authorization_pending*) ;;                      # keep polling
-    *slow_down*) INTERVAL=$((INTERVAL + 5)) ;;       # back off per GitHub docs
-    *expired_token*) echo "CODE_EXPIRED — restart the flow"; exit 1 ;;
-    *access_denied*) echo "USER_DENIED"; exit 1 ;;
-    *) echo "UNEXPECTED: $POLL"; exit 1 ;;
-  esac
+ sleep "$INTERVAL"
+ POLL=$(curl -s -X POST -H "Accept: application/json" \
+ -d "client_id=178c6fc778ccc68e1d6a&device_code=${DEVICE_CODE}&grant_type=urn:ietf:params:oauth:grant-type:device_code" \
+ https://github.com/login/oauth/access_token)
+ case "$POLL" in
+ *access_token*)
+ # Never echo the token; pipe it straight into gh.
+ # timeout guards the headless-keyring hang (see pitfall below) —
+ # on exit 124, fall back to writing ~/.config/gh/hosts.yml directly.
+ echo "$POLL" | sed 's/.*"access_token":"\([^"]*\)".*/\1/' | timeout 20 gh auth login --with-token \
+ || { echo "WITH_TOKEN_HUNG_OR_FAILED — use the hosts.yml fallback below"; exit 1; }
+ gh auth setup-git
+ gh auth status
+ echo "LOGIN_COMPLETE"; break ;;
+ *authorization_pending*) ;; # keep polling
+ *slow_down*) INTERVAL=$((INTERVAL + 5)) ;; # back off per GitHub docs
+ *expired_token*) echo "CODE_EXPIRED — restart the flow"; exit 1 ;;
+ *access_denied*) echo "USER_DENIED"; exit 1 ;;
+ *) echo "UNEXPECTED: $POLL"; exit 1 ;;
+ esac
 done
 ```
 
@@ -211,12 +211,12 @@ Note: on Windows winget installs, gh lands at `/c/Program Files/GitHub CLI` — 
 > # $TOKEN = the access token from the device flow above (never echo it)
 > mkdir -p ~/.config/gh
 > LOGIN=$(curl -s -H "Authorization: token $TOKEN" https://api.github.com/user \
->   | sed 's/.*"login": *"\([^"]*\)".*/\1/')
-> printf 'github.com:\n    users:\n        %s:\n            oauth_token: %s\n    git_protocol: https\n    oauth_token: %s\n    user: %s\n' \
->   "$LOGIN" "$TOKEN" "$TOKEN" "$LOGIN" > ~/.config/gh/hosts.yml
+> | sed 's/.*"login": *"\([^"]*\)".*/\1/')
+> printf 'github.com:\n users:\n %s:\n oauth_token: %s\n git_protocol: https\n oauth_token: %s\n user: %s\n' \
+> "$LOGIN" "$TOKEN" "$TOKEN" "$LOGIN" > ~/.config/gh/hosts.yml
 > chmod 600 ~/.config/gh/hosts.yml
-> gh auth status          # reads hosts.yml directly — verifies without the keyring
-> gh auth setup-git       # wires the git credential helper (does not hang)
+> gh auth status # reads hosts.yml directly — verifies without the keyring
+> gh auth setup-git # wires the git credential helper (does not hang)
 > ```
 >
 > `gh auth status` and `setup-git` read the file store without touching the
@@ -254,7 +254,7 @@ export GITHUB_TOKEN="<token>"
 
 # Then use in curl calls:
 curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/user
+ https://api.github.com/user
 ```
 
 ### Extracting the Token from Git Credentials
@@ -273,18 +273,18 @@ Use this pattern at the start of any GitHub workflow:
 ```bash
 # Try gh first, fall back to git + curl
 if command -v gh &>/dev/null && gh auth status &>/dev/null; then
-  echo "AUTH_METHOD=gh"
+ echo "AUTH_METHOD=gh"
 elif [ -n "$GITHUB_TOKEN" ]; then
-  echo "AUTH_METHOD=curl"
+ echo "AUTH_METHOD=curl"
 elif _hermes_env="${HERMES_HOME:-$HOME/.hermes}/.env"; [ -f "$_hermes_env" ] && grep -q "^GITHUB_TOKEN=" "$_hermes_env"; then
-  export GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
-  echo "AUTH_METHOD=curl"
+ export GITHUB_TOKEN=$(grep "^GITHUB_TOKEN=" "$_hermes_env" | head -1 | cut -d= -f2 | tr -d '\n\r')
+ echo "AUTH_METHOD=curl"
 elif grep -q "github.com" ~/.git-credentials 2>/dev/null; then
-  export GITHUB_TOKEN=$(uv run python "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
-  echo "AUTH_METHOD=curl"
+ export GITHUB_TOKEN=$(uv run python "${HERMES_HOME:-$HOME/.hermes}/skills/github/github-auth/scripts/git-credential-token.py")
+ echo "AUTH_METHOD=curl"
 else
-  echo "AUTH_METHOD=none"
-  echo "Need to set up authentication first"
+ echo "AUTH_METHOD=none"
+ echo "Need to set up authentication first"
 fi
 ```
 

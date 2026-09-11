@@ -1,15 +1,15 @@
 ---
 name: detecting-ransomware-precursors-in-network
 description: 'Detects early-stage ransomware indicators in network traffic before
-  encryption begins, including initial access broker activity, command-and-control
-  beaconing, credential harvesting, reconnaissance scanning, and staging behavior.
-  Uses network detection tools (Zeek, Suricata, Arkime), SIEM correlation rules, and
-  threat intelligence feeds to identify ransomware precursor patterns such as Cobalt
-  Strike beacons, Mimikatz network signatures, and RDP brute-force attempts. Activates
-  for requests involving pre-ransomware detection, network-based ransomware indicators,
-  or early warning ransomware monitoring.
+ encryption begins, including initial access broker activity, command-and-control
+ beaconing, credential harvesting, reconnaissance scanning, and staging behavior.
+ Uses network detection tools (Zeek, Suricata, Arkime), SIEM correlation rules, and
+ threat intelligence feeds to identify ransomware precursor patterns such as Cobalt
+ Strike beacons, Mimikatz network signatures, and RDP brute-force attempts. Activates
+ for requests involving pre-ransomware detection, network-based ransomware indicators,
+ or early warning ransomware monitoring.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -33,28 +33,28 @@ mitre_attack:
 - T1003
 - T1110
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - monetization
-  techniques:
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: T1219
-    name: Remote Access Tools
-    tactic: positioning
-    source: attack
-  - id: T1650
-    name: Acquire Access
-    tactic: resource-development
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - monetization
+ techniques:
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: T1219
+ name: Remote Access Tools
+ tactic: positioning
+ source: attack
+ - id: T1650
+ name: Acquire Access
+ tactic: resource-development
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
 ---
 # Detecting Ransomware Precursors in Network Traffic
 
@@ -130,45 +130,45 @@ alert tcp $HOME_NET any -> $HOME_NET 445 (msg:"RANSOMWARE PRECURSOR - Large SMB 
 module RansomwarePrecursor;
 
 export {
-    redef enum Notice::Type += {
-        SMB_Brute_Force,
-        Suspicious_Internal_Scan,
-        Excessive_DNS_Queries,
-        SMB_Admin_Share_Access,
-    };
+ redef enum Notice::Type += {
+ SMB_Brute_Force,
+ Suspicious_Internal_Scan,
+ Excessive_DNS_Queries,
+ SMB_Admin_Share_Access,
+ };
 
-    const smb_fail_threshold = 10 &redef;
-    const scan_threshold = 50 &redef;
-    const dns_query_threshold = 200 &redef;
+ const smb_fail_threshold = 10 &redef;
+ const scan_threshold = 50 &redef;
+ const dns_query_threshold = 200 &redef;
 }
 
 global smb_fail_count: table[addr] of count &default=0 &create_expire=5min;
 global conn_count: table[addr] of set[addr] &create_expire=1min;
 
 event smb2_message(c: connection, hdr: SMB2::Header, is_orig: bool) {
-    if (hdr$status != 0) {
-        ++smb_fail_count[c$id$orig_h];
-        if (smb_fail_count[c$id$orig_h] >= smb_fail_threshold) {
-            NOTICE([$note=SMB_Brute_Force,
-                    $msg=fmt("Host %s has %d failed SMB attempts", c$id$orig_h, smb_fail_count[c$id$orig_h]),
-                    $src=c$id$orig_h,
-                    $identifier=cat(c$id$orig_h)]);
-        }
-    }
+ if (hdr$status != 0) {
+ ++smb_fail_count[c$id$orig_h];
+ if (smb_fail_count[c$id$orig_h] >= smb_fail_threshold) {
+ NOTICE([$note=SMB_Brute_Force,
+ $msg=fmt("Host %s has %d failed SMB attempts", c$id$orig_h, smb_fail_count[c$id$orig_h]),
+ $src=c$id$orig_h,
+ $identifier=cat(c$id$orig_h)]);
+ }
+ }
 }
 
 event new_connection(c: connection) {
-    if (c$id$orig_h in Site::local_nets && c$id$resp_h in Site::local_nets) {
-        if (c$id$orig_h !in conn_count)
-            conn_count[c$id$orig_h] = set();
-        add conn_count[c$id$orig_h][c$id$resp_h];
-        if (|conn_count[c$id$orig_h]| >= scan_threshold) {
-            NOTICE([$note=Suspicious_Internal_Scan,
-                    $msg=fmt("Host %s connected to %d internal hosts in 1 min", c$id$orig_h, |conn_count[c$id$orig_h]|),
-                    $src=c$id$orig_h,
-                    $identifier=cat(c$id$orig_h)]);
-        }
-    }
+ if (c$id$orig_h in Site::local_nets && c$id$resp_h in Site::local_nets) {
+ if (c$id$orig_h !in conn_count)
+ conn_count[c$id$orig_h] = set();
+ add conn_count[c$id$orig_h][c$id$resp_h];
+ if (|conn_count[c$id$orig_h]| >= scan_threshold) {
+ NOTICE([$note=Suspicious_Internal_Scan,
+ $msg=fmt("Host %s connected to %d internal hosts in 1 min", c$id$orig_h, |conn_count[c$id$orig_h]|),
+ $src=c$id$orig_h,
+ $identifier=cat(c$id$orig_h)]);
+ }
+ }
 }
 ```
 
@@ -178,21 +178,21 @@ event new_connection(c: connection) {
 
 ```spl
 | tstats count FROM datamodel=Network_Traffic
-  WHERE earliest=-24h All_Traffic.dest_port IN (445, 135, 139, 3389, 5985, 5986)
-    AND All_Traffic.src_ip IN 10.0.0.0/8
-    AND All_Traffic.dest_ip IN 10.0.0.0/8
-  BY All_Traffic.src_ip, All_Traffic.dest_port, _time span=1h
+ WHERE earliest=-24h All_Traffic.dest_port IN (445, 135, 139, 3389, 5985, 5986)
+ AND All_Traffic.src_ip IN 10.0.0.0/8
+ AND All_Traffic.dest_ip IN 10.0.0.0/8
+ BY All_Traffic.src_ip, All_Traffic.dest_port, _time span=1h
 | stats dc(All_Traffic.dest_port) as port_count,
-        values(All_Traffic.dest_port) as ports,
-        count as total_conns
-  BY All_Traffic.src_ip
+ values(All_Traffic.dest_port) as ports,
+ count as total_conns
+ BY All_Traffic.src_ip
 | where port_count >= 3 AND total_conns > 50
 | rename All_Traffic.src_ip as src_ip
 | lookup threat_intel_ioc ip as src_ip OUTPUT threat_type
 | eval risk_score = case(
-    port_count >= 5 AND total_conns > 200, "CRITICAL",
-    port_count >= 3 AND total_conns > 50, "HIGH",
-    1=1, "MEDIUM")
+ port_count >= 5 AND total_conns > 200, "CRITICAL",
+ port_count >= 3 AND total_conns > 50, "HIGH",
+ 1=1, "MEDIUM")
 | table src_ip, ports, port_count, total_conns, risk_score, threat_type
 ```
 
@@ -230,19 +230,19 @@ Configure automated IOC feeds for known ransomware infrastructure:
 # Download and update ransomware C2 blocklists
 # abuse.ch Feodo Tracker (Cobalt Strike, TrickBot, BazarLoader C2s)
 curl -s https://feodotracker.abuse.ch/downloads/ipblocklist.csv | \
-  grep -v "^#" | cut -d, -f2 > /opt/threat-intel/feodo_ips.txt
+ grep -v "^#" | cut -d, -f2 > /opt/threat-intel/feodo_ips.txt
 
 # abuse.ch URLhaus (malware distribution URLs)
 curl -s https://urlhaus.abuse.ch/downloads/csv_recent/ | \
-  grep -v "^#" | cut -d, -f3 > /opt/threat-intel/urlhaus_urls.txt
+ grep -v "^#" | cut -d, -f3 > /opt/threat-intel/urlhaus_urls.txt
 
 # abuse.ch ThreatFox (ransomware IOCs)
 curl -s https://threatfox.abuse.ch/export/csv/recent/ | \
-  grep -i "ransomware" | cut -d, -f3 > /opt/threat-intel/ransomware_iocs.txt
+ grep -i "ransomware" | cut -d, -f3 > /opt/threat-intel/ransomware_iocs.txt
 
 # CISA Known Exploited Vulnerabilities (initial access vectors)
 curl -s https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json | \
-  python3 -c "import json,sys; data=json.load(sys.stdin); [print(v['cveID'],v['vendorProject'],v['product']) for v in data['vulnerabilities'] if 'ransomware' in v.get('knownRansomwareCampaignUse','').lower()]"
+ python3 -c "import json,sys; data=json.load(sys.stdin); [print(v['cveID'],v['vendorProject'],v['product']) for v in data['vulnerabilities'] if 'ransomware' in v.get('knownRansomwareCampaignUse','').lower()]"
 ```
 
 ### Step 5: Establish Alert Triage and Escalation

@@ -1,10 +1,10 @@
 ---
 name: implementing-continuous-security-validation-with-bas
 description: Deploys Breach and Attack Simulation (BAS) platforms such as SafeBreach,
-  AttackIQ, Picus, Cymulate, Pentera, or SCYTHE to continuously validate endpoint,
-  network, email-gateway, SIEM, and incident-response effectiveness by safely emulating
-  MITRE ATT&CK techniques. Use when moving beyond point-in-time pentesting to continuous
-  control validation, or standing up automated adversary emulation.
+ AttackIQ, Picus, Cymulate, Pentera, or SCYTHE to continuously validate endpoint,
+ network, email-gateway, SIEM, and incident-response effectiveness by safely emulating
+ MITRE ATT&CK techniques. Use when moving beyond point-in-time pentesting to continuous
+ control validation, or standing up automated adversary emulation.
 domain: cybersecurity
 subdomain: vulnerability-management
 tags:
@@ -92,15 +92,15 @@ Breach and Attack Simulation (BAS) is an automated, continuous approach to valid
 Control Effectiveness = (Attacks Prevented + Attacks Detected) / Total Attacks Simulated * 100
 
 Example:
-  Total simulations:  500
-  Prevented (blocked): 350
-  Detected (alerted):  100
-  Missed (no action):   50
+ Total simulations: 500
+ Prevented (blocked): 350
+ Detected (alerted): 100
+ Missed (no action): 50
 
-  Prevention Rate: 350/500 = 70%
-  Detection Rate:  100/500 = 20%
-  Overall Score:   450/500 = 90%
-  Gap Rate:         50/500 = 10%
+ Prevention Rate: 350/500 = 70%
+ Detection Rate: 100/500 = 20%
+ Overall Score: 450/500 = 90%
+ Gap Rate: 50/500 = 10%
 ```
 
 ## Workflow
@@ -109,22 +109,22 @@ Example:
 
 ```
 Architecture:
-  Management Console (Cloud SaaS):
-    - Central orchestration and reporting
-    - Attack scenario library management
-    - MITRE ATT&CK mapping dashboard
+ Management Console (Cloud SaaS):
+ - Central orchestration and reporting
+ - Attack scenario library management
+ - MITRE ATT&CK mapping dashboard
 
-  Simulation Agents:
-    - Attacker Agent: Simulates threat actor behavior
-    - Target Agent: Receives simulated attacks
-    - Network Agent: Tests network-level controls
+ Simulation Agents:
+ - Attacker Agent: Simulates threat actor behavior
+ - Target Agent: Receives simulated attacks
+ - Network Agent: Tests network-level controls
 
-  Deploy agents across zones:
-    - Corporate network (workstations)
-    - DMZ (web servers)
-    - Data center (critical servers)
-    - Cloud environments (AWS/Azure/GCP)
-    - Remote/VPN segment
+ Deploy agents across zones:
+ - Corporate network (workstations)
+ - DMZ (web servers)
+ - Data center (critical servers)
+ - Cloud environments (AWS/Azure/GCP)
+ - Remote/VPN segment
 ```
 
 ### Step 2: Configure Attack Scenarios
@@ -132,115 +132,115 @@ Architecture:
 ```yaml
 # Example BAS scenario configuration
 scenario:
-  name: "APT29 (Cozy Bear) Full Kill Chain"
-  threat_group: APT29
-  mitre_attack_techniques:
-    - T1566.001  # Spearphishing Attachment
-    - T1059.001  # PowerShell Execution
-    - T1547.001  # Registry Run Key Persistence
-    - T1003.001  # LSASS Memory Credential Dump
-    - T1021.002  # SMB/Windows Admin Shares
-    - T1071.001  # Web Protocol C2
-    - T1048.003  # DNS Exfiltration
+ name: "APT29 (Cozy Bear) Full Kill Chain"
+ threat_group: APT29
+ mitre_attack_techniques:
+ - T1566.001 # Spearphishing Attachment
+ - T1059.001 # PowerShell Execution
+ - T1547.001 # Registry Run Key Persistence
+ - T1003.001 # LSASS Memory Credential Dump
+ - T1021.002 # SMB/Windows Admin Shares
+ - T1071.001 # Web Protocol C2
+ - T1048.003 # DNS Exfiltration
 
-  phases:
-    - name: "Initial Access"
-      actions:
-        - deliver_phishing_payload:
-            type: office_macro
-            target: email_gateway
-            variants: [docm, xlsm, ppam]
+ phases:
+ - name: "Initial Access"
+ actions:
+ - deliver_phishing_payload:
+ type: office_macro
+ target: email_gateway
+ variants: [docm, xlsm, ppam]
 
-    - name: "Execution & Persistence"
-      actions:
-        - execute_powershell:
-            encoded: true
-            amsi_bypass: true
-        - create_scheduled_task:
-            technique: T1053.005
+ - name: "Execution & Persistence"
+ actions:
+ - execute_powershell:
+ encoded: true
+ amsi_bypass: true
+ - create_scheduled_task:
+ technique: T1053.005
 
-    - name: "Credential Access"
-      actions:
-        - dump_lsass:
-            method: [procdump, comsvcs, nanodump]
+ - name: "Credential Access"
+ actions:
+ - dump_lsass:
+ method: [procdump, comsvcs, nanodump]
 
-    - name: "Lateral Movement"
-      actions:
-        - psexec_lateral:
-            target: internal_server
-        - wmi_lateral:
-            target: file_server
+ - name: "Lateral Movement"
+ actions:
+ - psexec_lateral:
+ target: internal_server
+ - wmi_lateral:
+ target: file_server
 
-    - name: "Exfiltration"
-      actions:
-        - dns_exfiltration:
-            data_size: 10MB
-            encoding: base64
+ - name: "Exfiltration"
+ actions:
+ - dns_exfiltration:
+ data_size: 10MB
+ encoding: base64
 ```
 
 ### Step 3: Map Results to Security Controls
 
 ```python
 def map_bas_results_to_controls(simulation_results):
-    """Map BAS results to security control effectiveness."""
-    control_scores = {}
+ """Map BAS results to security control effectiveness."""
+ control_scores = {}
 
-    control_mapping = {
-        "email_gateway": ["T1566.001", "T1566.002", "T1566.003"],
-        "edr": ["T1059.001", "T1003.001", "T1055", "T1547.001"],
-        "ngfw": ["T1071.001", "T1071.004", "T1048"],
-        "siem": ["T1053.005", "T1021.002", "T1087"],
-        "dlp": ["T1048.003", "T1567", "T1041"],
-        "ndr": ["T1071", "T1021", "T1040"],
-    }
+ control_mapping = {
+ "email_gateway": ["T1566.001", "T1566.002", "T1566.003"],
+ "edr": ["T1059.001", "T1003.001", "T1055", "T1547.001"],
+ "ngfw": ["T1071.001", "T1071.004", "T1048"],
+ "siem": ["T1053.005", "T1021.002", "T1087"],
+ "dlp": ["T1048.003", "T1567", "T1041"],
+ "ndr": ["T1071", "T1021", "T1040"],
+ }
 
-    for control, techniques in control_mapping.items():
-        relevant = [r for r in simulation_results
-                    if r["technique_id"] in techniques]
-        if not relevant:
-            continue
+ for control, techniques in control_mapping.items():
+ relevant = [r for r in simulation_results
+ if r["technique_id"] in techniques]
+ if not relevant:
+ continue
 
-        prevented = sum(1 for r in relevant if r["result"] == "prevented")
-        detected = sum(1 for r in relevant if r["result"] == "detected")
-        missed = sum(1 for r in relevant if r["result"] == "missed")
-        total = len(relevant)
+ prevented = sum(1 for r in relevant if r["result"] == "prevented")
+ detected = sum(1 for r in relevant if r["result"] == "detected")
+ missed = sum(1 for r in relevant if r["result"] == "missed")
+ total = len(relevant)
 
-        control_scores[control] = {
-            "total_tests": total,
-            "prevented": prevented,
-            "detected": detected,
-            "missed": missed,
-            "prevention_rate": round(prevented / total * 100, 1),
-            "detection_rate": round(detected / total * 100, 1),
-            "effectiveness": round((prevented + detected) / total * 100, 1),
-        }
+ control_scores[control] = {
+ "total_tests": total,
+ "prevented": prevented,
+ "detected": detected,
+ "missed": missed,
+ "prevention_rate": round(prevented / total * 100, 1),
+ "detection_rate": round(detected / total * 100, 1),
+ "effectiveness": round((prevented + detected) / total * 100, 1),
+ }
 
-    return control_scores
+ return control_scores
 ```
 
 ### Step 4: Schedule Continuous Validation
 
 ```
 Validation Schedule:
-  Daily:
-    - Malware delivery simulation (email gateway test)
-    - C2 communication simulation (firewall/proxy test)
-    - Known ransomware behavior simulation (EDR test)
+ Daily:
+ - Malware delivery simulation (email gateway test)
+ - C2 communication simulation (firewall/proxy test)
+ - Known ransomware behavior simulation (EDR test)
 
-  Weekly:
-    - Full kill chain simulation (APT scenario)
-    - Lateral movement simulation (network segmentation test)
-    - Data exfiltration simulation (DLP test)
+ Weekly:
+ - Full kill chain simulation (APT scenario)
+ - Lateral movement simulation (network segmentation test)
+ - Data exfiltration simulation (DLP test)
 
-  Monthly:
-    - Full MITRE ATT&CK coverage assessment
-    - New threat group TTP simulation
-    - Regression testing after security control changes
+ Monthly:
+ - Full MITRE ATT&CK coverage assessment
+ - New threat group TTP simulation
+ - Regression testing after security control changes
 
-  On-Demand:
-    - After firewall rule changes
-    - After EDR policy updates
-    - After new threat intelligence (zero-day response)
+ On-Demand:
+ - After firewall rule changes
+ - After EDR policy updates
+ - After new threat intelligence (zero-day response)
 ```
 
 ## Best Practices

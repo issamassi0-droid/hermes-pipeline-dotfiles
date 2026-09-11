@@ -1,12 +1,12 @@
 ---
 name: performing-ransomware-tabletop-exercise
 description: 'Plans and facilitates tabletop exercises simulating ransomware incidents,
-  using realistic scenarios based on threat actors like LockBit and ALPHV/BlackCat
-  with injects covering double extortion and backup destruction, then evaluates responses
-  against NIST CSF and CISA guidelines. Use when planning or running a ransomware
-  tabletop exercise or incident response readiness drill.
+ using realistic scenarios based on threat actors like LockBit and ALPHV/BlackCat
+ with injects covering double extortion and backup destruction, then evaluates responses
+ against NIST CSF and CISA guidelines. Use when planning or running a ransomware
+ tabletop exercise or incident response readiness drill.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -30,27 +30,27 @@ mitre_attack:
 - T1486
 - T1490
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - positioning
-  - monetization
-  techniques:
-  - id: T1531
-    name: Account Access Removal
-    tactic: positioning
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1047
-    name: Transfer of funds
-    tactic: monetization
-    source: f3
-  - id: F1017.001
-    name: 'Conversion to Physical Monetary Instruments: Cash'
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - positioning
+ - monetization
+ techniques:
+ - id: T1531
+ name: Account Access Removal
+ tactic: positioning
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1047
+ name: Transfer of funds
+ tactic: monetization
+ source: f3
+ - id: F1017.001
+ name: 'Conversion to Physical Monetary Instruments: Cash'
+ tactic: monetization
+ source: f3
 ---
 # Performing Ransomware Tabletop Exercise
 
@@ -82,24 +82,24 @@ Build a realistic scenario based on current threat actor TTPs:
 **Scenario Structure:**
 ```
 Phase 1: Initial Detection (30 min)
-  - SOC receives alert for suspicious process execution on file server
-  - EDR detects Cobalt Strike beacon on 3 workstations
-  - Inject: External threat intel report links C2 IP to LockBit affiliate
+ - SOC receives alert for suspicious process execution on file server
+ - EDR detects Cobalt Strike beacon on 3 workstations
+ - Inject: External threat intel report links C2 IP to LockBit affiliate
 
 Phase 2: Escalation (30 min)
-  - Ransomware executes on 40% of servers during overnight hours
-  - Ransom note demands $2M in Bitcoin with 72-hour deadline
-  - Inject: Attackers contact media claiming data theft of customer PII
+ - Ransomware executes on 40% of servers during overnight hours
+ - Ransom note demands $2M in Bitcoin with 72-hour deadline
+ - Inject: Attackers contact media claiming data theft of customer PII
 
 Phase 3: Decision Points (45 min)
-  - Backup assessment reveals immutable copies are intact but primary backups encrypted
-  - Legal advises on breach notification timeline (72 hours GDPR, varies by US state)
-  - Inject: Threat actor publishes sample of stolen data on leak site
+ - Backup assessment reveals immutable copies are intact but primary backups encrypted
+ - Legal advises on breach notification timeline (72 hours GDPR, varies by US state)
+ - Inject: Threat actor publishes sample of stolen data on leak site
 
 Phase 4: Recovery and Communication (45 min)
-  - Recovery time estimate: 5-7 days from immutable backups
-  - Insurance carrier engages negotiation firm
-  - Inject: Major customer threatens contract termination without update within 24 hours
+ - Recovery time estimate: 5-7 days from immutable backups
+ - Insurance carrier engages negotiation firm
+ - Inject: Major customer threatens contract termination without update within 24 hours
 ```
 
 **Scenario Variables to Customize:**

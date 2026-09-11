@@ -1,12 +1,12 @@
 ---
 name: configuring-suricata-for-network-monitoring
 description: 'Deploys and configures Suricata IDS/IPS with Emerging Threats rulesets,
-  EVE JSON logging, and custom rules for high-throughput, protocol-aware traffic
-  inspection (HTTP, TLS, DNS, SMB) and SIEM integration. Use when running Suricata
-  in IDS or inline IPS mode to detect or block malicious traffic, or when combining
-  signature-based and protocol anomaly detection with file extraction.
+ EVE JSON logging, and custom rules for high-throughput, protocol-aware traffic
+ inspection (HTTP, TLS, DNS, SMB) and SIEM integration. Use when running Suricata
+ in IDS or inline IPS mode to detect or block malicious traffic, or when combining
+ signature-based and protocol anomaly detection with file extraction.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -66,12 +66,12 @@ suricata --build-info | grep -E "Version|AF_PACKET|NFQueue"
 
 # Or install from source for latest features
 sudo apt install -y libpcre2-dev build-essential autoconf automake libtool \
-  libpcap-dev libnet1-dev libyaml-dev libjansson-dev libcap-ng-dev \
-  libmagic-dev libnetfilter-queue-dev libhiredis-dev rustc cargo cbindgen
+ libpcap-dev libnet1-dev libyaml-dev libjansson-dev libcap-ng-dev \
+ libmagic-dev libnetfilter-queue-dev libhiredis-dev rustc cargo cbindgen
 git clone https://github.com/OISF/suricata.git
 cd suricata && git clone https://github.com/OISF/libhtp.git -b 0.5.x
 ./autogen.sh && ./configure --prefix=/usr --sysconfdir=/etc --localstatedir=/var \
-  --enable-nfqueue --enable-af-packet
+ --enable-nfqueue --enable-af-packet
 make -j$(nproc) && sudo make install install-conf
 ```
 
@@ -95,117 +95,117 @@ sudo ip link set eth1 promisc on
 
 # Network variables
 vars:
-  address-groups:
-    HOME_NET: "[10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]"
-    EXTERNAL_NET: "!$HOME_NET"
-    HTTP_SERVERS: "$HOME_NET"
-    DNS_SERVERS: "$HOME_NET"
-    SMTP_SERVERS: "$HOME_NET"
+ address-groups:
+ HOME_NET: "[10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16]"
+ EXTERNAL_NET: "!$HOME_NET"
+ HTTP_SERVERS: "$HOME_NET"
+ DNS_SERVERS: "$HOME_NET"
+ SMTP_SERVERS: "$HOME_NET"
 
 # Default rule path
 default-rule-path: /var/lib/suricata/rules
 rule-files:
-  - suricata.rules
+ - suricata.rules
 
 # AF_PACKET configuration for high performance
 af-packet:
-  - interface: eth1
-    threads: auto
-    cluster-id: 99
-    cluster-type: cluster_flow
-    defrag: yes
-    use-mmap: yes
-    ring-size: 200000
-    buffer-size: 262144
+ - interface: eth1
+ threads: auto
+ cluster-id: 99
+ cluster-type: cluster_flow
+ defrag: yes
+ use-mmap: yes
+ ring-size: 200000
+ buffer-size: 262144
 
 # EVE JSON logging (primary output format)
 outputs:
-  - eve-log:
-      enabled: yes
-      filetype: regular
-      filename: eve.json
-      pcap-file: false
-      community-id: true
-      types:
-        - alert:
-            tagged-packets: yes
-            payload: yes
-            payload-printable: yes
-            http-body: yes
-            http-body-printable: yes
-        - http:
-            extended: yes
-        - dns:
-            query: yes
-            answer: yes
-        - tls:
-            extended: yes
-        - files:
-            force-magic: yes
-            force-hash: [md5, sha256]
-        - smtp:
-            extended: yes
-        - flow
-        - netflow
-        - anomaly:
-            enabled: yes
-        - stats:
-            totals: yes
-            threads: yes
+ - eve-log:
+ enabled: yes
+ filetype: regular
+ filename: eve.json
+ pcap-file: false
+ community-id: true
+ types:
+ - alert:
+ tagged-packets: yes
+ payload: yes
+ payload-printable: yes
+ http-body: yes
+ http-body-printable: yes
+ - http:
+ extended: yes
+ - dns:
+ query: yes
+ answer: yes
+ - tls:
+ extended: yes
+ - files:
+ force-magic: yes
+ force-hash: [md5, sha256]
+ - smtp:
+ extended: yes
+ - flow
+ - netflow
+ - anomaly:
+ enabled: yes
+ - stats:
+ totals: yes
+ threads: yes
 
-  # PCAP logging for captured packets that trigger alerts
-  - pcap-log:
-      enabled: yes
-      filename: alert-%n.pcap
-      limit: 100mb
-      max-files: 50
-      mode: normal
-      use-stream-depth: no
-      honor-pass-rules: no
+ # PCAP logging for captured packets that trigger alerts
+ - pcap-log:
+ enabled: yes
+ filename: alert-%n.pcap
+ limit: 100mb
+ max-files: 50
+ mode: normal
+ use-stream-depth: no
+ honor-pass-rules: no
 
 # Stream engine settings
 stream:
-  memcap: 512mb
-  checksum-validation: no
-  reassembly:
-    memcap: 1gb
-    depth: 1mb
-    toserver-chunk-size: 2560
-    toclient-chunk-size: 2560
+ memcap: 512mb
+ checksum-validation: no
+ reassembly:
+ memcap: 1gb
+ depth: 1mb
+ toserver-chunk-size: 2560
+ toclient-chunk-size: 2560
 
 # Detection engine
 detect:
-  profile: high
-  custom-values:
-    toclient-groups: 200
-    toserver-groups: 200
-  sgh-mpm-context: auto
-  inspection-recursion-limit: 3000
+ profile: high
+ custom-values:
+ toclient-groups: 200
+ toserver-groups: 200
+ sgh-mpm-context: auto
+ inspection-recursion-limit: 3000
 
 # Protocol detection and parsing
 app-layer:
-  protocols:
-    http:
-      enabled: yes
-      memcap: 64mb
-    tls:
-      enabled: yes
-      detection-ports:
-        dp: 443, 8443
-      ja3-fingerprints: yes
-    dns:
-      enabled: yes
-      tcp:
-        enabled: yes
-      udp:
-        enabled: yes
-    smb:
-      enabled: yes
-      detection-ports:
-        dp: 139, 445
-    ssh:
-      enabled: yes
-      hassh: yes
+ protocols:
+ http:
+ enabled: yes
+ memcap: 64mb
+ tls:
+ enabled: yes
+ detection-ports:
+ dp: 443, 8443
+ ja3-fingerprints: yes
+ dns:
+ enabled: yes
+ tcp:
+ enabled: yes
+ udp:
+ enabled: yes
+ smb:
+ enabled: yes
+ detection-ports:
+ dp: 139, 445
+ ssh:
+ enabled: yes
+ hassh: yes
 ```
 
 ### Step 4: Download and Manage Rulesets
@@ -255,7 +255,7 @@ alert http $HOME_NET any -> $EXTERNAL_NET any (msg:"LOCAL Large HTTP POST Upload
 EOF
 
 # Add local rules to configuration
-echo "  - local.rules" | sudo tee -a /etc/suricata/suricata.yaml
+echo " - local.rules" | sudo tee -a /etc/suricata/suricata.yaml
 ```
 
 ### Step 5: Deploy and Validate
@@ -319,9 +319,9 @@ cat /var/log/suricata/eve.json | jq -r 'select(.event_type=="dns" and .dns.type=
 # Configure Filebeat for Elastic integration
 sudo tee /etc/filebeat/modules.d/suricata.yml << 'EOF'
 - module: suricata
-  eve:
-    enabled: true
-    var.paths: ["/var/log/suricata/eve.json"]
+ eve:
+ enabled: true
+ var.paths: ["/var/log/suricata/eve.json"]
 EOF
 
 sudo filebeat modules enable suricata

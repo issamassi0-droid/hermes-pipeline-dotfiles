@@ -103,8 +103,8 @@ gsap.to(svgEl, { rotation: 90, svgOrigin: "100 100" });
 Offset the animation of each item by 0.1 second like this: 
 ```javascript 
 gsap.to(".item", {
-  y: -20,
-  stagger: 0.1
+ y: -20,
+ stagger: 0.1
 });
 ```
 Or use the object syntax for advanced options like how each successive stagger amount is applied to the targets array (`from: "random" | "start" | "center" | "end" | "edges" | (index)`)
@@ -118,28 +118,28 @@ https://gsap.com/resources/getting-started/Staggers
 Use string eases unless a custom curve is needed:
 
 ```javascript
-ease: "power1.out"     // default feel
+ease: "power1.out" // default feel
 ease: "power3.inOut"
-ease: "back.out(1.7)"  // overshoot
+ease: "back.out(1.7)" // overshoot
 ease: "elastic.out(1, 0.3)"
-ease: "none"           // linear
+ease: "none" // linear
 ```
 
 Built-in eases: base (same as `.out`), `.in`, `.out`, `.inOut` where "power" refers to the strength of the curve (1 is more gradual, 4 is steepest):
 
 ```
-base (out)        .in                .out               .inOut
+base (out) .in .out .inOut
 "none"
-"power1"          "power1.in"        "power1.out"       "power1.inOut"
-"power2"          "power2.in"        "power2.out"       "power2.inOut"
-"power3"          "power3.in"        "power3.out"       "power3.inOut"
-"power4"          "power4.in"        "power4.out"       "power4.inOut"
-"back"            "back.in"          "back.out"         "back.inOut"
-"bounce"          "bounce.in"        "bounce.out"      "bounce.inOut"
-"circ"            "circ.in"          "circ.out"        "circ.inOut"
-"elastic"         "elastic.in"       "elastic.out"     "elastic.inOut"
-"expo"            "expo.in"          "expo.out"        "expo.inOut"
-"sine"            "sine.in"          "sine.out"        "sine.inOut"
+"power1" "power1.in" "power1.out" "power1.inOut"
+"power2" "power2.in" "power2.out" "power2.inOut"
+"power3" "power3.in" "power3.out" "power3.inOut"
+"power4" "power4.in" "power4.out" "power4.inOut"
+"back" "back.in" "back.out" "back.inOut"
+"bounce" "bounce.in" "bounce.out" "bounce.inOut"
+"circ" "circ.in" "circ.out" "circ.inOut"
+"elastic" "elastic.in" "elastic.out" "elastic.inOut"
+"expo" "expo.in" "expo.out" "expo.inOut"
+"sine" "sine.in" "sine.out" "sine.inOut"
 ```
 
 ### Custom: use CustomEase (plugin)
@@ -180,8 +180,8 @@ Use a function for a `vars` value and it will get called **once for each target*
 
 ```javascript
 gsap.to(".item", {
-  x: (i, target, targetsArray) => i * 50, // first item animates to 0, the second to 50, the third to 100, etc.
-  stagger: 0.1
+ x: (i, target, targetsArray) => i * 50, // first item animates to 0, the second to 50, the third to 100, etc.
+ stagger: 0.1
 });
 ```
 
@@ -216,19 +216,19 @@ gsap.defaults({ duration: 0.6, ease: "power2.out" });
 
 ```javascript
 mm.add(
-  {
-    isDesktop: "(min-width: 800px)",
-    isMobile: "(max-width: 799px)",
-    reduceMotion: "(prefers-reduced-motion: reduce)"
-  },
-  (context) => {
-    const { isDesktop, reduceMotion } = context.conditions;
-    gsap.to(".box", {
-      rotation: isDesktop ? 360 : 180,
-      duration: reduceMotion ? 0 : 2  // skip animation when user prefers reduced motion
-    });
-    return () => { /* optional cleanup when no condition matches */ };
-  }
+ {
+ isDesktop: "(min-width: 800px)",
+ isMobile: "(max-width: 799px)",
+ reduceMotion: "(prefers-reduced-motion: reduce)"
+ },
+ (context) => {
+ const { isDesktop, reduceMotion } = context.conditions;
+ gsap.to(".box", {
+ rotation: isDesktop ? 360 : 180,
+ duration: reduceMotion ? 0 : 2 // skip animation when user prefers reduced motion
+ });
+ return () => { /* optional cleanup when no condition matches */ };
+ }
 );
 ```
 

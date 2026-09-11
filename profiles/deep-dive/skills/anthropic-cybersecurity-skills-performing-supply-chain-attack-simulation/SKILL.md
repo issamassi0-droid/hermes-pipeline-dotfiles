@@ -1,12 +1,12 @@
 ---
 name: performing-supply-chain-attack-simulation
 description: >-
-  Simulates and detects software supply chain attacks: typosquatting
-  detection via Levenshtein distance against popular PyPI package names,
-  dependency confusion testing against private registries, SHA-256 package
-  hash verification, and known-CVE scanning with pip-audit. Use when auditing
-  a project's dependencies for malicious or confused packages, or when
-  assessing package-registry supply-chain risk.
+ Simulates and detects software supply chain attacks: typosquatting
+ detection via Levenshtein distance against popular PyPI package names,
+ dependency confusion testing against private registries, SHA-256 package
+ hash verification, and known-CVE scanning with pip-audit. Use when auditing
+ a project's dependencies for malicious or confused packages, or when
+ assessing package-registry supply-chain risk.
 domain: cybersecurity
 subdomain: application-security
 tags:

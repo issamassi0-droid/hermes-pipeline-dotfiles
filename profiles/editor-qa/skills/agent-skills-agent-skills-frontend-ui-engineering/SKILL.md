@@ -25,12 +25,12 @@ Colocate everything related to a component:
 
 ```
 src/components/
-  TaskList/
-    TaskList.tsx          # Component implementation
-    TaskList.test.tsx     # Tests
-    TaskList.stories.tsx  # Storybook stories (if using)
-    use-task-list.ts      # Custom hook (if complex state)
-    types.ts              # Component-specific types (if needed)
+ TaskList/
+ TaskList.tsx # Component implementation
+ TaskList.test.tsx # Tests
+ TaskList.stories.tsx # Storybook stories (if using)
+ use-task-list.ts # Custom hook (if complex state)
+ types.ts # Component-specific types (if needed)
 ```
 
 ### Component Patterns
@@ -40,20 +40,20 @@ src/components/
 ```tsx
 // Good: Composable
 <Card>
-  <CardHeader>
-    <CardTitle>Tasks</CardTitle>
-  </CardHeader>
-  <CardBody>
-    <TaskList tasks={tasks} />
-  </CardBody>
+ <CardHeader>
+ <CardTitle>Tasks</CardTitle>
+ </CardHeader>
+ <CardBody>
+ <TaskList tasks={tasks} />
+ </CardBody>
 </Card>
 
 // Avoid: Over-configured
 <Card
-  title="Tasks"
-  headerVariant="large"
-  bodyPadding="md"
-  content={<TaskList tasks={tasks} />}
+ title="Tasks"
+ headerVariant="large"
+ bodyPadding="md"
+ content={<TaskList tasks={tasks} />}
 />
 ```
 
@@ -62,15 +62,15 @@ src/components/
 ```tsx
 // Good: Does one thing
 export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
-  return (
-    <li className="flex items-center gap-3 p-3">
-      <Checkbox checked={task.done} onChange={() => onToggle(task.id)} />
-      <span className={task.done ? 'line-through text-muted' : ''}>{task.title}</span>
-      <Button variant="ghost" size="sm" onClick={() => onDelete(task.id)}>
-        <TrashIcon />
-      </Button>
-    </li>
-  );
+ return (
+ <li className="flex items-center gap-3 p-3">
+ <Checkbox checked={task.done} onChange={() => onToggle(task.id)} />
+ <span className={task.done ? 'line-through text-muted' : ''}>{task.title}</span>
+ <Button variant="ghost" size="sm" onClick={() => onDelete(task.id)}>
+ <TrashIcon />
+ </Button>
+ </li>
+ );
 }
 ```
 
@@ -79,22 +79,22 @@ export function TaskItem({ task, onToggle, onDelete }: TaskItemProps) {
 ```tsx
 // Container: handles data
 export function TaskListContainer() {
-  const { tasks, isLoading, error } = useTasks();
+ const { tasks, isLoading, error } = useTasks();
 
-  if (isLoading) return <TaskListSkeleton />;
-  if (error) return <ErrorState message="Failed to load tasks" retry={refetch} />;
-  if (tasks.length === 0) return <EmptyState message="No tasks yet" />;
+ if (isLoading) return <TaskListSkeleton />;
+ if (error) return <ErrorState message="Failed to load tasks" retry={refetch} />;
+ if (tasks.length === 0) return <EmptyState message="No tasks yet" />;
 
-  return <TaskList tasks={tasks} />;
+ return <TaskList tasks={tasks} />;
 }
 
 // Presentation: handles rendering
 export function TaskList({ tasks }: { tasks: Task[] }) {
-  return (
-    <ul role="list" className="divide-y">
-      {tasks.map(task => <TaskItem key={task.id} task={task} />)}
-    </ul>
-  );
+ return (
+ <ul role="list" className="divide-y">
+ {tasks.map(task => <TaskItem key={task.id} task={task} />)}
+ </ul>
+ );
 }
 ```
 
@@ -103,12 +103,12 @@ export function TaskList({ tasks }: { tasks: Task[] }) {
 **Choose the simplest approach that works:**
 
 ```
-Local state (useState)           → Component-specific UI state
-Lifted state                     → Shared between 2-3 sibling components
-Context                          → Theme, auth, locale (read-heavy, write-rare)
-URL state (searchParams)         → Filters, pagination, shareable UI state
-Server state (React Query, SWR)  → Remote data with caching
-Global store (Zustand, Redux)    → Complex client state shared app-wide
+Local state (useState) → Component-specific UI state
+Lifted state → Shared between 2-3 sibling components
+Context → Theme, auth, locale (read-heavy, write-rare)
+URL state (searchParams) → Filters, pagination, shareable UI state
+Server state (React Query, SWR) → Remote data with caching
+Global store (Zustand, Redux) → Complex client state shared app-wide
 ```
 
 **Avoid prop drilling deeper than 3 levels.** If you're passing props through components that don't use them, introduce context or restructure the component tree.
@@ -136,10 +136,10 @@ Use a consistent spacing scale. Don't invent values:
 
 ```css
 /* Use the scale: 0.25rem increments (or whatever the project uses) */
-/* Good */  padding: 1rem;      /* 16px */
-/* Good */  gap: 0.75rem;       /* 12px */
-/* Bad */   padding: 13px;      /* Not on any scale */
-/* Bad */   margin-top: 2.3rem; /* Not on any scale */
+/* Good */ padding: 1rem; /* 16px */
+/* Good */ gap: 0.75rem; /* 12px */
+/* Bad */ padding: 13px; /* Not on any scale */
+/* Bad */ margin-top: 2.3rem; /* Not on any scale */
 ```
 
 ### Typography
@@ -170,17 +170,17 @@ Every component must meet these standards:
 
 ```tsx
 // Every interactive element must be keyboard accessible
-<button onClick={handleClick}>Click me</button>        // ✓ Focusable by default
-<div onClick={handleClick}>Click me</div>               // ✗ Not focusable
-<div role="button" tabIndex={0} onClick={handleClick}    // ✓ But prefer <button>
-     onKeyDown={e => {
-       if (e.key === 'Enter') handleClick();
-       if (e.key === ' ') e.preventDefault();
-     }}
-     onKeyUp={e => {
-       if (e.key === ' ') handleClick();
-     }}>
-  Click me
+<button onClick={handleClick}>Click me</button> // ✓ Focusable by default
+<div onClick={handleClick}>Click me</div> // ✗ Not focusable
+<div role="button" tabIndex={0} onClick={handleClick} // ✓ But prefer <button>
+ onKeyDown={e => {
+ if (e.key === 'Enter') handleClick();
+ if (e.key === ' ') e.preventDefault();
+ }}
+ onKeyUp={e => {
+ if (e.key === ' ') handleClick();
+ }}>
+ Click me
 </div>
 ```
 
@@ -203,19 +203,19 @@ Every component must meet these standards:
 ```tsx
 // Move focus when content changes
 function Dialog({ isOpen, onClose }: DialogProps) {
-  const closeRef = useRef<HTMLButtonElement>(null);
+ const closeRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    if (isOpen) closeRef.current?.focus();
-  }, [isOpen]);
+ useEffect(() => {
+ if (isOpen) closeRef.current?.focus();
+ }, [isOpen]);
 
-  // Trap focus inside dialog when open
-  return (
-    <dialog open={isOpen}>
-      <button ref={closeRef} onClick={onClose}>Close</button>
-      {/* dialog content */}
-    </dialog>
-  );
+ // Trap focus inside dialog when open
+ return (
+ <dialog open={isOpen}>
+ <button ref={closeRef} onClick={onClose}>Close</button>
+ {/* dialog content */}
+ </dialog>
+ );
 }
 ```
 
@@ -224,18 +224,18 @@ function Dialog({ isOpen, onClose }: DialogProps) {
 ```tsx
 // Don't show blank screens
 function TaskList({ tasks }: { tasks: Task[] }) {
-  if (tasks.length === 0) {
-    return (
-      <div role="status" className="text-center py-12">
-        <TasksEmptyIcon className="mx-auto h-12 w-12 text-muted" />
-        <h3 className="mt-2 text-sm font-medium">No tasks</h3>
-        <p className="mt-1 text-sm text-muted">Get started by creating a new task.</p>
-        <Button className="mt-4" onClick={onCreateTask}>Create Task</Button>
-      </div>
-    );
-  }
+ if (tasks.length === 0) {
+ return (
+ <div role="status" className="text-center py-12">
+ <TasksEmptyIcon className="mx-auto h-12 w-12 text-muted" />
+ <h3 className="mt-2 text-sm font-medium">No tasks</h3>
+ <p className="mt-1 text-sm text-muted">Get started by creating a new task.</p>
+ <Button className="mt-4" onClick={onCreateTask}>Create Task</Button>
+ </div>
+ );
+ }
 
-  return <ul role="list">...</ul>;
+ return <ul role="list">...</ul>;
 }
 ```
 
@@ -246,10 +246,10 @@ Design for mobile first, then expand:
 ```tsx
 // Tailwind: mobile-first responsive
 <div className="
-  grid grid-cols-1      /* Mobile: single column */
-  sm:grid-cols-2        /* Small: 2 columns */
-  lg:grid-cols-3        /* Large: 3 columns */
-  gap-4
+ grid grid-cols-1 /* Mobile: single column */
+ sm:grid-cols-2 /* Small: 2 columns */
+ lg:grid-cols-3 /* Large: 3 columns */
+ gap-4
 ">
 ```
 
@@ -260,35 +260,35 @@ Test at these breakpoints: 320px, 768px, 1024px, 1440px.
 ```tsx
 // Skeleton loading (not spinners for content)
 function TaskListSkeleton() {
-  return (
-    <div className="space-y-3" aria-busy="true" aria-label="Loading tasks">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="h-12 bg-muted animate-pulse rounded" />
-      ))}
-    </div>
-  );
+ return (
+ <div className="space-y-3" aria-busy="true" aria-label="Loading tasks">
+ {Array.from({ length: 3 }).map((_, i) => (
+ <div key={i} className="h-12 bg-muted animate-pulse rounded" />
+ ))}
+ </div>
+ );
 }
 
 // Optimistic updates for perceived speed
 function useToggleTask() {
-  const queryClient = useQueryClient();
+ const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: toggleTask,
-    onMutate: async (taskId) => {
-      await queryClient.cancelQueries({ queryKey: ['tasks'] });
-      const previous = queryClient.getQueryData(['tasks']);
+ return useMutation({
+ mutationFn: toggleTask,
+ onMutate: async (taskId) => {
+ await queryClient.cancelQueries({ queryKey: ['tasks'] });
+ const previous = queryClient.getQueryData(['tasks']);
 
-      queryClient.setQueryData(['tasks'], (old: Task[]) =>
-        old.map(t => t.id === taskId ? { ...t, done: !t.done } : t)
-      );
+ queryClient.setQueryData(['tasks'], (old: Task[]) =>
+ old.map(t => t.id === taskId ? { ...t, done: !t.done } : t)
+ );
 
-      return { previous };
-    },
-    onError: (_err, _taskId, context) => {
-      queryClient.setQueryData(['tasks'], context?.previous);
-    },
-  });
+ return { previous };
+ },
+ onError: (_err, _taskId, context) => {
+ queryClient.setQueryData(['tasks'], context?.previous);
+ },
+ });
 }
 ```
 

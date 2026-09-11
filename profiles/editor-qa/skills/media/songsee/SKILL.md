@@ -6,11 +6,11 @@ author: community
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Audio, Visualization, Spectrogram, Music, Analysis]
-    homepage: https://github.com/steipete/songsee
+ hermes:
+ tags: [Audio, Visualization, Spectrogram, Music, Analysis]
+ homepage: https://github.com/steipete/songsee
 prerequisites:
-  commands: [songsee]
+ commands: [songsee]
 ---
 
 # songsee

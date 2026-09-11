@@ -41,16 +41,16 @@ This skill provides a hypothesis-driven hunt: baseline normal session behavior, 
 ## Prerequisites
 
 - Entra ID sign-in logs flowing to a queryable store (Microsoft Sentinel / Log Analytics):
-  ```bash
-  # Confirm the diagnostic settings export SigninLogs + non-interactive logs to a workspace
-  az monitor diagnostic-settings list --resource \
-    /providers/Microsoft.aadiam/diagnosticSettings -o table
-  ```
+ ```bash
+ # Confirm the diagnostic settings export SigninLogs + non-interactive logs to a workspace
+ az monitor diagnostic-settings list --resource \
+ /providers/Microsoft.aadiam/diagnosticSettings -o table
+ ```
 - Okta System Log access via API or SIEM ingestion:
-  ```bash
-  curl -s -H "Authorization: SSWS $OKTA_API_TOKEN" \
-    "https://<org>.okta.com/api/v1/logs?filter=eventType eq \"user.session.start\"&since=2026-06-01T00:00:00Z"
-  ```
+ ```bash
+ curl -s -H "Authorization: SSWS $OKTA_API_TOKEN" \
+ "https://<org>.okta.com/api/v1/logs?filter=eventType eq \"user.session.start\"&since=2026-06-01T00:00:00Z"
+ ```
 - An IP enrichment source (GeoIP + ASN/hosting-provider classification)
 - Read access to the SIEM (KQL for Sentinel, SPL for Splunk)
 - Python 3.9+ for the helper script (`requests` for the Okta API)
@@ -84,8 +84,8 @@ union SigninLogs, AADNonInteractiveUserSignInLogs
 | where TimeGenerated > ago(7d)
 | where isnotempty(SessionId)
 | summarize IPs=make_set(IPAddress), Apps=make_set(AppDisplayName),
-            Locations=make_set(tostring(LocationDetails.countryOrRegion)),
-            Count=count() by SessionId, UserPrincipalName
+ Locations=make_set(tostring(LocationDetails.countryOrRegion)),
+ Count=count() by SessionId, UserPrincipalName
 | where array_length(IPs) > 1
 ```
 
@@ -95,7 +95,7 @@ AADNonInteractiveUserSignInLogs
 | where TimeGenerated > ago(24h)
 | extend ASN = tostring(parse_json(tostring(NetworkLocationDetails))[0].networkType)
 | summarize distinctIPs = dcount(IPAddress),
-            ipset = make_set(IPAddress) by SessionId, UserPrincipalName
+ ipset = make_set(IPAddress) by SessionId, UserPrincipalName
 | where distinctIPs >= 2
 ```
 
@@ -104,14 +104,14 @@ AADNonInteractiveUserSignInLogs
 SigninLogs
 | where TimeGenerated > ago(7d)
 | project TimeGenerated, UserPrincipalName, IPAddress,
-          City=tostring(LocationDetails.city),
-          Country=tostring(LocationDetails.countryOrRegion), SessionId
+ City=tostring(LocationDetails.city),
+ Country=tostring(LocationDetails.countryOrRegion), SessionId
 | order by UserPrincipalName, TimeGenerated asc
 | serialize
 | extend prevCountry = prev(Country), prevTime = prev(TimeGenerated),
-         prevUser = prev(UserPrincipalName)
+ prevUser = prev(UserPrincipalName)
 | where UserPrincipalName == prevUser and Country != prevCountry
-        and datetime_diff('minute', TimeGenerated, prevTime) < 60
+ and datetime_diff('minute', TimeGenerated, prevTime) < 60
 ```
 
 ### 4. Detect token use from hosting/VPS infrastructure
@@ -130,7 +130,7 @@ AADNonInteractiveUserSignInLogs
 AuditLogs
 | where TimeGenerated > ago(30d)
 | where OperationName in ("Consent to application", "Add OAuth2PermissionGrant",
-                          "Add delegated permission grant")
+ "Add delegated permission grant")
 | extend app = tostring(TargetResources[0].displayName)
 | project TimeGenerated, InitiatedBy, app, Result
 ```
@@ -139,18 +139,18 @@ AuditLogs
 A single Okta session (`deviceToken`) used from divergent IPs/clients indicates hijack.
 ```bash
 curl -s -H "Authorization: SSWS $OKTA_API_TOKEN" \
-  "https://<org>.okta.com/api/v1/logs?filter=eventType eq \"policy.evaluate_sign_on\"&since=2026-06-15T00:00:00Z" \
-  | jq -r '.[] | [.authenticationContext.externalSessionId, .client.ipAddress, .client.userAgent.rawUserAgent] | @tsv' \
-  | sort | uniq -c | sort -rn
+ "https://<org>.okta.com/api/v1/logs?filter=eventType eq \"policy.evaluate_sign_on\"&since=2026-06-15T00:00:00Z" \
+ | jq -r '.[] | [.authenticationContext.externalSessionId, .client.ipAddress, .client.userAgent.rawUserAgent] | @tsv' \
+ | sort | uniq -c | sort -rn
 ```
 
 ### 7. Splunk equivalent for Okta session reuse
 ```spl
 index=okta eventType="policy.evaluate_sign_on"
 | stats dc(client.ipAddress) as ip_count
-        values(client.ipAddress) as ips
-        values(client.userAgent.rawUserAgent) as agents
-        by authenticationContext.externalSessionId actor.alternateId
+ values(client.ipAddress) as ips
+ values(client.userAgent.rawUserAgent) as agents
+ by authenticationContext.externalSessionId actor.alternateId
 | where ip_count > 1
 ```
 
@@ -159,7 +159,7 @@ For confirmed token abuse, revoke sessions and rotate, then promote the hunt to 
 ```bash
 # Revoke all refresh tokens / sessions for the user in Entra
 az rest --method POST \
-  --url "https://graph.microsoft.com/v1.0/users/<userId>/revokeSignInSessions"
+ --url "https://graph.microsoft.com/v1.0/users/<userId>/revokeSignInSessions"
 ```
 See `scripts/agent.py` to pull Okta logs and flag reused session tokens automatically.
 
@@ -179,13 +179,13 @@ See `scripts/agent.py` to pull Okta logs and flag reused session tokens automati
 Detection should pair with controls that make stolen tokens far less useful:
 
 - **Entra Conditional Access "token protection"** binds the sign-in session to the
-  device, so an exfiltrated cookie/PRT cannot be replayed off-device.
+ device, so an exfiltrated cookie/PRT cannot be replayed off-device.
 - **Continuous Access Evaluation (CAE)** revokes access in near-real-time on risk
-  events instead of waiting for token expiry.
+ events instead of waiting for token expiry.
 - **Phishing-resistant MFA (FIDO2/passkeys)** blocks the AiTM proxy phishing that
-  harvests tokens in the first place.
+ harvests tokens in the first place.
 - **Short token lifetimes + refresh-token rotation** shrink the replay window and turn
-  refresh-token reuse into an unambiguous compromise signal.
+ refresh-token reuse into an unambiguous compromise signal.
 - **Okta Identity Threat Protection (ITP)** flags suspected session hijacking natively.
 
 ## False-Positive Tuning

@@ -1,14 +1,14 @@
 ---
 name: video-translate
 description: |
-  Translate and dub existing videos into multiple languages using HeyGen. Use when: (1) Translating a video into another language, (2) Dubbing video content with lip-sync, (3) Creating multi-language versions of existing videos, (4) Audio-only translation without lip-sync, (5) Working with HeyGen's /v2/video_translate endpoint.
+ Translate and dub existing videos into multiple languages using HeyGen. Use when: (1) Translating a video into another language, (2) Dubbing video content with lip-sync, (3) Creating multi-language versions of existing videos, (4) Audio-only translation without lip-sync, (5) Working with HeyGen's /v2/video_translate endpoint.
 allowed-tools: mcp__heygen__*
 metadata:
-  openclaw:
-    requires:
-      env:
-        - HEYGEN_API_KEY
-    primaryEnv: HEYGEN_API_KEY
+ openclaw:
+ requires:
+ env:
+ - HEYGEN_API_KEY
+ primaryEnv: HEYGEN_API_KEY
 ---
 
 # Video Translation (HeyGen)
@@ -21,9 +21,9 @@ All requests require the `X-Api-Key` header. Set the `HEYGEN_API_KEY` environmen
 
 ```bash
 curl -X POST "https://api.heygen.com/v2/video_translate" \
-  -H "X-Api-Key: $HEYGEN_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"video_url": "https://example.com/video.mp4", "output_language": "es-ES"}'
+ -H "X-Api-Key: $HEYGEN_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{"video_url": "https://example.com/video.mp4", "output_language": "es-ES"}'
 ```
 
 ## Default Workflow
@@ -54,53 +54,53 @@ curl -X POST "https://api.heygen.com/v2/video_translate" \
 
 ```bash
 curl -X POST "https://api.heygen.com/v2/video_translate" \
-  -H "X-Api-Key: $HEYGEN_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "video_url": "https://example.com/original-video.mp4",
-    "output_language": "es-ES",
-    "title": "Spanish Version"
-  }'
+ -H "X-Api-Key: $HEYGEN_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "video_url": "https://example.com/original-video.mp4",
+ "output_language": "es-ES",
+ "title": "Spanish Version"
+ }'
 ```
 
 ### TypeScript
 
 ```typescript
 interface VideoTranslateRequest {
-  video_url?: string;
-  video_id?: string;
-  output_language: string;
-  title?: string;
-  translate_audio_only?: boolean;
-  speaker_num?: number;
-  callback_id?: string;
-  callback_url?: string;
+ video_url?: string;
+ video_id?: string;
+ output_language: string;
+ title?: string;
+ translate_audio_only?: boolean;
+ speaker_num?: number;
+ callback_id?: string;
+ callback_url?: string;
 }
 
 interface VideoTranslateResponse {
-  error: null | string;
-  data: {
-    video_translate_id: string;
-  };
+ error: null | string;
+ data: {
+ video_translate_id: string;
+ };
 }
 
 async function translateVideo(config: VideoTranslateRequest): Promise<string> {
-  const response = await fetch("https://api.heygen.com/v2/video_translate", {
-    method: "POST",
-    headers: {
-      "X-Api-Key": process.env.HEYGEN_API_KEY!,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(config),
-  });
+ const response = await fetch("https://api.heygen.com/v2/video_translate", {
+ method: "POST",
+ headers: {
+ "X-Api-Key": process.env.HEYGEN_API_KEY!,
+ "Content-Type": "application/json",
+ },
+ body: JSON.stringify(config),
+ });
 
-  const json: VideoTranslateResponse = await response.json();
+ const json: VideoTranslateResponse = await response.json();
 
-  if (json.error) {
-    throw new Error(json.error);
-  }
+ if (json.error) {
+ throw new Error(json.error);
+ }
 
-  return json.data.video_translate_id;
+ return json.data.video_translate_id;
 }
 ```
 
@@ -111,20 +111,20 @@ import requests
 import os
 
 def translate_video(config: dict) -> str:
-    response = requests.post(
-        "https://api.heygen.com/v2/video_translate",
-        headers={
-            "X-Api-Key": os.environ["HEYGEN_API_KEY"],
-            "Content-Type": "application/json"
-        },
-        json=config
-    )
+ response = requests.post(
+ "https://api.heygen.com/v2/video_translate",
+ headers={
+ "X-Api-Key": os.environ["HEYGEN_API_KEY"],
+ "Content-Type": "application/json"
+ },
+ json=config
+ )
 
-    data = response.json()
-    if data.get("error"):
-        raise Exception(data["error"])
+ data = response.json()
+ if data.get("error"):
+ raise Exception(data["error"])
 
-    return data["data"]["video_translate_id"]
+ return data["data"]["video_translate_id"]
 ```
 
 ## Supported Languages
@@ -150,9 +150,9 @@ def translate_video(config: dict) -> str:
 
 ```typescript
 const config = {
-  video_url: "https://example.com/original.mp4",
-  output_language: "es-ES",
-  title: "Spanish Translation",
+ video_url: "https://example.com/original.mp4",
+ output_language: "es-ES",
+ title: "Spanish Translation",
 };
 ```
 
@@ -160,9 +160,9 @@ const config = {
 
 ```typescript
 const config = {
-  video_url: "https://example.com/original.mp4",
-  output_language: "es-ES",
-  translate_audio_only: true,
+ video_url: "https://example.com/original.mp4",
+ output_language: "es-ES",
+ translate_audio_only: true,
 };
 ```
 
@@ -170,9 +170,9 @@ const config = {
 
 ```typescript
 const config = {
-  video_url: "https://example.com/interview.mp4",
-  output_language: "fr-FR",
-  speaker_num: 2,
+ video_url: "https://example.com/interview.mp4",
+ output_language: "fr-FR",
+ speaker_num: 2,
 };
 ```
 
@@ -182,22 +182,22 @@ For more control over translation:
 
 ```typescript
 interface VideoTranslateV4Request {
-  input_video_id?: string;
-  google_url?: string;
-  output_languages: string[];        // Multiple languages in one call
-  name: string;
-  srt_key?: string;                  // Custom SRT subtitles
-  instruction?: string;
-  vocabulary?: string[];             // Terms to preserve as-is
-  brand_voice_id?: string;
-  speaker_num?: number;
-  keep_the_same_format?: boolean;
-  input_language?: string;
-  enable_video_stretching?: boolean;
-  disable_music_track?: boolean;
-  enable_speech_enhancement?: boolean;
-  srt_role?: "input" | "output";
-  translate_audio_only?: boolean;
+ input_video_id?: string;
+ google_url?: string;
+ output_languages: string[]; // Multiple languages in one call
+ name: string;
+ srt_key?: string; // Custom SRT subtitles
+ instruction?: string;
+ vocabulary?: string[]; // Terms to preserve as-is
+ brand_voice_id?: string;
+ speaker_num?: number;
+ keep_the_same_format?: boolean;
+ input_language?: string;
+ enable_video_stretching?: boolean;
+ disable_music_track?: boolean;
+ enable_speech_enhancement?: boolean;
+ srt_role?: "input" | "output";
+ translate_audio_only?: boolean;
 }
 ```
 
@@ -205,9 +205,9 @@ interface VideoTranslateV4Request {
 
 ```typescript
 const config = {
-  input_video_id: "original_video_id",
-  output_languages: ["es-ES", "fr-FR", "de-DE"],
-  name: "Multi-language translations",
+ input_video_id: "original_video_id",
+ output_languages: ["es-ES", "fr-FR", "de-DE"],
+ name: "Multi-language translations",
 };
 ```
 
@@ -215,9 +215,9 @@ const config = {
 
 ```typescript
 const config = {
-  video_url: "https://example.com/product-demo.mp4",
-  output_language: "ja-JP",
-  vocabulary: ["SuperWidget", "Pro Max", "TechCorp"],
+ video_url: "https://example.com/product-demo.mp4",
+ output_language: "ja-JP",
+ vocabulary: ["SuperWidget", "Pro Max", "TechCorp"],
 };
 ```
 
@@ -225,10 +225,10 @@ const config = {
 
 ```typescript
 const config = {
-  video_url: "https://example.com/video.mp4",
-  output_language: "es-ES",
-  srt_key: "path/to/custom-subtitles.srt",
-  srt_role: "input",
+ video_url: "https://example.com/video.mp4",
+ output_language: "es-ES",
+ srt_key: "path/to/custom-subtitles.srt",
+ srt_role: "input",
 };
 ```
 
@@ -238,35 +238,35 @@ const config = {
 
 ```bash
 curl -X GET "https://api.heygen.com/v2/video_translate/{translate_id}" \
-  -H "X-Api-Key: $HEYGEN_API_KEY"
+ -H "X-Api-Key: $HEYGEN_API_KEY"
 ```
 
 ### TypeScript
 
 ```typescript
 interface TranslateStatusResponse {
-  error: null | string;
-  data: {
-    id: string;
-    status: "pending" | "processing" | "completed" | "failed";
-    video_url?: string;
-    message?: string;
-  };
+ error: null | string;
+ data: {
+ id: string;
+ status: "pending" | "processing" | "completed" | "failed";
+ video_url?: string;
+ message?: string;
+ };
 }
 
 async function getTranslateStatus(translateId: string): Promise<TranslateStatusResponse["data"]> {
-  const response = await fetch(
-    `https://api.heygen.com/v2/video_translate/${translateId}`,
-    { headers: { "X-Api-Key": process.env.HEYGEN_API_KEY! } }
-  );
+ const response = await fetch(
+ `https://api.heygen.com/v2/video_translate/${translateId}`,
+ { headers: { "X-Api-Key": process.env.HEYGEN_API_KEY! } }
+ );
 
-  const json: TranslateStatusResponse = await response.json();
+ const json: TranslateStatusResponse = await response.json();
 
-  if (json.error) {
-    throw new Error(json.error);
-  }
+ if (json.error) {
+ throw new Error(json.error);
+ }
 
-  return json.data;
+ return json.data;
 }
 ```
 
@@ -276,27 +276,27 @@ Translations take longer than standard video generation — allow up to 30 minut
 
 ```typescript
 async function waitForTranslation(
-  translateId: string,
-  maxWaitMs = 1800000,
-  pollIntervalMs = 30000
+ translateId: string,
+ maxWaitMs = 1800000,
+ pollIntervalMs = 30000
 ): Promise<string> {
-  const startTime = Date.now();
+ const startTime = Date.now();
 
-  while (Date.now() - startTime < maxWaitMs) {
-    const status = await getTranslateStatus(translateId);
+ while (Date.now() - startTime < maxWaitMs) {
+ const status = await getTranslateStatus(translateId);
 
-    switch (status.status) {
-      case "completed":
-        return status.video_url!;
-      case "failed":
-        throw new Error(status.message || "Translation failed");
-      default:
-        console.log(`Status: ${status.status}...`);
-        await new Promise((r) => setTimeout(r, pollIntervalMs));
-    }
-  }
+ switch (status.status) {
+ case "completed":
+ return status.video_url!;
+ case "failed":
+ throw new Error(status.message || "Translation failed");
+ default:
+ console.log(`Status: ${status.status}...`);
+ await new Promise((r) => setTimeout(r, pollIntervalMs));
+ }
+ }
 
-  throw new Error("Translation timed out");
+ throw new Error("Translation timed out");
 }
 ```
 
@@ -304,26 +304,26 @@ async function waitForTranslation(
 
 ```typescript
 async function translateAndDownload(
-  videoUrl: string,
-  targetLanguage: string
+ videoUrl: string,
+ targetLanguage: string
 ): Promise<string> {
-  console.log(`Starting translation to ${targetLanguage}...`);
-  const translateId = await translateVideo({
-    video_url: videoUrl,
-    output_language: targetLanguage,
-  });
-  console.log(`Translation ID: ${translateId}`);
+ console.log(`Starting translation to ${targetLanguage}...`);
+ const translateId = await translateVideo({
+ video_url: videoUrl,
+ output_language: targetLanguage,
+ });
+ console.log(`Translation ID: ${translateId}`);
 
-  console.log("Processing translation...");
-  const translatedVideoUrl = await waitForTranslation(translateId);
-  console.log(`Translation complete: ${translatedVideoUrl}`);
+ console.log("Processing translation...");
+ const translatedVideoUrl = await waitForTranslation(translateId);
+ console.log(`Translation complete: ${translatedVideoUrl}`);
 
-  return translatedVideoUrl;
+ return translatedVideoUrl;
 }
 
 const spanishVideo = await translateAndDownload(
-  "https://example.com/my-video.mp4",
-  "es-ES"
+ "https://example.com/my-video.mp4",
+ "es-ES"
 );
 ```
 
@@ -333,36 +333,36 @@ Translate to multiple languages in parallel:
 
 ```typescript
 async function translateToMultipleLanguages(
-  sourceVideoUrl: string,
-  targetLanguages: string[]
+ sourceVideoUrl: string,
+ targetLanguages: string[]
 ): Promise<Record<string, string>> {
-  const results: Record<string, string> = {};
+ const results: Record<string, string> = {};
 
-  const translatePromises = targetLanguages.map(async (lang) => {
-    const translateId = await translateVideo({
-      video_url: sourceVideoUrl,
-      output_language: lang,
-    });
-    return { lang, translateId };
-  });
+ const translatePromises = targetLanguages.map(async (lang) => {
+ const translateId = await translateVideo({
+ video_url: sourceVideoUrl,
+ output_language: lang,
+ });
+ return { lang, translateId };
+ });
 
-  const translationJobs = await Promise.all(translatePromises);
+ const translationJobs = await Promise.all(translatePromises);
 
-  for (const job of translationJobs) {
-    try {
-      const videoUrl = await waitForTranslation(job.translateId);
-      results[job.lang] = videoUrl;
-    } catch (error) {
-      results[job.lang] = `error: ${error.message}`;
-    }
-  }
+ for (const job of translationJobs) {
+ try {
+ const videoUrl = await waitForTranslation(job.translateId);
+ results[job.lang] = videoUrl;
+ } catch (error) {
+ results[job.lang] = `error: ${error.message}`;
+ }
+ }
 
-  return results;
+ return results;
 }
 
 const translations = await translateToMultipleLanguages(
-  "https://example.com/original.mp4",
-  ["es-ES", "fr-FR", "de-DE", "ja-JP"]
+ "https://example.com/original.mp4",
+ ["es-ES", "fr-FR", "de-DE", "ja-JP"]
 );
 ```
 
@@ -388,23 +388,23 @@ Common errors and how to handle them:
 
 ```typescript
 async function safeTranslate(
-  videoUrl: string,
-  targetLanguage: string
+ videoUrl: string,
+ targetLanguage: string
 ): Promise<{ success: boolean; result?: string; error?: string }> {
-  try {
-    const url = await translateAndDownload(videoUrl, targetLanguage);
-    return { success: true, result: url };
-  } catch (error) {
-    if (error.message.includes("quota")) {
-      return { success: false, error: "Insufficient credits" };
-    }
-    if (error.message.includes("duration")) {
-      return { success: false, error: "Video too long" };
-    }
-    if (error.message.includes("format")) {
-      return { success: false, error: "Unsupported video format" };
-    }
-    return { success: false, error: error.message };
-  }
+ try {
+ const url = await translateAndDownload(videoUrl, targetLanguage);
+ return { success: true, result: url };
+ } catch (error) {
+ if (error.message.includes("quota")) {
+ return { success: false, error: "Insufficient credits" };
+ }
+ if (error.message.includes("duration")) {
+ return { success: false, error: "Video too long" };
+ }
+ if (error.message.includes("format")) {
+ return { success: false, error: "Unsupported video format" };
+ }
+ return { success: false, error: error.message };
+ }
 }
 ```

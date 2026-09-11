@@ -1,13 +1,13 @@
 ---
 name: performing-mobile-app-certificate-pinning-bypass
 description: 'Bypasses SSL/TLS certificate pinning implementations in Android and
-  iOS applications to enable traffic interception during authorized security assessments.
-  Covers OkHttp, TrustManager, NSURLSession, and third-party pinning library bypass
-  techniques using Frida, Objection, and custom scripts. Activates for requests involving
-  certificate pinning bypass, SSL pinning defeat, mobile TLS interception, or proxy-resistant
-  app testing.
+ iOS applications to enable traffic interception during authorized security assessments.
+ Covers OkHttp, TrustManager, NSURLSession, and third-party pinning library bypass
+ techniques using Frida, Objection, and custom scripts. Activates for requests involving
+ certificate pinning bypass, SSL pinning defeat, mobile TLS interception, or proxy-resistant
+ app testing.
 
-  '
+ '
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -59,17 +59,17 @@ Use this skill when:
 **Android pinning methods to identify:**
 ```
 1. Network Security Config (res/xml/network_security_config.xml)
-   <pin-set> with certificate hash pins
+ <pin-set> with certificate hash pins
 
 2. OkHttp CertificatePinner
-   CertificatePinner.Builder().add("api.target.com", "sha256/...")
+ CertificatePinner.Builder().add("api.target.com", "sha256/...")
 
 3. Custom TrustManager
-   X509TrustManager overrides in code
+ X509TrustManager overrides in code
 
 4. Third-party libraries
-   - TrustKit
-   - Certificate Transparency checks
+ - TrustKit
+ - Certificate Transparency checks
 ```
 
 **iOS pinning methods:**
@@ -101,55 +101,55 @@ Objection hooks common pinning implementations including OkHttp CertificatePinne
 ```javascript
 // android_ssl_bypass.js
 Java.perform(function() {
-    // Bypass TrustManagerImpl
-    var TrustManagerImpl = Java.use("com.android.org.conscrypt.TrustManagerImpl");
-    TrustManagerImpl.verifyChain.implementation = function(untrustedChain, trustAnchorChain,
-        host, clientAuth, ocspData, tlsSctData) {
-        console.log("[+] Bypassing TrustManagerImpl for: " + host);
-        return untrustedChain;
-    };
+ // Bypass TrustManagerImpl
+ var TrustManagerImpl = Java.use("com.android.org.conscrypt.TrustManagerImpl");
+ TrustManagerImpl.verifyChain.implementation = function(untrustedChain, trustAnchorChain,
+ host, clientAuth, ocspData, tlsSctData) {
+ console.log("[+] Bypassing TrustManagerImpl for: " + host);
+ return untrustedChain;
+ };
 
-    // Bypass OkHttp3 CertificatePinner
-    try {
-        var CertificatePinner = Java.use("okhttp3.CertificatePinner");
-        CertificatePinner.check.overload("java.lang.String", "java.util.List").implementation =
-            function(hostname, peerCertificates) {
-                console.log("[+] Bypassing OkHttp3 pinning for: " + hostname);
-                return;
-            };
-    } catch(e) {}
+ // Bypass OkHttp3 CertificatePinner
+ try {
+ var CertificatePinner = Java.use("okhttp3.CertificatePinner");
+ CertificatePinner.check.overload("java.lang.String", "java.util.List").implementation =
+ function(hostname, peerCertificates) {
+ console.log("[+] Bypassing OkHttp3 pinning for: " + hostname);
+ return;
+ };
+ } catch(e) {}
 
-    // Bypass custom X509TrustManager
-    var X509TrustManager = Java.use("javax.net.ssl.X509TrustManager");
-    var TrustManager = Java.registerClass({
-        name: "com.bypass.TrustManager",
-        implements: [X509TrustManager],
-        methods: {
-            checkClientTrusted: function(chain, authType) {},
-            checkServerTrusted: function(chain, authType) {},
-            getAcceptedIssuers: function() { return []; }
-        }
-    });
+ // Bypass custom X509TrustManager
+ var X509TrustManager = Java.use("javax.net.ssl.X509TrustManager");
+ var TrustManager = Java.registerClass({
+ name: "com.bypass.TrustManager",
+ implements: [X509TrustManager],
+ methods: {
+ checkClientTrusted: function(chain, authType) {},
+ checkServerTrusted: function(chain, authType) {},
+ getAcceptedIssuers: function() { return []; }
+ }
+ });
 
-    // Bypass SSLContext
-    var SSLContext = Java.use("javax.net.ssl.SSLContext");
-    SSLContext.init.overload("[Ljavax.net.ssl.KeyManager;",
-        "[Ljavax.net.ssl.TrustManager;", "java.security.SecureRandom").implementation =
-        function(km, tm, sr) {
-            console.log("[+] Replacing TrustManagers in SSLContext.init");
-            this.init(km, [TrustManager.$new()], sr);
-        };
+ // Bypass SSLContext
+ var SSLContext = Java.use("javax.net.ssl.SSLContext");
+ SSLContext.init.overload("[Ljavax.net.ssl.KeyManager;",
+ "[Ljavax.net.ssl.TrustManager;", "java.security.SecureRandom").implementation =
+ function(km, tm, sr) {
+ console.log("[+] Replacing TrustManagers in SSLContext.init");
+ this.init(km, [TrustManager.$new()], sr);
+ };
 
-    // Bypass NetworkSecurityConfig (Android 7+)
-    try {
-        var NetworkSecurityConfig = Java.use(
-            "android.security.net.config.NetworkSecurityConfig");
-        NetworkSecurityConfig.isCleartextTrafficPermitted.implementation = function() {
-            return true;
-        };
-    } catch(e) {}
+ // Bypass NetworkSecurityConfig (Android 7+)
+ try {
+ var NetworkSecurityConfig = Java.use(
+ "android.security.net.config.NetworkSecurityConfig");
+ NetworkSecurityConfig.isCleartextTrafficPermitted.implementation = function() {
+ return true;
+ };
+ } catch(e) {}
 
-    console.log("[*] SSL pinning bypass loaded");
+ console.log("[*] SSL pinning bypass loaded");
 });
 ```
 
@@ -161,39 +161,39 @@ frida -U -f com.target.app -l android_ssl_bypass.js --no-pause
 ```javascript
 // ios_ssl_bypass.js
 if (ObjC.available) {
-    // Bypass NSURLSession delegate
-    var resolver = new ApiResolver("objc");
-    resolver.enumerateMatches(
-        "-[* URLSession:didReceiveChallenge:completionHandler:]", {
-        onMatch: function(match) {
-            Interceptor.attach(match.address, {
-                onEnter: function(args) {
-                    var completionHandler = new ObjC.Block(args[4]);
-                    var NSURLSessionAuthChallengeUseCredential = 0;
-                    var trust = new ObjC.Object(args[3])
-                        .protectionSpace().serverTrust();
-                    var credential = ObjC.classes.NSURLCredential
-                        .credentialForTrust_(trust);
-                    completionHandler.invoke(NSURLSessionAuthChallengeUseCredential,
-                        credential);
-                }
-            });
-        },
-        onComplete: function() {}
-    });
+ // Bypass NSURLSession delegate
+ var resolver = new ApiResolver("objc");
+ resolver.enumerateMatches(
+ "-[* URLSession:didReceiveChallenge:completionHandler:]", {
+ onMatch: function(match) {
+ Interceptor.attach(match.address, {
+ onEnter: function(args) {
+ var completionHandler = new ObjC.Block(args[4]);
+ var NSURLSessionAuthChallengeUseCredential = 0;
+ var trust = new ObjC.Object(args[3])
+ .protectionSpace().serverTrust();
+ var credential = ObjC.classes.NSURLCredential
+ .credentialForTrust_(trust);
+ completionHandler.invoke(NSURLSessionAuthChallengeUseCredential,
+ credential);
+ }
+ });
+ },
+ onComplete: function() {}
+ });
 
-    // Bypass SecTrustEvaluate
-    var SecTrustEvaluateWithError = Module.findExportByName(
-        "Security", "SecTrustEvaluateWithError");
-    if (SecTrustEvaluateWithError) {
-        Interceptor.replace(SecTrustEvaluateWithError, new NativeCallback(
-            function(trust, error) {
-                return 1;  // Always return true
-            }, "bool", ["pointer", "pointer"]
-        ));
-    }
+ // Bypass SecTrustEvaluate
+ var SecTrustEvaluateWithError = Module.findExportByName(
+ "Security", "SecTrustEvaluateWithError");
+ if (SecTrustEvaluateWithError) {
+ Interceptor.replace(SecTrustEvaluateWithError, new NativeCallback(
+ function(trust, error) {
+ return 1; // Always return true
+ }, "bool", ["pointer", "pointer"]
+ ));
+ }
 
-    console.log("[*] iOS SSL pinning bypass loaded");
+ console.log("[*] iOS SSL pinning bypass loaded");
 }
 ```
 

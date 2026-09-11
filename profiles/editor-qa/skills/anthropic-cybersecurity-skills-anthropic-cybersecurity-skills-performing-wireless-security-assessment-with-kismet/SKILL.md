@@ -1,8 +1,8 @@
 ---
 name: performing-wireless-security-assessment-with-kismet
 description: Conduct wireless network security assessments using Kismet to detect
-  rogue access points, hidden SSIDs, weak encryption, and unauthorized clients through
-  passive RF monitoring.
+ rogue access points, hidden SSIDs, weak encryption, and unauthorized clients through
+ passive RF monitoring.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -155,13 +155,13 @@ sudo kismet -c wlan0
 ```bash
 # Export device list via Kismet REST API
 curl -u kismet:kismet http://localhost:2501/devices/summary/devices.json | \
-    python3 -m json.tool > all_devices.json
+ python3 -m json.tool > all_devices.json
 
 # Filter for access points
 curl -u kismet:kismet \
-    'http://localhost:2501/devices/summary/devices.json' \
-    -d 'json={"fields":["kismet.device.base.macaddr","kismet.device.base.name","kismet.device.base.type","kismet.device.base.crypt","kismet.device.base.channel","kismet.device.base.manuf","dot11.device/dot11.device.advertised_ssid_map/dot11.advertisedssid.ssid"]}' \
-    > access_points.json
+ 'http://localhost:2501/devices/summary/devices.json' \
+ -d 'json={"fields":["kismet.device.base.macaddr","kismet.device.base.name","kismet.device.base.type","kismet.device.base.crypt","kismet.device.base.channel","kismet.device.base.manuf","dot11.device/dot11.device.advertised_ssid_map/dot11.advertisedssid.ssid"]}' \
+ > access_points.json
 ```
 
 **Client Probe Analysis:**
@@ -186,117 +186,117 @@ from collections import defaultdict
 
 
 def analyze_kismet_db(db_path: str):
-    """Analyze Kismet SQLite database for security issues."""
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+ """Analyze Kismet SQLite database for security issues."""
+ conn = sqlite3.connect(db_path)
+ cursor = conn.cursor()
 
-    findings = []
+ findings = []
 
-    # Query all devices
-    cursor.execute("""
-        SELECT devmac, type, device
-        FROM devices
-    """)
+ # Query all devices
+ cursor.execute("""
+ SELECT devmac, type, device
+ FROM devices
+ """)
 
-    devices = cursor.fetchall()
-    ap_count = 0
-    client_count = 0
-    open_networks = []
-    wep_networks = []
-    wpa_tkip_networks = []
-    hidden_networks = []
-    all_aps = []
+ devices = cursor.fetchall()
+ ap_count = 0
+ client_count = 0
+ open_networks = []
+ wep_networks = []
+ wpa_tkip_networks = []
+ hidden_networks = []
+ all_aps = []
 
-    for mac, dev_type, device_json in devices:
-        try:
-            device = json.loads(device_json)
-        except json.JSONDecodeError:
-            continue
+ for mac, dev_type, device_json in devices:
+ try:
+ device = json.loads(device_json)
+ except json.JSONDecodeError:
+ continue
 
-        base = device.get('kismet.device.base.type', '')
+ base = device.get('kismet.device.base.type', '')
 
-        if 'Wi-Fi AP' in base or 'Wi-Fi Device' in base:
-            ap_count += 1
-            ssid_map = device.get('dot11.device', {}).get(
-                'dot11.device.advertised_ssid_map', []
-            )
-            crypt = device.get('kismet.device.base.crypt', '')
-            name = device.get('kismet.device.base.name', 'Unknown')
-            channel = device.get('kismet.device.base.channel', '')
-            manuf = device.get('kismet.device.base.manuf', 'Unknown')
+ if 'Wi-Fi AP' in base or 'Wi-Fi Device' in base:
+ ap_count += 1
+ ssid_map = device.get('dot11.device', {}).get(
+ 'dot11.device.advertised_ssid_map', []
+ )
+ crypt = device.get('kismet.device.base.crypt', '')
+ name = device.get('kismet.device.base.name', 'Unknown')
+ channel = device.get('kismet.device.base.channel', '')
+ manuf = device.get('kismet.device.base.manuf', 'Unknown')
 
-            ap_info = {
-                'mac': mac,
-                'ssid': name,
-                'encryption': crypt,
-                'channel': channel,
-                'manufacturer': manuf,
-            }
-            all_aps.append(ap_info)
+ ap_info = {
+ 'mac': mac,
+ 'ssid': name,
+ 'encryption': crypt,
+ 'channel': channel,
+ 'manufacturer': manuf,
+ }
+ all_aps.append(ap_info)
 
-            if 'None' in crypt or crypt == '':
-                open_networks.append(ap_info)
-            elif 'WEP' in crypt:
-                wep_networks.append(ap_info)
-            elif 'WPA+TKIP' in crypt and 'AES' not in crypt:
-                wpa_tkip_networks.append(ap_info)
+ if 'None' in crypt or crypt == '':
+ open_networks.append(ap_info)
+ elif 'WEP' in crypt:
+ wep_networks.append(ap_info)
+ elif 'WPA+TKIP' in crypt and 'AES' not in crypt:
+ wpa_tkip_networks.append(ap_info)
 
-            for ssid_entry in ssid_map:
-                if isinstance(ssid_entry, dict):
-                    ssid = ssid_entry.get('dot11.advertisedssid.ssid', '')
-                    if ssid == '' or ssid is None:
-                        hidden_networks.append(ap_info)
+ for ssid_entry in ssid_map:
+ if isinstance(ssid_entry, dict):
+ ssid = ssid_entry.get('dot11.advertisedssid.ssid', '')
+ if ssid == '' or ssid is None:
+ hidden_networks.append(ap_info)
 
-        elif 'Wi-Fi Client' in base:
-            client_count += 1
+ elif 'Wi-Fi Client' in base:
+ client_count += 1
 
-    # Generate findings
-    print(f"\n{'='*70}")
-    print("WIRELESS SECURITY ASSESSMENT REPORT")
-    print(f"{'='*70}")
-    print(f"\nTotal Access Points Detected: {ap_count}")
-    print(f"Total Clients Detected: {client_count}")
+ # Generate findings
+ print(f"\n{'='*70}")
+ print("WIRELESS SECURITY ASSESSMENT REPORT")
+ print(f"{'='*70}")
+ print(f"\nTotal Access Points Detected: {ap_count}")
+ print(f"Total Clients Detected: {client_count}")
 
-    if open_networks:
-        print(f"\n[CRITICAL] Open Networks (No Encryption): {len(open_networks)}")
-        for net in open_networks:
-            print(f"  - SSID: {net['ssid']}, MAC: {net['mac']}, "
-                  f"Channel: {net['channel']}, Vendor: {net['manufacturer']}")
+ if open_networks:
+ print(f"\n[CRITICAL] Open Networks (No Encryption): {len(open_networks)}")
+ for net in open_networks:
+ print(f" - SSID: {net['ssid']}, MAC: {net['mac']}, "
+ f"Channel: {net['channel']}, Vendor: {net['manufacturer']}")
 
-    if wep_networks:
-        print(f"\n[CRITICAL] WEP-Encrypted Networks: {len(wep_networks)}")
-        for net in wep_networks:
-            print(f"  - SSID: {net['ssid']}, MAC: {net['mac']}, "
-                  f"Channel: {net['channel']}")
+ if wep_networks:
+ print(f"\n[CRITICAL] WEP-Encrypted Networks: {len(wep_networks)}")
+ for net in wep_networks:
+ print(f" - SSID: {net['ssid']}, MAC: {net['mac']}, "
+ f"Channel: {net['channel']}")
 
-    if wpa_tkip_networks:
-        print(f"\n[HIGH] WPA-TKIP Networks (Deprecated): {len(wpa_tkip_networks)}")
-        for net in wpa_tkip_networks:
-            print(f"  - SSID: {net['ssid']}, MAC: {net['mac']}, "
-                  f"Channel: {net['channel']}")
+ if wpa_tkip_networks:
+ print(f"\n[HIGH] WPA-TKIP Networks (Deprecated): {len(wpa_tkip_networks)}")
+ for net in wpa_tkip_networks:
+ print(f" - SSID: {net['ssid']}, MAC: {net['mac']}, "
+ f"Channel: {net['channel']}")
 
-    if hidden_networks:
-        print(f"\n[MEDIUM] Hidden SSIDs Detected: {len(hidden_networks)}")
-        for net in hidden_networks:
-            print(f"  - MAC: {net['mac']}, Channel: {net['channel']}, "
-                  f"Vendor: {net['manufacturer']}")
+ if hidden_networks:
+ print(f"\n[MEDIUM] Hidden SSIDs Detected: {len(hidden_networks)}")
+ for net in hidden_networks:
+ print(f" - MAC: {net['mac']}, Channel: {net['channel']}, "
+ f"Vendor: {net['manufacturer']}")
 
-    # Channel utilization analysis
-    channel_usage = defaultdict(int)
-    for ap in all_aps:
-        ch = ap.get('channel', 'Unknown')
-        channel_usage[ch] += 1
+ # Channel utilization analysis
+ channel_usage = defaultdict(int)
+ for ap in all_aps:
+ ch = ap.get('channel', 'Unknown')
+ channel_usage[ch] += 1
 
-    print(f"\n[INFO] Channel Utilization:")
-    for ch, count in sorted(channel_usage.items()):
-        print(f"  Channel {ch}: {count} APs")
+ print(f"\n[INFO] Channel Utilization:")
+ for ch, count in sorted(channel_usage.items()):
+ print(f" Channel {ch}: {count} APs")
 
-    conn.close()
+ conn.close()
 
 
 if __name__ == '__main__':
-    db_path = sys.argv[1] if len(sys.argv) > 1 else 'Kismet-*.kismet'
-    analyze_kismet_db(db_path)
+ db_path = sys.argv[1] if len(sys.argv) > 1 else 'Kismet-*.kismet'
+ analyze_kismet_db(db_path)
 ```
 
 ### Step 5: Detect Rogue Access Points
@@ -312,58 +312,58 @@ import sys
 
 
 def load_authorized_aps(filepath: str) -> set:
-    """Load authorized AP MAC addresses from file."""
-    authorized = set()
-    with open(filepath, 'r') as f:
-        for line in f:
-            mac = line.strip().lower()
-            if mac and not mac.startswith('#'):
-                authorized.add(mac)
-    return authorized
+ """Load authorized AP MAC addresses from file."""
+ authorized = set()
+ with open(filepath, 'r') as f:
+ for line in f:
+ mac = line.strip().lower()
+ if mac and not mac.startswith('#'):
+ authorized.add(mac)
+ return authorized
 
 
 def detect_rogues(kismet_json: str, authorized_file: str):
-    """Compare discovered APs against authorized list."""
-    authorized = load_authorized_aps(authorized_file)
+ """Compare discovered APs against authorized list."""
+ authorized = load_authorized_aps(authorized_file)
 
-    with open(kismet_json, 'r') as f:
-        devices = json.load(f)
+ with open(kismet_json, 'r') as f:
+ devices = json.load(f)
 
-    rogues = []
-    for device in devices:
-        mac = device.get('kismet.device.base.macaddr', '').lower()
-        dev_type = device.get('kismet.device.base.type', '')
+ rogues = []
+ for device in devices:
+ mac = device.get('kismet.device.base.macaddr', '').lower()
+ dev_type = device.get('kismet.device.base.type', '')
 
-        if 'AP' in dev_type and mac not in authorized:
-            rogues.append({
-                'mac': mac,
-                'ssid': device.get('kismet.device.base.name', 'Unknown'),
-                'encryption': device.get('kismet.device.base.crypt', ''),
-                'channel': device.get('kismet.device.base.channel', ''),
-                'manufacturer': device.get('kismet.device.base.manuf', ''),
-                'signal': device.get('kismet.device.base.signal', {}).get(
-                    'kismet.common.signal.last_signal', 0),
-            })
+ if 'AP' in dev_type and mac not in authorized:
+ rogues.append({
+ 'mac': mac,
+ 'ssid': device.get('kismet.device.base.name', 'Unknown'),
+ 'encryption': device.get('kismet.device.base.crypt', ''),
+ 'channel': device.get('kismet.device.base.channel', ''),
+ 'manufacturer': device.get('kismet.device.base.manuf', ''),
+ 'signal': device.get('kismet.device.base.signal', {}).get(
+ 'kismet.common.signal.last_signal', 0),
+ })
 
-    if rogues:
-        print(f"\n[ALERT] {len(rogues)} ROGUE ACCESS POINTS DETECTED\n")
-        for rogue in rogues:
-            print(f"  MAC: {rogue['mac']}")
-            print(f"  SSID: {rogue['ssid']}")
-            print(f"  Encryption: {rogue['encryption']}")
-            print(f"  Channel: {rogue['channel']}")
-            print(f"  Vendor: {rogue['manufacturer']}")
-            print(f"  Signal: {rogue['signal']} dBm")
-            print()
-    else:
-        print("No rogue access points detected.")
+ if rogues:
+ print(f"\n[ALERT] {len(rogues)} ROGUE ACCESS POINTS DETECTED\n")
+ for rogue in rogues:
+ print(f" MAC: {rogue['mac']}")
+ print(f" SSID: {rogue['ssid']}")
+ print(f" Encryption: {rogue['encryption']}")
+ print(f" Channel: {rogue['channel']}")
+ print(f" Vendor: {rogue['manufacturer']}")
+ print(f" Signal: {rogue['signal']} dBm")
+ print()
+ else:
+ print("No rogue access points detected.")
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 3:
-        print("Usage: python detect_rogues.py <kismet_devices.json> <authorized_aps.txt>")
-        sys.exit(1)
-    detect_rogues(sys.argv[1], sys.argv[2])
+ if len(sys.argv) < 3:
+ print("Usage: python detect_rogues.py <kismet_devices.json> <authorized_aps.txt>")
+ sys.exit(1)
+ detect_rogues(sys.argv[1], sys.argv[2])
 ```
 
 ## Assessment Checklist

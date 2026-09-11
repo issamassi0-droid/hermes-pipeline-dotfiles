@@ -1,12 +1,12 @@
 ---
 name: detecting-cryptomining-in-cloud
 description: 'This skill teaches security teams how to detect and respond to unauthorized
-  cryptocurrency mining operations in cloud environments. It covers identifying cryptomining
-  indicators through compute usage anomalies, network traffic patterns to mining pools,
-  GuardDuty CryptoCurrency findings, and runtime process monitoring on EC2, ECS, EKS,
-  and Azure Automation workloads.
+ cryptocurrency mining operations in cloud environments. It covers identifying cryptomining
+ indicators through compute usage anomalies, network traffic patterns to mining pools,
+ GuardDuty CryptoCurrency findings, and runtime process monitoring on EC2, ECS, EKS,
+ and Azure Automation workloads.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -30,28 +30,28 @@ mitre_attack:
 - T1580
 - T1071
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - resource-development
-  - monetization
-  techniques:
-  - id: F1006.001
-    name: 'Account Takeover: Exposed API Key'
-    tactic: initial-access
-    source: f3
-  - id: T1586.003
-    name: 'Compromise Accounts: Cloud Accounts'
-    tactic: resource-development
-    source: attack
-  - id: T1583.003
-    name: 'Acquire Infrastructure: Virtual Private Network or Server'
-    tactic: resource-development
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - resource-development
+ - monetization
+ techniques:
+ - id: F1006.001
+ name: 'Account Takeover: Exposed API Key'
+ tactic: initial-access
+ source: f3
+ - id: T1586.003
+ name: 'Compromise Accounts: Cloud Accounts'
+ tactic: resource-development
+ source: attack
+ - id: T1583.003
+ name: 'Acquire Infrastructure: Virtual Private Network or Server'
+ tactic: resource-development
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
 ---
 
 # Detecting Cryptomining in Cloud
@@ -82,32 +82,32 @@ Deploy detection across four signal categories: cost anomalies, compute utilizat
 ```bash
 # AWS Cost Anomaly Detection
 aws ce create-anomaly-monitor \
-  --anomaly-monitor '{
-    "MonitorName": "EC2CostSpike",
-    "MonitorType": "DIMENSIONAL",
-    "MonitorDimension": "SERVICE"
-  }'
+ --anomaly-monitor '{
+ "MonitorName": "EC2CostSpike",
+ "MonitorType": "DIMENSIONAL",
+ "MonitorDimension": "SERVICE"
+ }'
 
 aws ce create-anomaly-subscription \
-  --anomaly-subscription '{
-    "SubscriptionName": "CryptoMiningAlert",
-    "MonitorArnList": ["arn:aws:ce::123456789012:anomalymonitor/monitor-id"],
-    "Subscribers": [{"Address": "security@company.com", "Type": "EMAIL"}],
-    "Threshold": 50.0,
-    "Frequency": "IMMEDIATE"
-  }'
+ --anomaly-subscription '{
+ "SubscriptionName": "CryptoMiningAlert",
+ "MonitorArnList": ["arn:aws:ce::123456789012:anomalymonitor/monitor-id"],
+ "Subscribers": [{"Address": "security@company.com", "Type": "EMAIL"}],
+ "Threshold": 50.0,
+ "Frequency": "IMMEDIATE"
+ }'
 
 # CloudWatch alarm for CPU utilization spike
 aws cloudwatch put-metric-alarm \
-  --alarm-name HighCPUUtilization \
-  --namespace AWS/EC2 \
-  --metric-name CPUUtilization \
-  --statistic Average \
-  --period 300 \
-  --threshold 90 \
-  --comparison-operator GreaterThanThreshold \
-  --evaluation-periods 3 \
-  --alarm-actions "arn:aws:sns:us-east-1:123456789012:security-alerts"
+ --alarm-name HighCPUUtilization \
+ --namespace AWS/EC2 \
+ --metric-name CPUUtilization \
+ --statistic Average \
+ --period 300 \
+ --threshold 90 \
+ --comparison-operator GreaterThanThreshold \
+ --evaluation-periods 3 \
+ --alarm-actions "arn:aws:sns:us-east-1:123456789012:security-alerts"
 ```
 
 ### Step 2: Monitor GuardDuty CryptoCurrency Findings
@@ -123,26 +123,26 @@ Key GuardDuty finding types for cryptomining:
 ```bash
 # EventBridge rule for cryptocurrency findings
 aws events put-rule \
-  --name CryptoMiningDetection \
-  --event-pattern '{
-    "source": ["aws.guardduty"],
-    "detail-type": ["GuardDuty Finding"],
-    "detail": {
-      "type": [
-        {"prefix": "CryptoCurrency:"},
-        {"prefix": "Impact:EC2/BitcoinTool"},
-        {"prefix": "Impact:Runtime/CryptoMiner"}
-      ]
-    }
-  }'
+ --name CryptoMiningDetection \
+ --event-pattern '{
+ "source": ["aws.guardduty"],
+ "detail-type": ["GuardDuty Finding"],
+ "detail": {
+ "type": [
+ {"prefix": "CryptoCurrency:"},
+ {"prefix": "Impact:EC2/BitcoinTool"},
+ {"prefix": "Impact:Runtime/CryptoMiner"}
+ ]
+ }
+ }'
 
 # Auto-remediation Lambda for crypto findings
 aws events put-targets \
-  --rule CryptoMiningDetection \
-  --targets '[{
-    "Id": "CryptoAutoRemediate",
-    "Arn": "arn:aws:lambda:us-east-1:123456789012:function/crypto-remediate"
-  }]'
+ --rule CryptoMiningDetection \
+ --targets '[{
+ "Id": "CryptoAutoRemediate",
+ "Arn": "arn:aws:lambda:us-east-1:123456789012:function/crypto-remediate"
+ }]'
 ```
 
 ### Step 3: Analyze Network Traffic for Mining Pool Connections
@@ -155,7 +155,7 @@ AzureNetworkAnalytics_CL
 | where TimeGenerated > ago(24h)
 | where DestPort_d in (3333, 4444, 5555, 8333, 9999, 14444, 14433, 45700)
 | summarize ConnectionCount = count(), BytesSent = sum(BytesSent_d)
-            by SrcIP_s, DestIP_s, DestPort_d, bin(TimeGenerated, 1h)
+ by SrcIP_s, DestIP_s, DestPort_d, bin(TimeGenerated, 1h)
 | where ConnectionCount > 10
 | project TimeGenerated, SrcIP_s, DestIP_s, DestPort_d, ConnectionCount, BytesSent
 ```
@@ -164,12 +164,12 @@ AzureNetworkAnalytics_CL
 # AWS Athena query for VPC Flow Logs mining pool detection
 cat << 'EOF' > mining-detection.sql
 SELECT srcaddr, dstaddr, dstport, protocol,
-       COUNT(*) as connection_count,
-       SUM(bytes) as total_bytes
+ COUNT(*) as connection_count,
+ SUM(bytes) as total_bytes
 FROM vpc_flow_logs
 WHERE dstport IN (3333, 4444, 5555, 8333, 9999, 14444)
-  AND action = 'ACCEPT'
-  AND start >= date_add('hour', -24, now())
+ AND action = 'ACCEPT'
+ AND start >= date_add('hour', -24, now())
 GROUP BY srcaddr, dstaddr, dstport, protocol
 HAVING COUNT(*) > 10
 ORDER BY connection_count DESC
@@ -183,10 +183,10 @@ Monitor ECS task definitions and EKS pod deployments for known mining container 
 ```bash
 # Check for recently registered ECS task definitions with suspicious images
 aws ecs list-task-definitions --sort DESC --max-items 50 | \
-  jq -r '.taskDefinitionArns[]' | while read arn; do
-    aws ecs describe-task-definition --task-definition "$arn" \
-      --query 'taskDefinition.containerDefinitions[*].[name,image]' --output text
-  done
+ jq -r '.taskDefinitionArns[]' | while read arn; do
+ aws ecs describe-task-definition --task-definition "$arn" \
+ --query 'taskDefinition.containerDefinitions[*].[name,image]' --output text
+ done
 
 # Known malicious mining images to watch for:
 # - Images with high pull counts from unknown registries
@@ -195,9 +195,9 @@ aws ecs list-task-definitions --sort DESC --max-items 50 | \
 
 # Monitor CloudTrail for suspicious ECS/EKS activity
 aws cloudtrail lookup-events \
-  --lookup-attributes AttributeKey=EventName,AttributeValue=RegisterTaskDefinition \
-  --start-time $(date -d '-24 hours' +%Y-%m-%dT%H:%M:%S) \
-  --query 'Events[*].[EventName,Username,EventTime]'
+ --lookup-attributes AttributeKey=EventName,AttributeValue=RegisterTaskDefinition \
+ --start-time $(date -d '-24 hours' +%Y-%m-%dT%H:%M:%S) \
+ --query 'Events[*].[EventName,Username,EventTime]'
 ```
 
 ### Step 5: Respond and Contain Mining Activity
@@ -210,53 +210,53 @@ import boto3
 import json
 
 def lambda_handler(event, context):
-    finding = event['detail']
-    resource_type = finding['resource']['resourceType']
+ finding = event['detail']
+ resource_type = finding['resource']['resourceType']
 
-    if resource_type == 'Instance':
-        instance_id = finding['resource']['instanceDetails']['instanceId']
-        ec2 = boto3.client('ec2')
+ if resource_type == 'Instance':
+ instance_id = finding['resource']['instanceDetails']['instanceId']
+ ec2 = boto3.client('ec2')
 
-        # Snapshot EBS volumes for forensics before isolation
-        volumes = ec2.describe_instances(InstanceIds=[instance_id])
-        for reservation in volumes['Reservations']:
-            for instance in reservation['Instances']:
-                for vol in instance['BlockDeviceMappings']:
-                    volume_id = vol['Ebs']['VolumeId']
-                    ec2.create_snapshot(
-                        VolumeId=volume_id,
-                        Description=f'Forensic snapshot - crypto mining - {instance_id}',
-                        TagSpecifications=[{
-                            'ResourceType': 'snapshot',
-                            'Tags': [{'Key': 'Incident', 'Value': 'CryptoMining'},
-                                     {'Key': 'SourceInstance', 'Value': instance_id}]
-                        }]
-                    )
+ # Snapshot EBS volumes for forensics before isolation
+ volumes = ec2.describe_instances(InstanceIds=[instance_id])
+ for reservation in volumes['Reservations']:
+ for instance in reservation['Instances']:
+ for vol in instance['BlockDeviceMappings']:
+ volume_id = vol['Ebs']['VolumeId']
+ ec2.create_snapshot(
+ VolumeId=volume_id,
+ Description=f'Forensic snapshot - crypto mining - {instance_id}',
+ TagSpecifications=[{
+ 'ResourceType': 'snapshot',
+ 'Tags': [{'Key': 'Incident', 'Value': 'CryptoMining'},
+ {'Key': 'SourceInstance', 'Value': instance_id}]
+ }]
+ )
 
-        # Disable API termination protection if set by attacker
-        ec2.modify_instance_attribute(
-            InstanceId=instance_id,
-            DisableApiTermination={'Value': False}
-        )
+ # Disable API termination protection if set by attacker
+ ec2.modify_instance_attribute(
+ InstanceId=instance_id,
+ DisableApiTermination={'Value': False}
+ )
 
-        # Isolate instance with empty security group
-        vpc_id = finding['resource']['instanceDetails']['networkInterfaces'][0]['vpcId']
-        isolation_sg = ec2.create_security_group(
-            GroupName=f'crypto-isolation-{instance_id}',
-            Description='Cryptomining isolation - no traffic allowed',
-            VpcId=vpc_id
-        )
-        # Revoke default egress rule
-        ec2.revoke_security_group_egress(
-            GroupId=isolation_sg['GroupId'],
-            IpPermissions=[{'IpProtocol': '-1', 'IpRanges': [{'CidrIp': '0.0.0.0/0'}]}]
-        )
-        ec2.modify_instance_attribute(
-            InstanceId=instance_id,
-            Groups=[isolation_sg['GroupId']]
-        )
+ # Isolate instance with empty security group
+ vpc_id = finding['resource']['instanceDetails']['networkInterfaces'][0]['vpcId']
+ isolation_sg = ec2.create_security_group(
+ GroupName=f'crypto-isolation-{instance_id}',
+ Description='Cryptomining isolation - no traffic allowed',
+ VpcId=vpc_id
+ )
+ # Revoke default egress rule
+ ec2.revoke_security_group_egress(
+ GroupId=isolation_sg['GroupId'],
+ IpPermissions=[{'IpProtocol': '-1', 'IpRanges': [{'CidrIp': '0.0.0.0/0'}]}]
+ )
+ ec2.modify_instance_attribute(
+ InstanceId=instance_id,
+ Groups=[isolation_sg['GroupId']]
+ )
 
-        return {'status': 'contained', 'instance': instance_id}
+ return {'status': 'contained', 'instance': instance_id}
 ```
 
 ### Step 6: Trace Initial Access Vector
@@ -266,21 +266,21 @@ Investigate CloudTrail logs to determine how the attacker gained access to deplo
 ```bash
 # Trace the initial access for the compromised identity
 aws cloudtrail lookup-events \
-  --lookup-attributes AttributeKey=Username,AttributeValue=compromised-user \
-  --start-time 2025-02-01T00:00:00Z \
-  --query 'Events[?EventName==`ConsoleLogin` || EventName==`GetSessionToken`].[EventTime,SourceIPAddress,EventName]' \
-  --output table
+ --lookup-attributes AttributeKey=Username,AttributeValue=compromised-user \
+ --start-time 2025-02-01T00:00:00Z \
+ --query 'Events[?EventName==`ConsoleLogin` || EventName==`GetSessionToken`].[EventTime,SourceIPAddress,EventName]' \
+ --output table
 
 # Check for RunInstances calls in unusual regions
 for region in $(aws ec2 describe-regions --query 'Regions[*].RegionName' --output text); do
-  count=$(aws cloudtrail lookup-events \
-    --region $region \
-    --lookup-attributes AttributeKey=EventName,AttributeValue=RunInstances \
-    --start-time $(date -d '-7 days' +%Y-%m-%dT%H:%M:%S) \
-    --query 'Events | length(@)')
-  if [ "$count" -gt 0 ]; then
-    echo "Region: $region - RunInstances calls: $count"
-  fi
+ count=$(aws cloudtrail lookup-events \
+ --region $region \
+ --lookup-attributes AttributeKey=EventName,AttributeValue=RunInstances \
+ --start-time $(date -d '-7 days' +%Y-%m-%dT%H:%M:%S) \
+ --query 'Events | length(@)')
+ if [ "$count" -gt 0 ]; then
+ echo "Region: $region - RunInstances calls: $count"
+ fi
 done
 ```
 
@@ -332,31 +332,31 @@ Detection Time: 2025-02-23T14:23:00Z
 Containment Time: 2025-02-23T14:41:00Z (18 minutes)
 
 INITIAL ACCESS:
-  Vector: Exposed IAM access key in public GitHub repository
-  Credential: AKIAIOSFODNN7EXAMPLE (user: ci-deploy)
-  First Malicious Activity: 2025-02-23T14:12:00Z
+ Vector: Exposed IAM access key in public GitHub repository
+ Credential: AKIAIOSFODNN7EXAMPLE (user: ci-deploy)
+ First Malicious Activity: 2025-02-23T14:12:00Z
 
 IMPACT:
-  Instances Launched: 200 (p3.2xlarge GPU instances)
-  Regions Affected: 8 (us-east-1, us-west-2, eu-west-1, eu-central-1, ...)
-  Estimated Cost: $4,200 (18 minutes at $15,400/hour)
-  Mining Pool: stratum+tcp://pool.supportxmr.com:3333
-  Cryptocurrency: Monero (XMR)
+ Instances Launched: 200 (p3.2xlarge GPU instances)
+ Regions Affected: 8 (us-east-1, us-west-2, eu-west-1, eu-central-1, ...)
+ Estimated Cost: $4,200 (18 minutes at $15,400/hour)
+ Mining Pool: stratum+tcp://pool.supportxmr.com:3333
+ Cryptocurrency: Monero (XMR)
 
 DETECTION SIGNALS:
-  [14:15] GuardDuty: Stealth:IAMUser/CloudTrailLoggingDisabled (HIGH)
-  [14:18] Cost Anomaly: EC2 spend 4,200% above baseline
-  [14:23] GuardDuty: CryptoCurrency:EC2/BitcoinTool.B (HIGH) x 200
+ [14:15] GuardDuty: Stealth:IAMUser/CloudTrailLoggingDisabled (HIGH)
+ [14:18] Cost Anomaly: EC2 spend 4,200% above baseline
+ [14:23] GuardDuty: CryptoCurrency:EC2/BitcoinTool.B (HIGH) x 200
 
 CONTAINMENT ACTIONS:
-  [14:25] IAM access key AKIAIOSFODNN7EXAMPLE deactivated
-  [14:30] CloudTrail re-enabled in all 8 regions
-  [14:35] API termination protection disabled on 200 instances
-  [14:41] All 200 instances terminated
+ [14:25] IAM access key AKIAIOSFODNN7EXAMPLE deactivated
+ [14:30] CloudTrail re-enabled in all 8 regions
+ [14:35] API termination protection disabled on 200 instances
+ [14:41] All 200 instances terminated
 
 REMEDIATION:
-  - Compromised access key deleted
-  - GitHub repository secret scanning enabled
-  - AWS Config rule deployed: cloudtrail-enabled (auto-remediate)
-  - SCP deployed: deny ec2:RunInstances for GPU instance types without approval
+ - Compromised access key deleted
+ - GitHub repository secret scanning enabled
+ - AWS Config rule deployed: cloudtrail-enabled (auto-remediate)
+ - SCP deployed: deny ec2:RunInstances for GPU instance types without approval
 ```

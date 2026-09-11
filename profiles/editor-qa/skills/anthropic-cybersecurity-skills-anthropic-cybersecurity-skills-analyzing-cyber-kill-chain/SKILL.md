@@ -1,14 +1,14 @@
 ---
 name: analyzing-cyber-kill-chain
 description: 'Analyzes intrusion activity against the Lockheed Martin Cyber Kill Chain
-  framework to identify which phases an adversary has completed, where defenses succeeded
-  or failed, and what controls would have interrupted the attack at earlier phases.
-  Use when conducting post-incident analysis, building prevention-focused security
-  controls, or mapping detection gaps to kill chain phases. Activates for requests
-  involving kill chain analysis, intrusion kill chain, attack phase mapping, or Lockheed
-  Martin kill chain framework.
+ framework to identify which phases an adversary has completed, where defenses succeeded
+ or failed, and what controls would have interrupted the attack at earlier phases.
+ Use when conducting post-incident analysis, building prevention-focused security
+ controls, or mapping detection gaps to kill chain phases. Activates for requests
+ involving kill chain analysis, intrusion kill chain, attack phase mapping, or Lockheed
+ Martin kill chain framework.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -82,13 +82,13 @@ The Lockheed Martin Cyber Kill Chain consists of seven phases. Map all observed 
 
 Create a phase matrix for the incident:
 ```
-Phase 1: Recon        → Completed (undetected)
-Phase 2: Weaponize    → Completed (undetected — pre-attack)
-Phase 3: Delivery     → Completed; phishing email bypassed SEG
-Phase 4: Exploit      → Completed; CVE-2023-23397 exploited
-Phase 5: Install      → DETECTED: EDR flagged scheduled task creation (attack stalled here)
-Phase 6: C2           → Not achieved (installation blocked)
-Phase 7: Objectives   → Not achieved
+Phase 1: Recon → Completed (undetected)
+Phase 2: Weaponize → Completed (undetected — pre-attack)
+Phase 3: Delivery → Completed; phishing email bypassed SEG
+Phase 4: Exploit → Completed; CVE-2023-23397 exploited
+Phase 5: Install → DETECTED: EDR flagged scheduled task creation (attack stalled here)
+Phase 6: C2 → Not achieved (installation blocked)
+Phase 7: Objectives → Not achieved
 ```
 
 For each phase completed without detection, document the defensive control gap.

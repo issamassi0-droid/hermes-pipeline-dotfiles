@@ -16,7 +16,7 @@ Use this skill before presenting a character-animation preview or final render.
 4. Motion check: compare sampled frames for non-trivial differences.
 5. Final MP4 check: ffprobe metadata, duration, resolution, audio, frame samples.
 6. Agent visual review: inspect sampled frames for detached limbs, bad layers,
-   off-frame characters, unreadable expressions, broken text.
+ off-frame characters, unreadable expressions, broken text.
 
 ## Playwright Pattern
 
@@ -36,8 +36,8 @@ await page.screenshot({ path: "preview.png" });
 ## Sources
 
 - Playwright screenshots:
-  https://playwright.dev/docs/screenshots
+ https://playwright.dev/docs/screenshots
 - Playwright page navigation:
-  https://playwright.dev/docs/api/class-page#page-goto
+ https://playwright.dev/docs/api/class-page#page-goto
 - FFmpeg/ffprobe should be used for final media probing:
-  https://ffmpeg.org/ffprobe.html
+ https://ffmpeg.org/ffprobe.html

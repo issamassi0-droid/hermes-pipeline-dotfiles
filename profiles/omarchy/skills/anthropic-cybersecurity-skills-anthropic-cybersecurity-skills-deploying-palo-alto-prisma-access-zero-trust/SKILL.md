@@ -61,16 +61,16 @@ Set up the cloud infrastructure for mobile user and remote network connections.
 Strata Cloud Manager > Prisma Access > Infrastructure Settings:
 
 Mobile Users Configuration:
-  - Service Connection: Auto-selected based on user location
-  - DNS Servers: 10.1.1.10, 10.1.1.11 (corporate DNS)
-  - IP Pool for Mobile Users: 10.100.0.0/16
-  - Authentication: SAML with Okta (Primary), Entra ID (Secondary)
-  - GlobalProtect Portal: portal.company.com
-  - GlobalProtect Gateway: Auto (nearest Prisma Access location)
+ - Service Connection: Auto-selected based on user location
+ - DNS Servers: 10.1.1.10, 10.1.1.11 (corporate DNS)
+ - IP Pool for Mobile Users: 10.100.0.0/16
+ - Authentication: SAML with Okta (Primary), Entra ID (Secondary)
+ - GlobalProtect Portal: portal.company.com
+ - GlobalProtect Gateway: Auto (nearest Prisma Access location)
 
 Infrastructure Subnet:
-  - Range: 172.16.0.0/16
-  - Allocation: /24 per Prisma Access location
+ - Range: 172.16.0.0/16
+ - Allocation: /24 per Prisma Access location
 ```
 
 ### Step 2: Deploy ZTNA Connectors for Private Application Access
@@ -83,14 +83,14 @@ Install ZTNA Connectors to provide secure access to internal applications.
 
 # AWS deployment via CloudFormation
 aws cloudformation create-stack \
-  --stack-name prisma-ztna-connector \
-  --template-url https://prisma-access-connector-templates.s3.amazonaws.com/ztna-connector-aws.yaml \
-  --parameters \
-    ParameterKey=VpcId,ParameterValue=vpc-PROD \
-    ParameterKey=SubnetId,ParameterValue=subnet-PRIVATE \
-    ParameterKey=InstanceType,ParameterValue=m5.xlarge \
-    ParameterKey=TenantServiceGroup,ParameterValue=TSG_ID \
-    ParameterKey=ConnectorName,ParameterValue=dc-east-connector-01
+ --stack-name prisma-ztna-connector \
+ --template-url https://prisma-access-connector-templates.s3.amazonaws.com/ztna-connector-aws.yaml \
+ --parameters \
+ ParameterKey=VpcId,ParameterValue=vpc-PROD \
+ ParameterKey=SubnetId,ParameterValue=subnet-PRIVATE \
+ ParameterKey=InstanceType,ParameterValue=m5.xlarge \
+ ParameterKey=TenantServiceGroup,ParameterValue=TSG_ID \
+ ParameterKey=ConnectorName,ParameterValue=dc-east-connector-01
 
 # Verify connector registration
 # Strata Cloud Manager > Prisma Access > ZTNA Connectors
@@ -110,48 +110,48 @@ Create application definitions pointing to internal applications via ZTNA Connec
 Strata Cloud Manager > Prisma Access > Applications:
 
 Application 1: Internal Wiki
-  - FQDN: wiki.internal.corp
-  - Port: TCP 443
-  - ZTNA Connector: dc-east-connector-01
-  - Protocol: HTTPS
-  - Health Check: Enabled (HTTP GET /health)
+ - FQDN: wiki.internal.corp
+ - Port: TCP 443
+ - ZTNA Connector: dc-east-connector-01
+ - Protocol: HTTPS
+ - Health Check: Enabled (HTTP GET /health)
 
 Application 2: Source Code Repository
-  - FQDN: git.internal.corp
-  - Ports: TCP 22, 443
-  - ZTNA Connector: dc-east-connector-01, dc-east-connector-02
-  - Protocol: HTTPS, SSH
+ - FQDN: git.internal.corp
+ - Ports: TCP 22, 443
+ - ZTNA Connector: dc-east-connector-01, dc-east-connector-02
+ - Protocol: HTTPS, SSH
 
 Application 3: Finance ERP
-  - FQDN: erp.internal.corp
-  - Port: TCP 443
-  - ZTNA Connector: dc-east-connector-01
-  - Protocol: HTTPS
-  - User Authentication: Required (re-auth every 2h)
+ - FQDN: erp.internal.corp
+ - Port: TCP 443
+ - ZTNA Connector: dc-east-connector-01
+ - Protocol: HTTPS
+ - User Authentication: Required (re-auth every 2h)
 
 Strata Cloud Manager > Policies > Security Policy:
 
 Rule 1: Engineering Access to Dev Tools
-  Source: User Group "Engineering" (from Okta SAML)
-  Destination: Application "Source Code Repository", "Internal Wiki"
-  HIP Profile: "Managed Device with CrowdStrike"
-  Action: Allow
-  Logging: Enabled
-  Threat Prevention: Best Practice profile
+ Source: User Group "Engineering" (from Okta SAML)
+ Destination: Application "Source Code Repository", "Internal Wiki"
+ HIP Profile: "Managed Device with CrowdStrike"
+ Action: Allow
+ Logging: Enabled
+ Threat Prevention: Best Practice profile
 
 Rule 2: Finance Access to ERP
-  Source: User Group "Finance"
-  Destination: Application "Finance ERP"
-  HIP Profile: "Compliant Device - High Security"
-  Action: Allow
-  SSL Decryption: Forward Proxy
-  DLP Profile: "Financial Data Protection"
+ Source: User Group "Finance"
+ Destination: Application "Finance ERP"
+ HIP Profile: "Compliant Device - High Security"
+ Action: Allow
+ SSL Decryption: Forward Proxy
+ DLP Profile: "Financial Data Protection"
 
 Rule 3: Default Deny Private Apps
-  Source: Any
-  Destination: Any Private App
-  Action: Deny
-  Logging: Enabled
+ Source: Any
+ Destination: Any Private App
+ Action: Deny
+ Logging: Enabled
 ```
 
 ### Step 4: Configure Host Information Profile (HIP) for Device Posture
@@ -162,24 +162,24 @@ Define device posture requirements using HIP checks.
 Strata Cloud Manager > Objects > GlobalProtect > HIP Objects:
 
 HIP Object: "CrowdStrike Running"
-  - Vendor: CrowdStrike
-  - Product: Falcon Sensor
-  - Is Running: Yes
-  - Minimum Version: 7.10
+ - Vendor: CrowdStrike
+ - Product: Falcon Sensor
+ - Is Running: Yes
+ - Minimum Version: 7.10
 
 HIP Object: "Disk Encryption Enabled"
-  - Windows: BitLocker = Encrypted
-  - macOS: FileVault = Encrypted
+ - Windows: BitLocker = Encrypted
+ - macOS: FileVault = Encrypted
 
 HIP Object: "OS Patch Level"
-  - Windows: >= 10.0.22631
-  - macOS: >= 14.0
+ - Windows: >= 10.0.22631
+ - macOS: >= 14.0
 
 HIP Profile: "Managed Device with CrowdStrike"
-  - Match: "CrowdStrike Running" AND "Disk Encryption Enabled"
+ - Match: "CrowdStrike Running" AND "Disk Encryption Enabled"
 
 HIP Profile: "Compliant Device - High Security"
-  - Match: "CrowdStrike Running" AND "Disk Encryption Enabled" AND "OS Patch Level"
+ - Match: "CrowdStrike Running" AND "Disk Encryption Enabled" AND "OS Patch Level"
 ```
 
 ### Step 5: Deploy GlobalProtect Agent to Endpoints
@@ -194,14 +194,14 @@ Roll out the GlobalProtect agent for secure connectivity.
 # pre-deploy.xml for automated portal connection:
 cat > pre-deploy.xml << 'EOF'
 <GlobalProtect>
-  <Settings>
-    <portal>portal.company.com</portal>
-    <connect-method>pre-logon</connect-method>
-    <authentication-override>
-      <generate-cookie>yes</generate-cookie>
-      <cookie-lifetime>24</cookie-lifetime>
-    </authentication-override>
-  </Settings>
+ <Settings>
+ <portal>portal.company.com</portal>
+ <connect-method>pre-logon</connect-method>
+ <authentication-override>
+ <generate-cookie>yes</generate-cookie>
+ <cookie-lifetime>24</cookie-lifetime>
+ </authentication-override>
+ </Settings>
 </GlobalProtect>
 EOF
 
@@ -219,20 +219,20 @@ Set up Cortex Data Lake integration and monitoring dashboards.
 Strata Cloud Manager > Prisma Access > Monitoring:
 
 Log Forwarding:
-  - Cortex Data Lake: Enabled (all log types)
-  - SIEM Forwarding: Splunk HEC (https://splunk-hec.company.com:8088)
-  - Log Types: Traffic, Threat, URL, WildFire, GlobalProtect, HIP Match
+ - Cortex Data Lake: Enabled (all log types)
+ - SIEM Forwarding: Splunk HEC (https://splunk-hec.company.com:8088)
+ - Log Types: Traffic, Threat, URL, WildFire, GlobalProtect, HIP Match
 
 Dashboard Monitoring:
-  - Mobile Users: Active connections, locations, bandwidth
-  - ZTNA Connectors: Health, latency, tunnel status
-  - Security Events: Threats blocked, DLP violations, HIP failures
-  - Application Usage: Top apps, top users, denied access attempts
+ - Mobile Users: Active connections, locations, bandwidth
+ - ZTNA Connectors: Health, latency, tunnel status
+ - Security Events: Threats blocked, DLP violations, HIP failures
+ - Application Usage: Top apps, top users, denied access attempts
 
 Alerting:
-  - ZTNA Connector down: Email + PagerDuty
-  - HIP failure rate > 10%: Email to IT
-  - Threat detected on mobile user: SOC alert
+ - ZTNA Connector down: Email + PagerDuty
+ - HIP failure rate > 10%: Email to IT
+ - Threat detected on mobile user: SOC alert
 ```
 
 ## Key Concepts
@@ -283,23 +283,23 @@ Organization: ManufactureCorp
 Deployment Date: 2026-02-23
 
 INFRASTRUCTURE:
-  ZTNA Connectors: 6 (2x DC-East, 2x DC-West, 2x DC-EU)
-  Prisma Access Locations: 8 (auto-selected)
-  GlobalProtect Portal: portal.manufacturecorp.com
+ ZTNA Connectors: 6 (2x DC-East, 2x DC-West, 2x DC-EU)
+ Prisma Access Locations: 8 (auto-selected)
+ GlobalProtect Portal: portal.manufacturecorp.com
 
 APPLICATION ACCESS:
-  Defined Applications: 52
-  Active ZTNA Connections: 3,247
-  Average Latency: 12ms
+ Defined Applications: 52
+ Active ZTNA Connections: 3,247
+ Average Latency: 12ms
 
 ENDPOINT DEPLOYMENT:
-  GlobalProtect Deployed: 4,812 / 5,000 (96.2%)
-  HIP Compliant: 4,567 / 4,812 (94.9%)
-  HIP Failures: 245 (top: missing patches 120, encryption 85)
+ GlobalProtect Deployed: 4,812 / 5,000 (96.2%)
+ HIP Compliant: 4,567 / 4,812 (94.9%)
+ HIP Failures: 245 (top: missing patches 120, encryption 85)
 
 SECURITY (last 30 days):
-  Threats Blocked: 1,234
-  DLP Violations: 89
-  URL Blocked: 45,678
-  WildFire Submissions: 2,345
+ Threats Blocked: 1,234
+ DLP Violations: 89
+ URL Blocked: 45,678
+ WildFire Submissions: 2,345
 ```

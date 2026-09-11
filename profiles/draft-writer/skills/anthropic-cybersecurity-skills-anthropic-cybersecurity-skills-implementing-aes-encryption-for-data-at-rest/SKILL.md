@@ -58,10 +58,10 @@ AES (Advanced Encryption Standard) is a symmetric block cipher standardized by N
 
 | Mode | Authentication | Parallelizable | Use Case |
 |------|---------------|----------------|----------|
-| GCM  | Yes (AEAD)    | Yes            | Network data, file encryption |
-| CBC  | No            | Decrypt only   | Legacy systems, disk encryption |
-| CTR  | No            | Yes            | Streaming encryption |
-| CCM  | Yes (AEAD)    | No             | IoT, constrained environments |
+| GCM | Yes (AEAD) | Yes | Network data, file encryption |
+| CBC | No | Decrypt only | Legacy systems, disk encryption |
+| CTR | No | Yes | Streaming encryption |
+| CCM | Yes (AEAD) | No | IoT, constrained environments |
 
 ### Key Derivation
 

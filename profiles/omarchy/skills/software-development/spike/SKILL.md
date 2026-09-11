@@ -6,9 +6,9 @@ author: Hermes Agent (adapted from gsd-build/get-shit-done)
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [spike, prototype, experiment, feasibility, throwaway, exploration, research, planning, mvp, proof-of-concept]
-    related_skills: [sketch, subagent-driven-development]
+ hermes:
+ tags: [spike, prototype, experiment, feasibility, throwaway, exploration, research, planning, mvp, proof-of-concept]
+ related_skills: [sketch, subagent-driven-development]
 ---
 
 # Spike
@@ -32,9 +32,9 @@ If `gsd-spike` shows up as a sibling skill (installed via `npx get-shit-done-cc 
 Regardless of scale, every spike follows this loop:
 
 ```
-decompose  →  research  →  build  →  verdict
-   ↑__________________________________________↓
-                  iterate on findings
+decompose → research → build → verdict
+ ↑__________________________________________↓
+ iterate on findings
 ```
 
 ### 1. Decompose
@@ -69,9 +69,9 @@ Spikes are not research-free — you research enough to pick the right approach,
 1. **Brief it.** 2-3 sentences: what this spike is, why it matters, key risk.
 2. **Surface competing approaches** if there's real choice:
 
-   | Approach | Tool/Library | Pros | Cons | Status |
-   |----------|-------------|------|------|--------|
-   | ... | ... | ... | ... | maintained / abandoned / beta |
+ | Approach | Tool/Library | Pros | Cons | Status |
+ |----------|-------------|------|------|--------|
+ | ... | ... | ... | ... | maintained / abandoned / beta |
 
 3. **Pick one.** State why. If 2+ are credible, build quick variants within the spike.
 4. **Skip research** for pure logic with no external dependencies.
@@ -91,14 +91,14 @@ One directory per spike. Keep it standalone.
 ```
 spikes/
 ├── 001-websocket-streaming/
-│   ├── README.md
-│   └── main.py
+│ ├── README.md
+│ └── main.py
 ├── 002a-pdf-parse-pdfjs/
-│   ├── README.md
-│   └── parse.js
+│ ├── README.md
+│ └── parse.js
 └── 002b-pdf-parse-camelot/
-    ├── README.md
-    └── parse.py
+ ├── README.md
+ └── parse.py
 ```
 
 **Bias toward something the user can interact with.** Spikes fail when the only output is a log line that says "it works." The user wants to *feel* the spike working. Default choices, in order of preference:
@@ -126,8 +126,8 @@ terminal("cd spikes/001-websocket-streaming && python main.py")
 
 ```
 delegate_task(tasks=[
-    {"goal": "Build 002a-pdf-parse-pdfjs: ...", "toolsets": ["terminal", "file", "web"]},
-    {"goal": "Build 002b-pdf-parse-camelot: ...", "toolsets": ["terminal", "file", "web"]},
+ {"goal": "Build 002a-pdf-parse-pdfjs: ...", "toolsets": ["terminal", "file", "web"]},
+ {"goal": "Build 002b-pdf-parse-camelot: ...", "toolsets": ["terminal", "file", "web"]},
 ])
 ```
 

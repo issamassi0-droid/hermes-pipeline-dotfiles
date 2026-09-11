@@ -4,13 +4,13 @@ description: Detect LSASS credential dumping, SAM database extraction, and NTDS.
 domain: cybersecurity
 subdomain: threat-detection
 tags:
-  - credential-dumping
-  - lsass
-  - mimikatz
-  - sysmon
-  - active-directory
-  - windows-security
-  - defense-evasion
+ - credential-dumping
+ - lsass
+ - mimikatz
+ - sysmon
+ - active-directory
+ - windows-security
+ - defense-evasion
 version: "1.0"
 author: mahipal
 license: Apache-2.0

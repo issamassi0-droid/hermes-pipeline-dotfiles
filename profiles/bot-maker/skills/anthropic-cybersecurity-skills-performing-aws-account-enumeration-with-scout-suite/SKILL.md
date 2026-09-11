@@ -1,10 +1,10 @@
 ---
 name: performing-aws-account-enumeration-with-scout-suite
 description: Run the agentless, open-source ScoutSuite tool (via pip install and the `scout` CLI)
-  against an AWS account to enumerate resources across services, identify misconfigurations,
-  and generate an interactive HTML security report. Use when assessing an AWS account's overall
-  security posture with read-only IAM credentials, such as during a cloud security audit or
-  compliance review.
+ against an AWS account to enumerate resources across services, identify misconfigurations,
+ and generate an interactive HTML security report. Use when assessing an AWS account's overall
+ security posture with read-only IAM credentials, such as during a cloud security audit or
+ compliance review.
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -83,61 +83,61 @@ Attach the AWS managed policy `SecurityAudit` and `ViewOnlyAccess` to the IAM us
 
 ```json
 {
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "acm:Describe*",
-        "acm:List*",
-        "cloudformation:Describe*",
-        "cloudformation:Get*",
-        "cloudformation:List*",
-        "cloudtrail:Describe*",
-        "cloudtrail:Get*",
-        "cloudtrail:List*",
-        "cloudwatch:Describe*",
-        "cloudwatch:Get*",
-        "cloudwatch:List*",
-        "config:Describe*",
-        "config:Get*",
-        "config:List*",
-        "dynamodb:Describe*",
-        "dynamodb:List*",
-        "ec2:Describe*",
-        "ec2:Get*",
-        "elasticloadbalancing:Describe*",
-        "iam:Generate*",
-        "iam:Get*",
-        "iam:List*",
-        "iam:Simulate*",
-        "kms:Describe*",
-        "kms:Get*",
-        "kms:List*",
-        "lambda:Get*",
-        "lambda:List*",
-        "logs:Describe*",
-        "logs:Get*",
-        "rds:Describe*",
-        "rds:List*",
-        "redshift:Describe*",
-        "route53:Get*",
-        "route53:List*",
-        "s3:Get*",
-        "s3:List*",
-        "ses:Get*",
-        "ses:List*",
-        "sns:Get*",
-        "sns:List*",
-        "sqs:Get*",
-        "sqs:List*",
-        "ssm:Describe*",
-        "ssm:Get*",
-        "ssm:List*"
-      ],
-      "Resource": "*"
-    }
-  ]
+ "Version": "2012-10-17",
+ "Statement": [
+ {
+ "Effect": "Allow",
+ "Action": [
+ "acm:Describe*",
+ "acm:List*",
+ "cloudformation:Describe*",
+ "cloudformation:Get*",
+ "cloudformation:List*",
+ "cloudtrail:Describe*",
+ "cloudtrail:Get*",
+ "cloudtrail:List*",
+ "cloudwatch:Describe*",
+ "cloudwatch:Get*",
+ "cloudwatch:List*",
+ "config:Describe*",
+ "config:Get*",
+ "config:List*",
+ "dynamodb:Describe*",
+ "dynamodb:List*",
+ "ec2:Describe*",
+ "ec2:Get*",
+ "elasticloadbalancing:Describe*",
+ "iam:Generate*",
+ "iam:Get*",
+ "iam:List*",
+ "iam:Simulate*",
+ "kms:Describe*",
+ "kms:Get*",
+ "kms:List*",
+ "lambda:Get*",
+ "lambda:List*",
+ "logs:Describe*",
+ "logs:Get*",
+ "rds:Describe*",
+ "rds:List*",
+ "redshift:Describe*",
+ "route53:Get*",
+ "route53:List*",
+ "s3:Get*",
+ "s3:List*",
+ "ses:Get*",
+ "ses:List*",
+ "sns:Get*",
+ "sns:List*",
+ "sqs:Get*",
+ "sqs:List*",
+ "ssm:Describe*",
+ "ssm:Get*",
+ "ssm:List*"
+ ],
+ "Resource": "*"
+ }
+ ]
 }
 ```
 
@@ -234,12 +234,12 @@ scout aws --services s3 iam ec2 --no-browser --report-dir ./scout-report/
 python -c "
 import json
 with open('./scout-report/scoutsuite-results/scoutsuite_results.json') as f:
-    results = json.load(f)
-    for service in results.get('services', {}):
-        findings = results['services'][service].get('findings', {})
-        for finding_id, finding in findings.items():
-            if finding.get('flagged_items', 0) > 0 and finding.get('level') == 'danger':
-                print(f'CRITICAL: {finding_id} - {finding.get(\"description\", \"\")}')
+ results = json.load(f)
+ for service in results.get('services', {}):
+ findings = results['services'][service].get('findings', {})
+ for finding_id, finding in findings.items():
+ if finding.get('flagged_items', 0) > 0 and finding.get('level') == 'danger':
+ print(f'CRITICAL: {finding_id} - {finding.get(\"description\", \"\")}')
 "
 ```
 

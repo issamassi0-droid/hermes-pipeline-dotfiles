@@ -15,10 +15,10 @@ A ValueTracker is an invisible Mobject that holds a single float. It never appea
 Think of it as a slider: drag the slider from 0 to 5, and every object wired to it responds in real time.
 
 ```python
-tracker = ValueTracker(0)        # invisible, stores 0.0
-tracker.get_value()              # read: 0.0
-tracker.set_value(5)             # write: jump to 5.0 instantly
-tracker.animate.set_value(5)     # animate: smoothly interpolate to 5.0
+tracker = ValueTracker(0) # invisible, stores 0.0
+tracker.get_value() # read: 0.0
+tracker.set_value(5) # write: jump to 5.0 instantly
+tracker.animate.set_value(5) # animate: smoothly interpolate to 5.0
 ```
 
 ### The three-step pattern
@@ -36,10 +36,10 @@ x_tracker = ValueTracker(1)
 # Step 2: Create dependent objects
 dot = always_redraw(lambda: Dot(axes.c2p(x_tracker.get_value(), 0), color=YELLOW))
 v_line = always_redraw(lambda: axes.get_vertical_line(
-    axes.c2p(x_tracker.get_value(), func(x_tracker.get_value())), color=BLUE
+ axes.c2p(x_tracker.get_value(), func(x_tracker.get_value())), color=BLUE
 ))
 label = always_redraw(lambda: DecimalNumber(x_tracker.get_value(), font_size=24)
-    .next_to(dot, UP))
+ .next_to(dot, UP))
 
 self.add(dot, v_line, label)
 
@@ -59,7 +59,7 @@ label.add_updater(lambda m: m.next_to(dot, UP, buff=0.2))
 
 # Line always connects two points
 line.add_updater(lambda m: m.put_start_and_end_on(
-    point_a.get_center(), point_b.get_center()
+ point_a.get_center(), point_b.get_center()
 ))
 ```
 
@@ -76,7 +76,7 @@ dot.add_updater(lambda m, dt: m.shift(RIGHT * 0.3 * dt))
 
 # Oscillation
 dot.add_updater(lambda m, dt: m.move_to(
-    axes.c2p(m.get_center()[0], np.sin(self.time))
+ axes.c2p(m.get_center()[0], np.sin(self.time))
 ))
 ```
 
@@ -92,12 +92,12 @@ brace = always_redraw(Brace, square, UP)
 
 # Area under curve that updates as function changes
 area = always_redraw(lambda: axes.get_area(
-    graph, x_range=[0, x_tracker.get_value()], color=BLUE, opacity=0.3
+ graph, x_range=[0, x_tracker.get_value()], color=BLUE, opacity=0.3
 ))
 
 # Label that reconstructs its text
 counter = always_redraw(lambda: Text(
-    f"n = {int(x_tracker.get_value())}", font_size=24, font="Menlo"
+ f"n = {int(x_tracker.get_value())}", font_size=24, font="Menlo"
 ).to_corner(UR))
 ```
 
@@ -140,7 +140,7 @@ mobject.resume_updating()
 
 # Remove specific updater (if you stored a reference)
 def my_updater(m):
-    m.next_to(dot, UP)
+ m.next_to(dot, UP)
 label.add_updater(my_updater)
 # ... later ...
 label.remove_updater(my_updater)
@@ -170,7 +170,7 @@ from manim import turn_animation_into_updater
 # This would normally play once — now it loops forever
 turn_animation_into_updater(Rotating(gear, rate=PI/4))
 self.add(gear)
-self.wait(5)  # gear rotates for 5 seconds
+self.wait(5) # gear rotates for 5 seconds
 ```
 
 ## Practical patterns
@@ -181,12 +181,12 @@ self.wait(5)  # gear rotates for 5 seconds
 tracker = ValueTracker(0)
 graph = axes.plot(np.sin, x_range=[0, 2*PI], color=PRIMARY)
 dot = always_redraw(lambda: Dot(
-    axes.c2p(tracker.get_value(), np.sin(tracker.get_value())),
-    color=YELLOW
+ axes.c2p(tracker.get_value(), np.sin(tracker.get_value())),
+ color=YELLOW
 ))
 tangent = always_redraw(lambda: axes.get_secant_slope_group(
-    x=tracker.get_value(), graph=graph, dx=0.01,
-    secant_line_color=HIGHLIGHT, secant_line_length=3
+ x=tracker.get_value(), graph=graph, dx=0.01,
+ secant_line_color=HIGHLIGHT, secant_line_length=3
 ))
 
 self.add(graph, dot, tangent)
@@ -198,13 +198,13 @@ self.play(tracker.animate.set_value(2*PI), run_time=6, rate_func=linear)
 ```python
 tracker = ValueTracker(0.5)
 area = always_redraw(lambda: axes.get_area(
-    graph, x_range=[0, tracker.get_value()],
-    color=PRIMARY, opacity=0.3
+ graph, x_range=[0, tracker.get_value()],
+ color=PRIMARY, opacity=0.3
 ))
 area_label = always_redraw(lambda: DecimalNumber(
-    # Numerical integration
-    sum(func(x) * 0.01 for x in np.arange(0, tracker.get_value(), 0.01)),
-    font_size=24
+ # Numerical integration
+ sum(func(x) * 0.01 for x in np.arange(0, tracker.get_value(), 0.01)),
+ font_size=24
 ).next_to(axes, RIGHT))
 
 self.add(area, area_label)
@@ -218,10 +218,10 @@ self.play(tracker.animate.set_value(4), run_time=5)
 node_a = Dot(LEFT * 2, color=PRIMARY)
 node_b = Dot(RIGHT * 2, color=SECONDARY)
 edge = Line().add_updater(lambda m: m.put_start_and_end_on(
-    node_a.get_center(), node_b.get_center()
+ node_a.get_center(), node_b.get_center()
 ))
 label = Text("edge", font_size=18, font="Menlo").add_updater(
-    lambda m: m.move_to(edge.get_center() + UP * 0.3)
+ lambda m: m.move_to(edge.get_center() + UP * 0.3)
 )
 
 self.add(node_a, node_b, edge, label)
@@ -236,11 +236,11 @@ self.play(node_b.animate.shift(DOWN + RIGHT), run_time=2)
 # Explore how a parameter changes a curve
 a_tracker = ValueTracker(1)
 curve = always_redraw(lambda: axes.plot(
-    lambda x: a_tracker.get_value() * np.sin(x),
-    x_range=[0, 2*PI], color=PRIMARY
+ lambda x: a_tracker.get_value() * np.sin(x),
+ x_range=[0, 2*PI], color=PRIMARY
 ))
 param_label = always_redraw(lambda: Text(
-    f"a = {a_tracker.get_value():.1f}", font_size=24, font="Menlo"
+ f"a = {a_tracker.get_value():.1f}", font_size=24, font="Menlo"
 ).to_corner(UR))
 
 self.add(curve, param_label)

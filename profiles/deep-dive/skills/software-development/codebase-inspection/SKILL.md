@@ -6,11 +6,11 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [LOC, Code Analysis, pygount, Codebase, Metrics, Repository]
-    related_skills: [github]
+ hermes:
+ tags: [LOC, Code Analysis, pygount, Codebase, Metrics, Repository]
+ related_skills: [github]
 prerequisites:
-  commands: [pygount]
+ commands: [pygount]
 ---
 
 # Codebase Inspection with pygount
@@ -38,8 +38,8 @@ Get a full language breakdown with file counts, code lines, and comment lines:
 ```bash
 cd /path/to/repo
 pygount --format=summary \
-  --folders-to-skip=".git,node_modules,venv,.venv,__pycache__,.cache,dist,build,.next,.tox,.eggs,*.egg-info" \
-  .
+ --folders-to-skip=".git,node_modules,venv,.venv,__pycache__,.cache,dist,build,.next,.tox,.eggs,*.egg-info" \
+ .
 ```
 
 **IMPORTANT:** Always use `--folders-to-skip` to exclude dependency/build directories, otherwise pygount will crawl them and take a very long time or hang.

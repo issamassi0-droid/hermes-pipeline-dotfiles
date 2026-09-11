@@ -1,12 +1,12 @@
 ---
 name: configuring-snort-ids-for-intrusion-detection
 description: 'Installs, configures, and tunes Snort 3 to monitor network traffic
-  for malicious activity using custom and community rulesets, preprocessors, and
-  alert output plugins. Use when deploying network-based intrusion detection at
-  key boundaries, writing custom Snort rules, tuning rulesets to reduce false positives,
-  or integrating Snort alerts with a SIEM.
+ for malicious activity using custom and community rulesets, preprocessors, and
+ alert output plugins. Use when deploying network-based intrusion detection at
+ key boundaries, writing custom Snort rules, tuning rulesets to reduce false positives,
+ or integrating Snort alerts with a SIEM.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -58,10 +58,10 @@ mitre_attack:
 ```bash
 # Install dependencies (Ubuntu/Debian)
 sudo apt install -y build-essential libpcap-dev libpcre3-dev libnet1-dev \
-  zlib1g-dev luajit hwloc libdumbnet-dev bison flex libcmocka-dev \
-  libnetfilter-queue-dev libmnl-dev autotools-dev libluajit-5.1-dev \
-  pkg-config cmake libhwloc-dev liblzma-dev openssl libssl-dev cpputest \
-  libsqlite3-dev uuid-dev
+ zlib1g-dev luajit hwloc libdumbnet-dev bison flex libcmocka-dev \
+ libnetfilter-queue-dev libmnl-dev autotools-dev libluajit-5.1-dev \
+ pkg-config cmake libhwloc-dev liblzma-dev openssl libssl-dev cpputest \
+ libsqlite3-dev uuid-dev
 
 # Install DAQ from source
 git clone https://github.com/snort3/libdaq.git
@@ -126,8 +126,8 @@ BUILTIN_RULE_PATH = '/usr/local/etc/snort/builtin_rules'
 
 -- Configure DAQ
 daq = {
-    module_dirs = { '/usr/local/lib/daq' },
-    modules = { { name = 'afpacket', variables = { 'buffer_size_mb=256' } } }
+ module_dirs = { '/usr/local/lib/daq' },
+ modules = { { name = 'afpacket', variables = { 'buffer_size_mb=256' } } }
 }
 
 -- Decoder configuration
@@ -156,35 +156,35 @@ file_id = { rules_file = '/usr/local/etc/snort/file_magic.rules' }
 
 -- Port scan detection
 port_scan = {
-    protos = 'all',
-    scan_types = 'all',
-    memcap = 10000000
+ protos = 'all',
+ scan_types = 'all',
+ memcap = 10000000
 }
 
 -- Reputation-based filtering
 -- reputation = {
---     blacklist = RULE_PATH .. '/blocklist.rules'
+-- blacklist = RULE_PATH .. '/blocklist.rules'
 -- }
 
 -- IPS rules
 ips = {
-    enable_builtin_rules = true,
-    include = RULE_PATH .. '/snort3-community.rules',
-    variables = {
-        nets = { HOME_NET = HOME_NET, EXTERNAL_NET = EXTERNAL_NET },
-        ports = {
-            HTTP_PORTS = '80 8080 8443',
-            SSH_PORTS = '22',
-            DNS_PORTS = '53'
-        }
-    }
+ enable_builtin_rules = true,
+ include = RULE_PATH .. '/snort3-community.rules',
+ variables = {
+ nets = { HOME_NET = HOME_NET, EXTERNAL_NET = EXTERNAL_NET },
+ ports = {
+ HTTP_PORTS = '80 8080 8443',
+ SSH_PORTS = '22',
+ DNS_PORTS = '53'
+ }
+ }
 }
 
 -- Alert output
 alert_fast = {
-    file = true,
-    packet = false,
-    limit = 100
+ file = true,
+ packet = false,
+ limit = 100
 }
 
 -- Unified2 output for Barnyard2/SIEM integration
@@ -192,9 +192,9 @@ alert_fast = {
 
 -- JSON alert output
 alert_json = {
-    file = true,
-    limit = 100,
-    fields = 'timestamp pkt_num proto pkt_gen pkt_len dir src_addr src_port dst_addr dst_port service rule action'
+ file = true,
+ limit = 100,
+ fields = 'timestamp pkt_num proto pkt_gen pkt_len dir src_addr src_port dst_addr dst_port service rule action'
 }
 
 -- Syslog output
@@ -240,54 +240,54 @@ sudo pulledpork3 -c /usr/local/etc/pulledpork3/pulledpork.conf
 sudo tee /usr/local/etc/snort/rules/local.rules << 'EOF'
 # Detect reverse shell on common ports
 alert tcp $HOME_NET any -> $EXTERNAL_NET 4444 (
-    msg:"LOCAL Possible Reverse Shell on port 4444";
-    flow:established,to_server;
-    content:"/bin/sh"; nocase;
-    sid:1000001; rev:1;
-    classtype:trojan-activity;
-    priority:1;
+ msg:"LOCAL Possible Reverse Shell on port 4444";
+ flow:established,to_server;
+ content:"/bin/sh"; nocase;
+ sid:1000001; rev:1;
+ classtype:trojan-activity;
+ priority:1;
 )
 
 # Detect Mimikatz execution indicators over SMB
 alert tcp any any -> $HOME_NET 445 (
-    msg:"LOCAL Mimikatz Lateral Movement via SMB";
-    flow:established,to_server;
-    content:"|FF|SMB";
-    content:"mimikatz"; nocase; distance:0;
-    sid:1000002; rev:1;
-    classtype:trojan-activity;
-    priority:1;
+ msg:"LOCAL Mimikatz Lateral Movement via SMB";
+ flow:established,to_server;
+ content:"|FF|SMB";
+ content:"mimikatz"; nocase; distance:0;
+ sid:1000002; rev:1;
+ classtype:trojan-activity;
+ priority:1;
 )
 
 # Detect DNS tunneling (high-entropy long subdomain queries)
 alert udp $HOME_NET any -> any 53 (
-    msg:"LOCAL Possible DNS Tunneling - Long Query Name";
-    content:"|01 00|"; offset:2; depth:2;
-    byte_test:1,>,50,12;
-    sid:1000003; rev:1;
-    classtype:policy-violation;
-    priority:2;
+ msg:"LOCAL Possible DNS Tunneling - Long Query Name";
+ content:"|01 00|"; offset:2; depth:2;
+ byte_test:1,>,50,12;
+ sid:1000003; rev:1;
+ classtype:policy-violation;
+ priority:2;
 )
 
 # Detect cleartext password transmission via FTP
 alert tcp $HOME_NET any -> any 21 (
-    msg:"LOCAL FTP Cleartext Password Detected";
-    flow:established,to_server;
-    content:"PASS "; depth:5;
-    sid:1000004; rev:1;
-    classtype:policy-violation;
-    priority:2;
+ msg:"LOCAL FTP Cleartext Password Detected";
+ flow:established,to_server;
+ content:"PASS "; depth:5;
+ sid:1000004; rev:1;
+ classtype:policy-violation;
+ priority:2;
 )
 
 # Detect potential port scan (SYN flood pattern)
 alert tcp $EXTERNAL_NET any -> $HOME_NET any (
-    msg:"LOCAL Possible Port Scan SYN Flood";
-    flow:stateless;
-    flags:S,12;
-    threshold:type both, track by_src, count 100, seconds 10;
-    sid:1000005; rev:1;
-    classtype:attempted-recon;
-    priority:2;
+ msg:"LOCAL Possible Port Scan SYN Flood";
+ flow:stateless;
+ flags:S,12;
+ threshold:type both, track by_src, count 100, seconds 10;
+ sid:1000005; rev:1;
+ classtype:attempted-recon;
+ priority:2;
 )
 EOF
 ```
@@ -300,11 +300,11 @@ snort -c /usr/local/etc/snort/snort.lua --daq-dir /usr/local/lib/daq -T
 
 # Run Snort in IDS mode on the capture interface
 sudo snort -c /usr/local/etc/snort/snort.lua --daq-dir /usr/local/lib/daq \
-  -i eth1 -l /var/log/snort -D
+ -i eth1 -l /var/log/snort -D
 
 # Test rules against a PCAP file
 snort -c /usr/local/etc/snort/snort.lua --daq-dir /usr/local/lib/daq \
-  -r test_traffic.pcap -l /var/log/snort/test/ -A fast
+ -r test_traffic.pcap -l /var/log/snort/test/ -A fast
 
 # Create systemd service for production deployment
 sudo tee /etc/systemd/system/snort.service << 'EOF'

@@ -21,11 +21,11 @@ Create and edit valid Obsidian Flavored Markdown. Obsidian extends CommonMark an
 ## Internal Links (Wikilinks)
 
 ```markdown
-[[Note Name]]                          Link to note
-[[Note Name|Display Text]]             Custom display text
-[[Note Name#Heading]]                  Link to heading
-[[Note Name#^block-id]]                Link to block
-[[#Heading in same note]]              Same-note heading link
+[[Note Name]] Link to note
+[[Note Name|Display Text]] Custom display text
+[[Note Name#Heading]] Link to heading
+[[Note Name#^block-id]] Link to block
+[[#Heading in same note]] Same-note heading link
 ```
 
 Define a block ID by appending `^block-id` to any paragraph:
@@ -47,11 +47,11 @@ For lists and quotes, place the block ID on a separate line after the block:
 Prefix any wikilink with `!` to embed its content inline:
 
 ```markdown
-![[Note Name]]                         Embed full note
-![[Note Name#Heading]]                 Embed section
-![[image.png]]                         Embed image
-![[image.png|300]]                     Embed image with width
-![[document.pdf#page=3]]               Embed PDF page
+![[Note Name]] Embed full note
+![[Note Name#Heading]] Embed section
+![[image.png]] Embed image
+![[image.png|300]] Embed image with width
+![[document.pdf#page=3]] Embed PDF page
 ```
 
 See [EMBEDS.md](references/EMBEDS.md) for audio, video, search embeds, and external images.
@@ -80,12 +80,12 @@ See [CALLOUTS.md](references/CALLOUTS.md) for the full list with aliases, nestin
 title: My Note
 date: 2024-01-15
 tags:
-  - project
-  - active
+ - project
+ - active
 aliases:
-  - Alternative Name
+ - Alternative Name
 cssclasses:
-  - custom-class
+ - custom-class
 ---
 ```
 
@@ -96,8 +96,8 @@ See [PROPERTIES.md](references/PROPERTIES.md) for all property types, tag syntax
 ## Tags
 
 ```markdown
-#tag                    Inline tag
-#nested/tag             Nested tag with hierarchy
+#tag Inline tag
+#nested/tag Nested tag with hierarchy
 ```
 
 Tags can contain letters, numbers (not first character), underscores, hyphens, and forward slashes. Tags can also be defined in frontmatter under the `tags` property.
@@ -115,7 +115,7 @@ This entire block is hidden in reading view.
 ## Obsidian-Specific Formatting
 
 ```markdown
-==Highlighted text==                   Highlight syntax
+==Highlighted text== Highlight syntax
 ```
 
 ## Math (LaTeX)
@@ -134,9 +134,9 @@ $$
 ````markdown
 ```mermaid
 graph TD
-    A[Start] --> B{Decision}
-    B -->|Yes| C[Do this]
-    B -->|No| D[Do that]
+ A[Start] --> B{Decision}
+ B -->|Yes| C[Do this]
+ B -->|No| D[Do that]
 ```
 ````
 
@@ -159,8 +159,8 @@ Inline footnote.^[This is inline.]
 title: Project Alpha
 date: 2024-01-15
 tags:
-  - project
-  - active
+ - project
+ - active
 status: in-progress
 ---
 
@@ -175,8 +175,8 @@ This project aims to [[improve workflow]] using modern techniques.
 
 - [x] Initial planning
 - [ ] Development phase
-  - [ ] Backend implementation
-  - [ ] Frontend design
+ - [ ] Backend implementation
+ - [ ] Frontend design
 
 ## Notes
 

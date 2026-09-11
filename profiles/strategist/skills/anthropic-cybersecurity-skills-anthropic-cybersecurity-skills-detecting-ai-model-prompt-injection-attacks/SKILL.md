@@ -123,12 +123,12 @@ detector = PromptInjectionDetector(threshold=0.85)
 result = detector.analyze("user input here")
 
 if result["injection_detected"]:
-    # Block or flag the input
-    log_security_event(result)
-    return "I cannot process that request."
+ # Block or flag the input
+ log_security_event(result)
+ return "I cannot process that request."
 else:
-    # Forward to LLM
-    response = llm.generate(result["sanitized_input"])
+ # Forward to LLM
+ response = llm.generate(result["sanitized_input"])
 ```
 
 ### Step 5: Batch Audit Historical Prompts

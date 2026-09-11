@@ -1,0 +1,100 @@
+# Architecture Patterns for Multi-Agent Systems
+
+## Three-Layer Architecture (Cabinet-Office Pattern)
+
+A proven architecture for multi-agent systems that separates concerns:
+
+### Layer 1: Constitutional (Frozen)
+- Immutable principles that cannot be modified by evolution
+- Typically 7-10 principles that define system values
+- Changes require explicit human approval (Class 3 amendment)
+- Examples: "Every claim needs a source", "No destructive actions"
+
+### Layer 2: System (Evolvable)
+- Contracts and rules that govern system behavior
+- Can be modified through evolution loop with safeguards
+- Types of contracts:
+  - **Registry**: Agent roster, tool allowlists, context windows
+  - **Protocol**: Inter-agent communication format and payload types
+  - **Routing**: Tier selection, scoring rubric, dynamic context
+  - **Quality**: Charter, metrics, evidence grades
+  - **Ledger**: Mission logging schema
+  - **Evolution**: Amendment system with rollback
+
+### Layer 3: Agent (SOULs)
+- Individual agent profiles with roles and tools
+- Modified only by bot-maker agent
+- Each agent has: role description, tool allowlist, inter-agent protocol references
+
+## Dynamic Tiering System
+
+Instead of one-size-fits-all, route tasks to different agent counts based on complexity:
+
+| Tier | Agents | Use Case | Token Overhead |
+|------|--------|----------|----------------|
+| 0 | 1 (Architect only) | Simple questions | +305% (prohibitive) |
+| 1 | 2 (Researcher → Publisher) | Quick research | +130% |
+| 2 | 5 (Full pipeline) | Strategy and audit | +55.8% |
+| 3 | 8 (All agents) | Comprehensive analysis | +31.8% |
+
+**Key insight**: Tier 0 is token-inefficient due to overhead. Reserve for truly simple queries.
+
+## Model Gateway Pattern
+
+Dynamic model selection using weighted scoring:
+
+```python
+score = (
+    task_fit * 0.40 +
+    user_preference * 0.25 +
+    cost_efficiency * 0.20 +
+    speed * 0.15
+)
+```
+
+Cache selections and track success rates for continuous optimization.
+
+## Semantic Checkpointing
+
+Instead of naive retry, save execution state at each step:
+
+```json
+{
+  "step": "research_complete",
+  "state": {"sources": 5, "claims": 8, "confidence": 0.82},
+  "timestamp": "2026-09-11T10:00:00Z"
+}
+```
+
+On failure, recover from last valid checkpoint rather than restarting.
+
+## Cascade Routing
+
+Start with cheap model, escalate only on failure:
+
+```
+Level 1: ling-3.0-flash (cheap, fast)
+    ↓ if quality < threshold
+Level 2: meituan-longcat-2.0 (mid-tier)
+    ↓ if quality < threshold
+Level 3: gpt-4o (expensive, powerful)
+```
+
+Reduces cost by 60-80% on simple tasks while maintaining quality on complex ones.
+
+## Self-Learning Loop
+
+Extract knowledge from completed missions:
+
+1. **Extract**: Pull quality issues, tool usage, routing decisions from mission report
+2. **Identify**: Find patterns across missions (e.g., "publish fails 80% of time without verification")
+3. **Generate**: Create reusable skills from patterns
+4. **Propose**: Generate evolution proposals based on accumulated evidence
+5. **Feed**: Connect to evolution loop (evolution.md amendment system)
+
+## References
+
+- `references/fault-tolerance.md` — MAS-FIRE taxonomy and 4-tier model
+- `references/quality-gates.md` — Trajectory evaluation and hallucination taxonomy
+- `references/dynamic-routing.md` — Cascade routing and circuit breaker patterns
+- `references/self-learning.md` — Learning extraction and skill generation

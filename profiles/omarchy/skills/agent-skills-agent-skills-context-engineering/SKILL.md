@@ -23,15 +23,15 @@ Structure context from most persistent to most transient:
 
 ```
 ┌─────────────────────────────────────┐
-│  1. Rules Files (CLAUDE.md, etc.)   │ ← Always loaded, project-wide
+│ 1. Rules Files (CLAUDE.md, etc.) │ ← Always loaded, project-wide
 ├─────────────────────────────────────┤
-│  2. Spec / Architecture Docs        │ ← Loaded per feature/session
+│ 2. Spec / Architecture Docs │ ← Loaded per feature/session
 ├─────────────────────────────────────┤
-│  3. Relevant Source Files            │ ← Loaded per task
+│ 3. Relevant Source Files │ ← Loaded per task
 ├─────────────────────────────────────┤
-│  4. Error Output / Test Results      │ ← Loaded per iteration
+│ 4. Error Output / Test Results │ ← Loaded per iteration
 ├─────────────────────────────────────┤
-│  5. Conversation History             │ ← Accumulates, compacts
+│ 5. Conversation History │ ← Accumulates, compacts
 └─────────────────────────────────────┘
 ```
 
@@ -196,7 +196,7 @@ Even with good context, you will encounter ambiguity. How you handle it determin
 ### When Context Conflicts
 
 ```
-Spec says:         "Use REST for all endpoints"
+Spec says: "Use REST for all endpoints"
 Existing code has: GraphQL for the user profile query
 ```
 

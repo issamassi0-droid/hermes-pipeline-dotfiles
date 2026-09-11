@@ -2,9 +2,9 @@
 name: grok-media
 description: xAI Grok image and video generation guide covering authentication, endpoints, prompt structure, image editing, reference-image video, and async polling.
 metadata:
-  author: OpenMontage
-  version: "1.0.0"
-  tags: xai, grok, image-generation, video-generation, media
+ author: OpenMontage
+ version: "1.0.0"
+ tags: xai, grok, image-generation, video-generation, media
 ---
 
 # Grok Media
@@ -28,11 +28,11 @@ Use this skill when working with xAI media models in OpenMontage.
 
 - Endpoint: `POST /images/generations`
 - Core fields:
-  - `model`
-  - `prompt`
-  - `n`
-  - `aspect_ratio`
-  - `resolution`
+ - `model`
+ - `prompt`
+ - `n`
+ - `aspect_ratio`
+ - `resolution`
 
 ### Image edit
 
@@ -40,8 +40,8 @@ Use this skill when working with xAI media models in OpenMontage.
 - Use `image` for one source image
 - Use `images` for multi-image compositing
 - Each source image can be:
-  - a public HTTPS URL
-  - a base64 data URI
+ - a public HTTPS URL
+ - a base64 data URI
 
 ### Image prompting
 
@@ -62,14 +62,14 @@ Use this skill when working with xAI media models in OpenMontage.
 ### Modes
 
 - Text-to-video:
-  - prompt-only generation
+ - prompt-only generation
 - Image-to-video:
-  - use `image: {"url": ...}`
-  - this anchors the starting frame
+ - use `image: {"url": ...}`
+ - this anchors the starting frame
 - Reference-to-video:
-  - use `reference_images: [{"url": ...}, ...]`
-  - this influences who/what appears in the video without locking the first frame
-  - prompts can reference inputs with placeholders like `<IMAGE_1>`, `<IMAGE_2>`
+ - use `reference_images: [{"url": ...}, ...]`
+ - this influences who/what appears in the video without locking the first frame
+ - prompts can reference inputs with placeholders like `<IMAGE_1>`, `<IMAGE_2>`
 
 ### Video constraints
 
@@ -83,8 +83,8 @@ Use this skill when working with xAI media models in OpenMontage.
 - `grok-imagine-image`: `$0.02` per generated image
 - `grok-imagine-image` edits/composites: add `$0.002` per input image
 - `grok-imagine-video`:
-  - `480p`: `$0.05` per second
-  - `720p`: `$0.07` per second
+ - `480p`: `$0.05` per second
+ - `720p`: `$0.07` per second
 - `grok-imagine-video` image-conditioned requests: add `$0.002` per input image
 
 ## Grok-Specific Prompt Guidance
@@ -94,21 +94,21 @@ Use this skill when working with xAI media models in OpenMontage.
 - Start with subject, action, setting
 - Add one style anchor, not five
 - For edits:
-  - describe the desired modification
-  - keep the rest of the image stable by omission, not by writing a giant preservation list
+ - describe the desired modification
+ - keep the rest of the image stable by omission, not by writing a giant preservation list
 
 ### Video
 
 - Keep prompts scene-local: one shot, one main motion idea, one emotional beat
 - For reference-conditioned video, explicitly map source images to roles:
-  - person from `<IMAGE_1>`
-  - jacket from `<IMAGE_2>`
-  - product from `<IMAGE_3>`
+ - person from `<IMAGE_1>`
+ - jacket from `<IMAGE_2>`
+ - product from `<IMAGE_3>`
 - Camera and pacing language helps:
-  - slow push-in
-  - handheld follow
-  - locked-off medium shot
-  - high-energy whip pan transition
+ - slow push-in
+ - handheld follow
+ - locked-off medium shot
+ - high-energy whip pan transition
 
 ## Good Fits
 

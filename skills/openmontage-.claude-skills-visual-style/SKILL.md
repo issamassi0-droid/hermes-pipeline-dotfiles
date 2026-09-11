@@ -1,7 +1,7 @@
 ---
 name: visual-style
 description: |
-  Create, extract, and apply portable visual design systems via visual-style.md files. Use when: (1) Creating a visual-style.md design system from scratch, (2) Extracting a visual style from a website URL, video, or PDF brand guide, (3) Applying a visual style to HeyGen videos, HTML slides, Figma, or paper.design, (4) Browsing the gallery of pre-built visual styles (Swiss, Saul Bass, Game Boy, etc.), (5) User mentions "visual style", "design system", "brand style", or "style guide", (6) Styling a HeyGen video with a consistent design language.
+ Create, extract, and apply portable visual design systems via visual-style.md files. Use when: (1) Creating a visual-style.md design system from scratch, (2) Extracting a visual style from a website URL, video, or PDF brand guide, (3) Applying a visual style to HeyGen videos, HTML slides, Figma, or paper.design, (4) Browsing the gallery of pre-built visual styles (Swiss, Saul Bass, Game Boy, etc.), (5) User mentions "visual style", "design system", "brand style", or "style guide", (6) Styling a HeyGen video with a consistent design language.
 ---
 
 # Visual Style
@@ -68,10 +68,10 @@ version: "1.0"
 style_prompt_short: "1-2 sentence elevator pitch"
 style_prompt_full: "Detailed generation prompt — THE most important field"
 colors:
-  primary:
-    - name: "Color Name"
-      hex: "#000000"
-      role: "how this color is used"
+ primary:
+ - name: "Color Name"
+ hex: "#000000"
+ role: "how this color is used"
 ```
 
 **`style_prompt_full` is king.** If a tool can only read one field, it reads this one. Everything else is structured data for tools that want finer control.

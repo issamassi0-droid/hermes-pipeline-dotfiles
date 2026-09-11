@@ -1,11 +1,11 @@
 ---
 name: implementing-aws-iam-permission-boundaries
 description: Configures AWS IAM permission boundaries that cap the maximum permissions
-  an identity-based policy can grant to a user or role, so effective permissions
-  are the intersection of the identity policy and the boundary even if the policy
-  grants AdministratorAccess. Use when letting security teams delegate IAM role and
-  policy creation to developers for self-service while enforcing least-privilege
-  ceilings and preventing privilege escalation.
+ an identity-based policy can grant to a user or role, so effective permissions
+ are the intersection of the identity policy and the boundary even if the policy
+ grants AdministratorAccess. Use when letting security teams delegate IAM role and
+ policy creation to developers for self-service while enforcing least-privilege
+ ceilings and preventing privilege escalation.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -57,13 +57,13 @@ IAM permission boundaries are an advanced AWS feature that sets the maximum perm
 ### How Permission Boundaries Work
 
 ```
-Identity-Based Policy          Permission Boundary
-(What the role CAN do)    ∩    (What the role MAY do)
-        │                              │
-        └──────────┬───────────────────┘
-                   │
-          Effective Permissions
-    (Only actions in BOTH policies)
+Identity-Based Policy Permission Boundary
+(What the role CAN do) ∩ (What the role MAY do)
+ │ │
+ └──────────┬───────────────────┘
+ │
+ Effective Permissions
+ (Only actions in BOTH policies)
 ```
 
 ### Policy Evaluation Logic
@@ -94,66 +94,66 @@ Create a managed policy that defines the maximum allowed permissions:
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowedServices",
-            "Effect": "Allow",
-            "Action": [
-                "s3:*",
-                "dynamodb:*",
-                "lambda:*",
-                "logs:*",
-                "cloudwatch:*",
-                "sqs:*",
-                "sns:*",
-                "events:*",
-                "states:*",
-                "xray:*",
-                "ec2:Describe*",
-                "ec2:CreateTags",
-                "sts:AssumeRole",
-                "kms:Decrypt",
-                "kms:GenerateDataKey",
-                "kms:DescribeKey",
-                "secretsmanager:GetSecretValue"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "AllowIAMPassRole",
-            "Effect": "Allow",
-            "Action": "iam:PassRole",
-            "Resource": "arn:aws:iam::*:role/app-*",
-            "Condition": {
-                "StringEquals": {
-                    "iam:PassedToService": [
-                        "lambda.amazonaws.com",
-                        "states.amazonaws.com"
-                    ]
-                }
-            }
-        },
-        {
-            "Sid": "DenyBoundaryDeletion",
-            "Effect": "Deny",
-            "Action": [
-                "iam:DeletePolicy",
-                "iam:DeletePolicyVersion",
-                "iam:CreatePolicyVersion"
-            ],
-            "Resource": "arn:aws:iam::*:policy/DeveloperBoundary"
-        },
-        {
-            "Sid": "DenyBoundaryRemoval",
-            "Effect": "Deny",
-            "Action": [
-                "iam:DeleteUserPermissionsBoundary",
-                "iam:DeleteRolePermissionsBoundary"
-            ],
-            "Resource": "*"
-        }
-    ]
+ "Version": "2012-10-17",
+ "Statement": [
+ {
+ "Sid": "AllowedServices",
+ "Effect": "Allow",
+ "Action": [
+ "s3:*",
+ "dynamodb:*",
+ "lambda:*",
+ "logs:*",
+ "cloudwatch:*",
+ "sqs:*",
+ "sns:*",
+ "events:*",
+ "states:*",
+ "xray:*",
+ "ec2:Describe*",
+ "ec2:CreateTags",
+ "sts:AssumeRole",
+ "kms:Decrypt",
+ "kms:GenerateDataKey",
+ "kms:DescribeKey",
+ "secretsmanager:GetSecretValue"
+ ],
+ "Resource": "*"
+ },
+ {
+ "Sid": "AllowIAMPassRole",
+ "Effect": "Allow",
+ "Action": "iam:PassRole",
+ "Resource": "arn:aws:iam::*:role/app-*",
+ "Condition": {
+ "StringEquals": {
+ "iam:PassedToService": [
+ "lambda.amazonaws.com",
+ "states.amazonaws.com"
+ ]
+ }
+ }
+ },
+ {
+ "Sid": "DenyBoundaryDeletion",
+ "Effect": "Deny",
+ "Action": [
+ "iam:DeletePolicy",
+ "iam:DeletePolicyVersion",
+ "iam:CreatePolicyVersion"
+ ],
+ "Resource": "arn:aws:iam::*:policy/DeveloperBoundary"
+ },
+ {
+ "Sid": "DenyBoundaryRemoval",
+ "Effect": "Deny",
+ "Action": [
+ "iam:DeleteUserPermissionsBoundary",
+ "iam:DeleteRolePermissionsBoundary"
+ ],
+ "Resource": "*"
+ }
+ ]
 }
 ```
 
@@ -163,46 +163,46 @@ Grant developers the ability to create IAM roles, but only with the boundary att
 
 ```json
 {
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowCreateRoleWithBoundary",
-            "Effect": "Allow",
-            "Action": [
-                "iam:CreateRole",
-                "iam:AttachRolePolicy",
-                "iam:DetachRolePolicy",
-                "iam:PutRolePolicy",
-                "iam:DeleteRolePolicy"
-            ],
-            "Resource": "arn:aws:iam::*:role/app-*",
-            "Condition": {
-                "StringEquals": {
-                    "iam:PermissionsBoundary": "arn:aws:iam::*:policy/DeveloperBoundary"
-                }
-            }
-        },
-        {
-            "Sid": "AllowCreatePolicyScoped",
-            "Effect": "Allow",
-            "Action": [
-                "iam:CreatePolicy",
-                "iam:DeletePolicy",
-                "iam:CreatePolicyVersion",
-                "iam:DeletePolicyVersion"
-            ],
-            "Resource": "arn:aws:iam::*:policy/app-*"
-        },
-        {
-            "Sid": "AllowViewIAM",
-            "Effect": "Allow",
-            "Action": [
-                "iam:Get*",
-                "iam:List*"
-            ],
-            "Resource": "*"
-        }
-    ]
+ "Version": "2012-10-17",
+ "Statement": [
+ {
+ "Sid": "AllowCreateRoleWithBoundary",
+ "Effect": "Allow",
+ "Action": [
+ "iam:CreateRole",
+ "iam:AttachRolePolicy",
+ "iam:DetachRolePolicy",
+ "iam:PutRolePolicy",
+ "iam:DeleteRolePolicy"
+ ],
+ "Resource": "arn:aws:iam::*:role/app-*",
+ "Condition": {
+ "StringEquals": {
+ "iam:PermissionsBoundary": "arn:aws:iam::*:policy/DeveloperBoundary"
+ }
+ }
+ },
+ {
+ "Sid": "AllowCreatePolicyScoped",
+ "Effect": "Allow",
+ "Action": [
+ "iam:CreatePolicy",
+ "iam:DeletePolicy",
+ "iam:CreatePolicyVersion",
+ "iam:DeletePolicyVersion"
+ ],
+ "Resource": "arn:aws:iam::*:policy/app-*"
+ },
+ {
+ "Sid": "AllowViewIAM",
+ "Effect": "Allow",
+ "Action": [
+ "iam:Get*",
+ "iam:List*"
+ ],
+ "Resource": "*"
+ }
+ ]
 }
 ```
 
@@ -211,19 +211,19 @@ Grant developers the ability to create IAM roles, but only with the boundary att
 ```bash
 # Create the boundary policy
 aws iam create-policy \
-    --policy-name DeveloperBoundary \
-    --policy-document file://developer-boundary.json
+ --policy-name DeveloperBoundary \
+ --policy-document file://developer-boundary.json
 
 # Attach boundary to an existing role
 aws iam put-role-permissions-boundary \
-    --role-name developer-role \
-    --permissions-boundary arn:aws:iam::123456789012:policy/DeveloperBoundary
+ --role-name developer-role \
+ --permissions-boundary arn:aws:iam::123456789012:policy/DeveloperBoundary
 
 # Create a new role with boundary
 aws iam create-role \
-    --role-name app-lambda-executor \
-    --assume-role-policy-document file://trust-policy.json \
-    --permissions-boundary arn:aws:iam::123456789012:policy/DeveloperBoundary
+ --role-name app-lambda-executor \
+ --assume-role-policy-document file://trust-policy.json \
+ --permissions-boundary arn:aws:iam::123456789012:policy/DeveloperBoundary
 ```
 
 ### Step 4: Prevent Privilege Escalation
@@ -238,15 +238,15 @@ The boundary must include deny statements to prevent developers from:
 
 ```hcl
 resource "aws_iam_policy" "developer_boundary" {
-  name   = "DeveloperBoundary"
-  path   = "/"
-  policy = file("${path.module}/policies/developer-boundary.json")
+ name = "DeveloperBoundary"
+ path = "/"
+ policy = file("${path.module}/policies/developer-boundary.json")
 }
 
 resource "aws_iam_role" "app_role" {
-  name                 = "app-lambda-executor"
-  assume_role_policy   = data.aws_iam_policy_document.lambda_trust.json
-  permissions_boundary = aws_iam_policy.developer_boundary.arn
+ name = "app-lambda-executor"
+ assume_role_policy = data.aws_iam_policy_document.lambda_trust.json
+ permissions_boundary = aws_iam_policy.developer_boundary.arn
 }
 ```
 

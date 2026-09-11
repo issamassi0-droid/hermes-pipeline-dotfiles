@@ -6,9 +6,9 @@ author: Hermes Agent (adapted from obra/superpowers)
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [debugging, troubleshooting, problem-solving, root-cause, investigation]
-    related_skills: [test-driven-development, subagent-driven-development]
+ hermes:
+ tags: [debugging, troubleshooting, problem-solving, root-cause, investigation]
+ related_skills: [test-driven-development, subagent-driven-development]
 ---
 
 # Systematic Debugging
@@ -376,19 +376,19 @@ For complex multi-component debugging, dispatch investigation subagents:
 
 ```python
 delegate_task(
-    goal="Investigate why [specific test/behavior] fails",
-    context="""
-    Follow systematic-debugging skill:
-    1. Read the error message carefully
-    2. Reproduce the issue
-    3. Trace the data flow to find root cause
-    4. Report findings — do NOT fix yet
+ goal="Investigate why [specific test/behavior] fails",
+ context="""
+ Follow systematic-debugging skill:
+ 1. Read the error message carefully
+ 2. Reproduce the issue
+ 3. Trace the data flow to find root cause
+ 4. Report findings — do NOT fix yet
 
-    Error: [paste full error]
-    File: [path to failing code]
-    Test command: [exact command]
-    """,
-    toolsets=['terminal', 'file']
+ Error: [paste full error]
+ File: [path to failing code]
+ Test command: [exact command]
+ """,
+ toolsets=['terminal', 'file']
 )
 ```
 

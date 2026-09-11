@@ -6,9 +6,9 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Research, Archives, Wayback, Paywall, WAF, Fallback]
-    related_skills: [grounded-citations]
+ hermes:
+ tags: [Research, Archives, Wayback, Paywall, WAF, Fallback]
+ related_skills: [grounded-citations]
 ---
 
 # Blocked-Page Recovery
@@ -21,11 +21,11 @@ ladder, cheapest first.
 ## The ladder
 
 ```
-1. Wayback Machine  — archive.org "available" API  (snapshot + timestamp)
-2. archive.today    — domain rotation: archive.ph → .md → .li → .is
-3. Jina Reader      — only if JINA_API_KEY is set  (live server-side render)
-4. API-first pivot  — look for /api/, /graphql, .json, or RSS on the same host
-5. Real browser     — browser tool as the last, most expensive resort
+1. Wayback Machine — archive.org "available" API (snapshot + timestamp)
+2. archive.today — domain rotation: archive.ph → .md → .li → .is
+3. Jina Reader — only if JINA_API_KEY is set (live server-side render)
+4. API-first pivot — look for /api/, /graphql, .json, or RSS on the same host
+5. Real browser — browser tool as the last, most expensive resort
 ```
 
 Run it in one shot with the bundled script:
@@ -79,8 +79,8 @@ Rate-limits aggressively (429) and rotates domains, so iterate:
 
 ```bash
 for d in archive.ph archive.md archive.li archive.is; do
-  curl -sL --max-time 20 "https://$d/newest/{URL}" -o /tmp/page.html \
-    -w "%{http_code}" && break
+ curl -sL --max-time 20 "https://$d/newest/{URL}" -o /tmp/page.html \
+ -w "%{http_code}" && break
 done
 ```
 
@@ -108,7 +108,7 @@ look for:
 
 - `/api/...`, `/graphql`, or `.json` variants of the page URL
 - An RSS/Atom feed (`/feed`, `/rss`, `<link rel="alternate">` in any copy
-  you did recover)
+ you did recover)
 - A sitemap (`/sitemap.xml`) revealing canonical URLs that may not be gated
 
 ## Fake successes — routes that LIE
@@ -117,13 +117,13 @@ These return HTTP 200 with a plausible body that is NOT the page. The script
 rejects them automatically; reject them manually too:
 
 - **Google Cache is dead** (since mid-2024). `webcache.googleusercontent.com`
-  returns 200 + tens of KB, but it's a Google Search interstitial with a JS
-  redirect, not a cache. Never use it.
+ returns 200 + tens of KB, but it's a Google Search interstitial with a JS
+ redirect, not a cache. Never use it.
 - **AMP caches** (`*.cdn.ampproject.org`) mostly return a ~300-byte
-  `<title>Redirecting</title>` meta-refresh stub pointing back at the
-  original (blocked) URL. Treating that as success creates a fetch loop.
+ `<title>Redirecting</title>` meta-refresh stub pointing back at the
+ original (blocked) URL. Treating that as success creates a fetch loop.
 - **Rate-limit bodies**: archive.today 429 pages are multi-KB HTML. Check for
-  the target's actual content (title words, expected strings), not just size.
+ the target's actual content (title words, expected strings), not just size.
 
 Detection heuristics the script applies: body under a per-route byte floor;
 meta-refresh/JS-redirect stubs whose target is the original host; interstitial

@@ -1,13 +1,13 @@
 ---
 name: implementing-attack-surface-management
 description: 'Implements external attack surface management (EASM) using Shodan, Censys,
-  and ProjectDiscovery tools (subfinder, httpx, nuclei) for asset discovery, subdomain
-  enumeration, service fingerprinting, and exposure scoring. Includes a weighted risk
-  scoring algorithm based on OWASP attack surface analysis methodology and the Relative
-  Attack Surface Quotient (RSQ). Use when building continuous ASM programs or performing
-  external reconnaissance for security assessments.
+ and ProjectDiscovery tools (subfinder, httpx, nuclei) for asset discovery, subdomain
+ enumeration, service fingerprinting, and exposure scoring. Includes a weighted risk
+ scoring algorithm based on OWASP attack surface analysis methodology and the Relative
+ Attack Surface Quotient (RSQ). Use when building continuous ASM programs or performing
+ external reconnaissance for security assessments.
 
-  '
+ '
 domain: cybersecurity
 subdomain: offensive-security
 tags:
@@ -89,12 +89,12 @@ Probe discovered subdomains to identify live hosts, technologies, and services.
 ```bash
 # HTTP probing with technology detection
 cat combined_subdomains.txt | httpx -sc -cl -ct -title -tech-detect \
-    -follow-redirects -json -o httpx_results.json
+ -follow-redirects -json -o httpx_results.json
 
 # Detailed service fingerprinting
 cat combined_subdomains.txt | httpx -sc -cl -ct -title -tech-detect \
-    -favicon -hash sha256 -jarm -cdn -cname \
-    -follow-redirects -json -o httpx_detailed.json
+ -favicon -hash sha256 -jarm -cdn -cname \
+ -follow-redirects -json -o httpx_detailed.json
 ```
 
 ### Phase 3: Shodan Asset Discovery
@@ -110,10 +110,10 @@ api = shodan.Shodan("YOUR_SHODAN_API_KEY")
 # Search by organization
 results = api.search("org:\"Example Corp\"")
 for service in results["matches"]:
-    print(f"{service['ip_str']}:{service['port']} - {service.get('product', 'unknown')}")
-    if service.get("vulns"):
-        for cve in service["vulns"]:
-            print(f"  CVE: {cve}")
+ print(f"{service['ip_str']}:{service['port']} - {service.get('product', 'unknown')}")
+ if service.get("vulns"):
+ for cve in service["vulns"]:
+ print(f" CVE: {cve}")
 
 # Search by hostname
 results = api.search("hostname:example.com")
@@ -139,19 +139,19 @@ from censys.search import CensysHosts, CensysCerts
 hosts = CensysHosts()
 query = hosts.search("services.tls.certificates.leaf.subject.common_name: example.com")
 for page in query:
-    for host in page:
-        print(f"IP: {host['ip']}")
-        for service in host.get("services", []):
-            print(f"  Port: {service['port']} Protocol: {service['transport_protocol']}")
-            print(f"  Service: {service.get('service_name', 'unknown')}")
+ for host in page:
+ print(f"IP: {host['ip']}")
+ for service in host.get("services", []):
+ print(f" Port: {service['port']} Protocol: {service['transport_protocol']}")
+ print(f" Service: {service.get('service_name', 'unknown')}")
 
 # Certificate transparency search
 certs = CensysCerts()
 query = certs.search("parsed.names: example.com")
 for page in query:
-    for cert in page:
-        print(f"Fingerprint: {cert['fingerprint_sha256']}")
-        print(f"Names: {cert.get('parsed', {}).get('names', [])}")
+ for cert in page:
+ print(f"Fingerprint: {cert['fingerprint_sha256']}")
+ print(f"Names: {cert.get('parsed', {}).get('names', [])}")
 ```
 
 ### Phase 5: Vulnerability Scanning with Nuclei
@@ -167,15 +167,15 @@ cat combined_subdomains.txt | httpx -silent | nuclei -o nuclei_results.txt
 
 # Scan with specific severity
 cat combined_subdomains.txt | httpx -silent | \
-    nuclei -severity critical,high -o critical_findings.txt
+ nuclei -severity critical,high -o critical_findings.txt
 
 # Scan with specific template categories
 cat combined_subdomains.txt | httpx -silent | \
-    nuclei -tags cve,misconfig,exposure -o categorized_findings.txt
+ nuclei -tags cve,misconfig,exposure -o categorized_findings.txt
 
 # Scan for exposed panels and sensitive files
 cat combined_subdomains.txt | httpx -silent | \
-    nuclei -tags panel,exposure,config -o exposed_panels.txt
+ nuclei -tags panel,exposure,config -o exposed_panels.txt
 ```
 
 ### Phase 6: Exposure Scoring Algorithm
@@ -201,29 +201,29 @@ The scoring algorithm considers:
 ```bash
 # Run complete ASM pipeline against a target domain
 python agent.py \
-    --domain example.com \
-    --action full_scan \
-    --shodan-key YOUR_KEY \
-    --censys-id YOUR_ID \
-    --censys-secret YOUR_SECRET \
-    --output asm_report.json
+ --domain example.com \
+ --action full_scan \
+ --shodan-key YOUR_KEY \
+ --censys-id YOUR_ID \
+ --censys-secret YOUR_SECRET \
+ --output asm_report.json
 
 # Subdomain enumeration only
 python agent.py \
-    --domain example.com \
-    --action enumerate \
-    --output subdomains.json
+ --domain example.com \
+ --action enumerate \
+ --output subdomains.json
 
 # Exposure scoring on previously discovered assets
 python agent.py \
-    --domain example.com \
-    --action score \
-    --input previous_scan.json \
-    --output scored_assets.json
+ --domain example.com \
+ --action score \
+ --input previous_scan.json \
+ --output scored_assets.json
 
 # Multi-domain scan from file
 python agent.py \
-    --domain-list targets.txt \
-    --action full_scan \
-    --output multi_domain_report.json
+ --domain-list targets.txt \
+ --action full_scan \
+ --output multi_domain_report.json
 ```

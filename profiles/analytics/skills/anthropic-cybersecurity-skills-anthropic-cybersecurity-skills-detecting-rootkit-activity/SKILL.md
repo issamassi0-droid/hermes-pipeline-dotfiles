@@ -1,12 +1,12 @@
 ---
 name: detecting-rootkit-activity
 description: 'Detects rootkit presence on compromised systems by identifying hidden
-  processes, hooked system calls, modified kernel structures, and covert network
-  connections using Volatility memory forensics, cross-view detection, and tools
-  like GMER, rkhunter, chkrootkit, and RootkitRevealer. Use when standard tools
-  (Task Manager, netstat, AV/EDR) show nothing abnormal but compromise is suspected.
+ processes, hooked system calls, modified kernel structures, and covert network
+ connections using Volatility memory forensics, cross-view detection, and tools
+ like GMER, rkhunter, chkrootkit, and RootkitRevealer. Use when standard tools
+ (Task Manager, netstat, AV/EDR) show nothing abnormal but compromise is suspected.
 
-  '
+ '
 domain: cybersecurity
 subdomain: malware-analysis
 tags:
@@ -71,24 +71,24 @@ pslist_pids = set()
 psscan_pids = set()
 
 with open("pslist_output.txt") as f:
-    for line in f:
-        parts = line.split()
-        if len(parts) > 1 and parts[1].isdigit():
-            pslist_pids.add(int(parts[1]))
+ for line in f:
+ parts = line.split()
+ if len(parts) > 1 and parts[1].isdigit():
+ pslist_pids.add(int(parts[1]))
 
 with open("psscan_output.txt") as f:
-    for line in f:
-        parts = line.split()
-        if len(parts) > 1 and parts[1].isdigit():
-            psscan_pids.add(int(parts[1]))
+ for line in f:
+ parts = line.split()
+ if len(parts) > 1 and parts[1].isdigit():
+ psscan_pids.add(int(parts[1]))
 
 hidden = psscan_pids - pslist_pids
 if hidden:
-    print(f"[!] HIDDEN PROCESSES DETECTED (in psscan but not pslist):")
-    for pid in hidden:
-        print(f"    PID: {pid}")
+ print(f"[!] HIDDEN PROCESSES DETECTED (in psscan but not pslist):")
+ for pid in hidden:
+ print(f" PID: {pid}")
 else:
-    print("[*] No hidden processes detected via cross-view analysis")
+ print("[*] No hidden processes detected via cross-view analysis")
 PYEOF
 ```
 
@@ -104,7 +104,7 @@ vol3 -f memory.dmp windows.ssdt
 vol3 -f memory.dmp windows.ssdt | grep -v "ntoskrnl\|win32k"
 
 # Check for Inline hooks (detour patching)
-vol3 -f memory.dmp windows.apihooks --pid 4  # System process
+vol3 -f memory.dmp windows.apihooks --pid 4 # System process
 
 # IDT (Interrupt Descriptor Table) analysis
 vol3 -f memory.dmp windows.idt
@@ -117,20 +117,20 @@ vol3 -f memory.dmp windows.driverirp
 ```
 Types of Rootkit Hooks:
 ━━━━━━━━━━━━━━━━━━━━━
-SSDT Hook:         Modifies System Service Descriptor Table entries to redirect
-                   system calls through rootkit code (filters process/file listings)
+SSDT Hook: Modifies System Service Descriptor Table entries to redirect
+ system calls through rootkit code (filters process/file listings)
 
-IAT Hook:          Patches Import Address Table of a process to intercept API calls
-                   before they reach the kernel
+IAT Hook: Patches Import Address Table of a process to intercept API calls
+ before they reach the kernel
 
-Inline Hook:       Overwrites the first bytes of a function with a JMP to rootkit code
-                   (detour/trampoline technique)
+Inline Hook: Overwrites the first bytes of a function with a JMP to rootkit code
+ (detour/trampoline technique)
 
-IRP Hook:          Intercepts I/O Request Packets to filter disk/network operations
-                   at the driver level
+IRP Hook: Intercepts I/O Request Packets to filter disk/network operations
+ at the driver level
 
-DKOM:              Direct Kernel Object Manipulation - unlinking structures like
-                   EPROCESS from the ActiveProcessLinks list without hooking
+DKOM: Direct Kernel Object Manipulation - unlinking structures like
+ EPROCESS from the ActiveProcessLinks list without hooking
 ```
 
 ### Step 3: Analyze Kernel Modules and Drivers
@@ -212,8 +212,8 @@ vol3 -f memory.dmp windows.moddump --base 0xFFFFF80070000000 --dump
 sfc /scannow
 
 # Linux: Package integrity verification
-rpm -Va  # RPM-based systems
-debsums -c  # Debian-based systems
+rpm -Va # RPM-based systems
+debsums -c # Debian-based systems
 
 # Compare critical system binaries
 find /bin /sbin /usr/bin /usr/sbin -type f -exec sha256sum {} \; > current_hashes.txt
@@ -269,17 +269,17 @@ vol3 -f memory.dmp yarascan.YaraScan --yara-file rootkit_rules.yar
 ```
 ROOTKIT DETECTION ANALYSIS REPORT
 ====================================
-Dump File:        memory.dmp
-System:           Windows 10 21H2 x64
-Analysis Tool:    Volatility 3.2
+Dump File: memory.dmp
+System: Windows 10 21H2 x64
+Analysis Tool: Volatility 3.2
 
 CROSS-VIEW DETECTION
 Process List Comparison:
-  pslist processes:  127
-  psscan processes:  129
-  [!] HIDDEN PROCESSES: 2
-    PID 6784: sysmon64.exe (hidden rootkit component)
-    PID 6812: netfilter.exe (hidden network filter)
+ pslist processes: 127
+ psscan processes: 129
+ [!] HIDDEN PROCESSES: 2
+ PID 6784: sysmon64.exe (hidden rootkit component)
+ PID 6812: netfilter.exe (hidden network filter)
 
 SSDT HOOK ANALYSIS
 [!] Entry 0x004A (NtQuerySystemInformation) hooked -> driver.sys+0x1200
@@ -289,15 +289,15 @@ Hook Target: driver.sys at 0xFFFFF800ABCD0000 (unsigned, suspicious)
 
 KERNEL DRIVER ANALYSIS
 [!] driver.sys - No digital signature, loaded at 0xFFFFF800ABCD0000
-    Size: 45,056 bytes
-    SHA-256: abc123def456...
-    IRP Hooks: IRP_MJ_CREATE, IRP_MJ_DEVICE_CONTROL
-    Registry: HKLM\SYSTEM\CurrentControlSet\Services\MalDriver
+ Size: 45,056 bytes
+ SHA-256: abc123def456...
+ IRP Hooks: IRP_MJ_CREATE, IRP_MJ_DEVICE_CONTROL
+ Registry: HKLM\SYSTEM\CurrentControlSet\Services\MalDriver
 
 HIDDEN NETWORK CONNECTIONS
 PID 6812: 10.1.5.42:49152 -> 185.220.101.42:443 (ESTABLISHED)
-  - Not visible via netstat or user-mode tools
-  - Filtered by NtDeviceIoControlFile SSDT hook
+ - Not visible via netstat or user-mode tools
+ - Filtered by NtDeviceIoControlFile SSDT hook
 
 ROOTKIT CAPABILITIES
 - Process hiding (DKOM + SSDT)

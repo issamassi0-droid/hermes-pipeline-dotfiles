@@ -1,13 +1,13 @@
 ---
 name: performing-api-fuzzing-with-restler
 description: 'Uses Microsoft RESTler to perform stateful REST API fuzzing: compiles
-  an OpenAPI/Swagger spec into a RESTler grammar, configures authentication, and runs
-  test/fuzz-lean/fuzz modes that generate request sequences exercising producer-consumer
-  dependencies, then flags 500 errors, auth bypasses, resource leaks, and injection
-  bugs. Use when fuzzing REST APIs for stateful bugs or running RESTler-based automated
-  API security testing.
+ an OpenAPI/Swagger spec into a RESTler grammar, configures authentication, and runs
+ test/fuzz-lean/fuzz modes that generate request sequences exercising producer-consumer
+ dependencies, then flags 500 errors, auth bypasses, resource leaks, and injection
+ bugs. Use when fuzzing REST APIs for stateful bugs or running RESTler-based automated
+ API security testing.
 
-  '
+ '
 domain: cybersecurity
 subdomain: api-security
 tags:
@@ -77,54 +77,54 @@ python3 ./build-restler.py --dest_dir /opt/restler
 ```bash
 # Compile the OpenAPI spec into a RESTler fuzzing grammar
 /opt/restler/restler/Restler compile \
-    --api_spec /path/to/openapi.yaml
+ --api_spec /path/to/openapi.yaml
 
 # Output directory structure:
 # Compile/
-#   grammar.py          - Generated fuzzing grammar
-#   grammar.json        - Grammar in JSON format
-#   dict.json           - Custom dictionary for fuzzing values
-#   engine_settings.json - Engine configuration
-#   config.json         - Compilation config
+# grammar.py - Generated fuzzing grammar
+# grammar.json - Grammar in JSON format
+# dict.json - Custom dictionary for fuzzing values
+# engine_settings.json - Engine configuration
+# config.json - Compilation config
 ```
 
 **Custom dictionary for targeted fuzzing (dict.json):**
 ```json
 {
-    "restler_fuzzable_string": [
-        "fuzzstring",
-        "' OR '1'='1",
-        "\" OR \"1\"=\"1",
-        "<script>alert(1)</script>",
-        "../../../etc/passwd",
-        "${7*7}",
-        "{{7*7}}",
-        "a]UNION SELECT 1,2,3--",
-        "\"; cat /etc/passwd; echo \"",
-        "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-    ],
-    "restler_fuzzable_int": [
-        "0",
-        "-1",
-        "999999999",
-        "2147483647",
-        "-2147483648"
-    ],
-    "restler_fuzzable_bool": ["true", "false", "null", "1", "0"],
-    "restler_fuzzable_datetime": [
-        "2024-01-01T00:00:00Z",
-        "0000-00-00T00:00:00Z",
-        "9999-12-31T23:59:59Z",
-        "invalid-date"
-    ],
-    "restler_fuzzable_uuid4": [
-        "00000000-0000-0000-0000-000000000000",
-        "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
-    ],
-    "restler_custom_payload": {
-        "/users/{userId}": ["1", "0", "-1", "admin", "' OR 1=1--"],
-        "/orders/{orderId}": ["1", "0", "999999999"]
-    }
+ "restler_fuzzable_string": [
+ "fuzzstring",
+ "' OR '1'='1",
+ "\" OR \"1\"=\"1",
+ "<script>alert(1)</script>",
+ "../../../etc/passwd",
+ "${7*7}",
+ "{{7*7}}",
+ "a]UNION SELECT 1,2,3--",
+ "\"; cat /etc/passwd; echo \"",
+ "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+ ],
+ "restler_fuzzable_int": [
+ "0",
+ "-1",
+ "999999999",
+ "2147483647",
+ "-2147483648"
+ ],
+ "restler_fuzzable_bool": ["true", "false", "null", "1", "0"],
+ "restler_fuzzable_datetime": [
+ "2024-01-01T00:00:00Z",
+ "0000-00-00T00:00:00Z",
+ "9999-12-31T23:59:59Z",
+ "invalid-date"
+ ],
+ "restler_fuzzable_uuid4": [
+ "00000000-0000-0000-0000-000000000000",
+ "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+ ],
+ "restler_custom_payload": {
+ "/users/{userId}": ["1", "0", "-1", "admin", "' OR 1=1--"],
+ "/orders/{orderId}": ["1", "0", "999999999"]
+ }
 }
 ```
 
@@ -137,34 +137,34 @@ import json
 import time
 
 class AuthenticationProvider:
-    def __init__(self):
-        self.token = None
-        self.token_expiry = 0
-        self.auth_url = "https://target-api.example.com/api/v1/auth/login"
-        self.credentials = {
-            "email": "fuzzer@test.com",
-            "password": "FuzzerPass123!"
-        }
+ def __init__(self):
+ self.token = None
+ self.token_expiry = 0
+ self.auth_url = "https://target-api.example.com/api/v1/auth/login"
+ self.credentials = {
+ "email": "fuzzer@test.com",
+ "password": "FuzzerPass123!"
+ }
 
-    def get_token(self):
-        """Get or refresh authentication token."""
-        current_time = time.time()
-        if self.token and current_time < self.token_expiry - 60:
-            return self.token
+ def get_token(self):
+ """Get or refresh authentication token."""
+ current_time = time.time()
+ if self.token and current_time < self.token_expiry - 60:
+ return self.token
 
-        resp = requests.post(self.auth_url, json=self.credentials)
-        if resp.status_code == 200:
-            data = resp.json()
-            self.token = data["access_token"]
-            self.token_expiry = current_time + 3600  # Assume 1-hour TTL
-            return self.token
-        else:
-            raise Exception(f"Authentication failed: {resp.status_code}")
+ resp = requests.post(self.auth_url, json=self.credentials)
+ if resp.status_code == 200:
+ data = resp.json()
+ self.token = data["access_token"]
+ self.token_expiry = current_time + 3600 # Assume 1-hour TTL
+ return self.token
+ else:
+ raise Exception(f"Authentication failed: {resp.status_code}")
 
-    def get_auth_header(self):
-        """Return the authentication header for RESTler."""
-        token = self.get_token()
-        return f"Authorization: Bearer {token}"
+ def get_auth_header(self):
+ """Return the authentication header for RESTler."""
+ token = self.get_token()
+ return f"Authorization: Bearer {token}"
 
 # Export the token refresh command for RESTler
 auth = AuthenticationProvider()
@@ -174,20 +174,20 @@ print(auth.get_auth_header())
 **Engine settings for authentication (engine_settings.json):**
 ```json
 {
-    "authentication": {
-        "token": {
-            "token_refresh_interval": 300,
-            "token_refresh_cmd": "python3 /path/to/authentication_token.py"
-        }
-    },
-    "max_combinations": 20,
-    "max_request_execution_time": 30,
-    "global_producer_timing_delay": 2,
-    "no_ssl": false,
-    "host": "target-api.example.com",
-    "target_port": 443,
-    "garbage_collection_interval": 300,
-    "max_sequence_length": 10
+ "authentication": {
+ "token": {
+ "token_refresh_interval": 300,
+ "token_refresh_cmd": "python3 /path/to/authentication_token.py"
+ }
+ },
+ "max_combinations": 20,
+ "max_request_execution_time": 30,
+ "global_producer_timing_delay": 2,
+ "no_ssl": false,
+ "host": "target-api.example.com",
+ "target_port": 443,
+ "garbage_collection_interval": 300,
+ "max_sequence_length": 10
 }
 ```
 
@@ -196,12 +196,12 @@ print(auth.get_auth_header())
 ```bash
 # Test mode: Quick validation that all endpoints are reachable
 /opt/restler/restler/Restler test \
-    --grammar_file Compile/grammar.py \
-    --dictionary_file Compile/dict.json \
-    --settings Compile/engine_settings.json \
-    --no_ssl \
-    --target_ip target-api.example.com \
-    --target_port 443
+ --grammar_file Compile/grammar.py \
+ --dictionary_file Compile/dict.json \
+ --settings Compile/engine_settings.json \
+ --no_ssl \
+ --target_ip target-api.example.com \
+ --target_port 443
 
 # Review test results
 cat Test/ResponseBuckets/runSummary.json
@@ -212,22 +212,22 @@ cat Test/ResponseBuckets/runSummary.json
 import json
 
 with open("Test/ResponseBuckets/runSummary.json") as f:
-    summary = json.load(f)
+ summary = json.load(f)
 
 print("Test Mode Summary:")
-print(f"  Total requests: {summary.get('total_requests_sent', {}).get('num_requests', 0)}")
-print(f"  Successful (2xx): {summary.get('num_fully_valid', 0)}")
-print(f"  Client errors (4xx): {summary.get('num_invalid', 0)}")
-print(f"  Server errors (5xx): {summary.get('num_server_error', 0)}")
+print(f" Total requests: {summary.get('total_requests_sent', {}).get('num_requests', 0)}")
+print(f" Successful (2xx): {summary.get('num_fully_valid', 0)}")
+print(f" Client errors (4xx): {summary.get('num_invalid', 0)}")
+print(f" Server errors (5xx): {summary.get('num_server_error', 0)}")
 
 # Identify uncovered endpoints
 covered = summary.get('covered_endpoints', [])
 total = summary.get('total_endpoints', [])
 uncovered = set(total) - set(covered)
 if uncovered:
-    print(f"\nUncovered endpoints ({len(uncovered)}):")
-    for ep in uncovered:
-        print(f"  - {ep}")
+ print(f"\nUncovered endpoints ({len(uncovered)}):")
+ for ep in uncovered:
+ print(f" - {ep}")
 ```
 
 ### Step 5: Run Fuzz-Lean Mode
@@ -235,12 +235,12 @@ if uncovered:
 ```bash
 # Fuzz-lean: One pass through all endpoints with security checkers enabled
 /opt/restler/restler/Restler fuzz-lean \
-    --grammar_file Compile/grammar.py \
-    --dictionary_file Compile/dict.json \
-    --settings Compile/engine_settings.json \
-    --target_ip target-api.example.com \
-    --target_port 443 \
-    --time_budget 1  # 1 hour max
+ --grammar_file Compile/grammar.py \
+ --dictionary_file Compile/dict.json \
+ --settings Compile/engine_settings.json \
+ --target_ip target-api.example.com \
+ --target_port 443 \
+ --time_budget 1 # 1 hour max
 
 # Checkers automatically enabled in fuzz-lean:
 # - UseAfterFree: Tests accessing resources after deletion
@@ -255,13 +255,13 @@ if uncovered:
 ```bash
 # Full fuzz mode: Extended fuzzing for comprehensive coverage
 /opt/restler/restler/Restler fuzz \
-    --grammar_file Compile/grammar.py \
-    --dictionary_file Compile/dict.json \
-    --settings Compile/engine_settings.json \
-    --target_ip target-api.example.com \
-    --target_port 443 \
-    --time_budget 4 \
-    --enable_checkers UseAfterFree NamespaceRule ResourceHierarchy LeakageRule InvalidDynamicObject PayloadBody
+ --grammar_file Compile/grammar.py \
+ --dictionary_file Compile/dict.json \
+ --settings Compile/engine_settings.json \
+ --target_ip target-api.example.com \
+ --target_port 443 \
+ --time_budget 4 \
+ --enable_checkers UseAfterFree NamespaceRule ResourceHierarchy LeakageRule InvalidDynamicObject PayloadBody
 
 # Analyze fuzzing results
 python3 <<'EOF'
@@ -273,23 +273,23 @@ bugs_dir = "Fuzz/bug_buckets"
 
 # Parse bug buckets
 if os.path.exists(bugs_dir):
-    for bug_file in os.listdir(bugs_dir):
-        if bug_file.endswith(".txt"):
-            with open(os.path.join(bugs_dir, bug_file)) as f:
-                content = f.read()
-            print(f"\n=== Bug: {bug_file} ===")
-            print(content[:500])
+ for bug_file in os.listdir(bugs_dir):
+ if bug_file.endswith(".txt"):
+ with open(os.path.join(bugs_dir, bug_file)) as f:
+ content = f.read()
+ print(f"\n=== Bug: {bug_file} ===")
+ print(content[:500])
 
 # Parse response summary
 summary_file = os.path.join(results_dir, "runSummary.json")
 if os.path.exists(summary_file):
-    with open(summary_file) as f:
-        summary = json.load(f)
-    print(f"\nFuzz Summary:")
-    print(f"  Duration: {summary.get('time_budget_hours', 0)} hours")
-    print(f"  Total requests: {summary.get('total_requests_sent', {}).get('num_requests', 0)}")
-    print(f"  Bugs found: {summary.get('num_bugs', 0)}")
-    print(f"  500 errors: {summary.get('num_server_error', 0)}")
+ with open(summary_file) as f:
+ summary = json.load(f)
+ print(f"\nFuzz Summary:")
+ print(f" Duration: {summary.get('time_budget_hours', 0)} hours")
+ print(f" Total requests: {summary.get('total_requests_sent', {}).get('num_requests', 0)}")
+ print(f" Bugs found: {summary.get('num_bugs', 0)}")
+ print(f" 500 errors: {summary.get('num_server_error', 0)}")
 EOF
 ```
 
@@ -376,5 +376,5 @@ EOF
 
 - Endpoints covered: 38/42 (90.5%)
 - Uncovered: POST /admin/migrate, DELETE /admin/cache,
-  PUT /config/advanced, POST /webhooks/test
+ PUT /config/advanced, POST /webhooks/test
 ```

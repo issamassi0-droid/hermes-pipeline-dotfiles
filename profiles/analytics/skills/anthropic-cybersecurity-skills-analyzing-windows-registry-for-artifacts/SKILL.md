@@ -1,10 +1,10 @@
 ---
 name: analyzing-windows-registry-for-artifacts
 description: Extract and analyze Windows Registry hives with tools like RegRipper
-  and Registry Explorer to uncover user activity, installed software, autostart/persistence
-  entries, and evidence of system compromise. Use when investigating registry-based
-  persistence, reconstructing user or system activity, or performing DFIR triage
-  on a Windows image.
+ and Registry Explorer to uncover user activity, installed software, autostart/persistence
+ entries, and evidence of system compromise. Use when investigating registry-based
+ persistence, reconstructing user or system activity, or performing DFIR triage
+ on a Windows image.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -80,26 +80,26 @@ git clone https://github.com/keydet89/RegRipper3.0.git /opt/regripper
 
 # Run RegRipper against NTUSER.DAT (user profile)
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/NTUSER.DAT \
-   -f ntuser > /cases/case-2024-001/analysis/ntuser_report.txt
+ -f ntuser > /cases/case-2024-001/analysis/ntuser_report.txt
 
 # Run against SYSTEM hive
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SYSTEM \
-   -f system > /cases/case-2024-001/analysis/system_report.txt
+ -f system > /cases/case-2024-001/analysis/system_report.txt
 
 # Run against SOFTWARE hive
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SOFTWARE \
-   -f software > /cases/case-2024-001/analysis/software_report.txt
+ -f software > /cases/case-2024-001/analysis/software_report.txt
 
 # Run against SAM hive (user accounts)
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SAM \
-   -f sam > /cases/case-2024-001/analysis/sam_report.txt
+ -f sam > /cases/case-2024-001/analysis/sam_report.txt
 
 # Run specific plugins
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/NTUSER.DAT \
-   -p userassist > /cases/case-2024-001/analysis/userassist.txt
+ -p userassist > /cases/case-2024-001/analysis/userassist.txt
 
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SYSTEM \
-   -p usbstor > /cases/case-2024-001/analysis/usbstor.txt
+ -p usbstor > /cases/case-2024-001/analysis/usbstor.txt
 ```
 
 ### Step 3: Extract Persistence and Autorun Entries
@@ -116,27 +116,27 @@ reg = Registry.Registry("/cases/case-2024-001/registry/SOFTWARE")
 
 # Check Run keys (autostart)
 autorun_paths = [
-    "Microsoft\\Windows\\CurrentVersion\\Run",
-    "Microsoft\\Windows\\CurrentVersion\\RunOnce",
-    "Microsoft\\Windows\\CurrentVersion\\RunServices",
-    "Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run",
-    "Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"
+ "Microsoft\\Windows\\CurrentVersion\\Run",
+ "Microsoft\\Windows\\CurrentVersion\\RunOnce",
+ "Microsoft\\Windows\\CurrentVersion\\RunServices",
+ "Microsoft\\Windows\\CurrentVersion\\Policies\\Explorer\\Run",
+ "Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"
 ]
 
 for path in autorun_paths:
-    try:
-        key = reg.open(path)
-        print(f"\n=== {path} (Last Modified: {key.timestamp()}) ===")
-        for value in key.values():
-            print(f"  {value.name()}: {value.value()}")
-    except Registry.RegistryKeyNotFoundException:
-        pass
+ try:
+ key = reg.open(path)
+ print(f"\n=== {path} (Last Modified: {key.timestamp()}) ===")
+ for value in key.values():
+ print(f" {value.name()}: {value.value()}")
+ except Registry.RegistryKeyNotFoundException:
+ pass
 
 # Check installed services
 key = reg.open("Microsoft\\Windows NT\\CurrentVersion\\Svchost")
 print(f"\n=== Svchost Groups ===")
 for value in key.values():
-    print(f"  {value.name()}: {value.value()}")
+ print(f" {value.name()}: {value.value()}")
 PYEOF
 
 # Check NTUSER.DAT for user-specific autorun
@@ -146,19 +146,19 @@ from Registry import Registry
 reg = Registry.Registry("/cases/case-2024-001/registry/NTUSER.DAT")
 
 user_autorun = [
-    "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-    "Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
-    "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run"
+ "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+ "Software\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+ "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run"
 ]
 
 for path in user_autorun:
-    try:
-        key = reg.open(path)
-        print(f"\n=== {path} (Last Modified: {key.timestamp()}) ===")
-        for value in key.values():
-            print(f"  {value.name()}: {value.value()}")
-    except Registry.RegistryKeyNotFoundException:
-        pass
+ try:
+ key = reg.open(path)
+ print(f"\n=== {path} (Last Modified: {key.timestamp()}) ===")
+ for value in key.values():
+ print(f" {value.name()}: {value.value()}")
+ except Registry.RegistryKeyNotFoundException:
+ pass
 PYEOF
 ```
 
@@ -176,33 +176,33 @@ ua_path = "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\UserAssist"
 key = reg.open(ua_path)
 
 for guid_key in key.subkeys():
-    count_key = guid_key.subkey("Count")
-    print(f"\n=== {guid_key.name()} ===")
-    for value in count_key.values():
-        decoded_name = codecs.decode(value.name(), 'rot_13')
-        data = value.value()
-        if len(data) >= 16:
-            run_count = struct.unpack('<I', data[4:8])[0]
-            focus_count = struct.unpack('<I', data[8:12])[0]
-            timestamp = struct.unpack('<Q', data[60:68])[0] if len(data) >= 68 else 0
-            if timestamp > 0:
-                ts = datetime.datetime(1601,1,1) + datetime.timedelta(microseconds=timestamp//10)
-                print(f"  {decoded_name}: Runs={run_count}, Focus={focus_count}, Last={ts}")
-            else:
-                print(f"  {decoded_name}: Runs={run_count}, Focus={focus_count}")
+ count_key = guid_key.subkey("Count")
+ print(f"\n=== {guid_key.name()} ===")
+ for value in count_key.values():
+ decoded_name = codecs.decode(value.name(), 'rot_13')
+ data = value.value()
+ if len(data) >= 16:
+ run_count = struct.unpack('<I', data[4:8])[0]
+ focus_count = struct.unpack('<I', data[8:12])[0]
+ timestamp = struct.unpack('<Q', data[60:68])[0] if len(data) >= 68 else 0
+ if timestamp > 0:
+ ts = datetime.datetime(1601,1,1) + datetime.timedelta(microseconds=timestamp//10)
+ print(f" {decoded_name}: Runs={run_count}, Focus={focus_count}, Last={ts}")
+ else:
+ print(f" {decoded_name}: Runs={run_count}, Focus={focus_count}")
 PYEOF
 
 # Extract Recent Documents (MRU lists)
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/NTUSER.DAT \
-   -p recentdocs > /cases/case-2024-001/analysis/recentdocs.txt
+ -p recentdocs > /cases/case-2024-001/analysis/recentdocs.txt
 
 # Extract typed URLs (browser)
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/NTUSER.DAT \
-   -p typedurls > /cases/case-2024-001/analysis/typedurls.txt
+ -p typedurls > /cases/case-2024-001/analysis/typedurls.txt
 
 # Extract typed paths in Explorer
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/NTUSER.DAT \
-   -p typedpaths > /cases/case-2024-001/analysis/typedpaths.txt
+ -p typedpaths > /cases/case-2024-001/analysis/typedpaths.txt
 ```
 
 ### Step 5: Extract System and Network Information
@@ -210,27 +210,27 @@ perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/NTUSER.DAT \
 ```bash
 # Computer name and OS version from SYSTEM hive
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SYSTEM \
-   -p compname > /cases/case-2024-001/analysis/system_info.txt
+ -p compname > /cases/case-2024-001/analysis/system_info.txt
 
 # Network interfaces and configuration
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SYSTEM \
-   -p nic2 >> /cases/case-2024-001/analysis/system_info.txt
+ -p nic2 >> /cases/case-2024-001/analysis/system_info.txt
 
 # Wireless network history
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SOFTWARE \
-   -p networklist > /cases/case-2024-001/analysis/network_history.txt
+ -p networklist > /cases/case-2024-001/analysis/network_history.txt
 
 # Timezone configuration
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SYSTEM \
-   -p timezone > /cases/case-2024-001/analysis/timezone.txt
+ -p timezone > /cases/case-2024-001/analysis/timezone.txt
 
 # Shutdown time
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SYSTEM \
-   -p shutdown > /cases/case-2024-001/analysis/shutdown.txt
+ -p shutdown > /cases/case-2024-001/analysis/shutdown.txt
 
 # Installed software from Uninstall keys
 perl /opt/regripper/rip.pl -r /cases/case-2024-001/registry/SOFTWARE \
-   -p uninstall > /cases/case-2024-001/analysis/installed_software.txt
+ -p uninstall > /cases/case-2024-001/analysis/installed_software.txt
 ```
 
 ## Key Concepts
@@ -277,25 +277,25 @@ Extract USBSTOR entries from SYSTEM hive for connected devices, correlate device
 
 ```
 Registry Analysis Summary:
-  System: DESKTOP-ABC123 (Windows 10 Pro Build 19041)
-  Timezone: Eastern Standard Time (UTC-5)
-  Last Shutdown: 2024-01-18 23:45:12 UTC
+ System: DESKTOP-ABC123 (Windows 10 Pro Build 19041)
+ Timezone: Eastern Standard Time (UTC-5)
+ Last Shutdown: 2024-01-18 23:45:12 UTC
 
-  Autorun Entries:
-    HKLM Run:     5 entries (1 suspicious: "updater.exe" -> C:\ProgramData\svc\updater.exe)
-    HKCU Run:     3 entries (all legitimate)
-    Services:     142 entries (2 unknown: "WinDefSvc", "SysMonAgent")
+ Autorun Entries:
+ HKLM Run: 5 entries (1 suspicious: "updater.exe" -> C:\ProgramData\svc\updater.exe)
+ HKCU Run: 3 entries (all legitimate)
+ Services: 142 entries (2 unknown: "WinDefSvc", "SysMonAgent")
 
-  User Activity (NTUSER.DAT):
-    UserAssist Programs:  234 entries
-    Recent Documents:     89 entries
-    Typed URLs:           45 entries
-    Typed Paths:          12 entries
+ User Activity (NTUSER.DAT):
+ UserAssist Programs: 234 entries
+ Recent Documents: 89 entries
+ Typed URLs: 45 entries
+ Typed Paths: 12 entries
 
-  USB Devices Connected:
-    - Kingston DataTraveler (Serial: 0019E06B4521) - First: 2024-01-10, Last: 2024-01-18
-    - WD My Passport (Serial: 575834314131) - First: 2024-01-15, Last: 2024-01-15
+ USB Devices Connected:
+ - Kingston DataTraveler (Serial: 0019E06B4521) - First: 2024-01-10, Last: 2024-01-18
+ - WD My Passport (Serial: 575834314131) - First: 2024-01-15, Last: 2024-01-15
 
-  Installed Software:     127 applications
-  Suspicious Findings:    3 items flagged for review
+ Installed Software: 127 applications
+ Suspicious Findings: 3 items flagged for review
 ```

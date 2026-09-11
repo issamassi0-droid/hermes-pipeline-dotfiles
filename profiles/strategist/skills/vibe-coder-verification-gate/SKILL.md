@@ -72,7 +72,7 @@ Run all checks programmatically:
 
 ```bash
 python scripts/verify.py --path /project/path --language rust
-python scripts/verify.py --path /project/path --json  # JSON output
+python scripts/verify.py --path /project/path --json # JSON output
 ```
 
 The script auto-detects language and runs appropriate checks.

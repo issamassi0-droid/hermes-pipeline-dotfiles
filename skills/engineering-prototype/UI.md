@@ -61,12 +61,12 @@ Create a single switcher component on the route:
 // pseudo-code, adapt to the project's framework
 const variant = searchParams.get('variant') ?? 'A';
 return (
-  <>
-    {variant === 'A' && <VariantA {...data} />}
-    {variant === 'B' && <VariantB {...data} />}
-    {variant === 'C' && <VariantC {...data} />}
-    <PrototypeSwitcher variants={['A','B','C']} current={variant} />
-  </>
+ <>
+ {variant === 'A' && <VariantA {...data} />}
+ {variant === 'B' && <VariantB {...data} />}
+ {variant === 'C' && <VariantC {...data} />}
+ <PrototypeSwitcher variants={['A','B','C']} current={variant} />
+ </>
 );
 ```
 

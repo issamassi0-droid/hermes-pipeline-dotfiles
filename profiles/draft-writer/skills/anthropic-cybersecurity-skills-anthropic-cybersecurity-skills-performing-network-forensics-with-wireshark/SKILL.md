@@ -55,18 +55,18 @@ capinfos /cases/case-2024-001/network/capture.pcap
 
 # Output includes: file type, packet count, capture duration, data size
 # Example output:
-# File name:           capture.pcap
-# File type:           Wireshark/tcpdump/... - pcap
-# Number of packets:   1,245,678
-# File size:           856 MB
-# Data size:           823 MB
-# Capture duration:    3600.123456 seconds
-# First packet time:   2024-01-15 14:00:00.000000
-# Last packet time:    2024-01-15 15:00:00.123456
+# File name: capture.pcap
+# File type: Wireshark/tcpdump/... - pcap
+# Number of packets: 1,245,678
+# File size: 856 MB
+# Data size: 823 MB
+# Capture duration: 3600.123456 seconds
+# First packet time: 2024-01-15 14:00:00.000000
+# Last packet time: 2024-01-15 15:00:00.123456
 
 # Hash the PCAP for integrity
 sha256sum /cases/case-2024-001/network/capture.pcap \
-   > /cases/case-2024-001/network/pcap_hash.txt
+ > /cases/case-2024-001/network/pcap_hash.txt
 
 # Get a protocol hierarchy statistics overview
 tshark -r /cases/case-2024-001/network/capture.pcap -q -z io,phs
@@ -80,38 +80,38 @@ tshark -r /cases/case-2024-001/network/capture.pcap -q -z conv,tcp
 
 # Find top talkers by bytes transferred
 tshark -r /cases/case-2024-001/network/capture.pcap -q -z endpoints,ip \
-   | sort -t$'\t' -k3 -rn | head -20
+ | sort -t$'\t' -k3 -rn | head -20
 
 # Filter for DNS queries (potential C2 or exfiltration)
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "dns.qr == 0" \
-   -T fields -e frame.time -e ip.src -e dns.qry.name \
-   > /cases/case-2024-001/analysis/dns_queries.txt
+ -Y "dns.qr == 0" \
+ -T fields -e frame.time -e ip.src -e dns.qry.name \
+ > /cases/case-2024-001/analysis/dns_queries.txt
 
 # Find DNS queries to unusual TLDs or long domain names (DNS tunneling)
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "dns.qr == 0 && dns.qry.name matches \"[a-z0-9]{30,}\"" \
-   -T fields -e frame.time -e ip.src -e dns.qry.name \
-   > /cases/case-2024-001/analysis/suspicious_dns.txt
+ -Y "dns.qr == 0 && dns.qry.name matches \"[a-z0-9]{30,}\"" \
+ -T fields -e frame.time -e ip.src -e dns.qry.name \
+ > /cases/case-2024-001/analysis/suspicious_dns.txt
 
 # Filter HTTP traffic
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "http.request" \
-   -T fields -e frame.time -e ip.src -e ip.dst -e http.request.method \
-   -e http.host -e http.request.uri -e http.user_agent \
-   > /cases/case-2024-001/analysis/http_requests.txt
+ -Y "http.request" \
+ -T fields -e frame.time -e ip.src -e ip.dst -e http.request.method \
+ -e http.host -e http.request.uri -e http.user_agent \
+ > /cases/case-2024-001/analysis/http_requests.txt
 
 # Find connections to known malicious ports
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "tcp.dstport == 4444 || tcp.dstport == 8080 || tcp.dstport == 1337 || tcp.dstport == 6667" \
-   -T fields -e frame.time -e ip.src -e ip.dst -e tcp.dstport \
-   > /cases/case-2024-001/analysis/suspicious_ports.txt
+ -Y "tcp.dstport == 4444 || tcp.dstport == 8080 || tcp.dstport == 1337 || tcp.dstport == 6667" \
+ -T fields -e frame.time -e ip.src -e ip.dst -e tcp.dstport \
+ > /cases/case-2024-001/analysis/suspicious_ports.txt
 
 # Detect beaconing patterns (regular interval connections)
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "ip.dst == 185.0.0.1" \
-   -T fields -e frame.time_epoch \
-   > /tmp/beacon_times.txt
+ -Y "ip.dst == 185.0.0.1" \
+ -T fields -e frame.time_epoch \
+ > /tmp/beacon_times.txt
 ```
 
 ### Step 3: Extract Files and Objects from Traffic
@@ -119,38 +119,38 @@ tshark -r /cases/case-2024-001/network/capture.pcap \
 ```bash
 # Export HTTP objects (files transferred over HTTP)
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   --export-objects http,/cases/case-2024-001/analysis/http_objects/
+ --export-objects http,/cases/case-2024-001/analysis/http_objects/
 
 # Export SMB objects
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   --export-objects smb,/cases/case-2024-001/analysis/smb_objects/
+ --export-objects smb,/cases/case-2024-001/analysis/smb_objects/
 
 # Export DICOM objects (medical imaging)
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   --export-objects dicom,/cases/case-2024-001/analysis/dicom_objects/
+ --export-objects dicom,/cases/case-2024-001/analysis/dicom_objects/
 
 # Export FTP data transfers
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "ftp-data" \
-   -T fields -e ftp-data.data \
-   --export-objects ftp-data,/cases/case-2024-001/analysis/ftp_objects/
+ -Y "ftp-data" \
+ -T fields -e ftp-data.data \
+ --export-objects ftp-data,/cases/case-2024-001/analysis/ftp_objects/
 
 # Hash all extracted objects
 find /cases/case-2024-001/analysis/http_objects/ -type f -exec sha256sum {} \; \
-   > /cases/case-2024-001/analysis/extracted_file_hashes.txt
+ > /cases/case-2024-001/analysis/extracted_file_hashes.txt
 
 # Check extracted file hashes against VirusTotal
 while read hash filepath; do
-   echo "Checking $filepath ($hash)"
-   curl -s "https://www.virustotal.com/api/v3/files/$hash" \
-      -H "x-apikey: YOUR_API_KEY" | python3 -c "
+ echo "Checking $filepath ($hash)"
+ curl -s "https://www.virustotal.com/api/v3/files/$hash" \
+ -H "x-apikey: YOUR_API_KEY" | python3 -c "
 import json,sys
 data=json.load(sys.stdin)
 if 'data' in data:
-   stats=data['data']['attributes']['last_analysis_stats']
-   print(f'  Malicious: {stats[\"malicious\"]}, Undetected: {stats[\"undetected\"]}')
+ stats=data['data']['attributes']['last_analysis_stats']
+ print(f' Malicious: {stats[\"malicious\"]}, Undetected: {stats[\"undetected\"]}')
 else:
-   print('  Not found on VT')
+ print(' Not found on VT')
 "
 done < /cases/case-2024-001/analysis/extracted_file_hashes.txt
 ```
@@ -160,37 +160,37 @@ done < /cases/case-2024-001/analysis/extracted_file_hashes.txt
 ```bash
 # Follow a specific TCP stream (stream index 42)
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -q -z "follow,tcp,ascii,42" \
-   > /cases/case-2024-001/analysis/stream_42.txt
+ -q -z "follow,tcp,ascii,42" \
+ > /cases/case-2024-001/analysis/stream_42.txt
 
 # Extract all HTTP request-response pairs for a suspicious host
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "http && ip.addr == 185.0.0.1" \
-   -T fields -e frame.time -e http.request.method -e http.host \
-   -e http.request.uri -e http.response.code -e http.content_length \
-   > /cases/case-2024-001/analysis/suspicious_http.txt
+ -Y "http && ip.addr == 185.0.0.1" \
+ -T fields -e frame.time -e http.request.method -e http.host \
+ -e http.request.uri -e http.response.code -e http.content_length \
+ > /cases/case-2024-001/analysis/suspicious_http.txt
 
 # Extract TLS/SSL certificate information
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "tls.handshake.type == 11" \
-   -T fields -e ip.dst -e tls.handshake.certificate \
-   > /cases/case-2024-001/analysis/tls_certs.txt
+ -Y "tls.handshake.type == 11" \
+ -T fields -e ip.dst -e tls.handshake.certificate \
+ > /cases/case-2024-001/analysis/tls_certs.txt
 
 # Extract TLS SNI (Server Name Indication) values
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "tls.handshake.extensions_server_name" \
-   -T fields -e frame.time -e ip.src -e ip.dst \
-   -e tls.handshake.extensions_server_name \
-   > /cases/case-2024-001/analysis/tls_sni.txt
+ -Y "tls.handshake.extensions_server_name" \
+ -T fields -e frame.time -e ip.src -e ip.dst \
+ -e tls.handshake.extensions_server_name \
+ > /cases/case-2024-001/analysis/tls_sni.txt
 
 # Extract credentials from unencrypted protocols
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "ftp.request.command == \"USER\" || ftp.request.command == \"PASS\"" \
-   -T fields -e frame.time -e ip.src -e ftp.request.command -e ftp.request.arg
+ -Y "ftp.request.command == \"USER\" || ftp.request.command == \"PASS\"" \
+ -T fields -e frame.time -e ip.src -e ftp.request.command -e ftp.request.arg
 
 tshark -r /cases/case-2024-001/network/capture.pcap \
-   -Y "http.authorization" \
-   -T fields -e frame.time -e ip.src -e http.host -e http.authorization
+ -Y "http.authorization" \
+ -T fields -e frame.time -e ip.src -e http.host -e http.authorization
 ```
 
 ### Step 5: Use NetworkMiner for Automated Analysis
@@ -227,27 +227,27 @@ Capture Period: 2024-01-15 14:00 to 15:00 UTC
 Analyst: [Examiner Name]
 
 TRAFFIC OVERVIEW:
-  Total packets: 1,245,678
-  Unique source IPs: 45
-  Unique destination IPs: 234
-  Protocols: TCP (78%), UDP (18%), ICMP (2%), Other (2%)
+ Total packets: 1,245,678
+ Unique source IPs: 45
+ Unique destination IPs: 234
+ Protocols: TCP (78%), UDP (18%), ICMP (2%), Other (2%)
 
 C2 COMMUNICATION:
-  Destination: 185.0.0.1:443
-  Beaconing interval: ~60 seconds
-  Total connections: 58
-  Data transferred: 4.2 MB outbound, 12.3 MB inbound
-  TLS SNI: update-service.malware-c2.com
+ Destination: 185.0.0.1:443
+ Beaconing interval: ~60 seconds
+ Total connections: 58
+ Data transferred: 4.2 MB outbound, 12.3 MB inbound
+ TLS SNI: update-service.malware-c2.com
 
 EXFILTRATION:
-  Method: HTTPS POST to 185.0.0.1
-  Volume: 4.2 MB over 45 minutes
-  Files: 3 ZIP archives extracted from HTTP objects
+ Method: HTTPS POST to 185.0.0.1
+ Volume: 4.2 MB over 45 minutes
+ Files: 3 ZIP archives extracted from HTTP objects
 
 DNS TUNNELING:
-  Suspicious queries to: data.evil-dns.com
-  Average subdomain length: 45 characters
-  Query count: 1,234 (normal baseline: 50)
+ Suspicious queries to: data.evil-dns.com
+ Average subdomain length: 45 characters
+ Query count: 1,234 (normal baseline: 50)
 EOF
 ```
 
@@ -295,23 +295,23 @@ Filter HTTP traffic to the web server, identify SQL injection, XSS, and director
 
 ```
 Network Forensics Summary:
-  Capture: capture.pcap
-  Duration: 1 hour (14:00-15:00 UTC, 2024-01-15)
-  Packets: 1,245,678 | Size: 856 MB
+ Capture: capture.pcap
+ Duration: 1 hour (14:00-15:00 UTC, 2024-01-15)
+ Packets: 1,245,678 | Size: 856 MB
 
-  Top Suspicious Connections:
-    192.168.1.50 -> 185.0.0.1:443   (C2, 58 connections, 4.2MB out)
-    192.168.1.50 -> 10.0.0.25:445   (SMB lateral movement)
-    192.168.1.50 -> 10.0.0.30:3389  (RDP lateral movement)
+ Top Suspicious Connections:
+ 192.168.1.50 -> 185.0.0.1:443 (C2, 58 connections, 4.2MB out)
+ 192.168.1.50 -> 10.0.0.25:445 (SMB lateral movement)
+ 192.168.1.50 -> 10.0.0.30:3389 (RDP lateral movement)
 
-  Extracted Artifacts:
-    Files:        23 (3 malicious per VT)
-    Credentials:  2 plaintext FTP logins
-    DNS Queries:  1,234 suspicious (possible tunneling)
-    TLS Certs:    5 self-signed certificates
+ Extracted Artifacts:
+ Files: 23 (3 malicious per VT)
+ Credentials: 2 plaintext FTP logins
+ DNS Queries: 1,234 suspicious (possible tunneling)
+ TLS Certs: 5 self-signed certificates
 
-  IOCs Identified:
-    IPs:     185.0.0.1, 203.0.113.50
-    Domains: update-service.malware-c2.com, data.evil-dns.com
-    Hashes:  3 file hashes flagged as malware
+ IOCs Identified:
+ IPs: 185.0.0.1, 203.0.113.50
+ Domains: update-service.malware-c2.com, data.evil-dns.com
+ Hashes: 3 file hashes flagged as malware
 ```

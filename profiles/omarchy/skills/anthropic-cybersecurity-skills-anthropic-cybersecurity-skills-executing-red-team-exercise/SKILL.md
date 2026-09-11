@@ -1,13 +1,13 @@
 ---
 name: executing-red-team-exercise
 description: 'Run a stealthy, MITRE ATT&CK-mapped adversary emulation against an organization''s
-  people, processes, and technology, using C2 infrastructure (Cobalt Strike, Sliver, Brute
-  Ratel, Mythic) through the full attack lifecycle to test SOC detection and response rather
-  than just find vulnerabilities. Use when executing a full-scope red team exercise, adversary
-  simulation/emulation, or a regulatory exercise (TIBER-EU, CBEST, AASE, iCAST) with executive
-  authorization and a signed Rules of Engagement already in place.
+ people, processes, and technology, using C2 infrastructure (Cobalt Strike, Sliver, Brute
+ Ratel, Mythic) through the full attack lifecycle to test SOC detection and response rather
+ than just find vulnerabilities. Use when executing a full-scope red team exercise, adversary
+ simulation/emulation, or a regulatory exercise (TIBER-EU, CBEST, AASE, iCAST) with executive
+ authorization and a signed Rules of Engagement already in place.
 
-  '
+ '
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -70,14 +70,14 @@ Develop the operation plan based on a realistic threat model:
 - **Threat actor selection**: Select an adversary group relevant to the organization's industry. For financial services, emulate FIN7 or Lazarus Group. For healthcare, emulate APT41 or FIN12. Map the selected adversary's known TTPs from MITRE ATT&CK.
 - **Objective definition**: Define measurable objectives such as "Access customer financial data from the core banking system" or "Demonstrate ability to deploy ransomware across the domain"
 - **Attack plan development**: Create a step-by-step operation plan mapping each phase to ATT&CK tactics:
-  1. Initial Access (TA0001): Phishing, exploiting public-facing applications, or supply chain compromise
-  2. Execution (TA0002): PowerShell, scripting, exploitation for client execution
-  3. Persistence (TA0003): Scheduled tasks, registry modifications, implant deployment
-  4. Privilege Escalation (TA0004): Token impersonation, exploitation for privilege escalation
-  5. Defense Evasion (TA0005): Process injection, timestomping, indicator removal
-  6. Credential Access (TA0006): LSASS dumping, Kerberoasting, credential stuffing
-  7. Lateral Movement (TA0008): Remote services, pass-the-hash, remote desktop
-  8. Collection/Exfiltration (TA0009/TA0010): Data staging, exfiltration over C2
+ 1. Initial Access (TA0001): Phishing, exploiting public-facing applications, or supply chain compromise
+ 2. Execution (TA0002): PowerShell, scripting, exploitation for client execution
+ 3. Persistence (TA0003): Scheduled tasks, registry modifications, implant deployment
+ 4. Privilege Escalation (TA0004): Token impersonation, exploitation for privilege escalation
+ 5. Defense Evasion (TA0005): Process injection, timestomping, indicator removal
+ 6. Credential Access (TA0006): LSASS dumping, Kerberoasting, credential stuffing
+ 7. Lateral Movement (TA0008): Remote services, pass-the-hash, remote desktop
+ 8. Collection/Exfiltration (TA0009/TA0010): Data staging, exfiltration over C2
 - **Deconfliction plan**: Establish procedures for the white cell to distinguish red team activity from actual threats
 
 ### Step 2: Infrastructure Preparation
@@ -87,10 +87,10 @@ Build OPSEC-hardened attack infrastructure:
 - **C2 infrastructure**: Deploy primary C2 server behind redirectors that filter Blue Team investigation traffic. Use domain fronting or legitimate cloud services (Azure CDN, CloudFront) to blend C2 traffic with normal web traffic.
 - **Phishing infrastructure**: Register aged domains (30+ days old), configure SPF/DKIM/DMARC, and build credential harvesting or payload delivery pages
 - **Payload development**: Create custom implants or configure C2 framework payloads with:
-  - AMSI bypass for PowerShell execution
-  - ETW patching to evade security product telemetry
-  - Sleep masking and memory encryption to defeat memory scanning
-  - Signed binary proxy execution (rundll32, msbuild, regsvr32) for defense evasion
+ - AMSI bypass for PowerShell execution
+ - ETW patching to evade security product telemetry
+ - Sleep masking and memory encryption to defeat memory scanning
+ - Signed binary proxy execution (rundll32, msbuild, regsvr32) for defense evasion
 - **Staging infrastructure**: Set up file hosting for second-stage payloads, exfiltration drop servers, and backup communication channels
 - **OPSEC verification**: Test the entire infrastructure against the same EDR/AV products deployed in the target environment before going live
 

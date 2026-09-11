@@ -66,32 +66,32 @@ Policies inherit from the lowest ancestor with an enforced policy. If no ancesto
 ```bash
 # Deny external IP addresses on all VMs
 gcloud resource-manager org-policies set-policy \
-  --organization=ORGANIZATION_ID \
-  policy.yaml
+ --organization=ORGANIZATION_ID \
+ policy.yaml
 ```
 
 policy.yaml:
 ```yaml
 constraint: constraints/compute.vmExternalIpAccess
 listPolicy:
-  allValues: DENY
+ allValues: DENY
 ```
 
 ### Restrict Resource Locations
 
 ```bash
 gcloud org-policies set-policy \
-  --organization=ORGANIZATION_ID \
-  location-policy.yaml
+ --organization=ORGANIZATION_ID \
+ location-policy.yaml
 ```
 
 location-policy.yaml:
 ```yaml
 constraint: constraints/gcp.resourceLocations
 listPolicy:
-  allowedValues:
-    - "in:us-locations"
-    - "in:eu-locations"
+ allowedValues:
+ - "in:us-locations"
+ - "in:eu-locations"
 ```
 
 ### Disable Default Service Account Creation
@@ -99,7 +99,7 @@ listPolicy:
 ```yaml
 constraint: constraints/iam.automaticIamGrantsForDefaultServiceAccounts
 booleanPolicy:
-  enforced: true
+ enforced: true
 ```
 
 ### Require OS Login for SSH
@@ -107,7 +107,7 @@ booleanPolicy:
 ```yaml
 constraint: constraints/compute.requireOsLogin
 booleanPolicy:
-  enforced: true
+ enforced: true
 ```
 
 ### Disable Serial Port Access
@@ -115,7 +115,7 @@ booleanPolicy:
 ```yaml
 constraint: constraints/compute.disableSerialPortAccess
 booleanPolicy:
-  enforced: true
+ enforced: true
 ```
 
 ### Enforce Uniform Bucket-Level Access
@@ -123,7 +123,7 @@ booleanPolicy:
 ```yaml
 constraint: constraints/storage.uniformBucketLevelAccess
 booleanPolicy:
-  enforced: true
+ enforced: true
 ```
 
 ### Restrict Public IP on Cloud SQL
@@ -131,7 +131,7 @@ booleanPolicy:
 ```yaml
 constraint: constraints/sql.restrictPublicIp
 booleanPolicy:
-  enforced: true
+ enforced: true
 ```
 
 ### Disable Service Account Key Creation
@@ -139,52 +139,52 @@ booleanPolicy:
 ```yaml
 constraint: constraints/iam.disableServiceAccountKeyCreation
 booleanPolicy:
-  enforced: true
+ enforced: true
 ```
 
 ## Terraform Implementation
 
 ```hcl
 resource "google_organization_policy" "restrict_vm_external_ip" {
-  org_id     = var.org_id
-  constraint = "constraints/compute.vmExternalIpAccess"
+ org_id = var.org_id
+ constraint = "constraints/compute.vmExternalIpAccess"
 
-  list_policy {
-    deny {
-      all = true
-    }
-  }
+ list_policy {
+ deny {
+ all = true
+ }
+ }
 }
 
 resource "google_organization_policy" "restrict_locations" {
-  org_id     = var.org_id
-  constraint = "constraints/gcp.resourceLocations"
+ org_id = var.org_id
+ constraint = "constraints/gcp.resourceLocations"
 
-  list_policy {
-    allow {
-      values = ["in:us-locations", "in:eu-locations"]
-    }
-  }
+ list_policy {
+ allow {
+ values = ["in:us-locations", "in:eu-locations"]
+ }
+ }
 }
 
 resource "google_organization_policy" "require_os_login" {
-  org_id     = var.org_id
-  constraint = "constraints/compute.requireOsLogin"
+ org_id = var.org_id
+ constraint = "constraints/compute.requireOsLogin"
 
-  boolean_policy {
-    enforced = true
-  }
+ boolean_policy {
+ enforced = true
+ }
 }
 
 resource "google_folder_organization_policy" "dev_folder_external_ip" {
-  folder     = google_folder.dev.name
-  constraint = "constraints/compute.vmExternalIpAccess"
+ folder = google_folder.dev.name
+ constraint = "constraints/compute.vmExternalIpAccess"
 
-  list_policy {
-    allow {
-      values = ["projects/dev-project/zones/us-central1-a/instances/bastion-host"]
-    }
-  }
+ list_policy {
+ allow {
+ values = ["projects/dev-project/zones/us-central1-a/instances/bastion-host"]
+ }
+ }
 }
 ```
 
@@ -195,22 +195,22 @@ Use Policy Intelligence tools to test changes before enforcement:
 ```bash
 # Create a dry-run policy to monitor impact
 gcloud org-policies set-policy \
-  --organization=ORGANIZATION_ID \
-  dry-run-policy.yaml
+ --organization=ORGANIZATION_ID \
+ dry-run-policy.yaml
 ```
 
 dry-run-policy.yaml:
 ```yaml
 constraint: constraints/compute.vmExternalIpAccess
 listPolicy:
-  allValues: DENY
+ allValues: DENY
 dryRunSpec: true
 ```
 
 ```bash
 # Check violations against dry-run policy
 gcloud org-policies list-custom-constraints \
-  --organization=ORGANIZATION_ID
+ --organization=ORGANIZATION_ID
 ```
 
 ## Custom Constraints
@@ -219,10 +219,10 @@ gcloud org-policies list-custom-constraints \
 # custom-constraint.yaml
 name: organizations/ORGANIZATION_ID/customConstraints/custom.disableGKEAutoUpgrade
 resourceTypes:
-  - container.googleapis.com/NodePool
+ - container.googleapis.com/NodePool
 methodTypes:
-  - CREATE
-  - UPDATE
+ - CREATE
+ - UPDATE
 condition: "resource.management.autoUpgrade == true"
 actionType: DENY
 displayName: Deny GKE auto-upgrade on node pools
@@ -245,15 +245,15 @@ gcloud org-policies list --organization=ORGANIZATION_ID
 
 ```bash
 gcloud org-policies describe constraints/compute.vmExternalIpAccess \
-  --organization=ORGANIZATION_ID
+ --organization=ORGANIZATION_ID
 ```
 
 ### Audit policy violations with Cloud Asset Inventory
 
 ```bash
 gcloud asset search-all-resources \
-  --scope=organizations/ORGANIZATION_ID \
-  --query="policy:constraints/compute.vmExternalIpAccess"
+ --scope=organizations/ORGANIZATION_ID \
+ --query="policy:constraints/compute.vmExternalIpAccess"
 ```
 
 ## Recommended Baseline Policies

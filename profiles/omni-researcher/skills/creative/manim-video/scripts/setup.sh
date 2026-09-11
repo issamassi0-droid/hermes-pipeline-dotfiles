@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 G="\033[0;32m"; R="\033[0;31m"; N="\033[0m"
-ok() { echo -e "  ${G}+${N} $1"; }
-fail() { echo -e "  ${R}x${N} $1"; }
+ok() { echo -e " ${G}+${N} $1"; }
+fail() { echo -e " ${R}x${N} $1"; }
 echo ""; echo "Manim Video Skill — Setup Check"; echo ""
 errors=0
 command -v python3 &>/dev/null && ok "Python $(python3 --version 2>&1 | awk '{print $2}')" || { fail "Python 3 not found"; errors=$((errors+1)); }

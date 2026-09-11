@@ -18,10 +18,10 @@ Find the exact path to your `.gguf` file, e.g.: `/home/user/.cache/huggingface/h
 
 ```bash
 llama-server \
-  -m /path/to/model.gguf \
-  --port 8080 \
-  -c 8192 \
-  -ngl 99
+ -m /path/to/model.gguf \
+ --port 8080 \
+ -c 8192 \
+ -ngl 99
 ```
 
 Adjust:
@@ -42,13 +42,13 @@ curl -s http://localhost:8080/health
 
 ```yaml
 model:
-  provider: custom
-  default: auto
-  base_url: http://localhost:8080/v1
-  api_key: sk-local
+ provider: custom
+ default: auto
+ base_url: http://localhost:8080/v1
+ api_key: sk-local
 
 litellm:
-  default_model: "openai/local-model"
+ default_model: "openai/local-model"
 
 context_length: 8192
 ```

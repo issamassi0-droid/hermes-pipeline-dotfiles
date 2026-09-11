@@ -16,10 +16,10 @@ Everything runs through `npx hyperframes` unless project instructions specify a 
 5. **Visual inspect** — `npx hyperframes inspect`
 6. **Preview** — `npx hyperframes preview` opens **Studio**, the timeline editor where the user can manually edit anything (not just watch). Review there, then ask before rendering.
 7. **Render** — pick the variant:
-   - Iterate: `npx hyperframes render --quality draft`
-   - Deliver: `npx hyperframes render --quality high --output out.mp4`
-   - CI / cross-host repro: `npx hyperframes render --docker --strict --output out.mp4`
-   - Cloud (long / large): `npx hyperframes lambda render ./my-project --width 1920 --height 1080 --wait` (see Lambda below)
+ - Iterate: `npx hyperframes render --quality draft`
+ - Deliver: `npx hyperframes render --quality high --output out.mp4`
+ - CI / cross-host repro: `npx hyperframes render --docker --strict --output out.mp4`
+ - Cloud (long / large): `npx hyperframes lambda render ./my-project --width 1920 --height 1080 --wait` (see Lambda below)
 
 Run lint, validate, and inspect before preview. `lint` catches missing `data-composition-id`, overlapping tracks, and unregistered timelines. `validate` loads the composition in headless Chrome and reports runtime console errors plus WCAG contrast issues. `inspect` seeks through the timeline and reports text spilling out of bubbles/containers or off the canvas — and, when a `*.motion.json` sidecar is present, verifies motion intent (entrances firing under seek, stagger order, in-frame, liveness) against that same seeked timeline.
 
@@ -35,18 +35,18 @@ Cross-cutting rules that hold for every command:
 - **CI gating on render**: `--strict` fails on lint errors, `--strict-all` fails on warnings too, `--strict-variables` fails on undeclared `--variables` keys.
 - **Paths in `--json` are redacted** — `$HOME` becomes the literal `$HOME` so output is safe to paste into bug reports and agent contexts.
 - **Render is user-gated.** Never auto-render once the checks pass. Pause at `preview`, tell the user the video is editable in Studio, and render only after they approve.
-- **Post-render verification.** After `render` returns exit 0, confirm the output file exists and has plausible size before reporting success: `[ -s "$OUTPUT" ] || echo "render produced no output"`. The CLI prints `◇  <path>` on success; for long renders also sanity-check duration with `ffprobe -i "$OUTPUT" -show_format -v error`.
+- **Post-render verification.** After `render` returns exit 0, confirm the output file exists and has plausible size before reporting success: `[ -s "$OUTPUT" ] || echo "render produced no output"`. The CLI prints `◇ <path>` on success; for long renders also sanity-check duration with `ffprobe -i "$OUTPUT" -show_format -v error`.
 
 ## Routing
 
-| Want to…                                                                                                   | Read                                  |
+| Want to… | Read |
 | ---------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| Scaffold a project (`init`, `capture`, `skills`)                                                           | `references/init-and-scaffold.md`     |
-| Check correctness (`lint`, `validate`, `inspect`, `snapshot`)                                              | `references/lint-validate-inspect.md` |
-| Preview or render (`preview`, `play`, `render`, `publish`)                                                 | `references/preview-render.md`        |
-| Diagnose the environment (`doctor`, `browser`)                                                             | `references/doctor-browser.md`        |
-| Cloud render on AWS Lambda (`lambda deploy / sites / render / progress / destroy / policies`)              | `references/lambda.md`                |
-| Everything else (`info`, `upgrade`, `compositions`, `docs`, `benchmark`, `telemetry`, asset preprocessing) | `references/upgrade-info-misc.md`     |
+| Scaffold a project (`init`, `capture`, `skills`) | `references/init-and-scaffold.md` |
+| Check correctness (`lint`, `validate`, `inspect`, `snapshot`) | `references/lint-validate-inspect.md` |
+| Preview or render (`preview`, `play`, `render`, `publish`) | `references/preview-render.md` |
+| Diagnose the environment (`doctor`, `browser`) | `references/doctor-browser.md` |
+| Cloud render on AWS Lambda (`lambda deploy / sites / render / progress / destroy / policies`) | `references/lambda.md` |
+| Everything else (`info`, `upgrade`, `compositions`, `docs`, `benchmark`, `telemetry`, asset preprocessing) | `references/upgrade-info-misc.md` |
 
 ## Cross-Skill Hand-Offs
 
@@ -60,9 +60,9 @@ Cross-cutting rules that hold for every command:
 `hyperframes lambda` deploys distributed rendering to AWS Lambda and drives renders from your laptop or CI. End-to-end is three commands:
 
 ```bash
-npx hyperframes lambda deploy                                             # provision SAM stack (Lambda + Step Functions + S3)
+npx hyperframes lambda deploy # provision SAM stack (Lambda + Step Functions + S3)
 npx hyperframes lambda render ./my-project --width 1920 --height 1080 --wait
-npx hyperframes lambda destroy                                            # tear down (S3 bucket is retained)
+npx hyperframes lambda destroy # tear down (S3 bucket is retained)
 ```
 
 Use Lambda when a render is too long / too large for one host (multi-minute videos, 4K, large parallel batches) and you have AWS credentials configured. For dev-loop iteration stay on local `render`.
@@ -99,11 +99,11 @@ Output lands in `snapshots/frame-NN-at-Xs.png`. Eyeball each frame against the s
 
 Per-frame red flags (each maps to a specific failure mode the static gates miss):
 
-| What you see                                                                       | Root cause                                                                                  |
+| What you see | Root cause |
 | ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Text shows up tiny + unstyled in the top-left corner                               | `<style>` block left in `<head>` outside `<template>` (Pitfall 1) — no CSS reached live DOM |
-| SVG/icon elements blown up to canvas-size                                          | Same as above — no width/height constraints applied                                         |
-| Hero element of the scene is missing entirely; only background + watermark visible | Host-id ≠ template id (Pitfall 2) — timeline never ran, frame captured at initial state     |
-| Snapshot command logs `Sub-composition timelines not registered after 45000ms`     | Pitfall 2 — direct confirmation                                                             |
+| Text shows up tiny + unstyled in the top-left corner | `<style>` block left in `<head>` outside `<template>` (Pitfall 1) — no CSS reached live DOM |
+| SVG/icon elements blown up to canvas-size | Same as above — no width/height constraints applied |
+| Hero element of the scene is missing entirely; only background + watermark visible | Host-id ≠ template id (Pitfall 2) — timeline never ran, frame captured at initial state |
+| Snapshot command logs `Sub-composition timelines not registered after 45000ms` | Pitfall 2 — direct confirmation |
 
 `snapshots/` can be deleted after eyeballing; the user-facing final render is a separate pass with `npx hyperframes render`.

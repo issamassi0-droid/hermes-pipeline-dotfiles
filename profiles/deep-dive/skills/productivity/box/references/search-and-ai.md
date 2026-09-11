@@ -7,7 +7,7 @@ Use Box search and metadata before AI when they answer the request deterministic
 ```bash
 box search "invoice ACME" --json --limit 25 --fields id,name,type,parent
 box metadata-query enterprise_12345.contractTemplate <ANCESTOR_FOLDER_ID> \
-  --query "status = :status" --query-param status=active --json
+ --query "status = :status" --query-param status=active --json
 ```
 
 Search only returns content visible to the current actor. Resolve IDs and confirm the actor before treating empty results as missing files.
@@ -27,17 +27,17 @@ Search only returns content visible to the current actor. Resolve IDs and confir
 
 ```bash
 box ai:ask --items=id=<FILE_ID>,type=file \
-  --prompt "Summarize the renewal obligations and dates." --json
+ --prompt "Summarize the renewal obligations and dates." --json
 
 box ai:extract --items=id=<FILE_ID>,type=file \
-  --prompt "invoice_number, vendor, total, due_date" --json
+ --prompt "invoice_number, vendor, total, due_date" --json
 
 box ai:extract-structured --items=id=<FILE_ID>,type=file \
-  --fields "key=invoice_number,type=string,description=Invoice number" \
-  --fields "key=total,type=float,description=Invoice total" --json
+ --fields "key=invoice_number,type=string,description=Invoice number" \
+ --fields "key=total,type=float,description=Invoice total" --json
 
 box ai:text-gen --items=id=<FILE_ID>,type=file \
-  --prompt "Draft a concise customer update based on this file." --json
+ --prompt "Draft a concise customer update based on this file." --json
 ```
 
 `ai:text-gen` supports exactly one item. Extraction endpoints return JSON; they do not automatically attach that result to the file. Use structured extraction with inline fields when the desired schema is known, freeform extraction when the fields are exploratory, and `--metadata-template` only when an existing Box template is the source of truth.
@@ -62,15 +62,15 @@ Treat extraction and persistence as separate operations. Unless the user asks fo
 ### Inspect schemas before extracting
 
 1. Retrieve the file, its parent, and every metadata instance already attached to it.
-   ```bash
-   box files:get <FILE_ID> --json --fields id,name,parent
-   box files:metadata <FILE_ID> --json
-   ```
+ ```bash
+ box files:get <FILE_ID> --json --fields id,name,parent
+ box files:metadata <FILE_ID> --json
+ ```
 2. List the enterprise templates visible to the current OAuth identity and retrieve plausible schemas.
-   ```bash
-   box metadata-templates --json --fields templateKey,displayName,scope
-   box metadata-templates:get <TEMPLATE_KEY> --scope enterprise --json
-   ```
+ ```bash
+ box metadata-templates --json --fields templateKey,displayName,scope
+ box metadata-templates:get <TEMPLATE_KEY> --scope enterprise --json
+ ```
 3. Compare every requested field with each candidate's meaning, field key, and type. Use an existing template only when one semantically appropriate template supports **all** requested fields. Do not attach a partial or unrelated template merely to fit some values.
 
 ### Use a compatible existing template
@@ -79,14 +79,14 @@ Extract against the template, then add its metadata instance or update the exist
 
 ```bash
 box ai:extract-structured --items=id=<FILE_ID>,type=file \
-  --metadata-template="type=metadata_template,scope=enterprise,template_key=<TEMPLATE_KEY>" \
-  --json
+ --metadata-template="type=metadata_template,scope=enterprise,template_key=<TEMPLATE_KEY>" \
+ --json
 
 box files:metadata:create <FILE_ID> --scope enterprise --template-key <TEMPLATE_KEY> \
-  --data "invoice_number=INV-001" --data "total=#1250.00" --json
+ --data "invoice_number=INV-001" --data "total=#1250.00" --json
 
 box files:metadata:update <FILE_ID> --scope enterprise --template-key <TEMPLATE_KEY> \
-  --replace "invoice_number=INV-001" --replace "total=#1250.00" --json
+ --replace "invoice_number=INV-001" --replace "total=#1250.00" --json
 
 box files:metadata:get <FILE_ID> --scope enterprise --template-key <TEMPLATE_KEY> --json
 ```
@@ -108,10 +108,10 @@ Persist a flat scalar result in Box's built-in `global.properties` instance. It 
 box files:metadata:get <FILE_ID> --scope global --template-key properties --json
 
 box files:metadata:create <FILE_ID> --scope global --template-key properties \
-  --data "invoice_number=INV-001" --data "total=1250.00" --json
+ --data "invoice_number=INV-001" --data "total=1250.00" --json
 
 box files:metadata:update <FILE_ID> --scope global --template-key properties \
-  --replace "invoice_number=INV-001" --add "total=1250.00" --json
+ --replace "invoice_number=INV-001" --add "total=1250.00" --json
 
 box files:metadata:get <FILE_ID> --scope global --template-key properties --json
 ```

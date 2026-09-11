@@ -80,7 +80,7 @@ Bulk-append with a Python heredoc, not repeated `patch` calls:
 
 ```python
 if "## System Layer" in text:
-    continue          # idempotency guard — re-runs must not double-append
+ continue # idempotency guard — re-runs must not double-append
 text.rstrip() + "\n\n---\n\n" + section
 ```
 
@@ -108,45 +108,45 @@ Only then report done.
 ## Pitfalls
 
 - **SOUL edits do not apply to already-running sessions.** The current context was loaded
-  before the edit. Say so explicitly and tell the user each agent picks the change up on
-  its next load — otherwise the user tests immediately, sees no difference, and concludes
-  the work failed.
+ before the edit. Say so explicitly and tell the user each agent picks the change up on
+ its next load — otherwise the user tests immediately, sees no difference, and concludes
+ the work failed.
 - **Do not let a contract restate the environment.** Contracts carry policy (who may
-  escalate, what a handoff contains, what the quality floor is). Tool schemas, directory
-  maps, and command lists already load every session — duplicating them makes the contract
-  stale and contradicts reality after the first environment change.
+ escalate, what a handoff contains, what the quality floor is). Tool schemas, directory
+ maps, and command lists already load every session — duplicating them makes the contract
+ stale and contradicts reality after the first environment change.
 - **A rejection must be a first-class deliverable.** If the quality charter only rewards
-  approvals, the verifier rubber-stamps under pressure. State precision/recall as the
-  verifier's metric, not approval rate.
+ approvals, the verifier rubber-stamps under pressure. State precision/recall as the
+ verifier's metric, not approval rate.
 - **Same-model verification is not verification.** For high or irreversible stakes, require
-  a different model family for the verifier than the writer, and make a match a hard refusal
-  rather than a warning.
+ a different model family for the verifier than the writer, and make a match a hard refusal
+ rather than a warning.
 - **Never put secrets in the contracts.** Payloads, registry, and protocol are plaintext;
-  credentials go through env vars or the vault. A registry entry with an inline key is a
-  breach, not a shortcut.
+ credentials go through env vars or the vault. A registry entry with an inline key is a
+ breach, not a shortcut.
 - **Bootstrap restore must copy the SOULs back too.** A restore that only reinstalls the
-  system layer leaves the agents unwired and the system silently half-broken.
+ system layer leaves the agents unwired and the system silently half-broken.
 - **Freeze the constitutional layer explicitly.** Name what the evolution loop may NOT
-  change (refusal lines, the evidence-label set, the core canon) — otherwise the
-  self-improvement loop will eventually sand off exactly the constraints that make the
-  system trustworthy.
+ change (refusal lines, the evidence-label set, the core canon) — otherwise the
+ self-improvement loop will eventually sand off exactly the constraints that make the
+ system trustworthy.
 - **All outputs go to the shared vault.** The user's ObsidianVault is the canonical
-  destination for all system outputs (papers, research, contracts, reports). Writing only
-  to `~/.hermes/system/` is incomplete — the user expects deliverables in the vault where
-  they can read and share them.
+ destination for all system outputs (papers, research, contracts, reports). Writing only
+ to `~/.hermes/system/` is incomplete — the user expects deliverables in the vault where
+ they can read and share them.
 - **Bilingual deliverables by default.** The user discusses in Arabic but expects
-  deliverables (research papers, documentation, reports) in both Arabic AND English — not
-  English-only. Always produce bilingual deliverables unless the user explicitly requests
-  one language.
+ deliverables (research papers, documentation, reports) in both Arabic AND English — not
+ English-only. Always produce bilingual deliverables unless the user explicitly requests
+ one language.
 - **Patch-driven evolution.** When the user provides a patch document, implement it
-  immediately — do not summarize or discuss first. The user expects action, not narration.
+ immediately — do not summarize or discuss first. The user expects action, not narration.
 - **Cache must be bounded.** The model gateway cache must have a TTL and max entry count.
-  An unbounded cache serves stale data and costs memory.
+ An unbounded cache serves stale data and costs memory.
 - **Do not over-promise SLM parity.** Small language models with good engineering reach
-  80-90% of capable models on structured tasks. They do NOT reach parity on open-ended
-  creative or multi-step reasoning tasks. State this honestly.
+ 80-90% of capable models on structured tasks. They do NOT reach parity on open-ended
+ creative or multi-step reasoning tasks. State this honestly.
 - **Test token cost, not always latency.** When benchmarking, measure both tokens AND
-  wall-clock time. A fast system that burns tokens is not efficient.
+ wall-clock time. A fast system that burns tokens is not efficient.
 
 ## Verification
 

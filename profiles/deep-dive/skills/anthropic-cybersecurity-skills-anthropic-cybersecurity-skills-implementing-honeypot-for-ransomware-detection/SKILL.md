@@ -1,14 +1,14 @@
 ---
 name: implementing-honeypot-for-ransomware-detection
 description: 'Deploys canary files, honeypot shares, and decoy systems to detect ransomware
-  activity at the earliest possible stage. Configures canary tokens embedded in strategic
-  file locations that trigger alerts when ransomware attempts encryption, uses honeypot
-  network shares that mimic high-value targets, and deploys Thinkst Canary appliances
-  for comprehensive deception-based detection. Activates for requests involving ransomware
-  honeypots, canary files, deception technology for ransomware, or early ransomware
-  alerting.
+ activity at the earliest possible stage. Configures canary tokens embedded in strategic
+ file locations that trigger alerts when ransomware attempts encryption, uses honeypot
+ network shares that mimic high-value targets, and deploys Thinkst Canary appliances
+ for comprehensive deception-based detection. Activates for requests involving ransomware
+ honeypots, canary files, deception technology for ransomware, or early ransomware
+ alerting.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -39,33 +39,33 @@ mitre_attack:
 - T1486
 - T1490
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - positioning
-  - initial-access
-  - monetization
-  - resource-development
-  techniques:
-  - id: T1219
-    name: Remote Access Tools
-    tactic: positioning
-    source: attack
-  - id: T1586
-    name: Compromise Accounts
-    tactic: resource-development
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1047
-    name: Transfer of funds
-    tactic: monetization
-    source: f3
-  - id: F1033
-    name: Insider Access Abuse
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - positioning
+ - initial-access
+ - monetization
+ - resource-development
+ techniques:
+ - id: T1219
+ name: Remote Access Tools
+ tactic: positioning
+ source: attack
+ - id: T1586
+ name: Compromise Accounts
+ tactic: resource-development
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1047
+ name: Transfer of funds
+ tactic: monetization
+ source: f3
+ - id: F1033
+ name: Insider Access Abuse
+ tactic: initial-access
+ source: f3
 ---
 # Implementing Honeypot for Ransomware Detection
 
@@ -101,33 +101,33 @@ Place canary files in strategic locations that ransomware will encounter during 
 
 $shares = @("\\fileserver01\finance", "\\fileserver01\hr", "\\fileserver01\engineering")
 $canaryNames = @(
-    "!_IMPORTANT_DO_NOT_DELETE.docx",
-    "000_Budget_2026_FINAL.xlsx",
-    "_Confidential_Employee_Records.pdf",
-    "AAAA_Quarterly_Report.docx"
+ "!_IMPORTANT_DO_NOT_DELETE.docx",
+ "000_Budget_2026_FINAL.xlsx",
+ "_Confidential_Employee_Records.pdf",
+ "AAAA_Quarterly_Report.docx"
 )
 
 foreach ($share in $shares) {
-    foreach ($name in $canaryNames) {
-        $targetPath = Join-Path $share $name
-        # Create a legitimate-looking file with canary content
-        # The file contains a unique token that triggers on access
-        $content = "This document contains confidential financial data.`n"
-        $content += "Q4 2025 Revenue: $42.3M | Q1 2026 Forecast: $45.1M`n"
-        $content += "Prepared by: Finance Department`n"
-        Set-Content -Path $targetPath -Value $content
-        # Set file as hidden system to avoid user interaction
-        $file = Get-Item $targetPath
-        $file.Attributes = [System.IO.FileAttributes]::Hidden
-    }
+ foreach ($name in $canaryNames) {
+ $targetPath = Join-Path $share $name
+ # Create a legitimate-looking file with canary content
+ # The file contains a unique token that triggers on access
+ $content = "This document contains confidential financial data.`n"
+ $content += "Q4 2025 Revenue: $42.3M | Q1 2026 Forecast: $45.1M`n"
+ $content += "Prepared by: Finance Department`n"
+ Set-Content -Path $targetPath -Value $content
+ # Set file as hidden system to avoid user interaction
+ $file = Get-Item $targetPath
+ $file.Attributes = [System.IO.FileAttributes]::Hidden
+ }
 }
 
 # Also deploy in subdirectories (ransomware traverses recursively)
 $subDirs = Get-ChildItem -Path "\\fileserver01\finance" -Directory -Recurse | Select-Object -First 20
 foreach ($dir in $subDirs) {
-    $canaryPath = Join-Path $dir.FullName "!_Budget_Summary.xlsx"
-    Set-Content -Path $canaryPath -Value "Canary file for ransomware detection"
-    (Get-Item $canaryPath).Attributes = [System.IO.FileAttributes]::Hidden
+ $canaryPath = Join-Path $dir.FullName "!_Budget_Summary.xlsx"
+ Set-Content -Path $canaryPath -Value "Canary file for ransomware detection"
+ (Get-Item $canaryPath).Attributes = [System.IO.FileAttributes]::Hidden
 }
 ```
 
@@ -143,11 +143,11 @@ Install-WindowsFeature -Name FS-Resource-Manager -IncludeManagementTools
 
 # Create file screen for known ransomware extensions
 $ransomExtensions = @(
-    "*.encrypted", "*.locked", "*.crypto", "*.crypt",
-    "*.locky", "*.cerber", "*.zepto", "*.thor",
-    "*.aesir", "*.zzzzz", "*.wallet", "*.onion",
-    "*.wncry", "*.wcry", "*.lockbit", "*.BlackCat",
-    "*.ALPHV", "*.rhysida", "*.play"
+ "*.encrypted", "*.locked", "*.crypto", "*.crypt",
+ "*.locky", "*.cerber", "*.zepto", "*.thor",
+ "*.aesir", "*.zzzzz", "*.wallet", "*.onion",
+ "*.wncry", "*.wcry", "*.lockbit", "*.BlackCat",
+ "*.ALPHV", "*.rhysida", "*.play"
 )
 
 # Create file group for ransomware extensions
@@ -155,13 +155,13 @@ New-FsrmFileGroup -Name "Ransomware_Extensions" -IncludePattern $ransomExtension
 
 # Create file screen template
 New-FsrmFileScreenTemplate -Name "Ransomware_Screen" `
-    -IncludeGroup "Ransomware_Extensions" `
-    -Active:$false  # Passive mode: alert without blocking
+ -IncludeGroup "Ransomware_Extensions" `
+ -Active:$false # Passive mode: alert without blocking
 
 # Apply to all monitored shares
 $monitoredPaths = @("D:\Shares\Finance", "D:\Shares\HR", "D:\Shares\Engineering")
 foreach ($path in $monitoredPaths) {
-    New-FsrmFileScreen -Path $path -Template "Ransomware_Screen"
+ New-FsrmFileScreen -Path $path -Template "Ransomware_Screen"
 }
 ```
 
@@ -170,9 +170,9 @@ foreach ($path in $monitoredPaths) {
 ```powershell
 # Real-time canary file monitoring service
 $canaryPaths = @(
-    "D:\Shares\Finance\!_IMPORTANT_DO_NOT_DELETE.docx",
-    "D:\Shares\HR\000_Budget_2026_FINAL.xlsx",
-    "D:\Shares\Engineering\_Confidential_Employee_Records.pdf"
+ "D:\Shares\Finance\!_IMPORTANT_DO_NOT_DELETE.docx",
+ "D:\Shares\HR\000_Budget_2026_FINAL.xlsx",
+ "D:\Shares\Engineering\_Confidential_Employee_Records.pdf"
 )
 
 $watcher = New-Object System.IO.FileSystemWatcher
@@ -182,24 +182,24 @@ $watcher.IncludeSubdirectories = $true
 $watcher.EnableRaisingEvents = $true
 
 $action = {
-    $path = $Event.SourceEventArgs.FullPath
-    $changeType = $Event.SourceEventArgs.ChangeType
-    $timestamp = $Event.TimeGenerated
+ $path = $Event.SourceEventArgs.FullPath
+ $changeType = $Event.SourceEventArgs.ChangeType
+ $timestamp = $Event.TimeGenerated
 
-    # Check if modified file is a canary
-    $isCanary = $false
-    foreach ($canary in $canaryPaths) {
-        if ($path -eq $canary) { $isCanary = $true; break }
-    }
+ # Check if modified file is a canary
+ $isCanary = $false
+ foreach ($canary in $canaryPaths) {
+ if ($path -eq $canary) { $isCanary = $true; break }
+ }
 
-    if ($isCanary -or $changeType -eq "Renamed") {
-        $alertMsg = "RANSOMWARE ALERT: Canary file modified! Path: $path | Change: $changeType | Time: $timestamp"
-        # Log to Windows Event Log
-        Write-EventLog -LogName Application -Source "RansomwareCanary" `
-            -EventID 9999 -EntryType Error -Message $alertMsg
-        # Send SIEM alert via syslog
-        # Trigger automated containment
-    }
+ if ($isCanary -or $changeType -eq "Renamed") {
+ $alertMsg = "RANSOMWARE ALERT: Canary file modified! Path: $path | Change: $changeType | Time: $timestamp"
+ # Log to Windows Event Log
+ Write-EventLog -LogName Application -Source "RansomwareCanary" `
+ -EventID 9999 -EntryType Error -Message $alertMsg
+ # Send SIEM alert via syslog
+ # Trigger automated containment
+ }
 }
 
 Register-ObjectEvent $watcher "Changed" -Action $action
@@ -222,9 +222,9 @@ New-Item -Path "D:\HoneypotShares\Customer_Database_Exports" -ItemType Directory
 
 # Share with broad read access (enticing to attackers)
 New-SmbShare -Name "Executive_Compensation" `
-    -Path "D:\HoneypotShares\Executive_Compensation" `
-    -FullAccess "DOMAIN\Domain Users" `
-    -Description "Executive Compensation Files - Restricted"
+ -Path "D:\HoneypotShares\Executive_Compensation" `
+ -FullAccess "DOMAIN\Domain Users" `
+ -Description "Executive Compensation Files - Restricted"
 
 # Populate with realistic-looking but fake documents
 # Use document templates that look legitimate
@@ -239,8 +239,8 @@ Set-Content -Path "D:\HoneypotShares\Executive_Compensation\FY2026_Comp_Summary.
 # Enable detailed audit logging on honeypot share
 $acl = Get-Acl "D:\HoneypotShares"
 $auditRule = New-Object System.Security.AccessControl.FileSystemAuditRule(
-    "Everyone", "ReadAndExecute,Write,Delete", "ContainerInherit,ObjectInherit",
-    "None", "Success,Failure"
+ "Everyone", "ReadAndExecute,Write,Delete", "ContainerInherit,ObjectInherit",
+ "None", "Success,Failure"
 )
 $acl.AddAuditRule($auditRule)
 Set-Acl "D:\HoneypotShares" $acl
@@ -259,23 +259,23 @@ For organizations using Thinkst Canary or the free canarytokens.org service:
 
 # Word document token
 curl -X POST "https://CONSOLE.canary.tools/api/v1/canarytoken/create" \
-  -d "auth_token=YOUR_API_TOKEN" \
-  -d "memo=Finance_Share_Canary" \
-  -d "kind=doc-msword" \
-  -o /tmp/canary_budget_report.docx
+ -d "auth_token=YOUR_API_TOKEN" \
+ -d "memo=Finance_Share_Canary" \
+ -d "kind=doc-msword" \
+ -o /tmp/canary_budget_report.docx
 
 # PDF document token
 curl -X POST "https://CONSOLE.canary.tools/api/v1/canarytoken/create" \
-  -d "auth_token=YOUR_API_TOKEN" \
-  -d "memo=HR_Share_Canary" \
-  -d "kind=pdf-acrobat-reader" \
-  -o /tmp/canary_employee_handbook.pdf
+ -d "auth_token=YOUR_API_TOKEN" \
+ -d "memo=HR_Share_Canary" \
+ -d "kind=pdf-acrobat-reader" \
+ -o /tmp/canary_employee_handbook.pdf
 
 # Windows folder token (alerts when folder is browsed)
 curl -X POST "https://CONSOLE.canary.tools/api/v1/canarytoken/create" \
-  -d "auth_token=YOUR_API_TOKEN" \
-  -d "memo=Executive_Folder_Browse" \
-  -d "kind=windows-dir"
+ -d "auth_token=YOUR_API_TOKEN" \
+ -d "memo=Executive_Folder_Browse" \
+ -d "kind=windows-dir"
 
 # Deploy Canary appliance (emulates a file server)
 # Configure via web console to appear as:
@@ -299,41 +299,41 @@ NAC_API = "https://nac.company.com/api/v1/quarantine"
 EDR_API = "https://edr.company.com/api/v1/isolate"
 
 def send_ransomware_alert(source_ip: str, canary_path: str, action: str):
-    """Send high-priority alert to SIEM and trigger automated containment."""
-    alert = {
-        "timestamp": datetime.utcnow().isoformat(),
-        "severity": "CRITICAL",
-        "category": "Ransomware - Canary File Triggered",
-        "source_ip": source_ip,
-        "canary_file": canary_path,
-        "action_detected": action,
-        "automated_response": "Host isolation initiated",
-        "mitre_technique": "T1486 - Data Encrypted for Impact",
-    }
+ """Send high-priority alert to SIEM and trigger automated containment."""
+ alert = {
+ "timestamp": datetime.utcnow().isoformat(),
+ "severity": "CRITICAL",
+ "category": "Ransomware - Canary File Triggered",
+ "source_ip": source_ip,
+ "canary_file": canary_path,
+ "action_detected": action,
+ "automated_response": "Host isolation initiated",
+ "mitre_technique": "T1486 - Data Encrypted for Impact",
+ }
 
-    # Send to SIEM
-    try:
-        requests.post(SIEM_WEBHOOK, json=alert, timeout=5)
-    except requests.RequestException as e:
-        logging.error(f"SIEM alert failed: {e}")
+ # Send to SIEM
+ try:
+ requests.post(SIEM_WEBHOOK, json=alert, timeout=5)
+ except requests.RequestException as e:
+ logging.error(f"SIEM alert failed: {e}")
 
-    # Automated containment - isolate host via NAC
-    try:
-        requests.post(f"{NAC_API}/{source_ip}",
-                      json={"action": "quarantine", "reason": "Ransomware canary triggered"},
-                      timeout=5)
-    except requests.RequestException as e:
-        logging.error(f"NAC quarantine failed: {e}")
+ # Automated containment - isolate host via NAC
+ try:
+ requests.post(f"{NAC_API}/{source_ip}",
+ json={"action": "quarantine", "reason": "Ransomware canary triggered"},
+ timeout=5)
+ except requests.RequestException as e:
+ logging.error(f"NAC quarantine failed: {e}")
 
-    # Automated containment - isolate host via EDR
-    try:
-        requests.post(EDR_API,
-                      json={"ip": source_ip, "action": "isolate"},
-                      timeout=5)
-    except requests.RequestException as e:
-        logging.error(f"EDR isolation failed: {e}")
+ # Automated containment - isolate host via EDR
+ try:
+ requests.post(EDR_API,
+ json={"ip": source_ip, "action": "isolate"},
+ timeout=5)
+ except requests.RequestException as e:
+ logging.error(f"EDR isolation failed: {e}")
 
-    logging.critical(f"RANSOMWARE CANARY ALERT: {source_ip} modified {canary_path} ({action})")
+ logging.critical(f"RANSOMWARE CANARY ALERT: {source_ip} modified {canary_path} ({action})")
 ```
 
 ## Key Concepts

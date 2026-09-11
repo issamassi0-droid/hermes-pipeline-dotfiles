@@ -13,10 +13,10 @@ import * as THREE from "three";
 // Create scene, camera, renderer
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000,
+ 75,
+ window.innerWidth / window.innerHeight,
+ 0.1,
+ 1000,
 );
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 
@@ -40,18 +40,18 @@ camera.position.z = 5;
 
 // Animation loop
 function animate() {
-  requestAnimationFrame(animate);
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-  renderer.render(scene, camera);
+ requestAnimationFrame(animate);
+ cube.rotation.x += 0.01;
+ cube.rotation.y += 0.01;
+ renderer.render(scene, camera);
 }
 animate();
 
 // Handle resize
 window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+ camera.aspect = window.innerWidth / window.innerHeight;
+ camera.updateProjectionMatrix();
+ renderer.setSize(window.innerWidth, window.innerHeight);
 });
 ```
 
@@ -78,10 +78,10 @@ scene.fog = new THREE.FogExp2(0xffffff, 0.02); // Exponential fog
 ```javascript
 // PerspectiveCamera(fov, aspect, near, far)
 const camera = new THREE.PerspectiveCamera(
-  75, // Field of view (degrees)
-  window.innerWidth / window.innerHeight, // Aspect ratio
-  0.1, // Near clipping plane
-  1000, // Far clipping plane
+ 75, // Field of view (degrees)
+ window.innerWidth / window.innerHeight, // Aspect ratio
+ 0.1, // Near clipping plane
+ 1000, // Far clipping plane
 );
 
 camera.position.set(0, 5, 10);
@@ -96,12 +96,12 @@ camera.updateProjectionMatrix(); // Call after changing fov, aspect, near, far
 const aspect = window.innerWidth / window.innerHeight;
 const frustumSize = 10;
 const camera = new THREE.OrthographicCamera(
-  (frustumSize * aspect) / -2,
-  (frustumSize * aspect) / 2,
-  frustumSize / 2,
-  frustumSize / -2,
-  0.1,
-  1000,
+ (frustumSize * aspect) / -2,
+ (frustumSize * aspect) / 2,
+ frustumSize / 2,
+ frustumSize / -2,
+ 0.1,
+ 1000,
 );
 ```
 
@@ -110,14 +110,14 @@ const camera = new THREE.OrthographicCamera(
 ```javascript
 const cameras = [];
 for (let i = 0; i < 4; i++) {
-  const subcamera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
-  subcamera.viewport = new THREE.Vector4(
-    Math.floor(i % 2) * 0.5,
-    Math.floor(i / 2) * 0.5,
-    0.5,
-    0.5,
-  );
-  cameras.push(subcamera);
+ const subcamera = new THREE.PerspectiveCamera(40, 1, 0.1, 100);
+ subcamera.viewport = new THREE.Vector4(
+ Math.floor(i % 2) * 0.5,
+ Math.floor(i / 2) * 0.5,
+ 0.5,
+ 0.5,
+ );
+ cameras.push(subcamera);
 }
 const arrayCamera = new THREE.ArrayCamera(cameras);
 ```
@@ -141,11 +141,11 @@ cubeCamera.update(renderer, scene);
 
 ```javascript
 const renderer = new THREE.WebGLRenderer({
-  canvas: document.querySelector("#canvas"), // Optional existing canvas
-  antialias: true, // Smooth edges
-  alpha: true, // Transparent background
-  powerPreference: "high-performance", // GPU hint
-  preserveDrawingBuffer: true, // For screenshots
+ canvas: document.querySelector("#canvas"), // Optional existing canvas
+ antialias: true, // Smooth edges
+ alpha: true, // Transparent background
+ powerPreference: "high-performance", // GPU hint
+ preserveDrawingBuffer: true, // For screenshots
 });
 
 renderer.setSize(width, height);
@@ -203,7 +203,7 @@ obj.layers.disable(0);
 
 // Traverse hierarchy
 obj.traverse((child) => {
-  if (child.isMesh) child.material.color.set(0xff0000);
+ if (child.isMesh) child.material.color.set(0xff0000);
 });
 
 // Matrix updates
@@ -393,24 +393,24 @@ THREE.MathUtils.smootherstep(x, min, max);
 
 ```javascript
 function dispose() {
-  // Dispose geometries
-  mesh.geometry.dispose();
+ // Dispose geometries
+ mesh.geometry.dispose();
 
-  // Dispose materials
-  if (Array.isArray(mesh.material)) {
-    mesh.material.forEach((m) => m.dispose());
-  } else {
-    mesh.material.dispose();
-  }
+ // Dispose materials
+ if (Array.isArray(mesh.material)) {
+ mesh.material.forEach((m) => m.dispose());
+ } else {
+ mesh.material.dispose();
+ }
 
-  // Dispose textures
-  texture.dispose();
+ // Dispose textures
+ texture.dispose();
 
-  // Remove from scene
-  scene.remove(mesh);
+ // Remove from scene
+ scene.remove(mesh);
 
-  // Dispose renderer
-  renderer.dispose();
+ // Dispose renderer
+ renderer.dispose();
 }
 ```
 
@@ -420,13 +420,13 @@ function dispose() {
 const clock = new THREE.Clock();
 
 function animate() {
-  const delta = clock.getDelta(); // Time since last frame (seconds)
-  const elapsed = clock.getElapsedTime(); // Total time (seconds)
+ const delta = clock.getDelta(); // Time since last frame (seconds)
+ const elapsed = clock.getElapsedTime(); // Total time (seconds)
 
-  mesh.rotation.y += delta * 0.5; // Consistent speed regardless of framerate
+ mesh.rotation.y += delta * 0.5; // Consistent speed regardless of framerate
 
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
+ requestAnimationFrame(animate);
+ renderer.render(scene, camera);
 }
 ```
 
@@ -434,14 +434,14 @@ function animate() {
 
 ```javascript
 function onWindowResize() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+ const width = window.innerWidth;
+ const height = window.innerHeight;
 
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
+ camera.aspect = width / height;
+ camera.updateProjectionMatrix();
 
-  renderer.setSize(width, height);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+ renderer.setSize(width, height);
+ renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 }
 window.addEventListener("resize", onWindowResize);
 ```

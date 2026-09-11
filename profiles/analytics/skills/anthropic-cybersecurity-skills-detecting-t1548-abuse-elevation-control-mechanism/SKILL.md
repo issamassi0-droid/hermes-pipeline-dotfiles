@@ -1,10 +1,10 @@
 ---
 name: detecting-t1548-abuse-elevation-control-mechanism
 description: Detect abuse of elevation control mechanisms (T1548), including Windows UAC
-  bypass via auto-elevating binaries like fodhelper.exe and Linux sudo/setuid/setgid exploitation,
-  by monitoring registry changes, integrity-level transitions, and parent-child process
-  relationships via Sysmon and Windows Security events. Use when hunting privilege-escalation
-  activity or validating elevation-abuse detection coverage.
+ bypass via auto-elevating binaries like fodhelper.exe and Linux sudo/setuid/setgid exploitation,
+ by monitoring registry changes, integrity-level transitions, and parent-child process
+ relationships via Sysmon and Windows Security events. Use when hunting privilege-escalation
+ activity or validating elevation-abuse detection coverage.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:
@@ -106,19 +106,19 @@ DeviceRegistryEvents
 title: UAC Bypass via Registry Modification
 status: stable
 logsource:
-    product: windows
-    category: registry_set
+ product: windows
+ category: registry_set
 detection:
-    selection:
-        TargetObject|contains:
-            - '\ms-settings\shell\open\command'
-            - '\mscfile\shell\open\command'
-            - '\exefile\shell\open\command'
-    condition: selection
+ selection:
+ TargetObject|contains:
+ - '\ms-settings\shell\open\command'
+ - '\mscfile\shell\open\command'
+ - '\exefile\shell\open\command'
+ condition: selection
 level: high
 tags:
-    - attack.privilege_escalation
-    - attack.t1548.002
+ - attack.privilege_escalation
+ - attack.t1548.002
 ```
 
 ## Common Scenarios

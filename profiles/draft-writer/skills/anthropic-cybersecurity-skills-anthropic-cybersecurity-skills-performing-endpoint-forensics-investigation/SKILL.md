@@ -1,12 +1,12 @@
 ---
 name: performing-endpoint-forensics-investigation
 description: 'Performs digital forensics investigation on compromised endpoints including
-  memory acquisition, disk imaging, artifact analysis, and timeline reconstruction.
-  Use when investigating security incidents, collecting evidence for legal proceedings,
-  or analyzing endpoint compromise scope. Activates for requests involving endpoint
-  forensics, memory analysis, disk forensics, or incident investigation.
+ memory acquisition, disk imaging, artifact analysis, and timeline reconstruction.
+ Use when investigating security incidents, collecting evidence for legal proceedings,
+ or analyzing endpoint compromise scope. Activates for requests involving endpoint
+ forensics, memory analysis, disk forensics, or incident investigation.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -158,34 +158,34 @@ vol -f memdump.raw windows.registry.printkey --key "Software\Microsoft\Windows\C
 Key forensic artifacts and their tools:
 
 Prefetch Files (C:\Windows\Prefetch\):
-  Tool: PECmd.exe (Eric Zimmerman)
-  Shows: Program execution history with timestamps and run counts
-  Command: PECmd.exe -d "C:\Windows\Prefetch" --csv output\
+ Tool: PECmd.exe (Eric Zimmerman)
+ Shows: Program execution history with timestamps and run counts
+ Command: PECmd.exe -d "C:\Windows\Prefetch" --csv output\
 
 ShimCache (AppCompatCache):
-  Tool: AppCompatCacheParser.exe
-  Shows: Programs that existed on system (even if deleted)
-  Command: AppCompatCacheParser.exe -f SYSTEM --csv output\
+ Tool: AppCompatCacheParser.exe
+ Shows: Programs that existed on system (even if deleted)
+ Command: AppCompatCacheParser.exe -f SYSTEM --csv output\
 
 AmCache (C:\Windows\appcompat\Programs\Amcache.hve):
-  Tool: AmcacheParser.exe
-  Shows: Program execution with SHA1 hashes and install timestamps
-  Command: AmcacheParser.exe -f Amcache.hve --csv output\
+ Tool: AmcacheParser.exe
+ Shows: Program execution with SHA1 hashes and install timestamps
+ Command: AmcacheParser.exe -f Amcache.hve --csv output\
 
 NTFS artifacts ($MFT, $UsnJrnl, $LogFile):
-  Tool: MFTECmd.exe
-  Shows: Complete file system timeline including deleted files
-  Command: MFTECmd.exe -f "$MFT" --csv output\
+ Tool: MFTECmd.exe
+ Shows: Complete file system timeline including deleted files
+ Command: MFTECmd.exe -f "$MFT" --csv output\
 
 Event Logs:
-  Tool: EvtxECmd.exe
-  Shows: Security, System, PowerShell, Sysmon events
-  Command: EvtxECmd.exe -d "C:\Windows\System32\winevt\Logs" --csv output\
+ Tool: EvtxECmd.exe
+ Shows: Security, System, PowerShell, Sysmon events
+ Command: EvtxECmd.exe -d "C:\Windows\System32\winevt\Logs" --csv output\
 
 Registry Hives (SAM, SYSTEM, SOFTWARE, NTUSER.DAT):
-  Tool: RECmd.exe with batch files
-  Shows: User accounts, services, installed software, USB history
-  Command: RECmd.exe -d "C:\Windows\System32\config" --bn BatchExamples\RECmd_Batch_MC.reb --csv output\
+ Tool: RECmd.exe with batch files
+ Shows: User accounts, services, installed software, USB history
+ Command: RECmd.exe -d "C:\Windows\System32\config" --bn BatchExamples\RECmd_Batch_MC.reb --csv output\
 ```
 
 ### Step 5: Timeline Reconstruction
@@ -193,7 +193,7 @@ Registry Hives (SAM, SYSTEM, SOFTWARE, NTUSER.DAT):
 ```bash
 # Use KAPE for automated artifact collection
 kape.exe --tsource C: --tdest C:\evidence\kape_output \
-  --target KapeTriage --module !EZParser
+ --target KapeTriage --module !EZParser
 
 # Create super timeline with plaso/log2timeline
 log2timeline.py timeline.plaso disk_image.E01
@@ -212,10 +212,10 @@ Structure forensic report:
 3. Evidence Inventory (with chain of custody)
 4. Timeline of Events
 5. Findings and Analysis
-   - Initial access vector
-   - Persistence mechanisms
-   - Lateral movement
-   - Data access/exfiltration
+ - Initial access vector
+ - Persistence mechanisms
+ - Lateral movement
+ - Data access/exfiltration
 6. Indicators of Compromise (IOCs)
 7. Recommendations
 8. Appendices (tool output, hashes, raw evidence)

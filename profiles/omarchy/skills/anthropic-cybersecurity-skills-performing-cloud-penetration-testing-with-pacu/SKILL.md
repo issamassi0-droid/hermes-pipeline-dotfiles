@@ -1,12 +1,12 @@
 ---
 name: performing-cloud-penetration-testing-with-pacu
 description: 'Run authorized AWS penetration tests with Pacu, the open-source AWS exploitation
-  framework, to enumerate IAM configuration, scan for privilege escalation paths, and
-  test data access and lateral movement using compromised credentials. Use when conducting
-  authorized red-team assessments of AWS environments, validating IAM policies and
-  SCPs, or determining the blast radius of compromised AWS credentials.
+ framework, to enumerate IAM configuration, scan for privilege escalation paths, and
+ test data access and lateral movement using compromised credentials. Use when conducting
+ authorized red-team assessments of AWS environments, validating IAM policies and
+ SCPs, or determining the blast radius of compromised AWS credentials.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -111,15 +111,15 @@ Use Pacu's privilege escalation scanner to identify all exploitable escalation v
 Pacu > run iam__privesc_scan
 
 # The scanner tests for 21+ escalation methods:
-# Method 1:  iam:CreatePolicyVersion
-# Method 2:  iam:SetDefaultPolicyVersion
-# Method 3:  iam:PassRole + ec2:RunInstances
-# Method 4:  iam:PassRole + lambda:CreateFunction + lambda:InvokeFunction
-# Method 5:  iam:PassRole + lambda:CreateFunction + lambda:CreateEventSourceMapping
-# Method 6:  iam:PassRole + glue:CreateDevEndpoint
-# Method 7:  iam:PassRole + cloudformation:CreateStack
-# Method 8:  iam:PassRole + datapipeline:CreatePipeline
-# Method 9:  iam:CreateAccessKey
+# Method 1: iam:CreatePolicyVersion
+# Method 2: iam:SetDefaultPolicyVersion
+# Method 3: iam:PassRole + ec2:RunInstances
+# Method 4: iam:PassRole + lambda:CreateFunction + lambda:InvokeFunction
+# Method 5: iam:PassRole + lambda:CreateFunction + lambda:CreateEventSourceMapping
+# Method 6: iam:PassRole + glue:CreateDevEndpoint
+# Method 7: iam:PassRole + cloudformation:CreateStack
+# Method 8: iam:PassRole + datapipeline:CreatePipeline
+# Method 9: iam:CreateAccessKey
 # Method 10: iam:CreateLoginProfile
 # Method 11: iam:UpdateLoginProfile
 # Method 12: iam:AttachUserPolicy
@@ -198,18 +198,18 @@ Review whether security controls detected the testing activities and compile fin
 ```bash
 # Check GuardDuty findings generated during testing
 aws guardduty list-findings \
-  --detector-id $(aws guardduty list-detectors --query 'DetectorIds[0]' --output text) \
-  --finding-criteria '{
-    "Criterion": {
-      "updatedAt": {"GreaterThanOrEqual": ENGAGEMENT_START_EPOCH}
-    }
-  }' --output json
+ --detector-id $(aws guardduty list-detectors --query 'DetectorIds[0]' --output text) \
+ --finding-criteria '{
+ "Criterion": {
+ "updatedAt": {"GreaterThanOrEqual": ENGAGEMENT_START_EPOCH}
+ }
+ }' --output json
 
 # Check Security Hub findings
 aws securityhub get-findings \
-  --filters '{
-    "CreatedAt": [{"Start": "ENGAGEMENT_START_ISO", "End": "ENGAGEMENT_END_ISO"}]
-  }'
+ --filters '{
+ "CreatedAt": [{"Start": "ENGAGEMENT_START_ISO", "End": "ENGAGEMENT_END_ISO"}]
+ }'
 
 # Export Pacu session data for reporting
 Pacu > export_keys --all
@@ -268,40 +268,40 @@ Starting Credentials: Developer role (read-only S3, Lambda invoke)
 Authorization: Signed ROE document #PT-2026-015
 
 ATTACK PATH SUMMARY:
-  Starting access: S3 read-only, Lambda invoke
-  Maximum access achieved: AdministratorAccess (full account compromise)
-  Time to admin: 47 minutes
-  Detection by GuardDuty: Yes (after 12 minutes)
-  Detection by Security Hub: Yes (after 18 minutes)
-  SOC response time: 45 minutes (missed the escalation window)
+ Starting access: S3 read-only, Lambda invoke
+ Maximum access achieved: AdministratorAccess (full account compromise)
+ Time to admin: 47 minutes
+ Detection by GuardDuty: Yes (after 12 minutes)
+ Detection by Security Hub: Yes (after 18 minutes)
+ SOC response time: 45 minutes (missed the escalation window)
 
 PACU MODULES EXECUTED:
-  iam__enum_users_roles_policies_groups: SUCCESS
-  iam__enum_permissions: SUCCESS
-  iam__privesc_scan: 3 escalation paths found
-  s3__download_bucket: 4 buckets accessed
-  lambda__enum: 12 functions enumerated
-  secretsmanager__enum: 8 secrets retrieved
+ iam__enum_users_roles_policies_groups: SUCCESS
+ iam__enum_permissions: SUCCESS
+ iam__privesc_scan: 3 escalation paths found
+ s3__download_bucket: 4 buckets accessed
+ lambda__enum: 12 functions enumerated
+ secretsmanager__enum: 8 secrets retrieved
 
 ESCALATION PATHS EXPLOITED:
-  [1] iam:PassRole + lambda:CreateFunction -> AdminRole (CRITICAL)
-  [2] sts:AssumeRole -> CrossAccountProdRole (HIGH)
-  [3] iam:CreatePolicyVersion on dev-policy (CRITICAL)
+ [1] iam:PassRole + lambda:CreateFunction -> AdminRole (CRITICAL)
+ [2] sts:AssumeRole -> CrossAccountProdRole (HIGH)
+ [3] iam:CreatePolicyVersion on dev-policy (CRITICAL)
 
 DATA ACCESSED:
-  S3 objects downloaded: 1,247 files (2.3 GB)
-  Secrets Manager values: 8 secrets including DB credentials
-  SSM parameters: 23 parameters including API keys
+ S3 objects downloaded: 1,247 files (2.3 GB)
+ Secrets Manager values: 8 secrets including DB credentials
+ SSM parameters: 23 parameters including API keys
 
 DETECTION RESULTS:
-  GuardDuty findings generated: 7
-  Security Hub findings: 12
-  Custom CloudWatch alarms triggered: 3
-  SOC acknowledged: Yes (45 min response)
+ GuardDuty findings generated: 7
+ Security Hub findings: 12
+ Custom CloudWatch alarms triggered: 3
+ SOC acknowledged: Yes (45 min response)
 
 RECOMMENDATIONS:
-  1. Apply permission boundaries to all developer roles
-  2. Remove iam:PassRole from non-admin principals
-  3. Reduce SOC response time to < 15 minutes for IAM escalation alerts
-  4. Implement SCP blocking iam:CreatePolicyVersion in non-admin OUs
+ 1. Apply permission boundaries to all developer roles
+ 2. Remove iam:PassRole from non-admin principals
+ 3. Reduce SOC response time to < 15 minutes for IAM escalation alerts
+ 4. Implement SCP blocking iam:CreatePolicyVersion in non-admin OUs
 ```

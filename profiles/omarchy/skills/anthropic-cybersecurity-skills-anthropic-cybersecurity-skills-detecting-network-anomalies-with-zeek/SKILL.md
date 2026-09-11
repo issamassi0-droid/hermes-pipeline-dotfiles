@@ -75,9 +75,9 @@ sudo vi /opt/zeek/etc/networks.cfg
 
 ```
 # /opt/zeek/etc/networks.cfg
-10.0.0.0/8       Internal
-172.16.0.0/12    Internal
-192.168.0.0/16   Internal
+10.0.0.0/8 Internal
+172.16.0.0/12 Internal
+192.168.0.0/16 Internal
 ```
 
 ```bash
@@ -98,16 +98,16 @@ sudo zeekctl status
 ls /opt/zeek/logs/current/
 
 # Key log files:
-# conn.log       - All network connections (TCP, UDP, ICMP)
-# dns.log        - DNS queries and responses
-# http.log       - HTTP requests and responses
-# ssl.log        - SSL/TLS handshake details
-# files.log      - File transfers observed on the network
-# notice.log     - Alerts from Zeek detection scripts
-# weird.log      - Protocol anomalies and errors
-# x509.log       - X.509 certificate details
-# smtp.log       - SMTP email transactions
-# ssh.log        - SSH connection details
+# conn.log - All network connections (TCP, UDP, ICMP)
+# dns.log - DNS queries and responses
+# http.log - HTTP requests and responses
+# ssl.log - SSL/TLS handshake details
+# files.log - File transfers observed on the network
+# notice.log - Alerts from Zeek detection scripts
+# weird.log - Protocol anomalies and errors
+# x509.log - X.509 certificate details
+# smtp.log - SMTP email transactions
+# ssh.log - SSH connection details
 
 # View connection log with zeek-cut for column selection
 cat /opt/zeek/logs/current/conn.log | zeek-cut ts id.orig_h id.orig_p id.resp_h id.resp_p proto service duration orig_bytes resp_bytes
@@ -135,15 +135,15 @@ Create a script for detecting DNS tunneling:
 module DNSTunneling;
 
 export {
-    redef enum Notice::Type += {
-        DNS_Tunneling_Detected,
-        DNS_Long_Query
-    };
+ redef enum Notice::Type += {
+ DNS_Tunneling_Detected,
+ DNS_Long_Query
+ };
 
-    # Threshold: number of unique queries per source in time window
-    const query_threshold: count = 200 &redef;
-    const time_window: interval = 5min &redef;
-    const max_query_length: count = 50 &redef;
+ # Threshold: number of unique queries per source in time window
+ const query_threshold: count = 200 &redef;
+ const time_window: interval = 5min &redef;
+ const max_query_length: count = 50 &redef;
 }
 
 # Track query counts per source IP
@@ -151,31 +151,31 @@ global dns_query_counts: table[addr] of count &create_expire=5min &default=0;
 
 event dns_request(c: connection, msg: dns_msg, query: string, qtype: count, qclass: count)
 {
-    local src = c$id$orig_h;
+ local src = c$id$orig_h;
 
-    # Check for unusually long domain queries (base64-encoded data)
-    if ( |query| > max_query_length )
-    {
-        NOTICE([
-            $note=DNS_Long_Query,
-            $msg=fmt("Unusually long DNS query from %s: %s (%d chars)", src, query, |query|),
-            $src=src,
-            $identifier=cat(src, query)
-        ]);
-    }
+ # Check for unusually long domain queries (base64-encoded data)
+ if ( |query| > max_query_length )
+ {
+ NOTICE([
+ $note=DNS_Long_Query,
+ $msg=fmt("Unusually long DNS query from %s: %s (%d chars)", src, query, |query|),
+ $src=src,
+ $identifier=cat(src, query)
+ ]);
+ }
 
-    # Track query volume per source
-    dns_query_counts[src] += 1;
+ # Track query volume per source
+ dns_query_counts[src] += 1;
 
-    if ( dns_query_counts[src] == query_threshold )
-    {
-        NOTICE([
-            $note=DNS_Tunneling_Detected,
-            $msg=fmt("Possible DNS tunneling: %s sent %d queries in %s", src, query_threshold, time_window),
-            $src=src,
-            $identifier=cat(src)
-        ]);
-    }
+ if ( dns_query_counts[src] == query_threshold )
+ {
+ NOTICE([
+ $note=DNS_Tunneling_Detected,
+ $msg=fmt("Possible DNS tunneling: %s sent %d queries in %s", src, query_threshold, time_window),
+ $src=src,
+ $identifier=cat(src)
+ ]);
+ }
 }
 ```
 
@@ -189,47 +189,47 @@ Create a script for detecting beaconing:
 module BeaconDetection;
 
 export {
-    redef enum Notice::Type += {
-        Possible_Beaconing
-    };
+ redef enum Notice::Type += {
+ Possible_Beaconing
+ };
 
-    const beacon_threshold: count = 50 &redef;
-    const observation_window: interval = 1hr &redef;
+ const beacon_threshold: count = 50 &redef;
+ const observation_window: interval = 1hr &redef;
 }
 
 event zeek_init()
 {
-    local r1 = SumStats::Reducer(
-        $stream="beacon.connections",
-        $apply=set(SumStats::SUM)
-    );
+ local r1 = SumStats::Reducer(
+ $stream="beacon.connections",
+ $apply=set(SumStats::SUM)
+ );
 
-    SumStats::create([
-        $name="detect-beaconing",
-        $epoch=observation_window,
-        $reducers=set(r1),
-        $threshold_val(key: SumStats::Key, result: SumStats::Result) = {
-            return result["beacon.connections"]$sum;
-        },
-        $threshold=beacon_threshold + 0.0,
-        $threshold_crossed(key: SumStats::Key, result: SumStats::Result) = {
-            NOTICE([
-                $note=Possible_Beaconing,
-                $msg=fmt("Possible beaconing: %s made %d connections in %s",
-                         key$str, result["beacon.connections"]$sum, observation_window),
-                $identifier=key$str
-            ]);
-        }
-    ]);
+ SumStats::create([
+ $name="detect-beaconing",
+ $epoch=observation_window,
+ $reducers=set(r1),
+ $threshold_val(key: SumStats::Key, result: SumStats::Result) = {
+ return result["beacon.connections"]$sum;
+ },
+ $threshold=beacon_threshold + 0.0,
+ $threshold_crossed(key: SumStats::Key, result: SumStats::Result) = {
+ NOTICE([
+ $note=Possible_Beaconing,
+ $msg=fmt("Possible beaconing: %s made %d connections in %s",
+ key$str, result["beacon.connections"]$sum, observation_window),
+ $identifier=key$str
+ ]);
+ }
+ ]);
 }
 
 event connection_state_remove(c: connection)
 {
-    if ( c$id$resp_h !in Site::local_nets )
-    {
-        local key = fmt("%s->%s:%d", c$id$orig_h, c$id$resp_h, c$id$resp_p);
-        SumStats::observe("beacon.connections", [$str=key], [$num=1]);
-    }
+ if ( c$id$resp_h !in Site::local_nets )
+ {
+ local key = fmt("%s->%s:%d", c$id$orig_h, c$id$resp_h, c$id$resp_p);
+ SumStats::observe("beacon.connections", [$str=key], [$num=1]);
+ }
 }
 ```
 
@@ -272,30 +272,30 @@ sudo zeekctl diag
 ```bash
 # Find long-duration connections (possible C2)
 cat /opt/zeek/logs/current/conn.log | zeek-cut ts id.orig_h id.resp_h id.resp_p duration | \
-  awk '$5 > 3600 {print $0}' | sort -t$'\t' -k5 -rn | head -20
+ awk '$5 > 3600 {print $0}' | sort -t$'\t' -k5 -rn | head -20
 
 # Find connections with high data transfer volumes
 cat /opt/zeek/logs/current/conn.log | zeek-cut ts id.orig_h id.resp_h orig_bytes resp_bytes | \
-  awk '$4 > 100000000 || $5 > 100000000 {print $0}'
+ awk '$4 > 100000000 || $5 > 100000000 {print $0}'
 
 # Identify rare user agents (potential malware)
 cat /opt/zeek/logs/current/http.log | zeek-cut user_agent | sort | uniq -c | sort -n | head -20
 
 # Find self-signed or expired certificates
 cat /opt/zeek/logs/current/ssl.log | zeek-cut ts id.orig_h id.resp_h server_name validation_status | \
-  grep -v "ok"
+ grep -v "ok"
 
 # Detect DNS queries to newly registered domains (DGA patterns)
 cat /opt/zeek/logs/current/dns.log | zeek-cut ts id.orig_h query | \
-  awk -F'\t' '{n=split($3,a,"."); if(length(a[n-1]) > 10) print $0}'
+ awk -F'\t' '{n=split($3,a,"."); if(length(a[n-1]) > 10) print $0}'
 
 # Find SSH brute force attempts
 cat /opt/zeek/logs/current/ssh.log | zeek-cut ts id.orig_h id.resp_h auth_success | \
-  grep "F" | awk '{print $2}' | sort | uniq -c | sort -rn | head -10
+ grep "F" | awk '{print $2}' | sort | uniq -c | sort -rn | head -10
 
 # Identify unusual port usage
 cat /opt/zeek/logs/current/conn.log | zeek-cut id.resp_p proto service | \
-  sort | uniq -c | sort -rn | head -50
+ sort | uniq -c | sort -rn | head -50
 ```
 
 ### Step 6: Integrate with SIEM and Set Up Alerting
@@ -311,21 +311,21 @@ EOF
 # /etc/filebeat/filebeat.yml
 sudo tee /etc/filebeat/filebeat.yml << 'EOF'
 filebeat.inputs:
-  - type: log
-    enabled: true
-    paths:
-      - /opt/zeek/logs/current/*.log
-    json.keys_under_root: true
-    json.add_error_key: true
-    fields:
-      source: zeek
-    fields_under_root: true
+ - type: log
+ enabled: true
+ paths:
+ - /opt/zeek/logs/current/*.log
+ json.keys_under_root: true
+ json.add_error_key: true
+ fields:
+ source: zeek
+ fields_under_root: true
 
 output.elasticsearch:
-  hosts: ["https://elastic-siem:9200"]
-  index: "zeek-%{+yyyy.MM.dd}"
-  username: "elastic"
-  password: "${ES_PASSWORD}"
+ hosts: ["https://elastic-siem:9200"]
+ index: "zeek-%{+yyyy.MM.dd}"
+ username: "elastic"
+ password: "${ES_PASSWORD}"
 EOF
 
 sudo systemctl enable --now filebeat

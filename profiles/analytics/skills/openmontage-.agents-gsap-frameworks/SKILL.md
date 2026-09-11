@@ -29,24 +29,24 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger); // once per app, e.g. in main.js
 
 export default {
-  setup() {
-    const container = ref(null);
-    let ctx;
+ setup() {
+ const container = ref(null);
+ let ctx;
 
-    onMounted(() => {
-      if (!container.value) return;
-      ctx = gsap.context(() => {
-        gsap.to(".box", { x: 100, duration: 0.6 });
-        gsap.from(".item", { autoAlpha: 0, y: 20, stagger: 0.1 });
-      }, container.value);
-    });
+ onMounted(() => {
+ if (!container.value) return;
+ ctx = gsap.context(() => {
+ gsap.to(".box", { x: 100, duration: 0.6 });
+ gsap.from(".item", { autoAlpha: 0, y: 20, stagger: 0.1 });
+ }, container.value);
+ });
 
-    onUnmounted(() => {
-      ctx?.revert();
-    });
+ onUnmounted(() => {
+ ctx?.revert();
+ });
 
-    return { container };
-  }
+ return { container };
+ }
 };
 ```
 
@@ -67,23 +67,23 @@ const container = ref(null);
 let ctx;
 
 onMounted(() => {
-  if (!container.value) return;
-  ctx = gsap.context(() => {
-    gsap.to(".box", { x: 100 });
-    gsap.from(".item", { autoAlpha: 0, stagger: 0.1 });
-  }, container.value);
+ if (!container.value) return;
+ ctx = gsap.context(() => {
+ gsap.to(".box", { x: 100 });
+ gsap.from(".item", { autoAlpha: 0, stagger: 0.1 });
+ }, container.value);
 });
 
 onUnmounted(() => {
-  ctx?.revert();
+ ctx?.revert();
 });
 </script>
 
 <template>
-  <div ref="container">
-    <div class="box">Box</div>
-    <div class="item">Item</div>
-  </div>
+ <div ref="container">
+ <div class="box">Box</div>
+ <div class="item">Item</div>
+ </div>
 </template>
 ```
 
@@ -93,25 +93,25 @@ Use **onMount** to run GSAP after the DOM is ready. Use the **returned cleanup f
 
 ```javascript
 <script>
-  import { onMount } from "svelte";
-  import { gsap } from "gsap";
-  import { ScrollTrigger } from "gsap/ScrollTrigger";
+ import { onMount } from "svelte";
+ import { gsap } from "gsap";
+ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-  let container;
+ let container;
 
-  onMount(() => {
-    if (!container) return;
-    const ctx = gsap.context(() => {
-      gsap.to(".box", { x: 100 });
-      gsap.from(".item", { autoAlpha: 0, stagger: 0.1 });
-    }, container);
-    return () => ctx.revert();
-  });
+ onMount(() => {
+ if (!container) return;
+ const ctx = gsap.context(() => {
+ gsap.to(".box", { x: 100 });
+ gsap.from(".item", { autoAlpha: 0, stagger: 0.1 });
+ }, container);
+ return () => ctx.revert();
+ });
 </script>
 
 <div bind:this={container}>
-  <div class="box">Box</div>
-  <div class="item">Item</div>
+ <div class="box">Box</div>
+ <div class="item">Item</div>
 </div>
 ```
 
@@ -134,9 +134,9 @@ ScrollTrigger instances are created when you use the `scrollTrigger` config on a
 
 ## When to Create vs Kill
 
-| Lifecycle        | Action |
+| Lifecycle | Action |
 |-----------------|--------|
-| **Mounted**      | Create tweens and ScrollTriggers inside **gsap.context(scope)**. |
+| **Mounted** | Create tweens and ScrollTriggers inside **gsap.context(scope)**. |
 | **Unmount / Destroy** | Call **ctx.revert()** so all animations and ScrollTriggers in that context are killed and inline styles reverted. |
 
 Do not create GSAP animations in the component’s setup or in a synchronous top-level script that runs before the root element exists. Wait for **onMounted** / **onMount** (or equivalent) so the container ref is in the DOM.

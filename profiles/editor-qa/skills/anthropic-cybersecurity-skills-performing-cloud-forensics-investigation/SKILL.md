@@ -1,10 +1,10 @@
 ---
 name: performing-cloud-forensics-investigation
 description: Collect and analyze cloud forensic evidence using AWS CLI, Azure CLI, or gcloud
-  to snapshot volumes, capture instance metadata and security group configurations, and preserve
-  cloud-native logs (CloudTrail, Activity Log, Audit Log). Use when investigating a suspected
-  breach in AWS, Azure, or GCP, tracing unauthorized access through API logs, or analyzing a
-  compromised VM, container, or serverless function.
+ to snapshot volumes, capture instance metadata and security group configurations, and preserve
+ cloud-native logs (CloudTrail, Activity Log, Audit Log). Use when investigating a suspected
+ breach in AWS, Azure, or GCP, tracing unauthorized access through API logs, or analyzing a
+ compromised VM, container, or serverless function.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -56,41 +56,41 @@ mitre_attack:
 # Snapshot compromised EC2 instance volumes
 INSTANCE_ID="i-0abc123def456789"
 VOLUME_IDS=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID \
-   --query 'Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' --output text)
+ --query 'Reservations[].Instances[].BlockDeviceMappings[].Ebs.VolumeId' --output text)
 
 for vol in $VOLUME_IDS; do
-   aws ec2 create-snapshot --volume-id $vol \
-      --description "Forensic snapshot - Case 2024-001 - $(date -u)" \
-      --tag-specifications "ResourceType=snapshot,Tags=[{Key=Case,Value=2024-001},{Key=Evidence,Value=true}]"
+ aws ec2 create-snapshot --volume-id $vol \
+ --description "Forensic snapshot - Case 2024-001 - $(date -u)" \
+ --tag-specifications "ResourceType=snapshot,Tags=[{Key=Case,Value=2024-001},{Key=Evidence,Value=true}]"
 done
 
 # Capture instance metadata
 aws ec2 describe-instances --instance-ids $INSTANCE_ID \
-   > /cases/case-2024-001/cloud/instance_metadata.json
+ > /cases/case-2024-001/cloud/instance_metadata.json
 
 # Capture security group rules
 aws ec2 describe-security-groups --group-ids $(aws ec2 describe-instances \
-   --instance-ids $INSTANCE_ID --query 'Reservations[].Instances[].SecurityGroups[].GroupId' --output text) \
-   > /cases/case-2024-001/cloud/security_groups.json
+ --instance-ids $INSTANCE_ID --query 'Reservations[].Instances[].SecurityGroups[].GroupId' --output text) \
+ > /cases/case-2024-001/cloud/security_groups.json
 
 # Capture network interfaces
 aws ec2 describe-network-interfaces --filters "Name=attachment.instance-id,Values=$INSTANCE_ID" \
-   > /cases/case-2024-001/cloud/network_interfaces.json
+ > /cases/case-2024-001/cloud/network_interfaces.json
 
 # Isolate the instance (replace security group with forensic isolation SG)
 aws ec2 modify-instance-attribute --instance-id $INSTANCE_ID \
-   --groups sg-forensic-isolation
+ --groups sg-forensic-isolation
 
 # === Azure Evidence Preservation ===
 # Snapshot a compromised VM disk
 az snapshot create --resource-group forensics-rg \
-   --name "case-2024-001-osdisk-snapshot" \
-   --source "/subscriptions/SUB_ID/resourceGroups/RG/providers/Microsoft.Compute/disks/vm-osdisk"
+ --name "case-2024-001-osdisk-snapshot" \
+ --source "/subscriptions/SUB_ID/resourceGroups/RG/providers/Microsoft.Compute/disks/vm-osdisk"
 
 # === GCP Evidence Preservation ===
 gcloud compute disks snapshot compromised-disk \
-   --snapshot-names="case-2024-001-forensic" \
-   --zone=us-central1-a
+ --snapshot-names="case-2024-001-forensic" \
+ --zone=us-central1-a
 ```
 
 ### Step 2: Collect Cloud API and Access Logs
@@ -99,48 +99,48 @@ gcloud compute disks snapshot compromised-disk \
 # === AWS CloudTrail Logs ===
 # Download CloudTrail events for the investigation period
 aws cloudtrail lookup-events \
-   --start-time "2024-01-15T00:00:00Z" \
-   --end-time "2024-01-20T23:59:59Z" \
-   --max-results 1000 \
-   > /cases/case-2024-001/cloud/cloudtrail_events.json
+ --start-time "2024-01-15T00:00:00Z" \
+ --end-time "2024-01-20T23:59:59Z" \
+ --max-results 1000 \
+ > /cases/case-2024-001/cloud/cloudtrail_events.json
 
 # Filter for specific user activity
 aws cloudtrail lookup-events \
-   --lookup-attributes AttributeKey=Username,AttributeValue=compromised-user \
-   --start-time "2024-01-15T00:00:00Z" \
-   > /cases/case-2024-001/cloud/user_activity.json
+ --lookup-attributes AttributeKey=Username,AttributeValue=compromised-user \
+ --start-time "2024-01-15T00:00:00Z" \
+ > /cases/case-2024-001/cloud/user_activity.json
 
 # Download S3 access logs
 aws s3 sync s3://my-cloudtrail-bucket/AWSLogs/ /cases/case-2024-001/cloud/cloudtrail_s3/
 
 # Query CloudTrail with Athena for large-scale analysis
 aws athena start-query-execution \
-   --query-string "SELECT eventTime, eventName, userIdentity.arn, sourceIPAddress, errorCode
-                   FROM cloudtrail_logs
-                   WHERE eventTime BETWEEN '2024-01-15' AND '2024-01-20'
-                   AND sourceIPAddress NOT IN ('10.0.0.0/8')
-                   ORDER BY eventTime" \
-   --result-configuration OutputLocation=s3://forensics-bucket/athena-results/
+ --query-string "SELECT eventTime, eventName, userIdentity.arn, sourceIPAddress, errorCode
+ FROM cloudtrail_logs
+ WHERE eventTime BETWEEN '2024-01-15' AND '2024-01-20'
+ AND sourceIPAddress NOT IN ('10.0.0.0/8')
+ ORDER BY eventTime" \
+ --result-configuration OutputLocation=s3://forensics-bucket/athena-results/
 
 # === AWS VPC Flow Logs ===
 aws logs filter-log-events \
-   --log-group-name "vpc-flow-logs" \
-   --start-time $(date -d "2024-01-15" +%s000) \
-   --end-time $(date -d "2024-01-20" +%s000) \
-   --filter-pattern "ACCEPT" \
-   > /cases/case-2024-001/cloud/vpc_flow_logs.json
+ --log-group-name "vpc-flow-logs" \
+ --start-time $(date -d "2024-01-15" +%s000) \
+ --end-time $(date -d "2024-01-20" +%s000) \
+ --filter-pattern "ACCEPT" \
+ > /cases/case-2024-001/cloud/vpc_flow_logs.json
 
 # === Azure Activity Log ===
 az monitor activity-log list \
-   --start-time "2024-01-15T00:00:00Z" \
-   --end-time "2024-01-20T23:59:59Z" \
-   --output json > /cases/case-2024-001/cloud/azure_activity.json
+ --start-time "2024-01-15T00:00:00Z" \
+ --end-time "2024-01-20T23:59:59Z" \
+ --output json > /cases/case-2024-001/cloud/azure_activity.json
 
 # === GCP Audit Logs ===
 gcloud logging read 'logName="projects/PROJECT_ID/logs/cloudaudit.googleapis.com%2Factivity"
-   AND timestamp>="2024-01-15T00:00:00Z"
-   AND timestamp<="2024-01-20T23:59:59Z"' \
-   --format=json > /cases/case-2024-001/cloud/gcp_audit.json
+ AND timestamp>="2024-01-15T00:00:00Z"
+ AND timestamp<="2024-01-20T23:59:59Z"' \
+ --format=json > /cases/case-2024-001/cloud/gcp_audit.json
 ```
 
 ### Step 3: Analyze IAM and Access Patterns
@@ -152,7 +152,7 @@ import json
 from collections import defaultdict
 
 with open('/cases/case-2024-001/cloud/cloudtrail_events.json') as f:
-    data = json.load(f)
+ data = json.load(f)
 
 # Analyze by source IP
 ip_events = defaultdict(list)
@@ -160,36 +160,36 @@ error_events = []
 critical_actions = []
 
 for event in data.get('Events', []):
-    ct = json.loads(event.get('CloudTrailEvent', '{}'))
-    source_ip = ct.get('sourceIPAddress', 'Unknown')
-    event_name = ct.get('eventName', 'Unknown')
-    user_arn = ct.get('userIdentity', {}).get('arn', 'Unknown')
-    error = ct.get('errorCode')
-    timestamp = ct.get('eventTime', '')
+ ct = json.loads(event.get('CloudTrailEvent', '{}'))
+ source_ip = ct.get('sourceIPAddress', 'Unknown')
+ event_name = ct.get('eventName', 'Unknown')
+ user_arn = ct.get('userIdentity', {}).get('arn', 'Unknown')
+ error = ct.get('errorCode')
+ timestamp = ct.get('eventTime', '')
 
-    ip_events[source_ip].append(event_name)
+ ip_events[source_ip].append(event_name)
 
-    if error:
-        error_events.append({'time': timestamp, 'action': event_name, 'error': error, 'ip': source_ip})
+ if error:
+ error_events.append({'time': timestamp, 'action': event_name, 'error': error, 'ip': source_ip})
 
-    # Flag critical actions
-    critical = ['CreateUser', 'CreateAccessKey', 'AttachUserPolicy', 'CreateRole',
-                'PutBucketPolicy', 'StopLogging', 'DeleteTrail', 'CreateKeyPair',
-                'RunInstances', 'AuthorizeSecurityGroupIngress']
-    if event_name in critical:
-        critical_actions.append({'time': timestamp, 'action': event_name, 'user': user_arn, 'ip': source_ip})
+ # Flag critical actions
+ critical = ['CreateUser', 'CreateAccessKey', 'AttachUserPolicy', 'CreateRole',
+ 'PutBucketPolicy', 'StopLogging', 'DeleteTrail', 'CreateKeyPair',
+ 'RunInstances', 'AuthorizeSecurityGroupIngress']
+ if event_name in critical:
+ critical_actions.append({'time': timestamp, 'action': event_name, 'user': user_arn, 'ip': source_ip})
 
 print("=== SOURCE IP ANALYSIS ===")
 for ip, events in sorted(ip_events.items(), key=lambda x: len(x[1]), reverse=True):
-    print(f"  {ip}: {len(events)} events ({len(set(events))} unique actions)")
+ print(f" {ip}: {len(events)} events ({len(set(events))} unique actions)")
 
 print(f"\n=== ACCESS ERRORS ({len(error_events)} total) ===")
 for e in error_events[:10]:
-    print(f"  [{e['time']}] {e['action']} -> {e['error']} from {e['ip']}")
+ print(f" [{e['time']}] {e['action']} -> {e['error']} from {e['ip']}")
 
 print(f"\n=== CRITICAL ACTIONS ({len(critical_actions)} total) ===")
 for a in critical_actions:
-    print(f"  [{a['time']}] {a['action']} by {a['user']} from {a['ip']}")
+ print(f" [{a['time']}] {a['action']} by {a['user']} from {a['ip']}")
 PYEOF
 ```
 
@@ -201,14 +201,14 @@ SNAPSHOT_ID="snap-0abc123def456789"
 
 # Create volume from snapshot in isolated forensic VPC
 FORENSIC_VOL=$(aws ec2 create-volume --snapshot-id $SNAPSHOT_ID \
-   --availability-zone us-east-1a \
-   --tag-specifications "ResourceType=volume,Tags=[{Key=Case,Value=2024-001}]" \
-   --query 'VolumeId' --output text)
+ --availability-zone us-east-1a \
+ --tag-specifications "ResourceType=volume,Tags=[{Key=Case,Value=2024-001}]" \
+ --query 'VolumeId' --output text)
 
 # Attach to forensic analysis instance (read-only mount)
 aws ec2 attach-volume --volume-id $FORENSIC_VOL \
-   --instance-id i-forensic-workstation \
-   --device /dev/xvdf
+ --instance-id i-forensic-workstation \
+ --device /dev/xvdf
 
 # On the forensic instance, mount read-only
 sudo mount -o ro /dev/xvdf1 /mnt/evidence
@@ -244,28 +244,28 @@ EVIDENCE PRESERVED:
 
 FINDINGS:
 1. Initial Access:
-   - Compromised IAM access key AKIA... used from IP 203.0.113.45
-   - First unauthorized API call: 2024-01-15 14:32:00 UTC
-   - IP geolocation: Foreign jurisdiction (not company IP range)
+ - Compromised IAM access key AKIA... used from IP 203.0.113.45
+ - First unauthorized API call: 2024-01-15 14:32:00 UTC
+ - IP geolocation: Foreign jurisdiction (not company IP range)
 
 2. Persistence:
-   - New IAM user 'backup-admin' created with AdministratorAccess
-   - New access key pair generated for backup-admin
-   - SSH key added to EC2 instance authorized_keys
+ - New IAM user 'backup-admin' created with AdministratorAccess
+ - New access key pair generated for backup-admin
+ - SSH key added to EC2 instance authorized_keys
 
 3. Lateral Movement:
-   - S3 bucket policies modified to allow public access
-   - Security group rules modified to allow SSH from 0.0.0.0/0
-   - 3 additional EC2 instances launched for crypto-mining
+ - S3 bucket policies modified to allow public access
+ - Security group rules modified to allow SSH from 0.0.0.0/0
+ - 3 additional EC2 instances launched for crypto-mining
 
 4. Data Exfiltration:
-   - S3 bucket 'company-confidential' accessed 234 times
-   - 12 GB of data downloaded via GetObject API calls
-   - Data transferred to external IP 185.x.x.x
+ - S3 bucket 'company-confidential' accessed 234 times
+ - 12 GB of data downloaded via GetObject API calls
+ - Data transferred to external IP 185.x.x.x
 
 5. Anti-Forensics:
-   - CloudTrail logging disabled at 2024-01-18 03:00 UTC
-   - CloudWatch log groups deleted
+ - CloudTrail logging disabled at 2024-01-18 03:00 UTC
+ - CloudWatch log groups deleted
 
 RECOMMENDATIONS:
 - Rotate all IAM credentials immediately
@@ -276,7 +276,7 @@ RECOMMENDATIONS:
 """
 
 with open('/cases/case-2024-001/cloud/cloud_forensics_report.txt', 'w') as f:
-    f.write(report)
+ f.write(report)
 print(report)
 PYEOF
 ```
@@ -325,25 +325,25 @@ Collect Kubernetes audit logs and cloud provider logs, analyze pod creation even
 
 ```
 Cloud Forensics Summary:
-  Cloud: AWS (us-east-1) Account: 123456789012
-  Investigation: 2024-01-15 to 2024-01-20
-  Incident Type: IAM Credential Compromise + Data Exfiltration
+ Cloud: AWS (us-east-1) Account: 123456789012
+ Investigation: 2024-01-15 to 2024-01-20
+ Incident Type: IAM Credential Compromise + Data Exfiltration
 
-  Evidence Collected:
-    EBS Snapshots:    3 volumes preserved
-    CloudTrail Events: 12,456 (1,234 from attacker IP)
-    VPC Flow Logs:    45,678 records
-    S3 Access Logs:   2,345 entries
+ Evidence Collected:
+ EBS Snapshots: 3 volumes preserved
+ CloudTrail Events: 12,456 (1,234 from attacker IP)
+ VPC Flow Logs: 45,678 records
+ S3 Access Logs: 2,345 entries
 
-  Attack Timeline:
-    2024-01-15 14:32 - Compromised access key first used from 203.0.113.45
-    2024-01-15 14:45 - New IAM user created with admin privileges
-    2024-01-16 02:00 - S3 bucket policy modified (public access enabled)
-    2024-01-16 03:00 - 12 GB downloaded from company-confidential bucket
-    2024-01-18 03:00 - CloudTrail logging disabled
+ Attack Timeline:
+ 2024-01-15 14:32 - Compromised access key first used from 203.0.113.45
+ 2024-01-15 14:45 - New IAM user created with admin privileges
+ 2024-01-16 02:00 - S3 bucket policy modified (public access enabled)
+ 2024-01-16 03:00 - 12 GB downloaded from company-confidential bucket
+ 2024-01-18 03:00 - CloudTrail logging disabled
 
-  Impact Assessment:
-    Data Exposed: 12 GB from 3 S3 buckets
-    Resources Created: 3 EC2 instances (crypto mining)
-    Estimated Cost: $4,500 in unauthorized compute
+ Impact Assessment:
+ Data Exposed: 12 GB from 3 S3 buckets
+ Resources Created: 3 EC2 instances (crypto mining)
+ Estimated Cost: $4,500 in unauthorized compute
 ```

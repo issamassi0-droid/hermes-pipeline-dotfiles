@@ -27,31 +27,31 @@ mitre_attack:
 - T1078.004
 - T1110.003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  techniques:
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: T1110.003
-    name: 'Brute Force: Password Spraying'
-    tactic: initial-access
-    source: attack
-  - id: T1550
-    name: Use Alternate Authentication Material
-    tactic: initial-access
-    source: attack
-  - id: F1004
-    name: Access with Stolen Session Cookie
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ techniques:
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: T1110.003
+ name: 'Brute Force: Password Spraying'
+ tactic: initial-access
+ source: attack
+ - id: T1550
+ name: Use Alternate Authentication Material
+ tactic: initial-access
+ source: attack
+ - id: F1004
+ name: Access with Stolen Session Cookie
+ tactic: initial-access
+ source: f3
 ---
 
 # Building Identity Federation with SAML Azure AD
@@ -92,24 +92,24 @@ Identity federation enables users authenticated by one identity provider to acce
 
 ```
 User → Cloud App (SP)
-   │
-   └── Redirect to Azure AD
-          │
-          ├── Azure AD checks federated domain
-          │
-          └── Redirect to on-premises AD FS
-                 │
-                 ├── AD FS authenticates against Active Directory
-                 │
-                 ├── AD FS issues SAML token
-                 │
-                 └── Token posted back to Azure AD
-                        │
-                        ├── Azure AD validates federation trust
-                        │
-                        ├── Azure AD issues its own token
-                        │
-                        └── User receives access token for cloud app
+ │
+ └── Redirect to Azure AD
+ │
+ ├── Azure AD checks federated domain
+ │
+ └── Redirect to on-premises AD FS
+ │
+ ├── AD FS authenticates against Active Directory
+ │
+ ├── AD FS issues SAML token
+ │
+ └── Token posted back to Azure AD
+ │
+ ├── Azure AD validates federation trust
+ │
+ ├── Azure AD issues its own token
+ │
+ └── User receives access token for cloud app
 ```
 
 ### Federation Trust Components
@@ -132,10 +132,10 @@ Install-WindowsFeature ADFS-Federation -IncludeManagementTools
 
 # Configure AD FS farm
 Install-AdfsFarm `
-    -CertificateThumbprint $certThumbprint `
-    -FederationServiceDisplayName "Corp Federation Service" `
-    -FederationServiceName "fs.corp.example.com" `
-    -ServiceAccountCredential $gmsaCredential
+ -CertificateThumbprint $certThumbprint `
+ -FederationServiceDisplayName "Corp Federation Service" `
+ -FederationServiceName "fs.corp.example.com" `
+ -ServiceAccountCredential $gmsaCredential
 
 # Verify AD FS is operational
 Get-AdfsProperties | Select-Object HostName, Identifier, FederationPassiveAddress
@@ -154,12 +154,12 @@ Connect-MgGraph -Scopes "Domain.ReadWrite.All"
 # Using AD FS federation metadata URL
 $domainId = "corp.example.com"
 $federationConfig = @{
-    issuerUri = "http://fs.corp.example.com/adfs/services/trust"
-    metadataExchangeUri = "https://fs.corp.example.com/adfs/services/trust/mex"
-    passiveSignInUri = "https://fs.corp.example.com/adfs/ls/"
-    signOutUri = "https://fs.corp.example.com/adfs/ls/?wa=wsignout1.0"
-    signingCertificate = $base64Cert
-    preferredAuthenticationProtocol = "saml"
+ issuerUri = "http://fs.corp.example.com/adfs/services/trust"
+ metadataExchangeUri = "https://fs.corp.example.com/adfs/services/trust/mex"
+ passiveSignInUri = "https://fs.corp.example.com/adfs/ls/"
+ signOutUri = "https://fs.corp.example.com/adfs/ls/?wa=wsignout1.0"
+ signingCertificate = $base64Cert
+ preferredAuthenticationProtocol = "saml"
 }
 
 # Apply federation settings to domain
@@ -171,37 +171,37 @@ New-MgDomainFederationConfiguration -DomainId $domainId -BodyParameter $federati
 ```powershell
 # Add Relying Party Trust for Azure AD
 Add-AdfsRelyingPartyTrust `
-    -Name "Microsoft Office 365 Identity Platform" `
-    -MetadataUrl "https://nexus.microsoftonline-p.com/federationmetadata/2007-06/federationmetadata.xml"
+ -Name "Microsoft Office 365 Identity Platform" `
+ -MetadataUrl "https://nexus.microsoftonline-p.com/federationmetadata/2007-06/federationmetadata.xml"
 
 # Configure claim rules
 $rules = @"
 @RuleTemplate = "LdapClaims"
 @RuleName = "Extract AD Attributes"
 c:[Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/windowsaccountname",
-   Issuer == "AD AUTHORITY"]
+ Issuer == "AD AUTHORITY"]
 => issue(store = "Active Directory",
-   types = ("http://schemas.xmlsoap.org/claims/UPN",
-            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
-            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
-            "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"),
-   query = ";userPrincipalName,mail,givenName,sn;{0}",
-   param = c.Value);
+ types = ("http://schemas.xmlsoap.org/claims/UPN",
+ "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress",
+ "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname",
+ "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname"),
+ query = ";userPrincipalName,mail,givenName,sn;{0}",
+ param = c.Value);
 
 @RuleTemplate = "PassThroughClaims"
 @RuleName = "Pass Through UPN as NameID"
 c:[Type == "http://schemas.xmlsoap.org/claims/UPN"]
 => issue(Type = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier",
-   Issuer = c.Issuer, OriginalIssuer = c.OriginalIssuer,
-   Value = c.Value,
-   ValueType = c.ValueType,
-   Properties["http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/format"]
-       = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
+ Issuer = c.Issuer, OriginalIssuer = c.OriginalIssuer,
+ Value = c.Value,
+ ValueType = c.ValueType,
+ Properties["http://schemas.xmlsoap.org/ws/2005/05/identity/claimproperties/format"]
+ = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent");
 "@
 
 Set-AdfsRelyingPartyTrust `
-    -TargetName "Microsoft Office 365 Identity Platform" `
-    -IssuanceTransformRules $rules
+ -TargetName "Microsoft Office 365 Identity Platform" `
+ -IssuanceTransformRules $rules
 ```
 
 ### Step 4: Configure Third-Party SaaS Federation
@@ -211,12 +211,12 @@ For each SaaS application that supports SAML SSO via Azure AD:
 1. Navigate to Microsoft Entra Admin Center > Enterprise Applications
 2. Add the application from the gallery (or create custom SAML)
 3. Configure Single Sign-On > SAML:
-   - Identifier (Entity ID): Application's entity ID
-   - Reply URL (ACS): Application's assertion consumer service URL
-   - Sign-on URL: Application's login URL
+ - Identifier (Entity ID): Application's entity ID
+ - Reply URL (ACS): Application's assertion consumer service URL
+ - Sign-on URL: Application's login URL
 4. Map user attributes/claims:
-   - NameID: user.userprincipalname (email format)
-   - Additional claims as required by the application
+ - NameID: user.userprincipalname (email format)
+ - Additional claims as required by the application
 5. Download the Federation Metadata XML or certificate
 6. Configure the SaaS app with Azure AD's federation details
 

@@ -54,44 +54,44 @@ Create a CodeQL workflow that runs on pull requests and on a weekly schedule to 
 name: "CodeQL Analysis"
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
-  schedule:
-    - cron: '30 2 * * 1'  # Weekly Monday 2:30 AM
+ push:
+ branches: [main, develop]
+ pull_request:
+ branches: [main]
+ schedule:
+ - cron: '30 2 * * 1' # Weekly Monday 2:30 AM
 
 jobs:
-  analyze:
-    name: Analyze (${{ matrix.language }})
-    runs-on: ubuntu-latest
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
+ analyze:
+ name: Analyze (${{ matrix.language }})
+ runs-on: ubuntu-latest
+ permissions:
+ actions: read
+ contents: read
+ security-events: write
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ['javascript', 'python']
+ strategy:
+ fail-fast: false
+ matrix:
+ language: ['javascript', 'python']
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+ steps:
+ - name: Checkout repository
+ uses: actions/checkout@v4
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          queries: security-extended,security-and-quality
+ - name: Initialize CodeQL
+ uses: github/codeql-action/init@v3
+ with:
+ languages: ${{ matrix.language }}
+ queries: security-extended,security-and-quality
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+ - name: Autobuild
+ uses: github/codeql-action/autobuild@v3
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{ matrix.language }}"
+ - name: Perform CodeQL Analysis
+ uses: github/codeql-action/analyze@v3
+ with:
+ category: "/language:${{ matrix.language }}"
 ```
 
 ### Step 2: Add Semgrep Scanning for Custom Rules
@@ -103,44 +103,44 @@ Semgrep complements CodeQL with faster scans and support for custom pattern-base
 name: "Semgrep SAST Scan"
 
 on:
-  pull_request:
-    branches: [main, develop]
-  push:
-    branches: [main]
+ pull_request:
+ branches: [main, develop]
+ push:
+ branches: [main]
 
 jobs:
-  semgrep:
-    name: Semgrep Scan
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      contents: read
+ semgrep:
+ name: Semgrep Scan
+ runs-on: ubuntu-latest
+ permissions:
+ security-events: write
+ contents: read
 
-    container:
-      image: semgrep/semgrep:latest
+ container:
+ image: semgrep/semgrep:latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+ steps:
+ - name: Checkout
+ uses: actions/checkout@v4
 
-      - name: Run Semgrep
-        run: |
-          semgrep ci \
-            --config auto \
-            --config p/owasp-top-ten \
-            --config p/cwe-top-25 \
-            --sarif --output semgrep-results.sarif \
-            --severity ERROR \
-            --error
-        env:
-          SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
+ - name: Run Semgrep
+ run: |
+ semgrep ci \
+ --config auto \
+ --config p/owasp-top-ten \
+ --config p/cwe-top-25 \
+ --sarif --output semgrep-results.sarif \
+ --severity ERROR \
+ --error
+ env:
+ SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
 
-      - name: Upload SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: semgrep-results.sarif
-          category: semgrep
+ - name: Upload SARIF
+ if: always()
+ uses: github/codeql-action/upload-sarif@v3
+ with:
+ sarif_file: semgrep-results.sarif
+ category: semgrep
 ```
 
 ### Step 3: Create Custom Semgrep Rules for Organization Patterns
@@ -150,45 +150,45 @@ Write organization-specific rules to catch patterns unique to your codebase, suc
 ```yaml
 # .semgrep/custom-rules.yml
 rules:
-  - id: hardcoded-database-url
-    patterns:
-      - pattern: |
-          $DB_URL = "...$PROTO://...:...$PASS@..."
-    message: |
-      Hardcoded database connection string with credentials detected.
-      Use environment variables or a secrets manager instead.
-    languages: [python, javascript, typescript]
-    severity: ERROR
-    metadata:
-      cwe: "CWE-798: Use of Hard-coded Credentials"
-      owasp: "A07:2021 - Identification and Authentication Failures"
+ - id: hardcoded-database-url
+ patterns:
+ - pattern: |
+ $DB_URL = "...$PROTO://...:...$PASS@..."
+ message: |
+ Hardcoded database connection string with credentials detected.
+ Use environment variables or a secrets manager instead.
+ languages: [python, javascript, typescript]
+ severity: ERROR
+ metadata:
+ cwe: "CWE-798: Use of Hard-coded Credentials"
+ owasp: "A07:2021 - Identification and Authentication Failures"
 
-  - id: unsafe-deserialization
-    patterns:
-      - pattern-either:
-          - pattern: pickle.loads(...)
-          - pattern: yaml.load(..., Loader=yaml.Loader)
-          - pattern: yaml.load(..., Loader=yaml.FullLoader)
-    message: |
-      Unsafe deserialization detected. Use safe alternatives to prevent
-      remote code execution vulnerabilities.
-    languages: [python]
-    severity: ERROR
-    metadata:
-      cwe: "CWE-502: Deserialization of Untrusted Data"
+ - id: unsafe-deserialization
+ patterns:
+ - pattern-either:
+ - pattern: pickle.loads(...)
+ - pattern: yaml.load(..., Loader=yaml.Loader)
+ - pattern: yaml.load(..., Loader=yaml.FullLoader)
+ message: |
+ Unsafe deserialization detected. Use safe alternatives to prevent
+ remote code execution vulnerabilities.
+ languages: [python]
+ severity: ERROR
+ metadata:
+ cwe: "CWE-502: Deserialization of Untrusted Data"
 
-  - id: missing-csrf-protection
-    patterns:
-      - pattern: |
-          @app.route("...", methods=["POST"])
-          def $FUNC(...):
-              ...
-      - pattern-not-inside: |
-          @csrf.exempt
-          ...
-    message: "POST endpoint may lack CSRF protection."
-    languages: [python]
-    severity: WARNING
+ - id: missing-csrf-protection
+ patterns:
+ - pattern: |
+ @app.route("...", methods=["POST"])
+ def $FUNC(...):
+ ...
+ - pattern-not-inside: |
+ @csrf.exempt
+ ...
+ message: "POST endpoint may lack CSRF protection."
+ languages: [python]
+ severity: WARNING
 ```
 
 ### Step 4: Establish Quality Gates with Branch Protection
@@ -198,10 +198,10 @@ Configure branch protection rules that require SAST checks to pass before mergin
 ```bash
 # Use GitHub CLI to set branch protection requiring SAST checks
 gh api repos/{owner}/{repo}/branches/main/protection \
-  --method PUT \
-  --field required_status_checks='{"strict":true,"contexts":["Analyze (javascript)","Analyze (python)","Semgrep Scan"]}' \
-  --field enforce_admins=true \
-  --field required_pull_request_reviews='{"required_approving_review_count":1}'
+ --method PUT \
+ --field required_status_checks='{"strict":true,"contexts":["Analyze (javascript)","Analyze (python)","Semgrep Scan"]}' \
+ --field enforce_admins=true \
+ --field required_pull_request_reviews='{"required_approving_review_count":1}'
 ```
 
 ### Step 5: Tune and Suppress False Positives
@@ -212,17 +212,17 @@ Manage false positives through CodeQL query filters and Semgrep nosemgrep annota
 # codeql-config.yml - Custom CodeQL configuration
 name: "Custom CodeQL Config"
 queries:
-  - uses: security-extended
-  - uses: security-and-quality
-  - excludes:
-      id: js/unused-local-variable
+ - uses: security-extended
+ - uses: security-and-quality
+ - excludes:
+ id: js/unused-local-variable
 paths-ignore:
-  - '**/test/**'
-  - '**/tests/**'
-  - '**/vendor/**'
-  - '**/node_modules/**'
-  - '**/*.test.js'
-  - '**/*.spec.py'
+ - '**/test/**'
+ - '**/tests/**'
+ - '**/vendor/**'
+ - '**/node_modules/**'
+ - '**/*.test.js'
+ - '**/*.spec.py'
 ```
 
 ```python
@@ -230,9 +230,9 @@ paths-ignore:
 import subprocess
 
 def run_safe_command(cmd_list):
-    # nosemgrep: python.lang.security.audit.dangerous-subprocess-use
-    result = subprocess.run(cmd_list, capture_output=True, text=True, shell=False)
-    return result.stdout
+ # nosemgrep: python.lang.security.audit.dangerous-subprocess-use
+ result = subprocess.run(cmd_list, capture_output=True, text=True, shell=False)
+ return result.stdout
 ```
 
 ### Step 6: Aggregate and Report Findings
@@ -242,11 +242,11 @@ Use the GitHub Security Overview dashboard and configure notifications for secur
 ```bash
 # Query SARIF results via GitHub API for reporting
 gh api repos/{owner}/{repo}/code-scanning/alerts \
-  --jq '.[] | select(.state=="open") | {rule: .rule.id, severity: .rule.security_severity_level, file: .most_recent_instance.location.path, line: .most_recent_instance.location.start_line}'
+ --jq '.[] | select(.state=="open") | {rule: .rule.id, severity: .rule.security_severity_level, file: .most_recent_instance.location.path, line: .most_recent_instance.location.start_line}'
 
 # Count open alerts by severity
 gh api repos/{owner}/{repo}/code-scanning/alerts \
-  --jq '[.[] | select(.state=="open")] | group_by(.rule.security_severity_level) | map({severity: .[0].rule.security_severity_level, count: length})'
+ --jq '[.[] | select(.state=="open")] | group_by(.rule.security_severity_level) | map({severity: .[0].rule.security_severity_level, count: length})'
 ```
 
 ## Key Concepts
@@ -309,20 +309,20 @@ Scan Date: 2026-02-23
 Commit: a1b2c3d4
 
 CodeQL Results:
-  Language    Queries Run   Findings   Critical   High   Medium
-  javascript  312           4          1          2      1
-  python      287           2          0          1      1
+ Language Queries Run Findings Critical High Medium
+ javascript 312 4 1 2 1
+ python 287 2 0 1 1
 
 Semgrep Results:
-  Ruleset          Rules Matched   Findings   Errors   Warnings
-  auto             1,847           3          1        2
-  owasp-top-ten    186             2          1        1
-  custom-rules     12              1          0        1
+ Ruleset Rules Matched Findings Errors Warnings
+ auto 1,847 3 1 2
+ owasp-top-ten 186 2 1 1
+ custom-rules 12 1 0 1
 
 QUALITY GATE: FAILED
-  Blocking findings: 2 Critical/High severity issues
-  - [CRITICAL] CWE-89: SQL Injection in src/api/users.py:47
-  - [HIGH] CWE-79: Cross-site Scripting in src/components/Search.tsx:123
+ Blocking findings: 2 Critical/High severity issues
+ - [CRITICAL] CWE-89: SQL Injection in src/api/users.py:47
+ - [HIGH] CWE-79: Cross-site Scripting in src/components/Search.tsx:123
 
 Action Required: Fix blocking findings before merge is permitted.
 ```

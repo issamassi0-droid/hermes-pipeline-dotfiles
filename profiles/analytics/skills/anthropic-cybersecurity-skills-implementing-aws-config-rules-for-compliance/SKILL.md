@@ -1,10 +1,10 @@
 ---
 name: implementing-aws-config-rules-for-compliance
 description: 'Implements AWS Config managed and custom rules for continuous compliance
-  monitoring of AWS resources aligned to CIS and PCI DSS, configuring automatic remediation
-  with SSM Automation and aggregating compliance data across accounts. Use when establishing
-  continuous compliance monitoring, detecting configuration drift, or building a
-  multi-account compliance dashboard via AWS Organizations.'
+ monitoring of AWS resources aligned to CIS and PCI DSS, configuring automatic remediation
+ with SSM Automation and aggregating compliance data across accounts. Use when establishing
+ continuous compliance monitoring, detecting configuration drift, or building a
+ multi-account compliance dashboard via AWS Organizations.'
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -58,25 +58,25 @@ Set up the Config recorder and delivery channel in each target account.
 ```bash
 # Create S3 bucket for Config data
 aws s3api create-bucket \
-  --bucket config-compliance-data-ACCOUNT_ID \
-  --region us-east-1
+ --bucket config-compliance-data-ACCOUNT_ID \
+ --region us-east-1
 
 # Create Config service role
 aws iam create-service-linked-role --aws-service-name config.amazonaws.com
 
 # Start the Config recorder
 aws configservice put-configuration-recorder \
-  --configuration-recorder name=default,roleARN=arn:aws:iam::ACCOUNT:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig \
-  --recording-group allSupported=true,includeGlobalResourceTypes=true
+ --configuration-recorder name=default,roleARN=arn:aws:iam::ACCOUNT:role/aws-service-role/config.amazonaws.com/AWSServiceRoleForConfig \
+ --recording-group allSupported=true,includeGlobalResourceTypes=true
 
 # Set up delivery channel
 aws configservice put-delivery-channel \
-  --delivery-channel '{
-    "name": "default",
-    "s3BucketName": "config-compliance-data-ACCOUNT_ID",
-    "snsTopicARN": "arn:aws:sns:us-east-1:ACCOUNT:config-notifications",
-    "configSnapshotDeliveryProperties": {"deliveryFrequency": "TwentyFour_Hours"}
-  }'
+ --delivery-channel '{
+ "name": "default",
+ "s3BucketName": "config-compliance-data-ACCOUNT_ID",
+ "snsTopicARN": "arn:aws:sns:us-east-1:ACCOUNT:config-notifications",
+ "configSnapshotDeliveryProperties": {"deliveryFrequency": "TwentyFour_Hours"}
+ }'
 
 # Start recording
 aws configservice start-configuration-recorder --configuration-recorder-name default
@@ -89,57 +89,57 @@ Enable AWS-managed Config rules that map to CIS AWS Foundations Benchmark contro
 ```bash
 # S3 bucket security rules
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "s3-bucket-public-read-prohibited",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "S3_BUCKET_PUBLIC_READ_PROHIBITED"}
+ "ConfigRuleName": "s3-bucket-public-read-prohibited",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "S3_BUCKET_PUBLIC_READ_PROHIBITED"}
 }'
 
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "s3-bucket-server-side-encryption-enabled",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"}
+ "ConfigRuleName": "s3-bucket-server-side-encryption-enabled",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "S3_BUCKET_SERVER_SIDE_ENCRYPTION_ENABLED"}
 }'
 
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "s3-bucket-ssl-requests-only",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "S3_BUCKET_SSL_REQUESTS_ONLY"}
+ "ConfigRuleName": "s3-bucket-ssl-requests-only",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "S3_BUCKET_SSL_REQUESTS_ONLY"}
 }'
 
 # IAM security rules
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "iam-root-access-key-check",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "IAM_ROOT_ACCESS_KEY_CHECK"}
+ "ConfigRuleName": "iam-root-access-key-check",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "IAM_ROOT_ACCESS_KEY_CHECK"}
 }'
 
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "mfa-enabled-for-iam-console-access",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "MFA_ENABLED_FOR_IAM_CONSOLE_ACCESS"}
+ "ConfigRuleName": "mfa-enabled-for-iam-console-access",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "MFA_ENABLED_FOR_IAM_CONSOLE_ACCESS"}
 }'
 
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "iam-password-policy",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "IAM_PASSWORD_POLICY"},
-  "InputParameters": "{\"RequireUppercaseCharacters\":\"true\",\"RequireLowercaseCharacters\":\"true\",\"RequireSymbols\":\"true\",\"RequireNumbers\":\"true\",\"MinimumPasswordLength\":\"14\"}"
+ "ConfigRuleName": "iam-password-policy",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "IAM_PASSWORD_POLICY"},
+ "InputParameters": "{\"RequireUppercaseCharacters\":\"true\",\"RequireLowercaseCharacters\":\"true\",\"RequireSymbols\":\"true\",\"RequireNumbers\":\"true\",\"MinimumPasswordLength\":\"14\"}"
 }'
 
 # Network security rules
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "restricted-ssh",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "INCOMING_SSH_DISABLED"}
+ "ConfigRuleName": "restricted-ssh",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "INCOMING_SSH_DISABLED"}
 }'
 
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "vpc-flow-logs-enabled",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "VPC_FLOW_LOGS_ENABLED"}
+ "ConfigRuleName": "vpc-flow-logs-enabled",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "VPC_FLOW_LOGS_ENABLED"}
 }'
 
 # Encryption rules
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "rds-storage-encrypted",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "RDS_STORAGE_ENCRYPTED"}
+ "ConfigRuleName": "rds-storage-encrypted",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "RDS_STORAGE_ENCRYPTED"}
 }'
 
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "encrypted-volumes",
-  "Source": {"Owner": "AWS", "SourceIdentifier": "ENCRYPTED_VOLUMES"}
+ "ConfigRuleName": "encrypted-volumes",
+ "Source": {"Owner": "AWS", "SourceIdentifier": "ENCRYPTED_VOLUMES"}
 }'
 ```
 
@@ -157,47 +157,47 @@ config = boto3.client('config')
 REQUIRED_TAGS = ['Environment', 'Owner', 'CostCenter', 'Project']
 
 def lambda_handler(event, context):
-    invoking_event = json.loads(event['invokingEvent'])
-    configuration_item = invoking_event.get('configurationItem', {})
+ invoking_event = json.loads(event['invokingEvent'])
+ configuration_item = invoking_event.get('configurationItem', {})
 
-    if configuration_item['resourceType'] != 'AWS::EC2::Instance':
-        return
+ if configuration_item['resourceType'] != 'AWS::EC2::Instance':
+ return
 
-    tags = {t['key']: t['value'] for t in configuration_item.get('tags', [])}
-    missing_tags = [tag for tag in REQUIRED_TAGS if tag not in tags]
+ tags = {t['key']: t['value'] for t in configuration_item.get('tags', [])}
+ missing_tags = [tag for tag in REQUIRED_TAGS if tag not in tags]
 
-    if missing_tags:
-        compliance = 'NON_COMPLIANT'
-        annotation = f"Missing required tags: {', '.join(missing_tags)}"
-    else:
-        compliance = 'COMPLIANT'
-        annotation = 'All required tags present'
+ if missing_tags:
+ compliance = 'NON_COMPLIANT'
+ annotation = f"Missing required tags: {', '.join(missing_tags)}"
+ else:
+ compliance = 'COMPLIANT'
+ annotation = 'All required tags present'
 
-    config.put_evaluations(
-        Evaluations=[{
-            'ComplianceResourceType': configuration_item['resourceType'],
-            'ComplianceResourceId': configuration_item['resourceId'],
-            'ComplianceType': compliance,
-            'Annotation': annotation,
-            'OrderingTimestamp': configuration_item['configurationItemCaptureTime']
-        }],
-        ResultToken=event['resultToken']
-    )
+ config.put_evaluations(
+ Evaluations=[{
+ 'ComplianceResourceType': configuration_item['resourceType'],
+ 'ComplianceResourceId': configuration_item['resourceId'],
+ 'ComplianceType': compliance,
+ 'Annotation': annotation,
+ 'OrderingTimestamp': configuration_item['configurationItemCaptureTime']
+ }],
+ ResultToken=event['resultToken']
+ )
 ```
 
 ```bash
 # Deploy the custom rule
 aws configservice put-config-rule --config-rule '{
-  "ConfigRuleName": "ec2-required-tags",
-  "Source": {
-    "Owner": "CUSTOM_LAMBDA",
-    "SourceIdentifier": "arn:aws:lambda:us-east-1:ACCOUNT:function:config-required-tags",
-    "SourceDetails": [{
-      "EventSource": "aws.config",
-      "MessageType": "ConfigurationItemChangeNotification"
-    }]
-  },
-  "Scope": {"ComplianceResourceTypes": ["AWS::EC2::Instance"]}
+ "ConfigRuleName": "ec2-required-tags",
+ "Source": {
+ "Owner": "CUSTOM_LAMBDA",
+ "SourceIdentifier": "arn:aws:lambda:us-east-1:ACCOUNT:function:config-required-tags",
+ "SourceDetails": [{
+ "EventSource": "aws.config",
+ "MessageType": "ConfigurationItemChangeNotification"
+ }]
+ },
+ "Scope": {"ComplianceResourceTypes": ["AWS::EC2::Instance"]}
 }'
 ```
 
@@ -208,43 +208,43 @@ Set up SSM Automation documents for automatic remediation of non-compliant resou
 ```bash
 # Auto-remediate public S3 buckets
 aws configservice put-remediation-configurations --remediation-configurations '[{
-  "ConfigRuleName": "s3-bucket-public-read-prohibited",
-  "TargetType": "SSM_DOCUMENT",
-  "TargetId": "AWS-DisableS3BucketPublicReadWrite",
-  "Parameters": {
-    "S3BucketName": {"ResourceValue": {"Value": "RESOURCE_ID"}},
-    "AutomationAssumeRole": {"StaticValue": {"Values": ["arn:aws:iam::ACCOUNT:role/ConfigRemediationRole"]}}
-  },
-  "Automatic": true,
-  "MaximumAutomaticAttempts": 3,
-  "RetryAttemptSeconds": 60
+ "ConfigRuleName": "s3-bucket-public-read-prohibited",
+ "TargetType": "SSM_DOCUMENT",
+ "TargetId": "AWS-DisableS3BucketPublicReadWrite",
+ "Parameters": {
+ "S3BucketName": {"ResourceValue": {"Value": "RESOURCE_ID"}},
+ "AutomationAssumeRole": {"StaticValue": {"Values": ["arn:aws:iam::ACCOUNT:role/ConfigRemediationRole"]}}
+ },
+ "Automatic": true,
+ "MaximumAutomaticAttempts": 3,
+ "RetryAttemptSeconds": 60
 }]'
 
 # Auto-remediate unencrypted EBS volumes
 aws configservice put-remediation-configurations --remediation-configurations '[{
-  "ConfigRuleName": "encrypted-volumes",
-  "TargetType": "SSM_DOCUMENT",
-  "TargetId": "AWS-EnableEBSEncryptionByDefault",
-  "Parameters": {
-    "AutomationAssumeRole": {"StaticValue": {"Values": ["arn:aws:iam::ACCOUNT:role/ConfigRemediationRole"]}}
-  },
-  "Automatic": true,
-  "MaximumAutomaticAttempts": 1,
-  "RetryAttemptSeconds": 300
+ "ConfigRuleName": "encrypted-volumes",
+ "TargetType": "SSM_DOCUMENT",
+ "TargetId": "AWS-EnableEBSEncryptionByDefault",
+ "Parameters": {
+ "AutomationAssumeRole": {"StaticValue": {"Values": ["arn:aws:iam::ACCOUNT:role/ConfigRemediationRole"]}}
+ },
+ "Automatic": true,
+ "MaximumAutomaticAttempts": 1,
+ "RetryAttemptSeconds": 300
 }]'
 
 # Auto-remediate security groups allowing SSH from 0.0.0.0/0
 aws configservice put-remediation-configurations --remediation-configurations '[{
-  "ConfigRuleName": "restricted-ssh",
-  "TargetType": "SSM_DOCUMENT",
-  "TargetId": "AWS-DisablePublicAccessForSecurityGroup",
-  "Parameters": {
-    "GroupId": {"ResourceValue": {"Value": "RESOURCE_ID"}},
-    "AutomationAssumeRole": {"StaticValue": {"Values": ["arn:aws:iam::ACCOUNT:role/ConfigRemediationRole"]}}
-  },
-  "Automatic": true,
-  "MaximumAutomaticAttempts": 3,
-  "RetryAttemptSeconds": 60
+ "ConfigRuleName": "restricted-ssh",
+ "TargetType": "SSM_DOCUMENT",
+ "TargetId": "AWS-DisablePublicAccessForSecurityGroup",
+ "Parameters": {
+ "GroupId": {"ResourceValue": {"Value": "RESOURCE_ID"}},
+ "AutomationAssumeRole": {"StaticValue": {"Values": ["arn:aws:iam::ACCOUNT:role/ConfigRemediationRole"]}}
+ },
+ "Automatic": true,
+ "MaximumAutomaticAttempts": 3,
+ "RetryAttemptSeconds": 60
 }]'
 ```
 
@@ -255,25 +255,25 @@ Aggregate compliance data from all organization accounts into a central view.
 ```bash
 # Create a Config aggregator for the organization
 aws configservice put-configuration-aggregator \
-  --configuration-aggregator-name org-compliance-aggregator \
-  --organization-aggregation-source '{
-    "RoleArn": "arn:aws:iam::ACCOUNT:role/ConfigAggregatorRole",
-    "AllAwsRegions": true
-  }'
+ --configuration-aggregator-name org-compliance-aggregator \
+ --organization-aggregation-source '{
+ "RoleArn": "arn:aws:iam::ACCOUNT:role/ConfigAggregatorRole",
+ "AllAwsRegions": true
+ }'
 
 # Query aggregate compliance across all accounts
 aws configservice get-aggregate-compliance-details-by-config-rule \
-  --configuration-aggregator-name org-compliance-aggregator \
-  --config-rule-name s3-bucket-public-read-prohibited \
-  --compliance-type NON_COMPLIANT \
-  --query 'AggregateEvaluationResults[*].[AccountId,AwsRegion,EvaluationResultIdentifier.EvaluationResultQualifier.ResourceId,ComplianceType]' \
-  --output table
+ --configuration-aggregator-name org-compliance-aggregator \
+ --config-rule-name s3-bucket-public-read-prohibited \
+ --compliance-type NON_COMPLIANT \
+ --query 'AggregateEvaluationResults[*].[AccountId,AwsRegion,EvaluationResultIdentifier.EvaluationResultQualifier.ResourceId,ComplianceType]' \
+ --output table
 
 # Get compliance summary by account
 aws configservice get-aggregate-compliance-summary-by-source \
-  --configuration-aggregator-name org-compliance-aggregator \
-  --query 'AggregateComplianceCounts[*].[GroupName,ComplianceSummary.CompliantResourceCount.CappedCount,ComplianceSummary.NonCompliantResourceCount.CappedCount]' \
-  --output table
+ --configuration-aggregator-name org-compliance-aggregator \
+ --query 'AggregateComplianceCounts[*].[GroupName,ComplianceSummary.CompliantResourceCount.CappedCount,ComplianceSummary.NonCompliantResourceCount.CappedCount]' \
+ --output table
 ```
 
 ## Key Concepts
@@ -323,28 +323,28 @@ Report Date: 2026-02-23
 Config Rules Active: 48
 
 COMPLIANCE SUMMARY:
-  Overall Compliance: 87%
-  Compliant Resources:     4,234
-  Non-Compliant Resources:   612
-  Not Applicable:            189
+ Overall Compliance: 87%
+ Compliant Resources: 4,234
+ Non-Compliant Resources: 612
+ Not Applicable: 189
 
 TOP NON-COMPLIANT RULES:
-  encrypted-volumes:              89 resources (14 accounts)
-  vpc-flow-logs-enabled:          67 resources (12 accounts)
-  mfa-enabled-for-iam-console:    45 resources (8 accounts)
-  s3-bucket-ssl-requests-only:    34 resources (6 accounts)
-  restricted-ssh:                 28 resources (5 accounts)
+ encrypted-volumes: 89 resources (14 accounts)
+ vpc-flow-logs-enabled: 67 resources (12 accounts)
+ mfa-enabled-for-iam-console: 45 resources (8 accounts)
+ s3-bucket-ssl-requests-only: 34 resources (6 accounts)
+ restricted-ssh: 28 resources (5 accounts)
 
 AUTO-REMEDIATION (Last 30 Days):
-  Public S3 buckets remediated:    12
-  Security groups restricted:       8
-  EBS default encryption enabled:   6
-  Total auto-remediated:           26
-  Failed remediation attempts:      3
+ Public S3 buckets remediated: 12
+ Security groups restricted: 8
+ EBS default encryption enabled: 6
+ Total auto-remediated: 26
+ Failed remediation attempts: 3
 
 ACCOUNT COMPLIANCE RANKING:
-  1. prod-core (account-001):     96% compliant
-  2. prod-data (account-002):     94% compliant
-  ...
-  30. dev-sandbox (account-030):  68% compliant
+ 1. prod-core (account-001): 96% compliant
+ 2. prod-data (account-002): 94% compliant
+ ...
+ 30. dev-sandbox (account-030): 68% compliant
 ```

@@ -1,13 +1,13 @@
 ---
 name: implementing-gdpr-data-subject-access-request
 description: 'Automates GDPR Data Subject Access Request (DSAR) workflows including
-  identity verification, PII discovery across databases and files using regex and
-  NER, data mapping, response templating per Article 15 requirements, deadline tracking,
-  and audit logging. Covers ICO/EDPB guidance compliance, exemption handling, and
-  scalable batch processing. Use when building or auditing DSAR response capabilities
-  under GDPR/UK GDPR.
+ identity verification, PII discovery across databases and files using regex and
+ NER, data mapping, response templating per Article 15 requirements, deadline tracking,
+ and audit logging. Covers ICO/EDPB guidance compliance, exemption handling, and
+ scalable batch processing. Use when building or auditing DSAR response capabilities
+ under GDPR/UK GDPR.
 
-  '
+ '
 domain: cybersecurity
 subdomain: privacy-compliance
 tags:
@@ -58,14 +58,14 @@ Under GDPR Article 15, data subjects have the right to obtain from the controlle
 1. **Confirmation** that their personal data is being processed
 2. **A copy** of all personal data held about them
 3. **Supplementary information** including:
-   - Purposes of processing
-   - Categories of personal data
-   - Recipients or categories of recipients
-   - Retention periods or criteria to determine them
-   - Right to rectification, erasure, restriction, or objection
-   - Right to lodge a complaint with a supervisory authority
-   - Source of the data (if not collected directly from the subject)
-   - Existence of automated decision-making, including profiling
+ - Purposes of processing
+ - Categories of personal data
+ - Recipients or categories of recipients
+ - Retention periods or criteria to determine them
+ - Right to rectification, erasure, restriction, or objection
+ - Right to lodge a complaint with a supervisory authority
+ - Source of the data (if not collected directly from the subject)
+ - Existence of automated decision-making, including profiling
 
 ### Timeline Requirements
 
@@ -97,11 +97,11 @@ engine = DSARWorkflowEngine(config_path="dsar_config.json")
 
 # Register a new DSAR
 request = engine.register_dsar(
-    requester_name="Jane Smith",
-    requester_email="jane.smith@example.com",
-    request_channel="email",
-    request_text="I would like a copy of all personal data you hold about me.",
-    identity_docs=["passport_verified"],
+ requester_name="Jane Smith",
+ requester_email="jane.smith@example.com",
+ request_channel="email",
+ request_text="I would like a copy of all personal data you hold about me.",
+ identity_docs=["passport_verified"],
 )
 print(f"DSAR ID: {request['dsar_id']}, Deadline: {request['deadline']}")
 ```
@@ -118,20 +118,20 @@ pii_engine = PIIDiscoveryEngine()
 
 # Scan structured data (database)
 db_results = pii_engine.scan_database(
-    connection_string="postgresql://user:pass@localhost/appdb",
-    search_identifiers={"email": "jane.smith@example.com", "name": "Jane Smith"},
+ connection_string="postgresql://user:pass@localhost/appdb",
+ search_identifiers={"email": "jane.smith@example.com", "name": "Jane Smith"},
 )
 
 # Scan unstructured data (files, logs)
 file_results = pii_engine.scan_files(
-    directories=["/var/log/app", "/data/exports", "/data/documents"],
-    search_identifiers={"email": "jane.smith@example.com", "name": "Jane Smith"},
+ directories=["/var/log/app", "/data/exports", "/data/documents"],
+ search_identifiers={"email": "jane.smith@example.com", "name": "Jane Smith"},
 )
 
 # Scan with NER for contextual PII detection
 ner_results = pii_engine.scan_with_ner(
-    text_corpus=file_results["raw_text_matches"],
-    entity_types=["PERSON", "EMAIL", "PHONE_NUMBER", "LOCATION", "DATE_OF_BIRTH"],
+ text_corpus=file_results["raw_text_matches"],
+ entity_types=["PERSON", "EMAIL", "PHONE_NUMBER", "LOCATION", "DATE_OF_BIRTH"],
 )
 
 all_pii = pii_engine.consolidate_results(db_results, file_results, ner_results)
@@ -150,17 +150,17 @@ mapper = DataMapper(data_inventory_path="data_inventory.json")
 
 # Map PII to Article 15 categories
 mapped_data = mapper.map_to_article15(
-    pii_records=all_pii,
-    data_subject_id="jane.smith@example.com",
+ pii_records=all_pii,
+ data_subject_id="jane.smith@example.com",
 )
 
 # Output includes processing purposes, recipients, retention for each data category
 for category in mapped_data["categories"]:
-    print(f"Category: {category['name']}")
-    print(f"  Purpose: {category['processing_purpose']}")
-    print(f"  Legal basis: {category['legal_basis']}")
-    print(f"  Retention: {category['retention_period']}")
-    print(f"  Recipients: {', '.join(category['recipients'])}")
+ print(f"Category: {category['name']}")
+ print(f" Purpose: {category['processing_purpose']}")
+ print(f" Legal basis: {category['legal_basis']}")
+ print(f" Retention: {category['retention_period']}")
+ print(f" Recipients: {', '.join(category['recipients'])}")
 ```
 
 ### Step 4: Exemption Review
@@ -175,14 +175,14 @@ reviewer = ExemptionReviewer()
 
 # Check for applicable exemptions
 review_result = reviewer.review_exemptions(
-    mapped_data=mapped_data,
-    exemption_checks=[
-        "third_party_data",
-        "legal_professional_privilege",
-        "trade_secrets",
-        "crime_prevention",
-        "management_forecasting",
-    ],
+ mapped_data=mapped_data,
+ exemption_checks=[
+ "third_party_data",
+ "legal_professional_privilege",
+ "trade_secrets",
+ "crime_prevention",
+ "management_forecasting",
+ ],
 )
 
 # Apply redactions where exemptions apply
@@ -202,15 +202,15 @@ generator = DSARResponseGenerator(template_dir="templates/")
 
 # Generate complete response package
 response = generator.generate_response(
-    dsar_id=request["dsar_id"],
-    data_subject="Jane Smith",
-    mapped_data=redacted_data,
-    format="pdf",  # or "json", "csv"
+ dsar_id=request["dsar_id"],
+ data_subject="Jane Smith",
+ mapped_data=redacted_data,
+ format="pdf", # or "json", "csv"
 )
 
 # Package includes: cover letter, data export, supplementary info, audit log
 for doc in response["documents"]:
-    print(f"Generated: {doc['filename']} ({doc['type']})")
+ print(f"Generated: {doc['filename']} ({doc['type']})")
 ```
 
 ### Step 6: Audit Trail and Compliance Logging
@@ -224,17 +224,17 @@ logger = DSARAuditLogger(log_path="dsar_audit_logs/")
 
 # Log complete DSAR lifecycle
 logger.log_event(request["dsar_id"], "request_received", {
-    "channel": "email",
-    "identity_verified": True,
+ "channel": "email",
+ "identity_verified": True,
 })
 logger.log_event(request["dsar_id"], "pii_discovery_complete", {
-    "records_found": all_pii["total_records"],
-    "sources_scanned": all_pii["source_count"],
+ "records_found": all_pii["total_records"],
+ "sources_scanned": all_pii["source_count"],
 })
 logger.log_event(request["dsar_id"], "response_sent", {
-    "format": "pdf",
-    "documents_count": len(response["documents"]),
-    "exemptions_applied": review_result["exemption_count"],
+ "format": "pdf",
+ "documents_count": len(response["documents"]),
+ "exemptions_applied": review_result["exemption_count"],
 })
 
 # Generate compliance report
@@ -255,24 +255,24 @@ gen = DSARResponseGenerator(template_dir="templates/")
 
 # 1. Intake
 req = engine.register_dsar(
-    requester_name="John Doe",
-    requester_email="john.doe@example.com",
-    request_channel="web_form",
-    request_text="Please provide all my data under GDPR Article 15.",
-    identity_docs=["email_verified", "account_match"],
+ requester_name="John Doe",
+ requester_email="john.doe@example.com",
+ request_channel="web_form",
+ request_text="Please provide all my data under GDPR Article 15.",
+ identity_docs=["email_verified", "account_match"],
 )
 
 # 2. Discover
 results = pii.full_scan(
-    search_identifiers={"email": "john.doe@example.com"},
-    sources=["database", "files", "logs"],
+ search_identifiers={"email": "john.doe@example.com"},
+ sources=["database", "files", "logs"],
 )
 
 # 3. Generate response
 response = gen.generate_response(
-    dsar_id=req["dsar_id"],
-    data_subject="John Doe",
-    mapped_data=results,
+ dsar_id=req["dsar_id"],
+ data_subject="John Doe",
+ mapped_data=results,
 )
 
 # 4. Track deadline
@@ -291,7 +291,7 @@ matcher = PIIPatternMatcher()
 test_text = "Contact jane.smith@example.com or call +44 20 7946 0958. SSN: 123-45-6789"
 matches = matcher.scan_text(test_text)
 for m in matches:
-    print(f"  [{m['type']}] '{m['value']}' (confidence: {m['confidence']})")
+ print(f" [{m['type']}] '{m['value']}' (confidence: {m['confidence']})")
 ```
 
 ## References

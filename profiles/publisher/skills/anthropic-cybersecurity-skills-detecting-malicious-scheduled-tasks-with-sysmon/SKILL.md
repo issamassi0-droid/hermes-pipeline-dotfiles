@@ -1,14 +1,14 @@
 ---
 name: detecting-malicious-scheduled-tasks-with-sysmon
 description: 'Detect malicious scheduled task creation and modification using Sysmon
-  Event IDs 1 (Process Create for schtasks.exe), 11 (File Create for task XML), and
-  Windows Security Event 4698/4702. The analyst correlates task creation with suspicious
-  parent processes, public directory paths, and encoded command arguments to identify
-  persistence and lateral movement via scheduled tasks. Activates for requests involving
-  scheduled task detection, Sysmon persistence hunting, or T1053.005 Scheduled Task/Job
-  analysis.
+ Event IDs 1 (Process Create for schtasks.exe), 11 (File Create for task XML), and
+ Windows Security Event 4698/4702. The analyst correlates task creation with suspicious
+ parent processes, public directory paths, and encoded command arguments to identify
+ persistence and lateral movement via scheduled tasks. Activates for requests involving
+ scheduled task detection, Sysmon persistence hunting, or T1053.005 Scheduled Task/Job
+ analysis.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-hunting
 tags:
@@ -77,10 +77,10 @@ targeting remote systems.
 
 ```
 [CRITICAL] Suspicious Scheduled Task Detected
-  Task: \Microsoft\Windows\UpdateCheck
-  Command: powershell.exe -enc SQBuAHYAbwBrAGUALQBXAGUAYgBSAGU...
-  Created By: DOMAIN\compromised_user
-  Parent Process: cmd.exe (PID 4532)
-  Source: \\192.168.1.50 (remote creation)
-  MITRE: T1053.005 - Scheduled Task/Job
+ Task: \Microsoft\Windows\UpdateCheck
+ Command: powershell.exe -enc SQBuAHYAbwBrAGUALQBXAGUAYgBSAGU...
+ Created By: DOMAIN\compromised_user
+ Parent Process: cmd.exe (PID 4532)
+ Source: \\192.168.1.50 (remote creation)
+ MITRE: T1053.005 - Scheduled Task/Job
 ```

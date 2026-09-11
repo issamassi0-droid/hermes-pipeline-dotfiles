@@ -1,11 +1,11 @@
 ---
 name: validating-tpm-measured-boot-attestation
 description: Verifies TPM 2.0 measured-boot integrity and remote attestation with
-  tpm2-tools -- reading PCRs (tpm2_pcrread), replaying the boot event log, generating
-  and checking signed quotes (tpm2_quote/tpm2_checkquote), and sealing secrets to
-  a PCR policy. Use to confirm a system booted trusted firmware/kernel for Zero
-  Trust device posture, detect boot-chain tampering via PCR drift, or build a golden-value
-  baseline for fleet attestation.
+ tpm2-tools -- reading PCRs (tpm2_pcrread), replaying the boot event log, generating
+ and checking signed quotes (tpm2_quote/tpm2_checkquote), and sealing secrets to
+ a PCR policy. Use to confirm a system booted trusted firmware/kernel for Zero
+ Trust device posture, detect boot-chain tampering via PCR drift, or build a golden-value
+ baseline for fleet attestation.
 domain: cybersecurity
 subdomain: hardware-firmware-security
 tags:
@@ -48,10 +48,10 @@ This skill provides the full `tpm2-tools` workflow for enrolling an AK, capturin
 ## Prerequisites
 
 - A system with a TPM 2.0 device and the resource manager:
-  ```bash
-  sudo apt install tpm2-tools tpm2-abrmd        # Debian/Ubuntu
-  sudo dnf install tpm2-tools tpm2-abrmd        # Fedora/RHEL
-  ```
+ ```bash
+ sudo apt install tpm2-tools tpm2-abrmd # Debian/Ubuntu
+ sudo dnf install tpm2-tools tpm2-abrmd # Fedora/RHEL
+ ```
 - Access to the TPM (`/dev/tpm0` / `/dev/tpmrm0`) and the kernel measurement log at `/sys/kernel/security/tpm0/binary_bios_measurements`.
 - Root for reading some sysfs entries and for NV/AK operations.
 - For remote attestation: a verifier host and a transport for the quote/nonce exchange.
@@ -80,15 +80,15 @@ This skill provides the full `tpm2-tools` workflow for enrolling an AK, capturin
 ### 1. Confirm the TPM is present and read its properties
 ```bash
 tpm2_getcap properties-fixed | grep -i manufacturer
-tpm2_getcap pcrs                 # list supported PCR banks (sha1, sha256, ...)
+tpm2_getcap pcrs # list supported PCR banks (sha1, sha256, ...)
 ```
 
 ### 2. Read current PCR values
 PCR 7 = Secure Boot policy; PCR 0–7 = firmware; PCR 8–9 = bootloader/kernel; PCR 10 = IMA.
 ```bash
-tpm2_pcrread sha256                       # all sha256 PCRs
-tpm2_pcrread sha256:0,1,2,3,4,5,6,7       # firmware + Secure Boot policy
-tpm2_pcrread sha256:7                      # Secure Boot policy only
+tpm2_pcrread sha256 # all sha256 PCRs
+tpm2_pcrread sha256:0,1,2,3,4,5,6,7 # firmware + Secure Boot policy
+tpm2_pcrread sha256:7 # Secure Boot policy only
 ```
 
 ### 3. Replay the TPM event log against live PCRs
@@ -104,9 +104,9 @@ The AK signs quotes; its public part is shared with the verifier out-of-band.
 ```bash
 tpm2_createprimary -C e -g sha256 -G rsa -c primary.ctx
 tpm2_create -C primary.ctx -G rsa -u ak.pub -r ak.priv \
-  -a 'fixedtpm|fixedparent|sensitivedataorigin|userwithauth|restricted|sign'
+ -a 'fixedtpm|fixedparent|sensitivedataorigin|userwithauth|restricted|sign'
 tpm2_load -C primary.ctx -u ak.pub -r ak.priv -c ak.ctx
-tpm2_readpublic -c ak.ctx -o ak.pem -f pem      # export AK public key for the verifier
+tpm2_readpublic -c ak.ctx -o ak.pem -f pem # export AK public key for the verifier
 ```
 
 ### 5. Produce a nonce-bound quote (attestor side)
@@ -114,7 +114,7 @@ The verifier supplies a fresh random nonce to defeat replay.
 ```bash
 NONCE=$(openssl rand -hex 20)
 tpm2_quote -c ak.ctx -l sha256:0,1,2,3,4,5,6,7,8,9 \
-  -q "$NONCE" -m quote.msg -s quote.sig -o quote.pcrs -g sha256
+ -q "$NONCE" -m quote.msg -s quote.sig -o quote.pcrs -g sha256
 # Send quote.msg, quote.sig, quote.pcrs (and the nonce) to the verifier.
 ```
 
@@ -122,7 +122,7 @@ tpm2_quote -c ak.ctx -l sha256:0,1,2,3,4,5,6,7,8,9 \
 Independently validate the signature, nonce, and PCR digest with the AK public key.
 ```bash
 tpm2_checkquote -u ak.pem -m quote.msg -s quote.sig -f quote.pcrs \
-  -q "$NONCE" -g sha256
+ -q "$NONCE" -g sha256
 # Exit 0 + matching PCR digest == authentic, fresh, untampered quote.
 ```
 
@@ -140,7 +140,7 @@ Bind a secret so the TPM only releases it when PCRs match the trusted state.
 ```bash
 tpm2_createpolicy --policy-pcr -l sha256:7 -L pcr7.policy -f pcr7.dat
 echo -n "diskkey" | tpm2_create -C primary.ctx -L pcr7.policy \
-  -i - -u sealed.pub -r sealed.priv
+ -i - -u sealed.pub -r sealed.priv
 tpm2_load -C primary.ctx -u sealed.pub -r sealed.priv -c sealed.ctx
 # Unseal succeeds only while PCR 7 matches the sealed policy:
 tpm2_unseal -c sealed.ctx -p pcr:sha256:7

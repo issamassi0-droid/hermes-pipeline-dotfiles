@@ -1,9 +1,9 @@
 ---
 name: performing-cloud-asset-inventory-with-cartography
 description: Run Cartography to sync AWS, GCP, or Azure resources into a Neo4j graph database,
-  mapping relationships such as IAM permission chains, network paths, and cross-account trust.
-  Use when building a cloud asset inventory, querying the graph to identify attack paths, or
-  generating security reports across multi-cloud infrastructure.
+ mapping relationships such as IAM permission chains, network paths, and cross-account trust.
+ Use when building a cloud asset inventory, querying the graph to identify attack paths, or
+ generating security reports across multi-cloud infrastructure.
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -66,12 +66,12 @@ cartography --help
 
 ```bash
 docker run -d \
-  --name neo4j \
-  -p 7474:7474 -p 7687:7687 \
-  -e NEO4J_AUTH=neo4j/changethispassword \
-  -e NEO4J_PLUGINS='["apoc"]' \
-  -v neo4j_data:/data \
-  neo4j:5-community
+ --name neo4j \
+ -p 7474:7474 -p 7687:7687 \
+ -e NEO4J_AUTH=neo4j/changethispassword \
+ -e NEO4J_PLUGINS='["apoc"]' \
+ -v neo4j_data:/data \
+ neo4j:5-community
 ```
 
 ## Running Cartography
@@ -81,29 +81,29 @@ docker run -d \
 ```bash
 # Sync AWS account data to Neo4j
 cartography \
-  --neo4j-uri bolt://localhost:7687 \
-  --neo4j-user neo4j \
-  --neo4j-password-env-var NEO4J_PASSWORD
+ --neo4j-uri bolt://localhost:7687 \
+ --neo4j-user neo4j \
+ --neo4j-password-env-var NEO4J_PASSWORD
 ```
 
 ### Sync specific AWS modules
 
 ```bash
 cartography \
-  --neo4j-uri bolt://localhost:7687 \
-  --neo4j-user neo4j \
-  --neo4j-password-env-var NEO4J_PASSWORD \
-  --aws-sync-all-profiles
+ --neo4j-uri bolt://localhost:7687 \
+ --neo4j-user neo4j \
+ --neo4j-password-env-var NEO4J_PASSWORD \
+ --aws-sync-all-profiles
 ```
 
 ### GCP Sync
 
 ```bash
 cartography \
-  --neo4j-uri bolt://localhost:7687 \
-  --neo4j-user neo4j \
-  --neo4j-password-env-var NEO4J_PASSWORD \
-  --gcp-requested-syncs compute iam storage
+ --neo4j-uri bolt://localhost:7687 \
+ --neo4j-user neo4j \
+ --neo4j-password-env-var NEO4J_PASSWORD \
+ --gcp-requested-syncs compute iam storage
 ```
 
 ## Security-Focused Cypher Queries
@@ -113,7 +113,7 @@ cartography \
 ```cypher
 MATCH (b:S3Bucket)
 WHERE b.anonymous_access = true
-   OR b.anonymous_actions IS NOT NULL
+ OR b.anonymous_actions IS NOT NULL
 RETURN b.name, b.anonymous_actions, b.region, b.arn
 ORDER BY b.name
 ```
@@ -123,7 +123,7 @@ ORDER BY b.name
 ```cypher
 MATCH (user:AWSUser)-[:POLICY]->(policy:AWSPolicy)
 WHERE policy.name = 'AdministratorAccess'
-   OR policy.arn CONTAINS 'AdministratorAccess'
+ OR policy.arn CONTAINS 'AdministratorAccess'
 RETURN user.name, user.arn, policy.name, user.password_last_used
 ```
 
@@ -131,10 +131,10 @@ RETURN user.name, user.arn, policy.name, user.password_last_used
 
 ```cypher
 MATCH (instance:EC2Instance)-[:MEMBER_OF_EC2_SECURITY_GROUP]->(sg:EC2SecurityGroup)
-      -[:MEMBER_OF_EC2_SECURITY_GROUP_RULE]->(rule:IpRule)
+ -[:MEMBER_OF_EC2_SECURITY_GROUP_RULE]->(rule:IpRule)
 WHERE rule.fromport <= 22 AND rule.toport >= 22
-  AND rule.protocol IN ['tcp', '-1']
-  AND '0.0.0.0/0' IN rule.ipranges
+ AND rule.protocol IN ['tcp', '-1']
+ AND '0.0.0.0/0' IN rule.ipranges
 RETURN instance.instanceid, instance.publicipaddress, sg.groupid, sg.name
 ```
 
@@ -143,7 +143,7 @@ RETURN instance.instanceid, instance.publicipaddress, sg.groupid, sg.name
 ```cypher
 MATCH (role:AWSRole)-[:TRUSTS_AWS_PRINCIPAL]->(principal:AWSPrincipal)
 WHERE principal.arn CONTAINS ':root'
-  AND NOT principal.arn CONTAINS role.accountid
+ AND NOT principal.arn CONTAINS role.accountid
 RETURN role.arn, role.name, principal.arn AS trusted_account
 ORDER BY role.name
 ```
@@ -152,9 +152,9 @@ ORDER BY role.name
 
 ```cypher
 MATCH path = (instance:EC2Instance)-[:STS_ASSUME_ROLE_ALLOWS|MEMBER_OF_EC2_SECURITY_GROUP|
-  POLICY|INSTANCE_PROFILE*1..5]->(bucket:S3Bucket)
+ POLICY|INSTANCE_PROFILE*1..5]->(bucket:S3Bucket)
 WHERE instance.publicipaddress IS NOT NULL
-  AND bucket.name CONTAINS 'sensitive'
+ AND bucket.name CONTAINS 'sensitive'
 RETURN path
 LIMIT 25
 ```
@@ -164,7 +164,7 @@ LIMIT 25
 ```cypher
 MATCH (role:AWSRole)
 WHERE role.last_used IS NULL
-   OR role.last_used < datetime().epochMillis - (90 * 24 * 60 * 60 * 1000)
+ OR role.last_used < datetime().epochMillis - (90 * 24 * 60 * 60 * 1000)
 RETURN role.name, role.arn, role.last_used
 ORDER BY role.last_used
 ```
@@ -183,7 +183,7 @@ RETURN func.name, func.arn, role.name, policy.name
 MATCH (vpc:AWSVpc)-[:RESOURCE]->(subnet:EC2Subnet)-[:MEMBER_OF_SUBNET]->(instance:EC2Instance)
 WHERE instance.publicipaddress IS NOT NULL
 RETURN vpc.id, subnet.subnetid, subnet.cidr_block, instance.instanceid,
-       instance.publicipaddress, instance.state
+ instance.publicipaddress, instance.state
 ```
 
 ## Scheduling Regular Syncs
@@ -193,10 +193,10 @@ RETURN vpc.id, subnet.subnetid, subnet.cidr_block, instance.instanceid,
 ```bash
 # Add to crontab - sync every 6 hours
 0 */6 * * * /usr/local/bin/cartography \
-  --neo4j-uri bolt://localhost:7687 \
-  --neo4j-user neo4j \
-  --neo4j-password-env-var NEO4J_PASSWORD \
-  >> /var/log/cartography/sync.log 2>&1
+ --neo4j-uri bolt://localhost:7687 \
+ --neo4j-user neo4j \
+ --neo4j-password-env-var NEO4J_PASSWORD \
+ >> /var/log/cartography/sync.log 2>&1
 ```
 
 ### Docker Compose deployment
@@ -204,32 +204,32 @@ RETURN vpc.id, subnet.subnetid, subnet.cidr_block, instance.instanceid,
 ```yaml
 version: '3.8'
 services:
-  neo4j:
-    image: neo4j:5-community
-    ports:
-      - "7474:7474"
-      - "7687:7687"
-    environment:
-      NEO4J_AUTH: neo4j/securepwd123
-      NEO4J_PLUGINS: '["apoc"]'
-      NEO4J_dbms_memory_heap_max__size: 4G
-    volumes:
-      - neo4j_data:/data
+ neo4j:
+ image: neo4j:5-community
+ ports:
+ - "7474:7474"
+ - "7687:7687"
+ environment:
+ NEO4J_AUTH: neo4j/securepwd123
+ NEO4J_PLUGINS: '["apoc"]'
+ NEO4J_dbms_memory_heap_max__size: 4G
+ volumes:
+ - neo4j_data:/data
 
-  cartography:
-    image: ghcr.io/cartography-cncf/cartography:latest
-    depends_on:
-      - neo4j
-    environment:
-      NEO4J_PASSWORD: securepwd123
-      AWS_DEFAULT_REGION: us-east-1
-    command: >
-      --neo4j-uri bolt://neo4j:7687
-      --neo4j-user neo4j
-      --neo4j-password-env-var NEO4J_PASSWORD
+ cartography:
+ image: ghcr.io/cartography-cncf/cartography:latest
+ depends_on:
+ - neo4j
+ environment:
+ NEO4J_PASSWORD: securepwd123
+ AWS_DEFAULT_REGION: us-east-1
+ command: >
+ --neo4j-uri bolt://neo4j:7687
+ --neo4j-user neo4j
+ --neo4j-password-env-var NEO4J_PASSWORD
 
 volumes:
-  neo4j_data:
+ neo4j_data:
 ```
 
 ## Data Model Overview

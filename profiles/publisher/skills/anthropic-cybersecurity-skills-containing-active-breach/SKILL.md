@@ -1,13 +1,13 @@
 ---
 name: containing-active-breach
 description: 'Executes containment strategies to stop active adversary operations
-  and prevent lateral movement during a confirmed security breach. Implements short-term
-  and long-term containment using network segmentation, endpoint isolation, credential
-  revocation, and access control modifications. Activates for requests involving breach
-  containment, lateral movement prevention, network isolation, active threat containment,
-  or live incident response.
+ and prevent lateral movement during a confirmed security breach. Implements short-term
+ and long-term containment using network segmentation, endpoint isolation, credential
+ revocation, and access control modifications. Activates for requests involving breach
+ containment, lateral movement prevention, network isolation, active threat containment,
+ or live incident response.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -68,12 +68,12 @@ Before taking containment actions, map the full scope of compromise to avoid par
 ```
 Containment Scope Assessment:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Compromised Hosts:     5 (WKSTN-042, WKSTN-087, SRV-FILE01, SRV-DC02, WKSTN-103)
-Compromised Accounts:  3 (jsmith, svc-backup, admin-tier0)
-C2 Channels:           HTTPS beacon to 185.220.x.x every 60s ± 15% jitter
-Lateral Movement:      PsExec via svc-backup, RDP via admin-tier0
-Adversary Privilege:   Domain Admin (admin-tier0 compromised)
-Data at Risk:          Finance share (\\SRV-FILE01\finance$) accessed
+Compromised Hosts: 5 (WKSTN-042, WKSTN-087, SRV-FILE01, SRV-DC02, WKSTN-103)
+Compromised Accounts: 3 (jsmith, svc-backup, admin-tier0)
+C2 Channels: HTTPS beacon to 185.220.x.x every 60s ± 15% jitter
+Lateral Movement: PsExec via svc-backup, RDP via admin-tier0
+Adversary Privilege: Domain Admin (admin-tier0 compromised)
+Data at Risk: Finance share (\\SRV-FILE01\finance$) accessed
 ```
 
 ### Step 2: Execute Short-Term Containment
@@ -193,9 +193,9 @@ Provide structured status updates to incident commander and stakeholders:
 ```
 CONTAINMENT STATUS REPORT
 =========================
-Incident:        INC-2025-1547
-Status:          CONTAINED (Short-Term)
-Timestamp:       2025-11-15T15:47:00Z
+Incident: INC-2025-1547
+Status: CONTAINED (Short-Term)
+Timestamp: 2025-11-15T15:47:00Z
 Containment Lead: [Name]
 
 ACTIONS TAKEN

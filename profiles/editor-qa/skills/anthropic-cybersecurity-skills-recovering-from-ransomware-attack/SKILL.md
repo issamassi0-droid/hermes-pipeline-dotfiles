@@ -1,13 +1,13 @@
 ---
 name: recovering-from-ransomware-attack
 description: 'Executes structured ransomware incident recovery following NIST/CISA
-  frameworks: environment isolation, forensic evidence preservation, clean infrastructure
-  rebuild, prioritized restoration from verified backups, credential reset, and
-  Active Directory/database recovery in dependency order. Use when recovering from
-  a ransomware attack, performing post-encryption restoration, or executing disaster
-  recovery after ransomware encryption.
+ frameworks: environment isolation, forensic evidence preservation, clean infrastructure
+ rebuild, prioritized restoration from verified backups, credential reset, and
+ Active Directory/database recovery in dependency order. Use when recovering from
+ a ransomware attack, performing post-encryption restoration, or executing disaster
+ recovery after ransomware encryption.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -31,28 +31,28 @@ mitre_attack:
 - T1003
 - T1110
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - positioning
-  - monetization
-  - defense-impairment
-  techniques:
-  - id: T1531
-    name: Account Access Removal
-    tactic: positioning
-    source: attack
-  - id: F1005
-    name: Account Manipulation
-    tactic: defense-impairment
-    source: f3
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: T1219
-    name: Remote Access Tools
-    tactic: positioning
-    source: attack
+ version: '1.1'
+ tactics:
+ - positioning
+ - monetization
+ - defense-impairment
+ techniques:
+ - id: T1531
+ name: Account Access Removal
+ tactic: positioning
+ source: attack
+ - id: F1005
+ name: Account Manipulation
+ tactic: defense-impairment
+ source: f3
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: T1219
+ name: Remote Access Tools
+ tactic: positioning
+ source: attack
 ---
 # Recovering from Ransomware Attack
 
@@ -88,10 +88,10 @@ Build recovery infrastructure isolated from the compromised network:
 
 # Recovery network architecture:
 # VLAN 999 (Recovery) - 10.99.0.0/24
-#   - Recovery workstations (10.99.0.10-20)
-#   - Recovered DCs (10.99.0.50-55)
-#   - Recovered servers (10.99.0.100+)
-#   - Proxy for internet (10.99.0.1) - patches and updates only
+# - Recovery workstations (10.99.0.10-20)
+# - Recovered DCs (10.99.0.50-55)
+# - Recovered servers (10.99.0.100+)
+# - Proxy for internet (10.99.0.1) - patches and updates only
 
 # Firewall rules: DENY all from recovery VLAN to production VLANs
 # Allow: Recovery VLAN -> Internet (HTTPS only, via proxy)
@@ -129,11 +129,11 @@ Set-ADAccountPassword -Identity krbtgt -Reset -NewPassword (ConvertTo-SecureStri
 # Reset all privileged account passwords
 $privilegedGroups = @("Domain Admins", "Enterprise Admins", "Schema Admins", "Administrators")
 foreach ($group in $privilegedGroups) {
-    Get-ADGroupMember -Identity $group -Recursive | ForEach-Object {
-        Set-ADAccountPassword -Identity $_.SamAccountName -Reset `
-            -NewPassword (ConvertTo-SecureString (New-Guid).Guid -AsPlainText -Force)
-        Set-ADUser -Identity $_.SamAccountName -ChangePasswordAtLogon $true
-    }
+ Get-ADGroupMember -Identity $group -Recursive | ForEach-Object {
+ Set-ADAccountPassword -Identity $_.SamAccountName -Reset `
+ -NewPassword (ConvertTo-SecureString (New-Guid).Guid -AsPlainText -Force)
+ Set-ADUser -Identity $_.SamAccountName -ChangePasswordAtLogon $true
+ }
 }
 
 # Validate AD health
@@ -155,13 +155,13 @@ clamscan -r --infected --log=/var/log/backup_scan.log /mnt/backup_verify
 
 # Check for known ransomware indicators
 find /mnt/backup_verify -name "*.encrypted" -o -name "*.locked" \
-    -o -name "*.lockbit" -o -name "DECRYPT_*" -o -name "readme.txt" \
-    -o -name "RECOVER-*" -o -name "HOW_TO_*" | tee /var/log/ransomware_check.log
+ -o -name "*.lockbit" -o -name "DECRYPT_*" -o -name "readme.txt" \
+ -o -name "RECOVER-*" -o -name "HOW_TO_*" | tee /var/log/ransomware_check.log
 
 # Verify database consistency (SQL Server example)
 # Restore database to temporary instance for validation
 RESTORE VERIFYONLY FROM DISK = '/mnt/backup_verify/databases/erp_db.bak'
-    WITH CHECKSUM
+ WITH CHECKSUM
 ```
 
 ### Step 4: Restore Systems in Priority Order
@@ -171,24 +171,24 @@ Follow dependency-based recovery sequence:
 ```
 Recovery Order:
 Phase 1 (Hours 0-4): Identity & Infrastructure
-  1. Domain Controllers (AD, DNS, DHCP)
-  2. Certificate Authority (if applicable)
-  3. Core network services (DHCP, NTP)
+ 1. Domain Controllers (AD, DNS, DHCP)
+ 2. Certificate Authority (if applicable)
+ 3. Core network services (DHCP, NTP)
 
 Phase 2 (Hours 4-12): Critical Business Systems
-  4. Database servers (SQL, Oracle, PostgreSQL)
-  5. Core business applications (ERP, CRM)
-  6. Email (Exchange, M365 hybrid)
+ 4. Database servers (SQL, Oracle, PostgreSQL)
+ 5. Core business applications (ERP, CRM)
+ 6. Email (Exchange, M365 hybrid)
 
 Phase 3 (Hours 12-24): Important Systems
-  7. File servers
-  8. Web applications
-  9. Monitoring and security tools (SIEM, EDR)
+ 7. File servers
+ 8. Web applications
+ 9. Monitoring and security tools (SIEM, EDR)
 
 Phase 4 (Hours 24-48): Remaining Systems
-  10. Development environments
-  11. Archive systems
-  12. Non-critical applications
+ 10. Development environments
+ 11. Archive systems
+ 12. Non-critical applications
 ```
 
 ```powershell
@@ -197,15 +197,15 @@ Phase 4 (Hours 24-48): Remaining Systems
 
 # Instant recovery for Tier 1 system
 Start-VBRInstantRecovery -RestorePoint (Get-VBRRestorePoint -Name "DC01" |
-    Sort-Object CreationTime -Descending | Select-Object -First 1) `
-    -VMName "DC01-Recovered" `
-    -Server (Get-VBRServer -Name "esxi01.recovery.local") `
-    -Datastore "recovery-datastore"
+ Sort-Object CreationTime -Descending | Select-Object -First 1) `
+ -VMName "DC01-Recovered" `
+ -Server (Get-VBRServer -Name "esxi01.recovery.local") `
+ -Datastore "recovery-datastore"
 
 # After validation, migrate to production storage
 Start-VBRQuickMigration -VM "DC01-Recovered" `
-    -Server (Get-VBRServer -Name "esxi01.prod.local") `
-    -Datastore "production-datastore"
+ -Server (Get-VBRServer -Name "esxi01.prod.local") `
+ -Datastore "production-datastore"
 ```
 
 ### Step 5: Validate Recovered Systems and Harden
@@ -216,18 +216,18 @@ Before connecting recovered systems to production:
 # Check for persistence mechanisms
 # Scheduled Tasks
 Get-ScheduledTask | Where-Object {$_.State -ne "Disabled"} |
-    Select-Object TaskName, TaskPath, State, Author |
-    Export-Csv C:\recovery\scheduled_tasks.csv
+ Select-Object TaskName, TaskPath, State, Author |
+ Export-Csv C:\recovery\scheduled_tasks.csv
 
 # Services
 Get-Service | Where-Object {$_.StartType -eq "Automatic"} |
-    Select-Object Name, DisplayName, StartType, Status |
-    Export-Csv C:\recovery\auto_services.csv
+ Select-Object Name, DisplayName, StartType, Status |
+ Export-Csv C:\recovery\auto_services.csv
 
 # Startup items
 Get-CimInstance Win32_StartupCommand |
-    Select-Object Name, Command, Location, User |
-    Export-Csv C:\recovery\startup_items.csv
+ Select-Object Name, Command, Location, User |
+ Export-Csv C:\recovery\startup_items.csv
 
 # WMI event subscriptions (common persistence)
 Get-WmiObject -Namespace root\subscription -Class __EventFilter
@@ -250,23 +250,23 @@ Install-WindowsUpdate -AcceptAll -AutoReboot
 
 ```
 Phase 1: Reconnect identity infrastructure
-  - DCs online in production VLAN
-  - Validate replication and authentication
-  - Monitor for suspicious authentication patterns
+ - DCs online in production VLAN
+ - Validate replication and authentication
+ - Monitor for suspicious authentication patterns
 
 Phase 2: Reconnect Tier 1 systems
-  - One system at a time
-  - Monitor EDR for 1 hour before proceeding to next
-  - Validate application functionality
+ - One system at a time
+ - Monitor EDR for 1 hour before proceeding to next
+ - Validate application functionality
 
 Phase 3: Reconnect remaining systems
-  - Groups of 5-10 systems
-  - Continue monitoring for re-infection indicators
+ - Groups of 5-10 systems
+ - Continue monitoring for re-infection indicators
 
 Throughout: SOC monitoring on high alert
-  - EDR in aggressive blocking mode
-  - All previous IOCs loaded in detection rules
-  - Canary files deployed on recovered systems
+ - EDR in aggressive blocking mode
+ - All previous IOCs loaded in detection rules
+ - Canary files deployed on recovered systems
 ```
 
 ## Key Concepts

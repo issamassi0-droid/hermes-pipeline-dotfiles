@@ -1,11 +1,11 @@
 ---
 name: performing-log-source-onboarding-in-siem
 description: Perform structured log source onboarding into SIEM platforms (Splunk,
-  Elastic, Sentinel, QRadar, or similar) by prioritizing sources with a tiered value
-  framework, configuring collectors, building parsers, normalizing fields to a common
-  schema (e.g. CIM), and validating data quality. Use when planning or executing
-  the integration of new log sources — such as Active Directory, firewalls, EDR,
-  VPN, DNS, or cloud audit logs — into a SIEM for security monitoring and detection.
+ Elastic, Sentinel, QRadar, or similar) by prioritizing sources with a tiered value
+ framework, configuring collectors, building parsers, normalizing fields to a common
+ schema (e.g. CIM), and validating data quality. Use when planning or executing
+ the integration of new log sources — such as Active Directory, firewalls, EDR,
+ VPN, DNS, or cloud audit logs — into a SIEM for security monitoring and detection.
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -91,20 +91,20 @@ Log source onboarding is the systematic process of integrating new data sources 
 
 ```
 1. Identify the log source:
-   - System type and version
-   - Log format (syslog, CEF, JSON, Windows Events, etc.)
-   - Log volume estimate (EPS - events per second)
-   - Network location and firewall requirements
+ - System type and version
+ - Log format (syslog, CEF, JSON, Windows Events, etc.)
+ - Log volume estimate (EPS - events per second)
+ - Network location and firewall requirements
 
 2. Assess security value:
-   - What threats can this source help detect?
-   - Which MITRE ATT&CK techniques does it cover?
-   - Is there an existing SIEM parser?
+ - What threats can this source help detect?
+ - Which MITRE ATT&CK techniques does it cover?
+ - Is there an existing SIEM parser?
 
 3. Estimate ingestion cost:
-   - Daily volume in GB
-   - License impact (per-GB or per-EPS pricing)
-   - Storage retention requirements
+ - Daily volume in GB
+ - License impact (per-GB or per-EPS pricing)
+ - Storage retention requirements
 ```
 
 ### Step 2: Configure Log Collection
@@ -125,15 +125,15 @@ input(type="imtcp" port="514" ruleset="siem_forwarding")
 
 # TLS reception
 module(load="imtcp" StreamDriver.AuthMode="x509/name"
-       StreamDriver.Mode="1" StreamDriver.Name="gtls")
+ StreamDriver.Mode="1" StreamDriver.Name="gtls")
 input(type="imtcp" port="6514" ruleset="siem_forwarding")
 
 ruleset(name="siem_forwarding") {
-    # Forward to SIEM
-    action(type="omfwd" target="siem.company.com" port="9514"
-           protocol="tcp" queue.type="LinkedList"
-           queue.filename="siem_fwd" queue.maxdiskspace="1g"
-           queue.saveonshutdown="on" action.resumeRetryCount="-1")
+ # Forward to SIEM
+ action(type="omfwd" target="siem.company.com" port="9514"
+ protocol="tcp" queue.type="LinkedList"
+ queue.filename="siem_fwd" queue.maxdiskspace="1g"
+ queue.saveonshutdown="on" action.resumeRetryCount="-1")
 }
 ```
 
@@ -169,32 +169,32 @@ sourcetype = XmlWinEventLog:Microsoft-Windows-PowerShell/Operational
 
 ```json
 {
-  "AWSTemplateFormatVersion": "2010-09-09",
-  "Resources": {
-    "CloudTrailToSIEM": {
-      "Type": "AWS::CloudTrail::Trail",
-      "Properties": {
-        "TrailName": "siem-cloudtrail",
-        "S3BucketName": "company-cloudtrail-logs",
-        "IsLogging": true,
-        "IsMultiRegionTrail": true,
-        "IncludeGlobalServiceEvents": true,
-        "EnableLogFileValidation": true,
-        "EventSelectors": [
-          {
-            "ReadWriteType": "All",
-            "IncludeManagementEvents": true,
-            "DataResources": [
-              {
-                "Type": "AWS::S3::Object",
-                "Values": ["arn:aws:s3"]
-              }
-            ]
-          }
-        ]
-      }
-    }
-  }
+ "AWSTemplateFormatVersion": "2010-09-09",
+ "Resources": {
+ "CloudTrailToSIEM": {
+ "Type": "AWS::CloudTrail::Trail",
+ "Properties": {
+ "TrailName": "siem-cloudtrail",
+ "S3BucketName": "company-cloudtrail-logs",
+ "IsLogging": true,
+ "IsMultiRegionTrail": true,
+ "IncludeGlobalServiceEvents": true,
+ "EnableLogFileValidation": true,
+ "EventSelectors": [
+ {
+ "ReadWriteType": "All",
+ "IncludeManagementEvents": true,
+ "DataResources": [
+ {
+ "Type": "AWS::S3::Object",
+ "Values": ["arn:aws:s3"]
+ }
+ ]
+ }
+ ]
+ }
+ }
+ }
 }
 ```
 

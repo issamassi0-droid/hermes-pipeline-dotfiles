@@ -53,15 +53,15 @@ If any blocker fires, **stop**. Read [`references/escape-hatch.md`](references/e
 
 Read [`references/api-map.md`](references/api-map.md) — the index of every Remotion API and its HF equivalent or per-topic reference. Identify which topic references you'll need based on what the source uses:
 
-| Source contains                                                           | Load reference                                |
+| Source contains | Load reference |
 | ------------------------------------------------------------------------- | --------------------------------------------- |
-| `Composition`, `defaultProps`, `schema`, `calculateMetadata`              | [`parameters.md`](references/parameters.md)   |
-| `Sequence`, `Series`, `Loop`, `AbsoluteFill`, `Freeze`                    | [`sequencing.md`](references/sequencing.md)   |
-| `useCurrentFrame`, `interpolate`, `spring`, `Easing`, `interpolateColors` | [`timing.md`](references/timing.md)           |
-| `Audio`, `Video`, `Img`, `IFrame`, `staticFile`, `delayRender`            | [`media.md`](references/media.md)             |
-| `TransitionSeries`, `@remotion/transitions`                               | [`transitions.md`](references/transitions.md) |
-| `@remotion/lottie`                                                        | [`lottie.md`](references/lottie.md)           |
-| `@remotion/google-fonts/<Family>`, `Font.loadFont`, `@font-face`          | [`fonts.md`](references/fonts.md)             |
+| `Composition`, `defaultProps`, `schema`, `calculateMetadata` | [`parameters.md`](references/parameters.md) |
+| `Sequence`, `Series`, `Loop`, `AbsoluteFill`, `Freeze` | [`sequencing.md`](references/sequencing.md) |
+| `useCurrentFrame`, `interpolate`, `spring`, `Easing`, `interpolateColors` | [`timing.md`](references/timing.md) |
+| `Audio`, `Video`, `Img`, `IFrame`, `staticFile`, `delayRender` | [`media.md`](references/media.md) |
+| `TransitionSeries`, `@remotion/transitions` | [`transitions.md`](references/transitions.md) |
+| `@remotion/lottie` | [`lottie.md`](references/lottie.md) |
+| `@remotion/google-fonts/<Family>`, `Font.loadFont`, `@font-face` | [`fonts.md`](references/fonts.md) |
 
 Don't load all of them — load only what the specific source needs.
 
@@ -119,9 +119,9 @@ It runs T1, T2, T3 (render + diff) and T4 (lint validation), prints a per-tier p
 
 Validated baseline (as of 2026-04-27):
 
-| Tier | Composition shape                           | Mean SSIM | Threshold |
+| Tier | Composition shape | Mean SSIM | Threshold |
 | ---- | ------------------------------------------- | --------- | --------- |
-| T1   | single-element fade-in                      | 0.974     | 0.95      |
-| T2   | multi-scene + spring + audio + image        | 0.985     | 0.95      |
-| T3   | data-driven, custom subcomponents, count-up | 0.953     | 0.90      |
-| T4   | escape-hatch (8 lint cases)                 | 8/8 pass  | n/a       |
+| T1 | single-element fade-in | 0.974 | 0.95 |
+| T2 | multi-scene + spring + audio + image | 0.985 | 0.95 |
+| T3 | data-driven, custom subcomponents, count-up | 0.953 | 0.90 |
+| T4 | escape-hatch (8 lint cases) | 8/8 pass | n/a |

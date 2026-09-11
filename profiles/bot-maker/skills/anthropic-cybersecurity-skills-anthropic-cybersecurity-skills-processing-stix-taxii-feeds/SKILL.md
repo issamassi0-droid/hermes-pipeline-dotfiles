@@ -1,13 +1,13 @@
 ---
 name: processing-stix-taxii-feeds
 description: 'Processes STIX 2.1 threat intelligence bundles delivered via TAXII 2.1
-  servers, normalizing objects into platform-native schemas and routing them to appropriate
-  consuming systems. Use when onboarding new TAXII collection endpoints, automating
-  bi-directional intelligence sharing with ISACs, or building pipeline validation
-  for malformed STIX bundles. Activates for requests involving OASIS STIX, TAXII server
-  configuration, MISP TAXII, or Cortex XSOAR feed integrations.
+ servers, normalizing objects into platform-native schemas and routing them to appropriate
+ consuming systems. Use when onboarding new TAXII collection endpoints, automating
+ bi-directional intelligence sharing with ISACs, or building pipeline validation
+ for malformed STIX bundles. Activates for requests involving OASIS STIX, TAXII server
+ configuration, MISP TAXII, or Cortex XSOAR feed integrations.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -58,10 +58,10 @@ Use this skill when:
 from taxii2client.v21 import Server, as_pages
 
 server = Server("https://cti.example.com/taxii/",
-                user="apiuser", password="apikey")
+ user="apiuser", password="apikey")
 api_root = server.api_roots[0]
 for collection in api_root.collections:
-    print(collection.id, collection.title, collection.can_read)
+ print(collection.id, collection.title, collection.can_read)
 ```
 
 Select collections relevant to your threat profile. CISA AIS provides collections segmented by sector (financial, energy, healthcare).
@@ -73,14 +73,14 @@ from taxii2client.v21 import Collection
 from datetime import datetime, timedelta, timezone
 
 collection = Collection(
-    "https://cti.example.com/taxii/api1/collections/<id>/objects/",
-    user="apiuser", password="apikey")
+ "https://cti.example.com/taxii/api1/collections/<id>/objects/",
+ user="apiuser", password="apikey")
 
 # Fetch only objects added in the last 24 hours
 added_after = datetime.now(timezone.utc) - timedelta(hours=24)
 for bundle_page in as_pages(collection.get_objects,
-                             added_after=added_after, per_request=100):
-    process_bundle(bundle_page)
+ added_after=added_after, per_request=100):
+ process_bundle(bundle_page)
 ```
 
 ### Step 3: Parse and Validate STIX Objects
@@ -89,24 +89,24 @@ for bundle_page in as_pages(collection.get_objects,
 import stix2
 
 def process_bundle(bundle_dict):
-    bundle = stix2.parse(bundle_dict, allow_custom=True)
-    for obj in bundle.objects:
-        if obj.type == "indicator":
-            validate_indicator(obj)
-        elif obj.type == "threat-actor":
-            upsert_threat_actor(obj)
-        elif obj.type == "relationship":
-            link_objects(obj)
+ bundle = stix2.parse(bundle_dict, allow_custom=True)
+ for obj in bundle.objects:
+ if obj.type == "indicator":
+ validate_indicator(obj)
+ elif obj.type == "threat-actor":
+ upsert_threat_actor(obj)
+ elif obj.type == "relationship":
+ link_objects(obj)
 
 def validate_indicator(indicator):
-    required = ["id", "type", "spec_version", "created",
-                "modified", "pattern", "pattern_type", "valid_from"]
-    for field in required:
-        if not hasattr(indicator, field):
-            raise ValueError(f"Missing required field: {field}")
-    # Check confidence range
-    if hasattr(indicator, "confidence"):
-        assert 0 <= indicator.confidence <= 100
+ required = ["id", "type", "spec_version", "created",
+ "modified", "pattern", "pattern_type", "valid_from"]
+ for field in required:
+ if not hasattr(indicator, field):
+ raise ValueError(f"Missing required field: {field}")
+ # Check confidence range
+ if hasattr(indicator, "confidence"):
+ assert 0 <= indicator.confidence <= 100
 ```
 
 ### Step 4: Route Objects to Consuming Platforms
@@ -120,8 +120,8 @@ Map STIX object types to destination systems:
 Use TLP marking definitions to enforce sharing restrictions:
 ```python
 for marking in obj.get("object_marking_refs", []):
-    if "tlp-red" in marking:
-        route_to_restricted_platform_only(obj)
+ if "tlp-red" in marking:
+ route_to_restricted_platform_only(obj)
 ```
 
 ### Step 5: Publish Back to TAXII (Bi-directional Sharing)
@@ -129,13 +129,13 @@ for marking in obj.get("object_marking_refs", []):
 ```python
 # Add validated local intelligence back to shared collection
 new_indicator = stix2.Indicator(
-    name="Malicious C2 Domain",
-    pattern="[domain-name:value = 'evil-c2.example.com']",
-    pattern_type="stix",
-    valid_from="2025-01-15T00:00:00Z",
-    confidence=80,
-    labels=["malicious-activity"],
-    object_marking_refs=["marking-definition--34098fce-860f-479c-ae..."]  # TLP:GREEN
+ name="Malicious C2 Domain",
+ pattern="[domain-name:value = 'evil-c2.example.com']",
+ pattern_type="stix",
+ valid_from="2025-01-15T00:00:00Z",
+ confidence=80,
+ labels=["malicious-activity"],
+ object_marking_refs=["marking-definition--34098fce-860f-479c-ae..."] # TLP:GREEN
 )
 collection.add_objects(stix2.Bundle(new_indicator))
 ```

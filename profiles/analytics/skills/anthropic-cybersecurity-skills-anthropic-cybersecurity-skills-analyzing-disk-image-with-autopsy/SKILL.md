@@ -86,10 +86,10 @@ mmls /cases/case-2024-001/images/evidence.dd
 # DOS Partition Table
 # Offset Sector: 0
 # Units are in 512-byte sectors
-#      Slot    Start        End          Length       Description
-#      00:  -----   0000000000   0000002047   0000002048   Primary Table (#0)
-#      01:  00:00   0000002048   0001026047   0001024000   NTFS (0x07)
-#      02:  00:01   0001026048   0976771071   0975745024   NTFS (0x07)
+# Slot Start End Length Description
+# 00: ----- 0000000000 0000002047 0000002048 Primary Table (#0)
+# 01: 00:00 0000002048 0001026047 0001024000 NTFS (0x07)
+# 02: 00:01 0001026048 0976771071 0975745024 NTFS (0x07)
 
 # List files in a partition (offset 2048 sectors)
 fls -o 2048 /cases/case-2024-001/images/evidence.dd
@@ -140,8 +140,8 @@ icat -o 2048 /cases/case-2024-001/images/evidence.dd 14523 > /cases/case-2024-00
 
 # Extract all files from a directory
 tsk_recover -o 2048 -d /Users/suspect/Documents \
-   /cases/case-2024-001/images/evidence.dd \
-   /cases/case-2024-001/recovered/documents/
+ /cases/case-2024-001/images/evidence.dd \
+ /cases/case-2024-001/recovered/documents/
 
 # Get detailed file metadata
 istat -o 2048 /cases/case-2024-001/images/evidence.dd 14523
@@ -164,7 +164,7 @@ In Autopsy:
 ```bash
 # Using Sleuth Kit for CLI keyword search
 srch_strings -a -o 2048 /cases/case-2024-001/images/evidence.dd | \
-   grep -iE '(password|secret|confidential)' > /cases/case-2024-001/keyword_hits.txt
+ grep -iE '(password|secret|confidential)' > /cases/case-2024-001/keyword_hits.txt
 
 # Search for specific file signatures
 sigfind -o 2048 /cases/case-2024-001/images/evidence.dd 25504446
@@ -197,7 +197,7 @@ mactime -b /cases/case-2024-001/bodyfile.txt -d > /cases/case-2024-001/timeline.
 
 # Filter timeline to specific date range
 mactime -b /cases/case-2024-001/bodyfile.txt \
-   -d 2024-01-15..2024-01-20 > /cases/case-2024-001/incident_timeline.csv
+ -d 2024-01-15..2024-01-20 > /cases/case-2024-001/incident_timeline.csv
 ```
 
 ## Key Concepts
@@ -244,24 +244,24 @@ Import multiple employee disk images as separate data sources in one case, perfo
 
 ```
 Autopsy Case Analysis Summary:
-  Case:           CASE-2024-001-Workstation
-  Image:          evidence.dd (500GB NTFS)
-  Partitions:     2 (System Reserved + Primary)
-  Total Files:    245,832
-  Deleted Files:  12,456 (recoverable: 8,234)
+ Case: CASE-2024-001-Workstation
+ Image: evidence.dd (500GB NTFS)
+ Partitions: 2 (System Reserved + Primary)
+ Total Files: 245,832
+ Deleted Files: 12,456 (recoverable: 8,234)
 
-  Ingest Results:
-    Hash Matches (Known Bad):  3 files
-    Extension Mismatches:      17 files
-    Keyword Hits:              234 across 45 files
-    Encrypted Files:           5 containers detected
-    EXIF Data Extracted:       1,245 images with metadata
+ Ingest Results:
+ Hash Matches (Known Bad): 3 files
+ Extension Mismatches: 17 files
+ Keyword Hits: 234 across 45 files
+ Encrypted Files: 5 containers detected
+ EXIF Data Extracted: 1,245 images with metadata
 
-  Tagged Evidence:
-    Critical:     12 items
-    Supporting:   34 items
-    Review:       67 items
+ Tagged Evidence:
+ Critical: 12 items
+ Supporting: 34 items
+ Review: 67 items
 
-  Timeline Events:  1,234,567 entries (filtered to incident window: 892)
-  Report:          /cases/case-2024-001/reports/autopsy_report.html
+ Timeline Events: 1,234,567 entries (filtered to incident window: 892)
+ Report: /cases/case-2024-001/reports/autopsy_report.html
 ```

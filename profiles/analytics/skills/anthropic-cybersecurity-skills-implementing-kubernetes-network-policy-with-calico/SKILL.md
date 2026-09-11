@@ -1,15 +1,15 @@
 ---
 name: implementing-kubernetes-network-policy-with-calico
 description: >-
-  Installs Calico as the cluster CNI and writes standard Kubernetes NetworkPolicy under it,
-  covering default-deny baselines, policy ordering and precedence, service-account-based
-  selectors, and verifying that policy is genuinely being enforced. Use when adopting Calico
-  as the enforcement CNI, establishing a default-deny baseline, or debugging why a
-  NetworkPolicy is not taking effect under Calico. Keywords: Calico CNI, NetworkPolicy,
-  default deny, policy order, Felix, service account selector. Do not use for Calico-only CRDs
-  such as GlobalNetworkPolicy or DNS egress - use
-  implementing-container-network-policies-with-calico; for CNI-agnostic policy use
-  implementing-network-policies-for-kubernetes.
+ Installs Calico as the cluster CNI and writes standard Kubernetes NetworkPolicy under it,
+ covering default-deny baselines, policy ordering and precedence, service-account-based
+ selectors, and verifying that policy is genuinely being enforced. Use when adopting Calico
+ as the enforcement CNI, establishing a default-deny baseline, or debugging why a
+ NetworkPolicy is not taking effect under Calico. Keywords: Calico CNI, NetworkPolicy,
+ default deny, policy order, Felix, service account selector. Do not use for Calico-only CRDs
+ such as GlobalNetworkPolicy or DNS egress - use
+ implementing-container-network-policies-with-calico; for CNI-agnostic policy use
+ implementing-network-policies-for-kubernetes.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -96,24 +96,24 @@ kubectl exec -n calico-system calicoctl -- calicoctl get ippool -o wide
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: default-deny-ingress
-  namespace: production
+ name: default-deny-ingress
+ namespace: production
 spec:
-  podSelector: {}
-  policyTypes:
-    - Ingress
+ podSelector: {}
+ policyTypes:
+ - Ingress
 
 ---
 # deny-all-egress.yaml
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: default-deny-egress
-  namespace: production
+ name: default-deny-egress
+ namespace: production
 spec:
-  podSelector: {}
-  policyTypes:
-    - Egress
+ podSelector: {}
+ policyTypes:
+ - Egress
 ```
 
 ### Allow Specific Pod-to-Pod Communication
@@ -123,22 +123,22 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-frontend-to-backend
-  namespace: production
+ name: allow-frontend-to-backend
+ namespace: production
 spec:
-  podSelector:
-    matchLabels:
-      app: backend
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - podSelector:
-            matchLabels:
-              app: frontend
-      ports:
-        - protocol: TCP
-          port: 8080
+ podSelector:
+ matchLabels:
+ app: backend
+ policyTypes:
+ - Ingress
+ ingress:
+ - from:
+ - podSelector:
+ matchLabels:
+ app: frontend
+ ports:
+ - protocol: TCP
+ port: 8080
 ```
 
 ### Allow DNS Egress
@@ -148,20 +148,20 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-dns-egress
-  namespace: production
+ name: allow-dns-egress
+ namespace: production
 spec:
-  podSelector: {}
-  policyTypes:
-    - Egress
-  egress:
-    - to:
-        - namespaceSelector: {}
-      ports:
-        - protocol: UDP
-          port: 53
-        - protocol: TCP
-          port: 53
+ podSelector: {}
+ policyTypes:
+ - Egress
+ egress:
+ - to:
+ - namespaceSelector: {}
+ ports:
+ - protocol: UDP
+ port: 53
+ - protocol: TCP
+ port: 53
 ```
 
 ### Namespace Isolation
@@ -171,15 +171,15 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: allow-same-namespace
-  namespace: production
+ name: allow-same-namespace
+ namespace: production
 spec:
-  podSelector: {}
-  policyTypes:
-    - Ingress
-  ingress:
-    - from:
-        - podSelector: {}
+ podSelector: {}
+ policyTypes:
+ - Ingress
+ ingress:
+ - from:
+ - podSelector: {}
 ```
 
 ## Calico-Specific Policies
@@ -191,18 +191,18 @@ spec:
 apiVersion: projectcalico.org/v3
 kind: GlobalNetworkPolicy
 metadata:
-  name: deny-external-ingress
+ name: deny-external-ingress
 spec:
-  order: 100
-  selector: "projectcalico.org/namespace != 'ingress-nginx'"
-  types:
-    - Ingress
-  ingress:
-    - action: Deny
-      source:
-        nets:
-          - 0.0.0.0/0
-      destination: {}
+ order: 100
+ selector: "projectcalico.org/namespace != 'ingress-nginx'"
+ types:
+ - Ingress
+ ingress:
+ - action: Deny
+ source:
+ nets:
+ - 0.0.0.0/0
+ destination: {}
 ```
 
 ### Calico NetworkPolicy with Deny Rules
@@ -212,23 +212,23 @@ spec:
 apiVersion: projectcalico.org/v3
 kind: NetworkPolicy
 metadata:
-  name: deny-database-from-frontend
-  namespace: production
+ name: deny-database-from-frontend
+ namespace: production
 spec:
-  order: 10
-  selector: app == 'database'
-  types:
-    - Ingress
-  ingress:
-    - action: Deny
-      source:
-        selector: app == 'frontend'
-    - action: Allow
-      source:
-        selector: app == 'backend'
-      destination:
-        ports:
-          - 5432
+ order: 10
+ selector: app == 'database'
+ types:
+ - Ingress
+ ingress:
+ - action: Deny
+ source:
+ selector: app == 'frontend'
+ - action: Allow
+ source:
+ selector: app == 'backend'
+ destination:
+ ports:
+ - 5432
 ```
 
 ### Service Account Based Policy
@@ -238,23 +238,23 @@ spec:
 apiVersion: projectcalico.org/v3
 kind: NetworkPolicy
 metadata:
-  name: allow-by-service-account
-  namespace: production
+ name: allow-by-service-account
+ namespace: production
 spec:
-  selector: app == 'api'
-  ingress:
-    - action: Allow
-      source:
-        serviceAccounts:
-          names:
-            - frontend-sa
-            - monitoring-sa
-  egress:
-    - action: Allow
-      destination:
-        serviceAccounts:
-          names:
-            - database-sa
+ selector: app == 'api'
+ ingress:
+ - action: Allow
+ source:
+ serviceAccounts:
+ names:
+ - frontend-sa
+ - monitoring-sa
+ egress:
+ - action: Allow
+ destination:
+ serviceAccounts:
+ names:
+ - database-sa
 ```
 
 ### Host Endpoint Protection
@@ -264,27 +264,27 @@ spec:
 apiVersion: projectcalico.org/v3
 kind: GlobalNetworkPolicy
 metadata:
-  name: restrict-host-ssh
+ name: restrict-host-ssh
 spec:
-  order: 10
-  selector: "has(kubernetes.io/hostname)"
-  applyOnForward: false
-  types:
-    - Ingress
-  ingress:
-    - action: Allow
-      protocol: TCP
-      source:
-        nets:
-          - 10.0.0.0/8
-      destination:
-        ports:
-          - 22
-    - action: Deny
-      protocol: TCP
-      destination:
-        ports:
-          - 22
+ order: 10
+ selector: "has(kubernetes.io/hostname)"
+ applyOnForward: false
+ types:
+ - Ingress
+ ingress:
+ - action: Allow
+ protocol: TCP
+ source:
+ nets:
+ - 10.0.0.0/8
+ destination:
+ ports:
+ - 22
+ - action: Deny
+ protocol: TCP
+ destination:
+ ports:
+ - 22
 ```
 
 ## Calico Policy Tiers
@@ -294,18 +294,18 @@ spec:
 apiVersion: projectcalico.org/v3
 kind: Tier
 metadata:
-  name: security
+ name: security
 spec:
-  order: 100
+ order: 100
 
 ---
 # platform-tier.yaml
 apiVersion: projectcalico.org/v3
 kind: Tier
 metadata:
-  name: platform
+ name: platform
 spec:
-  order: 200
+ order: 200
 ```
 
 ## Monitoring and Troubleshooting

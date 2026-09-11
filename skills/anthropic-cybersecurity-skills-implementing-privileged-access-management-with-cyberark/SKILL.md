@@ -1,10 +1,10 @@
 ---
 name: implementing-privileged-access-management-with-cyberark
 description: Deploy CyberArk Privileged Access Management to discover, vault, rotate,
-  and monitor privileged credentials across enterprise infrastructure, covering
-  vault architecture, session isolation, credential rotation policies, and integration
-  with NIST 800-53 access control requirements. Use when standing up CyberArk PAM,
-  vaulting privileged credentials, or designing credential rotation policies.
+ and monitor privileged credentials across enterprise infrastructure, covering
+ vault architecture, session isolation, credential rotation policies, and integration
+ with NIST 800-53 access control requirements. Use when standing up CyberArk PAM,
+ vaulting privileged credentials, or designing credential rotation policies.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -29,32 +29,32 @@ mitre_attack:
 - T1098
 - T1003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - resource-development
-  techniques:
-  - id: T1586
-    name: Compromise Accounts
-    tactic: resource-development
-    source: attack
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: F1033
-    name: Insider Access Abuse
-    tactic: initial-access
-    source: f3
-  - id: F1005.002
-    name: 'Account Manipulation: Add Authorized User'
-    tactic: positioning
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - resource-development
+ techniques:
+ - id: T1586
+ name: Compromise Accounts
+ tactic: resource-development
+ source: attack
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: F1033
+ name: Insider Access Abuse
+ tactic: initial-access
+ source: f3
+ - id: F1005.002
+ name: 'Account Manipulation: Add Authorized User'
+ tactic: positioning
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
 ---
 # Implementing Privileged Access Management with CyberArk
 
@@ -120,14 +120,14 @@ Deploy CyberArk Privileged Access Management to discover, vault, rotate, and mon
 ### Step 2: Safe and Policy Configuration
 1. Create safe hierarchy aligned with business units
 2. Define safe members with least-privilege roles:
-   - Safe Admins: manage safe membership
-   - Credential Managers: add/modify accounts
-   - Auditors: view audit logs only
-   - Users: retrieve/use credentials
+ - Safe Admins: manage safe membership
+ - Credential Managers: add/modify accounts
+ - Auditors: view audit logs only
+ - Users: retrieve/use credentials
 3. Configure Master Policy settings:
-   - Require dual control for credential retrieval
-   - Enable exclusive access (one user per credential at a time)
-   - Set one-time password mode for sensitive accounts
+ - Require dual control for credential retrieval
+ - Enable exclusive access (one user per credential at a time)
+ - Set one-time password mode for sensitive accounts
 
 ### Step 3: Platform Configuration
 - Windows Domain Admin: Rotate every 24 hours, verify every 4 hours
@@ -148,9 +148,9 @@ Deploy CyberArk Privileged Access Management to discover, vault, rotate, and mon
 ### Step 5: Integration and Monitoring
 1. Forward CyberArk audit logs to SIEM (CEF/Syslog format)
 2. Configure PTA for behavioral analytics:
-   - Detect credential theft indicators
-   - Alert on suspicious privileged session activity
-   - Monitor unmanaged privileged account usage
+ - Detect credential theft indicators
+ - Alert on suspicious privileged session activity
+ - Monitor unmanaged privileged account usage
 3. Integrate with ticketing system for access request workflows
 4. Set up alerts for failed rotation, verification failures, policy violations
 

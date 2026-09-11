@@ -11,8 +11,8 @@ The study demonstrates how developers’ workflows have evolved with AI tools. A
 In this blog post, we:
 
 - Present our methodology for the study, namely:
-  - Log data from a two-year period
-  - Survey and interview responses
+ - Log data from a two-year period
+ - Survey and interview responses
 - Describe the components of developer workflows, including relevant previous research.
 - Discuss the results of our mixed-methods study.
 

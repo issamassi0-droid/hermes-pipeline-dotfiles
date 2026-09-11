@@ -1,13 +1,13 @@
 ---
 name: intercepting-mobile-traffic-with-burpsuite
 description: 'Intercepts and analyzes HTTP/HTTPS traffic from mobile applications
-  using Burp Suite proxy to identify insecure API communications, authentication flaws,
-  data leakage, and server-side vulnerabilities. Use when performing mobile application
-  penetration testing, assessing API security, or evaluating client-server communication
-  patterns. Activates for requests involving mobile traffic interception, Burp Suite
-  mobile proxy, API security testing, or mobile HTTPS analysis.
+ using Burp Suite proxy to identify insecure API communications, authentication flaws,
+ data leakage, and server-side vulnerabilities. Use when performing mobile application
+ penetration testing, assessing API security, or evaluating client-server communication
+ patterns. Activates for requests involving mobile traffic interception, Burp Suite
+ mobile proxy, API security testing, or mobile HTTPS analysis.
 
-  '
+ '
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -95,11 +95,11 @@ Apps targeting API 24+ do not trust user-installed CAs by default. Options:
 # Option A: Modify app's network_security_config.xml (requires APK rebuild)
 # Add to res/xml/network_security_config.xml:
 # <network-security-config>
-#   <debug-overrides>
-#     <trust-anchors>
-#       <certificates src="user" />
-#     </trust-anchors>
-#   </debug-overrides>
+# <debug-overrides>
+# <trust-anchors>
+# <certificates src="user" />
+# </trust-anchors>
+# </debug-overrides>
 # </network-security-config>
 
 # Option B: Install as system CA (rooted device)
@@ -172,7 +172,7 @@ frida -U -f com.target.app -l ssl-pinning-bypass.js
 
 # Objection bypass
 objection --gadget com.target.app explore
-ios sslpinning disable  # or
+ios sslpinning disable # or
 android sslpinning disable
 ```
 

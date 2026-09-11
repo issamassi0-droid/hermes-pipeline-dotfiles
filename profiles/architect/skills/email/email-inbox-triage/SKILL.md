@@ -6,9 +6,9 @@ author: Ben Barclay (benbarclay), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Email, Inbox, Triage, Replies, Productivity]
-    related_skills: [himalaya, google-workspace]
+ hermes:
+ tags: [Email, Inbox, Triage, Replies, Productivity]
+ related_skills: [himalaya, google-workspace]
 ---
 
 # Email Inbox Triage

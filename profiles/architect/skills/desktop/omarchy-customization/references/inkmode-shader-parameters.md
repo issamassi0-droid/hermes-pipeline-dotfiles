@@ -20,10 +20,10 @@ Modes: normal, p3, srgb, wide, neo16, color-ink, ink
 All four wide-gamut shaders use proper gamma 2.4 SRGB curve:
 ```glsl
 vec3 srgbToLinear(vec3 c) {
-    return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));
+ return mix(c / 12.92, pow((c + 0.055) / 1.055, vec3(2.4)), step(0.04045, c));
 }
 vec3 linearToSrgb(vec3 c) {
-    return mix(c * 12.92, pow(clamp(c, 0.0, 1.0), vec3(1.0 / 2.4)) * 1.055 - 0.055, step(0.0031308, c));
+ return mix(c * 12.92, pow(clamp(c, 0.0, 1.0), vec3(1.0 / 2.4)) * 1.055 - 0.055, step(0.0031308, c));
 }
 ```
 Apply before matrix: `lin = srgbToLinear(pix.rgb)`, apply after: `color = linearToSrgb(color)`.
@@ -32,9 +32,9 @@ Apply before matrix: `lin = srgbToLinear(pix.rgb)`, apply after: `color = linear
 Baked from ICC profile primaries via XYZ intermediate:
 ```glsl
 const mat3 M = mat3(
-    <row0>,
-    <row1>,
-    <row2>
+ <row0>,
+ <row1>,
+ <row2>
 );
 vec3 color = M * lin;
 ```

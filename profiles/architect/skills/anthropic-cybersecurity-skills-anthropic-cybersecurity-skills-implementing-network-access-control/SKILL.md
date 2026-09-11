@@ -1,13 +1,13 @@
 ---
 name: implementing-network-access-control
 description: 'Implements 802.1X port-based network access control using RADIUS authentication,
-  PacketFence NAC, and switch configuration to enforce identity-based access policies,
-  posture assessment, and automatic VLAN assignment for authorized devices. Use when
-  enforcing zero-trust access at the network edge, quarantining non-compliant endpoints,
-  meeting PCI-DSS/HIPAA/SOC 2 access requirements, or onboarding BYOD devices with
-  automated provisioning.
+ PacketFence NAC, and switch configuration to enforce identity-based access policies,
+ posture assessment, and automatic VLAN assignment for authorized devices. Use when
+ enforcing zero-trust access at the network edge, quarantining non-compliant endpoints,
+ meeting PCI-DSS/HIPAA/SOC 2 access requirements, or onboarding BYOD devices with
+ automated provisioning.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -62,45 +62,45 @@ sudo apt install -y freeradius freeradius-utils freeradius-ldap
 # Configure RADIUS clients (switches that authenticate against RADIUS)
 sudo tee /etc/freeradius/3.0/clients.conf << 'EOF'
 client switch-core-01 {
-    ipaddr = 10.10.100.1
-    secret = R4d1u5_S3cr3t_K3y!
-    shortname = core-switch
-    nastype = cisco
+ ipaddr = 10.10.100.1
+ secret = R4d1u5_S3cr3t_K3y!
+ shortname = core-switch
+ nastype = cisco
 }
 
 client switch-access-01 {
-    ipaddr = 10.10.100.10
-    secret = R4d1u5_S3cr3t_K3y!
-    shortname = access-switch-01
-    nastype = cisco
+ ipaddr = 10.10.100.10
+ secret = R4d1u5_S3cr3t_K3y!
+ shortname = access-switch-01
+ nastype = cisco
 }
 
 client switch-access-02 {
-    ipaddr = 10.10.100.11
-    secret = R4d1u5_S3cr3t_K3y!
-    shortname = access-switch-02
-    nastype = cisco
+ ipaddr = 10.10.100.11
+ secret = R4d1u5_S3cr3t_K3y!
+ shortname = access-switch-02
+ nastype = cisco
 }
 EOF
 
 # Configure LDAP module for Active Directory integration
 sudo tee /etc/freeradius/3.0/mods-available/ldap << 'EOF'
 ldap {
-    server = 'ldap://dc01.corp.example.com'
-    identity = 'CN=radius-svc,OU=Service Accounts,DC=corp,DC=example,DC=com'
-    password = 'ServiceAccountPassword123!'
-    base_dn = 'DC=corp,DC=example,DC=com'
+ server = 'ldap://dc01.corp.example.com'
+ identity = 'CN=radius-svc,OU=Service Accounts,DC=corp,DC=example,DC=com'
+ password = 'ServiceAccountPassword123!'
+ base_dn = 'DC=corp,DC=example,DC=com'
 
-    user {
-        base_dn = "${..base_dn}"
-        filter = "(sAMAccountName=%{%{Stripped-User-Name}:-%{User-Name}})"
-    }
+ user {
+ base_dn = "${..base_dn}"
+ filter = "(sAMAccountName=%{%{Stripped-User-Name}:-%{User-Name}})"
+ }
 
-    group {
-        base_dn = "${..base_dn}"
-        filter = "(objectClass=group)"
-        membership_attribute = 'memberOf'
-    }
+ group {
+ base_dn = "${..base_dn}"
+ filter = "(objectClass=group)"
+ membership_attribute = 'memberOf'
+ }
 }
 EOF
 
@@ -114,35 +114,35 @@ sudo ln -s /etc/freeradius/3.0/mods-available/ldap /etc/freeradius/3.0/mods-enab
 sudo tee /etc/freeradius/3.0/policy.d/vlan-assignment << 'EOF'
 # VLAN assignment based on group membership
 vlan_assignment {
-    if (&LDAP-Group[*] == "CN=IT-Staff,OU=Groups,DC=corp,DC=example,DC=com") {
-        update reply {
-            Tunnel-Type = VLAN
-            Tunnel-Medium-Type = IEEE-802
-            Tunnel-Private-Group-ID = "10"
-        }
-    }
-    elsif (&LDAP-Group[*] == "CN=Developers,OU=Groups,DC=corp,DC=example,DC=com") {
-        update reply {
-            Tunnel-Type = VLAN
-            Tunnel-Medium-Type = IEEE-802
-            Tunnel-Private-Group-ID = "15"
-        }
-    }
-    elsif (&LDAP-Group[*] == "CN=Finance,OU=Groups,DC=corp,DC=example,DC=com") {
-        update reply {
-            Tunnel-Type = VLAN
-            Tunnel-Medium-Type = IEEE-802
-            Tunnel-Private-Group-ID = "20"
-        }
-    }
-    else {
-        # Default: Guest VLAN for unknown users
-        update reply {
-            Tunnel-Type = VLAN
-            Tunnel-Medium-Type = IEEE-802
-            Tunnel-Private-Group-ID = "40"
-        }
-    }
+ if (&LDAP-Group[*] == "CN=IT-Staff,OU=Groups,DC=corp,DC=example,DC=com") {
+ update reply {
+ Tunnel-Type = VLAN
+ Tunnel-Medium-Type = IEEE-802
+ Tunnel-Private-Group-ID = "10"
+ }
+ }
+ elsif (&LDAP-Group[*] == "CN=Developers,OU=Groups,DC=corp,DC=example,DC=com") {
+ update reply {
+ Tunnel-Type = VLAN
+ Tunnel-Medium-Type = IEEE-802
+ Tunnel-Private-Group-ID = "15"
+ }
+ }
+ elsif (&LDAP-Group[*] == "CN=Finance,OU=Groups,DC=corp,DC=example,DC=com") {
+ update reply {
+ Tunnel-Type = VLAN
+ Tunnel-Medium-Type = IEEE-802
+ Tunnel-Private-Group-ID = "20"
+ }
+ }
+ else {
+ # Default: Guest VLAN for unknown users
+ update reply {
+ Tunnel-Type = VLAN
+ Tunnel-Medium-Type = IEEE-802
+ Tunnel-Private-Group-ID = "40"
+ }
+ }
 }
 EOF
 
@@ -153,28 +153,28 @@ EOF
 # Configure EAP for 802.1X authentication
 sudo tee /etc/freeradius/3.0/mods-available/eap << 'EAPEOF'
 eap {
-    default_eap_type = peap
-    timer_expire = 60
-    max_sessions = 4096
+ default_eap_type = peap
+ timer_expire = 60
+ max_sessions = 4096
 
-    tls-config tls-common {
-        private_key_file = /etc/freeradius/3.0/certs/server.key
-        certificate_file = /etc/freeradius/3.0/certs/server.pem
-        ca_file = /etc/freeradius/3.0/certs/ca.pem
-        dh_file = /etc/freeradius/3.0/certs/dh
-        cipher_list = "HIGH:!aNULL:!MD5"
-        tls_min_version = "1.2"
-    }
+ tls-config tls-common {
+ private_key_file = /etc/freeradius/3.0/certs/server.key
+ certificate_file = /etc/freeradius/3.0/certs/server.pem
+ ca_file = /etc/freeradius/3.0/certs/ca.pem
+ dh_file = /etc/freeradius/3.0/certs/dh
+ cipher_list = "HIGH:!aNULL:!MD5"
+ tls_min_version = "1.2"
+ }
 
-    peap {
-        tls = tls-common
-        default_eap_type = mschapv2
-        virtual_server = inner-tunnel
-    }
+ peap {
+ tls = tls-common
+ default_eap_type = mschapv2
+ virtual_server = inner-tunnel
+ }
 
-    tls {
-        tls = tls-common
-    }
+ tls {
+ tls = tls-common
+ }
 }
 EAPEOF
 
@@ -199,53 +199,53 @@ aaa accounting dot1x default start-stop group radius
 
 ! Configure RADIUS server
 radius server FREERADIUS
-  address ipv4 10.10.100.200 auth-port 1812 acct-port 1813
-  key R4d1u5_S3cr3t_K3y!
-  exit
+ address ipv4 10.10.100.200 auth-port 1812 acct-port 1813
+ key R4d1u5_S3cr3t_K3y!
+ exit
 
 ! Enable 802.1X globally
 dot1x system-auth-control
 
 ! Configure access ports for 802.1X
 interface range GigabitEthernet1/0/1-24
-  switchport mode access
-  switchport access vlan 999
-  authentication port-control auto
-  authentication order dot1x mab
-  authentication priority dot1x mab
-  dot1x pae authenticator
-  dot1x timeout tx-period 10
-  mab
-  authentication event fail action authorize vlan 999
-  authentication event no-response action authorize vlan 40
-  authentication host-mode multi-auth
-  spanning-tree portfast
-  exit
+ switchport mode access
+ switchport access vlan 999
+ authentication port-control auto
+ authentication order dot1x mab
+ authentication priority dot1x mab
+ dot1x pae authenticator
+ dot1x timeout tx-period 10
+ mab
+ authentication event fail action authorize vlan 999
+ authentication event no-response action authorize vlan 40
+ authentication host-mode multi-auth
+ spanning-tree portfast
+ exit
 
 ! Configure MAB (MAC Authentication Bypass) for devices without 802.1X
 ! Devices like printers, IP phones that cannot run a supplicant
 interface range GigabitEthernet1/0/25-36
-  switchport mode access
-  switchport access vlan 999
-  authentication port-control auto
-  authentication order mab
-  mab
-  authentication event fail action authorize vlan 999
-  authentication host-mode single-host
-  spanning-tree portfast
-  exit
+ switchport mode access
+ switchport access vlan 999
+ authentication port-control auto
+ authentication order mab
+ mab
+ authentication event fail action authorize vlan 999
+ authentication host-mode single-host
+ spanning-tree portfast
+ exit
 
 ! Configure guest VLAN for unauthenticated devices
 interface range GigabitEthernet1/0/1-24
-  authentication event no-response action authorize vlan 40
-  authentication event fail action authorize vlan 999
-  exit
+ authentication event no-response action authorize vlan 40
+ authentication event fail action authorize vlan 999
+ exit
 
 ! Configure critical VLAN for RADIUS server unavailability
 interface range GigabitEthernet1/0/1-36
-  authentication event server dead action authorize vlan 10
-  authentication event server alive action reinitialize
-  exit
+ authentication event server dead action authorize vlan 10
+ authentication event server alive action reinitialize
+ exit
 ```
 
 ### Step 4: Deploy PacketFence NAC for Posture Assessment
@@ -254,7 +254,7 @@ interface range GigabitEthernet1/0/1-36
 # Install PacketFence
 curl -fsSL https://inverse.ca/downloads/GPG_PUBLIC_KEY | sudo gpg --dearmor -o /etc/apt/keyrings/inverse.gpg
 echo "deb [signed-by=/etc/apt/keyrings/inverse.gpg] https://inverse.ca/downloads/PacketFence/debian bookworm bookworm" | \
-  sudo tee /etc/apt/sources.list.d/packetfence.list
+ sudo tee /etc/apt/sources.list.d/packetfence.list
 sudo apt update && sudo apt install -y packetfence
 
 # Run the PacketFence configurator
@@ -298,9 +298,9 @@ EOF
 # Computer Configuration > Policies > Windows Settings > Security Settings
 # > System Services > Wired AutoConfig: Automatic
 # > Network Policies:
-#   Authentication method: Microsoft: Protected EAP (PEAP)
-#   Inner method: EAP-MSCHAPv2
-#   Trusted Root CA: Corporate CA
+# Authentication method: Microsoft: Protected EAP (PEAP)
+# Inner method: EAP-MSCHAPv2
+# Trusted Root CA: Corporate CA
 
 # Linux 802.1X configuration with wpa_supplicant
 sudo tee /etc/wpa_supplicant/wpa_supplicant-wired.conf << 'EOF'
@@ -308,12 +308,12 @@ ctrl_interface=/var/run/wpa_supplicant
 ap_scan=0
 
 network={
-    key_mgmt=IEEE8021X
-    eap=PEAP
-    identity="testuser@corp.example.com"
-    password="UserPassword123"
-    ca_cert="/etc/ssl/certs/corporate-ca.pem"
-    phase2="auth=MSCHAPV2"
+ key_mgmt=IEEE8021X
+ eap=PEAP
+ identity="testuser@corp.example.com"
+ password="UserPassword123"
+ ca_cert="/etc/ssl/certs/corporate-ca.pem"
+ phase2="auth=MSCHAPV2"
 }
 EOF
 

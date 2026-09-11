@@ -6,9 +6,9 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [skills, authoring, hermes-agent, conventions, skill-md]
-    related_skills: [requesting-code-review]
+ hermes:
+ tags: [skills, authoring, hermes-agent, conventions, skill-md]
+ related_skills: [requesting-code-review]
 ---
 
 # Authoring Hermes-Agent Skills (in-repo)
@@ -55,18 +55,18 @@ Repo-standard shape (all fields expected, even where the validator doesn't enfor
 
 ```yaml
 ---
-name: my-skill-name               # lowercase, hyphens, ≤64 chars (MAX_NAME_LENGTH)
+name: my-skill-name # lowercase, hyphens, ≤64 chars (MAX_NAME_LENGTH)
 description: Concise capability statement, under sixty chars.
-version: 0.1.0                    # semver; new skills start at 0.1.0
+version: 0.1.0 # semver; new skills start at 0.1.0
 author: Real Name (github-handle), Hermes Agent
 license: MIT
-platforms: [linux, macos, windows]   # audit, don't guess — see Platform Gating
+platforms: [linux, macos, windows] # audit, don't guess — see Platform Gating
 metadata:
-  hermes:
-    editorial_name: My Skill Name
-    editorial_description: Human-readable summary for skill browsing surfaces.
-    tags: [Short, Descriptive, Tags]
-    related_skills: [other-in-repo-skill]
+ hermes:
+ editorial_name: My Skill Name
+ editorial_description: Human-readable summary for skill browsing surfaces.
+ tags: [Short, Descriptive, Tags]
+ related_skills: [other-in-repo-skill]
 ---
 ```
 
@@ -117,13 +117,13 @@ POSIX-only signals to search for in `scripts/`: `fcntl`, `termios`, `pty`, `os.f
 # <Skill> Skill
 2-3 sentence intro: what it does, what it doesn't do, dependency stance.
 
-## When to Use          — bulleted triggers (+ "Don't use for:" counter-triggers)
-## Prerequisites        — exact env vars, installs, API key sourcing
-## How to Run           — canonical invocation through the `terminal` tool
-## Quick Reference      — flat command list, no narration
-## Procedure            — numbered steps, each with a checkable completion criterion
-## Pitfalls             — known limits, things that look broken but aren't
-## Verification         — how to prove the skill worked
+## When to Use — bulleted triggers (+ "Don't use for:" counter-triggers)
+## Prerequisites — exact env vars, installs, API key sourcing
+## How to Run — canonical invocation through the `terminal` tool
+## Quick Reference — flat command list, no narration
+## Procedure — numbered steps, each with a checkable completion criterion
+## Pitfalls — known limits, things that look broken but aren't
+## Verification — how to prove the skill worked
 ```
 
 Not every section applies to every skill (a pure-procedure task skill may have no Quick Reference), but When to Use + actionable body + Pitfalls + Verification are the minimum. Cut marketing intros, "Setup Check" no-ops, and re-explanations of env vars already in Prerequisites.
@@ -159,19 +159,19 @@ A skill exists to make the agent's process more predictable — the agent reliab
 2. **Decide tier and category** (see above). When in doubt, optional — and ask before pushing rather than defaulting.
 3. **Draft** with `write_file` to `skills/<category>/<name>/SKILL.md` (or `optional-skills/...`).
 4. **Validate locally**:
-   ```python
-   import yaml, re, pathlib
-   content = pathlib.Path("skills/<category>/<name>/SKILL.md").read_text()
-   assert content.startswith("---")
-   m = re.search(r'\n---\s*\n', content[3:])
-   fm = yaml.safe_load(content[3:m.start()+3])
-   assert "name" in fm and "description" in fm
-   assert len(fm["description"]) <= 60, f"description {len(fm['description'])} chars — hardline is 60"
-   assert fm["description"].endswith(".")
-   assert "platforms" in fm
-   assert len(content) <= 100_000
-   ```
-   Also verify every `related_skills` entry exists in-repo.
+ ```python
+ import yaml, re, pathlib
+ content = pathlib.Path("skills/<category>/<name>/SKILL.md").read_text()
+ assert content.startswith("---")
+ m = re.search(r'\n---\s*\n', content[3:])
+ fm = yaml.safe_load(content[3:m.start()+3])
+ assert "name" in fm and "description" in fm
+ assert len(fm["description"]) <= 60, f"description {len(fm['description'])} chars — hardline is 60"
+ assert fm["description"].endswith(".")
+ assert "platforms" in fm
+ assert len(content) <= 100_000
+ ```
+ Also verify every `related_skills` entry exists in-repo.
 5. **Add tests + regen docs** (previous section).
 6. **Git add + commit** on the active branch; open a PR.
 7. **Note:** the CURRENT session's skill loader is cached — `skill_view` / `skills_list` will not see the new skill until a new session. This is expected, not a bug.

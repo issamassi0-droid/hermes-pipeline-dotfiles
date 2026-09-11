@@ -1,10 +1,10 @@
 ---
 name: auditing-kubernetes-cluster-rbac
 description: 'Auditing Kubernetes cluster RBAC configurations to identify overly permissive
-  roles, wildcard permissions, dangerous ClusterRoleBindings, service account abuse,
-  and privilege escalation paths using kubectl, rbac-tool, KubiScan, and Kubeaudit.
+ roles, wildcard permissions, dangerous ClusterRoleBindings, service account abuse,
+ and privilege escalation paths using kubectl, rbac-tool, KubiScan, and Kubeaudit.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -30,28 +30,28 @@ mitre_attack:
 - T1613
 - T1078.004
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - defense-impairment
-  techniques:
-  - id: F1033
-    name: Insider Access Abuse
-    tactic: initial-access
-    source: f3
-  - id: F1005
-    name: Account Manipulation
-    tactic: positioning
-    source: f3
-  - id: F1005.002
-    name: 'Account Manipulation: Add Authorized User'
-    tactic: positioning
-    source: f3
-  - id: T1531
-    name: Account Access Removal
-    tactic: positioning
-    source: attack
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - defense-impairment
+ techniques:
+ - id: F1033
+ name: Insider Access Abuse
+ tactic: initial-access
+ source: f3
+ - id: F1005
+ name: Account Manipulation
+ tactic: positioning
+ source: f3
+ - id: F1005.002
+ name: 'Account Manipulation: Add Authorized User'
+ tactic: positioning
+ source: f3
+ - id: T1531
+ name: Account Access Removal
+ tactic: positioning
+ source: attack
 ---
 
 # Auditing Kubernetes Cluster RBAC
@@ -86,16 +86,16 @@ kubectl get clusterroles -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for role in data['items']:
-    name = role['metadata']['name']
-    for rule in role.get('rules', []):
-        verbs = rule.get('verbs', [])
-        resources = rule.get('resources', [])
-        if '*' in verbs or '*' in resources:
-            print(f'ClusterRole: {name}')
-            print(f'  Verbs: {verbs}')
-            print(f'  Resources: {resources}')
-            print(f'  API Groups: {rule.get(\"apiGroups\", [])}')
-            print()
+ name = role['metadata']['name']
+ for rule in role.get('rules', []):
+ verbs = rule.get('verbs', [])
+ resources = rule.get('resources', [])
+ if '*' in verbs or '*' in resources:
+ print(f'ClusterRole: {name}')
+ print(f' Verbs: {verbs}')
+ print(f' Resources: {resources}')
+ print(f' API Groups: {rule.get(\"apiGroups\", [])}')
+ print()
 "
 
 # Find roles that can read secrets
@@ -103,13 +103,13 @@ kubectl get clusterroles -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for role in data['items']:
-    name = role['metadata']['name']
-    for rule in role.get('rules', []):
-        resources = rule.get('resources', [])
-        verbs = rule.get('verbs', [])
-        if ('secrets' in resources or '*' in resources) and ('get' in verbs or 'list' in verbs or '*' in verbs):
-            if not name.startswith('system:'):
-                print(f'ClusterRole: {name} -> can access secrets (verbs: {verbs})')
+ name = role['metadata']['name']
+ for rule in role.get('rules', []):
+ resources = rule.get('resources', [])
+ verbs = rule.get('verbs', [])
+ if ('secrets' in resources or '*' in resources) and ('get' in verbs or 'list' in verbs or '*' in verbs):
+ if not name.startswith('system:'):
+ print(f'ClusterRole: {name} -> can access secrets (verbs: {verbs})')
 "
 
 # Find roles with pod/exec permissions (container escape risk)
@@ -117,11 +117,11 @@ kubectl get clusterroles -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for role in data['items']:
-    name = role['metadata']['name']
-    for rule in role.get('rules', []):
-        resources = rule.get('resources', [])
-        if 'pods/exec' in resources or 'pods/*' in resources:
-            print(f'ClusterRole: {name} -> has pods/exec access')
+ name = role['metadata']['name']
+ for rule in role.get('rules', []):
+ resources = rule.get('resources', [])
+ if 'pods/exec' in resources or 'pods/*' in resources:
+ print(f'ClusterRole: {name} -> has pods/exec access')
 "
 ```
 
@@ -135,14 +135,14 @@ kubectl get clusterrolebindings -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for binding in data['items']:
-    name = binding['metadata']['name']
-    role = binding['roleRef']['name']
-    subjects = binding.get('subjects', [])
-    for subject in subjects:
-        kind = subject.get('kind', '')
-        subj_name = subject.get('name', '')
-        ns = subject.get('namespace', 'cluster-wide')
-        print(f'{name} -> Role: {role} | {kind}: {subj_name} ({ns})')
+ name = binding['metadata']['name']
+ role = binding['roleRef']['name']
+ subjects = binding.get('subjects', [])
+ for subject in subjects:
+ kind = subject.get('kind', '')
+ subj_name = subject.get('name', '')
+ ns = subject.get('namespace', 'cluster-wide')
+ print(f'{name} -> Role: {role} | {kind}: {subj_name} ({ns})')
 " | sort
 
 # Find bindings to cluster-admin
@@ -150,10 +150,10 @@ kubectl get clusterrolebindings -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for binding in data['items']:
-    if binding['roleRef']['name'] == 'cluster-admin':
-        print(f\"Binding: {binding['metadata']['name']}\")
-        for subject in binding.get('subjects', []):
-            print(f\"  {subject.get('kind')}: {subject.get('name')} (ns: {subject.get('namespace', 'N/A')})\")
+ if binding['roleRef']['name'] == 'cluster-admin':
+ print(f\"Binding: {binding['metadata']['name']}\")
+ for subject in binding.get('subjects', []):
+ print(f\" {subject.get('kind')}: {subject.get('name')} (ns: {subject.get('namespace', 'N/A')})\")
 "
 
 # Find bindings granting access to all authenticated users
@@ -161,9 +161,9 @@ kubectl get clusterrolebindings -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for binding in data['items']:
-    for subject in binding.get('subjects', []):
-        if subject.get('name') in ['system:authenticated', 'system:unauthenticated']:
-            print(f\"WARNING: {binding['metadata']['name']} grants {binding['roleRef']['name']} to {subject['name']}\")
+ for subject in binding.get('subjects', []):
+ if subject.get('name') in ['system:authenticated', 'system:unauthenticated']:
+ print(f\"WARNING: {binding['metadata']['name']} grants {binding['roleRef']['name']} to {subject['name']}\")
 "
 ```
 
@@ -199,22 +199,22 @@ Use KubiScan to automatically identify risky service accounts, pods, and RBAC co
 
 ```bash
 # Run KubiScan to find risky roles
-python3 -m kubiscan -rroles   # List risky Roles
-python3 -m kubiscan -rcr      # List risky ClusterRoles
-python3 -m kubiscan -rrb      # List risky RoleBindings
-python3 -m kubiscan -rcrb     # List risky ClusterRoleBindings
+python3 -m kubiscan -rroles # List risky Roles
+python3 -m kubiscan -rcr # List risky ClusterRoles
+python3 -m kubiscan -rrb # List risky RoleBindings
+python3 -m kubiscan -rcrb # List risky ClusterRoleBindings
 
 # Find risky service accounts
-python3 -m kubiscan -rs       # Risky service accounts
+python3 -m kubiscan -rs # Risky service accounts
 
 # Find pods running with risky service accounts
-python3 -m kubiscan -rp       # Risky pods
+python3 -m kubiscan -rp # Risky pods
 
 # Check for privilege escalation paths
-python3 -m kubiscan -pe       # Privilege escalation vectors
+python3 -m kubiscan -pe # Privilege escalation vectors
 
 # Generate full report
-python3 -m kubiscan -a        # All checks
+python3 -m kubiscan -a # All checks
 ```
 
 ### Step 5: Audit Service Account Token Mounting and Usage
@@ -227,12 +227,12 @@ kubectl get pods --all-namespaces -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for pod in data['items']:
-    name = pod['metadata']['name']
-    ns = pod['metadata']['namespace']
-    sa = pod['spec'].get('serviceAccountName', 'default')
-    automount = pod['spec'].get('automountServiceAccountToken', True)
-    if automount and sa != 'default':
-        print(f'{ns}/{name} -> SA: {sa} (token auto-mounted)')
+ name = pod['metadata']['name']
+ ns = pod['metadata']['namespace']
+ sa = pod['spec'].get('serviceAccountName', 'default')
+ automount = pod['spec'].get('automountServiceAccountToken', True)
+ if automount and sa != 'default':
+ print(f'{ns}/{name} -> SA: {sa} (token auto-mounted)')
 "
 
 # Find service accounts with non-default token secrets
@@ -240,11 +240,11 @@ kubectl get serviceaccounts --all-namespaces -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for sa in data['items']:
-    name = sa['metadata']['name']
-    ns = sa['metadata']['namespace']
-    secrets = sa.get('secrets', [])
-    if name != 'default' and len(secrets) > 0:
-        print(f'{ns}/{name}: {len(secrets)} secret(s) bound')
+ name = sa['metadata']['name']
+ ns = sa['metadata']['namespace']
+ secrets = sa.get('secrets', [])
+ if name != 'default' and len(secrets) > 0:
+ print(f'{ns}/{name}: {len(secrets)} secret(s) bound')
 "
 
 # Check for pods running as privileged or with host access
@@ -252,12 +252,12 @@ kubectl get pods --all-namespaces -o json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for pod in data['items']:
-    name = pod['metadata']['name']
-    ns = pod['metadata']['namespace']
-    for container in pod['spec'].get('containers', []):
-        sc = container.get('securityContext', {})
-        if sc.get('privileged', False) or sc.get('runAsUser', 1) == 0:
-            print(f'RISK: {ns}/{name}/{container[\"name\"]} - privileged={sc.get(\"privileged\",False)} runAsRoot={sc.get(\"runAsUser\",\"not set\")==0}')
+ name = pod['metadata']['name']
+ ns = pod['metadata']['namespace']
+ for container in pod['spec'].get('containers', []):
+ sc = container.get('securityContext', {})
+ if sc.get('privileged', False) or sc.get('runAsUser', 1) == 0:
+ print(f'RISK: {ns}/{name}/{container[\"name\"]} - privileged={sc.get(\"privileged\",False)} runAsRoot={sc.get(\"runAsUser\",\"not set\")==0}')
 "
 ```
 
@@ -270,10 +270,10 @@ Execute Kubeaudit for comprehensive security checks including RBAC-related findi
 kubeaudit all --kubeconfig ~/.kube/config
 
 # Run specific RBAC-related checks
-kubeaudit privesc    # Check for allowPrivilegeEscalation
-kubeaudit rootfs     # Check for readOnlyRootFilesystem
-kubeaudit nonroot    # Check for runAsNonRoot
-kubeaudit capabilities  # Check for dangerous capabilities
+kubeaudit privesc # Check for allowPrivilegeEscalation
+kubeaudit rootfs # Check for readOnlyRootFilesystem
+kubeaudit nonroot # Check for runAsNonRoot
+kubeaudit capabilities # Check for dangerous capabilities
 
 # Output as JSON for processing
 kubeaudit all --kubeconfig ~/.kube/config -f json > kubeaudit-results.json
@@ -325,30 +325,30 @@ Audit Date: 2026-02-23
 Namespaces: 12
 
 RBAC INVENTORY:
-  ClusterRoles: 48 (18 custom, 30 system)
-  ClusterRoleBindings: 32 (12 custom, 20 system)
-  Roles (namespaced): 24
-  RoleBindings (namespaced): 36
-  Service Accounts: 67
+ ClusterRoles: 48 (18 custom, 30 system)
+ ClusterRoleBindings: 32 (12 custom, 20 system)
+ Roles (namespaced): 24
+ RoleBindings (namespaced): 36
+ Service Accounts: 67
 
 CRITICAL FINDINGS:
 [RBAC-001] ClusterRoleBinding Grants edit to system:authenticated
-  Binding: authenticated-edit
-  Effect: ALL authenticated users have edit access across ALL namespaces
-  Risk: Any user can modify resources in any namespace
-  Remediation: Replace with namespace-scoped RoleBindings per team
+ Binding: authenticated-edit
+ Effect: ALL authenticated users have edit access across ALL namespaces
+ Risk: Any user can modify resources in any namespace
+ Remediation: Replace with namespace-scoped RoleBindings per team
 
 [RBAC-002] Custom ClusterRole with Wildcard Permissions
-  ClusterRole: developer-admin
-  Rules: verbs=["*"], resources=["*"], apiGroups=["*"]
-  Bindings: 4 users via developer-admin-binding
-  Risk: Equivalent to cluster-admin without the name
-  Remediation: Scope to specific resources and verbs needed
+ ClusterRole: developer-admin
+ Rules: verbs=["*"], resources=["*"], apiGroups=["*"]
+ Bindings: 4 users via developer-admin-binding
+ Risk: Equivalent to cluster-admin without the name
+ Remediation: Scope to specific resources and verbs needed
 
 SUMMARY:
-  Principals with cluster-admin: 6 (recommended: <= 3)
-  Roles with wildcard permissions: 4
-  Service accounts with secret access: 12
-  Pods with auto-mounted tokens: 45 / 67
-  Privileged containers: 8
+ Principals with cluster-admin: 6 (recommended: <= 3)
+ Roles with wildcard permissions: 4
+ Service accounts with secret access: 12
+ Pods with auto-mounted tokens: 45 / 67
+ Privileged containers: 8
 ```

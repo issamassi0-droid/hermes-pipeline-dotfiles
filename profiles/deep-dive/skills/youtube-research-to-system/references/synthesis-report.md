@@ -21,9 +21,9 @@ Save completed research-to-system reports here.
 ## Recommended Videos
 
 1. **[Title](link)**
-   - Why: <reason>
-   - Key insight: <one sentence>
-   - Best for: <audience>
+ - Why: <reason>
+ - Key insight: <one sentence>
+ - Best for: <audience>
 
 ### Where Videos Disagree
 <conflicting viewpoints and implications>

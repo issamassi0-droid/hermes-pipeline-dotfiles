@@ -1,9 +1,9 @@
 ---
 name: assessing-vector-and-embedding-weaknesses
 description: Test RAG vector stores (Pinecone, Qdrant, Weaviate, Chroma, pgvector,
-  FAISS) for embedding inversion, cross-tenant data leakage, and data poisoning per
-  OWASP LLM08:2025. Use when performing an authorized security assessment of a RAG
-  pipeline's retrieval layer or auditing multi-tenant vector-store isolation.
+ FAISS) for embedding inversion, cross-tenant data leakage, and data poisoning per
+ OWASP LLM08:2025. Use when performing an authorized security assessment of a RAG
+ pipeline's retrieval layer or auditing multi-tenant vector-store isolation.
 domain: cybersecurity
 subdomain: ai-security
 tags:
@@ -91,8 +91,8 @@ Document the embedding model + dimensions, the vector store and its tenancy mode
 from qdrant_client import QdrantClient
 client = QdrantClient(url="http://localhost:6333")
 info = client.get_collection("docs")
-print(info.config.params.vectors)   # size + distance metric
-print(client.count("docs"))         # corpus size
+print(info.config.params.vectors) # size + distance metric
+print(client.count("docs")) # corpus size
 ```
 
 ### Step 2: Test embedding-inversion exposure
@@ -110,14 +110,14 @@ target_vec = model.encode([secret])
 
 # Attacker has only target_vec and the embedding endpoint. Hill-climb candidate text.
 candidates = [
-    "Patient name and medical record number with a diagnosis.",
-    "John Doe medical record hypertension diagnosis",
-    "Patient John Doe MRN diagnosed hypertension",
+ "Patient name and medical record number with a diagnosis.",
+ "John Doe medical record hypertension diagnosis",
+ "Patient John Doe MRN diagnosed hypertension",
 ]
 cand_vecs = model.encode(candidates)
 sims = cosine_similarity(target_vec, cand_vecs)[0]
 for c, s in sorted(zip(candidates, sims), key=lambda x: -x[1]):
-    print(f"{s:.3f}  {c}")
+ print(f"{s:.3f} {c}")
 # High similarity for a near-verbatim guess => inversion risk is real for this model.
 ```
 
@@ -129,13 +129,13 @@ Determine whether a specific document is in the corpus by measuring the top-1 re
 
 ```python
 def membership_score(client, collection, embed, text):
-    vec = embed([text])[0].tolist()
-    hits = client.search(collection_name=collection, query_vector=vec, limit=1)
-    return hits[0].score if hits else 0.0
+ vec = embed([text])[0].tolist()
+ hits = client.search(collection_name=collection, query_vector=vec, limit=1)
+ return hits[0].score if hits else 0.0
 
 in_corpus = membership_score(client, "docs", model.encode, "<exact quote from a known chunk>")
-control  = membership_score(client, "docs", model.encode, "An unrelated random sentence.")
-print(f"in-corpus={in_corpus:.3f}  control={control:.3f}  delta={in_corpus-control:.3f}")
+control = membership_score(client, "docs", model.encode, "An unrelated random sentence.")
+print(f"in-corpus={in_corpus:.3f} control={control:.3f} delta={in_corpus-control:.3f}")
 # A large positive delta indicates the item is in the corpus (membership leak).
 ```
 
@@ -149,10 +149,10 @@ from qdrant_client.models import Filter, FieldCondition, MatchValue
 
 vec = model.encode(["confidential salary information"])[0].tolist()
 hits = client.search(
-    collection_name="docs",
-    query_vector=vec,
-    limit=10,
-    query_filter=Filter(must=[FieldCondition(key="tenant_id", match=MatchValue(value="B"))]),
+ collection_name="docs",
+ query_vector=vec,
+ limit=10,
+ query_filter=Filter(must=[FieldCondition(key="tenant_id", match=MatchValue(value="B"))]),
 )
 leaked = [h for h in hits if h.payload.get("tenant_id") != "B"]
 print("CROSS-TENANT LEAK" if leaked else "isolation OK", "->", len(leaked), "foreign rows")
@@ -172,18 +172,18 @@ from qdrant_client.models import PointStruct
 
 # Benign marker payload (no real injection) to measure retrieval dominance.
 poison = "POISON-CANARY. " + " ".join(
-    ["password reset billing refund account login support error help"] * 8
+ ["password reset billing refund account login support error help"] * 8
 )
 client.upsert("docs_test", points=[
-    PointStruct(id=999999, vector=model.encode([poison])[0].tolist(),
-                payload={"tenant_id": "B", "source": "poison-test"})
+ PointStruct(id=999999, vector=model.encode([poison])[0].tolist(),
+ payload={"tenant_id": "B", "source": "poison-test"})
 ])
 
 queries = ["how do I get a refund", "reset my password", "what is the weather"]
 for q in queries:
-    hits = client.search("docs_test", model.encode([q])[0].tolist(), limit=5)
-    dominated = any(h.payload.get("source") == "poison-test" for h in hits)
-    print(f"{'POISON in top5' if dominated else 'clean'}: {q}")
+ hits = client.search("docs_test", model.encode([q])[0].tolist(), limit=5)
+ dominated = any(h.payload.get("source") == "poison-test" for h in hits)
+ print(f"{'POISON in top5' if dominated else 'clean'}: {q}")
 ```
 
 ### Step 6: Detect indirect prompt injection in retrieved chunks
@@ -193,17 +193,17 @@ Scan retrieved chunk text for injection markers before it is concatenated into t
 ```python
 import re
 INJECTION_PATTERNS = [
-    r"ignore (all|previous|the above) instructions",
-    r"system prompt", r"you are now", r"disregard", r"</?(system|instructions)>",
+ r"ignore (all|previous|the above) instructions",
+ r"system prompt", r"you are now", r"disregard", r"</?(system|instructions)>",
 ]
 def chunk_is_injection(text):
-    low = text.lower()
-    return [p for p in INJECTION_PATTERNS if re.search(p, low)]
+ low = text.lower()
+ return [p for p in INJECTION_PATTERNS if re.search(p, low)]
 
 for hit in client.search("docs", model.encode(["help"])[0].tolist(), limit=10):
-    flags = chunk_is_injection(hit.payload.get("text", ""))
-    if flags:
-        print("INDIRECT INJECTION in chunk", hit.id, flags)
+ flags = chunk_is_injection(hit.payload.get("text", ""))
+ if flags:
+ print("INDIRECT INJECTION in chunk", hit.id, flags)
 ```
 
 ### Step 7: Report and remediate

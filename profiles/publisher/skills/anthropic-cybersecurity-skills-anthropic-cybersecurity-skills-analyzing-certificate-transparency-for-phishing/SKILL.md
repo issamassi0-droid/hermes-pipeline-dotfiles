@@ -1,8 +1,8 @@
 ---
 name: analyzing-certificate-transparency-for-phishing
 description: Monitor Certificate Transparency logs using crt.sh and Certstream to
-  detect phishing domains, lookalike certificates, and unauthorized certificate issuance
-  targeting your organization.
+ detect phishing domains, lookalike certificates, and unauthorized certificate issuance
+ targeting your organization.
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -31,32 +31,32 @@ mitre_attack:
 - T1608.005
 - T1596.003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - resource-development
-  - reconnaissance
-  - initial-access
-  techniques:
-  - id: T1583.001
-    name: 'Acquire Infrastructure: Domains'
-    tactic: resource-development
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
-  - id: T1593
-    name: Search Open Websites/Domains
-    tactic: reconnaissance
-    source: attack
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
+ version: '1.1'
+ tactics:
+ - resource-development
+ - reconnaissance
+ - initial-access
+ techniques:
+ - id: T1583.001
+ name: 'Acquire Infrastructure: Domains'
+ tactic: resource-development
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
+ - id: T1593
+ name: Search Open Websites/Domains
+ tactic: reconnaissance
+ source: attack
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
 ---
 # Analyzing Certificate Transparency for Phishing
 
@@ -105,78 +105,78 @@ from datetime import datetime
 import tldextract
 
 class CTLogMonitor:
-    CRT_SH_URL = "https://crt.sh"
+ CRT_SH_URL = "https://crt.sh"
 
-    def __init__(self, monitored_domains, brand_keywords):
-        self.monitored_domains = monitored_domains
-        self.brand_keywords = [k.lower() for k in brand_keywords]
+ def __init__(self, monitored_domains, brand_keywords):
+ self.monitored_domains = monitored_domains
+ self.brand_keywords = [k.lower() for k in brand_keywords]
 
-    def query_crt_sh(self, domain, include_expired=False):
-        """Query crt.sh for certificates matching a domain."""
-        params = {
-            "q": f"%.{domain}",
-            "output": "json",
-        }
-        if not include_expired:
-            params["exclude"] = "expired"
+ def query_crt_sh(self, domain, include_expired=False):
+ """Query crt.sh for certificates matching a domain."""
+ params = {
+ "q": f"%.{domain}",
+ "output": "json",
+ }
+ if not include_expired:
+ params["exclude"] = "expired"
 
-        resp = requests.get(self.CRT_SH_URL, params=params, timeout=30)
-        if resp.status_code == 200:
-            certs = resp.json()
-            print(f"[+] crt.sh: {len(certs)} certificates for *.{domain}")
-            return certs
-        return []
+ resp = requests.get(self.CRT_SH_URL, params=params, timeout=30)
+ if resp.status_code == 200:
+ certs = resp.json()
+ print(f"[+] crt.sh: {len(certs)} certificates for *.{domain}")
+ return certs
+ return []
 
-    def find_suspicious_certs(self, domain):
-        """Find certificates that may be phishing attempts."""
-        certs = self.query_crt_sh(domain)
-        suspicious = []
+ def find_suspicious_certs(self, domain):
+ """Find certificates that may be phishing attempts."""
+ certs = self.query_crt_sh(domain)
+ suspicious = []
 
-        for cert in certs:
-            common_name = cert.get("common_name", "").lower()
-            name_value = cert.get("name_value", "").lower()
-            issuer = cert.get("issuer_name", "")
-            not_before = cert.get("not_before", "")
-            not_after = cert.get("not_after", "")
+ for cert in certs:
+ common_name = cert.get("common_name", "").lower()
+ name_value = cert.get("name_value", "").lower()
+ issuer = cert.get("issuer_name", "")
+ not_before = cert.get("not_before", "")
+ not_after = cert.get("not_after", "")
 
-            # Check for exact domain matches (legitimate)
-            extracted = tldextract.extract(common_name)
-            cert_domain = f"{extracted.domain}.{extracted.suffix}"
-            if cert_domain == domain:
-                continue  # Legitimate certificate
+ # Check for exact domain matches (legitimate)
+ extracted = tldextract.extract(common_name)
+ cert_domain = f"{extracted.domain}.{extracted.suffix}"
+ if cert_domain == domain:
+ continue # Legitimate certificate
 
-            # Flag suspicious patterns
-            flags = []
-            if domain.replace(".", "") in common_name.replace(".", ""):
-                flags.append("contains target domain string")
-            if any(kw in common_name for kw in self.brand_keywords):
-                flags.append("contains brand keyword")
-            if "let's encrypt" in issuer.lower():
-                flags.append("free CA (Let's Encrypt)")
+ # Flag suspicious patterns
+ flags = []
+ if domain.replace(".", "") in common_name.replace(".", ""):
+ flags.append("contains target domain string")
+ if any(kw in common_name for kw in self.brand_keywords):
+ flags.append("contains brand keyword")
+ if "let's encrypt" in issuer.lower():
+ flags.append("free CA (Let's Encrypt)")
 
-            if flags:
-                suspicious.append({
-                    "common_name": cert.get("common_name", ""),
-                    "name_value": cert.get("name_value", ""),
-                    "issuer": issuer,
-                    "not_before": not_before,
-                    "not_after": not_after,
-                    "serial": cert.get("serial_number", ""),
-                    "flags": flags,
-                    "crt_sh_id": cert.get("id", ""),
-                    "crt_sh_url": f"https://crt.sh/?id={cert.get('id', '')}",
-                })
+ if flags:
+ suspicious.append({
+ "common_name": cert.get("common_name", ""),
+ "name_value": cert.get("name_value", ""),
+ "issuer": issuer,
+ "not_before": not_before,
+ "not_after": not_after,
+ "serial": cert.get("serial_number", ""),
+ "flags": flags,
+ "crt_sh_id": cert.get("id", ""),
+ "crt_sh_url": f"https://crt.sh/?id={cert.get('id', '')}",
+ })
 
-        print(f"[+] Found {len(suspicious)} suspicious certificates")
-        return suspicious
+ print(f"[+] Found {len(suspicious)} suspicious certificates")
+ return suspicious
 
 monitor = CTLogMonitor(
-    monitored_domains=["mycompany.com", "mycompany.org"],
-    brand_keywords=["mycompany", "mybrand", "myproduct"],
+ monitored_domains=["mycompany.com", "mycompany.org"],
+ brand_keywords=["mycompany", "mybrand", "myproduct"],
 )
 suspicious = monitor.find_suspicious_certs("mycompany.com")
 for cert in suspicious[:5]:
-    print(f"  [{cert['common_name']}] Flags: {cert['flags']}")
+ print(f" [{cert['common_name']}] Flags: {cert['flags']}")
 ```
 
 ### Step 2: Real-Time Monitoring with Certstream
@@ -188,89 +188,89 @@ import re
 from datetime import datetime
 
 class CertstreamMonitor:
-    def __init__(self, watched_domains, brand_keywords, similarity_threshold=0.8):
-        self.watched_domains = [d.lower() for d in watched_domains]
-        self.brand_keywords = [k.lower() for k in brand_keywords]
-        self.threshold = similarity_threshold
-        self.alerts = []
+ def __init__(self, watched_domains, brand_keywords, similarity_threshold=0.8):
+ self.watched_domains = [d.lower() for d in watched_domains]
+ self.brand_keywords = [k.lower() for k in brand_keywords]
+ self.threshold = similarity_threshold
+ self.alerts = []
 
-    def start_monitoring(self, max_alerts=100):
-        """Start real-time CT log monitoring."""
-        print("[*] Starting Certstream monitoring...")
-        print(f"    Watching: {self.watched_domains}")
-        print(f"    Keywords: {self.brand_keywords}")
+ def start_monitoring(self, max_alerts=100):
+ """Start real-time CT log monitoring."""
+ print("[*] Starting Certstream monitoring...")
+ print(f" Watching: {self.watched_domains}")
+ print(f" Keywords: {self.brand_keywords}")
 
-        def callback(message, context):
-            if message["message_type"] == "certificate_update":
-                data = message["data"]
-                leaf = data.get("leaf_cert", {})
-                all_domains = leaf.get("all_domains", [])
+ def callback(message, context):
+ if message["message_type"] == "certificate_update":
+ data = message["data"]
+ leaf = data.get("leaf_cert", {})
+ all_domains = leaf.get("all_domains", [])
 
-                for domain in all_domains:
-                    domain_lower = domain.lower().strip("*.")
-                    if self._is_suspicious(domain_lower):
-                        alert = {
-                            "domain": domain,
-                            "all_domains": all_domains,
-                            "issuer": leaf.get("issuer", {}).get("O", ""),
-                            "fingerprint": leaf.get("fingerprint", ""),
-                            "not_before": leaf.get("not_before", ""),
-                            "detected_at": datetime.now().isoformat(),
-                            "reason": self._get_reason(domain_lower),
-                        }
-                        self.alerts.append(alert)
-                        print(f"  [ALERT] {domain} - {alert['reason']}")
+ for domain in all_domains:
+ domain_lower = domain.lower().strip("*.")
+ if self._is_suspicious(domain_lower):
+ alert = {
+ "domain": domain,
+ "all_domains": all_domains,
+ "issuer": leaf.get("issuer", {}).get("O", ""),
+ "fingerprint": leaf.get("fingerprint", ""),
+ "not_before": leaf.get("not_before", ""),
+ "detected_at": datetime.now().isoformat(),
+ "reason": self._get_reason(domain_lower),
+ }
+ self.alerts.append(alert)
+ print(f" [ALERT] {domain} - {alert['reason']}")
 
-                        if len(self.alerts) >= max_alerts:
-                            raise KeyboardInterrupt
+ if len(self.alerts) >= max_alerts:
+ raise KeyboardInterrupt
 
-        try:
-            certstream.listen_for_events(callback, url="wss://certstream.calidog.io/")
-        except KeyboardInterrupt:
-            print(f"\n[+] Monitoring stopped. {len(self.alerts)} alerts collected.")
-        return self.alerts
+ try:
+ certstream.listen_for_events(callback, url="wss://certstream.calidog.io/")
+ except KeyboardInterrupt:
+ print(f"\n[+] Monitoring stopped. {len(self.alerts)} alerts collected.")
+ return self.alerts
 
-    def _is_suspicious(self, domain):
-        """Check if domain is suspicious relative to watched domains."""
-        for watched in self.watched_domains:
-            # Exact keyword match
-            watched_base = watched.split(".")[0]
-            if watched_base in domain and domain != watched:
-                return True
+ def _is_suspicious(self, domain):
+ """Check if domain is suspicious relative to watched domains."""
+ for watched in self.watched_domains:
+ # Exact keyword match
+ watched_base = watched.split(".")[0]
+ if watched_base in domain and domain != watched:
+ return True
 
-            # Levenshtein distance (typosquatting detection)
-            domain_base = tldextract.extract(domain).domain
-            similarity = Levenshtein.ratio(watched_base, domain_base)
-            if similarity >= self.threshold and domain_base != watched_base:
-                return True
+ # Levenshtein distance (typosquatting detection)
+ domain_base = tldextract.extract(domain).domain
+ similarity = Levenshtein.ratio(watched_base, domain_base)
+ if similarity >= self.threshold and domain_base != watched_base:
+ return True
 
-        # Brand keyword match
-        for keyword in self.brand_keywords:
-            if keyword in domain:
-                return True
+ # Brand keyword match
+ for keyword in self.brand_keywords:
+ if keyword in domain:
+ return True
 
-        return False
+ return False
 
-    def _get_reason(self, domain):
-        """Determine why domain was flagged."""
-        reasons = []
-        for watched in self.watched_domains:
-            watched_base = watched.split(".")[0]
-            if watched_base in domain:
-                reasons.append(f"contains '{watched_base}'")
-            domain_base = tldextract.extract(domain).domain
-            similarity = Levenshtein.ratio(watched_base, domain_base)
-            if similarity >= self.threshold and domain_base != watched_base:
-                reasons.append(f"similar to '{watched}' ({similarity:.0%})")
-        for kw in self.brand_keywords:
-            if kw in domain:
-                reasons.append(f"brand keyword '{kw}'")
-        return "; ".join(reasons) if reasons else "unknown"
+ def _get_reason(self, domain):
+ """Determine why domain was flagged."""
+ reasons = []
+ for watched in self.watched_domains:
+ watched_base = watched.split(".")[0]
+ if watched_base in domain:
+ reasons.append(f"contains '{watched_base}'")
+ domain_base = tldextract.extract(domain).domain
+ similarity = Levenshtein.ratio(watched_base, domain_base)
+ if similarity >= self.threshold and domain_base != watched_base:
+ reasons.append(f"similar to '{watched}' ({similarity:.0%})")
+ for kw in self.brand_keywords:
+ if kw in domain:
+ reasons.append(f"brand keyword '{kw}'")
+ return "; ".join(reasons) if reasons else "unknown"
 
 cs_monitor = CertstreamMonitor(
-    watched_domains=["mycompany.com"],
-    brand_keywords=["mycompany", "mybrand"],
-    similarity_threshold=0.75,
+ watched_domains=["mycompany.com"],
+ brand_keywords=["mycompany", "mybrand"],
+ similarity_threshold=0.75,
 )
 alerts = cs_monitor.start_monitoring(max_alerts=50)
 ```
@@ -279,37 +279,37 @@ alerts = cs_monitor.start_monitoring(max_alerts=50)
 
 ```python
 def enumerate_subdomains_ct(domain):
-    """Discover all subdomains from Certificate Transparency logs."""
-    params = {"q": f"%.{domain}", "output": "json"}
-    resp = requests.get("https://crt.sh", params=params, timeout=30)
+ """Discover all subdomains from Certificate Transparency logs."""
+ params = {"q": f"%.{domain}", "output": "json"}
+ resp = requests.get("https://crt.sh", params=params, timeout=30)
 
-    if resp.status_code != 200:
-        return []
+ if resp.status_code != 200:
+ return []
 
-    certs = resp.json()
-    subdomains = set()
-    for cert in certs:
-        name_value = cert.get("name_value", "")
-        for name in name_value.split("\n"):
-            name = name.strip().lower()
-            if name.endswith(f".{domain}") or name == domain:
-                name = name.lstrip("*.")
-                subdomains.add(name)
+ certs = resp.json()
+ subdomains = set()
+ for cert in certs:
+ name_value = cert.get("name_value", "")
+ for name in name_value.split("\n"):
+ name = name.strip().lower()
+ if name.endswith(f".{domain}") or name == domain:
+ name = name.lstrip("*.")
+ subdomains.add(name)
 
-    sorted_subs = sorted(subdomains)
-    print(f"[+] CT subdomain enumeration for {domain}: {len(sorted_subs)} subdomains")
-    return sorted_subs
+ sorted_subs = sorted(subdomains)
+ print(f"[+] CT subdomain enumeration for {domain}: {len(sorted_subs)} subdomains")
+ return sorted_subs
 
 subdomains = enumerate_subdomains_ct("example.com")
 for sub in subdomains[:20]:
-    print(f"  {sub}")
+ print(f" {sub}")
 ```
 
 ### Step 4: Generate CT Intelligence Report
 
 ```python
 def generate_ct_report(suspicious_certs, certstream_alerts, domain):
-    report = f"""# Certificate Transparency Intelligence Report
+ report = f"""# Certificate Transparency Intelligence Report
 ## Target Domain: {domain}
 ## Generated: {datetime.now().isoformat()}
 
@@ -321,21 +321,21 @@ def generate_ct_report(suspicious_certs, certstream_alerts, domain):
 | Common Name | Issuer | Flags | crt.sh Link |
 |------------|--------|-------|-------------|
 """
-    for cert in suspicious_certs[:20]:
-        flags = "; ".join(cert.get("flags", []))
-        report += (f"| {cert['common_name']} | {cert['issuer'][:30]} "
-                   f"| {flags} | [View]({cert['crt_sh_url']}) |\n")
+ for cert in suspicious_certs[:20]:
+ flags = "; ".join(cert.get("flags", []))
+ report += (f"| {cert['common_name']} | {cert['issuer'][:30]} "
+ f"| {flags} | [View]({cert['crt_sh_url']}) |\n")
 
-    report += f"""
+ report += f"""
 ## Real-Time Certstream Alerts
 | Domain | Issuer | Reason | Detected |
 |--------|--------|--------|----------|
 """
-    for alert in certstream_alerts[:20]:
-        report += (f"| {alert['domain']} | {alert['issuer']} "
-                   f"| {alert['reason']} | {alert['detected_at'][:19]} |\n")
+ for alert in certstream_alerts[:20]:
+ report += (f"| {alert['domain']} | {alert['issuer']} "
+ f"| {alert['reason']} | {alert['detected_at'][:19]} |\n")
 
-    report += """
+ report += """
 ## Recommendations
 1. Add flagged domains to DNS sinkhole / web proxy blocklist
 2. Submit takedown requests for confirmed phishing domains
@@ -343,10 +343,10 @@ def generate_ct_report(suspicious_certs, certstream_alerts, domain):
 4. Implement CAA DNS records to restrict certificate issuance for your domains
 5. Deploy DMARC to prevent email spoofing from lookalike domains
 """
-    with open(f"ct_report_{domain.replace('.','_')}.md", "w") as f:
-        f.write(report)
-    print(f"[+] CT report saved")
-    return report
+ with open(f"ct_report_{domain.replace('.','_')}.md", "w") as f:
+ f.write(report)
+ print(f"[+] CT report saved")
+ return report
 
 generate_ct_report(suspicious, alerts if 'alerts' in dir() else [], "mycompany.com")
 ```

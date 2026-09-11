@@ -43,17 +43,17 @@ The detection-engineering payoff comes from MISP's export formats and PyMISP. MI
 ## Prerequisites
 
 - A running MISP instance (the maintained container images are the fastest path):
-  ```bash
-  git clone https://github.com/MISP/misp-docker.git
-  cd misp-docker && cp template.env .env
-  docker compose up -d
-  # Web UI on https://localhost; default admin: admin@admin.test / admin
-  ```
+ ```bash
+ git clone https://github.com/MISP/misp-docker.git
+ cd misp-docker && cp template.env .env
+ docker compose up -d
+ # Web UI on https://localhost; default admin: admin@admin.test / admin
+ ```
 - A MISP **Auth Key** (UI: Administration -> List Auth Keys -> Add).
 - PyMISP:
-  ```bash
-  pip install pymisp
-  ```
+ ```bash
+ pip install pymisp
+ ```
 - Target detection tooling reachable: Suricata, a Sigma toolchain (`pip install sigma-cli`), and/or Wazuh manager.
 
 ## Objectives
@@ -106,10 +106,10 @@ Turn on known-good lists so non-actionable indicators are flagged.
 ```python
 # Enable the common false-positive warninglists
 for wl in misp.warninglists(pythonify=True):
-    if wl.name in ("List of RFC 1918 CIDR blocks",
-                   "Top 1000 website from Cisco Umbrella",
-                   "List of known public DNS resolvers"):
-        misp.toggle_warninglist(warninglist_id=wl.id, force_enable=True)
+ if wl.name in ("List of RFC 1918 CIDR blocks",
+ "Top 1000 website from Cisco Umbrella",
+ "List of known public DNS resolvers"):
+ misp.toggle_warninglist(warninglist_id=wl.id, force_enable=True)
 ```
 
 ### 4. Authenticate and search for fresh IOCs
@@ -119,11 +119,11 @@ from pymisp import PyMISP
 misp = PyMISP("https://localhost", "YOUR_AUTH_KEY", ssl=False)
 # Only export attributes flagged to_ids=1, published, last 7 days, IP/domain/url/hash
 attrs = misp.search(
-    controller="attributes",
-    type_attribute=["ip-dst", "domain", "url", "md5", "sha256"],
-    to_ids=True, published=True, last="7d",
-    enforce_warninglist=True,   # drop warninglisted (known-good) values
-    pythonify=True,
+ controller="attributes",
+ type_attribute=["ip-dst", "domain", "url", "md5", "sha256"],
+ to_ids=True, published=True, last="7d",
+ enforce_warninglist=True, # drop warninglisted (known-good) values
+ pythonify=True,
 )
 print(f"{len(attrs)} actionable IOCs")
 ```
@@ -133,20 +133,20 @@ MISP renders matching attributes directly as IDS rules.
 ```bash
 # Suricata rules for all to_ids network IOCs (NIDS export)
 curl -s -k -H "Authorization: YOUR_AUTH_KEY" -H "Accept: application/json" \
-  "https://localhost/attributes/restSearch/returnFormat:suricata/to_ids:1/type:domain%7Cip-dst%7Curl" \
-  -o misp_suricata.rules
+ "https://localhost/attributes/restSearch/returnFormat:suricata/to_ids:1/type:domain%7Cip-dst%7Curl" \
+ -o misp_suricata.rules
 
 # Snort equivalent
 curl -s -k -H "Authorization: YOUR_AUTH_KEY" -H "Accept: application/json" \
-  "https://localhost/attributes/restSearch/returnFormat:snort/to_ids:1" -o misp_snort.rules
+ "https://localhost/attributes/restSearch/returnFormat:snort/to_ids:1" -o misp_snort.rules
 ```
 
 ### 6. Deploy the Suricata rules
 Load and reload.
 ```bash
 cp misp_suricata.rules /etc/suricata/rules/
-suricata -T -c /etc/suricata/suricata.yaml   # validate config + rules
-suricatasc -c reload-rules                    # hot reload
+suricata -T -c /etc/suricata/suricata.yaml # validate config + rules
+suricatasc -c reload-rules # hot reload
 ```
 
 ### 7. Generate Wazuh CDB lists from IOCs
@@ -154,13 +154,13 @@ Convert MISP domains/IPs into a Wazuh CDB lookup list referenced by a rule.
 ```python
 # Build a Wazuh CDB list (key:value per line) from the searched attributes
 with open("misp_iocs.cdb", "w") as fh:
-    for a in attrs:
-        if a.type in ("domain", "ip-dst"):
-            fh.write(f"{a.value}:\n")
+ for a in attrs:
+ if a.type in ("domain", "ip-dst"):
+ fh.write(f"{a.value}:\n")
 # On the Wazuh manager: place under /var/ossec/etc/lists/, reference in ossec.conf:
-#   <list>etc/lists/misp_iocs</list>
+# <list>etc/lists/misp_iocs</list>
 # then compile and restart:
-#   /var/ossec/bin/wazuh-control restart
+# /var/ossec/bin/wazuh-control restart
 ```
 
 ### 8. Generate Sigma rules from MISP intelligence
@@ -169,15 +169,15 @@ Emit a Sigma rule matching the exported domains.
 import yaml
 domains = [a.value for a in attrs if a.type == "domain"]
 sigma = {
-    "title": "MISP feed malicious domain contact",
-    "status": "experimental",
-    "logsource": {"category": "dns"},
-    "detection": {"selection": {"query|contains": domains}, "condition": "selection"},
-    "level": "high",
-    "tags": ["attack.command_and_control", "attack.t1071.004"],
+ "title": "MISP feed malicious domain contact",
+ "status": "experimental",
+ "logsource": {"category": "dns"},
+ "detection": {"selection": {"query|contains": domains}, "condition": "selection"},
+ "level": "high",
+ "tags": ["attack.command_and_control", "attack.t1071.004"],
 }
 with open("misp_domains.yml", "w") as fh:
-    yaml.safe_dump(sigma, fh, sort_keys=False)
+ yaml.safe_dump(sigma, fh, sort_keys=False)
 ```
 
 ### 9. Convert and deploy Sigma to your SIEM backend
@@ -191,7 +191,7 @@ sigma convert -t elasticsearch misp_domains.yml > misp_domains.eql
 `agent.py` searches MISP and writes Suricata/Sigma/Wazuh artifacts in one pass; schedule it via cron.
 ```bash
 python scripts/agent.py --url https://localhost --key YOUR_AUTH_KEY \
-  --last 7d --outdir ./detections --insecure
+ --last 7d --outdir ./detections --insecure
 # crontab: 0 * * * * /usr/bin/python /path/scripts/agent.py ... >> /var/log/misp_pipeline.log 2>&1
 ```
 

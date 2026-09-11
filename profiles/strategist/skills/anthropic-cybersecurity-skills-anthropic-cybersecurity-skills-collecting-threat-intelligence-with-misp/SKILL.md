@@ -90,7 +90,7 @@ misp = PyMISP('https://misp.local', 'YOUR_API_KEY', ssl=False)
 # List available feeds
 feeds = misp.feeds()
 for feed in feeds:
-    print(f"{feed['Feed']['id']}: {feed['Feed']['name']} - Enabled: {feed['Feed']['enabled']}")
+ print(f"{feed['Feed']['id']}: {feed['Feed']['name']} - Enabled: {feed['Feed']['enabled']}")
 
 # Enable CIRCL OSINT Feed
 misp.enable_feed(feed_id=1)
@@ -103,19 +103,19 @@ misp.fetch_feed(feed_id=1)
 ```python
 # Add abuse.ch URLhaus feed
 feed_data = {
-    'name': 'URLhaus Recent URLs',
-    'provider': 'abuse.ch',
-    'url': 'https://urlhaus.abuse.ch/downloads/csv_recent/',
-    'source_format': 'csv',
-    'input_source': 'network',
-    'publish': False,
-    'enabled': True,
-    'headers': '',
-    'distribution': 0,
-    'sharing_group_id': 0,
-    'tag_id': 0,
-    'default': False,
-    'lookup_visible': True
+ 'name': 'URLhaus Recent URLs',
+ 'provider': 'abuse.ch',
+ 'url': 'https://urlhaus.abuse.ch/downloads/csv_recent/',
+ 'source_format': 'csv',
+ 'input_source': 'network',
+ 'publish': False,
+ 'enabled': True,
+ 'headers': '',
+ 'distribution': 0,
+ 'sharing_group_id': 0,
+ 'tag_id': 0,
+ 'default': False,
+ 'lookup_visible': True
 }
 result = misp.add_feed(feed_data)
 print(f"Feed added: {result}")
@@ -131,18 +131,18 @@ misp = PyMISP('https://misp.local', 'YOUR_API_KEY', ssl=False)
 
 # Search for events from the last 7 days
 result = misp.search(
-    controller='events',
-    date_from=(datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d'),
-    type_attribute='ip-dst',
-    to_ids=True,
-    pythonify=True
+ controller='events',
+ date_from=(datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d'),
+ type_attribute='ip-dst',
+ to_ids=True,
+ pythonify=True
 )
 
 for event in result:
-    print(f"Event {event.id}: {event.info}")
-    for attr in event.attributes:
-        if attr.type == 'ip-dst' and attr.to_ids:
-            print(f"  IOC: {attr.value} (category: {attr.category})")
+ print(f"Event {event.id}: {event.info}")
+ for attr in event.attributes:
+ if attr.type == 'ip-dst' and attr.to_ids:
+ print(f" IOC: {attr.value} (category: {attr.category})")
 ```
 
 ### Step 5: Export IOCs for Downstream Tools
@@ -150,26 +150,26 @@ for event in result:
 ```python
 # Export as STIX 2.1 bundle
 stix_output = misp.search(
-    controller='events',
-    return_format='stix2',
-    tags=['tlp:white'],
-    published=True
+ controller='events',
+ return_format='stix2',
+ tags=['tlp:white'],
+ published=True
 )
 
 # Export IDS-flagged attributes as Suricata rules
 suricata_rules = misp.search(
-    controller='attributes',
-    return_format='suricata',
-    to_ids=True,
-    type_attribute=['ip-dst', 'domain', 'url']
+ controller='attributes',
+ return_format='suricata',
+ to_ids=True,
+ type_attribute=['ip-dst', 'domain', 'url']
 )
 
 # Export as CSV for SIEM ingestion
 csv_output = misp.search(
-    controller='attributes',
-    return_format='csv',
-    type_attribute='ip-dst',
-    to_ids=True
+ controller='attributes',
+ return_format='csv',
+ type_attribute='ip-dst',
+ to_ids=True
 )
 ```
 

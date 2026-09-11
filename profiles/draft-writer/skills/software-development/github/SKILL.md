@@ -6,10 +6,10 @@ author: Ben Barclay (benbarclay), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [github, gh, git, pull-requests, issues, code-review, repos, auth, ci]
-    category: software-development
-    related_skills: [codebase-inspection, requesting-code-review]
+ hermes:
+ tags: [github, gh, git, pull-requests, issues, code-review, repos, auth, ci]
+ category: software-development
+ related_skills: [codebase-inspection, requesting-code-review]
 ---
 
 # GitHub
@@ -39,18 +39,18 @@ Supporting assets: `scripts/gh-env.sh` + `scripts/git-credential-token.py`
 ## Core discipline (applies to every workflow)
 
 - Preflight once per session: `gh auth status` — if it fails, go to
-  `references/auth.md` before anything else.
+ `references/auth.md` before anything else.
 - Prefer `gh` over raw REST; drop to `gh api` only for endpoints the
-  porcelain lacks (the cheatsheet lists them).
+ porcelain lacks (the cheatsheet lists them).
 - Never report CI green without checking `gh pr checks` yourself; never
-  claim merged without verifying `state,mergedAt`.
+ claim merged without verifying `state,mergedAt`.
 - Read full context before writing: `gh issue view --comments` /
-  `gh pr view --comments` — decisions live in threads, not titles.
+ `gh pr view --comments` — decisions live in threads, not titles.
 - Sweep for duplicates before creating anything:
-  `gh pr list --search` / `gh issue list --search`.
+ `gh pr list --search` / `gh issue list --search`.
 
 ## Verification
 
 - The workflow's own reference file defines done for that task.
 - Cross-cutting: every claim about remote state (CI, merge, release,
-  issue state) is backed by a fresh `gh` read, never memory.
+ issue state) is backed by a fresh `gh` read, never memory.

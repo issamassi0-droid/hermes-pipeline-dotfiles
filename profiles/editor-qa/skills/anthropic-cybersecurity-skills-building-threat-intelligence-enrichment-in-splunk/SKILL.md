@@ -52,25 +52,25 @@ Splunk's Threat Intelligence Framework in Enterprise Security enables SOC teams 
 
 ```
 External TI Sources (STIX/TAXII, CSV, API)
-    |
-    v
+ |
+ v
 Modular Inputs (download and parse feeds)
-    |
-    v
+ |
+ v
 KV Store Collections (normalized IOC storage)
-    |-- ip_intel
-    |-- domain_intel
-    |-- file_intel
-    |-- url_intel
-    |-- email_intel
-    |
-    v
+ |-- ip_intel
+ |-- domain_intel
+ |-- file_intel
+ |-- url_intel
+ |-- email_intel
+ |
+ v
 Threat Intelligence Lookups
-    |
-    v
+ |
+ v
 Correlation Searches (match events against IOCs)
-    |
-    v
+ |
+ v
 Notable Events (enriched with TI context)
 ```
 
@@ -113,58 +113,58 @@ from splunklib.modularinput import Script, Scheme, Argument, Event
 
 
 class OTXFeedInput(Script):
-    def get_scheme(self):
-        scheme = Scheme("OTX AlienVault Feed")
-        scheme.description = "Collects IOCs from AlienVault OTX"
-        scheme.use_external_validation = False
-        scheme.streaming_mode = Scheme.streaming_mode_xml
+ def get_scheme(self):
+ scheme = Scheme("OTX AlienVault Feed")
+ scheme.description = "Collects IOCs from AlienVault OTX"
+ scheme.use_external_validation = False
+ scheme.streaming_mode = Scheme.streaming_mode_xml
 
-        api_key_arg = Argument("api_key")
-        api_key_arg.data_type = Argument.data_type_string
-        api_key_arg.required_on_create = True
-        scheme.add_argument(api_key_arg)
+ api_key_arg = Argument("api_key")
+ api_key_arg.data_type = Argument.data_type_string
+ api_key_arg.required_on_create = True
+ scheme.add_argument(api_key_arg)
 
-        pulse_days_arg = Argument("pulse_days")
-        pulse_days_arg.data_type = Argument.data_type_number
-        pulse_days_arg.required_on_create = False
-        scheme.add_argument(pulse_days_arg)
+ pulse_days_arg = Argument("pulse_days")
+ pulse_days_arg.data_type = Argument.data_type_number
+ pulse_days_arg.required_on_create = False
+ scheme.add_argument(pulse_days_arg)
 
-        return scheme
+ return scheme
 
-    def stream_events(self, inputs, ew):
-        for input_name, input_item in inputs.inputs.items():
-            api_key = input_item["api_key"]
-            pulse_days = int(input_item.get("pulse_days", 30))
+ def stream_events(self, inputs, ew):
+ for input_name, input_item in inputs.inputs.items():
+ api_key = input_item["api_key"]
+ pulse_days = int(input_item.get("pulse_days", 30))
 
-            headers = {"X-OTX-API-KEY": api_key}
-            url = f"https://otx.alienvault.com/api/v1/pulses/subscribed?modified_since={pulse_days}d"
+ headers = {"X-OTX-API-KEY": api_key}
+ url = f"https://otx.alienvault.com/api/v1/pulses/subscribed?modified_since={pulse_days}d"
 
-            try:
-                response = requests.get(url, headers=headers, timeout=60)
-                response.raise_for_status()
-                data = response.json()
+ try:
+ response = requests.get(url, headers=headers, timeout=60)
+ response.raise_for_status()
+ data = response.json()
 
-                for pulse in data.get("results", []):
-                    for indicator in pulse.get("indicators", []):
-                        event = Event()
-                        event.stanza = input_name
-                        event.data = json.dumps({
-                            "indicator": indicator["indicator"],
-                            "type": indicator["type"],
-                            "pulse_name": pulse["name"],
-                            "pulse_id": pulse["id"],
-                            "description": indicator.get("description", ""),
-                            "created": indicator.get("created", ""),
-                            "threat_source": "OTX",
-                            "confidence": pulse.get("adversary", "unknown"),
-                        })
-                        ew.write_event(event)
-            except requests.RequestException as e:
-                ew.log("ERROR", f"OTX feed collection failed: {str(e)}")
+ for pulse in data.get("results", []):
+ for indicator in pulse.get("indicators", []):
+ event = Event()
+ event.stanza = input_name
+ event.data = json.dumps({
+ "indicator": indicator["indicator"],
+ "type": indicator["type"],
+ "pulse_name": pulse["name"],
+ "pulse_id": pulse["id"],
+ "description": indicator.get("description", ""),
+ "created": indicator.get("created", ""),
+ "threat_source": "OTX",
+ "confidence": pulse.get("adversary", "unknown"),
+ })
+ ew.write_event(event)
+ except requests.RequestException as e:
+ ew.log("ERROR", f"OTX feed collection failed: {str(e)}")
 
 
 if __name__ == "__main__":
-    sys.exit(OTXFeedInput().run(sys.argv))
+ sys.exit(OTXFeedInput().run(sys.argv))
 ```
 
 ## Building Enrichment Lookups
@@ -226,17 +226,17 @@ fields_list = file_hash, hash_type, malware_family, confidence, source
 
 ```spl
 | tstats summariesonly=true count from datamodel=Network_Traffic
-    where All_Traffic.action=allowed
-    by All_Traffic.src_ip, All_Traffic.dest_ip, All_Traffic.dest_port, _time span=5m
+ where All_Traffic.action=allowed
+ by All_Traffic.src_ip, All_Traffic.dest_ip, All_Traffic.dest_port, _time span=5m
 | rename "All_Traffic.*" as *
 | lookup ip_threat_intel_lookup ip as dest_ip OUTPUT threat_type, confidence, source as ti_source, severity as ti_severity
 | where isnotnull(threat_type)
 | lookup asset_lookup ip as src_ip OUTPUT asset_name, asset_owner, asset_priority
 | eval urgency=case(
-    ti_severity=="critical" AND asset_priority=="critical", "critical",
-    ti_severity=="high" OR asset_priority=="critical", "high",
-    ti_severity=="medium", "medium",
-    true(), "low"
+ ti_severity=="critical" AND asset_priority=="critical", "critical",
+ ti_severity=="high" OR asset_priority=="critical", "high",
+ ti_severity=="medium", "medium",
+ true(), "low"
 )
 | eval description="Connection from ".src_ip." (".asset_name.") to known malicious IP ".dest_ip." (".threat_type.") - Source: ".ti_source
 ```
@@ -274,13 +274,13 @@ index=firewall sourcetype=pan:traffic action=allowed
 | lookup whois_lookup ip as indicators OUTPUT org as ip_org, asn as ip_asn
 | where isnotnull(ip_threat)
 | stats count
-    values(ip_threat) as threat_types
-    values(ip_ti_source) as intel_sources
-    values(country) as countries
-    values(ip_org) as organizations
-    latest(_time) as last_seen
-    earliest(_time) as first_seen
-    by src_ip, dest_ip, dest_port
+ values(ip_threat) as threat_types
+ values(ip_ti_source) as intel_sources
+ values(country) as countries
+ values(ip_org) as organizations
+ latest(_time) as last_seen
+ earliest(_time) as first_seen
+ by src_ip, dest_ip, dest_port
 | eval enrichment_context="Threat: ".mvjoin(threat_types, ", ")." | Geo: ".mvjoin(countries, ", ")." | Org: ".mvjoin(organizations, ", ")
 ```
 

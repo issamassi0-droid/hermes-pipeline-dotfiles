@@ -43,9 +43,9 @@ This skill follows the official OpenCTI documentation (docs.opencti.io) and the 
 
 - Docker and Docker Compose (OpenCTI is deployed as a container stack)
 - Python 3.8+ for the pycti client:
-  ```bash
-  pip install pycti stix2
-  ```
+ ```bash
+ pip install pycti stix2
+ ```
 - An OpenCTI instance and an API token (Profile > API access in the UI)
 - Familiarity with the STIX 2.1 data model (SDOs, SROs, observables)
 - RabbitMQ, Redis, and Elasticsearch/OpenSearch reachable by the platform (handled by the reference compose)
@@ -101,8 +101,8 @@ Create an `OpenCTIApiClient` instance using your platform URL and API token.
 from pycti import OpenCTIApiClient
 
 opencti = OpenCTIApiClient(
-    "http://localhost:8080",
-    "YOUR_API_TOKEN",  # from Profile > API access, or OPENCTI_ADMIN_TOKEN
+ "http://localhost:8080",
+ "YOUR_API_TOKEN", # from Profile > API access, or OPENCTI_ADMIN_TOKEN
 )
 ```
 
@@ -111,27 +111,27 @@ Create a Threat Actor, an Intrusion Set, a Campaign, and an Attack Pattern. pyct
 ```python
 # Threat Actor (group)
 actor = opencti.threat_actor_group.create(
-    name="APT-EXAMPLE",
-    description="Financially motivated intrusion group tracked in this case.",
-    threat_actor_types=["crime-syndicate"],
+ name="APT-EXAMPLE",
+ description="Financially motivated intrusion group tracked in this case.",
+ threat_actor_types=["crime-syndicate"],
 )
 
 # Intrusion Set
 intrusion_set = opencti.intrusion_set.create(
-    name="EXAMPLE-SET",
-    description="Cluster of activity sharing infrastructure and TTPs.",
+ name="EXAMPLE-SET",
+ description="Cluster of activity sharing infrastructure and TTPs.",
 )
 
 # Campaign
 campaign = opencti.campaign.create(
-    name="Operation Example 2026",
-    description="Spearphishing campaign targeting the finance sector.",
+ name="Operation Example 2026",
+ description="Spearphishing campaign targeting the finance sector.",
 )
 
 # Attack Pattern linked to MITRE ATT&CK (x_mitre_id maps to the technique)
 technique = opencti.attack_pattern.create(
-    name="Spearphishing Attachment",
-    x_mitre_id="T1566.001",
+ name="Spearphishing Attachment",
+ x_mitre_id="T1566.001",
 )
 ```
 
@@ -140,23 +140,23 @@ Connect the objects with STIX relationships so the graph reflects how the advers
 ```python
 # Intrusion set attributed to the threat actor
 opencti.stix_core_relationship.create(
-    fromId=intrusion_set["id"],
-    toId=actor["id"],
-    relationship_type="attributed-to",
+ fromId=intrusion_set["id"],
+ toId=actor["id"],
+ relationship_type="attributed-to",
 )
 
 # Campaign attributed to the intrusion set
 opencti.stix_core_relationship.create(
-    fromId=campaign["id"],
-    toId=intrusion_set["id"],
-    relationship_type="attributed-to",
+ fromId=campaign["id"],
+ toId=intrusion_set["id"],
+ relationship_type="attributed-to",
 )
 
 # Intrusion set uses the technique
 opencti.stix_core_relationship.create(
-    fromId=intrusion_set["id"],
-    toId=technique["id"],
-    relationship_type="uses",
+ fromId=intrusion_set["id"],
+ toId=technique["id"],
+ relationship_type="uses",
 )
 ```
 
@@ -168,17 +168,17 @@ from dateutil.parser import parse
 date = parse("2026-06-01").strftime("%Y-%m-%dT%H:%M:%SZ")
 
 indicator = opencti.indicator.create(
-    name="C2 domain for Operation Example",
-    pattern_type="stix",
-    pattern="[domain-name:value = 'malicious-c2.example']",
-    x_opencti_main_observable_type="Domain-Name",
-    valid_from=date,
+ name="C2 domain for Operation Example",
+ pattern_type="stix",
+ pattern="[domain-name:value = 'malicious-c2.example']",
+ x_opencti_main_observable_type="Domain-Name",
+ valid_from=date,
 )
 
 opencti.stix_core_relationship.create(
-    fromId=indicator["id"],
-    toId=intrusion_set["id"],
-    relationship_type="indicates",
+ fromId=indicator["id"],
+ toId=intrusion_set["id"],
+ relationship_type="indicates",
 )
 ```
 
@@ -188,11 +188,11 @@ For bulk ingestion, build a STIX bundle and submit it with `send_stix2_bundle` â
 import json
 
 with open("threat_report_bundle.json") as f:
-    bundle = json.load(f)
+ bundle = json.load(f)
 
 opencti.stix2.import_bundle_from_json(
-    json.dumps(bundle),
-    update=True,
+ json.dumps(bundle),
+ update=True,
 )
 ```
 
@@ -200,17 +200,17 @@ opencti.stix2.import_bundle_from_json(
 Add connectors to the compose stack so external intelligence (MITRE ATT&CK, MISP) is ingested continuously. Each connector needs its own token.
 ```yaml
 # Append to docker-compose.yml under services:
-  connector-mitre:
-    image: opencti/connector-mitre:latest
-    environment:
-      - OPENCTI_URL=http://opencti:8080
-      - OPENCTI_TOKEN=${CONNECTOR_MITRE_TOKEN}
-      - CONNECTOR_ID=${CONNECTOR_MITRE_ID}
-      - CONNECTOR_TYPE=EXTERNAL_IMPORT
-      - CONNECTOR_NAME=MITRE ATT&CK
-      - CONNECTOR_SCOPE=tool,report,malware,identity,attack-pattern,intrusion-set,campaign
-      - MITRE_INTERVAL=7   # days
-    restart: always
+ connector-mitre:
+ image: opencti/connector-mitre:latest
+ environment:
+ - OPENCTI_URL=http://opencti:8080
+ - OPENCTI_TOKEN=${CONNECTOR_MITRE_TOKEN}
+ - CONNECTOR_ID=${CONNECTOR_MITRE_ID}
+ - CONNECTOR_TYPE=EXTERNAL_IMPORT
+ - CONNECTOR_NAME=MITRE ATT&CK
+ - CONNECTOR_SCOPE=tool,report,malware,identity,attack-pattern,intrusion-set,campaign
+ - MITRE_INTERVAL=7 # days
+ restart: always
 ```
 ```bash
 docker compose up -d connector-mitre
@@ -221,17 +221,17 @@ Read back the adversary's full picture for reporting and detection engineering.
 ```python
 # Resolve all techniques an intrusion set uses
 iset = opencti.intrusion_set.read(filters={
-    "mode": "and",
-    "filters": [{"key": "name", "values": ["EXAMPLE-SET"]}],
-    "filterGroups": [],
+ "mode": "and",
+ "filters": [{"key": "name", "values": ["EXAMPLE-SET"]}],
+ "filterGroups": [],
 })
 
 rels = opencti.stix_core_relationship.list(
-    fromId=iset["id"],
-    relationship_type="uses",
+ fromId=iset["id"],
+ relationship_type="uses",
 )
 for r in rels:
-    print(r["to"]["name"], r["to"].get("x_mitre_id"))
+ print(r["to"]["name"], r["to"].get("x_mitre_id"))
 ```
 
 ## Tools and Resources

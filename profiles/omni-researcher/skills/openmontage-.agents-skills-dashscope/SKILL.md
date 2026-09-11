@@ -56,9 +56,9 @@ Header: X-DashScope-Async: enable
 from tools.graphics.image_selector import ImageSelector
 
 result = ImageSelector().execute({
-    "preferred_provider": "dashscope",
-    "prompt": "一只猫坐在沙发上",
-    "output_path": "projects/my-video/assets/images/cat.png",
+ "preferred_provider": "dashscope",
+ "prompt": "一只猫坐在沙发上",
+ "output_path": "projects/my-video/assets/images/cat.png",
 })
 ```
 
@@ -68,10 +68,10 @@ result = ImageSelector().execute({
 from tools.audio.tts_selector import TTSSelector
 
 result = TTSSelector().execute({
-    "preferred_provider": "dashscope",
-    "text": "如果 AI 真的会改变未来，普通人到底该怎么参与？",
-    "voice": "Cherry",
-    "output_path": "projects/my-video/assets/audio/narration.wav",
+ "preferred_provider": "dashscope",
+ "text": "如果 AI 真的会改变未来，普通人到底该怎么参与？",
+ "voice": "Cherry",
+ "output_path": "projects/my-video/assets/audio/narration.wav",
 })
 ```
 
@@ -81,8 +81,8 @@ result = TTSSelector().execute({
 from tools.analysis.dashscope_asr import DashscopeAsr
 
 result = DashscopeAsr().execute({
-    "audio_url": "https://example.com/narration.wav",
-    "output_path": "projects/my-video/assets/audio/transcription.json",
+ "audio_url": "https://example.com/narration.wav",
+ "output_path": "projects/my-video/assets/audio/transcription.json",
 })
 
 # result.data["words"] is a flat list of {text, begin_time_seconds, end_time_seconds}

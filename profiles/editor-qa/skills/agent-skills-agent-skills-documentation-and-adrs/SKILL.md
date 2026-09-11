@@ -114,8 +114,8 @@ counter += 1;
 // Rate limit uses a sliding window — reset counter at window boundary,
 // not on a fixed schedule, to prevent burst attacks at window edges
 if (now - windowStart > WINDOW_SIZE_MS) {
-  counter = 0;
-  windowStart = now;
+ counter = 0;
+ windowStart = now;
 }
 ```
 
@@ -124,14 +124,14 @@ if (now - windowStart > WINDOW_SIZE_MS) {
 ```typescript
 // Don't comment self-explanatory code
 function calculateTotal(items: CartItem[]): number {
-  return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+ return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 }
 
 // Don't leave TODO comments for things you should just do now
-// TODO: add error handling  ← Just add it
+// TODO: add error handling ← Just add it
 
 // Don't leave commented-out code
-// const oldImplementation = () => { ... }  ← Delete it, git has history
+// const oldImplementation = () => { ... } ← Delete it, git has history
 ```
 
 ### Document Known Gotchas
@@ -145,7 +145,7 @@ function calculateTotal(items: CartItem[]): number {
  * See ADR-003 for the full design rationale.
  */
 export function initializeTheme(theme: Theme): void {
-  // ...
+ // ...
 }
 ```
 
@@ -169,7 +169,7 @@ For public APIs (REST, GraphQL, library interfaces):
  * console.log(task.id); // "task_abc123"
  */
 export async function createTask(input: CreateTaskInput): Promise<Task> {
-  // ...
+ // ...
 }
 ```
 
@@ -177,24 +177,24 @@ export async function createTask(input: CreateTaskInput): Promise<Task> {
 
 ```yaml
 paths:
-  /api/tasks:
-    post:
-      summary: Create a task
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTaskInput'
-      responses:
-        '201':
-          description: Task created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        '422':
-          description: Validation error
+ /api/tasks:
+ post:
+ summary: Create a task
+ requestBody:
+ required: true
+ content:
+ application/json:
+ schema:
+ $ref: '#/components/schemas/CreateTaskInput'
+ responses:
+ '201':
+ description: Task created
+ content:
+ application/json:
+ schema:
+ $ref: '#/components/schemas/Task'
+ '422':
+ description: Validation error
 ```
 
 ## README Structure

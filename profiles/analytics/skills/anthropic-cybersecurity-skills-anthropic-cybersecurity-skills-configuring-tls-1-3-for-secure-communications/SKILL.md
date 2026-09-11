@@ -1,9 +1,9 @@
 ---
 name: configuring-tls-1-3-for-secure-communications
 description: Configures TLS 1.3 (RFC 8446) on servers, covering cipher suite and
-  key-exchange group selection, and validates the resulting configuration with openssl
-  s_client and testssl.sh. Use when deploying or hardening TLS 1.3 for secure communications,
-  or when testing a server for common TLS misconfigurations and vulnerabilities.
+ key-exchange group selection, and validates the resulting configuration with openssl
+ s_client and testssl.sh. Use when deploying or hardening TLS 1.3 for secure communications,
+ or when testing a server for common TLS misconfigurations and vulnerabilities.
 domain: cybersecurity
 subdomain: cryptography
 tags:

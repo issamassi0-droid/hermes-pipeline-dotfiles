@@ -33,8 +33,8 @@ gsap.registerPlugin(useGSAP); // register before running useGSAP or any GSAP cod
 const containerRef = useRef(null);
 
 useGSAP(() => {
-  gsap.to(".box", { x: 100 });
-  gsap.from(".item", { opacity: 0, stagger: 0.1 });
+ gsap.to(".box", { x: 100 });
+ gsap.from(".item", { opacity: 0, stagger: 0.1 });
 }, { scope: containerRef });
 ```
 
@@ -52,11 +52,11 @@ By default, useGSAP() passes an empty dependency array to the internal useEffect
 
 ```javascript
 useGSAP(() => {
-		// gsap code here, just like in a useEffect()
+ // gsap code here, just like in a useEffect()
 },{ 
-  dependencies: [endX], // dependency array (optional)
-  scope: container,     // scope selector text (optional, recommended)
-  revertOnUpdate: true  // causes the context to be reverted and the cleanup function to run every time the hook re-synchronizes (when any dependency changes)
+ dependencies: [endX], // dependency array (optional)
+ scope: container, // scope selector text (optional, recommended)
+ revertOnUpdate: true // causes the context to be reverted and the cleanup function to run every time the hook re-synchronizes (when any dependency changes)
 });
 ```
 
@@ -66,11 +66,11 @@ It's okay to use **gsap.context()** inside a regular **useEffect()** when @gsap/
 
 ```javascript
 useEffect(() => {
-  const ctx = gsap.context(() => {
-    gsap.to(".box", { x: 100 });
-    gsap.from(".item", { opacity: 0, stagger: 0.1 });
-  }, containerRef);
-  return () => ctx.revert();
+ const ctx = gsap.context(() => {
+ gsap.to(".box", { x: 100 });
+ gsap.from(".item", { opacity: 0, stagger: 0.1 });
+ }, containerRef);
+ return () => ctx.revert();
 }, []);
 ```
 
@@ -92,20 +92,20 @@ useGSAP((context, contextSafe) => {
 
 	// ❌ DANGER! This animation is created in an event handler that executes AFTER useGSAP() executes. It's not added to the context so it won't get cleaned up (reverted). The event listener isn't removed in cleanup function below either, so it persists between component renders (bad).
 	badRef.current.addEventListener('click', () => {
-		gsap.to(badRef.current, { y: 100 });
+ gsap.to(badRef.current, { y: 100 });
 	});
 
 	// ✅ safe, wrapped in contextSafe() function
 	const onClickGood = contextSafe(() => {
-		gsap.to(goodRef.current, { rotation: 180 });
+ gsap.to(goodRef.current, { rotation: 180 });
 	});
 
 	goodRef.current.addEventListener('click', onClickGood);
 
 	// 👍 we remove the event listener in the cleanup function below.
 	return () => {
-		// <-- cleanup
-		goodRef.current.removeEventListener('click', onClickGood);
+ // <-- cleanup
+ goodRef.current.removeEventListener('click', onClickGood);
 	};
 },{ scope: container });
 ```

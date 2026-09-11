@@ -1,10 +1,10 @@
 ---
 name: detecting-t1003-credential-dumping-with-edr
 description: Detect OS credential dumping (MITRE T1003) targeting LSASS memory, the SAM
-  database, NTDS.dit, and cached credentials by correlating EDR telemetry, Sysmon process-access
-  events, and Windows security event logs. Use when hunting for Mimikatz-style credential
-  theft, triaging an EDR alert on LSASS access, or scoping an incident after suspected
-  credential dumping.
+ database, NTDS.dit, and cached credentials by correlating EDR telemetry, Sysmon process-access
+ events, and Windows security event logs. Use when hunting for Mimikatz-style credential
+ theft, triaging an EDR alert on LSASS access, or scoping an incident after suspected
+ credential dumping.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:
@@ -36,32 +36,32 @@ mitre_attack:
 - T1003.003
 - T1003.006
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - positioning
-  - initial-access
-  techniques:
-  - id: T1555
-    name: Credentials from Password Stores
-    tactic: reconnaissance
-    source: attack
-  - id: T1555.003
-    name: 'Credentials from Password Stores: Credentials from Web Browsers'
-    tactic: reconnaissance
-    source: attack
-  - id: T1539
-    name: Steal Web Session Cookie
-    tactic: positioning
-    source: attack
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - positioning
+ - initial-access
+ techniques:
+ - id: T1555
+ name: Credentials from Password Stores
+ tactic: reconnaissance
+ source: attack
+ - id: T1555.003
+ name: 'Credentials from Password Stores: Credentials from Web Browsers'
+ tactic: reconnaissance
+ source: attack
+ - id: T1539
+ name: Steal Web Session Cookie
+ tactic: positioning
+ source: attack
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
 ---
 
 # Detecting T1003 Credential Dumping with EDR
@@ -120,11 +120,11 @@ index=sysmon EventCode=10
 ```spl
 index=sysmon EventCode=1
 | where match(CommandLine, "(?i)(sekurlsa|lsadump|kerberos::list|crypto::certificates)")
-    OR match(CommandLine, "(?i)procdump.*-ma.*lsass")
-    OR match(CommandLine, "(?i)comsvcs\.dll.*MiniDump")
-    OR match(CommandLine, "(?i)ntdsutil.*\"ac i ntds\".*ifm")
-    OR match(CommandLine, "(?i)reg\s+save\s+hklm\\\\(sam|security|system)")
-    OR match(CommandLine, "(?i)vssadmin.*create\s+shadow")
+ OR match(CommandLine, "(?i)procdump.*-ma.*lsass")
+ OR match(CommandLine, "(?i)comsvcs\.dll.*MiniDump")
+ OR match(CommandLine, "(?i)ntdsutil.*\"ac i ntds\".*ifm")
+ OR match(CommandLine, "(?i)reg\s+save\s+hklm\\\\(sam|security|system)")
+ OR match(CommandLine, "(?i)vssadmin.*create\s+shadow")
 | table _time Computer User Image CommandLine ParentImage
 ```
 
@@ -134,7 +134,7 @@ DeviceEvents
 | where Timestamp > ago(7d)
 | where ActionType in ("LsassAccess", "CredentialDumpingActivity")
 | project Timestamp, DeviceName, AccountName, InitiatingProcessFileName,
-    InitiatingProcessCommandLine, ActionType, AdditionalFields
+ InitiatingProcessCommandLine, ActionType, AdditionalFields
 | sort by Timestamp desc
 ```
 
@@ -143,27 +143,27 @@ DeviceEvents
 title: LSASS Memory Credential Dumping Attempt
 status: stable
 logsource:
-    product: windows
-    category: process_access
+ product: windows
+ category: process_access
 detection:
-    selection:
-        TargetImage|endswith: '\lsass.exe'
-        GrantedAccess|contains:
-            - '0x1FFFFF'
-            - '0x1F3FFF'
-            - '0x143A'
-            - '0x0040'
-    filter:
-        SourceImage|endswith:
-            - '\csrss.exe'
-            - '\lsass.exe'
-            - '\MsMpEng.exe'
-            - '\svchost.exe'
-    condition: selection and not filter
+ selection:
+ TargetImage|endswith: '\lsass.exe'
+ GrantedAccess|contains:
+ - '0x1FFFFF'
+ - '0x1F3FFF'
+ - '0x143A'
+ - '0x0040'
+ filter:
+ SourceImage|endswith:
+ - '\csrss.exe'
+ - '\lsass.exe'
+ - '\MsMpEng.exe'
+ - '\svchost.exe'
+ condition: selection and not filter
 level: critical
 tags:
-    - attack.credential_access
-    - attack.t1003.001
+ - attack.credential_access
+ - attack.t1003.001
 ```
 
 ## Common Scenarios

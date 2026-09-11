@@ -47,9 +47,9 @@ This skill maps to MITRE D3FEND's **Decoy File (D3-DF)**, **Decoy User Credentia
 - A public IPv4 address reachable on 80/443 (HTTP tokens) and 53/udp (DNS tokens).
 - An SMTP relay or Mailgun account, and/or a Slack/Teams/generic webhook URL for alert delivery.
 - Python 3.8+ for the helper script:
-  ```bash
-  python3 -m pip install requests
-  ```
+ ```bash
+ python3 -m pip install requests
+ ```
 - For quick use with no hosting, an account-free token from the public service at https://canarytokens.org.
 
 ## Objectives
@@ -86,9 +86,9 @@ cp frontend.env.dist frontend.env
 ```
 Set the core variables. In `frontend.env`:
 ```ini
-CANARY_DOMAINS=canary.example.com          # general-purpose token domains (comma-separated)
-CANARY_NXDOMAINS=nx.example.com            # domains reserved for PDF/DNS tokens
-CANARY_PUBLIC_IP=203.0.113.10              # public IP of this host
+CANARY_DOMAINS=canary.example.com # general-purpose token domains (comma-separated)
+CANARY_NXDOMAINS=nx.example.com # domains reserved for PDF/DNS tokens
+CANARY_PUBLIC_IP=203.0.113.10 # public IP of this host
 ```
 In `switchboard.env`:
 ```ini
@@ -117,10 +117,10 @@ The frontend (token generator UI) is now served on your `CANARY_PUBLIC_DOMAIN`; 
 Both the public service and a self-hosted frontend expose a `POST /generate` endpoint. Create an HTTP token that fires on any GET:
 ```bash
 curl -s https://canarytokens.org/generate \
-  -F 'type=http' \
-  -F 'email=soc@example.com' \
-  -F 'memo=Internal wiki - IT admin passwords page' \
-  -F 'webhook_url=https://hooks.slack.com/services/T000/B000/XXXX'
+ -F 'type=http' \
+ -F 'email=soc@example.com' \
+ -F 'memo=Internal wiki - IT admin passwords page' \
+ -F 'webhook_url=https://hooks.slack.com/services/T000/B000/XXXX'
 # Response JSON includes: token, auth, hostname, url, url_components
 ```
 The returned `url` is the trip-wire link; place it where only an intruder would find it (a fake bookmark, a hidden link in a wiki page, an email signature).
@@ -128,9 +128,9 @@ The returned `url` is the trip-wire link; place it where only an intruder would 
 ### 4. Generate a cloud credential (AWS API key) honeytoken
 ```bash
 curl -s https://canarytokens.org/generate \
-  -F 'type=aws_keys' \
-  -F 'email=soc@example.com' \
-  -F 'memo=Decoy AWS keys - jenkins build host /root/.aws/credentials'
+ -F 'type=aws_keys' \
+ -F 'email=soc@example.com' \
+ -F 'memo=Decoy AWS keys - jenkins build host /root/.aws/credentials'
 # Response contains access_key_id and secret_access_key plus a downloadable
 # credentials file via /download?token=<token>&auth=<auth>&fmt=aws_keys
 ```
@@ -140,10 +140,10 @@ Drop the keys into a plausible `~/.aws/credentials` on a monitored host. Any `st
 ```bash
 # MS Word
 curl -s https://canarytokens.org/generate \
-  -F 'type=msword' \
-  -F 'email=soc@example.com' \
-  -F 'memo=Q4-Layoffs-DRAFT.docx on FILESERVER01\\HR$' \
-  -o token-meta.json
+ -F 'type=msword' \
+ -F 'email=soc@example.com' \
+ -F 'memo=Q4-Layoffs-DRAFT.docx on FILESERVER01\\HR$' \
+ -o token-meta.json
 # Download the weaponized document:
 curl -s "https://canarytokens.org/download?fmt=msword&token=<token>&auth=<auth>" -o Q4-Layoffs-DRAFT.docx
 ```
@@ -152,9 +152,9 @@ For PDFs use `type=adobe_pdf`. The document phones home when opened (DNS/HTTP ca
 ### 6. Plant a DNS token for resolver-level tripwires
 ```bash
 curl -s https://canarytokens.org/generate \
-  -F 'type=dns' \
-  -F 'email=soc@example.com' \
-  -F 'memo=DNS canary referenced in backup script comments'
+ -F 'type=dns' \
+ -F 'email=soc@example.com' \
+ -F 'memo=DNS canary referenced in backup script comments'
 # Response 'hostname' is a unique FQDN; any resolution of it fires an alert.
 ```
 Embed the hostname in scripts, configs, or `/etc/hosts` comments. Because resolution alone triggers it, DNS tokens catch reconnaissance even when egress HTTP is blocked.
@@ -163,11 +163,11 @@ Embed the hostname in scripts, configs, or `/etc/hosts` comments. Because resolu
 ```bash
 # Slack API token canary (fires when the fake token is used against Slack)
 curl -s https://canarytokens.org/generate -F 'type=slack_api' \
-  -F 'email=soc@example.com' -F 'memo=Decoy Slack bot token in repo .env'
+ -F 'email=soc@example.com' -F 'memo=Decoy Slack bot token in repo .env'
 
 # Kubeconfig canary (fires when used against the kube API)
 curl -s https://canarytokens.org/generate -F 'type=kubeconfig' \
-  -F 'email=soc@example.com' -F 'memo=Decoy kubeconfig in /home/deploy/.kube/config'
+ -F 'email=soc@example.com' -F 'memo=Decoy kubeconfig in /home/deploy/.kube/config'
 ```
 Commit decoy `.env` / `kubeconfig` files only to repos and hosts you instrument, never to public repos.
 
@@ -175,8 +175,8 @@ Commit decoy `.env` / `kubeconfig` files only to repos and hosts you instrument,
 Create a non-privileged-looking but never-used AD account whose authentication is alerted on. Set a SPN so it appears Kerberoastable bait, and forward Event ID 4768/4769/4625 for it to your SIEM:
 ```powershell
 New-ADUser -Name "svc_backup_legacy" -SamAccountName "svc_backup_legacy" `
-  -AccountPassword (ConvertTo-SecureString 'C0mpl3xDecoy!2026' -AsPlainText -Force) `
-  -Enabled $true -Description "Legacy backup service (do not use)"
+ -AccountPassword (ConvertTo-SecureString 'C0mpl3xDecoy!2026' -AsPlainText -Force) `
+ -Enabled $true -Description "Legacy backup service (do not use)"
 Set-ADUser svc_backup_legacy -ServicePrincipalNames @{Add="MSSQLSvc/decoy.example.com:1433"}
 ```
 Add a Windows audit ACL/SACL or a SIEM correlation rule so any 4768/4769 for `svc_backup_legacy` pages the SOC — no legitimate logon should ever occur.

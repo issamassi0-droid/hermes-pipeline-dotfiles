@@ -6,10 +6,10 @@ author: Hermes Agent + Teknium
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Research, Citations, Grounding, Sources, Web, Reports]
-    category: research
-    related_skills: [arxiv, pdf, reddit-reading, rss-feeds, youtube-content]
+ hermes:
+ tags: [Research, Citations, Grounding, Sources, Web, Reports]
+ category: research
+ related_skills: [arxiv, pdf, reddit-reading, rss-feeds, youtube-content]
 ---
 
 # Grounded Citations
@@ -36,7 +36,7 @@ knew:
 
 - Research, comparisons, news summaries, "what is the current state of X"
 - Any deliverable you write to disk that quotes, paraphrases, or reports
-  outside facts — reports, briefs, docs, decks, wiki pages
+ outside facts — reports, briefs, docs, decks, wiki pages
 - Fact-finding where the user will want to check your work
 - Multi-source synthesis where conflicting sources must be attributed
 
@@ -58,12 +58,12 @@ Override per task with `--ledger <path>` or `HERMES_CITATION_LEDGER`.
 ```bash
 S=~/.hermes/skills/research/grounded-citations/scripts/sources.py
 
-python "$S" reset                                  # start a clean ledger
-python "$S" add https://example.com/a --title "A"  # prints: [1]
-python "$S" add https://example.com/b --title "B"  # prints: [2]
-python "$S" list                                   # ledger table
-python "$S" render                                 # Sources: block
-python "$S" verify draft.md                        # catch bad citations
+python "$S" reset # start a clean ledger
+python "$S" add https://example.com/a --title "A" # prints: [1]
+python "$S" add https://example.com/b --title "B" # prints: [2]
+python "$S" list # ledger table
+python "$S" render # Sources: block
+python "$S" verify draft.md # catch bad citations
 ```
 
 `add` is idempotent and URL-normalized: the same page always returns the same
@@ -109,7 +109,7 @@ Ice floats because it is less dense than liquid water.[1][2]
 - Claims from your own knowledge get no citation.
 - Conflicting sources: present both readings, each with its own id.
 - Quote exact figures, dates, and names as the source states them; flag gaps
-  explicitly ("no source found for X") instead of smoothing them over.
+ explicitly ("no source found for X") instead of smoothing them over.
 
 ④ **Append the Sources block** with `sources.py render --cited-in <draft>` so
 the id → URL mapping is generated mechanically from the ledger, not retyped.
@@ -216,33 +216,33 @@ and read the `info: stats:` line to see the counts before picking a number.
 ## Pitfalls
 
 - **Registering after writing.** The ledger must be populated from tool output,
-  not reconstructed from the draft — that reintroduces exactly the hallucinated
-  -URL risk the numbering removes.
+ not reconstructed from the draft — that reintroduces exactly the hallucinated
+ -URL risk the numbering removes.
 - **Renumbering mid-task.** Never hand-edit ids in a draft. Ids are ledger
-  identities; if a draft cites `[4]`, `[4]` must stay that source. Run `reset`
-  only between tasks.
+ identities; if a draft cites `[4]`, `[4]` must stay that source. Run `reset`
+ only between tasks.
 - **Retyping URLs into the Sources block.** Always `render`. A hand-typed URL
-  is an unverified claim.
+ is an unverified claim.
 - **Citing a search snippet as if you read the page.** A `web_search`
-  description supports only what it literally says. Cite the extracted page
-  when the claim needs the body — `web_extract` it first.
+ description supports only what it literally says. Cite the extracted page
+ when the claim needs the body — `web_extract` it first.
 - **Over-citing.** Three ids on a sentence is the ceiling; a citation on every
-  clause makes text unreadable and hides which source carries the load.
+ clause makes text unreadable and hides which source carries the load.
 - **Citing the ledger in code/config artifacts.** Source comments belong in
-  prose deliverables and doc headers, not inside generated code.
+ prose deliverables and doc headers, not inside generated code.
 - **Parallel subagents.** Each subagent has its own working directory; point
-  them all at one ledger with `--ledger` (or `HERMES_CITATION_LEDGER`) if their
-  outputs get merged, otherwise their ids will collide.
+ them all at one ledger with `--ledger` (or `HERMES_CITATION_LEDGER`) if their
+ outputs get merged, otherwise their ids will collide.
 - **Quoting from a snippet instead of the page.** Evidence quotes must come
-  from the extracted page text, not a search-result description — `web_extract`
-  first, save the text, then `quote --from` that file.
+ from the extracted page text, not a search-result description — `web_extract`
+ first, save the text, then `quote --from` that file.
 - **Paraphrasing into `quote --text`.** The verbatim check will reject it; the
-  fix is to find the actual sentence, not to reword until something matches.
+ fix is to find the actual sentence, not to reword until something matches.
 - **Using `[unverified]` as an escape hatch.** It marks the rare claim that
-  genuinely cannot be sourced; if most sentences carry it, the task needed more
-  retrieval, not more markers.
+ genuinely cannot be sourced; if most sentences carry it, the task needed more
+ retrieval, not more markers.
 - **Hand-editing the Sources block.** Use `render --replace-in <draft>`; slicing
-  the file yourself risks a stale or duplicated block that `verify` then flags.
+ the file yourself risks a stale or duplicated block that `verify` then flags.
 
 ## Verification
 

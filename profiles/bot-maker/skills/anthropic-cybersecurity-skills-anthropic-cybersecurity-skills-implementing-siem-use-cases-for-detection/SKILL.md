@@ -1,12 +1,12 @@
 ---
 name: implementing-siem-use-cases-for-detection
 description: 'Implements SIEM detection use cases by designing correlation rules,
-  threshold alerts, and behavioral analytics mapped to MITRE ATT&CK techniques across
-  Splunk, Elastic, and Sentinel. Use when SOC teams need to expand detection coverage,
-  formalize use case lifecycle management, or build a detection library aligned to
-  organizational threat profile.
+ threshold alerts, and behavioral analytics mapped to MITRE ATT&CK techniques across
+ Splunk, Elastic, and Sentinel. Use when SOC teams need to expand detection coverage,
+ formalize use case lifecycle management, or build a detection library aligned to
+ organizational threat profile.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -78,26 +78,26 @@ import json
 
 # Load current detection rules mapped to ATT&CK
 current_rules = [
-    {"name": "Brute Force Detection", "techniques": ["T1110.001", "T1110.003"]},
-    {"name": "Malware Hash Match", "techniques": ["T1204.002"]},
-    {"name": "Suspicious PowerShell", "techniques": ["T1059.001"]},
+ {"name": "Brute Force Detection", "techniques": ["T1110.001", "T1110.003"]},
+ {"name": "Malware Hash Match", "techniques": ["T1204.002"]},
+ {"name": "Suspicious PowerShell", "techniques": ["T1059.001"]},
 ]
 
 # Load ATT&CK Enterprise techniques
 with open("enterprise-attack.json") as f:
-    attack = json.load(f)
+ attack = json.load(f)
 
 all_techniques = set()
 for obj in attack["objects"]:
-    if obj["type"] == "attack-pattern":
-        ext = obj.get("external_references", [])
-        for ref in ext:
-            if ref.get("source_name") == "mitre-attack":
-                all_techniques.add(ref["external_id"])
+ if obj["type"] == "attack-pattern":
+ ext = obj.get("external_references", [])
+ for ref in ext:
+ if ref.get("source_name") == "mitre-attack":
+ all_techniques.add(ref["external_id"])
 
 covered = set()
 for rule in current_rules:
-    covered.update(rule["techniques"])
+ covered.update(rule["techniques"])
 
 gaps = all_techniques - covered
 print(f"Total techniques: {len(all_techniques)}")
@@ -106,8 +106,8 @@ print(f"Gaps: {len(gaps)}")
 
 # Prioritize gaps by threat relevance
 priority_techniques = [
-    "T1003", "T1021", "T1053", "T1547", "T1078",
-    "T1055", "T1071", "T1105", "T1036", "T1070"
+ "T1003", "T1021", "T1053", "T1547", "T1078",
+ "T1055", "T1071", "T1105", "T1036", "T1070"
 ]
 priority_gaps = [t for t in priority_techniques if t in gaps]
 print(f"Priority gaps: {priority_gaps}")
@@ -122,24 +122,24 @@ use_case_id: UC-2024-015
 name: Credential Dumping via LSASS Access
 description: Detects tools accessing LSASS process memory for credential extraction
 mitre_attack:
-  tactic: Credential Access (TA0006)
-  technique: T1003.001 - LSASS Memory
-  data_sources:
-    - Process: OS API Execution (Sysmon EventCode 10)
-    - Process: Process Access (Windows Security 4663)
+ tactic: Credential Access (TA0006)
+ technique: T1003.001 - LSASS Memory
+ data_sources:
+ - Process: OS API Execution (Sysmon EventCode 10)
+ - Process: Process Access (Windows Security 4663)
 log_sources:
-  - index: sysmon, sourcetype: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
-  - index: wineventlog, sourcetype: WinEventLog:Security
+ - index: sysmon, sourcetype: XmlWinEventLog:Microsoft-Windows-Sysmon/Operational
+ - index: wineventlog, sourcetype: WinEventLog:Security
 severity: High
 confidence: Medium-High
 false_positive_sources:
-  - Antivirus products scanning LSASS
-  - CrowdStrike Falcon sensor
-  - Windows Defender ATP
-  - SCCM client
+ - Antivirus products scanning LSASS
+ - CrowdStrike Falcon sensor
+ - Windows Defender ATP
+ - SCCM client
 tuning_notes: >
-  Maintain exclusion list for known security tools that legitimately access LSASS.
-  Review exclusions quarterly for newly deployed security products.
+ Maintain exclusion list for known security tools that legitimately access LSASS.
+ Review exclusions quarterly for newly deployed security products.
 sla: Alert within 5 minutes of detection
 owner: detection_engineering_team
 status: Production
@@ -152,9 +152,9 @@ last_tested: 2024-03-15
 **Splunk ES Correlation Search:**
 ```spl
 | tstats summariesonly=true count from datamodel=Endpoint.Processes
-  where Processes.process_name="lsass.exe"
-  by Processes.dest, Processes.user, Processes.process_name,
-     Processes.parent_process_name, Processes.parent_process
+ where Processes.process_name="lsass.exe"
+ by Processes.dest, Processes.user, Processes.process_name,
+ Processes.parent_process_name, Processes.parent_process
 | `drop_dm_object_name(Processes)`
 | lookup lsass_access_whitelist parent_process AS parent_process OUTPUT is_whitelisted
 | where isnull(is_whitelisted) OR is_whitelisted!="true"
@@ -173,13 +173,13 @@ NOT [| inputlookup lsass_whitelist.csv | fields SourceImage]
 **Elastic Security EQL Rule:**
 ```eql
 process where event.type == "access" and
-  process.name == "lsass.exe" and
-  not process.executable : (
-    "?:\\Windows\\System32\\svchost.exe",
-    "?:\\Windows\\System32\\csrss.exe",
-    "?:\\Program Files\\CrowdStrike\\*",
-    "?:\\ProgramData\\Microsoft\\Windows Defender\\*"
-  )
+ process.name == "lsass.exe" and
+ not process.executable : (
+ "?:\\Windows\\System32\\svchost.exe",
+ "?:\\Windows\\System32\\csrss.exe",
+ "?:\\Program Files\\CrowdStrike\\*",
+ "?:\\ProgramData\\Microsoft\\Windows Defender\\*"
+ )
 ```
 
 **Microsoft Sentinel KQL Rule:**
@@ -190,7 +190,7 @@ DeviceProcessEvents
 | where ActionType == "ProcessAccessed"
 | where InitiatingProcessFileName !in ("svchost.exe", "csrss.exe", "MsMpEng.exe")
 | project Timestamp, DeviceName, InitiatingProcessFileName,
-          InitiatingProcessCommandLine, AccountName
+ InitiatingProcessCommandLine, AccountName
 ```
 
 ### Step 4: Test with Attack Simulation
@@ -223,10 +223,10 @@ earliest=-1h
 Document test results:
 ```
 TEST RESULTS — UC-2024-015
-Atomic Test T1003.001-1 (Mimikatz):      DETECTED (alert fired in 47s)
-Atomic Test T1003.001-2 (ProcDump):      DETECTED (alert fired in 32s)
-Atomic Test T1003.001-3 (Task Manager):  FALSE NEGATIVE (excluded by whitelist — expected)
-False Positive Rate (7-day backtest):     2 events (CrowdStrike scan — added to whitelist)
+Atomic Test T1003.001-1 (Mimikatz): DETECTED (alert fired in 47s)
+Atomic Test T1003.001-2 (ProcDump): DETECTED (alert fired in 32s)
+Atomic Test T1003.001-3 (Task Manager): FALSE NEGATIVE (excluded by whitelist — expected)
+False Positive Rate (7-day backtest): 2 events (CrowdStrike scan — added to whitelist)
 ```
 
 ### Step 5: Deploy and Monitor Use Case Health
@@ -237,11 +237,11 @@ Track detection rule effectiveness:
 -- Use case firing frequency
 index=notable
 | stats count AS fires, dc(src) AS unique_sources,
-        dc(dest) AS unique_dests
-  by rule_name, status_label
+ dc(dest) AS unique_dests
+ by rule_name, status_label
 | eval true_positive_rate = round(
-    sum(eval(if(status_label="Resolved - True Positive", 1, 0))) /
-    count * 100, 1)
+ sum(eval(if(status_label="Resolved - True Positive", 1, 0))) /
+ count * 100, 1)
 | sort - fires
 | table rule_name, fires, unique_sources, unique_dests, true_positive_rate
 
@@ -249,8 +249,8 @@ index=notable
 index=notable
 | eval detection_latency = _time - orig_time
 | stats avg(detection_latency) AS avg_latency_sec,
-        perc95(detection_latency) AS p95_latency_sec
-  by rule_name
+ perc95(detection_latency) AS p95_latency_sec
+ by rule_name
 | eval avg_latency_min = round(avg_latency_sec / 60, 1)
 | sort - avg_latency_sec
 ```
@@ -262,13 +262,13 @@ Establish lifecycle management for all detection use cases:
 ```
 USE CASE LIFECYCLE
 ━━━━━━━━━━━━━━━━━━
-1. PROPOSED    → New detection need identified (threat intel, gap analysis, incident finding)
+1. PROPOSED → New detection need identified (threat intel, gap analysis, incident finding)
 2. DEVELOPMENT → Query written, false positive analysis, tuning
-3. TESTING     → Atomic Red Team validation, 7-day backtest
-4. STAGING     → Deployed in alert-only mode (no incident creation) for 14 days
-5. PRODUCTION  → Full production with incident creation and SOAR integration
-6. REVIEW      → Quarterly review of effectiveness, false positive rate, relevance
-7. DEPRECATED  → Technique no longer relevant or replaced by better detection
+3. TESTING → Atomic Red Team validation, 7-day backtest
+4. STAGING → Deployed in alert-only mode (no incident creation) for 14 days
+5. PRODUCTION → Full production with incident creation and SOAR integration
+6. REVIEW → Quarterly review of effectiveness, false positive rate, relevance
+7. DEPRECATED → Technique no longer relevant or replaced by better detection
 ```
 
 ## Key Concepts
@@ -303,25 +303,25 @@ USE CASE LIFECYCLE
 ```
 USE CASE DEPLOYMENT REPORT
 ━━━━━━━━━━━━━━━━━━━━━━━━━
-Quarter:      Q1 2024
+Quarter: Q1 2024
 Total Use Cases: 147 (Production: 128, Staging: 12, Development: 7)
 
 New Deployments This Quarter:
-  UC-2024-012  Kerberoasting Detection (T1558.003)     — Production
-  UC-2024-013  DLL Side-Loading (T1574.002)            — Production
-  UC-2024-014  Scheduled Task Persistence (T1053.005)  — Production
-  UC-2024-015  LSASS Memory Access (T1003.001)         — Staging
+ UC-2024-012 Kerberoasting Detection (T1558.003) — Production
+ UC-2024-013 DLL Side-Loading (T1574.002) — Production
+ UC-2024-014 Scheduled Task Persistence (T1053.005) — Production
+ UC-2024-015 LSASS Memory Access (T1003.001) — Staging
 
 ATT&CK Coverage:
-  Overall: 67% of relevant techniques (up from 61%)
-  Initial Access:      78%
-  Execution:           82%
-  Persistence:         71%
-  Credential Access:   65%
-  Lateral Movement:    58% (priority gap area)
+ Overall: 67% of relevant techniques (up from 61%)
+ Initial Access: 78%
+ Execution: 82%
+ Persistence: 71%
+ Credential Access: 65%
+ Lateral Movement: 58% (priority gap area)
 
 Health Metrics:
-  Avg True Positive Rate:    74% (target: >70%)
-  Avg Detection Latency:     2.3 min (target: <5 min)
-  Use Cases Deprecated:      3 (replaced by improved versions)
+ Avg True Positive Rate: 74% (target: >70%)
+ Avg Detection Latency: 2.3 min (target: <5 min)
+ Use Cases Deprecated: 3 (replaced by improved versions)
 ```

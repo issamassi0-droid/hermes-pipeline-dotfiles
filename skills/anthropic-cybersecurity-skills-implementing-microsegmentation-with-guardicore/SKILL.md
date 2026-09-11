@@ -1,12 +1,12 @@
 ---
 name: implementing-microsegmentation-with-guardicore
 description: 'Implements microsegmentation with Akamai Guardicore Segmentation to map
-  application dependencies, visualize east-west traffic flows, and create granular,
-  least-privilege network policies across VMs, containers, bare metal, and cloud.
-  Use when blocking lateral movement in a data center or when PCI DSS/HIPAA
-  compliance requires validated network segmentation.
+ application dependencies, visualize east-west traffic flows, and create granular,
+ least-privilege network policies across VMs, containers, bare metal, and cloud.
+ Use when blocking lateral movement in a data center or when PCI DSS/HIPAA
+ compliance requires validated network segmentation.
 
-  '
+ '
 domain: cybersecurity
 subdomain: zero-trust-architecture
 tags:
@@ -62,66 +62,66 @@ Install agents to collect process-level network communication data.
 ```bash
 # Linux agent installation
 curl -sSL https://management.guardicore.com/api/v3.0/agents/download/linux \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -o gc-agent-installer.sh
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -o gc-agent-installer.sh
 chmod +x gc-agent-installer.sh
 sudo ./gc-agent-installer.sh \
-  --management-url=https://management.guardicore.com \
-  --site-id=datacenter-east \
-  --label="web-tier"
+ --management-url=https://management.guardicore.com \
+ --site-id=datacenter-east \
+ --label="web-tier"
 
 # Windows agent installation (PowerShell)
 # Invoke-WebRequest -Uri "https://management.guardicore.com/api/v3.0/agents/download/windows" `
-#   -Headers @{"Authorization"="Bearer $GC_API_TOKEN"} `
-#   -OutFile gc-agent-installer.exe
+# -Headers @{"Authorization"="Bearer $GC_API_TOKEN"} `
+# -OutFile gc-agent-installer.exe
 # Start-Process -FilePath .\gc-agent-installer.exe `
-#   -ArgumentList "--management-url=https://management.guardicore.com","--site-id=datacenter-east" `
-#   -Wait
+# -ArgumentList "--management-url=https://management.guardicore.com","--site-id=datacenter-east" `
+# -Wait
 
 # Kubernetes DaemonSet deployment
 cat > gc-daemonset.yaml << 'EOF'
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: guardicore-agent
-  namespace: guardicore
+ name: guardicore-agent
+ namespace: guardicore
 spec:
-  selector:
-    matchLabels:
-      app: gc-agent
-  template:
-    metadata:
-      labels:
-        app: gc-agent
-    spec:
-      hostNetwork: true
-      hostPID: true
-      containers:
-      - name: gc-agent
-        image: guardicore/agent:latest
-        securityContext:
-          privileged: true
-        env:
-        - name: GC_MANAGEMENT_URL
-          value: "https://management.guardicore.com"
-        - name: GC_API_KEY
-          valueFrom:
-            secretKeyRef:
-              name: gc-credentials
-              key: api-key
-        volumeMounts:
-        - mountPath: /host
-          name: host-root
-      volumes:
-      - name: host-root
-        hostPath:
-          path: /
+ selector:
+ matchLabels:
+ app: gc-agent
+ template:
+ metadata:
+ labels:
+ app: gc-agent
+ spec:
+ hostNetwork: true
+ hostPID: true
+ containers:
+ - name: gc-agent
+ image: guardicore/agent:latest
+ securityContext:
+ privileged: true
+ env:
+ - name: GC_MANAGEMENT_URL
+ value: "https://management.guardicore.com"
+ - name: GC_API_KEY
+ valueFrom:
+ secretKeyRef:
+ name: gc-credentials
+ key: api-key
+ volumeMounts:
+ - mountPath: /host
+ name: host-root
+ volumes:
+ - name: host-root
+ hostPath:
+ path: /
 EOF
 kubectl apply -f gc-daemonset.yaml
 
 # Verify agent enrollment
 curl -s "https://management.guardicore.com/api/v3.0/agents?status=active" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" | python3 -m json.tool
+ -H "Authorization: Bearer ${GC_API_TOKEN}" | python3 -m json.tool
 ```
 
 ### Step 2: Map Application Dependencies with Reveal
@@ -131,25 +131,25 @@ Use Guardicore Reveal to discover and visualize application communication patter
 ```bash
 # Query discovered application flows via API
 curl -s "https://management.guardicore.com/api/v3.0/connections" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -d '{
-    "time_range": {"from": "2026-02-17T00:00:00Z", "to": "2026-02-24T00:00:00Z"},
-    "filter": {
-      "source_label": "web-tier",
-      "destination_label": "app-tier"
-    },
-    "aggregation": "process",
-    "limit": 1000
-  }' | python3 -m json.tool
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -d '{
+ "time_range": {"from": "2026-02-17T00:00:00Z", "to": "2026-02-24T00:00:00Z"},
+ "filter": {
+ "source_label": "web-tier",
+ "destination_label": "app-tier"
+ },
+ "aggregation": "process",
+ "limit": 1000
+ }' | python3 -m json.tool
 
 # Export application dependency map
 curl -s "https://management.guardicore.com/api/v3.0/maps/export" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -d '{
-    "format": "json",
-    "labels": ["web-tier", "app-tier", "db-tier"],
-    "time_range": "7d"
-  }' -o app-dependency-map.json
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -d '{
+ "format": "json",
+ "labels": ["web-tier", "app-tier", "db-tier"],
+ "time_range": "7d"
+ }' -o app-dependency-map.json
 
 # Typical discovery findings:
 # web-tier -> app-tier: TCP 8080, 8443 (expected)
@@ -165,65 +165,65 @@ Define labels and create ring-fence policies around applications.
 ```bash
 # Create labels for application tiers
 curl -X POST "https://management.guardicore.com/api/v3.0/labels" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "PCI-CDE",
-    "description": "Cardholder Data Environment workloads",
-    "criteria": {"ip_ranges": ["10.10.0.0/16"]},
-    "color": "#FF0000"
-  }'
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "name": "PCI-CDE",
+ "description": "Cardholder Data Environment workloads",
+ "criteria": {"ip_ranges": ["10.10.0.0/16"]},
+ "color": "#FF0000"
+ }'
 
 # Create segmentation policy: Allow web-to-app communication
 curl -X POST "https://management.guardicore.com/api/v3.0/policies" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Web-to-App Allowed",
-    "action": "ALLOW",
-    "priority": 100,
-    "source": {"labels": ["web-tier"]},
-    "destination": {"labels": ["app-tier"]},
-    "services": [
-      {"protocol": "TCP", "port": 8080},
-      {"protocol": "TCP", "port": 8443}
-    ],
-    "log": true,
-    "enabled": true,
-    "section": "application-segmentation"
-  }'
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "name": "Web-to-App Allowed",
+ "action": "ALLOW",
+ "priority": 100,
+ "source": {"labels": ["web-tier"]},
+ "destination": {"labels": ["app-tier"]},
+ "services": [
+ {"protocol": "TCP", "port": 8080},
+ {"protocol": "TCP", "port": 8443}
+ ],
+ "log": true,
+ "enabled": true,
+ "section": "application-segmentation"
+ }'
 
 # Create deny policy: Block web-to-database direct access
 curl -X POST "https://management.guardicore.com/api/v3.0/policies" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "Block Web-to-DB Direct",
-    "action": "DENY",
-    "priority": 200,
-    "source": {"labels": ["web-tier"]},
-    "destination": {"labels": ["db-tier"]},
-    "services": [{"protocol": "TCP", "port_range": "1-65535"}],
-    "log": true,
-    "alert": true,
-    "enabled": true
-  }'
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "name": "Block Web-to-DB Direct",
+ "action": "DENY",
+ "priority": 200,
+ "source": {"labels": ["web-tier"]},
+ "destination": {"labels": ["db-tier"]},
+ "services": [{"protocol": "TCP", "port_range": "1-65535"}],
+ "log": true,
+ "alert": true,
+ "enabled": true
+ }'
 
 # Create ring-fence policy for PCI CDE
 curl -X POST "https://management.guardicore.com/api/v3.0/policies" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "name": "PCI CDE Ring Fence",
-    "action": "DENY",
-    "priority": 50,
-    "source": {"labels": ["!PCI-CDE"]},
-    "destination": {"labels": ["PCI-CDE"]},
-    "services": [{"protocol": "TCP", "port_range": "1-65535"}],
-    "log": true,
-    "alert": true,
-    "enabled": true
-  }'
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "name": "PCI CDE Ring Fence",
+ "action": "DENY",
+ "priority": 50,
+ "source": {"labels": ["!PCI-CDE"]},
+ "destination": {"labels": ["PCI-CDE"]},
+ "services": [{"protocol": "TCP", "port_range": "1-65535"}],
+ "log": true,
+ "alert": true,
+ "enabled": true
+ }'
 ```
 
 ### Step 4: Test Policies in Reveal Mode Before Enforcement
@@ -233,27 +233,27 @@ Simulate policy enforcement without blocking traffic.
 ```bash
 # Enable reveal mode (log-only) for new policies
 curl -X PATCH "https://management.guardicore.com/api/v3.0/policies/POLICY_ID" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -d '{"enforcement_mode": "REVEAL"}'
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -d '{"enforcement_mode": "REVEAL"}'
 
 # Check what would be blocked in reveal mode
 curl -s "https://management.guardicore.com/api/v3.0/violations" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -d '{
-    "time_range": "24h",
-    "policy_id": "POLICY_ID",
-    "limit": 100
-  }' | python3 -c "
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -d '{
+ "time_range": "24h",
+ "policy_id": "POLICY_ID",
+ "limit": 100
+ }' | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for v in data.get('violations', []):
-    print(f\"{v['source_ip']}:{v['source_process']} -> {v['dest_ip']}:{v['dest_port']} [{v['action']}]\")
+ print(f\"{v['source_ip']}:{v['source_process']} -> {v['dest_ip']}:{v['dest_port']} [{v['action']}]\")
 "
 
 # After validation, switch to enforcement
 curl -X PATCH "https://management.guardicore.com/api/v3.0/policies/POLICY_ID" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -d '{"enforcement_mode": "ENFORCE"}'
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -d '{"enforcement_mode": "ENFORCE"}'
 ```
 
 ### Step 5: Monitor and Respond to Policy Violations
@@ -263,15 +263,15 @@ Set up alerting and continuous monitoring for segmentation violations.
 ```bash
 # Configure SIEM integration for policy violations
 curl -X POST "https://management.guardicore.com/api/v3.0/integrations/syslog" \
-  -H "Authorization: Bearer ${GC_API_TOKEN}" \
-  -d '{
-    "name": "Splunk SIEM",
-    "host": "splunk-syslog.company.com",
-    "port": 514,
-    "protocol": "TCP",
-    "format": "CEF",
-    "events": ["policy_violation", "agent_status", "deception_alert"]
-  }'
+ -H "Authorization: Bearer ${GC_API_TOKEN}" \
+ -d '{
+ "name": "Splunk SIEM",
+ "host": "splunk-syslog.company.com",
+ "port": 514,
+ "protocol": "TCP",
+ "format": "CEF",
+ "events": ["policy_violation", "agent_status", "deception_alert"]
+ }'
 
 # Splunk query for microsegmentation violations
 # index=guardicore sourcetype=guardicore:policy
@@ -326,27 +326,27 @@ Organization: E-Commerce Corp
 Report Date: 2026-02-23
 
 AGENT DEPLOYMENT:
-  Total workloads:            500
-  Agents installed:           487 (97.4%)
-  Agents active:              482 (98.9%)
-  Agentless (flow logs):       13
+ Total workloads: 500
+ Agents installed: 487 (97.4%)
+ Agents active: 482 (98.9%)
+ Agentless (flow logs): 13
 
 POLICY COVERAGE:
-  Total policies:              45
-  Allow rules:                 38
-  Deny rules:                   7
-  Reveal mode:                  3
-  Enforced:                    42
+ Total policies: 45
+ Allow rules: 38
+ Deny rules: 7
+ Reveal mode: 3
+ Enforced: 42
 
 TRAFFIC ANALYSIS (7 days):
-  Total flows observed:        2,456,789
-  Flows matching allow:        2,441,234 (99.4%)
-  Flows matching deny:            15,555 (0.6%)
-  Unclassified flows:                 0
+ Total flows observed: 2,456,789
+ Flows matching allow: 2,441,234 (99.4%)
+ Flows matching deny: 15,555 (0.6%)
+ Unclassified flows: 0
 
 PCI CDE ISOLATION:
-  CDE workloads:               200
-  Ring-fence violations:         0 (last 30 days)
-  Authorized CDE entry points:  4
-  Lateral movement paths blocked: 95%
+ CDE workloads: 200
+ Ring-fence violations: 0 (last 30 days)
+ Authorized CDE entry points: 4
+ Lateral movement paths blocked: 95%
 ```

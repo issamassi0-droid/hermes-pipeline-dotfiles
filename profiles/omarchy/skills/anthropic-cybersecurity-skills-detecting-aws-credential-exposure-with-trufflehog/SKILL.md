@@ -1,13 +1,13 @@
 ---
 name: detecting-aws-credential-exposure-with-trufflehog
 description: 'Scan source code repositories, CI/CD pipelines, and configuration files
-  for exposed AWS credentials using TruffleHog, git-secrets, and AWS-native detection.
-  Use when integrating secrets scanning into CI/CD, auditing repositories (including
-  git history) for historically committed AWS keys, responding to a GuardDuty alert
-  about credential use from an unexpected location, or verifying credential rotation
-  removed all exposed keys.
+ for exposed AWS credentials using TruffleHog, git-secrets, and AWS-native detection.
+ Use when integrating secrets scanning into CI/CD, auditing repositories (including
+ git history) for historically committed AWS keys, responding to a GuardDuty alert
+ about credential use from an unexpected location, or verifying credential rotation
+ removed all exposed keys.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -31,31 +31,31 @@ mitre_attack:
 - T1078.004
 - T1589.001
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - initial-access
-  techniques:
-  - id: T1593
-    name: Search Open Websites/Domains
-    tactic: reconnaissance
-    source: attack
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: F1006.001
-    name: 'Account Takeover: Exposed API Key'
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: T1550.001
-    name: 'Use Alternate Authentication Material: Application Access Token'
-    tactic: initial-access
-    source: attack
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - initial-access
+ techniques:
+ - id: T1593
+ name: Search Open Websites/Domains
+ tactic: reconnaissance
+ source: attack
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: F1006.001
+ name: 'Account Takeover: Exposed API Key'
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: T1550.001
+ name: 'Use Alternate Authentication Material: Application Access Token'
+ tactic: initial-access
+ source: attack
 ---
 
 # Detecting AWS Credential Exposure with TruffleHog
@@ -128,14 +128,14 @@ Parse TruffleHog results to identify verified (still-active) credentials versus 
 cat trufflehog-results.json | python3 -c "
 import json, sys
 for line in sys.stdin:
-    finding = json.loads(line)
-    if 'AWS' in finding.get('DetectorName', ''):
-        print(f\"Detector: {finding['DetectorName']}\")
-        print(f\"Verified: {finding.get('Verified', False)}\")
-        print(f\"Source: {finding.get('SourceMetadata', {})}\")
-        print(f\"Commit: {finding.get('SourceMetadata', {}).get('Data', {}).get('Git', {}).get('commit', 'N/A')}\")
-        print(f\"File: {finding.get('SourceMetadata', {}).get('Data', {}).get('Git', {}).get('file', 'N/A')}\")
-        print('---')
+ finding = json.loads(line)
+ if 'AWS' in finding.get('DetectorName', ''):
+ print(f\"Detector: {finding['DetectorName']}\")
+ print(f\"Verified: {finding.get('Verified', False)}\")
+ print(f\"Source: {finding.get('SourceMetadata', {})}\")
+ print(f\"Commit: {finding.get('SourceMetadata', {}).get('Data', {}).get('Git', {}).get('commit', 'N/A')}\")
+ print(f\"File: {finding.get('SourceMetadata', {}).get('Data', {}).get('Git', {}).get('file', 'N/A')}\")
+ print('---')
 "
 
 # Check if a detected access key is still active
@@ -143,7 +143,7 @@ aws iam get-access-key-last-used --access-key-id AKIAIOSFODNN7EXAMPLE
 
 # List all access keys for a user to find active keys
 aws iam list-access-keys --user-name target-user \
-  --query 'AccessKeyMetadata[*].[AccessKeyId,Status,CreateDate]' --output table
+ --query 'AccessKeyMetadata[*].[AccessKeyId,Status,CreateDate]' --output table
 ```
 
 ### Step 4: Set Up Pre-Commit Hooks with git-secrets
@@ -152,7 +152,7 @@ Prevent credentials from being committed in the first place using git-secrets as
 
 ```bash
 # Install git-secrets
-git secrets --install  # In each repository
+git secrets --install # In each repository
 
 # Register AWS credential patterns
 git secrets --register-aws
@@ -180,26 +180,26 @@ name: Secrets Scan
 on: [push, pull_request]
 
 jobs:
-  trufflehog:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: TruffleHog Scan
-        uses: trufflesecurity/trufflehog@main
-        with:
-          extra_args: --only-verified --results=verified
+ trufflehog:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ with:
+ fetch-depth: 0
+ - name: TruffleHog Scan
+ uses: trufflesecurity/trufflehog@main
+ with:
+ extra_args: --only-verified --results=verified
 ```
 
 ```yaml
 # GitLab CI (.gitlab-ci.yml)
 secrets_scan:
-  stage: test
-  image: trufflesecurity/trufflehog:latest
-  script:
-    - trufflehog git file://$CI_PROJECT_DIR --since-commit $CI_COMMIT_BEFORE_SHA --only-verified --fail
-  allow_failure: false
+ stage: test
+ image: trufflesecurity/trufflehog:latest
+ script:
+ - trufflehog git file://$CI_PROJECT_DIR --since-commit $CI_COMMIT_BEFORE_SHA --only-verified --fail
+ allow_failure: false
 ```
 
 ### Step 6: Respond to Detected Credential Exposure
@@ -209,24 +209,24 @@ Execute incident response procedures when verified credentials are found exposed
 ```bash
 # IMMEDIATE: Deactivate the exposed access key
 aws iam update-access-key \
-  --user-name compromised-user \
-  --access-key-id AKIAEXPOSEDKEY123456 \
-  --status Inactive
+ --user-name compromised-user \
+ --access-key-id AKIAEXPOSEDKEY123456 \
+ --status Inactive
 
 # Generate new credentials
 aws iam create-access-key --user-name compromised-user
 
 # Review CloudTrail for unauthorized usage of the exposed key
 aws cloudtrail lookup-events \
-  --lookup-attributes AttributeKey=AccessKeyId,AttributeValue=AKIAEXPOSEDKEY123456 \
-  --start-time 2026-01-01T00:00:00Z \
-  --query 'Events[*].[EventTime,EventName,EventSource,SourceIPAddress]' \
-  --output table
+ --lookup-attributes AttributeKey=AccessKeyId,AttributeValue=AKIAEXPOSEDKEY123456 \
+ --start-time 2026-01-01T00:00:00Z \
+ --query 'Events[*].[EventTime,EventName,EventSource,SourceIPAddress]' \
+ --output table
 
 # Delete the exposed key after rotation is confirmed
 aws iam delete-access-key \
-  --user-name compromised-user \
-  --access-key-id AKIAEXPOSEDKEY123456
+ --user-name compromised-user \
+ --access-key-id AKIAEXPOSEDKEY123456
 
 # Remove the credential from git history using BFG Repo Cleaner
 java -jar bfg.jar --replace-text credentials.txt repo.git
@@ -280,32 +280,32 @@ Mode: Full git history scan with verification
 
 VERIFIED FINDINGS (Active Credentials):
 [CRED-001] AWS Access Key - VERIFIED ACTIVE
-  Key ID: AKIA...WXYZ
-  Repository: acme-corp/backend-api
-  File: deploy/config.env
-  Commit: a1b2c3d (2025-08-15)
-  Author: developer@acme.com
-  IAM User: svc-backend-deploy
-  Permissions: S3, DynamoDB, SQS (production)
-  Status: CRITICAL - Key active and used from 3 IP addresses
-  Action Required: Immediate deactivation and rotation
+ Key ID: AKIA...WXYZ
+ Repository: acme-corp/backend-api
+ File: deploy/config.env
+ Commit: a1b2c3d (2025-08-15)
+ Author: developer@acme.com
+ IAM User: svc-backend-deploy
+ Permissions: S3, DynamoDB, SQS (production)
+ Status: CRITICAL - Key active and used from 3 IP addresses
+ Action Required: Immediate deactivation and rotation
 
 [CRED-002] AWS Secret Key - VERIFIED ACTIVE
-  Repository: acme-corp/data-pipeline
-  File: scripts/etl_config.py
-  Commit: d4e5f6g (2025-11-22)
-  Author: data-engineer@acme.com
-  Status: HIGH - Key active, last used 2 days ago
+ Repository: acme-corp/data-pipeline
+ File: scripts/etl_config.py
+ Commit: d4e5f6g (2025-11-22)
+ Author: data-engineer@acme.com
+ Status: HIGH - Key active, last used 2 days ago
 
 UNVERIFIED FINDINGS (Potential Credentials):
-  Total pattern matches: 15
-  Likely test/example keys: 12
-  Requires manual review: 3
+ Total pattern matches: 15
+ Likely test/example keys: 12
+ Requires manual review: 3
 
 SUMMARY:
-  Repositories scanned: 42
-  Commits analyzed: 125,847
-  Verified active credentials: 2
-  Unverified credential patterns: 15
-  Repositories with pre-commit hooks: 8 / 42
+ Repositories scanned: 42
+ Commits analyzed: 125,847
+ Verified active credentials: 2
+ Unverified credential patterns: 15
+ Repositories with pre-commit hooks: 8 / 42
 ```

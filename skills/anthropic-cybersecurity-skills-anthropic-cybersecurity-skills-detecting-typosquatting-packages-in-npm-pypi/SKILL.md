@@ -1,16 +1,16 @@
 ---
 name: detecting-typosquatting-packages-in-npm-pypi
 description: 'Detects typosquatting attacks in npm and PyPI package registries by
-  analyzing package name similarity using Levenshtein distance and other string metrics,
-  examining publish date heuristics to identify recently created packages mimicking
-  established ones, and flagging download count anomalies where suspicious packages
-  have disproportionately low usage compared to their legitimate targets. The analyst
-  queries the PyPI JSON API and npm registry API to gather package metadata for automated
-  comparison. Activates for requests involving package typosquatting detection, dependency
-  confusion analysis, malicious package identification, or software supply chain threat
-  hunting in package registries.
+ analyzing package name similarity using Levenshtein distance and other string metrics,
+ examining publish date heuristics to identify recently created packages mimicking
+ established ones, and flagging download count anomalies where suspicious packages
+ have disproportionately low usage compared to their legitimate targets. The analyst
+ queries the PyPI JSON API and npm registry API to gather package metadata for automated
+ comparison. Activates for requests involving package typosquatting detection, dependency
+ confusion analysis, malicious package identification, or software supply chain threat
+ hunting in package registries.
 
-  '
+ '
 domain: cybersecurity
 subdomain: supply-chain-security
 tags:
@@ -165,9 +165,9 @@ Combine signals into a composite risk score and generate an actionable report:
 
 | Suspect Package | Target Package | Levenshtein | Created | Downloads | Score |
 |----------------|---------------|-------------|---------|-----------|-------|
-| reqeusts       | requests      | 1           | 2026-02-28 | 43     | 92    |
-| requsets       | requests      | 1           | 2026-03-01 | 12     | 88    |
-| numpyy         | numpy         | 1           | 2026-01-15 | 67     | 78    |
+| reqeusts | requests | 1 | 2026-02-28 | 43 | 92 |
+| requsets | requests | 1 | 2026-03-01 | 12 | 88 |
+| numpyy | numpy | 1 | 2026-01-15 | 67 | 78 |
 
 ### Recommendation
 - BLOCK: reqeusts, requsets, numpyy (add to artifact proxy deny-list)

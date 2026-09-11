@@ -19,16 +19,16 @@ Uses `write_file` with validated paths and generated frontmatter.
 
 ```
 /home/massi/ObsidianVault/
-├── Articles/          # Polished articles, blog posts
-├── Brain/             # Second brain / Zettelkasten
+├── Articles/ # Polished articles, blog posts
+├── Brain/ # Second brain / Zettelkasten
 ├── Guides/
-│   ├── Linux/         # Linux guides (Omarchy, etc.)
-│   ├── Dev/           # Development guides
-│   └── Tools/         # Tool tutorials
-├── Journal/           # Daily journals
-├── Logs/              # Session logs, agent runs
-├── Notes/             # Raw notes, fleeting thoughts
-└── .obsidian/         # Obsidian config (don't touch)
+│ ├── Linux/ # Linux guides (Omarchy, etc.)
+│ ├── Dev/ # Development guides
+│ └── Tools/ # Tool tutorials
+├── Journal/ # Daily journals
+├── Logs/ # Session logs, agent runs
+├── Notes/ # Raw notes, fleeting thoughts
+└── .obsidian/ # Obsidian config (don't touch)
 ```
 
 ## Core Functions
@@ -37,17 +37,17 @@ Uses `write_file` with validated paths and generated frontmatter.
 
 ```python
 publish_to_obsidian(
-    content: str,
-    title: str,
-    folder: str = "Notes",
-    tags: list = None,
-    aliases: list = None,
-    description: str = "",
-    links: list = None,
-    author: str = "@architect",
-    version: str = "1.0",
-    frontmatter_extras: dict = None
-) -> dict  # {path, bytes, verified, frontmatter}
+ content: str,
+ title: str,
+ folder: str = "Notes",
+ tags: list = None,
+ aliases: list = None,
+ description: str = "",
+ links: list = None,
+ author: str = "@architect",
+ version: str = "1.0",
+ frontmatter_extras: dict = None
+) -> dict # {path, bytes, verified, frontmatter}
 ```
 
 ### 2. `resolve_vault_path()` — Path resolution
@@ -60,8 +60,8 @@ resolve_vault_path(folder: str, title: str) -> str
 
 ```python
 generate_frontmatter(
-    title: str, folder: str, tags: list, aliases: list,
-    description: str, links: list, author: str, version: str, extras: dict
+ title: str, folder: str, tags: list, aliases: list,
+ description: str, links: list, author: str, version: str, extras: dict
 ) -> str
 ```
 
@@ -76,13 +76,13 @@ append_wikilinks(content: str, links: list) -> str
 ### Publish a guide
 ```python
 result = publish_to_obsidian(
-    content=guide_markdown,
-    title="Omarchy Linux Learning Guide - 7-Day Path",
-    folder="Guides/Linux",
-    tags=["omarchy", "linux", "hyprland", "guide", "learning-path"],
-    aliases=["Omarchy 7-Day Guide", "Omarchy Learning Path"],
-    description="Complete structured learning path for Omarchy Linux",
-    links=["Notes/omarchy-50-features-guide-bilingual.md"],
+ content=guide_markdown,
+ title="Omarchy Linux Learning Guide - 7-Day Path",
+ folder="Guides/Linux",
+ tags=["omarchy", "linux", "hyprland", "guide", "learning-path"],
+ aliases=["Omarchy 7-Day Guide", "Omarchy Learning Path"],
+ description="Complete structured learning path for Omarchy Linux",
+ links=["Notes/omarchy-50-features-guide-bilingual.md"],
 )
 print(f"Published to: {result['path']}")
 ```
@@ -90,21 +90,21 @@ print(f"Published to: {result['path']}")
 ### Publish a session log
 ```python
 publish_to_obsidian(
-    content=log_content,
-    title=f"Session Log - {datetime.now().strftime('%Y-%m-%d %H:%M')}",
-    folder="Logs",
-    tags=["session", "log", "architect"],
-    frontmatter_extras={"session_id": "abc123", "model": "nemotron-3-ultra-free"}
+ content=log_content,
+ title=f"Session Log - {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+ folder="Logs",
+ tags=["session", "log", "architect"],
+ frontmatter_extras={"session_id": "abc123", "model": "nemotron-3-ultra-free"}
 )
 ```
 
 ### Publish a raw note
 ```python
 publish_to_obsidian(
-    content=note_content,
-    title="Quick thought on Hyprland animations",
-    folder="Notes",
-    tags=["hyprland", "animation", "fleeting"]
+ content=note_content,
+ title="Quick thought on Hyprland animations",
+ folder="Notes",
+ tags=["hyprland", "animation", "fleeting"]
 )
 ```
 
@@ -115,16 +115,16 @@ publish_to_obsidian(
 title: "<title>"
 description: "<description>"
 tags:
-  - <tag1>
-  - <tag2>
+ - <tag1>
+ - <tag2>
 created: "<ISO8601 with timezone>"
 updated: "<ISO8601 with timezone>"
 author: "<author>"
 version: "<version>"
 folder: "<folder>"
 aliases:
-  - <alias1>
-  - <alias2>
+ - <alias1>
+ - <alias2>
 ---
 ```
 

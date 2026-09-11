@@ -197,7 +197,7 @@ pipe = subprocess.Popen(cmd, stdin=subprocess.PIPE, stderr=subprocess.PIPE)
 ```python
 stderr_fh = open(err_path, "w")
 pipe = subprocess.Popen(cmd, stdin=subprocess.PIPE,
-                        stdout=subprocess.DEVNULL, stderr=stderr_fh)
+ stdout=subprocess.DEVNULL, stderr=stderr_fh)
 ```
 
 ### Frame Count Mismatch
@@ -230,8 +230,8 @@ If the number of frames written to the pipe doesn't match what ffmpeg expects (b
 
 ```python
 ascent, descent = font.getmetrics()
-cell_height = ascent + descent  # correct
-# NOT: font.getbbox("M")[3]  # wrong on some versions
+cell_height = ascent + descent # correct
+# NOT: font.getbbox("M")[3] # wrong on some versions
 ```
 
 ### Missing Unicode Glyphs
@@ -243,19 +243,19 @@ Not all fonts render all Unicode characters. If a palette character isn't in the
 ```python
 all_chars = set()
 for pal in [PAL_DEFAULT, PAL_DENSE, PAL_RUNE, ...]:
-    all_chars.update(pal)
+ all_chars.update(pal)
 
 valid_chars = set()
 for c in all_chars:
-    if c == " ":
-        valid_chars.add(c)
-        continue
-    img = Image.new("L", (20, 20), 0)
-    ImageDraw.Draw(img).text((0, 0), c, fill=255, font=font)
-    if np.array(img).max() > 0:
-        valid_chars.add(c)
-    else:
-        log(f"WARNING: '{c}' (U+{ord(c):04X}) missing from font")
+ if c == " ":
+ valid_chars.add(c)
+ continue
+ img = Image.new("L", (20, 20), 0)
+ ImageDraw.Draw(img).text((0, 0), c, fill=255, font=font)
+ if np.array(img).max() > 0:
+ valid_chars.add(c)
+ else:
+ log(f"WARNING: '{c}' (U+{ord(c):04X}) missing from font")
 ```
 
 ### Platform Font Paths
@@ -300,8 +300,8 @@ The v2 scene protocol passes `S` (the state dict) as an explicit parameter. But 
 
 ```python
 def fx_scene(r, f, t, S):
-    S["counter"] = S.get("counter", 0) + 1   # via parameter (preferred)
-    r.S["counter"] = r.S.get("counter", 0) + 1  # via renderer (also works)
+ S["counter"] = S.get("counter", 0) + 1 # via parameter (preferred)
+ r.S["counter"] = r.S.get("counter", 0) + 1 # via renderer (also works)
 ```
 
 Use the `S` parameter for clarity. The explicit parameter makes it obvious that the function has persistent state.
@@ -311,7 +311,7 @@ Use the `S` parameter for clarity. The explicit parameter makes it obvious that 
 Audio features default to 0.0 if the audio is silent. Use `.get()` with sensible defaults:
 
 ```python
-energy = f.get("bass", 0.3)  # default to 0.3, not 0
+energy = f.get("bass", 0.3) # default to 0.3, not 0
 ```
 
 If you default to 0, effects go blank during silence.
@@ -324,11 +324,11 @@ A common bug in particle systems: creating new arrays every frame instead of upd
 # WRONG — particles reset every frame
 S["px"] = []
 for _ in range(100):
-    S["px"].append(random.random())
+ S["px"].append(random.random())
 
 # RIGHT — only initialize once, update each frame
 if "px" not in S:
-    S["px"] = []
+ S["px"] = []
 # ... emit new particles based on beats
 # ... update existing particles
 ```

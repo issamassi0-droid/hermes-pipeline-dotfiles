@@ -27,28 +27,28 @@ Every change goes through these gates before merge:
 
 ```
 Pull Request Opened
-    │
-    ▼
+ │
+ ▼
 ┌─────────────────┐
-│   LINT CHECK     │  eslint, prettier
-│   ↓ pass         │
-│   TYPE CHECK     │  tsc --noEmit
-│   ↓ pass         │
-│   UNIT TESTS     │  jest/vitest
-│   ↓ pass         │
-│   BUILD          │  npm run build
-│   ↓ pass         │
-│   INTEGRATION    │  API/DB tests
-│   ↓ pass         │
-│   E2E (optional) │  Playwright/Cypress
-│   ↓ pass         │
-│   SECURITY AUDIT │  npm audit
-│   ↓ pass         │
-│   BUNDLE SIZE    │  bundlesize check
+│ LINT CHECK │ eslint, prettier
+│ ↓ pass │
+│ TYPE CHECK │ tsc --noEmit
+│ ↓ pass │
+│ UNIT TESTS │ jest/vitest
+│ ↓ pass │
+│ BUILD │ npm run build
+│ ↓ pass │
+│ INTEGRATION │ API/DB tests
+│ ↓ pass │
+│ E2E (optional) │ Playwright/Cypress
+│ ↓ pass │
+│ SECURITY AUDIT │ npm audit
+│ ↓ pass │
+│ BUNDLE SIZE │ bundlesize check
 └─────────────────┘
-    │
-    ▼
-  Ready for review
+ │
+ ▼
+ Ready for review
 ```
 
 **No gate can be skipped.** If lint fails, fix lint — don't disable the rule. If a test fails, fix the code — don't skip the test.
@@ -62,76 +62,76 @@ Pull Request Opened
 name: CI
 
 on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
+ pull_request:
+ branches: [main]
+ push:
+ branches: [main]
 
 jobs:
-  quality:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ quality:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
+ - uses: actions/setup-node@v4
+ with:
+ node-version: '22'
+ cache: 'npm'
 
-      - name: Install dependencies
-        run: npm ci
+ - name: Install dependencies
+ run: npm ci
 
-      - name: Lint
-        run: npm run lint
+ - name: Lint
+ run: npm run lint
 
-      - name: Type check
-        run: npx tsc --noEmit
+ - name: Type check
+ run: npx tsc --noEmit
 
-      - name: Test
-        run: npm test -- --coverage
+ - name: Test
+ run: npm test -- --coverage
 
-      - name: Build
-        run: npm run build
+ - name: Build
+ run: npm run build
 
-      - name: Security audit
-        run: npm audit --audit-level=high
+ - name: Security audit
+ run: npm audit --audit-level=high
 ```
 
 ### With Database Integration Tests
 
 ```yaml
-  integration:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: testdb
-          POSTGRES_USER: ci_user
-          POSTGRES_PASSWORD: ${{ secrets.CI_DB_PASSWORD }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+ integration:
+ runs-on: ubuntu-latest
+ services:
+ postgres:
+ image: postgres:16
+ env:
+ POSTGRES_DB: testdb
+ POSTGRES_USER: ci_user
+ POSTGRES_PASSWORD: ${{ secrets.CI_DB_PASSWORD }}
+ ports:
+ - 5432:5432
+ options: >-
+ --health-cmd pg_isready
+ --health-interval 10s
+ --health-timeout 5s
+ --health-retries 5
 
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - name: Run migrations
-        run: npx prisma migrate deploy
-        env:
-          DATABASE_URL: postgresql://ci_user:${{ secrets.CI_DB_PASSWORD }}@localhost:5432/testdb
-      - name: Integration tests
-        run: npm run test:integration
-        env:
-          DATABASE_URL: postgresql://ci_user:${{ secrets.CI_DB_PASSWORD }}@localhost:5432/testdb
+ steps:
+ - uses: actions/checkout@v4
+ - uses: actions/setup-node@v4
+ with:
+ node-version: '22'
+ cache: 'npm'
+ - run: npm ci
+ - name: Run migrations
+ run: npx prisma migrate deploy
+ env:
+ DATABASE_URL: postgresql://ci_user:${{ secrets.CI_DB_PASSWORD }}@localhost:5432/testdb
+ - name: Integration tests
+ run: npm run test:integration
+ env:
+ DATABASE_URL: postgresql://ci_user:${{ secrets.CI_DB_PASSWORD }}@localhost:5432/testdb
 ```
 
 > **Note:** Even for CI-only test databases, use GitHub Secrets for credentials rather than hardcoding values. This builds good habits and prevents accidental reuse of test credentials in other contexts.
@@ -139,26 +139,26 @@ jobs:
 ### E2E Tests
 
 ```yaml
-  e2e:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: 'npm'
-      - run: npm ci
-      - name: Install Playwright
-        run: npx playwright install --with-deps chromium
-      - name: Build
-        run: npm run build
-      - name: Run E2E tests
-        run: npx playwright test
-      - uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-report
-          path: playwright-report/
+ e2e:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - uses: actions/setup-node@v4
+ with:
+ node-version: '22'
+ cache: 'npm'
+ - run: npm ci
+ - name: Install Playwright
+ run: npx playwright install --with-deps chromium
+ - name: Build
+ run: npm run build
+ - name: Run E2E tests
+ run: npx playwright test
+ - uses: actions/upload-artifact@v4
+ if: failure()
+ with:
+ name: playwright-report
+ path: playwright-report/
 ```
 
 ## Feeding CI Failures Back to Agents
@@ -167,17 +167,17 @@ The power of CI with AI agents is the feedback loop. When CI fails:
 
 ```
 CI fails
-    │
-    ▼
+ │
+ ▼
 Copy the failure output
-    │
-    ▼
+ │
+ ▼
 Feed it to the agent:
 "The CI pipeline failed with this error:
 [paste specific error]
 Fix the issue and verify locally before pushing again."
-    │
-    ▼
+ │
+ ▼
 Agent fixes → pushes → CI runs again
 ```
 
@@ -185,7 +185,7 @@ Agent fixes → pushes → CI runs again
 
 ```
 Lint failure → Agent runs `npm run lint --fix` and commits
-Type error  → Agent reads the error location and fixes the type
+Type error → Agent reads the error location and fixes the type
 Test failure → Agent follows debugging-and-error-recovery skill
 Build error → Agent checks config and dependencies
 ```
@@ -199,12 +199,12 @@ Every PR gets a preview deployment for manual testing:
 ```yaml
 # Deploy preview on PR (Vercel/Netlify/etc.)
 deploy-preview:
-  runs-on: ubuntu-latest
-  if: github.event_name == 'pull_request'
-  steps:
-    - uses: actions/checkout@v4
-    - name: Deploy preview
-      run: npx vercel --token=${{ secrets.VERCEL_TOKEN }}
+ runs-on: ubuntu-latest
+ if: github.event_name == 'pull_request'
+ steps:
+ - uses: actions/checkout@v4
+ - name: Deploy preview
+ run: npx vercel --token=${{ secrets.VERCEL_TOKEN }}
 ```
 
 ### Feature Flags
@@ -219,7 +219,7 @@ Feature flags decouple deployment from release. Deploy incomplete or risky featu
 ```typescript
 // Simple feature flag pattern
 if (featureFlags.isEnabled('new-checkout-flow', { userId })) {
-  return renderNewCheckout();
+ return renderNewCheckout();
 }
 return renderLegacyCheckout();
 ```
@@ -230,18 +230,18 @@ return renderLegacyCheckout();
 
 ```
 PR merged to main
-    │
-    ▼
-  Staging deployment (auto)
-    │ Manual verification
-    ▼
-  Production deployment (manual trigger or auto after staging)
-    │
-    ▼
-  Monitor for errors (15-minute window)
-    │
-    ├── Errors detected → Rollback
-    └── Clean → Done
+ │
+ ▼
+ Staging deployment (auto)
+ │ Manual verification
+ ▼
+ Production deployment (manual trigger or auto after staging)
+ │
+ ▼
+ Monitor for errors (15-minute window)
+ │
+ ├── Errors detected → Rollback
+ └── Clean → Done
 ```
 
 ### Rollback Plan
@@ -252,30 +252,30 @@ Every deployment should be reversible:
 # Manual rollback workflow
 name: Rollback
 on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to rollback to'
-        required: true
+ workflow_dispatch:
+ inputs:
+ version:
+ description: 'Version to rollback to'
+ required: true
 
 jobs:
-  rollback:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Rollback deployment
-        run: |
-          # Deploy the specified previous version
-          npx vercel rollback ${{ inputs.version }}
+ rollback:
+ runs-on: ubuntu-latest
+ steps:
+ - name: Rollback deployment
+ run: |
+ # Deploy the specified previous version
+ npx vercel rollback ${{ inputs.version }}
 ```
 
 ## Environment Management
 
 ```
-.env.example       → Committed (template for developers)
-.env                → NOT committed (local development)
-.env.test           → Committed (test environment, no real secrets)
-CI secrets          → Stored in GitHub Secrets / vault
-Production secrets  → Stored in deployment platform / vault
+.env.example → Committed (template for developers)
+.env → NOT committed (local development)
+.env.test → Committed (test environment, no real secrets)
+CI secrets → Stored in GitHub Secrets / vault
+Production secrets → Stored in deployment platform / vault
 ```
 
 CI should never have production secrets. Use separate secrets for CI testing.
@@ -288,11 +288,11 @@ CI should never have production secrets. Use separate secrets for CI testing.
 # .github/dependabot.yml
 version: 2
 updates:
-  - package-ecosystem: npm
-    directory: /
-    schedule:
-      interval: weekly
-    open-pull-requests-limit: 5
+ - package-ecosystem: npm
+ directory: /
+ schedule:
+ interval: weekly
+ open-pull-requests-limit: 5
 ```
 
 ### Build Cop Role
@@ -313,48 +313,48 @@ When the pipeline exceeds 10 minutes, apply these strategies in order of impact:
 ```
 Slow CI pipeline?
 ├── Cache dependencies
-│   └── Use actions/cache or setup-node cache option for node_modules
+│ └── Use actions/cache or setup-node cache option for node_modules
 ├── Run jobs in parallel
-│   └── Split lint, typecheck, test, build into separate parallel jobs
+│ └── Split lint, typecheck, test, build into separate parallel jobs
 ├── Only run what changed
-│   └── Use path filters to skip unrelated jobs (e.g., skip e2e for docs-only PRs)
+│ └── Use path filters to skip unrelated jobs (e.g., skip e2e for docs-only PRs)
 ├── Use matrix builds
-│   └── Shard test suites across multiple runners
+│ └── Shard test suites across multiple runners
 ├── Optimize the test suite
-│   └── Remove slow tests from the critical path, run them on a schedule instead
+│ └── Remove slow tests from the critical path, run them on a schedule instead
 └── Use larger runners
-    └── GitHub-hosted larger runners or self-hosted for CPU-heavy builds
+ └── GitHub-hosted larger runners or self-hosted for CPU-heavy builds
 ```
 
 **Example: caching and parallelism**
 ```yaml
 jobs:
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '22', cache: 'npm' }
-      - run: npm ci
-      - run: npm run lint
+ lint:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - uses: actions/setup-node@v4
+ with: { node-version: '22', cache: 'npm' }
+ - run: npm ci
+ - run: npm run lint
 
-  typecheck:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '22', cache: 'npm' }
-      - run: npm ci
-      - run: npx tsc --noEmit
+ typecheck:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - uses: actions/setup-node@v4
+ with: { node-version: '22', cache: 'npm' }
+ - run: npm ci
+ - run: npx tsc --noEmit
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '22', cache: 'npm' }
-      - run: npm ci
-      - run: npm test -- --coverage
+ test:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - uses: actions/setup-node@v4
+ with: { node-version: '22', cache: 'npm' }
+ - run: npm ci
+ - run: npm test -- --coverage
 ```
 
 ## Common Rationalizations

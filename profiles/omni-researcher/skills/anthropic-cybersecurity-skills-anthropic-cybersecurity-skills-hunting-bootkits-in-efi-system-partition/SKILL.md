@@ -47,11 +47,11 @@ The core detection insight from Eclypsium and Rapid7 is that the bootloader norm
 
 - Administrative/root access to the target host (mounting and reading the ESP requires elevation)
 - Linux analysis tooling — install on Debian/Ubuntu:
-  ```bash
-  sudo apt-get update
-  sudo apt-get install -y sbsigntool pesign efitools efibootmgr binwalk yara
-  pip install pefile
-  ```
+ ```bash
+ sudo apt-get update
+ sudo apt-get install -y sbsigntool pesign efitools efibootmgr binwalk yara
+ pip install pefile
+ ```
 - `UEFITool` for inspecting firmware/binaries (download from https://github.com/LongSoft/UEFITool/releases)
 - A trusted **golden baseline** of EFI binary hashes for the OS/vendor versions in scope (build it once on a known-clean, freshly imaged host)
 - For Windows targets: WinPE or a forensic boot environment, or Velociraptor with the `Windows.Forensics.UEFI` artifact
@@ -104,7 +104,7 @@ Compute SHA-256 of all boot binaries for baseline comparison and threat-intel lo
 ```bash
 # Recursively hash all EFI/PE binaries on the ESP
 find /mnt/esp -type f \( -iname '*.efi' -o -iname '*.sys' \) -print0 \
-  | xargs -0 sha256sum | tee /tmp/esp_hashes.txt
+ | xargs -0 sha256sum | tee /tmp/esp_hashes.txt
 
 # Quick triage on the primary loaders
 sha256sum /mnt/esp/EFI/Microsoft/Boot/bootmgfw.efi 2>/dev/null
@@ -120,7 +120,7 @@ A legitimate loader is signed by Microsoft UEFI CA (Windows/shim) or the distro 
 sbverify --list /mnt/esp/EFI/Microsoft/Boot/bootmgfw.efi
 
 # Verify against the platform's db certificate (export it first)
-sudo efi-readvar -v db -o /tmp/db.esl   # dump Secure Boot db
+sudo efi-readvar -v db -o /tmp/db.esl # dump Secure Boot db
 sbverify --cert /path/to/MicrosoftUEFICA.pem /mnt/esp/EFI/Boot/bootx64.efi
 
 # Inspect the PE certificate chain

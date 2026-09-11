@@ -1,13 +1,13 @@
 ---
 name: implementing-memory-protection-with-dep-aslr
 description: 'Implements memory protection mechanisms including DEP (Data Execution
-  Prevention), ASLR (Address Space Layout Randomization), CFG (Control Flow Guard),
-  and other exploit mitigations to prevent memory corruption attacks. Use when hardening
-  endpoints against buffer overflow exploits, ROP chains, and code injection. Activates
-  for requests involving memory protection, exploit mitigation, DEP, ASLR, or CFG
-  configuration.
+ Prevention), ASLR (Address Space Layout Randomization), CFG (Control Flow Guard),
+ and other exploit mitigations to prevent memory corruption attacks. Use when hardening
+ endpoints against buffer overflow exploits, ROP chains, and code injection. Activates
+ for requests involving memory protection, exploit mitigation, DEP, ASLR, or CFG
+ configuration.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -81,12 +81,12 @@ Get-ProcessMitigation -RegistryConfigFilePath "C:\exploit_protection.xml"
 
 ```
 Intune: Endpoint Security → Attack Surface Reduction → Exploit Protection
-  Import exploit_protection.xml template
+ Import exploit_protection.xml template
 
 GPO: Computer Configuration → Admin Templates → Windows Components
-  → Windows Defender Exploit Guard → Exploit Protection
-  → "Use a common set of exploit protection settings" → Enabled
-  → Point to XML file on network share
+ → Windows Defender Exploit Guard → Exploit Protection
+ → "Use a common set of exploit protection settings" → Enabled
+ → Point to XML file on network share
 ```
 
 ## Key Concepts

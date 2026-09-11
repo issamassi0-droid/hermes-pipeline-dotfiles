@@ -1,12 +1,12 @@
 ---
 name: deploying-active-directory-honeytokens
 description: 'Deploys deception-based honeytokens in Active Directory including fake
-  privileged accounts with AdminCount=1, fake SPNs for Kerberoasting detection (honeyroasting),
-  decoy GPOs with cpassword traps, and fake BloodHound paths. Monitors Windows Security
-  Event IDs 4769, 4625, 4662, 5136 for honeytoken interaction. Use when implementing
-  AD deception defenses for detecting lateral movement, credential theft, and reconnaissance.
+ privileged accounts with AdminCount=1, fake SPNs for Kerberoasting detection (honeyroasting),
+ decoy GPOs with cpassword traps, and fake BloodHound paths. Monitors Windows Security
+ Event IDs 4769, 4625, 4662, 5136 for honeytoken interaction. Use when implementing
+ AD deception defenses for detecting lateral movement, credential theft, and reconnaissance.
 
-  '
+ '
 domain: cybersecurity
 subdomain: deception-technology
 tags:
@@ -81,17 +81,17 @@ with a decoy object is inherently suspicious. In Active Directory:
 Per Trimarc Security research, effective honeytokens must appear legitimate:
 
 - **Age the account**: Repurpose old inactive accounts (10-15 year old accounts in
-  similarly aged domains appear authentic)
+ similarly aged domains appear authentic)
 - **Set AdminCount=1**: Flags the account as having elevated AD rights, making it
-  an attractive Kerberoasting target
+ an attractive Kerberoasting target
 - **Use realistic naming**: Match organizational naming conventions (svc_sqlbackup,
-  admin.maintenance, svc_exchange_legacy)
+ admin.maintenance, svc_exchange_legacy)
 - **Set old password date**: Password age of 10+ years with an SPN looks like a
-  high-value, neglected service account to attackers
+ high-value, neglected service account to attackers
 - **Add group memberships**: Place in visible groups like "Remote Desktop Users" or
-  a custom "Backup Operators" to increase attacker interest
+ a custom "Backup Operators" to increase attacker interest
 - **Avoid detection tells**: Attackers check creation date vs. last logon vs.
-  password change date for consistency
+ password change date for consistency
 
 ## Instructions
 
@@ -105,12 +105,12 @@ Import-Module .\scripts\Deploy-ADHoneytokens.ps1
 
 # Create a honeytoken admin account
 $honeyAdmin = New-HoneytokenAdmin `
-    -SamAccountName "svc_sqlbackup_legacy" `
-    -DisplayName "SQL Backup Service (Legacy)" `
-    -Description "Legacy SQL Server backup service account - DO NOT DELETE" `
-    -OU "OU=Service Accounts,DC=corp,DC=example,DC=com" `
-    -PasswordLength 128 `
-    -SetAdminCount $true
+ -SamAccountName "svc_sqlbackup_legacy" `
+ -DisplayName "SQL Backup Service (Legacy)" `
+ -Description "Legacy SQL Server backup service account - DO NOT DELETE" `
+ -OU "OU=Service Accounts,DC=corp,DC=example,DC=com" `
+ -PasswordLength 128 `
+ -SetAdminCount $true
 
 Write-Host "Honeytoken admin created: $($honeyAdmin.DistinguishedName)"
 ```
@@ -123,10 +123,10 @@ for this SPN is definitively malicious (honeyroasting).
 ```powershell
 # Add fake SPN to honeytoken account
 $honeySPN = Add-HoneytokenSPN `
-    -SamAccountName "svc_sqlbackup_legacy" `
-    -ServiceClass "MSSQLSvc" `
-    -Hostname "sql-legacy-bak01.corp.example.com" `
-    -Port 1433
+ -SamAccountName "svc_sqlbackup_legacy" `
+ -ServiceClass "MSSQLSvc" `
+ -Hostname "sql-legacy-bak01.corp.example.com" `
+ -Port 1433
 
 Write-Host "Honey SPN registered: $($honeySPN.SPN)"
 Write-Host "Monitor Event ID 4769 for TGS requests targeting this SPN"
@@ -141,11 +141,11 @@ and attempt to use these credentials, triggering detection.
 ```powershell
 # Create decoy GPO with cpassword trap
 $decoyGPO = New-DecoyGPO `
-    -GPOName "Server Maintenance Policy (Legacy)" `
-    -DecoyUsername "admin_maintenance" `
-    -DecoyDomain "CORP" `
-    -SYSVOLPath "\\corp.example.com\SYSVOL\corp.example.com\Policies" `
-    -EnableAuditSACL $true
+ -GPOName "Server Maintenance Policy (Legacy)" `
+ -DecoyUsername "admin_maintenance" `
+ -DecoyDomain "CORP" `
+ -SYSVOLPath "\\corp.example.com\SYSVOL\corp.example.com\Policies" `
+ -EnableAuditSACL $true
 
 Write-Host "Decoy GPO created: $($decoyGPO.GPOGuid)"
 Write-Host "SACL audit enabled - any read attempt will generate Event ID 4663"
@@ -159,9 +159,9 @@ reconnaissance, leading attackers toward monitored honeytokens.
 ```powershell
 # Create fake BloodHound attack path
 $deceptivePath = New-DeceptiveBloodHoundPath `
-    -HoneytokenSamAccount "svc_sqlbackup_legacy" `
-    -TargetHighValueGroup "Domain Admins" `
-    -IntermediateOU "OU=Service Accounts,DC=corp,DC=example,DC=com"
+ -HoneytokenSamAccount "svc_sqlbackup_legacy" `
+ -TargetHighValueGroup "Domain Admins" `
+ -IntermediateOU "OU=Service Accounts,DC=corp,DC=example,DC=com"
 
 Write-Host "Deceptive path created: $($deceptivePath.PathDescription)"
 ```
@@ -187,8 +187,8 @@ sentinel_rules = monitor.generate_detection_rules(siem="sentinel")
 sigma_rules = monitor.generate_detection_rules(siem="sigma")
 
 for rule in sigma_rules:
-    print(f"Rule: {rule['title']}")
-    print(f"  Detection: {rule['detection_logic']}")
+ print(f"Rule: {rule['title']}")
+ print(f" Detection: {rule['detection_logic']}")
 ```
 
 ### Step 6: Validate Deployment
@@ -198,11 +198,11 @@ Test the honeytokens to ensure detection fires correctly.
 ```powershell
 # Validate honeytoken deployment
 $validation = Test-HoneytokenDeployment `
-    -SamAccountName "svc_sqlbackup_legacy" `
-    -ValidateAdminCount `
-    -ValidateSPN `
-    -ValidateGPODecoy `
-    -ValidateAuditPolicy
+ -SamAccountName "svc_sqlbackup_legacy" `
+ -ValidateAdminCount `
+ -ValidateSPN `
+ -ValidateGPODecoy `
+ -ValidateAuditPolicy
 
 $validation | Format-Table Check, Status, Details -AutoSize
 ```
@@ -216,14 +216,14 @@ Import-Module .\scripts\Deploy-ADHoneytokens.ps1
 
 # Deploy complete honeytoken suite
 $deployment = Deploy-FullHoneytokenSuite `
-    -Environment "Production" `
-    -ServiceAccountOU "OU=Service Accounts,DC=corp,DC=example,DC=com" `
-    -SYSVOLPath "\\corp.example.com\SYSVOL\corp.example.com\Policies" `
-    -TokenCount 3 `
-    -IncludeSPN $true `
-    -IncludeGPODecoy $true `
-    -IncludeBloodHoundPath $true `
-    -SIEMType "Splunk"
+ -Environment "Production" `
+ -ServiceAccountOU "OU=Service Accounts,DC=corp,DC=example,DC=com" `
+ -SYSVOLPath "\\corp.example.com\SYSVOL\corp.example.com\Policies" `
+ -TokenCount 3 `
+ -IncludeSPN $true `
+ -IncludeGPODecoy $true `
+ -IncludeBloodHoundPath $true `
+ -SIEMType "Splunk"
 
 # Output deployment report
 $deployment.Tokens | Format-Table Name, Type, SPN, DetectionRule -AutoSize

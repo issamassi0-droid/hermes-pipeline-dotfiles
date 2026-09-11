@@ -31,7 +31,7 @@ Initialize only if `hyperframes.json` is missing. Name `<project>` from the brie
 ```bash
 npx hyperframes init "videos/<project>" --non-interactive --example=blank
 mkdir -p "$PROJECT_DIR/assets" "$PROJECT_DIR/renders"
-cp "<user-music>" "$PROJECT_DIR/assets/bgm.mp3"   # extract from a video first if needed
+cp "<user-music>" "$PROJECT_DIR/assets/bgm.mp3" # extract from a video first if needed
 # only if the user gave you images/videos:
 node <SKILL_DIR>/scripts/stage-assets.mjs --from <dir> --hyperframes "$PROJECT_DIR" --into public
 ```
@@ -56,7 +56,7 @@ python3 -m pip install librosa numpy soundfile
 
 ```bash
 python3 <SKILL_DIR>/scripts/analyze-beatgrid.py "$PROJECT_DIR/assets/bgm.mp3" \
-  -o "$PROJECT_DIR/audiomap.json" --print
+ -o "$PROJECT_DIR/audiomap.json" --print
 ```
 
 **Gate:** `audiomap.json` exists; `audio.duration_sec` is known.
@@ -84,7 +84,7 @@ Read [`references/planning.md`](references/planning.md), [`storyboard-format.md`
 
 ```bash
 node <SKILL_DIR>/scripts/validate-plan.mjs --storyboard "$PROJECT_DIR/STORYBOARD.md" \
-  --audiomap "$PROJECT_DIR/audiomap.json" --templates <SKILL_DIR>/references/templates
+ --audiomap "$PROJECT_DIR/audiomap.json" --templates <SKILL_DIR>/references/templates
 ```
 
 Fix every `✗` (hard errors: duration mismatch, frames not tiling the track, a missing `src`); warnings are best-effort. Then show the user a frame-by-frame summary and iterate until they approve.
@@ -101,14 +101,14 @@ Create `compositions/frames/`. Read [`sub-agents/frame-worker.md`](sub-agents/fr
 
 ```text
 PROJECT_DIR: <abs path>
-frame_id: <NN-frame_id>              # = the frame file stem, e.g. 02-f2; the composition id
+frame_id: <NN-frame_id> # = the frame file stem, e.g. 02-f2; the composition id
 Your block: the `## Frame N — <frame_id>` block in PROJECT_DIR/STORYBOARD.md
 audiomap: PROJECT_DIR/audiomap.json
 frame.md: PROJECT_DIR/frame.md
 Materials: for each group, <SKILL_DIR>/references/templates/<id>/index.html (templates) and
-           <SKILL_DIR>/references/motion-primitives/<id>/ (free); staged assets/ (asset groups)
+ <SKILL_DIR>/references/motion-primitives/<id>/ (free); staged assets/ (asset groups)
 Contracts: ../hyperframes-core/references/sub-compositions.md + determinism-rules.md
-Canvas: <w>×<h>   Pacing: <beat_cut|phrase_flow>
+Canvas: <w>×<h> Pacing: <beat_cut|phrase_flow>
 Write to: PROJECT_DIR/compositions/frames/<frame_id>.html
 ```
 
@@ -126,7 +126,7 @@ Goal: Wire the built frames + BGM into the playable `index.html`.
 
 ```bash
 node <SKILL_DIR>/scripts/assemble-index.mjs --storyboard "$PROJECT_DIR/STORYBOARD.md" \
-  --hyperframes "$PROJECT_DIR" --audiomap "$PROJECT_DIR/audiomap.json"
+ --hyperframes "$PROJECT_DIR" --audiomap "$PROJECT_DIR/audiomap.json"
 ```
 
 Fix any `✗` it reports — a missing or blank frame file means that worker wrote a partial file; re-dispatch it (Step 4) and re-assemble.
@@ -157,14 +157,14 @@ Inspect at `t=0`, each frame start, the strongest DROP / SURGE, every `hard_stop
 
 ## Resume table
 
-| You have                   | Continue from |
+| You have | Continue from |
 | -------------------------- | ------------- |
-| `assets/bgm.mp3` only      | Step 1        |
-| `audiomap.json`            | Step 2        |
-| `STORYBOARD.md` (skeleton) | Step 3        |
-| `STORYBOARD.md` (complete) | Step 4        |
-| all frame files            | Step 5        |
-| `index.html`               | Step 6        |
+| `assets/bgm.mp3` only | Step 1 |
+| `audiomap.json` | Step 2 |
+| `STORYBOARD.md` (skeleton) | Step 3 |
+| `STORYBOARD.md` (complete) | Step 4 |
+| all frame files | Step 5 |
+| `index.html` | Step 6 |
 
 ## Quick Reference
 
@@ -172,26 +172,26 @@ Inspect at `t=0`, each frame start, the strongest DROP / SURGE, every `hard_stop
 
 **Scripts** under `scripts/`: `analyze-beatgrid.py` (the one analyzer), `validate-plan.mjs` (plan check), `assemble-index.mjs` (index assembly), `stage-assets.mjs` (stage user media), `lib/storyboard.mjs` (vendored parser). Everything else is the `hyperframes` CLI.
 
-| Read                                                                                                           | When                                                    |
+| Read | When |
 | -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| [`references/frame-skeleton.md`](references/frame-skeleton.md)                                                 | Step 2: read the music, lay out the frames, set pacing  |
+| [`references/frame-skeleton.md`](references/frame-skeleton.md) | Step 2: read the music, lay out the frames, set pacing |
 | [`references/planning.md`](references/planning.md) · [`storyboard-format.md`](references/storyboard-format.md) | Step 3: pick the brand, fill each frame, write the plan |
-| [`references/template-catalog.md`](references/template-catalog.md)                                             | Step 3: pick a template per group                       |
-| [`references/motion-primitive-catalog.md`](references/motion-primitive-catalog.md)                             | Step 3/4: L0 recipes for free-compose                   |
-| [`references/montage.md`](references/montage.md)                                                               | Step 3/4: asset treatments (beat-cut / ken-burns)       |
-| [`sub-agents/frame-worker.md`](sub-agents/frame-worker.md)                                                     | Step 4: dispatch + build one frame                      |
-| `../hyperframes-core/references/subagent-dispatch.md`                                                          | Step 4: dispatch sub-agents safely                      |
-| `../hyperframes-creative/references/design-spec.md`                                                            | Step 3: pick the preset (the brand)                     |
+| [`references/template-catalog.md`](references/template-catalog.md) | Step 3: pick a template per group |
+| [`references/motion-primitive-catalog.md`](references/motion-primitive-catalog.md) | Step 3/4: L0 recipes for free-compose |
+| [`references/montage.md`](references/montage.md) | Step 3/4: asset treatments (beat-cut / ken-burns) |
+| [`sub-agents/frame-worker.md`](sub-agents/frame-worker.md) | Step 4: dispatch + build one frame |
+| `../hyperframes-core/references/subagent-dispatch.md` | Step 4: dispatch sub-agents safely |
+| `../hyperframes-creative/references/design-spec.md` | Step 3: pick the preset (the brand) |
 
 ## Directory layout
 
 ```
 music-to-video/
-  SKILL.md
-  references/   frame-skeleton.md · planning.md · storyboard-format.md
-                template-catalog.md · motion-primitive-catalog.md · montage.md
-                templates/<id>/          { index.html (+ assets/ · program.json) }  ← L1 catalog impls
-                motion-primitives/<id>/  { index.html } (+ ../assets/gsap.min.js shared by recipes) ← L0 catalog impls
-  scripts/      analyze-beatgrid.py · assemble-index.mjs · validate-plan.mjs · stage-assets.mjs · lib/storyboard.mjs
-  sub-agents/   frame-worker.md   ← the one subagent (one per frame)
+ SKILL.md
+ references/ frame-skeleton.md · planning.md · storyboard-format.md
+ template-catalog.md · motion-primitive-catalog.md · montage.md
+ templates/<id>/ { index.html (+ assets/ · program.json) } ← L1 catalog impls
+ motion-primitives/<id>/ { index.html } (+ ../assets/gsap.min.js shared by recipes) ← L0 catalog impls
+ scripts/ analyze-beatgrid.py · assemble-index.mjs · validate-plan.mjs · stage-assets.mjs · lib/storyboard.mjs
+ sub-agents/ frame-worker.md ← the one subagent (one per frame)
 ```

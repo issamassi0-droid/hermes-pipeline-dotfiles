@@ -1,9 +1,9 @@
 ---
 name: openai-sdk
 description: |
-  OpenAI official SDK usage (Python, Node.js). Use when: writing code that calls OpenAI API,
-  implementing chat/embeddings/images/audio features, handling streaming responses,
-  async patterns, error handling with SDK. For raw HTTP/REST calls, see `openai-api` skill.
+ OpenAI official SDK usage (Python, Node.js). Use when: writing code that calls OpenAI API,
+ implementing chat/embeddings/images/audio features, handling streaming responses,
+ async patterns, error handling with SDK. For raw HTTP/REST calls, see `openai-api` skill.
 ---
 
 # OpenAI SDK
@@ -21,11 +21,11 @@ pip install openai
 ```python
 from openai import OpenAI
 
-client = OpenAI()  # Uses OPENAI_API_KEY env var
+client = OpenAI() # Uses OPENAI_API_KEY env var
 
 response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Hello!"}]
+ model="gpt-4o",
+ messages=[{"role": "user", "content": "Hello!"}]
 )
 print(response.choices[0].message.content)
 ```
@@ -39,11 +39,11 @@ npm install openai
 ```typescript
 import OpenAI from "openai";
 
-const client = new OpenAI();  // Uses OPENAI_API_KEY env var
+const client = new OpenAI(); // Uses OPENAI_API_KEY env var
 
 const response = await client.chat.completions.create({
-  model: "gpt-4o",
-  messages: [{ role: "user", content: "Hello!" }],
+ model: "gpt-4o",
+ messages: [{ role: "user", content: "Hello!" }],
 });
 console.log(response.choices[0].message.content);
 ```
@@ -52,7 +52,7 @@ console.log(response.choices[0].message.content);
 
 ```bash
 export OPENAI_API_KEY="sk-..."
-export OPENAI_ORG_ID="org-..."      # Optional
+export OPENAI_ORG_ID="org-..." # Optional
 export OPENAI_PROJECT_ID="proj-..." # Optional
 ```
 
@@ -72,27 +72,27 @@ export OPENAI_PROJECT_ID="proj-..." # Optional
 ### Chat Completion
 ```python
 response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Hi"}]
+ model="gpt-4o",
+ messages=[{"role": "user", "content": "Hi"}]
 )
 ```
 
 ### Streaming
 ```python
 stream = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Hi"}],
-    stream=True
+ model="gpt-4o",
+ messages=[{"role": "user", "content": "Hi"}],
+ stream=True
 )
 for chunk in stream:
-    print(chunk.choices[0].delta.content or "", end="")
+ print(chunk.choices[0].delta.content or "", end="")
 ```
 
 ### Embeddings
 ```python
 response = client.embeddings.create(
-    model="text-embedding-3-small",
-    input="Hello world"
+ model="text-embedding-3-small",
+ input="Hello world"
 )
 vector = response.data[0].embedding
 ```
@@ -100,9 +100,9 @@ vector = response.data[0].embedding
 ### Image Generation
 ```python
 response = client.images.generate(
-    model="dall-e-3",
-    prompt="A sunset over mountains",
-    size="1024x1024"
+ model="dall-e-3",
+ prompt="A sunset over mountains",
+ size="1024x1024"
 )
 url = response.data[0].url
 ```
@@ -110,10 +110,10 @@ url = response.data[0].url
 ### Audio Transcription
 ```python
 with open("audio.mp3", "rb") as f:
-    transcript = client.audio.transcriptions.create(
-        model="whisper-1",
-        file=f
-    )
+ transcript = client.audio.transcriptions.create(
+ model="whisper-1",
+ file=f
+ )
 print(transcript.text)
 ```
 
@@ -125,11 +125,11 @@ from openai import OpenAI, APIError, RateLimitError
 client = OpenAI()
 
 try:
-    response = client.chat.completions.create(...)
+ response = client.chat.completions.create(...)
 except RateLimitError:
-    # Retry with backoff
+ # Retry with backoff
 except APIError as e:
-    print(f"API error: {e.status_code}")
+ print(f"API error: {e.status_code}")
 ```
 
 ## References

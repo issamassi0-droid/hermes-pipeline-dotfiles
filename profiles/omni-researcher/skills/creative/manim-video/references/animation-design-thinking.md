@@ -37,9 +37,9 @@ A scene where the narration says "the gradient points uphill" must show a gradie
 A "beat" is a moment where something changes on screen. Mark each beat in your narration:
 
 ```
-"Consider a function f of x."         → [BEAT: axes + curve appear]
-"At this point..."                     → [BEAT: dot appears on curve]
-"...the slope is positive."            → [BEAT: tangent line drawn]
+"Consider a function f of x." → [BEAT: axes + curve appear]
+"At this point..." → [BEAT: dot appears on curve]
+"...the slope is positive." → [BEAT: tangent line drawn]
 "So the gradient tells us to go left." → [BEAT: arrow points left, dot moves]
 ```
 
@@ -100,7 +100,7 @@ The visual should appear slightly BEFORE the narration describes it. When the vi
 
 # Use manim-voiceover for automatic sync:
 with self.voiceover(text="The gradient points downhill") as tracker:
-    self.play(GrowArrow(gradient_arrow), run_time=tracker.duration)
+ self.play(GrowArrow(gradient_arrow), run_time=tracker.duration)
 ```
 
 ## Equation decomposition strategy

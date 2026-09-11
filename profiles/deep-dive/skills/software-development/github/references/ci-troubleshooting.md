@@ -10,8 +10,8 @@ gh run view <RUN_ID> --log-failed
 
 # With curl — download and extract
 curl -sL -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO/actions/runs/<RUN_ID>/logs \
-  -o /tmp/ci-logs.zip && unzip -o /tmp/ci-logs.zip -d /tmp/ci-logs
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO/actions/runs/<RUN_ID>/logs \
+ -o /tmp/ci-logs.zip && unzip -o /tmp/ci-logs.zip -d /tmp/ci-logs
 ```
 
 ## Common Failure Patterns
@@ -21,7 +21,7 @@ curl -sL -H "Authorization: token $GITHUB_TOKEN" \
 **Signatures in logs:**
 ```
 FAILED tests/test_foo.py::test_bar - AssertionError
-E       assert 42 == 43
+E assert 42 == 43
 ERROR tests/test_foo.py - ModuleNotFoundError
 ```
 
@@ -161,13 +161,13 @@ COPY failed: file not found in build context
 ```
 CI Failed
 ├── Test failure
-│   ├── Assertion mismatch → update test or fix logic
-│   └── Import/module error → add dependency
+│ ├── Assertion mismatch → update test or fix logic
+│ └── Import/module error → add dependency
 ├── Lint failure → run formatter, fix style
 ├── Type error → fix types
 ├── Build failure
-│   ├── Missing dep → add to requirements
-│   └── Version conflict → update pins
+│ ├── Missing dep → add to requirements
+│ └── Version conflict → update pins
 ├── Permission error → update workflow permissions (needs user)
 └── Timeout → investigate perf (may need user input)
 ```
@@ -179,5 +179,5 @@ git add <fixed_files> && git commit -m "fix: resolve CI failure" && git push
 
 # Then monitor
 gh pr checks --watch 2>/dev/null || \
-  echo "Poll with: curl -s -H 'Authorization: token ...' https://api.github.com/repos/.../commits/$(git rev-parse HEAD)/status"
+ echo "Poll with: curl -s -H 'Authorization: token ...' https://api.github.com/repos/.../commits/$(git rev-parse HEAD)/status"
 ```

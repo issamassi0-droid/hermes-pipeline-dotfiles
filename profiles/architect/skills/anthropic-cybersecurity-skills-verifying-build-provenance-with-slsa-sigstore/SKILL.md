@@ -1,11 +1,11 @@
 ---
 name: verifying-build-provenance-with-slsa-sigstore
 description: Verifies artifact signatures and SLSA provenance using Sigstore's
-  cosign (verify, verify-attestation, verify-blob-attestation) and slsa-verifier
-  (verify-artifact), enforcing keyless OIDC builder identity and source repo against
-  SLSA Build levels. Use in CI/CD before deploying artifacts, when consuming third-party
-  attestations, establishing a SLSA Build L3 pipeline, or confirming provenance
-  during incident response or admission control.
+ cosign (verify, verify-attestation, verify-blob-attestation) and slsa-verifier
+ (verify-artifact), enforcing keyless OIDC builder identity and source repo against
+ SLSA Build levels. Use in CI/CD before deploying artifacts, when consuming third-party
+ attestations, establishing a SLSA Build L3 pipeline, or confirming provenance
+ during incident response or admission control.
 domain: cybersecurity
 subdomain: supply-chain-security
 tags:
@@ -46,17 +46,17 @@ This maps to MITRE ATT&CK **T1195 — Supply Chain Compromise** (provenance veri
 ## Prerequisites
 
 - **cosign** (Sigstore CLI):
-  ```bash
-  go install github.com/sigstore/cosign/v2/cmd/cosign@latest
-  # or download a release binary from https://github.com/sigstore/cosign/releases
-  ```
+ ```bash
+ go install github.com/sigstore/cosign/v2/cmd/cosign@latest
+ # or download a release binary from https://github.com/sigstore/cosign/releases
+ ```
 - **slsa-verifier**:
-  ```bash
-  go install github.com/slsa-framework/slsa-verifier/v2/cli/slsa-verifier@latest
-  # or:
-  curl -sSL https://github.com/slsa-framework/slsa-verifier/releases/latest/download/slsa-verifier-linux-amd64 \
-    -o /usr/local/bin/slsa-verifier && chmod +x /usr/local/bin/slsa-verifier
-  ```
+ ```bash
+ go install github.com/slsa-framework/slsa-verifier/v2/cli/slsa-verifier@latest
+ # or:
+ curl -sSL https://github.com/slsa-framework/slsa-verifier/releases/latest/download/slsa-verifier-linux-amd64 \
+ -o /usr/local/bin/slsa-verifier && chmod +x /usr/local/bin/slsa-verifier
+ ```
 - Network access to Rekor (`https://rekor.sigstore.dev`) and Fulcio for transparency-log verification.
 - The artifact plus its provenance/attestation bundle (`.sigstore`, `.intoto.jsonl`, or attached OCI attestation).
 
@@ -81,9 +81,9 @@ Pin both the OIDC issuer and the certificate identity (the exact workflow that s
 
 ```bash
 cosign verify \
-  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-  --certificate-identity-regexp "^https://github.com/myorg/myrepo/.github/workflows/.*@refs/tags/v.*" \
-  ghcr.io/myorg/myrepo:v1.2.3
+ --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+ --certificate-identity-regexp "^https://github.com/myorg/myrepo/.github/workflows/.*@refs/tags/v.*" \
+ ghcr.io/myorg/myrepo:v1.2.3
 ```
 A non-zero exit or empty result means verification failed — do not deploy.
 
@@ -92,10 +92,10 @@ The signature proves *who* signed; the provenance attestation proves *how it was
 
 ```bash
 cosign verify-attestation \
-  --type slsaprovenance \
-  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-  --certificate-identity "https://github.com/myorg/myrepo/.github/workflows/build-sign.yml@refs/heads/main" \
-  ghcr.io/myorg/myrepo:v1.2.3
+ --type slsaprovenance \
+ --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+ --certificate-identity "https://github.com/myorg/myrepo/.github/workflows/build-sign.yml@refs/heads/main" \
+ ghcr.io/myorg/myrepo:v1.2.3
 ```
 Supported predicate types include `slsaprovenance`, `slsaprovenance02`, and `slsaprovenance1`.
 
@@ -104,10 +104,10 @@ Decode the verified attestation to confirm the source repo, commit, and builder 
 
 ```bash
 cosign verify-attestation --type slsaprovenance \
-  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-  --certificate-identity-regexp '.*' \
-  ghcr.io/myorg/myrepo:v1.2.3 \
-  | jq -r '.payload' | base64 -d | jq '.predicate.buildDefinition.externalParameters, .predicate.runDetails.builder.id'
+ --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+ --certificate-identity-regexp '.*' \
+ ghcr.io/myorg/myrepo:v1.2.3 \
+ | jq -r '.payload' | base64 -d | jq '.predicate.buildDefinition.externalParameters, .predicate.runDetails.builder.id'
 ```
 
 ### Step 4: Verify a release binary with slsa-verifier
@@ -115,15 +115,15 @@ For downloadable binaries (e.g., produced by `slsa-github-generator`), pin the s
 
 ```bash
 slsa-verifier verify-artifact slsa-test-linux-amd64 \
-  --provenance-path slsa-test-linux-amd64.intoto.jsonl \
-  --source-uri github.com/myorg/myrepo \
-  --source-tag v1.2.3
+ --provenance-path slsa-test-linux-amd64.intoto.jsonl \
+ --source-uri github.com/myorg/myrepo \
+ --source-tag v1.2.3
 
 # Optionally pin the builder identity (SLSA L3)
 slsa-verifier verify-artifact ./mybin \
-  --provenance-path ./mybin.intoto.jsonl \
-  --source-uri github.com/myorg/myrepo \
-  --builder-id https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v2.0.0
+ --provenance-path ./mybin.intoto.jsonl \
+ --source-uri github.com/myorg/myrepo \
+ --builder-id https://github.com/slsa-framework/slsa-github-generator/.github/workflows/generator_generic_slsa3.yml@refs/tags/v2.0.0
 ```
 
 ### Step 5: Verify GitHub artifact attestations / blob bundles
@@ -131,11 +131,11 @@ For artifacts signed via `actions/attest-build-provenance`, the bundle uses the 
 
 ```bash
 cosign verify-blob-attestation \
-  --bundle ./myartifact.sigstore.json \
-  --new-bundle-format \
-  --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
-  --certificate-identity-regexp="^https://github.com/myorg/myrepo/" \
-  ./myartifact
+ --bundle ./myartifact.sigstore.json \
+ --new-bundle-format \
+ --certificate-oidc-issuer="https://token.actions.githubusercontent.com" \
+ --certificate-identity-regexp="^https://github.com/myorg/myrepo/" \
+ ./myartifact
 
 # Equivalent native GitHub CLI verification
 gh attestation verify ./myartifact --repo myorg/myrepo
@@ -149,11 +149,11 @@ Wrap verification so the pipeline fails closed on any error.
 set -euo pipefail
 IMG="ghcr.io/myorg/myrepo:v1.2.3"
 cosign verify \
-  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-  --certificate-identity-regexp "^https://github.com/myorg/myrepo/" "$IMG" >/dev/null
+ --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+ --certificate-identity-regexp "^https://github.com/myorg/myrepo/" "$IMG" >/dev/null
 cosign verify-attestation --type slsaprovenance \
-  --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
-  --certificate-identity-regexp "^https://github.com/myorg/myrepo/" "$IMG" >/dev/null
+ --certificate-oidc-issuer "https://token.actions.githubusercontent.com" \
+ --certificate-identity-regexp "^https://github.com/myorg/myrepo/" "$IMG" >/dev/null
 echo "[+] $IMG verified: signature + SLSA provenance OK"
 ```
 

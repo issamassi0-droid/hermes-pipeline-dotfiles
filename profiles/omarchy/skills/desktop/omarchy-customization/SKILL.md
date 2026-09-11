@@ -1,14 +1,14 @@
 ---
 name: omarchy-customization
 description: >
-  Use when customizing Omarchy shell bar plugins and QML.
+ Use when customizing Omarchy shell bar plugins and QML.
 triggers:
-  - omarchy bar widget customization
-  - system monitor chip layout
-  - modify Omarchy plugin QML
-  - remove network monitor from bar
-  - customizing Omarchy panel appearance
-  - desktop shell QML theming
+ - omarchy bar widget customization
+ - system monitor chip layout
+ - modify Omarchy plugin QML
+ - remove network monitor from bar
+ - customizing Omarchy panel appearance
+ - desktop shell QML theming
 category: desktop
 ---
 
@@ -24,8 +24,8 @@ can carry plugin-specific settings:
 
 ```json
 {
-  "id": "bitr0t.system-monitor",
-  "monitors": ["cpu", "memory"]
+ "id": "bitr0t.system-monitor",
+ "monitors": ["cpu", "memory"]
 }
 ```
 
@@ -44,21 +44,21 @@ Spacers between monitors use plain `Item { width: ...; height: 1 }`.
 
 - **Remove NET**: set `"monitors": ["cpu", "memory"]` in shell.json
 - **Remove dividers between monitors**: delete `ChipDivider` lines in
-  BarWidget.qml's `InstrumentChip` component
+ BarWidget.qml's `InstrumentChip` component
 - **Add custom gap**: insert `Item { width: Math.round(monitorTheme.monitorGap * 0.5); height: 1 }`
-  between Row wrappers in the instrumentMetrics Row
+ between Row wrappers in the instrumentMetrics Row
 
 ### Key QML component structure (InstrumentChip)
 
 ```
 Row (instrumentMetrics, spacing: 0)
-  Row (visible: monitorEnabled("cpu"))
-    CpuInstrument {}
-  Row (visible: monitorEnabled("memory"))
-    MemoryInstrument {}
-  Row (visible: monitorEnabled("network"))
-    NetworkInstrument {}
-  ...
+ Row (visible: monitorEnabled("cpu"))
+ CpuInstrument {}
+ Row (visible: monitorEnabled("memory"))
+ MemoryInstrument {}
+ Row (visible: monitorEnabled("network"))
+ NetworkInstrument {}
+ ...
 ```
 
 each monitor Row wraps a sub-component with its own spacing. The outer
@@ -120,9 +120,9 @@ The `chipBorder` alpha is set via `composedColorToken("chip-border", cpuColor, 0
 
 The `root.dim(color, alpha)` helper applies an alpha multiplier. Used for:
 - Label text ("CPU", "MEM"): `root.dim(monitorTheme.cpuColor, 0.82)` — reduce
-  the second arg to mute labels
+ the second arg to mute labels
 - Percentage values: `root.dim(root.cpuLevelColor(root.cpuUsage), 0.75)` —
-  wrap the level color function in dim()
+ wrap the level color function in dim()
 
 ### Vertical alignment of the bar widget
 
@@ -176,7 +176,7 @@ Google's free translate endpoint uses client parameter `gtx` by default,
 which is aggressively rate-limited. Switch to `client=dict-chrome-ex`:
 
 1. Edit `src/translate.c` — replace both occurrences of
-   `client=gtx` with `client=dict-chrome-ex`
+ `client=gtx` with `client=dict-chrome-ex`
 2. Rebuild: `make clean && make`
 
 The binary is a C program using libcurl, compiled with `-lcurl`. See
@@ -192,20 +192,20 @@ Source: `~/.config/omarchy/plugins/expose.window-overview/WindowCard.qml`
 The card has two border layers that can overlap:
 
 1. **Outer card border** — the top-level `Rectangle` (lines 62-63):
-   ```qml
-   border.color: card.outlineColor
-   border.width: card.outlineWidth
-   ```
+ ```qml
+ border.color: card.outlineColor
+ border.width: card.outlineWidth
+ ```
 
 2. **Inner preview border** — a `Rectangle` around the screenshot (lines 161-169):
-   ```qml
-   Rectangle {
-       anchors.fill: previewFrame
-       visible: !card.integratedFooter
-       border.color: card.outlineColor
-       border.width: card.outlineWidth
-   }
-   ```
+ ```qml
+ Rectangle {
+ anchors.fill: previewFrame
+ visible: !card.integratedFooter
+ border.color: card.outlineColor
+ border.width: card.outlineWidth
+ }
+ ```
 
 ### To remove only the inner border (keep outer card):
 Delete the inner Rectangle block entirely. Ensure the outer card border is active.
@@ -228,9 +228,9 @@ as the user's own repo (user: `issamassi0-droid`, `gh` is authed):
 
 ```bash
 cd ~/.config/omarchy/plugins/<plugin>
-gh repo create <repo-name> --public --source=. --push   # repo IS created; the
-                                                        # "Unable to add remote origin"
-                                                        # error is expected noise
+gh repo create <repo-name> --public --source=. --push # repo IS created; the
+ # "Unable to add remote origin"
+ # error is expected noise
 git remote set-url origin https://github.com/issamassi0-droid/<repo-name>.git
 git push -u origin main --force
 ```
@@ -248,17 +248,17 @@ Personal overrides go in `~/.config/hypr/` as `.lua`, loaded in `hyprland.lua`.
 For Hyprland v0.56.2 (and similar), create `~/.config/hypr/rendering.lua`:
 ```lua
 hl.config({
-    misc = {
-        vrr = 0,                       -- 1 if monitor supports FreeSync/VRR
-        disable_hyprland_logo = true,
-        disable_splash_rendering = true,
-        animate_manual_resizes = true,
-    },
+ misc = {
+ vrr = 0, -- 1 if monitor supports FreeSync/VRR
+ disable_hyprland_logo = true,
+ disable_splash_rendering = true,
+ animate_manual_resizes = true,
+ },
 })
 
 -- NVIDIA: force full composition pipeline (tear-free)
 hl.exec_once(
-    "nvidia-settings --assign CurrentMetaMode='nvidia-auto-select +0+0 { ForceFullCompositionPipeline = On }' 2>/dev/null || true"
+ "nvidia-settings --assign CurrentMetaMode='nvidia-auto-select +0+0 { ForceFullCompositionPipeline = On }' 2>/dev/null || true"
 )
 ```
 
@@ -311,10 +311,10 @@ or in the plugin's QML via `font.family`.
 
 ### Omarchy plugin architecture (QML + bash backend)
 - ChipDivider visibility is gated by `root.monitorPosition(id) > 0`, so the
-  divider only shows for monitors that are not the first one.
+ divider only shows for monitors that are not the first one.
 - QML uses `Math.round()` for pixel values — avoid fractional sizes.
 - The `anchorItem` property on the panel is the bar button — panels anchor to
-  it, not to the bar's edge.
+ it, not to the bar's edge.
 
 ### Omarchy plugin architecture (QML + bash backend)
 
@@ -324,9 +324,9 @@ the queue state on disk (JSON job files in `~/.local/state/<plugin>/jobs/`).
 Adding a feature means editing BOTH files in lockstep:
 
 1. QML: add the property, update `loadSettings`/`persistSettings`/`addUrl`,
-   add the UI control.
+ add the UI control.
 2. Bash: add the CLI flag to `cmd_add`, store the field in the job JSON,
-   emit the right yt-dlp flags in `format_args`, read the field in `run_job`.
+ emit the right yt-dlp flags in `format_args`, read the field in `run_job`.
 
 **Pitfall**: the QML sends what the bash script parses. If you add a QML
 property but forget the bash flag (or vice versa), the setting silently
@@ -353,6 +353,6 @@ aligns them inline.
 Key property chain:
 - Theme: `graphHeight` (SystemMonitorTheme.qml, line 104)
 - Text: `font.pixelSize: Math.max(9, Math.round(root.barSize * 0.38))`
-  (ChipText component in BarWidget.qml)
+ (ChipText component in BarWidget.qml)
 - Row height: `Math.max(monitorTheme.graphHeight, label.implicitHeight)`
-  (each instrument component)
+ (each instrument component)

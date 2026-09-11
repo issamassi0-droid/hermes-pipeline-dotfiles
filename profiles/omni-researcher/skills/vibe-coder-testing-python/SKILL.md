@@ -1,8 +1,8 @@
 ---
 name: testing-python
 description: |
-  Python testing best practices with pytest. Covers unit, integration, async tests, mocking, fixtures.
-  Triggers: "напиши тесты", "write tests", "add tests", "test coverage", "pytest"
+ Python testing best practices with pytest. Covers unit, integration, async tests, mocking, fixtures.
+ Triggers: "напиши тесты", "write tests", "add tests", "test coverage", "pytest"
 ---
 
 # Python Testing
@@ -41,14 +41,14 @@ testpaths = ["tests"]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 addopts = [
-    "-ra",
-    "-q",
-    "--strict-markers",
-    "--strict-config",
+ "-ra",
+ "-q",
+ "--strict-markers",
+ "--strict-config",
 ]
 markers = [
-    "slow: marks tests as slow",
-    "integration: marks tests as integration tests",
+ "slow: marks tests as slow",
+ "integration: marks tests as integration tests",
 ]
 
 [tool.coverage.run]
@@ -57,9 +57,9 @@ branch = true
 
 [tool.coverage.report]
 exclude_lines = [
-    "pragma: no cover",
-    "if TYPE_CHECKING:",
-    "raise NotImplementedError",
+ "pragma: no cover",
+ "if TYPE_CHECKING:",
+ "raise NotImplementedError",
 ]
 ```
 
@@ -68,15 +68,15 @@ exclude_lines = [
 ```
 project/
 ├── src/
-│   └── mypackage/
-│       ├── __init__.py
-│       └── service.py
+│ └── mypackage/
+│ ├── __init__.py
+│ └── service.py
 └── tests/
-    ├── conftest.py          # Shared fixtures
-    ├── unit/
-    │   └── test_service.py
-    └── integration/
-        └── test_api.py
+ ├── conftest.py # Shared fixtures
+ ├── unit/
+ │ └── test_service.py
+ └── integration/
+ └── test_api.py
 ```
 
 ## Patterns
@@ -89,14 +89,14 @@ import pytest
 from mypackage.calculator import add, divide
 
 def test_add_positive_numbers():
-    assert add(2, 3) == 5
+ assert add(2, 3) == 5
 
 def test_add_negative_numbers():
-    assert add(-1, -1) == -2
+ assert add(-1, -1) == -2
 
 def test_divide_by_zero_raises():
-    with pytest.raises(ZeroDivisionError):
-        divide(1, 0)
+ with pytest.raises(ZeroDivisionError):
+ divide(1, 0)
 ```
 
 ### Parametrized Tests
@@ -105,22 +105,22 @@ def test_divide_by_zero_raises():
 import pytest
 
 @pytest.mark.parametrize("input,expected", [
-    ("hello", "HELLO"),
-    ("World", "WORLD"),
-    ("", ""),
-    ("123", "123"),
+ ("hello", "HELLO"),
+ ("World", "WORLD"),
+ ("", ""),
+ ("123", "123"),
 ])
 def test_uppercase(input, expected):
-    assert input.upper() == expected
+ assert input.upper() == expected
 
 
 @pytest.mark.parametrize("a,b,expected", [
-    (1, 2, 3),
-    (0, 0, 0),
-    (-1, 1, 0),
+ (1, 2, 3),
+ (0, 0, 0),
+ (-1, 1, 0),
 ])
 def test_add(a, b, expected):
-    assert add(a, b) == expected
+ assert add(a, b) == expected
 ```
 
 ### Fixtures
@@ -132,25 +132,25 @@ from mypackage.database import Database
 
 @pytest.fixture
 def sample_user():
-    """Simple data fixture."""
-    return {"id": 1, "name": "Test User", "email": "test@example.com"}
+ """Simple data fixture."""
+ return {"id": 1, "name": "Test User", "email": "test@example.com"}
 
 
 @pytest.fixture
 def db():
-    """Setup/teardown fixture."""
-    database = Database(":memory:")
-    database.connect()
-    yield database
-    database.disconnect()
+ """Setup/teardown fixture."""
+ database = Database(":memory:")
+ database.connect()
+ yield database
+ database.disconnect()
 
 
 @pytest.fixture(scope="module")
 def expensive_resource():
-    """Shared across module (use sparingly)."""
-    resource = create_expensive_resource()
-    yield resource
-    resource.cleanup()
+ """Shared across module (use sparingly)."""
+ resource = create_expensive_resource()
+ yield resource
+ resource.cleanup()
 ```
 
 ### Async Tests
@@ -161,20 +161,20 @@ from mypackage.api import fetch_user
 
 # With asyncio_mode = "auto", no decorator needed
 async def test_fetch_user():
-    user = await fetch_user(1)
-    assert user["id"] == 1
+ user = await fetch_user(1)
+ assert user["id"] == 1
 
 
 # Async fixture
 @pytest.fixture
 async def async_client():
-    async with AsyncClient() as client:
-        yield client
+ async with AsyncClient() as client:
+ yield client
 
 
 async def test_with_async_client(async_client):
-    response = await async_client.get("/users")
-    assert response.status_code == 200
+ response = await async_client.get("/users")
+ assert response.status_code == 200
 ```
 
 ### Mocking
@@ -184,28 +184,28 @@ from unittest.mock import AsyncMock
 import pytest
 
 def test_send_email(mocker):
-    """Mock external service."""
-    mock_send = mocker.patch("mypackage.email.send_email")
-    mock_send.return_value = True
+ """Mock external service."""
+ mock_send = mocker.patch("mypackage.email.send_email")
+ mock_send.return_value = True
 
-    result = notify_user("test@example.com", "Hello")
+ result = notify_user("test@example.com", "Hello")
 
-    assert result is True
-    mock_send.assert_called_once_with("test@example.com", "Hello")
+ assert result is True
+ mock_send.assert_called_once_with("test@example.com", "Hello")
 
 
 async def test_external_api(mocker):
-    """Mock async function."""
-    mock_fetch = mocker.patch(
-        "mypackage.client.fetch_data",
-        new_callable=AsyncMock,
-        return_value={"data": "mocked"}
-    )
+ """Mock async function."""
+ mock_fetch = mocker.patch(
+ "mypackage.client.fetch_data",
+ new_callable=AsyncMock,
+ return_value={"data": "mocked"}
+ )
 
-    result = await process_data()
+ result = await process_data()
 
-    assert result["data"] == "mocked"
-    mock_fetch.assert_awaited_once()
+ assert result["data"] == "mocked"
+ mock_fetch.assert_awaited_once()
 ```
 
 ### HTTP Mocking (httpx)
@@ -217,26 +217,26 @@ import respx
 
 @respx.mock
 async def test_api_call():
-    respx.get("https://api.example.com/users/1").respond(
-        json={"id": 1, "name": "John"}
-    )
+ respx.get("https://api.example.com/users/1").respond(
+ json={"id": 1, "name": "John"}
+ )
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get("https://api.example.com/users/1")
+ async with httpx.AsyncClient() as client:
+ response = await client.get("https://api.example.com/users/1")
 
-    assert response.json()["name"] == "John"
+ assert response.json()["name"] == "John"
 
 
 # Or as fixture
 @pytest.fixture
 def mock_api():
-    with respx.mock:
-        yield respx
+ with respx.mock:
+ yield respx
 
 
 async def test_with_fixture(mock_api):
-    mock_api.get("https://api.example.com/data").respond(json={"ok": True})
-    # ... test code
+ mock_api.get("https://api.example.com/data").respond(json={"ok": True})
+ # ... test code
 ```
 
 ### Exception Testing
@@ -246,18 +246,18 @@ import pytest
 from mypackage.validator import validate_email
 
 def test_invalid_email_raises():
-    with pytest.raises(ValueError) as exc_info:
-        validate_email("not-an-email")
+ with pytest.raises(ValueError) as exc_info:
+ validate_email("not-an-email")
 
-    assert "Invalid email format" in str(exc_info.value)
+ assert "Invalid email format" in str(exc_info.value)
 
 
 def test_specific_exception_attributes():
-    with pytest.raises(ValidationError) as exc_info:
-        validate_input({"bad": "data"})
+ with pytest.raises(ValidationError) as exc_info:
+ validate_input({"bad": "data"})
 
-    assert exc_info.value.field == "email"
-    assert exc_info.value.code == "required"
+ assert exc_info.value.field == "email"
+ assert exc_info.value.code == "required"
 ```
 
 ### Markers
@@ -267,26 +267,26 @@ import pytest
 
 @pytest.mark.slow
 def test_complex_calculation():
-    """Run with: pytest -m slow"""
-    result = heavy_computation()
-    assert result is not None
+ """Run with: pytest -m slow"""
+ result = heavy_computation()
+ assert result is not None
 
 
 @pytest.mark.integration
 async def test_database_connection():
-    """Run with: pytest -m integration"""
-    async with get_connection() as conn:
-        assert await conn.ping()
+ """Run with: pytest -m integration"""
+ async with get_connection() as conn:
+ assert await conn.ping()
 
 
 @pytest.mark.skip(reason="Not implemented yet")
 def test_future_feature():
-    pass
+ pass
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="Unix only")
 def test_unix_specific():
-    pass
+ pass
 ```
 
 ## Running Tests

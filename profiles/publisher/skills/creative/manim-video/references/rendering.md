@@ -3,19 +3,19 @@
 ## Prerequisites
 
 ```bash
-manim --version       # Manim CE
-pdflatex --version    # LaTeX
-ffmpeg -version       # ffmpeg
+manim --version # Manim CE
+pdflatex --version # LaTeX
+ffmpeg -version # ffmpeg
 ```
 
 ## CLI Reference
 
 ```bash
-manim -ql script.py Scene1 Scene2    # draft (480p 15fps)
-manim -qm script.py Scene1           # medium (720p 30fps)
-manim -qh script.py Scene1           # production (1080p 60fps)
-manim -ql --format=png -s script.py Scene1  # preview still (last frame)
-manim -ql --format=gif script.py Scene1     # GIF output
+manim -ql script.py Scene1 Scene2 # draft (480p 15fps)
+manim -qm script.py Scene1 # medium (720p 30fps)
+manim -qh script.py Scene1 # production (1080p 60fps)
+manim -ql --format=png -s script.py Scene1 # preview still (last frame)
+manim -ql --format=gif script.py Scene1 # GIF output
 ```
 
 ## Quality Presets
@@ -32,7 +32,7 @@ manim -ql --format=gif script.py Scene1     # GIF output
 
 ```
 media/videos/script/480p15/Scene1_Intro.mp4
-media/images/script/Scene1_Intro.png  (from -s flag)
+media/images/script/Scene1_Intro.png (from -s flag)
 ```
 
 ## Stitching with ffmpeg
@@ -63,23 +63,23 @@ ffmpeg -y -f concat -safe 0 -i audio_concat.txt -c copy full_narration.mp3
 
 ```bash
 ffmpeg -y -i final.mp4 -i music.mp3 \
-  -filter_complex "[1:a]volume=0.15[bg];[0:a][bg]amix=inputs=2:duration=shortest" \
-  -c:v copy final_with_music.mp4
+ -filter_complex "[1:a]volume=0.15[bg];[0:a][bg]amix=inputs=2:duration=shortest" \
+ -c:v copy final_with_music.mp4
 ```
 
 ## GIF Export
 
 ```bash
 ffmpeg -y -i scene.mp4 \
-  -vf "fps=15,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
-  output.gif
+ -vf "fps=15,scale=640:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+ output.gif
 ```
 
 ## Aspect Ratios
 
 ```bash
-manim -ql --resolution 1080,1920 script.py Scene  # 9:16 vertical
-manim -ql --resolution 1080,1080 script.py Scene  # 1:1 square
+manim -ql --resolution 1080,1920 script.py Scene # 9:16 vertical
+manim -ql --resolution 1080,1080 script.py Scene # 1:1 square
 ```
 
 ## Render Workflow
@@ -117,15 +117,15 @@ Mark sections within a scene for organized output:
 
 ```python
 class LongVideo(Scene):
-    def construct(self):
-        self.next_section("Introduction")
-        # ... intro content ...
+ def construct(self):
+ self.next_section("Introduction")
+ # ... intro content ...
 
-        self.next_section("Main Concept")
-        # ... main content ...
+ self.next_section("Main Concept")
+ # ... main content ...
 
-        self.next_section("Conclusion")
-        # ... closing ...
+ self.next_section("Conclusion")
+ # ... closing ...
 ```
 
 Render individual sections: `manim --save_sections script.py LongVideo`
@@ -140,8 +140,8 @@ The official `manim-voiceover` plugin integrates TTS directly into scene code, a
 ```bash
 pip install "manim-voiceover[elevenlabs]"
 # Or for free/local TTS:
-pip install "manim-voiceover[gtts]"    # Google TTS (free, lower quality)
-pip install "manim-voiceover[azure]"   # Azure Cognitive Services
+pip install "manim-voiceover[gtts]" # Google TTS (free, lower quality)
+pip install "manim-voiceover[azure]" # Azure Cognitive Services
 ```
 
 ### Usage
@@ -152,18 +152,18 @@ from manim_voiceover import VoiceoverScene
 from manim_voiceover.services.elevenlabs import ElevenLabsService
 
 class NarratedScene(VoiceoverScene):
-    def construct(self):
-        self.set_speech_service(ElevenLabsService(
-            voice_name="Alice",
-            model_id="eleven_multilingual_v2"
-        ))
+ def construct(self):
+ self.set_speech_service(ElevenLabsService(
+ voice_name="Alice",
+ model_id="eleven_multilingual_v2"
+ ))
 
-        # Voiceover auto-controls scene duration
-        with self.voiceover(text="Here is a circle being drawn.") as tracker:
-            self.play(Create(Circle()), run_time=tracker.duration)
+ # Voiceover auto-controls scene duration
+ with self.voiceover(text="Here is a circle being drawn.") as tracker:
+ self.play(Create(Circle()), run_time=tracker.duration)
 
-        with self.voiceover(text="Now let's transform it into a square.") as tracker:
-            self.play(Transform(circle, Square()), run_time=tracker.duration)
+ with self.voiceover(text="Now let's transform it into a square.") as tracker:
+ self.play(Transform(circle, Square()), run_time=tracker.duration)
 ```
 
 ### Key Features
@@ -178,8 +178,8 @@ class NarratedScene(VoiceoverScene):
 
 ```python
 with self.voiceover(text='This is a <bookmark mark="circle"/>circle.') as tracker:
-    self.wait_until_bookmark("circle")
-    self.play(Create(Circle()), run_time=tracker.time_until_bookmark("circle", limit=1))
+ self.wait_until_bookmark("circle")
+ self.play(Create(Circle()), run_time=tracker.time_until_bookmark("circle", limit=1))
 ```
 
 This is the recommended approach for any video with narration. The manual ffmpeg muxing workflow above is still useful for adding background music or post-production audio mixing.

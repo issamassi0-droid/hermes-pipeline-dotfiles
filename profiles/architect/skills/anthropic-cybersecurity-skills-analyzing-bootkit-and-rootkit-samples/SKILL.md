@@ -1,12 +1,12 @@
 ---
 name: analyzing-bootkit-and-rootkit-samples
 description: 'Analyzes bootkit and advanced rootkit malware infecting the Master
-  Boot Record (MBR), Volume Boot Record (VBR), or UEFI firmware for below-OS persistence,
-  covering boot sector analysis, UEFI module inspection, and anti-rootkit detection.
-  Use when compromise survives OS reinstallation or antivirus/EDR fails to detect
-  malware despite clear infection signs.
+ Boot Record (MBR), Volume Boot Record (VBR), or UEFI firmware for below-OS persistence,
+ covering boot sector analysis, UEFI module inspection, and anti-rootkit detection.
+ Use when compromise survives OS reinstallation or antivirus/EDR fails to detect
+ malware despite clear infection signs.
 
-  '
+ '
 domain: cybersecurity
 subdomain: malware-analysis
 tags:
@@ -98,36 +98,36 @@ ndisasm -b16 mbr.bin > mbr_disasm.txt
 
 python3 << 'PYEOF'
 with open("mbr.bin", "rb") as f:
-    mbr = f.read()
+ mbr = f.read()
 
 # Check MBR signature (bytes 510-511 should be 0x55AA)
 if mbr[510:512] == b'\x55\xAA':
-    print("[*] Valid MBR signature (0x55AA)")
+ print("[*] Valid MBR signature (0x55AA)")
 else:
-    print("[!] Invalid MBR signature")
+ print("[!] Invalid MBR signature")
 
 # Check for known bootkit signatures
 bootkit_sigs = {
-    b'\xE8\x00\x00\x5E\x81\xEE': "TDL4/Alureon bootkit",
-    b'\xFA\x33\xC0\x8E\xD0\xBC\x00\x7C\x8B\xF4\x50\x07': "Standard Windows MBR (clean)",
-    b'\xEB\x5A\x90\x4E\x54\x46\x53': "Standard NTFS VBR (clean)",
+ b'\xE8\x00\x00\x5E\x81\xEE': "TDL4/Alureon bootkit",
+ b'\xFA\x33\xC0\x8E\xD0\xBC\x00\x7C\x8B\xF4\x50\x07': "Standard Windows MBR (clean)",
+ b'\xEB\x5A\x90\x4E\x54\x46\x53': "Standard NTFS VBR (clean)",
 }
 
 for sig, name in bootkit_sigs.items():
-    if sig in mbr:
-        print(f"[{'!' if 'clean' not in name else '*'}] Signature match: {name}")
+ if sig in mbr:
+ print(f"[{'!' if 'clean' not in name else '*'}] Signature match: {name}")
 
 # Check partition table entries
 print("\nPartition Table:")
 for i in range(4):
-    offset = 446 + (i * 16)
-    entry = mbr[offset:offset+16]
-    if entry != b'\x00' * 16:
-        boot_flag = "Active" if entry[0] == 0x80 else "Inactive"
-        part_type = entry[4]
-        start_lba = int.from_bytes(entry[8:12], 'little')
-        size_lba = int.from_bytes(entry[12:16], 'little')
-        print(f"  Partition {i+1}: Type=0x{part_type:02X} {boot_flag} Start=LBA {start_lba} Size={size_lba} sectors")
+ offset = 446 + (i * 16)
+ entry = mbr[offset:offset+16]
+ if entry != b'\x00' * 16:
+ boot_flag = "Active" if entry[0] == 0x80 else "Inactive"
+ part_type = entry[4]
+ start_lba = int.from_bytes(entry[8:12], 'little')
+ size_lba = int.from_bytes(entry[12:16], 'little')
+ print(f" Partition {i+1}: Type=0x{part_type:02X} {boot_flag} Start=LBA {start_lba} Size={size_lba} sectors")
 PYEOF
 ```
 
@@ -161,29 +161,29 @@ yara -r uefi_malware.yar firmware.rom
 Known UEFI Bootkit Detection Points:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 LoJax (APT28):
-  - Modified SPI flash
-  - Added DXE driver that drops agent to Windows
-  - Persists through OS reinstall and disk replacement
+ - Modified SPI flash
+ - Added DXE driver that drops agent to Windows
+ - Persists through OS reinstall and disk replacement
 
 BlackLotus:
-  - Exploits CVE-2022-21894 to bypass Secure Boot
-  - Modifies EFI System Partition bootloader
-  - Installs kernel driver during boot
+ - Exploits CVE-2022-21894 to bypass Secure Boot
+ - Modifies EFI System Partition bootloader
+ - Installs kernel driver during boot
 
 CosmicStrand:
-  - Modifies CORE_DXE firmware module
-  - Hooks kernel initialization during boot
-  - Drops shellcode into Windows kernel memory
+ - Modifies CORE_DXE firmware module
+ - Hooks kernel initialization during boot
+ - Drops shellcode into Windows kernel memory
 
 MoonBounce:
-  - SPI flash implant in CORE_DXE module
-  - Modified GetVariable() function
-  - Deploys user-mode implant through boot chain
+ - SPI flash implant in CORE_DXE module
+ - Modified GetVariable() function
+ - Deploys user-mode implant through boot chain
 
 ESPecter:
-  - Modifies Windows Boot Manager on ESP
-  - Patches winload.efi to disable DSE
-  - Loads unsigned kernel driver
+ - Modifies Windows Boot Manager on ESP
+ - Patches winload.efi to disable DSE
+ - Loads unsigned kernel driver
 ```
 
 ### Step 4: Detect Kernel-Level Rootkit Behavior
@@ -209,10 +209,10 @@ vol3 -f memory.dmp windows.modules
 
 # Check for unsigned drivers
 vol3 -f memory.dmp windows.driverscan | while read line; do
-    driver_path=$(echo "$line" | awk '{print $NF}')
-    if [ -f "$driver_path" ]; then
-        sigcheck -nobanner "$driver_path" 2>/dev/null | grep "Unsigned"
-    fi
+ driver_path=$(echo "$line" | awk '{print $NF}')
+ if [ -f "$driver_path" ]; then
+ sigcheck -nobanner "$driver_path" 2>/dev/null | grep "Unsigned"
+ fi
 done
 
 # IDT hook detection
@@ -238,7 +238,7 @@ sigcheck -a C:\Windows\System32\ntoskrnl.exe
 bcdedit /enum firmware
 
 # Verify Secure Boot state
-Confirm-SecureBootUEFI  # PowerShell cmdlet
+Confirm-SecureBootUEFI # PowerShell cmdlet
 
 # Check boot configuration for tampering
 bcdedit /v
@@ -314,43 +314,43 @@ Analysis should document:
 ```
 BOOTKIT / ROOTKIT ANALYSIS REPORT
 ====================================
-System:           Dell OptiPlex 7090 (UEFI, TPM 2.0)
+System: Dell OptiPlex 7090 (UEFI, TPM 2.0)
 Firmware Version: 1.15.0 (Dell)
-Secure Boot:      ENABLED (but bypassed)
-Capture Method:   Linux Live USB + chipsec SPI dump
+Secure Boot: ENABLED (but bypassed)
+Capture Method: Linux Live USB + chipsec SPI dump
 
 MBR/VBR ANALYSIS
-MBR Signature:    Valid (0x55AA)
-MBR Code:         MATCHES standard Windows 10 MBR (clean)
-VBR Code:         MATCHES standard NTFS VBR (clean)
+MBR Signature: Valid (0x55AA)
+MBR Code: MATCHES standard Windows 10 MBR (clean)
+VBR Code: MATCHES standard NTFS VBR (clean)
 
 UEFI FIRMWARE ANALYSIS
-Total Modules:    287
-Vendor Expected:  285
-Extra Modules:    2 UNAUTHORIZED
-  [!] DXE Driver GUID: {ABCD1234-...} "SmmAccessDxe_mod" (MODIFIED)
-      Original Size: 12,288 bytes
-      Current Size:  45,056 bytes (32KB ADDED)
-      Entropy: 7.82 (HIGH - encrypted payload)
+Total Modules: 287
+Vendor Expected: 285
+Extra Modules: 2 UNAUTHORIZED
+ [!] DXE Driver GUID: {ABCD1234-...} "SmmAccessDxe_mod" (MODIFIED)
+ Original Size: 12,288 bytes
+ Current Size: 45,056 bytes (32KB ADDED)
+ Entropy: 7.82 (HIGH - encrypted payload)
 
-  [!] DXE Driver GUID: {EFGH5678-...} "UefiPayloadDxe" (NEW - not in vendor firmware)
-      Size: 28,672 bytes
-      Function: Drops persistence agent during boot
+ [!] DXE Driver GUID: {EFGH5678-...} "UefiPayloadDxe" (NEW - not in vendor firmware)
+ Size: 28,672 bytes
+ Function: Drops persistence agent during boot
 
 BOOT CHAIN INTEGRITY
-bootmgfw.efi:     MODIFIED (hash mismatch, Secure Boot bypass via CVE-2022-21894)
-winload.efi:      MODIFIED (DSE disabled at load time)
-ntoskrnl.exe:     CLEAN (but unsigned driver loaded after boot)
+bootmgfw.efi: MODIFIED (hash mismatch, Secure Boot bypass via CVE-2022-21894)
+winload.efi: MODIFIED (DSE disabled at load time)
+ntoskrnl.exe: CLEAN (but unsigned driver loaded after boot)
 
 KERNEL ROOTKIT COMPONENTS
-Driver:           C:\Windows\System32\drivers\null_mod.sys (unsigned, hidden)
-SSDT Hooks:       3 (NtQuerySystemInformation, NtQueryDirectoryFile, NtDeviceIoControlFile)
+Driver: C:\Windows\System32\drivers\null_mod.sys (unsigned, hidden)
+SSDT Hooks: 3 (NtQuerySystemInformation, NtQueryDirectoryFile, NtDeviceIoControlFile)
 Hidden Processes: 2 (PID 6784: beacon.exe, PID 6812: keylog.exe)
-Hidden Files:     C:\Windows\System32\drivers\null_mod.sys
+Hidden Files: C:\Windows\System32\drivers\null_mod.sys
 
 ATTRIBUTION
-Family:           BlackLotus variant
-Confidence:       HIGH (CVE-2022-21894 exploit, ESP modification pattern matches)
+Family: BlackLotus variant
+Confidence: HIGH (CVE-2022-21894 exploit, ESP modification pattern matches)
 
 REMEDIATION
 1. Reflash SPI firmware with clean vendor image via hardware programmer

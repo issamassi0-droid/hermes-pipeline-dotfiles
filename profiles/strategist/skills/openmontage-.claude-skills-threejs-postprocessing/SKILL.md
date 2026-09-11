@@ -22,17 +22,17 @@ composer.addPass(renderPass);
 
 // Add bloom
 const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
-  1.5, // strength
-  0.4, // radius
-  0.85, // threshold
+ new THREE.Vector2(window.innerWidth, window.innerHeight),
+ 1.5, // strength
+ 0.4, // radius
+ 0.85, // threshold
 );
 composer.addPass(bloomPass);
 
 // Animation loop - use composer instead of renderer
 function animate() {
-  requestAnimationFrame(animate);
-  composer.render(); // NOT renderer.render()
+ requestAnimationFrame(animate);
+ composer.render(); // NOT renderer.render()
 }
 ```
 
@@ -56,14 +56,14 @@ effectPass.renderToScreen = true; // Default for last pass
 
 // Handle resize
 function onResize() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+ const width = window.innerWidth;
+ const height = window.innerHeight;
 
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
+ camera.aspect = width / height;
+ camera.updateProjectionMatrix();
 
-  renderer.setSize(width, height);
-  composer.setSize(width, height);
+ renderer.setSize(width, height);
+ composer.setSize(width, height);
 }
 ```
 
@@ -75,10 +75,10 @@ function onResize() {
 import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
 
 const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
-  1.5, // strength - intensity of glow
-  0.4, // radius - spread of glow
-  0.85, // threshold - brightness threshold
+ new THREE.Vector2(window.innerWidth, window.innerHeight),
+ 1.5, // strength - intensity of glow
+ 0.4, // radius - spread of glow
+ 0.85, // threshold - brightness threshold
 );
 
 composer.addPass(bloomPass);
@@ -110,28 +110,28 @@ const darkMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
 const materials = {};
 
 function darkenNonBloomed(obj) {
-  if (obj.isMesh && !bloomLayer.test(obj.layers)) {
-    materials[obj.uuid] = obj.material;
-    obj.material = darkMaterial;
-  }
+ if (obj.isMesh && !bloomLayer.test(obj.layers)) {
+ materials[obj.uuid] = obj.material;
+ obj.material = darkMaterial;
+ }
 }
 
 function restoreMaterial(obj) {
-  if (materials[obj.uuid]) {
-    obj.material = materials[obj.uuid];
-    delete materials[obj.uuid];
-  }
+ if (materials[obj.uuid]) {
+ obj.material = materials[obj.uuid];
+ delete materials[obj.uuid];
+ }
 }
 
 // Custom render loop
 function render() {
-  // Render bloom pass
-  scene.traverse(darkenNonBloomed);
-  composer.render();
-  scene.traverse(restoreMaterial);
+ // Render bloom pass
+ scene.traverse(darkenNonBloomed);
+ composer.render();
+ scene.traverse(restoreMaterial);
 
-  // Render final scene over bloom
-  renderer.render(scene, camera);
+ // Render final scene over bloom
+ renderer.render(scene, camera);
 }
 ```
 
@@ -143,18 +143,18 @@ import { FXAAShader } from "three/addons/shaders/FXAAShader.js";
 
 const fxaaPass = new ShaderPass(FXAAShader);
 fxaaPass.material.uniforms["resolution"].value.set(
-  1 / window.innerWidth,
-  1 / window.innerHeight,
+ 1 / window.innerWidth,
+ 1 / window.innerHeight,
 );
 
 composer.addPass(fxaaPass);
 
 // Update on resize
 function onResize() {
-  fxaaPass.material.uniforms["resolution"].value.set(
-    1 / window.innerWidth,
-    1 / window.innerHeight,
-  );
+ fxaaPass.material.uniforms["resolution"].value.set(
+ 1 / window.innerWidth,
+ 1 / window.innerHeight,
+ );
 }
 ```
 
@@ -164,8 +164,8 @@ function onResize() {
 import { SMAAPass } from "three/addons/postprocessing/SMAAPass.js";
 
 const smaaPass = new SMAAPass(
-  window.innerWidth * renderer.getPixelRatio(),
-  window.innerHeight * renderer.getPixelRatio(),
+ window.innerWidth * renderer.getPixelRatio(),
+ window.innerHeight * renderer.getPixelRatio(),
 );
 
 composer.addPass(smaaPass);
@@ -177,10 +177,10 @@ composer.addPass(smaaPass);
 import { SSAOPass } from "three/addons/postprocessing/SSAOPass.js";
 
 const ssaoPass = new SSAOPass(
-  scene,
-  camera,
-  window.innerWidth,
-  window.innerHeight,
+ scene,
+ camera,
+ window.innerWidth,
+ window.innerHeight,
 );
 ssaoPass.kernelRadius = 16;
 ssaoPass.minDistance = 0.005;
@@ -203,9 +203,9 @@ ssaoPass.output = SSAOPass.OUTPUT.Default;
 import { BokehPass } from "three/addons/postprocessing/BokehPass.js";
 
 const bokehPass = new BokehPass(scene, camera, {
-  focus: 10.0, // Focus distance
-  aperture: 0.025, // Aperture (smaller = more DOF)
-  maxblur: 0.01, // Max blur amount
+ focus: 10.0, // Focus distance
+ aperture: 0.025, // Aperture (smaller = more DOF)
+ maxblur: 0.01, // Max blur amount
 });
 
 composer.addPass(bokehPass);
@@ -220,10 +220,10 @@ bokehPass.uniforms["focus"].value = distanceToTarget;
 import { FilmPass } from "three/addons/postprocessing/FilmPass.js";
 
 const filmPass = new FilmPass(
-  0.35, // noise intensity
-  0.5, // scanline intensity
-  648, // scanline count
-  false, // grayscale
+ 0.35, // noise intensity
+ 0.5, // scanline intensity
+ 648, // scanline count
+ false, // grayscale
 );
 
 composer.addPass(filmPass);
@@ -291,15 +291,15 @@ composer.addPass(glitchPass);
 import { HalftonePass } from "three/addons/postprocessing/HalftonePass.js";
 
 const halftonePass = new HalftonePass(window.innerWidth, window.innerHeight, {
-  shape: 1, // 1 = dot, 2 = ellipse, 3 = line, 4 = square
-  radius: 4, // Dot size
-  rotateR: Math.PI / 12,
-  rotateB: (Math.PI / 12) * 2,
-  rotateG: (Math.PI / 12) * 3,
-  scatter: 0,
-  blending: 1,
-  blendingMode: 1,
-  greyscale: false,
+ shape: 1, // 1 = dot, 2 = ellipse, 3 = line, 4 = square
+ radius: 4, // Dot size
+ rotateR: Math.PI / 12,
+ rotateB: (Math.PI / 12) * 2,
+ rotateG: (Math.PI / 12) * 3,
+ scatter: 0,
+ blending: 1,
+ blendingMode: 1,
+ greyscale: false,
 });
 
 composer.addPass(halftonePass);
@@ -311,9 +311,9 @@ composer.addPass(halftonePass);
 import { OutlinePass } from "three/addons/postprocessing/OutlinePass.js";
 
 const outlinePass = new OutlinePass(
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
-  scene,
-  camera,
+ new THREE.Vector2(window.innerWidth, window.innerHeight),
+ scene,
+ camera,
 );
 
 outlinePass.edgeStrength = 3;
@@ -337,35 +337,35 @@ Create your own post-processing effects.
 import { ShaderPass } from "three/addons/postprocessing/ShaderPass.js";
 
 const CustomShader = {
-  uniforms: {
-    tDiffuse: { value: null }, // Required: input texture
-    time: { value: 0 },
-    intensity: { value: 1.0 },
-  },
-  vertexShader: `
-    varying vec2 vUv;
+ uniforms: {
+ tDiffuse: { value: null }, // Required: input texture
+ time: { value: 0 },
+ intensity: { value: 1.0 },
+ },
+ vertexShader: `
+ varying vec2 vUv;
 
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform float time;
-    uniform float intensity;
-    varying vec2 vUv;
+ void main() {
+ vUv = uv;
+ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+ }
+ `,
+ fragmentShader: `
+ uniform sampler2D tDiffuse;
+ uniform float time;
+ uniform float intensity;
+ varying vec2 vUv;
 
-    void main() {
-      vec2 uv = vUv;
+ void main() {
+ vec2 uv = vUv;
 
-      // Wave distortion
-      uv.x += sin(uv.y * 10.0 + time) * 0.01 * intensity;
+ // Wave distortion
+ uv.x += sin(uv.y * 10.0 + time) * 0.01 * intensity;
 
-      vec4 color = texture2D(tDiffuse, uv);
-      gl_FragColor = color;
-    }
-  `,
+ vec4 color = texture2D(tDiffuse, uv);
+ gl_FragColor = color;
+ }
+ `,
 };
 
 const customPass = new ShaderPass(CustomShader);
@@ -379,25 +379,25 @@ customPass.uniforms.time.value = clock.getElapsedTime();
 
 ```javascript
 const InvertShader = {
-  uniforms: {
-    tDiffuse: { value: null },
-  },
-  vertexShader: `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform sampler2D tDiffuse;
-    varying vec2 vUv;
+ uniforms: {
+ tDiffuse: { value: null },
+ },
+ vertexShader: `
+ varying vec2 vUv;
+ void main() {
+ vUv = uv;
+ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+ }
+ `,
+ fragmentShader: `
+ uniform sampler2D tDiffuse;
+ varying vec2 vUv;
 
-    void main() {
-      vec4 color = texture2D(tDiffuse, vUv);
-      gl_FragColor = vec4(1.0 - color.rgb, color.a);
-    }
-  `,
+ void main() {
+ vec4 color = texture2D(tDiffuse, vUv);
+ gl_FragColor = vec4(1.0 - color.rgb, color.a);
+ }
+ `,
 };
 ```
 
@@ -405,33 +405,33 @@ const InvertShader = {
 
 ```javascript
 const ChromaticAberrationShader = {
-  uniforms: {
-    tDiffuse: { value: null },
-    amount: { value: 0.005 },
-  },
-  vertexShader: `
-    varying vec2 vUv;
-    void main() {
-      vUv = uv;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform sampler2D tDiffuse;
-    uniform float amount;
-    varying vec2 vUv;
+ uniforms: {
+ tDiffuse: { value: null },
+ amount: { value: 0.005 },
+ },
+ vertexShader: `
+ varying vec2 vUv;
+ void main() {
+ vUv = uv;
+ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+ }
+ `,
+ fragmentShader: `
+ uniform sampler2D tDiffuse;
+ uniform float amount;
+ varying vec2 vUv;
 
-    void main() {
-      vec2 dir = vUv - 0.5;
-      float dist = length(dir);
+ void main() {
+ vec2 dir = vUv - 0.5;
+ float dist = length(dir);
 
-      float r = texture2D(tDiffuse, vUv - dir * amount * dist).r;
-      float g = texture2D(tDiffuse, vUv).g;
-      float b = texture2D(tDiffuse, vUv + dir * amount * dist).b;
+ float r = texture2D(tDiffuse, vUv - dir * amount * dist).r;
+ float g = texture2D(tDiffuse, vUv).g;
+ float b = texture2D(tDiffuse, vUv + dir * amount * dist).b;
 
-      gl_FragColor = vec4(r, g, b, 1.0);
-    }
-  `,
+ gl_FragColor = vec4(r, g, b, 1.0);
+ }
+ `,
 };
 ```
 
@@ -453,10 +453,10 @@ composer.addPass(new RenderPass(scene, camera));
 
 // 2. Bloom
 const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(window.innerWidth, window.innerHeight),
-  0.5,
-  0.4,
-  0.85,
+ new THREE.Vector2(window.innerWidth, window.innerHeight),
+ 0.5,
+ 0.4,
+ 0.85,
 );
 composer.addPass(bloomPass);
 
@@ -472,8 +472,8 @@ composer.addPass(new ShaderPass(GammaCorrectionShader));
 // 5. Anti-aliasing (always last before output)
 const fxaaPass = new ShaderPass(FXAAShader);
 fxaaPass.uniforms["resolution"].value.set(
-  1 / window.innerWidth,
-  1 / window.innerHeight,
+ 1 / window.innerWidth,
+ 1 / window.innerHeight,
 );
 composer.addPass(fxaaPass);
 ```
@@ -507,15 +507,15 @@ fgComposer.addPass(bloomPass);
 
 // Combine in render loop
 function animate() {
-  // Render background without clearing
-  renderer.autoClear = false;
-  renderer.clear();
+ // Render background without clearing
+ renderer.autoClear = false;
+ renderer.clear();
 
-  bgComposer.render();
+ bgComposer.render();
 
-  // Render foreground over it
-  renderer.clearDepth();
-  fgComposer.render();
+ // Render foreground over it
+ renderer.clearDepth();
+ fgComposer.render();
 }
 ```
 
@@ -534,7 +534,7 @@ postProcessing.outputNode = bloomNode;
 
 // Render
 function animate() {
-  postProcessing.render();
+ postProcessing.render();
 }
 ```
 
@@ -552,16 +552,16 @@ bloomPass.enabled = false;
 
 // Reduce bloom resolution
 const bloomPass = new UnrealBloomPass(
-  new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2),
-  strength,
-  radius,
-  threshold,
+ new THREE.Vector2(window.innerWidth / 2, window.innerHeight / 2),
+ strength,
+ radius,
+ threshold,
 );
 
 // Only apply effects in high-performance scenarios
 const isMobile = /iPhone|iPad|Android/i.test(navigator.userAgent);
 if (!isMobile) {
-  composer.addPass(expensivePass);
+ composer.addPass(expensivePass);
 }
 ```
 
@@ -569,27 +569,27 @@ if (!isMobile) {
 
 ```javascript
 function onWindowResize() {
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const pixelRatio = renderer.getPixelRatio();
+ const width = window.innerWidth;
+ const height = window.innerHeight;
+ const pixelRatio = renderer.getPixelRatio();
 
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
+ camera.aspect = width / height;
+ camera.updateProjectionMatrix();
 
-  renderer.setSize(width, height);
-  composer.setSize(width, height);
+ renderer.setSize(width, height);
+ composer.setSize(width, height);
 
-  // Update pass-specific resolutions
-  if (fxaaPass) {
-    fxaaPass.material.uniforms["resolution"].value.set(
-      1 / (width * pixelRatio),
-      1 / (height * pixelRatio),
-    );
-  }
+ // Update pass-specific resolutions
+ if (fxaaPass) {
+ fxaaPass.material.uniforms["resolution"].value.set(
+ 1 / (width * pixelRatio),
+ 1 / (height * pixelRatio),
+ );
+ }
 
-  if (bloomPass) {
-    bloomPass.resolution.set(width, height);
-  }
+ if (bloomPass) {
+ bloomPass.resolution.set(width, height);
+ }
 }
 
 window.addEventListener("resize", onWindowResize);

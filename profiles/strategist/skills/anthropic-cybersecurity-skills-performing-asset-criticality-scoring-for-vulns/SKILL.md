@@ -1,10 +1,10 @@
 ---
 name: performing-asset-criticality-scoring-for-vulns
 description: Build a multi-factor asset criticality scoring model—incorporating data
-  sensitivity, business function dependency, regulatory scope, network exposure, and
-  recoverability—to produce a 1-5 criticality tier that weights vulnerability prioritization
-  and remediation SLAs. Use when prioritizing vulnerability remediation by business
-  impact or aligning CMDB asset data with risk-based patching timelines.
+ sensitivity, business function dependency, regulatory scope, network exposure, and
+ recoverability—to produce a 1-5 criticality tier that weights vulnerability prioritization
+ and remediation SLAs. Use when prioritizing vulnerability remediation by business
+ impact or aligning CMDB asset data with risk-based patching timelines.
 domain: cybersecurity
 subdomain: vulnerability-management
 tags:
@@ -87,67 +87,67 @@ Asset criticality scoring assigns a business impact rating to each IT asset so t
 
 ```python
 class AssetCriticalityScorer:
-    """Multi-factor asset criticality scoring engine."""
+ """Multi-factor asset criticality scoring engine."""
 
-    WEIGHTS = {
-        "business_function": 0.25,
-        "data_sensitivity": 0.25,
-        "regulatory_scope": 0.15,
-        "network_exposure": 0.15,
-        "recoverability": 0.10,
-        "user_population": 0.10,
-    }
+ WEIGHTS = {
+ "business_function": 0.25,
+ "data_sensitivity": 0.25,
+ "regulatory_scope": 0.15,
+ "network_exposure": 0.15,
+ "recoverability": 0.10,
+ "user_population": 0.10,
+ }
 
-    TIER_THRESHOLDS = [
-        (4.5, 1, "Crown Jewels", -0.50),
-        (3.5, 2, "High Value", -0.25),
-        (2.5, 3, "Standard", 0.00),
-        (1.5, 4, "Low Impact", 0.25),
-        (1.0, 5, "Minimal", 0.50),
-    ]
+ TIER_THRESHOLDS = [
+ (4.5, 1, "Crown Jewels", -0.50),
+ (3.5, 2, "High Value", -0.25),
+ (2.5, 3, "Standard", 0.00),
+ (1.5, 4, "Low Impact", 0.25),
+ (1.0, 5, "Minimal", 0.50),
+ ]
 
-    def score_asset(self, asset):
-        """Calculate criticality score for an asset."""
-        weighted_score = sum(
-            asset.get(factor, 3) * weight
-            for factor, weight in self.WEIGHTS.items()
-        )
-        score = round(weighted_score, 2)
+ def score_asset(self, asset):
+ """Calculate criticality score for an asset."""
+ weighted_score = sum(
+ asset.get(factor, 3) * weight
+ for factor, weight in self.WEIGHTS.items()
+ )
+ score = round(weighted_score, 2)
 
-        for threshold, tier, label, sla_mod in self.TIER_THRESHOLDS:
-            if score >= threshold:
-                return {
-                    "score": score,
-                    "tier": tier,
-                    "label": label,
-                    "sla_modifier": sla_mod,
-                }
-        return {"score": score, "tier": 5, "label": "Minimal", "sla_modifier": 0.50}
+ for threshold, tier, label, sla_mod in self.TIER_THRESHOLDS:
+ if score >= threshold:
+ return {
+ "score": score,
+ "tier": tier,
+ "label": label,
+ "sla_modifier": sla_mod,
+ }
+ return {"score": score, "tier": 5, "label": "Minimal", "sla_modifier": 0.50}
 
-    def adjust_vuln_sla(self, base_sla_days, asset_tier_data):
-        """Adjust vulnerability SLA based on asset criticality."""
-        modifier = asset_tier_data["sla_modifier"]
-        adjusted = int(base_sla_days * (1 + modifier))
-        return max(1, adjusted)  # Minimum 1 day SLA
+ def adjust_vuln_sla(self, base_sla_days, asset_tier_data):
+ """Adjust vulnerability SLA based on asset criticality."""
+ modifier = asset_tier_data["sla_modifier"]
+ adjusted = int(base_sla_days * (1 + modifier))
+ return max(1, adjusted) # Minimum 1 day SLA
 ```
 
 ### Step 2: Integrate with Vulnerability Prioritization
 
 ```python
 def apply_criticality_to_vulns(vulns_df, asset_scores):
-    """Enrich vulnerability data with asset criticality context."""
-    for idx, vuln in vulns_df.iterrows():
-        asset_id = vuln.get("asset_id", "")
-        asset_data = asset_scores.get(asset_id, {"tier": 3, "sla_modifier": 0})
+ """Enrich vulnerability data with asset criticality context."""
+ for idx, vuln in vulns_df.iterrows():
+ asset_id = vuln.get("asset_id", "")
+ asset_data = asset_scores.get(asset_id, {"tier": 3, "sla_modifier": 0})
 
-        vulns_df.at[idx, "asset_tier"] = asset_data["tier"]
-        vulns_df.at[idx, "asset_label"] = asset_data.get("label", "Standard")
+ vulns_df.at[idx, "asset_tier"] = asset_data["tier"]
+ vulns_df.at[idx, "asset_label"] = asset_data.get("label", "Standard")
 
-        base_sla = get_base_sla(vuln["severity"])
-        adjusted_sla = int(base_sla * (1 + asset_data["sla_modifier"]))
-        vulns_df.at[idx, "adjusted_sla_days"] = max(1, adjusted_sla)
+ base_sla = get_base_sla(vuln["severity"])
+ adjusted_sla = int(base_sla * (1 + asset_data["sla_modifier"]))
+ vulns_df.at[idx, "adjusted_sla_days"] = max(1, adjusted_sla)
 
-    return vulns_df
+ return vulns_df
 ```
 
 ## Best Practices

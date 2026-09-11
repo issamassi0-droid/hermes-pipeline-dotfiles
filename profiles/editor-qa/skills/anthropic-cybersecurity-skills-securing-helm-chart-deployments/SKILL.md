@@ -1,13 +1,13 @@
 ---
 name: securing-helm-chart-deployments
 description: >-
-  Secures Helm chart deployments by verifying chart signatures and provenance, rendering and
-  linting templates for misconfiguration, enforcing pod security contexts through values.yaml,
-  moving secrets into an external store instead of Helm values, and scoping RBAC for Helm
-  operations in CI/CD. Use when deploying charts to Kubernetes or reviewing chart provenance,
-  templates, or release RBAC. Keywords: Helm, provenance file, helm verify, helm lint,
-  values.yaml, Tiller-less, release RBAC, external secrets. Do not use for scanning the
-  rendered manifests themselves - use scanning-kubernetes-manifests-with-kubesec.
+ Secures Helm chart deployments by verifying chart signatures and provenance, rendering and
+ linting templates for misconfiguration, enforcing pod security contexts through values.yaml,
+ moving secrets into an external store instead of Helm values, and scoping RBAC for Helm
+ operations in CI/CD. Use when deploying charts to Kubernetes or reviewing chart provenance,
+ templates, or release RBAC. Keywords: Helm, provenance file, helm verify, helm lint,
+ values.yaml, Tiller-less, release RBAC, external secrets. Do not use for scanning the
+ rendered manifests themselves - use scanning-kubernetes-manifests-with-kubesec.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -115,40 +115,40 @@ helm lint ./mychart --debug
 ```yaml
 # values.yaml - Security hardened defaults
 securityContext:
-  runAsNonRoot: true
-  runAsUser: 1000
-  runAsGroup: 3000
-  fsGroup: 2000
-  readOnlyRootFilesystem: true
-  allowPrivilegeEscalation: false
-  capabilities:
-    drop:
-      - ALL
+ runAsNonRoot: true
+ runAsUser: 1000
+ runAsGroup: 3000
+ fsGroup: 2000
+ readOnlyRootFilesystem: true
+ allowPrivilegeEscalation: false
+ capabilities:
+ drop:
+ - ALL
 
 podSecurityContext:
-  seccompProfile:
-    type: RuntimeDefault
+ seccompProfile:
+ type: RuntimeDefault
 
 resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-  requests:
-    cpu: 100m
-    memory: 128Mi
+ limits:
+ cpu: 500m
+ memory: 512Mi
+ requests:
+ cpu: 100m
+ memory: 128Mi
 
 networkPolicy:
-  enabled: true
+ enabled: true
 
 serviceAccount:
-  create: true
-  automountServiceAccountToken: false
+ create: true
+ automountServiceAccountToken: false
 
 image:
-  pullPolicy: Always
-  # Use digest instead of tag for immutability
-  # tag: "1.0.0"
-  # digest: "sha256:abc123..."
+ pullPolicy: Always
+ # Use digest instead of tag for immutability
+ # tag: "1.0.0"
+ # digest: "sha256:abc123..."
 ```
 
 ### Template with Security Contexts
@@ -158,20 +158,20 @@ image:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "mychart.fullname" . }}
+ name: {{ include "mychart.fullname" . }}
 spec:
-  template:
-    spec:
-      automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
-      securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      containers:
-        - name: {{ .Chart.Name }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+ template:
+ spec:
+ automountServiceAccountToken: {{ .Values.serviceAccount.automountServiceAccountToken }}
+ securityContext:
+ {{- toYaml .Values.podSecurityContext | nindent 8 }}
+ containers:
+ - name: {{ .Chart.Name }}
+ securityContext:
+ {{- toYaml .Values.securityContext | nindent 12 }}
+ image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+ resources:
+ {{- toYaml .Values.resources | nindent 12 }}
 ```
 
 ## Secrets Management
@@ -183,19 +183,19 @@ spec:
 apiVersion: external-secrets.io/v1beta1
 kind: ExternalSecret
 metadata:
-  name: {{ include "mychart.fullname" . }}-secrets
+ name: {{ include "mychart.fullname" . }}-secrets
 spec:
-  refreshInterval: 1h
-  secretStoreRef:
-    name: aws-secretsmanager
-    kind: ClusterSecretStore
-  target:
-    name: {{ include "mychart.fullname" . }}-secrets
-  data:
-    - secretKey: db-password
-      remoteRef:
-        key: production/database
-        property: password
+ refreshInterval: 1h
+ secretStoreRef:
+ name: aws-secretsmanager
+ kind: ClusterSecretStore
+ target:
+ name: {{ include "mychart.fullname" . }}-secrets
+ data:
+ - secretKey: db-password
+ remoteRef:
+ key: production/database
+ property: password
 ```
 
 ### helm-secrets Plugin
@@ -221,30 +221,30 @@ helm secrets edit values-secrets.yaml
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: helm-deployer
-  namespace: production
+ name: helm-deployer
+ namespace: production
 rules:
-  - apiGroups: ["", "apps", "batch", "networking.k8s.io"]
-    resources: ["deployments", "services", "configmaps", "secrets", "ingresses", "jobs"]
-    verbs: ["get", "list", "create", "update", "patch", "delete"]
-  - apiGroups: [""]
-    resources: ["pods", "pods/log"]
-    verbs: ["get", "list"]
+ - apiGroups: ["", "apps", "batch", "networking.k8s.io"]
+ resources: ["deployments", "services", "configmaps", "secrets", "ingresses", "jobs"]
+ verbs: ["get", "list", "create", "update", "patch", "delete"]
+ - apiGroups: [""]
+ resources: ["pods", "pods/log"]
+ verbs: ["get", "list"]
 
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: helm-deployer-binding
-  namespace: production
+ name: helm-deployer-binding
+ namespace: production
 subjects:
-  - kind: ServiceAccount
-    name: helm-deployer
-    namespace: production
+ - kind: ServiceAccount
+ name: helm-deployer
+ namespace: production
 roleRef:
-  kind: Role
-  name: helm-deployer
-  apiGroup: rbac.authorization.k8s.io
+ kind: Role
+ name: helm-deployer
+ apiGroup: rbac.authorization.k8s.io
 ```
 
 ## CI/CD Helm Security Pipeline
@@ -253,37 +253,37 @@ roleRef:
 # .github/workflows/helm-security.yaml
 name: Helm Chart Security
 on:
-  pull_request:
-    paths: ['charts/**']
+ pull_request:
+ paths: ['charts/**']
 
 jobs:
-  lint-and-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ lint-and-scan:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Helm lint
-        run: helm lint ./charts/mychart --strict
+ - name: Helm lint
+ run: helm lint ./charts/mychart --strict
 
-      - name: Render templates
-        run: helm template test ./charts/mychart -f charts/mychart/values.yaml > rendered.yaml
+ - name: Render templates
+ run: helm template test ./charts/mychart -f charts/mychart/values.yaml > rendered.yaml
 
-      - name: Scan with kube-linter
-        uses: stackrox/kube-linter-action@v1
-        with:
-          directory: rendered.yaml
+ - name: Scan with kube-linter
+ uses: stackrox/kube-linter-action@v1
+ with:
+ directory: rendered.yaml
 
-      - name: Scan with trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: config
-          scan-ref: rendered.yaml
+ - name: Scan with trivy
+ uses: aquasecurity/trivy-action@master
+ with:
+ scan-type: config
+ scan-ref: rendered.yaml
 
-      - name: Scan with checkov
-        uses: bridgecrewio/checkov-action@master
-        with:
-          file: rendered.yaml
-          framework: kubernetes
+ - name: Scan with checkov
+ uses: bridgecrewio/checkov-action@master
+ with:
+ file: rendered.yaml
+ framework: kubernetes
 ```
 
 ## Best Practices

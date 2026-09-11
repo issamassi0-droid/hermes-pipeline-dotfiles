@@ -1,12 +1,12 @@
 ---
 name: building-incident-response-dashboard
 description: 'Builds real-time incident response dashboards in Splunk, Elastic, or
-  Grafana to provide SOC analysts and leadership with situational awareness during
-  active incidents, tracking affected systems, containment status, IOC spread, and
-  response timeline. Use when IR teams need unified visibility during incident coordination
-  and post-incident reporting.
+ Grafana to provide SOC analysts and leadership with situational awareness during
+ active incidents, tracking affected systems, containment status, IOC spread, and
+ response timeline. Use when IR teams need unified visibility during incident coordination
+ and post-incident reporting.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -60,29 +60,29 @@ Build a Splunk Dashboard Studio dashboard for active incident tracking:
 
 ```xml
 <dashboard version="2" theme="dark">
-  <label>Active Incident Response Dashboard</label>
-  <description>Real-time tracking for IR-2024-0450</description>
+ <label>Active Incident Response Dashboard</label>
+ <description>Real-time tracking for IR-2024-0450</description>
 
-  <row>
-    <panel>
-      <title>Incident Summary</title>
-      <single>
-        <search>
-          <query>
+ <row>
+ <panel>
+ <title>Incident Summary</title>
+ <single>
+ <search>
+ <query>
 | makeresults
 | eval incident_id="IR-2024-0450",
-       status="CONTAINMENT",
-       severity="Critical",
-       affected_hosts=7,
-       contained_hosts=5,
-       iocs_identified=23,
-       hours_elapsed=round((now()-strptime("2024-03-15 14:00","%Y-%m-%d %H:%M"))/3600,1)
+ status="CONTAINMENT",
+ severity="Critical",
+ affected_hosts=7,
+ contained_hosts=5,
+ iocs_identified=23,
+ hours_elapsed=round((now()-strptime("2024-03-15 14:00","%Y-%m-%d %H:%M"))/3600,1)
 | table incident_id, status, severity, affected_hosts, contained_hosts, iocs_identified, hours_elapsed
-          </query>
-        </search>
-      </single>
-    </panel>
-  </row>
+ </query>
+ </search>
+ </single>
+ </panel>
+ </row>
 </dashboard>
 ```
 
@@ -93,15 +93,15 @@ Track affected systems and their containment status:
 ```spl
 | inputlookup ir_affected_systems.csv
 | eval status_color = case(
-    status="Contained", "#2ecc71",
-    status="Compromised", "#e74c3c",
-    status="Investigating", "#f39c12",
-    status="Recovered", "#3498db",
-    1=1, "#95a5a6"
-  )
+ status="Contained", "#2ecc71",
+ status="Compromised", "#e74c3c",
+ status="Investigating", "#f39c12",
+ status="Recovered", "#3498db",
+ 1=1, "#95a5a6"
+ )
 | stats count by status
 | eval order = case(status="Compromised", 1, status="Investigating", 2,
-                    status="Contained", 3, status="Recovered", 4)
+ status="Contained", 3, status="Recovered", 4)
 | sort order
 | table status, count
 
@@ -109,7 +109,7 @@ Track affected systems and their containment status:
 | inputlookup ir_affected_systems.csv
 | lookup asset_lookup_by_cidr ip AS host_ip OUTPUT category, owner, priority
 | table hostname, host_ip, category, owner, status, containment_time,
-        compromise_vector, analyst_assigned
+ compromise_vector, analyst_assigned
 | sort status, hostname
 ```
 
@@ -120,12 +120,12 @@ Monitor IOC spread across the environment:
 ```spl
 --- IOCs identified during incident
 index=* (src_ip IN ("185.234.218.50", "45.77.123.45") OR
-         dest IN ("evil-c2.com", "malware-drop.com") OR
-         file_hash IN ("a1b2c3d4...", "e5f6a7b8..."))
+ dest IN ("evil-c2.com", "malware-drop.com") OR
+ file_hash IN ("a1b2c3d4...", "e5f6a7b8..."))
 earliest="2024-03-14"
 | stats count AS hits, dc(src_ip) AS unique_sources,
-        dc(dest) AS unique_dests, latest(_time) AS last_seen
-  by sourcetype
+ dc(dest) AS unique_dests, latest(_time) AS last_seen
+ by sourcetype
 | sort - hits
 
 --- IOC timeline
@@ -148,20 +148,20 @@ Create chronological incident timeline:
 | inputlookup ir_timeline.csv
 | sort _time
 | eval phase = case(
-    action_type="detection", "Detection",
-    action_type="triage", "Triage",
-    action_type="containment", "Containment",
-    action_type="eradication", "Eradication",
-    action_type="recovery", "Recovery",
-    1=1, "Other"
-  )
+ action_type="detection", "Detection",
+ action_type="triage", "Triage",
+ action_type="containment", "Containment",
+ action_type="eradication", "Eradication",
+ action_type="recovery", "Recovery",
+ 1=1, "Other"
+ )
 | eval phase_color = case(
-    phase="Detection", "#e74c3c",
-    phase="Triage", "#f39c12",
-    phase="Containment", "#e67e22",
-    phase="Eradication", "#2ecc71",
-    phase="Recovery", "#3498db"
-  )
+ phase="Detection", "#e74c3c",
+ phase="Triage", "#f39c12",
+ phase="Containment", "#e67e22",
+ phase="Eradication", "#2ecc71",
+ phase="Recovery", "#3498db"
+ )
 | table _time, phase, action, analyst, details
 ```
 
@@ -187,14 +187,14 @@ Track overall SOC performance metrics:
 index=notable earliest=-30d
 | stats count by urgency
 | eval order = case(urgency="critical", 1, urgency="high", 2, urgency="medium", 3,
-                    urgency="low", 4, urgency="informational", 5)
+ urgency="low", 4, urgency="informational", 5)
 | sort order
 
 --- MTTD (Mean Time to Detect)
 index=notable earliest=-30d status_label="Resolved*"
 | eval mttd_minutes = round((time_of_first_event - orig_time) / 60, 1)
 | stats avg(mttd_minutes) AS avg_mttd, median(mttd_minutes) AS med_mttd,
-        perc95(mttd_minutes) AS p95_mttd
+ perc95(mttd_minutes) AS p95_mttd
 
 --- MTTR (Mean Time to Respond/Resolve)
 index=notable earliest=-30d status_label="Resolved*"
@@ -221,10 +221,10 @@ Create a high-level dashboard for leadership during major incidents:
 --- Executive summary panel
 | makeresults
 | eval metrics = "Business Impact: 1 file server offline (Finance dept), "
-                ."Estimated Recovery: 4 hours, "
-                ."Data Loss Risk: Low (backups verified), "
-                ."Customer Impact: None, "
-                ."Regulatory Notification: Not required (no PII exposure confirmed)"
+ ."Estimated Recovery: 4 hours, "
+ ."Data Loss Risk: Low (backups verified), "
+ ."Customer Impact: None, "
+ ."Regulatory Notification: Not required (no PII exposure confirmed)"
 
 --- Trend comparison (this month vs last month)
 index=notable earliest=-60d
@@ -245,10 +245,10 @@ Use Splunk scheduled searches to maintain dashboard data:
 ```spl
 --- Scheduled search to update affected systems lookup (runs every 5 minutes)
 index=* (src_ip IN [| inputlookup ir_ioc_list.csv | search ioc_type="ip"
-                    | fields ioc_value | rename ioc_value AS src_ip])
+ | fields ioc_value | rename ioc_value AS src_ip])
 earliest=-1h
 | stats latest(_time) AS last_seen, count AS event_count,
-        values(sourcetype) AS data_sources by src_ip
+ values(sourcetype) AS data_sources by src_ip
 | eval status = if(last_seen > relative_time(now(), "-15m"), "Active", "Dormant")
 | outputlookup ir_affected_systems_auto.csv
 ```
@@ -288,23 +288,23 @@ INCIDENT RESPONSE DASHBOARD — IR-2024-0450
 
 STATUS: CONTAINMENT PHASE (6h 30m elapsed)
 
-Affected Systems:          Containment Progress:
-  Compromised:   2         [==========----------] 71%
-  Investigating: 1         5 of 7 systems contained
-  Contained:     3
-  Recovered:     1
+Affected Systems: Containment Progress:
+ Compromised: 2 [==========----------] 71%
+ Investigating: 1 5 of 7 systems contained
+ Contained: 3
+ Recovered: 1
 
-IOC Summary:               Response Timeline:
-  IPs:      4              14:00 — Alert triggered
-  Domains:  2              14:12 — Confirmed malicious
-  Hashes:   3              14:23 — First host isolated
-  URLs:     5              15:00 — Enterprise scan started
-  Emails:   1              15:30 — 3 more hosts isolated
+IOC Summary: Response Timeline:
+ IPs: 4 14:00 — Alert triggered
+ Domains: 2 14:12 — Confirmed malicious
+ Hashes: 3 14:23 — First host isolated
+ URLs: 5 15:00 — Enterprise scan started
+ Emails: 1 15:30 — 3 more hosts isolated
 
 Key Metrics:
-  MTTD:    12 minutes
-  MTTC:    23 minutes (first host)
-  Analysts Active: 3 (Tier 2: 2, Tier 3: 1)
+ MTTD: 12 minutes
+ MTTC: 23 minutes (first host)
+ Analysts Active: 3 (Tier 2: 2, Tier 3: 1)
 
 Business Impact: LOW — Finance file server offline, no customer-facing systems affected
 ```

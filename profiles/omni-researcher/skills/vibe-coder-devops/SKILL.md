@@ -1,10 +1,10 @@
 ---
 name: devops
 description: |
-  DevOps essentials: Docker, CI/CD pipelines, deployment strategies.
-  Use when: containerizing apps, setting up CI/CD, deploying to production.
-  Triggers: "docker", "dockerfile", "ci/cd", "github actions", "deploy",
-  "kubernetes", "compose", "container", "pipeline".
+ DevOps essentials: Docker, CI/CD pipelines, deployment strategies.
+ Use when: containerizing apps, setting up CI/CD, deploying to production.
+ Triggers: "docker", "dockerfile", "ci/cd", "github actions", "deploy",
+ "kubernetes", "compose", "container", "pipeline".
 ---
 
 # DevOps Essentials
@@ -111,38 +111,38 @@ CMD ["myapp"]
 ```yaml
 # docker-compose.yml
 services:
-  api:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - DATABASE_URL=postgres://user:pass@db:5432/app
-    depends_on:
-      db:
-        condition: service_healthy
+ api:
+ build: .
+ ports:
+ - "3000:3000"
+ environment:
+ - DATABASE_URL=postgres://user:pass@db:5432/app
+ depends_on:
+ db:
+ condition: service_healthy
 
-  db:
-    image: postgres:16-alpine
-    environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: app
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U user -d app"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+ db:
+ image: postgres:16-alpine
+ environment:
+ POSTGRES_USER: user
+ POSTGRES_PASSWORD: pass
+ POSTGRES_DB: app
+ volumes:
+ - postgres_data:/var/lib/postgresql/data
+ healthcheck:
+ test: ["CMD-SHELL", "pg_isready -U user -d app"]
+ interval: 5s
+ timeout: 5s
+ retries: 5
 
-  redis:
-    image: redis:7-alpine
-    volumes:
-      - redis_data:/data
+ redis:
+ image: redis:7-alpine
+ volumes:
+ - redis_data:/data
 
 volumes:
-  postgres_data:
-  redis_data:
+ postgres_data:
+ redis_data:
 ```
 
 ## GitHub Actions
@@ -154,57 +154,57 @@ volumes:
 name: CI
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+ push:
+ branches: [main]
+ pull_request:
+ branches: [main]
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ test:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'pnpm'
+ - uses: actions/setup-node@v4
+ with:
+ node-version: 20
+ cache: 'pnpm'
 
-      - run: pnpm install
-      - run: pnpm lint
-      - run: pnpm test
-      - run: pnpm build
+ - run: pnpm install
+ - run: pnpm lint
+ - run: pnpm test
+ - run: pnpm build
 ```
 
 ### With Database
 
 ```yaml
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+ test:
+ runs-on: ubuntu-latest
+ services:
+ postgres:
+ image: postgres:16
+ env:
+ POSTGRES_USER: test
+ POSTGRES_PASSWORD: test
+ POSTGRES_DB: test
+ ports:
+ - 5432:5432
+ options: >-
+ --health-cmd pg_isready
+ --health-interval 10s
+ --health-timeout 5s
+ --health-retries 5
 
-    env:
-      DATABASE_URL: postgres://test:test@localhost:5432/test
+ env:
+ DATABASE_URL: postgres://test:test@localhost:5432/test
 
-    steps:
-      - uses: actions/checkout@v4
-      - run: pnpm install
-      - run: pnpm db:migrate
-      - run: pnpm test
+ steps:
+ - uses: actions/checkout@v4
+ - run: pnpm install
+ - run: pnpm db:migrate
+ - run: pnpm test
 ```
 
 ### Deploy to Fly.io
@@ -214,42 +214,42 @@ jobs:
 name: Deploy
 
 on:
-  push:
-    branches: [main]
+ push:
+ branches: [main]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ deploy:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - uses: superfly/flyctl-actions/setup-flyctl@master
+ - uses: superfly/flyctl-actions/setup-flyctl@master
 
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+ - run: flyctl deploy --remote-only
+ env:
+ FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 ```
 
 ### Docker Build & Push
 
 ```yaml
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ build:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+ - uses: docker/login-action@v3
+ with:
+ registry: ghcr.io
+ username: ${{ github.actor }}
+ password: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+ - uses: docker/build-push-action@v5
+ with:
+ context: .
+ push: true
+ tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
 ```
 
 ## Quick Reference
@@ -280,12 +280,12 @@ docker volume prune -f
 ### Fly.io Commands
 
 ```bash
-fly launch              # Initialize
-fly deploy              # Deploy
-fly logs                # View logs
-fly ssh console         # SSH into container
+fly launch # Initialize
+fly deploy # Deploy
+fly logs # View logs
+fly ssh console # SSH into container
 fly secrets set KEY=val # Set env vars
-fly scale count 2       # Scale instances
+fly scale count 2 # Scale instances
 ```
 
 ## Anti-patterns

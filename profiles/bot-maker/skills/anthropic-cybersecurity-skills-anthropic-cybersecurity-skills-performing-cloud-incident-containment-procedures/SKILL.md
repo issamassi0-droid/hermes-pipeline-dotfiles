@@ -1,10 +1,10 @@
 ---
 name: performing-cloud-incident-containment-procedures
 description: Execute cloud-native incident containment across AWS, Azure, and GCP using platform
-  CLIs to revoke or disable compromised IAM credentials, isolate resources with security groups
-  and network ACLs, and preserve forensic evidence via snapshots. Use when responding to a cloud
-  security incident that requires stopping lateral movement while keeping evidence intact for
-  later investigation.
+ CLIs to revoke or disable compromised IAM credentials, isolate resources with security groups
+ and network ACLs, and preserve forensic evidence via snapshots. Use when responding to a cloud
+ security incident that requires stopping lateral movement while keeping evidence intact for
+ later investigation.
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -66,7 +66,7 @@ Cloud incident containment requires cloud-native approaches that differ signific
 ```bash
 # Disable compromised IAM user access keys
 aws iam update-access-key --user-name compromised-user \
-  --access-key-id AKIA... --status Inactive
+ --access-key-id AKIA... --status Inactive
 
 # List and disable all access keys for user
 aws iam list-access-keys --user-name compromised-user
@@ -74,34 +74,34 @@ aws iam delete-access-key --user-name compromised-user --access-key-id AKIA...
 
 # Attach deny-all policy to compromised user
 aws iam put-user-policy --user-name compromised-user \
-  --policy-name DenyAll \
-  --policy-document '{
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Effect": "Deny",
-      "Action": "*",
-      "Resource": "*"
-    }]
-  }'
+ --policy-name DenyAll \
+ --policy-document '{
+ "Version": "2012-10-17",
+ "Statement": [{
+ "Effect": "Deny",
+ "Action": "*",
+ "Resource": "*"
+ }]
+ }'
 
 # Revoke all active sessions for IAM role
 aws iam put-role-policy --role-name compromised-role \
-  --policy-name RevokeOldSessions \
-  --policy-document '{
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Effect": "Deny",
-      "Action": "*",
-      "Resource": "*",
-      "Condition": {
-        "DateLessThan": {"aws:TokenIssueTime": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
-      }
-    }]
-  }'
+ --policy-name RevokeOldSessions \
+ --policy-document '{
+ "Version": "2012-10-17",
+ "Statement": [{
+ "Effect": "Deny",
+ "Action": "*",
+ "Resource": "*",
+ "Condition": {
+ "DateLessThan": {"aws:TokenIssueTime": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+ }
+ }]
+ }'
 
 # Invalidate temporary credentials by updating role trust policy
 aws iam update-assume-role-policy --role-name compromised-role \
-  --policy-document '{"Version":"2012-10-17","Statement":[]}'
+ --policy-document '{"Version":"2012-10-17","Statement":[]}'
 ```
 
 ### 2. EC2 Instance Isolation
@@ -109,29 +109,29 @@ aws iam update-assume-role-policy --role-name compromised-role \
 ```bash
 # Create quarantine security group (no inbound, no outbound)
 aws ec2 create-security-group --group-name quarantine-sg \
-  --description "Quarantine - No traffic allowed" --vpc-id vpc-xxxxx
+ --description "Quarantine - No traffic allowed" --vpc-id vpc-xxxxx
 
 # Remove all rules from quarantine SG (default allows outbound)
 aws ec2 revoke-security-group-egress --group-id sg-quarantine \
-  --ip-permissions '[{"IpProtocol":"-1","FromPort":-1,"ToPort":-1,"IpRanges":[{"CidrIp":"0.0.0.0/0"}]}]'
+ --ip-permissions '[{"IpProtocol":"-1","FromPort":-1,"ToPort":-1,"IpRanges":[{"CidrIp":"0.0.0.0/0"}]}]'
 
 # Take forensic snapshot BEFORE containment
 aws ec2 create-snapshot --volume-id vol-xxxxx \
-  --description "Forensic snapshot - IR Case 2025-001" \
-  --tag-specifications 'ResourceType=snapshot,Tags=[{Key=IR-Case,Value=2025-001}]'
+ --description "Forensic snapshot - IR Case 2025-001" \
+ --tag-specifications 'ResourceType=snapshot,Tags=[{Key=IR-Case,Value=2025-001}]'
 
 # Apply quarantine security group to compromised instance
 aws ec2 modify-instance-attribute --instance-id i-xxxxx \
-  --groups sg-quarantine
+ --groups sg-quarantine
 
 # Tag instance as compromised
 aws ec2 create-tags --resources i-xxxxx \
-  --tags Key=IR-Status,Value=Contained Key=IR-Case,Value=2025-001
+ --tags Key=IR-Status,Value=Contained Key=IR-Case,Value=2025-001
 
 # Capture memory (if SSM agent available)
 aws ssm send-command --instance-ids i-xxxxx \
-  --document-name "AWS-RunShellScript" \
-  --parameters 'commands=["dd if=/dev/mem of=/tmp/memory.dump bs=1M"]'
+ --document-name "AWS-RunShellScript" \
+ --parameters 'commands=["dd if=/dev/mem of=/tmp/memory.dump bs=1M"]'
 ```
 
 ### 3. S3 Bucket Containment
@@ -139,32 +139,32 @@ aws ssm send-command --instance-ids i-xxxxx \
 ```bash
 # Block all public access
 aws s3api put-public-access-block --bucket compromised-bucket \
-  --public-access-block-configuration \
-  BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+ --public-access-block-configuration \
+ BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
 
 # Apply deny policy to bucket
 aws s3api put-bucket-policy --bucket compromised-bucket \
-  --policy '{
-    "Version": "2012-10-17",
-    "Statement": [{
-      "Sid": "DenyAllExceptForensics",
-      "Effect": "Deny",
-      "NotPrincipal": {"AWS": "arn:aws:iam::ACCOUNT:role/IR-Forensics"},
-      "Action": "s3:*",
-      "Resource": ["arn:aws:s3:::compromised-bucket","arn:aws:s3:::compromised-bucket/*"]
-    }]
-  }'
+ --policy '{
+ "Version": "2012-10-17",
+ "Statement": [{
+ "Sid": "DenyAllExceptForensics",
+ "Effect": "Deny",
+ "NotPrincipal": {"AWS": "arn:aws:iam::ACCOUNT:role/IR-Forensics"},
+ "Action": "s3:*",
+ "Resource": ["arn:aws:s3:::compromised-bucket","arn:aws:s3:::compromised-bucket/*"]
+ }]
+ }'
 
 # Enable versioning to preserve evidence
 aws s3api put-bucket-versioning --bucket compromised-bucket \
-  --versioning-configuration Status=Enabled
+ --versioning-configuration Status=Enabled
 
 # Enable Object Lock for evidence preservation
 aws s3api put-object-lock-configuration --bucket evidence-bucket \
-  --object-lock-configuration '{
-    "ObjectLockEnabled": "Enabled",
-    "Rule": {"DefaultRetention": {"Mode": "COMPLIANCE", "Days": 365}}
-  }'
+ --object-lock-configuration '{
+ "ObjectLockEnabled": "Enabled",
+ "Rule": {"DefaultRetention": {"Mode": "COMPLIANCE", "Days": 365}}
+ }'
 ```
 
 ### 4. Lambda Function Containment
@@ -172,7 +172,7 @@ aws s3api put-object-lock-configuration --bucket evidence-bucket \
 ```bash
 # Set reserved concurrency to 0 (stops all invocations)
 aws lambda put-function-concurrency --function-name compromised-function \
-  --reserved-concurrent-executions 0
+ --reserved-concurrent-executions 0
 
 # Remove all event source mappings
 aws lambda list-event-source-mappings --function-name compromised-function
@@ -192,7 +192,7 @@ Set-AzureADUser -ObjectId "user-object-id" -AccountEnabled $false
 
 # Reset user password
 Set-AzureADUserPassword -ObjectId "user-object-id" -Password (
-  ConvertTo-SecureString "TempP@ss!" -AsPlainText -Force
+ ConvertTo-SecureString "TempP@ss!" -AsPlainText -Force
 ) -ForceChangePasswordNextLogin $true
 
 # Block sign-in via Conditional Access (emergency policy)
@@ -200,7 +200,7 @@ Set-AzureADUserPassword -ObjectId "user-object-id" -Password (
 
 # Revoke Azure AD application consent
 Remove-AzureADServiceAppRoleAssignment -ObjectId "sp-object-id" \
-  -AppRoleAssignmentId "assignment-id"
+ -AppRoleAssignmentId "assignment-id"
 ```
 
 ### 2. VM Isolation
@@ -208,22 +208,22 @@ Remove-AzureADServiceAppRoleAssignment -ObjectId "sp-object-id" \
 ```powershell
 # Create Network Security Group with deny-all rules
 $nsg = New-AzNetworkSecurityGroup -ResourceGroupName "rg" -Location "eastus" `
-  -Name "quarantine-nsg" `
-  -SecurityRules @(
-    New-AzNetworkSecurityRuleConfig -Name "DenyAllInbound" -Protocol * `
-      -Direction Inbound -Priority 100 -SourceAddressPrefix * `
-      -SourcePortRange * -DestinationAddressPrefix * `
-      -DestinationPortRange * -Access Deny,
-    New-AzNetworkSecurityRuleConfig -Name "DenyAllOutbound" -Protocol * `
-      -Direction Outbound -Priority 100 -SourceAddressPrefix * `
-      -SourcePortRange * -DestinationAddressPrefix * `
-      -DestinationPortRange * -Access Deny
-  )
+ -Name "quarantine-nsg" `
+ -SecurityRules @(
+ New-AzNetworkSecurityRuleConfig -Name "DenyAllInbound" -Protocol * `
+ -Direction Inbound -Priority 100 -SourceAddressPrefix * `
+ -SourcePortRange * -DestinationAddressPrefix * `
+ -DestinationPortRange * -Access Deny,
+ New-AzNetworkSecurityRuleConfig -Name "DenyAllOutbound" -Protocol * `
+ -Direction Outbound -Priority 100 -SourceAddressPrefix * `
+ -SourcePortRange * -DestinationAddressPrefix * `
+ -DestinationPortRange * -Access Deny
+ )
 
 # Take disk snapshot for forensics
 $vm = Get-AzVM -ResourceGroupName "rg" -Name "compromised-vm"
 $snapshotConfig = New-AzSnapshotConfig -SourceUri $vm.StorageProfile.OsDisk.ManagedDisk.Id `
-  -Location "eastus" -CreateOption Copy
+ -Location "eastus" -CreateOption Copy
 New-AzSnapshot -ResourceGroupName "rg" -SnapshotName "forensic-snap" -Snapshot $snapshotConfig
 
 # Apply quarantine NSG to VM NIC
@@ -237,7 +237,7 @@ Set-AzNetworkInterface -NetworkInterface $nic
 ```powershell
 # Remove network access
 Update-AzStorageAccountNetworkRuleSet -ResourceGroupName "rg" `
-  -Name "storageaccount" -DefaultAction Deny
+ -Name "storageaccount" -DefaultAction Deny
 
 # Regenerate access keys
 New-AzStorageAccountKey -ResourceGroupName "rg" -Name "storageaccount" -KeyName key1
@@ -270,21 +270,21 @@ gcloud iam service-accounts keys delete KEY_ID --iam-account SA_EMAIL
 ```bash
 # Create forensic snapshot
 gcloud compute disks snapshot compromised-disk \
-  --snapshot-names forensic-snap-$(date +%Y%m%d) \
-  --zone us-central1-a
+ --snapshot-names forensic-snap-$(date +%Y%m%d) \
+ --zone us-central1-a
 
 # Apply firewall rule to deny all traffic
 gcloud compute firewall-rules create quarantine-deny-all \
-  --network default --action DENY --rules all \
-  --target-tags quarantine --priority 0
+ --network default --action DENY --rules all \
+ --target-tags quarantine --priority 0
 
 # Tag compromised instance
 gcloud compute instances add-tags compromised-instance \
-  --tags quarantine --zone us-central1-a
+ --tags quarantine --zone us-central1-a
 
 # Remove external IP
 gcloud compute instances delete-access-config compromised-instance \
-  --access-config-name "External NAT" --zone us-central1-a
+ --access-config-name "External NAT" --zone us-central1-a
 ```
 
 ## Evidence Preservation Best Practices

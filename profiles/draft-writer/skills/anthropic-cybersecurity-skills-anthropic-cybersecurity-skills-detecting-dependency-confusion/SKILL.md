@@ -41,15 +41,15 @@ This skill covers both halves of the problem: **detection** — enumerating inte
 ## Prerequisites
 
 - Go 1.20+ to install `confused`:
-  ```bash
-  go install github.com/visma-prodsec/confused@latest
-  # binary lands in $(go env GOPATH)/bin/confused
-  ```
+ ```bash
+ go install github.com/visma-prodsec/confused@latest
+ # binary lands in $(go env GOPATH)/bin/confused
+ ```
 - Python 3.10+ for OWASP dep-scan:
-  ```bash
-  pip install owasp-depscan
-  # or container: docker pull ghcr.io/owasp-dep-scan/dep-scan
-  ```
+ ```bash
+ pip install owasp-depscan
+ # or container: docker pull ghcr.io/owasp-dep-scan/dep-scan
+ ```
 - Node.js + npm (for `.npmrc` and `npm config` remediation) and access to your private registry (Artifactory, Nexus, Azure Artifacts, GitHub Packages, AWS CodeArtifact).
 - Read access to the repositories / lockfiles being assessed and write access to your private registry for defensive registration.
 
@@ -78,11 +78,11 @@ Locate every dependency manifest so nothing is missed.
 ```bash
 # Find all supported manifests in a monorepo
 find . -type f \( \
-  -name package.json -o \
-  -name requirements.txt -o \
-  -name pom.xml -o \
-  -name composer.json -o \
-  -name Gemfile.lock \
+ -name package.json -o \
+ -name requirements.txt -o \
+ -name pom.xml -o \
+ -name composer.json -o \
+ -name Gemfile.lock \
 \) -not -path '*/node_modules/*' -print
 ```
 
@@ -102,10 +102,10 @@ confused -l npm -v package.json
 ### 3. Scan PyPI, Maven, Composer, and RubyGems manifests
 The `-l` flag selects the ecosystem; each maps to its standard manifest file.
 ```bash
-confused -l pip requirements.txt          # PyPI  -> requirements.txt
-confused -l mvn pom.xml                    # Maven -> pom.xml
-confused -l composer composer.json        # PHP   -> composer.json
-confused -l rubygems Gemfile.lock         # Ruby  -> Gemfile.lock
+confused -l pip requirements.txt # PyPI -> requirements.txt
+confused -l mvn pom.xml # Maven -> pom.xml
+confused -l composer composer.json # PHP -> composer.json
+confused -l rubygems Gemfile.lock # Ruby -> Gemfile.lock
 ```
 
 ### 4. Cross-check with OWASP dep-scan private-namespace mode
@@ -113,7 +113,7 @@ dep-scan confirms confusion exposure for declared private namespaces and folds i
 ```bash
 # Flag private namespaces accidentally claimable on public registries
 depscan --src $PWD --reports-dir ./reports \
-  --private-ns acme,acme_internal,@acme
+ --private-ns acme,acme_internal,@acme
 
 # Enable deep package risk audit (npm + pypi): typosquats, takeover risk, etc.
 depscan --src $PWD --reports-dir ./reports --risk-audit
@@ -142,7 +142,7 @@ registry=https://artifactory.example.com/api/npm/npm-virtual/
 Verify the resolution source before installing:
 ```bash
 npm config get @acme:registry
-npm install --dry-run   # confirm @acme/* resolves from the private host
+npm install --dry-run # confirm @acme/* resolves from the private host
 ```
 
 ### 7. Remediate PyPI and Maven
@@ -156,11 +156,11 @@ index-url = "https://artifactory.example.com/api/pypi/pypi-internal/simple/"
 ```xml
 <!-- ~/.m2/settings.xml: mirror everything through a single virtual repo -->
 <mirrors>
-  <mirror>
-    <id>internal-virtual</id>
-    <mirrorOf>*</mirrorOf>
-    <url>https://artifactory.example.com/artifactory/maven-virtual</url>
-  </mirror>
+ <mirror>
+ <id>internal-virtual</id>
+ <mirrorOf>*</mirrorOf>
+ <url>https://artifactory.example.com/artifactory/maven-virtual</url>
+ </mirror>
 </mirrors>
 ```
 
@@ -181,23 +181,23 @@ Fail the pipeline if any new confusable dependency appears.
 name: dependency-confusion
 on: [push, pull_request]
 jobs:
-  confused:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with: { go-version: '1.22' }
-      - run: go install github.com/visma-prodsec/confused@latest
-      - name: Scan npm manifest
-        run: $(go env GOPATH)/bin/confused -l npm -s '@acme/*' package.json
+ confused:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - uses: actions/setup-go@v5
+ with: { go-version: '1.22' }
+ - run: go install github.com/visma-prodsec/confused@latest
+ - name: Scan npm manifest
+ run: $(go env GOPATH)/bin/confused -l npm -s '@acme/*' package.json
 ```
 
 ### 10. Run the bundled helper for batch triage
 Use the included `agent.py` to scan a tree and emit a structured report combining `confused` and live registry probes.
 ```bash
 python scripts/agent.py --path . --ecosystem npm \
-  --secure-namespaces '@acme/*,@acme-internal/*' \
-  --output report.json
+ --secure-namespaces '@acme/*,@acme-internal/*' \
+ --output report.json
 ```
 
 ## Tools and Resources

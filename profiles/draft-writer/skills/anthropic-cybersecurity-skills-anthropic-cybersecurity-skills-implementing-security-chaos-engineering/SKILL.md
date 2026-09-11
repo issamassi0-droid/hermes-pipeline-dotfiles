@@ -1,12 +1,12 @@
 ---
 name: implementing-security-chaos-engineering
 description: 'Implements security chaos engineering experiments that deliberately
-  disable or degrade security controls to verify detection and response capabilities.
-  Tests WAF bypass, firewall rule removal, log pipeline disruption, and EDR disablement
-  scenarios using boto3 and subprocess. Use when validating SOC detection coverage
-  and resilience.
+ disable or degrade security controls to verify detection and response capabilities.
+ Tests WAF bypass, firewall rule removal, log pipeline disruption, and EDR disablement
+ scenarios using boto3 and subprocess. Use when validating SOC detection coverage
+ and resilience.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -68,9 +68,9 @@ ec2 = boto3.client("ec2")
 
 # Chaos experiment: temporarily add 0.0.0.0/0 rule
 ec2.authorize_security_group_ingress(
-    GroupId="sg-12345",
-    IpProtocol="tcp", FromPort=22, ToPort=22,
-    CidrIp="0.0.0.0/0",
+ GroupId="sg-12345",
+ IpProtocol="tcp", FromPort=22, ToPort=22,
+ CidrIp="0.0.0.0/0",
 )
 # Verify: does GuardDuty/Config alert fire within SLA?
 # Rollback: remove the rule after verification
@@ -88,10 +88,10 @@ Key experiments:
 ```python
 # Rollback function for safe experiment execution
 def run_experiment(setup_fn, verify_fn, rollback_fn, timeout=300):
-    try:
-        setup_fn()
-        result = verify_fn(timeout)
-    finally:
-        rollback_fn()
-    return result
+ try:
+ setup_fn()
+ result = verify_fn(timeout)
+ finally:
+ rollback_fn()
+ return result
 ```

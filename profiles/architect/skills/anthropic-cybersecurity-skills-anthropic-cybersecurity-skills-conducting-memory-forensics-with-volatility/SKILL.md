@@ -1,13 +1,13 @@
 ---
 name: conducting-memory-forensics-with-volatility
 description: 'Performs memory forensics analysis using Volatility 3 to extract evidence
-  of malware execution, process injection, network connections, and credential theft
-  from RAM dumps captured during incident response. Covers memory acquisition, process
-  analysis, DLL inspection, and malware detection. Activates for requests involving
-  memory forensics, RAM analysis, Volatility framework, memory dump investigation,
-  volatile evidence analysis, or live memory acquisition.
+ of malware execution, process injection, network connections, and credential theft
+ from RAM dumps captured during incident response. Covers memory acquisition, process
+ analysis, DLL inspection, and malware detection. Activates for requests involving
+ memory forensics, RAM analysis, Volatility framework, memory dump investigation,
+ volatile evidence analysis, or live memory acquisition.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -85,14 +85,14 @@ Document acquisition metadata:
 ```
 Acquisition Record:
 ━━━━━━━━━━━━━━━━━
-Target Host:      WKSTN-042
-RAM Size:         16 GB
-Dump File:        WKSTN-042_20251115_1445.raw
-Dump Size:        16,843,612,160 bytes
-SHA-256:          a4b3c2d1e5f6...
+Target Host: WKSTN-042
+RAM Size: 16 GB
+Dump File: WKSTN-042_20251115_1445.raw
+Dump Size: 16,843,612,160 bytes
+SHA-256: a4b3c2d1e5f6...
 Acquisition Tool: WinPmem 4.0
-Acquired By:      [Analyst Name]
-Timestamp:        2025-11-15T14:45:00Z
+Acquired By: [Analyst Name]
+Timestamp: 2025-11-15T14:45:00Z
 ```
 
 ### Step 2: Identify the Operating System and Profile
@@ -144,8 +144,8 @@ Extract active and recently closed network connections:
 vol -f memory.raw windows.netscan
 
 # Focus output fields:
-# Offset    Proto  LocalAddr     LocalPort  ForeignAddr    ForeignPort  State     PID  Owner
-# 0xe10...  TCPv4  10.1.5.42     49721     185.220.101.42  443         ESTAB     3847  update.exe
+# Offset Proto LocalAddr LocalPort ForeignAddr ForeignPort State PID Owner
+# 0xe10... TCPv4 10.1.5.42 49721 185.220.101.42 443 ESTAB 3847 update.exe
 ```
 
 Cross-reference suspicious connections with the process tree to identify C2 communications. Look for:
@@ -162,8 +162,8 @@ Use malfind to identify injected code and memory-resident malware:
 vol -f memory.raw windows.malfind
 
 # Output shows:
-# PID  Process       Start      End        Tag  Protection  Hexdump/Disassembly
-# 3847 explorer.exe  0x2a10000  0x2a14000  VadS PAGE_EXECUTE_READWRITE
+# PID Process Start End Tag Protection Hexdump/Disassembly
+# 3847 explorer.exe 0x2a10000 0x2a14000 VadS PAGE_EXECUTE_READWRITE
 # MZ header detected - injected PE
 
 # Dump suspicious process memory
@@ -253,26 +253,26 @@ Compile findings into a structured analysis report documenting all evidence extr
 ```
 MEMORY FORENSICS ANALYSIS REPORT
 ==================================
-Incident:         INC-2025-1547
-Evidence File:    WKSTN-042_20251115_1445.raw
-SHA-256:          a4b3c2d1e5f6...
-OS Identified:    Windows 10 22H2 (Build 19045)
-Analysis Tool:    Volatility 3.2.0
+Incident: INC-2025-1547
+Evidence File: WKSTN-042_20251115_1445.raw
+SHA-256: a4b3c2d1e5f6...
+OS Identified: Windows 10 22H2 (Build 19045)
+Analysis Tool: Volatility 3.2.0
 
 PROCESS ANOMALIES
-PID    Process         Parent       Anomaly
-3847   update.exe      powershell   Suspicious executable in Temp directory
-5102   svchost.exe     explorer     Wrong parent (expected services.exe)
----    [hidden]        ---          Found in psscan but not pslist
+PID Process Parent Anomaly
+3847 update.exe powershell Suspicious executable in Temp directory
+5102 svchost.exe explorer Wrong parent (expected services.exe)
+--- [hidden] --- Found in psscan but not pslist
 
 INJECTED CODE
-PID    Process        Address Range        Protection              Finding
-5102   svchost.exe    0x00A10000-0x00A14   PAGE_EXECUTE_READWRITE  MZ header (PE injection)
+PID Process Address Range Protection Finding
+5102 svchost.exe 0x00A10000-0x00A14 PAGE_EXECUTE_READWRITE MZ header (PE injection)
 
 NETWORK CONNECTIONS
-PID    Process      Local              Foreign             State
-3847   update.exe   10.1.5.42:49721    185.220.101.42:443  ESTABLISHED
-5102   svchost.exe  10.1.5.42:51003    91.215.85.17:8443   ESTABLISHED
+PID Process Local Foreign State
+3847 update.exe 10.1.5.42:49721 185.220.101.42:443 ESTABLISHED
+5102 svchost.exe 10.1.5.42:51003 91.215.85.17:8443 ESTABLISHED
 
 YARA MATCHES
 Rule: CobaltStrike_Beacon_x64
@@ -280,8 +280,8 @@ Match PID: 5102 (svchost.exe)
 Offset: 0x00A10240
 
 EXTRACTED IOCS
-Hashes:     [SHA-256 of dumped injected code]
-C2 IPs:     185.220.101.42, 91.215.85.17
+Hashes: [SHA-256 of dumped injected code]
+C2 IPs: 185.220.101.42, 91.215.85.17
 C2 Domains: [extracted from beacon config]
-Mutexes:    Global\MSCTF.Shared.MUTEX.ZRQ
+Mutexes: Global\MSCTF.Shared.MUTEX.ZRQ
 ```

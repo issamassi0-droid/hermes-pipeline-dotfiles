@@ -57,7 +57,7 @@ pip install chipsec
 # Or from source (builds the kernel helper/driver)
 git clone https://github.com/chipsec/chipsec
 cd chipsec
-python setup.py install        # builds and installs, including the Linux driver
+python setup.py install # builds and installs, including the Linux driver
 
 # Verify
 sudo chipsec_main --help
@@ -163,7 +163,7 @@ sudo chipsec_util uefi decode rom.bin
 Where loading the driver is impossible (locked-down Secure Boot), some checks still run read-only.
 
 ```bash
-sudo chipsec_main -n            # --no_driver: skip checks that need the driver
+sudo chipsec_main -n # --no_driver: skip checks that need the driver
 sudo chipsec_main -p <PLATFORM> # force platform code if auto-detect fails
 ```
 

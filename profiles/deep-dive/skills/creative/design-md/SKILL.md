@@ -6,9 +6,9 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [design, design-system, tokens, ui, accessibility, wcag, tailwind, dtcg, google]
-    related_skills: [popular-web-designs, claude-design, excalidraw, architecture-diagram]
+ hermes:
+ tags: [design, design-system, tokens, ui, accessibility, wcag, tailwind, dtcg, google]
+ related_skills: [popular-web-designs, claude-design, excalidraw, architecture-diagram]
 ---
 
 # DESIGN.md Skill
@@ -44,36 +44,36 @@ version: alpha
 name: Heritage
 description: Architectural minimalism meets journalistic gravitas.
 colors:
-  primary: "#1A1C1E"
-  secondary: "#6C7278"
-  tertiary: "#B8422E"
-  neutral: "#F7F5F2"
+ primary: "#1A1C1E"
+ secondary: "#6C7278"
+ tertiary: "#B8422E"
+ neutral: "#F7F5F2"
 typography:
-  h1:
-    fontFamily: Public Sans
-    fontSize: 3rem
-    fontWeight: 700
-    lineHeight: 1.1
-    letterSpacing: "-0.02em"
-  body-md:
-    fontFamily: Public Sans
-    fontSize: 1rem
+ h1:
+ fontFamily: Public Sans
+ fontSize: 3rem
+ fontWeight: 700
+ lineHeight: 1.1
+ letterSpacing: "-0.02em"
+ body-md:
+ fontFamily: Public Sans
+ fontSize: 1rem
 rounded:
-  sm: 4px
-  md: 8px
-  lg: 16px
+ sm: 4px
+ md: 8px
+ lg: 16px
 spacing:
-  sm: 8px
-  md: 16px
-  lg: 24px
+ sm: 8px
+ md: 16px
+ lg: 24px
 components:
-  button-primary:
-    backgroundColor: "{colors.tertiary}"
-    textColor: "#FFFFFF"
-    rounded: "{rounded.sm}"
-    padding: 12px
-  button-primary-hover:
-    backgroundColor: "{colors.primary}"
+ button-primary:
+ backgroundColor: "{colors.tertiary}"
+ textColor: "#FFFFFF"
+ rounded: "{rounded.sm}"
+ padding: 12px
+ button-primary-hover:
+ backgroundColor: "{colors.primary}"
 ---
 
 ## Overview
@@ -130,16 +130,16 @@ if the value type is valid. Unknown component properties produce a warning.
 ## Workflow: authoring a new DESIGN.md
 
 1. **Ask the user** (or infer) the brand tone, accent color, and typography
-   direction. If they provided a site, image, or vibe, translate it to the
-   token shape above.
+ direction. If they provided a site, image, or vibe, translate it to the
+ token shape above.
 2. **Write `DESIGN.md`** in their project root using `write_file`. Always
-   include `name:` and `colors:`; other sections optional but encouraged.
+ include `name:` and `colors:`; other sections optional but encouraged.
 3. **Use token references** (`{colors.primary}`) in the `components:` section
-   instead of re-typing hex values. Keeps the palette single-source.
+ instead of re-typing hex values. Keeps the palette single-source.
 4. **Lint it** (see below). Fix any broken references or WCAG failures
-   before returning.
+ before returning.
 5. **If the user has an existing project**, also write Tailwind or DTCG
-   exports next to the file (`tailwind.theme.json`, `tokens.json`).
+ exports next to the file (`tailwind.theme.json`, `tokens.json`).
 
 ## Workflow: lint / diff / export
 
@@ -178,15 +178,15 @@ alias: `npx -y -p @google/design.md designmd lint DESIGN.md`.
 
 - `broken-ref` (error) — `{colors.missing}` points at a non-existent token
 - `contrast-ratio` (warning) — component `textColor` vs `backgroundColor`
-  below WCAG AA (4.5:1)
+ below WCAG AA (4.5:1)
 - `missing-primary` (warning) — colors defined but no `primary` token
 - `missing-typography` (warning) — colors defined but no typography tokens
 - `orphaned-tokens` (warning) — color tokens never referenced by a component
 - `section-order` (warning) — sections out of the canonical order
 - `unknown-key` (warning) — top-level YAML key that looks like a typo of a
-  schema key (`colours:` → `colors:`); custom extension keys stay silent
+ schema key (`colours:` → `colors:`); custom extension keys stay silent
 - `token-summary`, `missing-sections` (info) — counts and absent optional
-  sections
+ sections
 
 When the user cares about accessibility, call this out explicitly in your
 summary — WCAG findings are the most load-bearing reason to use the CLI.
@@ -194,27 +194,27 @@ summary — WCAG findings are the most load-bearing reason to use the CLI.
 ## Pitfalls
 
 - **Don't nest component variants.** `button-primary.hover` is wrong;
-  `button-primary-hover` as a sibling key is right.
+ `button-primary-hover` as a sibling key is right.
 - **Hex colors must be quoted strings.** YAML will otherwise choke on `#` or
-  truncate values like `#1A1C1E` oddly.
+ truncate values like `#1A1C1E` oddly.
 - **Negative dimensions need quotes too.** `letterSpacing: -0.02em` parses as
-  a YAML flow — write `letterSpacing: "-0.02em"`.
+ a YAML flow — write `letterSpacing: "-0.02em"`.
 - **Section order matters even though the linter only warns.** If the user
-  gives you prose in a random order, reorder it to match the canonical list
-  before saving — spec-compliant consumers expect it.
+ gives you prose in a random order, reorder it to match the canonical list
+ before saving — spec-compliant consumers expect it.
 - **Typography sub-property typos are silently dropped.** As of CLI 0.3.0 a
-  typo like `fontwight:` produces no finding and the value vanishes from
-  exports — double-check sub-property names against the schema
-  (`fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, `letterSpacing`,
-  `fontFeature`, `fontVariation`).
+ typo like `fontwight:` produces no finding and the value vanishes from
+ exports — double-check sub-property names against the schema
+ (`fontFamily`, `fontSize`, `fontWeight`, `lineHeight`, `letterSpacing`,
+ `fontFeature`, `fontVariation`).
 - **`version: alpha` is the current spec version** (as of Jul 2026, CLI
-  0.3.0). The spec is marked alpha — watch for breaking changes.
+ 0.3.0). The spec is marked alpha — watch for breaking changes.
 - **Token references resolve by dotted path.** `{colors.primary}` works;
-  `{primary}` does not.
+ `{primary}` does not.
 
 ## Spec source of truth
 
 - Repo: https://github.com/google-labs-code/design.md (Apache-2.0)
 - CLI: `@google/design.md` on npm
 - License of generated DESIGN.md files: whatever the user's project uses;
-  the spec itself is Apache-2.0.
+ the spec itself is Apache-2.0.

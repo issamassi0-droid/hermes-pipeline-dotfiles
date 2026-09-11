@@ -1,11 +1,11 @@
 ---
 name: performing-sqlite-database-forensics
 description: Performs forensic analysis of SQLite databases by examining B-tree page
-  structures, recovering deleted records from freelist pages and Write-Ahead Log (WAL)
-  files, decoding encoded timestamps, and extracting evidence from browser history,
-  messaging apps, and mobile device databases. Use when recovering deleted or unallocated
-  data from a SQLite database during digital forensics or mobile/browser evidence
-  analysis.
+ structures, recovering deleted records from freelist pages and Write-Ahead Log (WAL)
+ files, decoding encoded timestamps, and extracting evidence from browser history,
+ messaging apps, and mobile device databases. Use when recovering deleted or unallocated
+ data from a SQLite database during digital forensics or mobile/browser evidence
+ analysis.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -99,70 +99,70 @@ import os
 
 
 def analyze_freelist(db_path: str) -> dict:
-    """Analyze SQLite freelist to identify pages containing deleted data."""
-    with open(db_path, "rb") as f:
-        # Read header
-        header = f.read(100)
-        page_size = struct.unpack(">H", header[16:18])[0]
-        if page_size == 1:
-            page_size = 65536
-        first_freelist_page = struct.unpack(">I", header[32:36])[0]
-        total_freelist_pages = struct.unpack(">I", header[36:40])[0]
+ """Analyze SQLite freelist to identify pages containing deleted data."""
+ with open(db_path, "rb") as f:
+ # Read header
+ header = f.read(100)
+ page_size = struct.unpack(">H", header[16:18])[0]
+ if page_size == 1:
+ page_size = 65536
+ first_freelist_page = struct.unpack(">I", header[32:36])[0]
+ total_freelist_pages = struct.unpack(">I", header[36:40])[0]
 
-        freelist_info = {
-            "page_size": page_size,
-            "first_freelist_page": first_freelist_page,
-            "total_freelist_pages": total_freelist_pages,
-            "trunk_pages": [],
-            "leaf_pages": []
-        }
+ freelist_info = {
+ "page_size": page_size,
+ "first_freelist_page": first_freelist_page,
+ "total_freelist_pages": total_freelist_pages,
+ "trunk_pages": [],
+ "leaf_pages": []
+ }
 
-        if first_freelist_page == 0:
-            return freelist_info
+ if first_freelist_page == 0:
+ return freelist_info
 
-        # Walk the freelist trunk chain
-        trunk_page = first_freelist_page
-        while trunk_page != 0:
-            offset = (trunk_page - 1) * page_size
-            f.seek(offset)
-            page_data = f.read(page_size)
+ # Walk the freelist trunk chain
+ trunk_page = first_freelist_page
+ while trunk_page != 0:
+ offset = (trunk_page - 1) * page_size
+ f.seek(offset)
+ page_data = f.read(page_size)
 
-            next_trunk = struct.unpack(">I", page_data[0:4])[0]
-            leaf_count = struct.unpack(">I", page_data[4:8])[0]
+ next_trunk = struct.unpack(">I", page_data[0:4])[0]
+ leaf_count = struct.unpack(">I", page_data[4:8])[0]
 
-            leaves = []
-            for i in range(leaf_count):
-                leaf_page = struct.unpack(">I", page_data[8 + i * 4:12 + i * 4])[0]
-                leaves.append(leaf_page)
+ leaves = []
+ for i in range(leaf_count):
+ leaf_page = struct.unpack(">I", page_data[8 + i * 4:12 + i * 4])[0]
+ leaves.append(leaf_page)
 
-            freelist_info["trunk_pages"].append({
-                "page_number": trunk_page,
-                "next_trunk": next_trunk,
-                "leaf_count": leaf_count,
-                "leaf_pages": leaves
-            })
-            freelist_info["leaf_pages"].extend(leaves)
-            trunk_page = next_trunk
+ freelist_info["trunk_pages"].append({
+ "page_number": trunk_page,
+ "next_trunk": next_trunk,
+ "leaf_count": leaf_count,
+ "leaf_pages": leaves
+ })
+ freelist_info["leaf_pages"].extend(leaves)
+ trunk_page = next_trunk
 
-    return freelist_info
+ return freelist_info
 
 
 def extract_freelist_content(db_path: str, output_dir: str):
-    """Extract raw content from freelist pages for analysis."""
-    info = analyze_freelist(db_path)
-    os.makedirs(output_dir, exist_ok=True)
+ """Extract raw content from freelist pages for analysis."""
+ info = analyze_freelist(db_path)
+ os.makedirs(output_dir, exist_ok=True)
 
-    with open(db_path, "rb") as f:
-        page_size = info["page_size"]
-        for page_num in info["leaf_pages"]:
-            offset = (page_num - 1) * page_size
-            f.seek(offset)
-            page_data = f.read(page_size)
-            output_file = os.path.join(output_dir, f"freelist_page_{page_num}.bin")
-            with open(output_file, "wb") as out:
-                out.write(page_data)
+ with open(db_path, "rb") as f:
+ page_size = info["page_size"]
+ for page_num in info["leaf_pages"]:
+ offset = (page_num - 1) * page_size
+ f.seek(offset)
+ page_data = f.read(page_size)
+ output_file = os.path.join(output_dir, f"freelist_page_{page_num}.bin")
+ with open(output_file, "wb") as out:
+ out.write(page_data)
 
-    return len(info["leaf_pages"])
+ return len(info["leaf_pages"])
 ```
 
 ### Method 2: WAL (Write-Ahead Log) Analysis
@@ -171,45 +171,45 @@ The WAL file contains pending transactions that have not yet been checkpointed b
 
 ```python
 def parse_wal_header(wal_path: str) -> dict:
-    """Parse SQLite WAL file header and frame inventory."""
-    with open(wal_path, "rb") as f:
-        header = f.read(32)
-        magic = struct.unpack(">I", header[0:4])[0]
-        file_format = struct.unpack(">I", header[4:8])[0]
-        page_size = struct.unpack(">I", header[8:12])[0]
-        checkpoint_seq = struct.unpack(">I", header[12:16])[0]
-        salt1 = struct.unpack(">I", header[16:20])[0]
-        salt2 = struct.unpack(">I", header[20:24])[0]
+ """Parse SQLite WAL file header and frame inventory."""
+ with open(wal_path, "rb") as f:
+ header = f.read(32)
+ magic = struct.unpack(">I", header[0:4])[0]
+ file_format = struct.unpack(">I", header[4:8])[0]
+ page_size = struct.unpack(">I", header[8:12])[0]
+ checkpoint_seq = struct.unpack(">I", header[12:16])[0]
+ salt1 = struct.unpack(">I", header[16:20])[0]
+ salt2 = struct.unpack(">I", header[20:24])[0]
 
-        wal_info = {
-            "magic": hex(magic),
-            "format": file_format,
-            "page_size": page_size,
-            "checkpoint_sequence": checkpoint_seq,
-            "frames": []
-        }
+ wal_info = {
+ "magic": hex(magic),
+ "format": file_format,
+ "page_size": page_size,
+ "checkpoint_sequence": checkpoint_seq,
+ "frames": []
+ }
 
-        # Parse frames (24-byte header + page_size data each)
-        frame_offset = 32
-        frame_num = 0
-        file_size = os.path.getsize(wal_path)
+ # Parse frames (24-byte header + page_size data each)
+ frame_offset = 32
+ frame_num = 0
+ file_size = os.path.getsize(wal_path)
 
-        while frame_offset + 24 + page_size <= file_size:
-            f.seek(frame_offset)
-            frame_header = f.read(24)
-            page_number = struct.unpack(">I", frame_header[0:4])[0]
-            db_size_after = struct.unpack(">I", frame_header[4:8])[0]
+ while frame_offset + 24 + page_size <= file_size:
+ f.seek(frame_offset)
+ frame_header = f.read(24)
+ page_number = struct.unpack(">I", frame_header[0:4])[0]
+ db_size_after = struct.unpack(">I", frame_header[4:8])[0]
 
-            wal_info["frames"].append({
-                "frame_number": frame_num,
-                "page_number": page_number,
-                "db_size_pages": db_size_after,
-                "offset": frame_offset
-            })
-            frame_offset += 24 + page_size
-            frame_num += 1
+ wal_info["frames"].append({
+ "frame_number": frame_num,
+ "page_number": page_number,
+ "db_size_pages": db_size_after,
+ "offset": frame_offset
+ })
+ frame_offset += 24 + page_size
+ frame_num += 1
 
-    return wal_info
+ return wal_info
 ```
 
 ### Method 3: Unallocated Space Within Pages
@@ -218,41 +218,41 @@ Deleted cells within active B-tree pages leave data in the unallocated region be
 
 ```python
 def analyze_unallocated_space(db_path: str, page_number: int) -> dict:
-    """Analyze unallocated space within a specific B-tree page."""
-    with open(db_path, "rb") as f:
-        header = f.read(100)
-        page_size = struct.unpack(">H", header[16:18])[0]
-        if page_size == 1:
-            page_size = 65536
+ """Analyze unallocated space within a specific B-tree page."""
+ with open(db_path, "rb") as f:
+ header = f.read(100)
+ page_size = struct.unpack(">H", header[16:18])[0]
+ if page_size == 1:
+ page_size = 65536
 
-        offset = (page_number - 1) * page_size
-        f.seek(offset)
-        page_data = f.read(page_size)
+ offset = (page_number - 1) * page_size
+ f.seek(offset)
+ page_data = f.read(page_size)
 
-        # Parse page header (8 or 12 bytes depending on type)
-        page_type = page_data[0]
-        first_freeblock = struct.unpack(">H", page_data[1:3])[0]
-        cell_count = struct.unpack(">H", page_data[3:5])[0]
-        cell_content_offset = struct.unpack(">H", page_data[5:7])[0]
-        if cell_content_offset == 0:
-            cell_content_offset = 65536
+ # Parse page header (8 or 12 bytes depending on type)
+ page_type = page_data[0]
+ first_freeblock = struct.unpack(">H", page_data[1:3])[0]
+ cell_count = struct.unpack(">H", page_data[3:5])[0]
+ cell_content_offset = struct.unpack(">H", page_data[5:7])[0]
+ if cell_content_offset == 0:
+ cell_content_offset = 65536
 
-        header_size = 12 if page_type in (0x02, 0x05) else 8
-        cell_pointer_end = header_size + cell_count * 2
+ header_size = 12 if page_type in (0x02, 0x05) else 8
+ cell_pointer_end = header_size + cell_count * 2
 
-        unallocated_start = cell_pointer_end
-        unallocated_end = cell_content_offset
-        unallocated_size = unallocated_end - unallocated_start
+ unallocated_start = cell_pointer_end
+ unallocated_end = cell_content_offset
+ unallocated_size = unallocated_end - unallocated_start
 
-        return {
-            "page_number": page_number,
-            "page_type": hex(page_type),
-            "cell_count": cell_count,
-            "unallocated_start": unallocated_start,
-            "unallocated_end": unallocated_end,
-            "unallocated_size": unallocated_size,
-            "unallocated_data": page_data[unallocated_start:unallocated_end].hex()
-        }
+ return {
+ "page_number": page_number,
+ "page_type": hex(page_type),
+ "cell_count": cell_count,
+ "unallocated_start": unallocated_start,
+ "unallocated_end": unallocated_end,
+ "unallocated_size": unallocated_size,
+ "unallocated_data": page_data[unallocated_start:unallocated_end].hex()
+ }
 ```
 
 ## Common Forensic Databases
@@ -274,22 +274,22 @@ def analyze_unallocated_space(db_path: str, page_number: int) -> dict:
 from datetime import datetime, timedelta
 
 def decode_chrome_timestamp(chrome_ts: int) -> datetime:
-    """Convert Chrome/WebKit timestamp to datetime (microseconds since 1601-01-01)."""
-    epoch_delta = 11644473600
-    return datetime.utcfromtimestamp((chrome_ts / 1000000) - epoch_delta)
+ """Convert Chrome/WebKit timestamp to datetime (microseconds since 1601-01-01)."""
+ epoch_delta = 11644473600
+ return datetime.utcfromtimestamp((chrome_ts / 1000000) - epoch_delta)
 
 def decode_unix_timestamp(unix_ts: int) -> datetime:
-    """Convert Unix timestamp to datetime."""
-    return datetime.utcfromtimestamp(unix_ts)
+ """Convert Unix timestamp to datetime."""
+ return datetime.utcfromtimestamp(unix_ts)
 
 def decode_mac_absolute_time(mac_ts: float) -> datetime:
-    """Convert Mac Absolute Time (seconds since 2001-01-01)."""
-    mac_epoch = datetime(2001, 1, 1)
-    return mac_epoch + timedelta(seconds=mac_ts)
+ """Convert Mac Absolute Time (seconds since 2001-01-01)."""
+ mac_epoch = datetime(2001, 1, 1)
+ return mac_epoch + timedelta(seconds=mac_ts)
 
 def decode_mozilla_timestamp(moz_ts: int) -> datetime:
-    """Convert Mozilla PRTime (microseconds since Unix epoch)."""
-    return datetime.utcfromtimestamp(moz_ts / 1000000)
+ """Convert Mozilla PRTime (microseconds since Unix epoch)."""
+ return datetime.utcfromtimestamp(moz_ts / 1000000)
 ```
 
 ## References
@@ -303,71 +303,71 @@ def decode_mozilla_timestamp(moz_ts: int) -> datetime:
 
 ```text
 $ python3 sqlite_forensics.py --db /evidence/chrome/Default/History \
-    --wal /evidence/chrome/Default/History-wal \
-    --journal /evidence/chrome/Default/History-journal \
-    --output /analysis/sqlite_report
+ --wal /evidence/chrome/Default/History-wal \
+ --journal /evidence/chrome/Default/History-journal \
+ --output /analysis/sqlite_report
 
 SQLite Database Forensic Analyzer v2.0
 ========================================
-Database:    /evidence/chrome/Default/History
-Size:        48.2 MB
-SQLite Ver:  3.39.5
-Page Size:   4096 bytes
+Database: /evidence/chrome/Default/History
+Size: 48.2 MB
+SQLite Ver: 3.39.5
+Page Size: 4096 bytes
 Total Pages: 12,345
-Encoding:    UTF-8
+Encoding: UTF-8
 
 [+] Analyzing WAL (Write-Ahead Log)...
-    WAL file:       History-wal (2.1 MB)
-    WAL frames:     512
-    Checkpointed:   No (contains uncommitted data)
-    Recoverable rows from WAL: 234
+ WAL file: History-wal (2.1 MB)
+ WAL frames: 512
+ Checkpointed: No (contains uncommitted data)
+ Recoverable rows from WAL: 234
 
 [+] Analyzing journal file...
-    Journal file:   History-journal (0 bytes - rolled back)
+ Journal file: History-journal (0 bytes - rolled back)
 
 [+] Scanning for deleted records (freelist pages)...
-    Freelist pages:     456
-    Deleted records recovered: 1,892
+ Freelist pages: 456
+ Deleted records recovered: 1,892
 
 [+] Analyzing table: urls
-    Active rows:     12,456
-    Deleted rows:    1,234 (recovered from freelist)
-    WAL-only rows:   89
+ Active rows: 12,456
+ Deleted rows: 1,234 (recovered from freelist)
+ WAL-only rows: 89
 
 --- Recovered Deleted URLs (Last 10) ---
-Row ID | URL                                              | Title                    | Visit Count | Last Visit (UTC)
+Row ID | URL | Title | Visit Count | Last Visit (UTC)
 -------|--------------------------------------------------|--------------------------|-------------|---------------------
-89234  | https://mega.nz/folder/xYz123#key=AbCdEf        | MEGA                     | 5           | 2024-01-16 03:20:00
-89235  | https://transfer.sh/abc123/data.7z               | transfer.sh              | 1           | 2024-01-16 03:25:00
-89240  | https://temp-mail.org/en/                        | Temp Mail                | 3           | 2024-01-15 13:00:00
-89241  | https://browserleaks.com/ip                      | IP Leak Test             | 1           | 2024-01-15 12:55:00
-89245  | https://www.virustotal.com/gui/file/a1b2c3...    | VirusTotal               | 2           | 2024-01-15 14:30:00
-89250  | https://github.com/gentilkiwi/mimikatz/releases  | Mimikatz Releases        | 1           | 2024-01-15 16:00:00
-89260  | https://raw.githubusercontent.com/.../payload.ps1| GitHub Raw               | 1           | 2024-01-15 14:34:00
-89270  | https://pastebin.com/edit/kL9mN2pQ               | Pastebin - Edit          | 2           | 2024-01-15 14:42:00
-89280  | https://duckduckgo.com/?q=clear+browser+history  | DuckDuckGo               | 1           | 2024-01-17 22:00:00
-89285  | https://duckduckgo.com/?q=anti+forensics+tools   | DuckDuckGo               | 1           | 2024-01-17 22:05:00
+89234 | https://mega.nz/folder/xYz123#key=AbCdEf | MEGA | 5 | 2024-01-16 03:20:00
+89235 | https://transfer.sh/abc123/data.7z | transfer.sh | 1 | 2024-01-16 03:25:00
+89240 | https://temp-mail.org/en/ | Temp Mail | 3 | 2024-01-15 13:00:00
+89241 | https://browserleaks.com/ip | IP Leak Test | 1 | 2024-01-15 12:55:00
+89245 | https://www.virustotal.com/gui/file/a1b2c3... | VirusTotal | 2 | 2024-01-15 14:30:00
+89250 | https://github.com/gentilkiwi/mimikatz/releases | Mimikatz Releases | 1 | 2024-01-15 16:00:00
+89260 | https://raw.githubusercontent.com/.../payload.ps1| GitHub Raw | 1 | 2024-01-15 14:34:00
+89270 | https://pastebin.com/edit/kL9mN2pQ | Pastebin - Edit | 2 | 2024-01-15 14:42:00
+89280 | https://duckduckgo.com/?q=clear+browser+history | DuckDuckGo | 1 | 2024-01-17 22:00:00
+89285 | https://duckduckgo.com/?q=anti+forensics+tools | DuckDuckGo | 1 | 2024-01-17 22:05:00
 
 [+] Analyzing table: downloads
-    Active rows:     234
-    Deleted rows:    12 (recovered)
+ Active rows: 234
+ Deleted rows: 12 (recovered)
 
 --- Recovered Deleted Downloads ---
-Row ID | Filename               | URL                                    | Size      | Start Time (UTC)
+Row ID | Filename | URL | Size | Start Time (UTC)
 -------|------------------------|----------------------------------------|-----------|---------------------
-5012   | payload.ps1            | https://raw.githubusercontent.com/...  | 4,096     | 2024-01-15 14:34:00
-5015   | mimikatz_trunk.zip     | https://github.com/.../releases/...    | 1,892,352 | 2024-01-15 16:00:00
-5018   | netscan_portable.zip   | https://www.softperfect.com/...        | 5,242,880 | 2024-01-15 15:05:00
+5012 | payload.ps1 | https://raw.githubusercontent.com/... | 4,096 | 2024-01-15 14:34:00
+5015 | mimikatz_trunk.zip | https://github.com/.../releases/... | 1,892,352 | 2024-01-15 16:00:00
+5018 | netscan_portable.zip | https://www.softperfect.com/... | 5,242,880 | 2024-01-15 15:05:00
 
 [+] Slack space analysis...
-    Pages with slack space data: 234
-    Partial strings recovered:   67 fragments
+ Pages with slack space data: 234
+ Partial strings recovered: 67 fragments
 
 Summary:
-  Total records analyzed:  14,578 (active) + 3,126 (deleted/WAL)
-  Evidence-relevant URLs:  23 (flagged)
-  Deleted downloads:       12 (3 tool-related)
-  Anti-forensics evidence: Browser history deletion detected
-  Report: /analysis/sqlite_report/sqlite_forensics.json
-  Recovered DB: /analysis/sqlite_report/History_recovered.db
+ Total records analyzed: 14,578 (active) + 3,126 (deleted/WAL)
+ Evidence-relevant URLs: 23 (flagged)
+ Deleted downloads: 12 (3 tool-related)
+ Anti-forensics evidence: Browser history deletion detected
+ Report: /analysis/sqlite_report/sqlite_forensics.json
+ Recovered DB: /analysis/sqlite_report/History_recovered.db
 ```

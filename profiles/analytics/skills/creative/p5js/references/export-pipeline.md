@@ -6,10 +6,10 @@
 
 ```javascript
 function keyPressed() {
-  if (key === 's' || key === 'S') {
-    saveCanvas('output', 'png');
-    // Downloads output.png immediately
-  }
+ if (key === 's' || key === 'S') {
+ saveCanvas('output', 'png');
+ // Downloads output.png immediately
+ }
 }
 ```
 
@@ -17,16 +17,16 @@ function keyPressed() {
 
 ```javascript
 function setup() {
-  createCanvas(3840, 2160);
-  pixelDensity(1);
-  randomSeed(CONFIG.seed);
-  noiseSeed(CONFIG.seed);
-  noLoop();
+ createCanvas(3840, 2160);
+ pixelDensity(1);
+ randomSeed(CONFIG.seed);
+ noiseSeed(CONFIG.seed);
+ noLoop();
 }
 
 function draw() {
-  // ... render everything ...
-  saveCanvas('output-seed-' + CONFIG.seed, 'png');
+ // ... render everything ...
+ saveCanvas('output-seed-' + CONFIG.seed, 'png');
 }
 ```
 
@@ -36,11 +36,11 @@ For resolutions beyond screen size, use `pixelDensity()` or a large offscreen bu
 
 ```javascript
 function exportHighRes(scale) {
-  let buffer = createGraphics(width * scale, height * scale);
-  buffer.scale(scale);
-  // Re-render everything to buffer at higher resolution
-  renderScene(buffer);
-  buffer.save('highres-output.png');
+ let buffer = createGraphics(width * scale, height * scale);
+ buffer.scale(scale);
+ // Re-render everything to buffer at higher resolution
+ renderScene(buffer);
+ buffer.save('highres-output.png');
 }
 ```
 
@@ -48,15 +48,15 @@ function exportHighRes(scale) {
 
 ```javascript
 function exportBatch(startSeed, count) {
-  for (let i = 0; i < count; i++) {
-    CONFIG.seed = startSeed + i;
-    randomSeed(CONFIG.seed);
-    noiseSeed(CONFIG.seed);
-    // Render
-    background(0);
-    renderScene();
-    saveCanvas('seed-' + nf(CONFIG.seed, 5), 'png');
-  }
+ for (let i = 0; i < count; i++) {
+ CONFIG.seed = startSeed + i;
+ randomSeed(CONFIG.seed);
+ noiseSeed(CONFIG.seed);
+ // Render
+ background(0);
+ renderScene();
+ saveCanvas('seed-' + nf(CONFIG.seed, 5), 'png');
+ }
 }
 ```
 
@@ -66,17 +66,17 @@ function exportBatch(startSeed, count) {
 
 ```javascript
 function keyPressed() {
-  if (key === 'g' || key === 'G') {
-    saveGif('output', 5);
-    // Captures 5 seconds of animation
-    // Options: saveGif(filename, duration, options)
-  }
+ if (key === 'g' || key === 'G') {
+ saveGif('output', 5);
+ // Captures 5 seconds of animation
+ // Options: saveGif(filename, duration, options)
+ }
 }
 
 // With options
 saveGif('output', 5, {
-  delay: 0,        // delay before starting capture (seconds)
-  units: 'seconds' // or 'frames'
+ delay: 0, // delay before starting capture (seconds)
+ units: 'seconds' // or 'frames'
 });
 ```
 
@@ -91,9 +91,9 @@ Limitations:
 ```javascript
 // For GIF output, use smaller canvas and lower framerate
 function setup() {
-  createCanvas(640, 360);
-  frameRate(15);  // GIF standard
-  pixelDensity(1);
+ createCanvas(640, 360);
+ frameRate(15); // GIF standard
+ pixelDensity(1);
 }
 ```
 
@@ -103,11 +103,11 @@ function setup() {
 
 ```javascript
 function keyPressed() {
-  if (key === 'f') {
-    saveFrames('frame', 'png', 10, 30);
-    // 10 seconds, 30 fps → 300 PNG files
-    // Downloads as individual files (browser may block bulk downloads)
-  }
+ if (key === 'f') {
+ saveFrames('frame', 'png', 10, 30);
+ // 10 seconds, 30 fps → 300 PNG files
+ // Downloads as individual files (browser may block bulk downloads)
+ }
 }
 ```
 
@@ -119,21 +119,21 @@ let frameNum = 0;
 const TOTAL_FRAMES = 300;
 
 function keyPressed() {
-  if (key === 'r') recording = !recording;
+ if (key === 'r') recording = !recording;
 }
 
 function draw() {
-  // ... render frame ...
+ // ... render frame ...
 
-  if (recording) {
-    saveCanvas('frame-' + nf(frameNum, 4), 'png');
-    frameNum++;
-    if (frameNum >= TOTAL_FRAMES) {
-      recording = false;
-      noLoop();
-      console.log('Recording complete: ' + frameNum + ' frames');
-    }
-  }
+ if (recording) {
+ saveCanvas('frame-' + nf(frameNum, 4), 'png');
+ frameNum++;
+ if (frameNum >= TOTAL_FRAMES) {
+ recording = false;
+ noLoop();
+ console.log('Recording complete: ' + frameNum + ' frames');
+ }
+ }
 }
 ```
 
@@ -143,15 +143,15 @@ The `noLoop()` + `redraw()` pattern is **required** for frame-perfect headless c
 
 ```javascript
 function setup() {
-  createCanvas(1920, 1080);
-  pixelDensity(1);
-  noLoop();                    // STOP the automatic draw loop
-  window._p5Ready = true;      // Signal to capture script
+ createCanvas(1920, 1080);
+ pixelDensity(1);
+ noLoop(); // STOP the automatic draw loop
+ window._p5Ready = true; // Signal to capture script
 }
 
 function draw() {
-  // This only runs when redraw() is called by the capture script
-  // frameCount increments exactly once per redraw()
+ // This only runs when redraw() is called by the capture script
+ // frameCount increments exactly once per redraw()
 }
 ```
 
@@ -165,13 +165,13 @@ ffmpeg -framerate 30 -i frame-%04d.png -c:v libx264 -pix_fmt yuv420p output.mp4
 
 # High quality
 ffmpeg -framerate 30 -i frame-%04d.png \
-  -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p \
-  output.mp4
+ -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p \
+ output.mp4
 
 # With audio
 ffmpeg -framerate 30 -i frame-%04d.png -i audio.mp3 \
-  -c:v libx264 -c:a aac -shortest \
-  output.mp4
+ -c:v libx264 -c:a aac -shortest \
+ output.mp4
 
 # Loop for social media (3 loops)
 ffmpeg -stream_loop 2 -i output.mp4 -c copy output-looped.mp4
@@ -197,11 +197,11 @@ ffmpeg -i output.mp4 -vf "select=eq(n\,100)" -vframes 1 check.png
 **Scene transitions are mandatory.** Hard cuts between visually different scenes are jarring. Use fade envelopes:
 
 ```javascript
-const FADE_FRAMES = 15;  // half-second at 30fps
+const FADE_FRAMES = 15; // half-second at 30fps
 let fade = 1;
 if (localFrame < FADE_FRAMES) fade = localFrame / FADE_FRAMES;
 if (localFrame > SCENE_FRAMES - FADE_FRAMES) fade = (SCENE_FRAMES - localFrame) / FADE_FRAMES;
-fade = fade * fade * (3 - 2 * fade);  // smoothstep
+fade = fade * fade * (3 - 2 * fade); // smoothstep
 // Apply: multiply all alpha/brightness by fade
 ```
 
@@ -212,19 +212,19 @@ For videos with multiple scenes, render each as a separate HTML file + MP4 clip,
 **Directory structure:**
 ```
 project/
-├── capture-scene.js          # Shared: node capture-scene.js <html> <outdir> <frames>
-├── render-all.sh             # Renders all + stitches
+├── capture-scene.js # Shared: node capture-scene.js <html> <outdir> <frames>
+├── render-all.sh # Renders all + stitches
 ├── scenes/
-│   ├── 00-intro.html         # Each scene is self-contained
-│   ├── 01-particles.html
-│   ├── 02-noise.html
-│   └── 03-outro.html
+│ ├── 00-intro.html # Each scene is self-contained
+│ ├── 01-particles.html
+│ ├── 02-noise.html
+│ └── 03-outro.html
 └── clips/
-    ├── 00-intro.mp4          # Each clip rendered independently
-    ├── 01-particles.mp4
-    ├── 02-noise.mp4
-    ├── 03-outro.mp4
-    └── concat.txt
+ ├── 00-intro.mp4 # Each clip rendered independently
+ ├── 01-particles.mp4
+ ├── 02-noise.mp4
+ ├── 03-outro.mp4
+ └── concat.txt
 ```
 
 **Stitch clips with ffmpeg concat:**
@@ -243,7 +243,7 @@ ffmpeg -f concat -safe 0 -i concat.txt -c copy final.mp4
 ```bash
 node capture-scene.js scenes/01-particles.html clips/01-particles 150
 ffmpeg -y -framerate 30 -i clips/01-particles/frame-%04d.png \
-  -c:v libx264 -preset slow -crf 16 -pix_fmt yuv420p clips/01-particles.mp4
+ -c:v libx264 -preset slow -crf 16 -pix_fmt yuv420p clips/01-particles.mp4
 # Then re-stitch
 ffmpeg -y -f concat -safe 0 -i clips/concat.txt -c copy final.mp4
 ```
@@ -264,8 +264,8 @@ ffmpeg -i frame-%04d.png -vf "fps=15,palettegen=max_colors=256" palette.png
 
 # Render GIF using palette
 ffmpeg -i frame-%04d.png -i palette.png \
-  -lavfi "fps=15 [x]; [x][1:v] paletteuse=dither=bayer:bayer_scale=3" \
-  output.gif
+ -lavfi "fps=15 [x]; [x][1:v] paletteuse=dither=bayer:bayer_scale=3" \
+ output.gif
 ```
 
 ## Headless Export (Puppeteer)
@@ -280,38 +280,38 @@ See `scripts/export-frames.js` for the full implementation. Basic pattern:
 const puppeteer = require('puppeteer');
 
 async function captureFrames(htmlPath, outputDir, options) {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-  const page = await browser.newPage();
+ const browser = await puppeteer.launch({
+ headless: true,
+ args: ['--no-sandbox', '--disable-setuid-sandbox']
+ });
+ const page = await browser.newPage();
 
-  await page.setViewport({
-    width: options.width || 1920,
-    height: options.height || 1080,
-    deviceScaleFactor: 1
-  });
+ await page.setViewport({
+ width: options.width || 1920,
+ height: options.height || 1080,
+ deviceScaleFactor: 1
+ });
 
-  await page.goto(`file://${path.resolve(htmlPath)}`, {
-    waitUntil: 'networkidle0'
-  });
+ await page.goto(`file://${path.resolve(htmlPath)}`, {
+ waitUntil: 'networkidle0'
+ });
 
-  // Wait for sketch to initialize
-  await page.waitForSelector('canvas');
-  await page.waitForTimeout(1000);
+ // Wait for sketch to initialize
+ await page.waitForSelector('canvas');
+ await page.waitForTimeout(1000);
 
-  for (let i = 0; i < options.frames; i++) {
-    const canvas = await page.$('canvas');
-    await canvas.screenshot({
-      path: path.join(outputDir, `frame-${String(i).padStart(4, '0')}.png`)
-    });
+ for (let i = 0; i < options.frames; i++) {
+ const canvas = await page.$('canvas');
+ await canvas.screenshot({
+ path: path.join(outputDir, `frame-${String(i).padStart(4, '0')}.png`)
+ });
 
-    // Advance one frame
-    await page.evaluate(() => { redraw(); });
-    await page.waitForTimeout(1000 / options.fps);
-  }
+ // Advance one frame
+ await page.evaluate(() => { redraw(); });
+ await page.waitForTimeout(1000 / options.fps);
+ }
 
-  await browser.close();
+ await browser.close();
 }
 ```
 
@@ -337,20 +337,20 @@ See `scripts/render.sh` for the complete render script. Pipeline:
 
 ```javascript
 function setup() {
-  createCanvas(1920, 1080, SVG);  // SVG renderer
-  noLoop();
+ createCanvas(1920, 1080, SVG); // SVG renderer
+ noLoop();
 }
 
 function draw() {
-  // Only vector operations (no pixels, no blend modes)
-  stroke(0);
-  noFill();
-  for (let i = 0; i < 100; i++) {
-    let x = random(width);
-    let y = random(height);
-    ellipse(x, y, random(10, 50));
-  }
-  save('output.svg');
+ // Only vector operations (no pixels, no blend modes)
+ stroke(0);
+ noFill();
+ for (let i = 0; i < 100; i++) {
+ let x = random(width);
+ let y = random(height);
+ ellipse(x, y, random(10, 50));
+ }
+ save('output.svg');
 }
 ```
 
@@ -384,22 +384,22 @@ For resolutions too large for a single canvas (e.g., 10000x10000 for print):
 
 ```javascript
 function renderTiled(totalW, totalH, tileSize) {
-  let cols = ceil(totalW / tileSize);
-  let rows = ceil(totalH / tileSize);
+ let cols = ceil(totalW / tileSize);
+ let rows = ceil(totalH / tileSize);
 
-  for (let ty = 0; ty < rows; ty++) {
-    for (let tx = 0; tx < cols; tx++) {
-      let buffer = createGraphics(tileSize, tileSize);
-      buffer.push();
-      buffer.translate(-tx * tileSize, -ty * tileSize);
-      renderScene(buffer, totalW, totalH);
-      buffer.pop();
-      buffer.save(`tile-${tx}-${ty}.png`);
-      buffer.remove();  // free memory
-    }
-  }
-  // Stitch with ImageMagick:
-  // montage tile-*.png -tile 4x4 -geometry +0+0 final.png
+ for (let ty = 0; ty < rows; ty++) {
+ for (let tx = 0; tx < cols; tx++) {
+ let buffer = createGraphics(tileSize, tileSize);
+ buffer.push();
+ buffer.translate(-tx * tileSize, -ty * tileSize);
+ renderScene(buffer, totalW, totalH);
+ buffer.pop();
+ buffer.save(`tile-${tx}-${ty}.png`);
+ buffer.remove(); // free memory
+ }
+ }
+ // Stitch with ImageMagick:
+ // montage tile-*.png -tile 4x4 -geometry +0+0 final.png
 }
 ```
 
@@ -418,39 +418,39 @@ let capturer;
 let recording = false;
 
 function setup() {
-  createCanvas(1920, 1080);
-  pixelDensity(1);
+ createCanvas(1920, 1080);
+ pixelDensity(1);
 
-  capturer = new CCapture({
-    format: 'webm',       // 'webm', 'gif', 'png', 'jpg'
-    framerate: 30,
-    quality: 99,           // 0-100 for webm/jpg
-    // timeLimit: 10,      // auto-stop after N seconds
-    // motionBlurFrames: 4 // supersampled motion blur
-  });
+ capturer = new CCapture({
+ format: 'webm', // 'webm', 'gif', 'png', 'jpg'
+ framerate: 30,
+ quality: 99, // 0-100 for webm/jpg
+ // timeLimit: 10, // auto-stop after N seconds
+ // motionBlurFrames: 4 // supersampled motion blur
+ });
 }
 
 function draw() {
-  // ... render frame ...
+ // ... render frame ...
 
-  if (recording) {
-    capturer.capture(document.querySelector('canvas'));
-  }
+ if (recording) {
+ capturer.capture(document.querySelector('canvas'));
+ }
 }
 
 function keyPressed() {
-  if (key === 'c') {
-    if (!recording) {
-      capturer.start();
-      recording = true;
-      console.log('Recording started');
-    } else {
-      capturer.stop();
-      capturer.save();  // triggers download
-      recording = false;
-      console.log('Recording saved');
-    }
-  }
+ if (key === 'c') {
+ if (!recording) {
+ capturer.start();
+ recording = true;
+ console.log('Recording started');
+ } else {
+ capturer.stop();
+ capturer.save(); // triggers download
+ recording = false;
+ console.log('Recording saved');
+ }
+ }
 }
 ```
 
@@ -478,9 +478,9 @@ For custom export workflows beyond `saveCanvas()`:
 ```javascript
 // Canvas to Blob (for upload, processing)
 document.querySelector('canvas').toBlob((blob) => {
-  // Upload to server, process, etc.
-  let url = URL.createObjectURL(blob);
-  console.log('Blob URL:', url);
+ // Upload to server, process, etc.
+ let url = URL.createObjectURL(blob);
+ console.log('Blob URL:', url);
 }, 'image/png');
 
 // Canvas to Data URL (for inline embedding)
@@ -496,18 +496,18 @@ let dataUrl = document.querySelector('canvas').toDataURL('image/png');
 
 ```javascript
 function setup() {
-  createCanvas(1920, 1080, SVG);  // SVG renderer
-  noLoop();
+ createCanvas(1920, 1080, SVG); // SVG renderer
+ noLoop();
 }
 
 function draw() {
-  // Only vector operations work (no pixel ops, no blendMode)
-  stroke(0);
-  noFill();
-  for (let i = 0; i < 100; i++) {
-    ellipse(random(width), random(height), random(10, 50));
-  }
-  save('output.svg');
+ // Only vector operations work (no pixel ops, no blendMode)
+ stroke(0);
+ noFill();
+ for (let i = 0; i < 100; i++) {
+ ellipse(random(width), random(height), random(10, 50));
+ }
+ save('output.svg');
 }
 ```
 
@@ -528,18 +528,18 @@ const rng = $fx.rand;
 
 // Declare features for rarity/filtering
 $fx.features({
-  'Palette': paletteName,
-  'Complexity': complexity > 0.7 ? 'High' : 'Low',
-  'Has Particles': particleCount > 0
+ 'Palette': paletteName,
+ 'Complexity': complexity > 0.7 ? 'High' : 'Low',
+ 'Has Particles': particleCount > 0
 });
 
 // Declare on-chain parameters
 $fx.params([
-  { id: 'density', name: 'Density', type: 'number',
-    options: { min: 1, max: 100, step: 1 } },
-  { id: 'palette', name: 'Palette', type: 'select',
-    options: { options: ['Warm', 'Cool', 'Mono'] } },
-  { id: 'accent', name: 'Accent Color', type: 'color' }
+ { id: 'density', name: 'Density', type: 'number',
+ options: { min: 1, max: 100, step: 1 } },
+ { id: 'palette', name: 'Palette', type: 'select',
+ options: { options: ['Warm', 'Cool', 'Mono'] } },
+ { id: 'accent', name: 'Accent Color', type: 'color' }
 ]);
 
 // Read params
@@ -553,13 +553,13 @@ let density = $fx.getParam('density');
 
 ```javascript
 // Platform provides a hash string
-const hash = tokenData.hash;  // Art Blocks convention
+const hash = tokenData.hash; // Art Blocks convention
 
 // Build deterministic PRNG from hash
 function prngFromHash(hash) {
-  let seed = parseInt(hash.slice(0, 16), 16);
-  // xoshiro128** or similar
-  return function() { /* ... */ };
+ let seed = parseInt(hash.slice(0, 16), 16);
+ // xoshiro128** or similar
+ return function() { /* ... */ };
 }
 
 const rng = prngFromHash(hash);

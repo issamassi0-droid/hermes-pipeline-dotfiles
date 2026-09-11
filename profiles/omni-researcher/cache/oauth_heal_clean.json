@@ -1,44 +1,44 @@
 {
-  "openai-codex": [
-    "/home/massi/.hermes/profiles/omni-researcher/auth.json",
-    [
-      1789123120731406977,
-      5339
-    ],
-    null,
-    "/home/massi/.hermes/auth.json",
-    [
-      1789122943521523166,
-      10192
-    ],
-    null
-  ],
-  "xai-oauth": [
-    "/home/massi/.hermes/profiles/omni-researcher/auth.json",
-    [
-      1789123120731406977,
-      5339
-    ],
-    null,
-    "/home/massi/.hermes/auth.json",
-    [
-      1789122943521523166,
-      10192
-    ],
-    null
-  ],
-  "anthropic": [
-    "/home/massi/.hermes/profiles/omni-researcher/auth.json",
-    [
-      1789123120731406977,
-      5339
-    ],
-    null,
-    "/home/massi/.hermes/auth.json",
-    [
-      1789122943521523166,
-      10192
-    ],
-    null
-  ]
+ "openai-codex": [
+ "/home/massi/.hermes/profiles/omni-researcher/auth.json",
+ [
+ 1789123120731406977,
+ 5339
+ ],
+ null,
+ "/home/massi/.hermes/auth.json",
+ [
+ 1789122943521523166,
+ 10192
+ ],
+ null
+ ],
+ "xai-oauth": [
+ "/home/massi/.hermes/profiles/omni-researcher/auth.json",
+ [
+ 1789123120731406977,
+ 5339
+ ],
+ null,
+ "/home/massi/.hermes/auth.json",
+ [
+ 1789122943521523166,
+ 10192
+ ],
+ null
+ ],
+ "anthropic": [
+ "/home/massi/.hermes/profiles/omni-researcher/auth.json",
+ [
+ 1789123120731406977,
+ 5339
+ ],
+ null,
+ "/home/massi/.hermes/auth.json",
+ [
+ 1789122943521523166,
+ 10192
+ ],
+ null
+ ]
 }

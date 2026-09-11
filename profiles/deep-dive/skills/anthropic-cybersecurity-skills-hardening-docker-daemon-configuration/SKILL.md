@@ -1,13 +1,13 @@
 ---
 name: hardening-docker-daemon-configuration
 description: >-
-  Hardens the Docker daemon (dockerd) through /etc/docker/daemon.json with user namespace
-  remapping, TLS client authentication, seccomp profiles, and CIS Docker Benchmark controls
-  such as icc, no-new-privileges, and live-restore. Use when securing a Docker host's daemon
-  to prevent privilege escalation, breakout, or lateral movement, or when auditing daemon
-  settings against CIS requirements. Keywords: dockerd, daemon.json, userns-remap,
-  no-new-privileges, icc, live-restore, TLS socket. Do not use for hardening images and
-  per-container runtime flags - use hardening-docker-containers-for-production.
+ Hardens the Docker daemon (dockerd) through /etc/docker/daemon.json with user namespace
+ remapping, TLS client authentication, seccomp profiles, and CIS Docker Benchmark controls
+ such as icc, no-new-privileges, and live-restore. Use when securing a Docker host's daemon
+ to prevent privilege escalation, breakout, or lateral movement, or when auditing daemon
+ settings against CIS requirements. Keywords: dockerd, daemon.json, userns-remap,
+ no-new-privileges, icc, live-restore, TLS socket. Do not use for hardening images and
+ per-container runtime flags - use hardening-docker-containers-for-production.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -58,50 +58,50 @@ The Docker daemon (`dockerd`) runs with root privileges and controls all contain
 
 ```json
 {
-  "icc": false,
-  "userns-remap": "default",
-  "no-new-privileges": true,
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "10m",
-    "max-file": "5"
-  },
-  "storage-driver": "overlay2",
-  "live-restore": true,
-  "userland-proxy": false,
-  "default-ulimits": {
-    "nofile": {
-      "Name": "nofile",
-      "Hard": 65536,
-      "Soft": 32768
-    },
-    "nproc": {
-      "Name": "nproc",
-      "Hard": 4096,
-      "Soft": 2048
-    }
-  },
-  "seccomp-profile": "/etc/docker/seccomp/default.json",
-  "default-address-pools": [
-    {
-      "base": "172.17.0.0/16",
-      "size": 24
-    }
-  ],
-  "iptables": true,
-  "ip-forward": true,
-  "ip-masq": true,
-  "experimental": false,
-  "metrics-addr": "127.0.0.1:9323",
-  "max-concurrent-downloads": 3,
-  "max-concurrent-uploads": 5,
-  "default-runtime": "runc",
-  "runtimes": {
-    "runsc": {
-      "path": "/usr/local/bin/runsc",
-      "runtimeArgs": ["--platform=ptrace"]
-    }
-  }
+ "icc": false,
+ "userns-remap": "default",
+ "no-new-privileges": true,
+ "log-driver": "json-file",
+ "log-opts": {
+ "max-size": "10m",
+ "max-file": "5"
+ },
+ "storage-driver": "overlay2",
+ "live-restore": true,
+ "userland-proxy": false,
+ "default-ulimits": {
+ "nofile": {
+ "Name": "nofile",
+ "Hard": 65536,
+ "Soft": 32768
+ },
+ "nproc": {
+ "Name": "nproc",
+ "Hard": 4096,
+ "Soft": 2048
+ }
+ },
+ "seccomp-profile": "/etc/docker/seccomp/default.json",
+ "default-address-pools": [
+ {
+ "base": "172.17.0.0/16",
+ "size": 24
+ }
+ ],
+ "iptables": true,
+ "ip-forward": true,
+ "ip-masq": true,
+ "experimental": false,
+ "metrics-addr": "127.0.0.1:9323",
+ "max-concurrent-downloads": 3,
+ "max-concurrent-uploads": 5,
+ "default-runtime": "runc",
+ "runtimes": {
+ "runsc": {
+ "path": "/usr/local/bin/runsc",
+ "runtimeArgs": ["--platform=ptrace"]
+ }
+ }
 }
 ```
 
@@ -111,7 +111,7 @@ The Docker daemon (`dockerd`) runs with root privileges and controls all contain
 
 ```json
 {
-  "icc": false
+ "icc": false
 }
 ```
 
@@ -121,7 +121,7 @@ Prevents containers on the default bridge network from communicating. Each conta
 
 ```json
 {
-  "userns-remap": "default"
+ "userns-remap": "default"
 }
 ```
 
@@ -144,7 +144,7 @@ docker run --rm alpine id
 
 ```json
 {
-  "no-new-privileges": true
+ "no-new-privileges": true
 }
 ```
 
@@ -154,7 +154,7 @@ Prevents container processes from gaining additional privileges via setuid/setgi
 
 ```json
 {
-  "live-restore": true
+ "live-restore": true
 }
 ```
 
@@ -164,7 +164,7 @@ Keeps containers running during daemon downtime, enabling daemon upgrades withou
 
 ```json
 {
-  "userland-proxy": false
+ "userland-proxy": false
 }
 ```
 
@@ -178,7 +178,7 @@ Uses iptables rules instead of docker-proxy for port forwarding, reducing attack
 # Create CA
 openssl genrsa -aes256 -out ca-key.pem 4096
 openssl req -new -x509 -days 365 -key ca-key.pem -sha256 -out ca.pem \
-  -subj "/CN=Docker CA"
+ -subj "/CN=Docker CA"
 
 # Create server key and CSR
 openssl genrsa -out server-key.pem 4096
@@ -190,14 +190,14 @@ echo "extendedKeyUsage = serverAuth" >> extfile.cnf
 
 # Sign server certificate
 openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAkey ca-key.pem \
-  -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+ -CAcreateserial -out server-cert.pem -extfile extfile.cnf
 
 # Create client key and certificate
 openssl genrsa -out key.pem 4096
 openssl req -subj "/CN=client" -new -key key.pem -out client.csr
 echo "extendedKeyUsage = clientAuth" > extfile-client.cnf
 openssl x509 -req -days 365 -sha256 -in client.csr -CA ca.pem -CAkey ca-key.pem \
-  -CAcreateserial -out cert.pem -extfile extfile-client.cnf
+ -CAcreateserial -out cert.pem -extfile extfile-client.cnf
 
 # Set permissions
 chmod 0400 ca-key.pem key.pem server-key.pem
@@ -212,12 +212,12 @@ sudo cp ca.pem server-cert.pem server-key.pem /etc/docker/tls/
 
 ```json
 {
-  "tls": true,
-  "tlsverify": true,
-  "tlscacert": "/etc/docker/tls/ca.pem",
-  "tlscert": "/etc/docker/tls/server-cert.pem",
-  "tlskey": "/etc/docker/tls/server-key.pem",
-  "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"]
+ "tls": true,
+ "tlsverify": true,
+ "tlscacert": "/etc/docker/tls/ca.pem",
+ "tlscert": "/etc/docker/tls/server-cert.pem",
+ "tlskey": "/etc/docker/tls/server-key.pem",
+ "hosts": ["unix:///var/run/docker.sock", "tcp://0.0.0.0:2376"]
 }
 ```
 
@@ -225,10 +225,10 @@ sudo cp ca.pem server-cert.pem server-key.pem /etc/docker/tls/
 
 ```bash
 docker --tlsverify \
-  --tlscacert=ca.pem \
-  --tlscert=cert.pem \
-  --tlskey=key.pem \
-  -H=tcp://docker-host:2376 version
+ --tlscacert=ca.pem \
+ --tlscert=cert.pem \
+ --tlskey=key.pem \
+ -H=tcp://docker-host:2376 version
 ```
 
 ## Docker Socket Protection
@@ -318,9 +318,9 @@ docker network inspect bridge --format '{{.Options}}'
 
 # Audit with Docker Bench
 docker run --rm --net host --pid host \
-  -v /var/run/docker.sock:/var/run/docker.sock \
-  -v /etc:/etc:ro \
-  docker/docker-bench-security
+ -v /var/run/docker.sock:/var/run/docker.sock \
+ -v /etc:/etc:ro \
+ docker/docker-bench-security
 ```
 
 ## Best Practices

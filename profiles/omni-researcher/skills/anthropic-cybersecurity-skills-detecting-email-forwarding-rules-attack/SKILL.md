@@ -1,9 +1,9 @@
 ---
 name: detecting-email-forwarding-rules-attack
 description: Detect malicious inbox/mail-flow forwarding rules that adversaries create to maintain
-  persistent access to email communications for intelligence collection and business email
-  compromise. Use when hunting for suspicious auto-forwarding, hidden mailbox rules, or
-  T1114-style email collection persistence after a compromised account or BEC incident.
+ persistent access to email communications for intelligence collection and business email
+ compromise. Use when hunting for suspicious auto-forwarding, hidden mailbox rules, or
+ T1114-style email collection persistence after a compromised account or BEC incident.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:

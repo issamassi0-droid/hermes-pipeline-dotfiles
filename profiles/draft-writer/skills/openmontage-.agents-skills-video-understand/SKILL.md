@@ -1,9 +1,9 @@
 ---
 name: video-understand
 description: |
-  Understand video content locally using ffmpeg frame extraction and Whisper transcription. No API keys needed.
-  Use when: (1) Understanding what a video contains, (2) Transcribing video audio locally,
-  (3) Extracting key frames for visual analysis, (4) Getting video content without API keys.
+ Understand video content locally using ffmpeg frame extraction and Whisper transcription. No API keys needed.
+ Use when: (1) Understanding what a video contains, (2) Transcribing video audio locally,
+ (3) Extracting key frames for visual analysis, (4) Getting video content without API keys.
 ---
 
 # video-understand
@@ -71,19 +71,19 @@ The script outputs JSON to stdout (or file with `-o`). See `references/output-fo
 
 ```json
 {
-  "video": "video.mp4",
-  "duration": 18.076,
-  "resolution": {"width": 1224, "height": 1080},
-  "mode": "scene",
-  "frames": [
-    {"path": "/abs/path/frame_0001.jpg", "timestamp": 0.0, "timestamp_formatted": "00:00"}
-  ],
-  "frame_count": 12,
-  "transcript": [
-    {"start": 0.0, "end": 2.5, "text": "Hello and welcome..."}
-  ],
-  "text": "Full transcript...",
-  "note": "Use the Read tool to view frame images for visual understanding."
+ "video": "video.mp4",
+ "duration": 18.076,
+ "resolution": {"width": 1224, "height": 1080},
+ "mode": "scene",
+ "frames": [
+ {"path": "/abs/path/frame_0001.jpg", "timestamp": 0.0, "timestamp_formatted": "00:00"}
+ ],
+ "frame_count": 12,
+ "transcript": [
+ {"start": 0.0, "end": 2.5, "text": "Hello and welcome..."}
+ ],
+ "text": "Full transcript...",
+ "note": "Use the Read tool to view frame images for visual understanding."
 }
 ```
 

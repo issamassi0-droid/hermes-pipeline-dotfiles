@@ -7,17 +7,17 @@ How the Cabinet-Office system learns from its own runs and rewrites itself safel
 ## The Loop
 
 ```
-       ┌─────────────────────────────────────────────┐
-       │                                             │
-       v                                             │
-   ┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-   │ run the  │───▶│ collect  │───▶│ analyze  │───▶│ amend    │
-   │ pipeline │    │ ledger + │    │ patterns │    │ SOULs /  │
-   │          │    │ analytics│    │          │    │ registry │
-   └──────────┘    └──────────┘    └──────────┘    └──────────┘
-       ▲                                                │
-       │                                                │
-       └──────────── next run uses new SOULs ◀──────────┘
+ ┌─────────────────────────────────────────────┐
+ │ │
+ v │
+ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐
+ │ run the │───▶│ collect │───▶│ analyze │───▶│ amend │
+ │ pipeline │ │ ledger + │ │ patterns │ │ SOULs / │
+ │ │ │ analytics│ │ │ │ registry │
+ └──────────┘ └──────────┘ └──────────┘ └──────────┘
+ ▲ │
+ │ │
+ └──────────── next run uses new SOULs ◀──────────┘
 ```
 
 The loop runs on a **cron schedule** (monthly) and on **demand** (after any 50th mission).
@@ -41,45 +41,45 @@ The Analyst role is played by **@analytics** (with **@architect** as co-analyst 
 
 ```json
 {
-  "period": "2026-09-11..2026-10-11",
-  "missions_run": 47,
-  "tier_distribution": {"0": 12, "1": 18, "2": 14, "3": 3},
-  "tier_accuracy": {
-    "correct": 44,
-    "under_tiered": 2,
-    "over_tiered": 1,
-    "accuracy": 0.936
-  },
-  "qa_effectiveness": {
-    "precision": 0.82,
-    "recall": 0.71,
-    "avg_cycles_to_converge": 1.3
-  },
-  "escalation_accuracy": {
-    "total": 6,
-    "correct": 5,
-    "spurious": 1,
-    "accuracy": 0.833
-  },
-  "coverage_completeness": {
-    "missions_with_all_blind_spots_covered": 45,
-    "missions_with_uncovered": 2,
-    "completeness": 0.957
-  },
-  "token_economy": {
-    "tier_0_actual_vs_budget": "0.4x",
-    "tier_1_actual_vs_budget": "0.6x",
-    "tier_2_actual_vs_budget": "0.9x",
-    "tier_3_actual_vs_budget": "1.05x"
-  },
-  "proposed_amendments": [
-    {
-      "target": "routing.yaml",
-      "change": "Raise tier-2 token budget to 16000 — actuals running 105% of budget.",
-      "evidence": "9 of 14 tier-2 missions exceeded 15000 tokens.",
-      "risk": "low"
-    }
-  ]
+ "period": "2026-09-11..2026-10-11",
+ "missions_run": 47,
+ "tier_distribution": {"0": 12, "1": 18, "2": 14, "3": 3},
+ "tier_accuracy": {
+ "correct": 44,
+ "under_tiered": 2,
+ "over_tiered": 1,
+ "accuracy": 0.936
+ },
+ "qa_effectiveness": {
+ "precision": 0.82,
+ "recall": 0.71,
+ "avg_cycles_to_converge": 1.3
+ },
+ "escalation_accuracy": {
+ "total": 6,
+ "correct": 5,
+ "spurious": 1,
+ "accuracy": 0.833
+ },
+ "coverage_completeness": {
+ "missions_with_all_blind_spots_covered": 45,
+ "missions_with_uncovered": 2,
+ "completeness": 0.957
+ },
+ "token_economy": {
+ "tier_0_actual_vs_budget": "0.4x",
+ "tier_1_actual_vs_budget": "0.6x",
+ "tier_2_actual_vs_budget": "0.9x",
+ "tier_3_actual_vs_budget": "1.05x"
+ },
+ "proposed_amendments": [
+ {
+ "target": "routing.yaml",
+ "change": "Raise tier-2 token budget to 16000 — actuals running 105% of budget.",
+ "evidence": "9 of 14 tier-2 missions exceeded 15000 tokens.",
+ "risk": "low"
+ }
+ ]
 }
 ```
 

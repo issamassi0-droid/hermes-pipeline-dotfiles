@@ -85,45 +85,45 @@ Create `.github/workflows/codeql-analysis.yml`:
 name: "CodeQL Analysis"
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
-  schedule:
-    - cron: '30 2 * * 1'  # Weekly Monday 2:30 AM UTC
+ push:
+ branches: [main, develop]
+ pull_request:
+ branches: [main]
+ schedule:
+ - cron: '30 2 * * 1' # Weekly Monday 2:30 AM UTC
 
 jobs:
-  analyze:
-    name: Analyze (${{ matrix.language }})
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      contents: read
-      actions: read
+ analyze:
+ name: Analyze (${{ matrix.language }})
+ runs-on: ubuntu-latest
+ permissions:
+ security-events: write
+ contents: read
+ actions: read
 
-    strategy:
-      fail-fast: false
-      matrix:
-        language: ['javascript-typescript', 'python', 'java-kotlin']
+ strategy:
+ fail-fast: false
+ matrix:
+ language: ['javascript-typescript', 'python', 'java-kotlin']
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+ steps:
+ - name: Checkout repository
+ uses: actions/checkout@v4
 
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: ${{ matrix.language }}
-          queries: +security-extended,security-and-quality
-          # For compiled languages, add build commands below
+ - name: Initialize CodeQL
+ uses: github/codeql-action/init@v3
+ with:
+ languages: ${{ matrix.language }}
+ queries: +security-extended,security-and-quality
+ # For compiled languages, add build commands below
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
+ - name: Autobuild
+ uses: github/codeql-action/autobuild@v3
 
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-        with:
-          category: "/language:${{ matrix.language }}"
+ - name: Perform CodeQL Analysis
+ uses: github/codeql-action/analyze@v3
+ with:
+ category: "/language:${{ matrix.language }}"
 ```
 
 ### Step 4 --- Custom Query Packs
@@ -132,12 +132,12 @@ Install organization-specific query packs by referencing them in the workflow:
 
 ```yaml
 - name: Initialize CodeQL
-  uses: github/codeql-action/init@v3
-  with:
-    languages: java-kotlin
-    packs: |
-      my-org/java-custom-queries@1.0.0
-      codeql/java-queries:cwe/cwe-089
+ uses: github/codeql-action/init@v3
+ with:
+ languages: java-kotlin
+ packs: |
+ my-org/java-custom-queries@1.0.0
+ codeql/java-queries:cwe/cwe-089
 ```
 
 ### Step 5 --- Configure Branch Protection Rules
@@ -175,10 +175,10 @@ GHAS accepts SARIF (Static Analysis Results Interchange Format) uploads from ext
 
 ```yaml
 - name: Upload SARIF
-  uses: github/codeql-action/upload-sarif@v3
-  with:
-    sarif_file: results.sarif
-    category: "semgrep"
+ uses: github/codeql-action/upload-sarif@v3
+ with:
+ sarif_file: results.sarif
+ category: "semgrep"
 ```
 
 ### Security Overview Dashboard

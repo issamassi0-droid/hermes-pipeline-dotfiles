@@ -22,17 +22,17 @@ for local 2D character animation.
 
 ```json
 {
-  "character_id": "mouse",
-  "rig_type": "svg_rig",
-  "parts": [
-    { "id": "body", "kind": "torso", "layer": 10 },
-    { "id": "head", "kind": "head", "layer": 30, "parent": "body" },
-    { "id": "arm_right", "kind": "limb", "layer": 40, "parent": "body" }
-  ],
-  "joints": {
-    "head": { "pivot": [320, 180], "rotation": [-20, 20] },
-    "arm_right": { "pivot": [390, 310], "rotation": [-70, 95] }
-  }
+ "character_id": "mouse",
+ "rig_type": "svg_rig",
+ "parts": [
+ { "id": "body", "kind": "torso", "layer": 10 },
+ { "id": "head", "kind": "head", "layer": 30, "parent": "body" },
+ { "id": "arm_right", "kind": "limb", "layer": 40, "parent": "body" }
+ ],
+ "joints": {
+ "head": { "pivot": [320, 180], "rotation": [-20, 20] },
+ "arm_right": { "pivot": [390, 310], "rotation": [-70, 95] }
+ }
 }
 ```
 
@@ -47,7 +47,7 @@ for local 2D character animation.
 ## Sources
 
 - SVG transform-origin behavior is browser-defined and can be sensitive to
-  coordinate space; prefer explicit SVG-coordinate pivots when using GSAP
-  `svgOrigin`: https://gsap.com/docs/v3/GSAP/CorePlugins/CSS/
+ coordinate space; prefer explicit SVG-coordinate pivots when using GSAP
+ `svgOrigin`: https://gsap.com/docs/v3/GSAP/CorePlugins/CSS/
 - Remotion animations must be frame-driven and deterministic via current frame:
-  https://www.remotion.dev/docs/use-current-frame
+ https://www.remotion.dev/docs/use-current-frame

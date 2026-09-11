@@ -1,12 +1,12 @@
 ---
 name: performing-threat-intelligence-sharing-with-misp
 description: >-
-  Uses PyMISP (the official MISP REST API library) to create events with
-  structured IOCs (IPs, domains, hashes, URLs), enrich them with MITRE ATT&CK
-  tags and galaxy clusters, manage sharing groups and distribution levels,
-  search existing intelligence, and export in STIX 2.1 format. Use when
-  creating, enriching, or sharing threat intelligence events on a MISP
-  instance, or integrating IOC feeds with other platforms.
+ Uses PyMISP (the official MISP REST API library) to create events with
+ structured IOCs (IPs, domains, hashes, URLs), enrich them with MITRE ATT&CK
+ tags and galaxy clusters, manage sharing groups and distribution levels,
+ search existing intelligence, and export in STIX 2.1 format. Use when
+ creating, enriching, or sharing threat intelligence events on a MISP
+ instance, or integrating IOC feeds with other platforms.
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:

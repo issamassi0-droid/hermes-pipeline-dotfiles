@@ -1,12 +1,12 @@
 ---
 name: implementing-usb-device-control-policy
 description: 'Implements USB device control policies to restrict unauthorized removable
-  media access on endpoints, preventing data exfiltration and malware introduction
-  via USB devices. Use when deploying device control via Group Policy, Intune, or
-  EDR platforms to enforce USB restrictions. Activates for requests involving USB
-  control, removable media policy, device control, or data loss prevention via USB.
+ media access on endpoints, preventing data exfiltration and malware introduction
+ via USB devices. Use when deploying device control via Group Policy, Intune, or
+ EDR platforms to enforce USB restrictions. Activates for requests involving USB
+ control, removable media policy, device control, or data loss prevention via USB.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -59,7 +59,7 @@ Get-PnpDevice -Class USB | Select-Object InstanceId, FriendlyName, Status
 
 # Query USB storage history from registry
 Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Enum\USBSTOR\*\*" |
-  Select-Object FriendlyName, ContainerID, HardwareID
+ Select-Object FriendlyName, ContainerID, HardwareID
 
 # Collect USB usage across fleet (via EDR or scripts)
 # CrowdStrike: Investigate → USB Device Activity
@@ -72,7 +72,7 @@ Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Enum\USBSTOR\*\*" |
 Computer Configuration → Administrative Templates → System → Removable Storage Access
 
 - All Removable Storage classes: Deny all access → Enabled
-  (Block read AND write for all removable storage)
+ (Block read AND write for all removable storage)
 
 OR for granular control:
 - CD and DVD: Deny read access → Enabled
@@ -82,11 +82,11 @@ OR for granular control:
 
 To allow specific approved USB devices:
 Computer Configuration → Administrative Templates → System → Device Installation
-  → Device Installation Restrictions
+ → Device Installation Restrictions
 
 - Prevent installation of devices not described by other policy settings → Enabled
 - Allow installation of devices that match any of these device IDs → Enabled
-  Add approved Device IDs: USB\VID_0781&PID_5583 (example: SanDisk Cruzer)
+ Add approved Device IDs: USB\VID_0781&PID_5583 (example: SanDisk Cruzer)
 ```
 
 ### Step 3: Deploy via Microsoft Defender for Endpoint
@@ -94,29 +94,29 @@ Computer Configuration → Administrative Templates → System → Device Instal
 ```xml
 <!-- MDE Device Control policy (XML format) -->
 <PolicyGroups>
-  <Group Id="{d9a81dc0-1234-5678-9abc-def012345678}"
-    Type="Device" Name="Approved USB Devices">
-    <MatchClause>
-      <MatchType>VID_PID</MatchType>
-      <MatchData>0781_5583</MatchData> <!-- SanDisk -->
-    </MatchClause>
-  </Group>
+ <Group Id="{d9a81dc0-1234-5678-9abc-def012345678}"
+ Type="Device" Name="Approved USB Devices">
+ <MatchClause>
+ <MatchType>VID_PID</MatchType>
+ <MatchData>0781_5583</MatchData> <!-- SanDisk -->
+ </MatchClause>
+ </Group>
 </PolicyGroups>
 
 <PolicyRules>
-  <Rule Id="{rule-guid}" Name="Block unapproved USB storage">
-    <IncludedIdList>
-      <PrimaryId>RemovableMediaDevices</PrimaryId>
-    </IncludedIdList>
-    <ExcludedIdList>
-      <GroupId>{d9a81dc0-1234-5678-9abc-def012345678}</GroupId>
-    </ExcludedIdList>
-    <Entry>
-      <Type>Deny</Type>
-      <AccessMask>63</AccessMask> <!-- All access -->
-      <Options>4</Options> <!-- Show notification -->
-    </Entry>
-  </Rule>
+ <Rule Id="{rule-guid}" Name="Block unapproved USB storage">
+ <IncludedIdList>
+ <PrimaryId>RemovableMediaDevices</PrimaryId>
+ </IncludedIdList>
+ <ExcludedIdList>
+ <GroupId>{d9a81dc0-1234-5678-9abc-def012345678}</GroupId>
+ </ExcludedIdList>
+ <Entry>
+ <Type>Deny</Type>
+ <AccessMask>63</AccessMask> <!-- All access -->
+ <Options>4</Options> <!-- Show notification -->
+ </Entry>
+ </Rule>
 </PolicyRules>
 ```
 

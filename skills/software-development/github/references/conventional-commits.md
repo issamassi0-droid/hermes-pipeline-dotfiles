@@ -53,9 +53,9 @@ Closes #42
 In the commit body or footer:
 
 ```
-Closes #42          ← closes the issue when merged
-Fixes #42           ← same effect
-Refs #42            ← references without closing
+Closes #42 ← closes the issue when merged
+Fixes #42 ← same effect
+Refs #42 ← references without closing
 Co-authored-by: Name <email>
 ```
 

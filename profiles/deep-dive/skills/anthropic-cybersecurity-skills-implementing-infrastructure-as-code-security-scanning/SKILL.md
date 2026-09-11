@@ -1,12 +1,12 @@
 ---
 name: implementing-infrastructure-as-code-security-scanning
 description: 'Implements automated security scanning for Infrastructure as Code using
-  Checkov, tfsec, and KICS to detect misconfigurations in Terraform, CloudFormation,
-  Kubernetes manifests, and Helm charts, plus policy-based governance and CI/CD
-  integration. Use when validating cloud infrastructure before deployment or blocking
-  insecure changes (public S3 buckets, open security groups) in pull requests.
+ Checkov, tfsec, and KICS to detect misconfigurations in Terraform, CloudFormation,
+ Kubernetes manifests, and Helm charts, plus policy-based governance and CI/CD
+ integration. Use when validating cloud infrastructure before deployment or blocking
+ insecure changes (public S3 buckets, open security groups) in pull requests.
 
-  '
+ '
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -82,55 +82,55 @@ checkov -d ./terraform/ --skip-check CKV_AWS_145,CKV2_AWS_6
 name: IaC Security Scan
 
 on:
-  pull_request:
-    paths:
-      - 'terraform/**'
-      - 'cloudformation/**'
-      - 'k8s/**'
+ pull_request:
+ paths:
+ - 'terraform/**'
+ - 'cloudformation/**'
+ - 'k8s/**'
 
 jobs:
-  checkov:
-    name: Checkov IaC Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ checkov:
+ name: Checkov IaC Scan
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Run Checkov
-        uses: bridgecrewio/checkov-action@v12
-        with:
-          directory: terraform/
-          framework: terraform
-          output_format: cli,sarif
-          output_file_path: console,checkov.sarif
-          soft_fail: false
-          skip_check: CKV_AWS_145
+ - name: Run Checkov
+ uses: bridgecrewio/checkov-action@v12
+ with:
+ directory: terraform/
+ framework: terraform
+ output_format: cli,sarif
+ output_file_path: console,checkov.sarif
+ soft_fail: false
+ skip_check: CKV_AWS_145
 
-      - name: Upload SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: checkov.sarif
-          category: checkov-iac
+ - name: Upload SARIF
+ if: always()
+ uses: github/codeql-action/upload-sarif@v3
+ with:
+ sarif_file: checkov.sarif
+ category: checkov-iac
 
-  tfsec:
-    name: tfsec Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ tfsec:
+ name: tfsec Scan
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Run tfsec
-        uses: aquasecurity/tfsec-action@v1.0.3
-        with:
-          working_directory: terraform/
-          sarif_file: tfsec.sarif
-          soft_fail: false
+ - name: Run tfsec
+ uses: aquasecurity/tfsec-action@v1.0.3
+ with:
+ working_directory: terraform/
+ sarif_file: tfsec.sarif
+ soft_fail: false
 
-      - name: Upload SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: tfsec.sarif
-          category: tfsec
+ - name: Upload SARIF
+ if: always()
+ uses: github/codeql-action/upload-sarif@v3
+ with:
+ sarif_file: tfsec.sarif
+ category: tfsec
 ```
 
 ### Step 3: Create Custom Checkov Policies
@@ -142,20 +142,20 @@ from checkov.common.models.enums import CheckResult, CheckCategories
 
 
 class S3BucketVersioning(BaseResourceCheck):
-    def __init__(self):
-        name = "Ensure S3 bucket has versioning enabled"
-        id = "CKV_CUSTOM_1"
-        supported_resources = ["aws_s3_bucket"]
-        categories = [CheckCategories.GENERAL_SECURITY]
-        super().__init__(name=name, id=id, categories=categories,
-                         supported_resources=supported_resources)
+ def __init__(self):
+ name = "Ensure S3 bucket has versioning enabled"
+ id = "CKV_CUSTOM_1"
+ supported_resources = ["aws_s3_bucket"]
+ categories = [CheckCategories.GENERAL_SECURITY]
+ super().__init__(name=name, id=id, categories=categories,
+ supported_resources=supported_resources)
 
-    def scan_resource_conf(self, conf):
-        versioning = conf.get("versioning", [{}])
-        if isinstance(versioning, list) and len(versioning) > 0:
-            if versioning[0].get("enabled", [False])[0]:
-                return CheckResult.PASSED
-        return CheckResult.FAILED
+ def scan_resource_conf(self, conf):
+ versioning = conf.get("versioning", [{}])
+ if isinstance(versioning, list) and len(versioning) > 0:
+ if versioning[0].get("enabled", [False])[0]:
+ return CheckResult.PASSED
+ return CheckResult.FAILED
 
 
 check = S3BucketVersioning()
@@ -168,18 +168,18 @@ check = S3BucketVersioning()
 branch: main
 compact: true
 directory:
-  - terraform/
-  - cloudformation/
+ - terraform/
+ - cloudformation/
 framework:
-  - terraform
-  - cloudformation
-  - kubernetes
+ - terraform
+ - cloudformation
+ - kubernetes
 output:
-  - cli
-  - sarif
+ - cli
+ - sarif
 skip-check:
-  - CKV_AWS_145    # S3 default encryption with CMK (using SSE-S3 is acceptable)
-  - CKV2_AWS_6     # S3 bucket request logging (handled at CloudTrail level)
+ - CKV_AWS_145 # S3 default encryption with CMK (using SSE-S3 is acceptable)
+ - CKV2_AWS_6 # S3 bucket request logging (handled at CloudTrail level)
 soft-fail: false
 ```
 
@@ -194,10 +194,10 @@ checkov -d ./charts/myapp/ --framework helm
 
 # Scan with KICS (Keeping Infrastructure as Code Secure)
 docker run -v $(pwd)/k8s:/path checkmarx/kics:latest scan \
-  --path /path \
-  --output-path /path/results \
-  --type Kubernetes \
-  --report-formats json,sarif
+ --path /path \
+ --output-path /path/results \
+ --type Kubernetes \
+ --report-formats json,sarif
 ```
 
 ## Key Concepts
@@ -245,23 +245,23 @@ Directory: terraform/
 Scan Date: 2026-02-23
 
 Checkov Results:
-  Passed: 187
-  Failed: 12
-  Skipped: 3
-  Unknown: 0
+ Passed: 187
+ Failed: 12
+ Skipped: 3
+ Unknown: 0
 
 FAILED CHECKS:
-  CKV_AWS_18  [HIGH]   S3 Bucket has public read ACL
-              Resource: aws_s3_bucket.data_lake
-              File:     terraform/storage.tf:15-28
+ CKV_AWS_18 [HIGH] S3 Bucket has public read ACL
+ Resource: aws_s3_bucket.data_lake
+ File: terraform/storage.tf:15-28
 
-  CKV_AWS_24  [HIGH]   CloudWatch log group not encrypted
-              Resource: aws_cloudwatch_log_group.app
-              File:     terraform/monitoring.tf:3-8
+ CKV_AWS_24 [HIGH] CloudWatch log group not encrypted
+ Resource: aws_cloudwatch_log_group.app
+ File: terraform/monitoring.tf:3-8
 
-  CKV_AWS_79  [MEDIUM] Instance metadata service v1 enabled
-              Resource: aws_instance.web
-              File:     terraform/compute.tf:12-30
+ CKV_AWS_79 [MEDIUM] Instance metadata service v1 enabled
+ Resource: aws_instance.web
+ File: terraform/compute.tf:12-30
 
 QUALITY GATE: FAILED (2 HIGH severity findings)
 ```

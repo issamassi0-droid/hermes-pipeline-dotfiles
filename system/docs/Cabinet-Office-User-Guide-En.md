@@ -20,7 +20,7 @@ status: published
 
 You're currently talking to `@deep-dive` (YouTube research bot).
 
-To use the ministry system, simply:
+To use the system, simply:
 
 ### 1. Research via @omni-researcher
 

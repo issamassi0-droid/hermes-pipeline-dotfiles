@@ -1,11 +1,11 @@
 ---
 name: manim-composer
 description: |
-  Trigger when: (1) User wants to create an educational/explainer video, (2) User has a vague concept they want visualized, (3) User mentions "3b1b style" or "explain like 3Blue1Brown", (4) User wants to plan a Manim video or animation sequence, (5) User asks to "compose" or "plan" a math/science visualization.
+ Trigger when: (1) User wants to create an educational/explainer video, (2) User has a vague concept they want visualized, (3) User mentions "3b1b style" or "explain like 3Blue1Brown", (4) User wants to plan a Manim video or animation sequence, (5) User asks to "compose" or "plan" a math/science visualization.
 
-  Transforms vague video ideas into detailed scene-by-scene plans (scenes.md). Conducts research, asks clarifying questions about audience/scope/focus, and outputs comprehensive scene specifications ready for implementation with ManimCE or ManimGL.
+ Transforms vague video ideas into detailed scene-by-scene plans (scenes.md). Conducts research, asks clarifying questions about audience/scope/focus, and outputs comprehensive scene specifications ready for implementation with ManimCE or ManimGL.
 
-  Use this BEFORE writing any Manim code. This skill plans the video; use manimce-best-practices or manimgl-best-practices for implementation.
+ Use this BEFORE writing any Manim code. This skill plans the video; use manimce-best-practices or manimgl-best-practices for implementation.
 ---
 
 ## Workflow
@@ -13,15 +13,15 @@ description: |
 ### Phase 1: Understand the Concept
 
 1. **Research the topic** deeply before asking questions
-   - Use web search to understand the core concepts
-   - Identify the key insights that make this topic interesting
-   - Find the "aha moment" - what makes this click for learners
-   - Note common misconceptions to address
+ - Use web search to understand the core concepts
+ - Identify the key insights that make this topic interesting
+ - Find the "aha moment" - what makes this click for learners
+ - Note common misconceptions to address
 
 2. **Identify the narrative hook**
-   - What question does this video answer?
-   - Why should the viewer care?
-   - What's the surprising or counterintuitive element?
+ - What question does this video answer?
+ - Why should the viewer care?
+ - What's the surprising or counterintuitive element?
 
 ### Phase 2: Clarify with User
 

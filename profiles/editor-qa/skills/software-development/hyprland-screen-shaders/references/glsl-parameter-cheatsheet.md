@@ -21,7 +21,7 @@
 ## Per-Channel Tweaks
 - Apply AFTER contrast, BEFORE final clamp
 - Use smoothstep-blended multiply:
-  `color *= mix(vec3(R_scale, G_scale, B_scale), vec3(1.0), smoothstep(0.0, 1.0, y));`
+ `color *= mix(vec3(R_scale, G_scale, B_scale), vec3(1.0), smoothstep(0.0, 1.0, y));`
 - Example phone-sleep-mode green lift: `vec3(1.0, 1.02, 0.97)`
 - Example yellow/green tint: `vec3(0.95, 1.04, 0.92)`
 - Example reduced red: `vec3(0.95, ...)`

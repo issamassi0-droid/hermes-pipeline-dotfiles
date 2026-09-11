@@ -1,12 +1,12 @@
 ---
 name: building-threat-intelligence-feed-integration
 description: 'Builds automated threat intelligence feed integration pipelines connecting
-  STIX/TAXII feeds, open-source threat intel, and commercial TI platforms into SIEM
-  and security tools for real-time IOC matching and alerting. Use when SOC teams need
-  to operationalize threat intelligence by automating feed ingestion, normalization,
-  scoring, and distribution to detection systems.
+ STIX/TAXII feeds, open-source threat intel, and commercial TI platforms into SIEM
+ and security tools for real-time IOC matching and alerting. Use when SOC teams need
+ to operationalize threat intelligence by automating feed ingestion, normalization,
+ scoring, and distribution to detection systems.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -76,22 +76,22 @@ from stix2 import parse
 
 # Connect to TAXII server (example: CISA AIS)
 server = Server(
-    "https://taxii.cisa.gov/taxii2/",
-    user="your_username",
-    password="your_password"
+ "https://taxii.cisa.gov/taxii2/",
+ user="your_username",
+ password="your_password"
 )
 
 # List available collections
 for api_root in server.api_roots:
-    print(f"API Root: {api_root.title}")
-    for collection in api_root.collections:
-        print(f"  Collection: {collection.title} (ID: {collection.id})")
+ print(f"API Root: {api_root.title}")
+ for collection in api_root.collections:
+ print(f" Collection: {collection.title} (ID: {collection.id})")
 
 # Fetch indicators from a collection
 collection = Collection(
-    "https://taxii.cisa.gov/taxii2/collections/COLLECTION_ID/",
-    user="your_username",
-    password="your_password"
+ "https://taxii.cisa.gov/taxii2/collections/COLLECTION_ID/",
+ user="your_username",
+ password="your_password"
 )
 
 # Get indicators added in last 24 hours
@@ -100,12 +100,12 @@ added_after = (datetime.utcnow() - timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%
 
 response = collection.get_objects(added_after=added_after, type=["indicator"])
 for obj in response.get("objects", []):
-    indicator = parse(obj)
-    print(f"Type: {indicator.type}")
-    print(f"Pattern: {indicator.pattern}")
-    print(f"Valid Until: {indicator.valid_until}")
-    print(f"Confidence: {indicator.confidence}")
-    print("---")
+ indicator = parse(obj)
+ print(f"Type: {indicator.type}")
+ print(f"Pattern: {indicator.pattern}")
+ print(f"Valid Until: {indicator.valid_until}")
+ print(f"Confidence: {indicator.confidence}")
+ print("---")
 ```
 
 ### Step 3: Ingest Open-Source Feeds
@@ -123,16 +123,16 @@ reader = csv.reader(StringIO(response.text), delimiter=',')
 
 indicators = []
 for row in reader:
-    if row[0].startswith("#"):
-        continue
-    indicators.append({
-        "id": row[0],
-        "dateadded": row[1],
-        "url": row[2],
-        "url_status": row[3],
-        "threat": row[5],
-        "tags": row[6]
-    })
+ if row[0].startswith("#"):
+ continue
+ indicators.append({
+ "id": row[0],
+ "dateadded": row[1],
+ "url": row[2],
+ "url_status": row[3],
+ "threat": row[5],
+ "tags": row[6]
+ })
 
 print(f"Ingested {len(indicators)} URLs from URLhaus")
 
@@ -152,10 +152,10 @@ otx = OTXv2("YOUR_OTX_API_KEY")
 pulses = otx.getall(modified_since="2024-03-14T00:00:00")
 
 for pulse in pulses:
-    print(f"Pulse: {pulse['name']}")
-    print(f"Tags: {pulse['tags']}")
-    for indicator in pulse["indicators"]:
-        print(f"  IOC: {indicator['indicator']} ({indicator['type']})")
+ print(f"Pulse: {pulse['name']}")
+ print(f"Tags: {pulse['tags']}")
+ for indicator in pulse["indicators"]:
+ print(f" IOC: {indicator['indicator']} ({indicator['type']})")
 ```
 
 **Abuse.ch Feodo Tracker (C2 IPs):**
@@ -165,10 +165,10 @@ response = requests.get("https://feodotracker.abuse.ch/downloads/ipblocklist_rec
 c2_data = response.json()
 
 for entry in c2_data:
-    print(f"IP: {entry['ip_address']}:{entry['port']}")
-    print(f"Malware: {entry['malware']}")
-    print(f"First Seen: {entry['first_seen']}")
-    print(f"Last Online: {entry['last_online']}")
+ print(f"IP: {entry['ip_address']}:{entry['port']}")
+ print(f"Malware: {entry['malware']}")
+ print(f"First Seen: {entry['first_seen']}")
+ print(f"Last Online: {entry['last_online']}")
 ```
 
 ### Step 4: Normalize and Deduplicate
@@ -180,36 +180,36 @@ from stix2 import Indicator, Bundle
 import hashlib
 
 def create_stix_indicator(ioc_value, ioc_type, source, confidence=50):
-    """Convert raw IOC to STIX 2.1 indicator"""
-    pattern_map = {
-        "ipv4": f"[ipv4-addr:value = '{ioc_value}']",
-        "domain": f"[domain-name:value = '{ioc_value}']",
-        "url": f"[url:value = '{ioc_value}']",
-        "sha256": f"[file:hashes.'SHA-256' = '{ioc_value}']",
-        "md5": f"[file:hashes.MD5 = '{ioc_value}']",
-    }
+ """Convert raw IOC to STIX 2.1 indicator"""
+ pattern_map = {
+ "ipv4": f"[ipv4-addr:value = '{ioc_value}']",
+ "domain": f"[domain-name:value = '{ioc_value}']",
+ "url": f"[url:value = '{ioc_value}']",
+ "sha256": f"[file:hashes.'SHA-256' = '{ioc_value}']",
+ "md5": f"[file:hashes.MD5 = '{ioc_value}']",
+ }
 
-    return Indicator(
-        name=f"{ioc_type}: {ioc_value}",
-        pattern=pattern_map[ioc_type],
-        pattern_type="stix",
-        valid_from="2024-03-15T00:00:00Z",
-        confidence=confidence,
-        labels=[source],
-        custom_properties={"x_source_feed": source}
-    )
+ return Indicator(
+ name=f"{ioc_type}: {ioc_value}",
+ pattern=pattern_map[ioc_type],
+ pattern_type="stix",
+ valid_from="2024-03-15T00:00:00Z",
+ confidence=confidence,
+ labels=[source],
+ custom_properties={"x_source_feed": source}
+ )
 
 # Deduplicate across sources
 seen_iocs = set()
 unique_indicators = []
 
 for ioc in all_collected_iocs:
-    ioc_hash = hashlib.sha256(f"{ioc['type']}:{ioc['value']}".encode()).hexdigest()
-    if ioc_hash not in seen_iocs:
-        seen_iocs.add(ioc_hash)
-        unique_indicators.append(
-            create_stix_indicator(ioc["value"], ioc["type"], ioc["source"])
-        )
+ ioc_hash = hashlib.sha256(f"{ioc['type']}:{ioc['value']}".encode()).hexdigest()
+ if ioc_hash not in seen_iocs:
+ seen_iocs.add(ioc_hash)
+ unique_indicators.append(
+ create_stix_indicator(ioc["value"], ioc["type"], ioc["source"])
+ )
 
 bundle = Bundle(objects=unique_indicators)
 print(f"Unique indicators: {len(unique_indicators)}")
@@ -226,23 +226,23 @@ splunk_url = "https://splunk.company.com:8089"
 headers = {"Authorization": f"Bearer {splunk_token}"}
 
 for indicator in unique_indicators:
-    # Extract IOC value from STIX pattern
-    ioc_value = indicator.pattern.split("'")[1]
+ # Extract IOC value from STIX pattern
+ ioc_value = indicator.pattern.split("'")[1]
 
-    # Upload to Splunk ES threat intel collection
-    data = {
-        "ip": ioc_value,
-        "description": indicator.name,
-        "weight": indicator.confidence // 10,
-        "threat_key": indicator.id,
-        "source_feed": indicator.get("x_source_feed", "unknown")
-    }
+ # Upload to Splunk ES threat intel collection
+ data = {
+ "ip": ioc_value,
+ "description": indicator.name,
+ "weight": indicator.confidence // 10,
+ "threat_key": indicator.id,
+ "source_feed": indicator.get("x_source_feed", "unknown")
+ }
 
-    requests.post(
-        f"{splunk_url}/services/data/threat_intel/item/ip_intel",
-        headers=headers, data=data,
-        verify=not os.environ.get("SKIP_TLS_VERIFY", "").lower() == "true",  # Set SKIP_TLS_VERIFY=true for self-signed certs in lab environments
-    )
+ requests.post(
+ f"{splunk_url}/services/data/threat_intel/item/ip_intel",
+ headers=headers, data=data,
+ verify=not os.environ.get("SKIP_TLS_VERIFY", "").lower() == "true", # Set SKIP_TLS_VERIFY=true for self-signed certs in lab environments
+ )
 ```
 
 **Push to MISP for centralized management:**
@@ -255,17 +255,17 @@ misp = PyMISP("https://misp.company.com", "YOUR_MISP_API_KEY")
 # Create event for feed batch
 event = MISPEvent()
 event.info = f"TI Feed Import - {datetime.now().strftime('%Y-%m-%d')}"
-event.threat_level_id = 2  # Medium
-event.analysis = 2  # Completed
+event.threat_level_id = 2 # Medium
+event.analysis = 2 # Completed
 
 # Add indicators as attributes
 for ioc in unique_indicators:
-    attr = MISPAttribute()
-    attr.type = "ip-dst" if "ipv4" in ioc.pattern else "domain"
-    attr.value = ioc.pattern.split("'")[1]
-    attr.to_ids = True
-    attr.comment = f"Source: {ioc.get('x_source_feed', 'mixed')}"
-    event.add_attribute(**attr)
+ attr = MISPAttribute()
+ attr.type = "ip-dst" if "ipv4" in ioc.pattern else "domain"
+ attr.value = ioc.pattern.split("'")[1]
+ attr.to_ids = True
+ attr.comment = f"Source: {ioc.get('x_source_feed', 'mixed')}"
+ event.add_attribute(**attr)
 
 result = misp.add_event(event)
 print(f"MISP Event created: {result['Event']['id']}")
@@ -278,13 +278,13 @@ Track feed effectiveness metrics:
 ```spl
 index=threat_intel sourcetype="threat_intel_manager"
 | stats count AS total_iocs,
-        dc(threat_key) AS unique_iocs,
-        dc(source_feed) AS feed_count
-  by source_feed
+ dc(threat_key) AS unique_iocs,
+ dc(source_feed) AS feed_count
+ by source_feed
 | join source_feed [
-    search index=notable source="Threat Intelligence"
-    | stats count AS matches by source_feed
-  ]
+ search index=notable source="Threat Intelligence"
+ | stats count AS matches by source_feed
+ ]
 | eval match_rate = round(matches / unique_iocs * 100, 2)
 | sort - match_rate
 | table source_feed, unique_iocs, matches, match_rate
@@ -322,21 +322,21 @@ index=threat_intel sourcetype="threat_intel_manager"
 ```
 THREAT INTEL FEED STATUS — Daily Report
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Date:         2024-03-15
-Total IOCs:   45,892 active indicators
+Date: 2024-03-15
+Total IOCs: 45,892 active indicators
 
 Feed Health:
-  Feed                  IOCs    Matches  Match Rate  Status
-  Abuse.ch URLhaus      12,340  47       0.38%       HEALTHY
-  AlienVault OTX        18,567  23       0.12%       HEALTHY
-  Abuse.ch Feodo        1,203   12       1.00%       HEALTHY
-  CISA AIS              8,945   8        0.09%       HEALTHY
-  CrowdStrike Intel     4,837   31       0.64%       HEALTHY
+ Feed IOCs Matches Match Rate Status
+ Abuse.ch URLhaus 12,340 47 0.38% HEALTHY
+ AlienVault OTX 18,567 23 0.12% HEALTHY
+ Abuse.ch Feodo 1,203 12 1.00% HEALTHY
+ CISA AIS 8,945 8 0.09% HEALTHY
+ CrowdStrike Intel 4,837 31 0.64% HEALTHY
 
 Actions Today:
-  New IOCs ingested:    1,247
-  IOCs expired:         892
-  Duplicates removed:   156
-  SIEM matches:         121 notable events generated
-  False positives:      3 (CDN IPs removed from feed)
+ New IOCs ingested: 1,247
+ IOCs expired: 892
+ Duplicates removed: 156
+ SIEM matches: 121 notable events generated
+ False positives: 3 (CDN IPs removed from feed)
 ```

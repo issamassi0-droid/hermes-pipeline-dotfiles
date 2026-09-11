@@ -1,10 +1,10 @@
 ---
 name: implementing-network-segmentation-with-firewall-zones
 description: Designs and implements network segmentation using firewall security zones, VLANs,
-  inter-zone ACLs, and workload-level microsegmentation to restrict east-west lateral
-  movement and enforce least-privilege access. Use when architecting security zones,
-  writing inter-zone firewall policies, or meeting PCI DSS/HIPAA/NIST 800-53/zero-trust
-  segmentation requirements for dynamic or traditional network environments.
+ inter-zone ACLs, and workload-level microsegmentation to restrict east-west lateral
+ movement and enforce least-privilege access. Use when architecting security zones,
+ writing inter-zone firewall policies, or meeting PCI DSS/HIPAA/NIST 800-53/zero-trust
+ segmentation requirements for dynamic or traditional network environments.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -92,7 +92,7 @@ nfdump -R /var/cache/nfdump/ -s srcip/bytes -n 50
 
 # Identify east-west traffic between subnets
 nfdump -R /var/cache/nfdump/ -s record/bytes \
-  'src net 10.0.0.0/8 and dst net 10.0.0.0/8' -n 100
+ 'src net 10.0.0.0/8 and dst net 10.0.0.0/8' -n 100
 
 # Map application dependencies
 # Document which servers need to communicate with which other servers
@@ -238,96 +238,96 @@ from datetime import datetime
 
 
 class SegmentationValidator:
-    """Test network segmentation controls between zones."""
+ """Test network segmentation controls between zones."""
 
-    def __init__(self):
-        self.results = []
+ def __init__(self):
+ self.results = []
 
-    def test_connectivity(self, src_desc: str, dst_ip: str, port: int,
-                          protocol: str = "tcp", expected: str = "blocked"):
-        """Test if connectivity exists between source and destination."""
-        try:
-            if protocol == "tcp":
-                cmd = ["nc", "-z", "-w", "3", dst_ip, str(port)]
-            elif protocol == "udp":
-                cmd = ["nc", "-z", "-u", "-w", "3", dst_ip, str(port)]
-            elif protocol == "icmp":
-                cmd = ["ping", "-c", "1", "-W", "3", dst_ip]
-            else:
-                return
+ def test_connectivity(self, src_desc: str, dst_ip: str, port: int,
+ protocol: str = "tcp", expected: str = "blocked"):
+ """Test if connectivity exists between source and destination."""
+ try:
+ if protocol == "tcp":
+ cmd = ["nc", "-z", "-w", "3", dst_ip, str(port)]
+ elif protocol == "udp":
+ cmd = ["nc", "-z", "-u", "-w", "3", dst_ip, str(port)]
+ elif protocol == "icmp":
+ cmd = ["ping", "-c", "1", "-W", "3", dst_ip]
+ else:
+ return
 
-            result = subprocess.run(cmd, capture_output=True, timeout=5)
-            actual = "open" if result.returncode == 0 else "blocked"
+ result = subprocess.run(cmd, capture_output=True, timeout=5)
+ actual = "open" if result.returncode == 0 else "blocked"
 
-        except subprocess.TimeoutExpired:
-            actual = "blocked"
-        except FileNotFoundError:
-            actual = "error"
+ except subprocess.TimeoutExpired:
+ actual = "blocked"
+ except FileNotFoundError:
+ actual = "error"
 
-        status = "PASS" if actual == expected else "FAIL"
+ status = "PASS" if actual == expected else "FAIL"
 
-        self.results.append({
-            "source": src_desc,
-            "destination": f"{dst_ip}:{port}/{protocol}",
-            "expected": expected,
-            "actual": actual,
-            "status": status,
-        })
+ self.results.append({
+ "source": src_desc,
+ "destination": f"{dst_ip}:{port}/{protocol}",
+ "expected": expected,
+ "actual": actual,
+ "status": status,
+ })
 
-        symbol = "[+]" if status == "PASS" else "[!]"
-        print(f"  {symbol} {src_desc} -> {dst_ip}:{port}/{protocol} "
-              f"| Expected: {expected} | Actual: {actual} | {status}")
+ symbol = "[+]" if status == "PASS" else "[!]"
+ print(f" {symbol} {src_desc} -> {dst_ip}:{port}/{protocol} "
+ f"| Expected: {expected} | Actual: {actual} | {status}")
 
-    def run_validation(self):
-        """Run segmentation validation tests."""
-        print(f"\n{'='*70}")
-        print("NETWORK SEGMENTATION VALIDATION")
-        print(f"{'='*70}")
-        print(f"Date: {datetime.now().isoformat()}\n")
+ def run_validation(self):
+ """Run segmentation validation tests."""
+ print(f"\n{'='*70}")
+ print("NETWORK SEGMENTATION VALIDATION")
+ print(f"{'='*70}")
+ print(f"Date: {datetime.now().isoformat()}\n")
 
-        # Tests that SHOULD be blocked
-        print("[*] Testing controls that should BLOCK traffic:")
-        self.test_connectivity("Corporate", "10.0.40.10", 443, "tcp", "blocked")
-        self.test_connectivity("Corporate", "10.0.40.10", 22, "tcp", "blocked")
-        self.test_connectivity("Guest", "10.0.30.10", 80, "tcp", "blocked")
-        self.test_connectivity("Guest", "10.0.20.1", 0, "icmp", "blocked")
+ # Tests that SHOULD be blocked
+ print("[*] Testing controls that should BLOCK traffic:")
+ self.test_connectivity("Corporate", "10.0.40.10", 443, "tcp", "blocked")
+ self.test_connectivity("Corporate", "10.0.40.10", 22, "tcp", "blocked")
+ self.test_connectivity("Guest", "10.0.30.10", 80, "tcp", "blocked")
+ self.test_connectivity("Guest", "10.0.20.1", 0, "icmp", "blocked")
 
-        # Tests that SHOULD be allowed
-        print("\n[*] Testing controls that should ALLOW traffic:")
-        self.test_connectivity("Corporate", "10.0.30.10", 443, "tcp", "open")
-        self.test_connectivity("Corporate", "10.0.30.10", 80, "tcp", "open")
-        self.test_connectivity("Management", "10.0.30.10", 22, "tcp", "open")
+ # Tests that SHOULD be allowed
+ print("\n[*] Testing controls that should ALLOW traffic:")
+ self.test_connectivity("Corporate", "10.0.30.10", 443, "tcp", "open")
+ self.test_connectivity("Corporate", "10.0.30.10", 80, "tcp", "open")
+ self.test_connectivity("Management", "10.0.30.10", 22, "tcp", "open")
 
-        # Summary
-        passed = sum(1 for r in self.results if r["status"] == "PASS")
-        failed = sum(1 for r in self.results if r["status"] == "FAIL")
-        print(f"\n{'='*70}")
-        print(f"Results: {passed} PASSED, {failed} FAILED out of {len(self.results)} tests")
+ # Summary
+ passed = sum(1 for r in self.results if r["status"] == "PASS")
+ failed = sum(1 for r in self.results if r["status"] == "FAIL")
+ print(f"\n{'='*70}")
+ print(f"Results: {passed} PASSED, {failed} FAILED out of {len(self.results)} tests")
 
-        if failed > 0:
-            print(f"\n[!] FAILED TESTS:")
-            for r in self.results:
-                if r["status"] == "FAIL":
-                    print(f"  - {r['source']} -> {r['destination']}: "
-                          f"expected {r['expected']}, got {r['actual']}")
+ if failed > 0:
+ print(f"\n[!] FAILED TESTS:")
+ for r in self.results:
+ if r["status"] == "FAIL":
+ print(f" - {r['source']} -> {r['destination']}: "
+ f"expected {r['expected']}, got {r['actual']}")
 
-        # Save report
-        report = {
-            "date": datetime.now().isoformat(),
-            "total_tests": len(self.results),
-            "passed": passed,
-            "failed": failed,
-            "results": self.results,
-        }
-        report_path = f"segmentation_test_{datetime.now().strftime('%Y%m%d')}.json"
-        with open(report_path, 'w') as f:
-            json.dump(report, f, indent=2)
-        print(f"\nReport saved to: {report_path}")
+ # Save report
+ report = {
+ "date": datetime.now().isoformat(),
+ "total_tests": len(self.results),
+ "passed": passed,
+ "failed": failed,
+ "results": self.results,
+ }
+ report_path = f"segmentation_test_{datetime.now().strftime('%Y%m%d')}.json"
+ with open(report_path, 'w') as f:
+ json.dump(report, f, indent=2)
+ print(f"\nReport saved to: {report_path}")
 
 
 if __name__ == "__main__":
-    validator = SegmentationValidator()
-    validator.run_validation()
+ validator = SegmentationValidator()
+ validator.run_validation()
 ```
 
 ## Best Practices

@@ -1,18 +1,18 @@
 ---
 name: conducting-gdpr-compliance-assessment
 description: >-
-  Conduct comprehensive GDPR compliance assessments by evaluating data processing
-  activities against EU Regulation 2016/679, including Article 30 records of processing,
-  lawful basis validation, data subject rights implementation, Data Protection Impact
-  Assessments (DPIAs) under Article 35, breach notification procedures, international
-  transfer safeguards (SCCs, adequacy decisions), and technical/organizational measures
-  under Article 32. Use when processing personal data of EU residents, preparing for
-  supervisory authority audits, implementing privacy-by-design for new systems, scoping
-  compliance gaps for M&A due diligence, assessing third-party processors, or responding
-  to data subject access requests at scale. Incorporates 2026 guidance from ICO, EDPB,
-  and post-Data (Use and Access) Act 2025 UK-GDPR considerations. Do not use for implementing
-  specific Article 32 controls — use implementing-gdpr-data-protection-controls; or for DSAR
-  automation — use implementing-gdpr-data-subject-access-request.
+ Conduct comprehensive GDPR compliance assessments by evaluating data processing
+ activities against EU Regulation 2016/679, including Article 30 records of processing,
+ lawful basis validation, data subject rights implementation, Data Protection Impact
+ Assessments (DPIAs) under Article 35, breach notification procedures, international
+ transfer safeguards (SCCs, adequacy decisions), and technical/organizational measures
+ under Article 32. Use when processing personal data of EU residents, preparing for
+ supervisory authority audits, implementing privacy-by-design for new systems, scoping
+ compliance gaps for M&A due diligence, assessing third-party processors, or responding
+ to data subject access requests at scale. Incorporates 2026 guidance from ICO, EDPB,
+ and post-Data (Use and Access) Act 2025 UK-GDPR considerations. Do not use for implementing
+ specific Article 32 controls — use implementing-gdpr-data-protection-controls; or for DSAR
+ automation — use implementing-gdpr-data-subject-access-request.
 domain: cybersecurity
 subdomain: compliance-governance
 tags:
@@ -44,8 +44,8 @@ mitre_attack:
 ---
 # Conducting GDPR Compliance Assessment
 
-> **Effective Date**: August 2026  
-> **Legal Basis**: EU Regulation 2016/679 (GDPR), UK GDPR as amended by Data Protection Act 2018 and Data (Use and Access) Act 2025 (ukpga/2025/18)  
+> **Effective Date**: August 2026 
+> **Legal Basis**: EU Regulation 2016/679 (GDPR), UK GDPR as amended by Data Protection Act 2018 and Data (Use and Access) Act 2025 (ukpga/2025/18) 
 > **Pending Changes**: Digital Omnibus proposal (COM(2025) 837) would change Article 30(5) threshold from 250 to 750 employees and Article 33 breach notification from 72h to 96h. Still in proposal stage; current requirements remain in force.
 
 ## When to Use
@@ -246,30 +246,30 @@ CRITICAL FINDINGS
 ARTICLE-BY-ARTICLE STATUS
 ━━━━━━━━━━━━━━━━━━━━━━━━
 ✅ Article 3: Applicability confirmed (EU establishment)
-⚠️  Article 6: Lawful basis documented but 3 activities use invalid bundled consent
+⚠️ Article 6: Lawful basis documented but 3 activities use invalid bundled consent
 ✅ Article 15-23: DSAR procedures operational (18-day avg response time)
 ❌ Article 28: 40% of processors lack signed DPAs
-⚠️  Article 32: Encryption at rest implemented but no MFA on admin accounts
+⚠️ Article 32: Encryption at rest implemented but no MFA on admin accounts
 ❌ Article 33/34: No breach notification procedures
-⚠️  Article 35: DPIA completed for profiling but not reviewed in 18 months
+⚠️ Article 35: DPIA completed for profiling but not reviewed in 18 months
 ❌ Chapter V: US transfers without SCCs
 
 REMEDIATION ROADMAP
 ━━━━━━━━━━━━━━━━━━━
 Priority 1 (0-30 days, $50K):
-  - Implement breach notification procedures + incident register
-  - Execute SCCs with AWS, Stripe (Module 2)
-  - Complete Article 30 records (retention periods, security measures)
+ - Implement breach notification procedures + incident register
+ - Execute SCCs with AWS, Stripe (Module 2)
+ - Complete Article 30 records (retention periods, security measures)
 
 Priority 2 (1-3 months, $80K):
-  - Execute DPAs with remaining 8 processors
-  - Deploy MFA on all admin accounts
-  - Conduct legitimate interest assessments for analytics
+ - Execute DPAs with remaining 8 processors
+ - Deploy MFA on all admin accounts
+ - Conduct legitimate interest assessments for analytics
 
 Priority 3 (3-6 months, $40K):
-  - Review and update DPIA
-  - Automated DSAR response workflow
-  - Annual GDPR training for staff
+ - Review and update DPIA
+ - Automated DSAR response workflow
+ - Annual GDPR training for staff
 
 COMPLIANCE SCORE: 67/100 → Target 90/100 (6 months post-remediation)
 ```

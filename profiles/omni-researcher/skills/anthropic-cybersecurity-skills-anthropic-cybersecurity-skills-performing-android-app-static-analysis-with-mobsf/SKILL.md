@@ -1,14 +1,14 @@
 ---
 name: performing-android-app-static-analysis-with-mobsf
 description: 'Performs automated static analysis of Android applications using Mobile
-  Security Framework (MobSF) to identify hardcoded secrets, insecure permissions,
-  vulnerable components, weak cryptography, and code-level security flaws without
-  executing the application. Use when assessing Android APK/AAB files for security
-  vulnerabilities before deployment, during penetration testing, or as part of CI/CD
-  security gates. Activates for requests involving Android static analysis, MobSF
-  scanning, APK security assessment, or mobile application code review.
+ Security Framework (MobSF) to identify hardcoded secrets, insecure permissions,
+ vulnerable components, weak cryptography, and code-level security flaws without
+ executing the application. Use when assessing Android APK/AAB files for security
+ vulnerabilities before deployment, during penetration testing, or as part of CI/CD
+ security gates. Activates for requests involving Android static analysis, MobSF
+ scanning, APK security assessment, or mobile application code review.
 
-  '
+ '
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -70,7 +70,7 @@ Upload the target APK using the MobSF REST API:
 
 ```bash
 curl -F "file=@target_app.apk" http://localhost:8000/api/v1/upload \
-  -H "Authorization: <API_KEY>"
+ -H "Authorization: <API_KEY>"
 ```
 
 Response includes the `hash` identifier used for subsequent API calls. MobSF automatically decompiles the APK using JADX, extracts the AndroidManifest.xml, and indexes all resources.
@@ -82,13 +82,13 @@ Initiate the static scan and retrieve results:
 ```bash
 # Trigger scan
 curl -X POST http://localhost:8000/api/v1/scan \
-  -H "Authorization: <API_KEY>" \
-  -d "scan_type=apk&file_name=target_app.apk&hash=<FILE_HASH>"
+ -H "Authorization: <API_KEY>" \
+ -d "scan_type=apk&file_name=target_app.apk&hash=<FILE_HASH>"
 
 # Retrieve JSON report
 curl -X POST http://localhost:8000/api/v1/report_json \
-  -H "Authorization: <API_KEY>" \
-  -d "hash=<FILE_HASH>"
+ -H "Authorization: <API_KEY>" \
+ -d "hash=<FILE_HASH>"
 ```
 
 ### Step 4: Analyze Critical Findings
@@ -123,13 +123,13 @@ Export findings in multiple formats for stakeholder communication:
 ```bash
 # PDF report
 curl -X POST http://localhost:8000/api/v1/download_pdf \
-  -H "Authorization: <API_KEY>" \
-  -d "hash=<FILE_HASH>" -o report.pdf
+ -H "Authorization: <API_KEY>" \
+ -d "hash=<FILE_HASH>" -o report.pdf
 
 # JSON for programmatic processing
 curl -X POST http://localhost:8000/api/v1/report_json \
-  -H "Authorization: <API_KEY>" \
-  -d "hash=<FILE_HASH>" -o report.json
+ -H "Authorization: <API_KEY>" \
+ -d "hash=<FILE_HASH>" -o report.json
 ```
 
 ### Step 6: Integrate into CI/CD Pipeline
@@ -139,16 +139,16 @@ Add MobSF scanning as a build gate:
 ```yaml
 # GitHub Actions example
 - name: MobSF Static Analysis
-  run: |
-    UPLOAD=$(curl -s -F "file=@app/build/outputs/apk/release/app-release.apk" \
-      http://mobsf:8000/api/v1/upload -H "Authorization: $MOBSF_API_KEY")
-    HASH=$(echo $UPLOAD | jq -r '.hash')
-    curl -s -X POST http://mobsf:8000/api/v1/scan \
-      -H "Authorization: $MOBSF_API_KEY" \
-      -d "scan_type=apk&file_name=app-release.apk&hash=$HASH"
-    SCORE=$(curl -s -X POST http://mobsf:8000/api/v1/scorecard \
-      -H "Authorization: $MOBSF_API_KEY" -d "hash=$HASH" | jq '.security_score')
-    if [ "$SCORE" -lt 60 ]; then exit 1; fi
+ run: |
+ UPLOAD=$(curl -s -F "file=@app/build/outputs/apk/release/app-release.apk" \
+ http://mobsf:8000/api/v1/upload -H "Authorization: $MOBSF_API_KEY")
+ HASH=$(echo $UPLOAD | jq -r '.hash')
+ curl -s -X POST http://mobsf:8000/api/v1/scan \
+ -H "Authorization: $MOBSF_API_KEY" \
+ -d "scan_type=apk&file_name=app-release.apk&hash=$HASH"
+ SCORE=$(curl -s -X POST http://mobsf:8000/api/v1/scorecard \
+ -H "Authorization: $MOBSF_API_KEY" -d "hash=$HASH" | jq '.security_score')
+ if [ "$SCORE" -lt 60 ]; then exit 1; fi
 ```
 
 ## Key Concepts

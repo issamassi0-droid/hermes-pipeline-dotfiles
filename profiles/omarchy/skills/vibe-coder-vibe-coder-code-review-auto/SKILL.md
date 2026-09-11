@@ -1,9 +1,9 @@
 ---
 name: code-review-auto
 description: |
-  Automatic code review and fixes before showing to user.
-  Use when: code generation is complete, before preview.
-  Triggers: internal use only.
+ Automatic code review and fixes before showing to user.
+ Use when: code generation is complete, before preview.
+ Triggers: internal use only.
 ---
 
 # Automatic Code Review

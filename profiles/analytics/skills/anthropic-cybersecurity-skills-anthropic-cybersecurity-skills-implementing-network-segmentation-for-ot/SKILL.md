@@ -1,12 +1,12 @@
 ---
 name: implementing-network-segmentation-for-ot
 description: 'Implements OT network segmentation using VLANs, OT-aware firewalls, data diodes,
-  and IEC 62443 zone/conduit architecture, with a traffic-baseline-driven design
-  tool for migrating flat Purdue-model networks without disrupting operations. Use
-  when segmenting a flat OT network into Purdue levels, deploying an IT/OT DMZ, or
-  isolating safety instrumented systems from basic process control systems.
+ and IEC 62443 zone/conduit architecture, with a traffic-baseline-driven design
+ tool for migrating flat Purdue-model networks without disrupting operations. Use
+ when segmenting a flat OT network into Purdue levels, deploying an IT/OT DMZ, or
+ isolating safety instrumented systems from basic process control systems.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ot-ics-security
 tags:
@@ -77,207 +77,207 @@ from ipaddress import ip_address, ip_network
 
 @dataclass
 class VLANDesign:
-    vlan_id: int
-    name: str
-    purdue_level: str
-    subnet: str
-    gateway: str
-    description: str
-    devices: list = field(default_factory=list)
+ vlan_id: int
+ name: str
+ purdue_level: str
+ subnet: str
+ gateway: str
+ description: str
+ devices: list = field(default_factory=list)
 
 
 @dataclass
 class FirewallRule:
-    rule_id: int
-    source_zone: str
-    source_ip: str
-    dest_zone: str
-    dest_ip: str
-    protocol: str
-    port: int
-    action: str
-    dpi_profile: str = ""
-    comment: str = ""
+ rule_id: int
+ source_zone: str
+ source_ip: str
+ dest_zone: str
+ dest_ip: str
+ protocol: str
+ port: int
+ action: str
+ dpi_profile: str = ""
+ comment: str = ""
 
 
 class SegmentationDesigner:
-    """Generates segmentation design from traffic baseline."""
+ """Generates segmentation design from traffic baseline."""
 
-    def __init__(self, baseline_file):
-        with open(baseline_file) as f:
-            self.baseline = json.load(f)
-        self.vlans = []
-        self.rules = []
-        self.rule_counter = 1
+ def __init__(self, baseline_file):
+ with open(baseline_file) as f:
+ self.baseline = json.load(f)
+ self.vlans = []
+ self.rules = []
+ self.rule_counter = 1
 
-    def design_vlans(self):
-        """Create VLAN design based on Purdue levels."""
-        self.vlans = [
-            VLANDesign(10, "SIS-SAFETY", "Level 1 (Safety)",
-                       "10.10.10.0/24", "10.10.10.1",
-                       "Safety Instrumented Systems - air-gapped or hardware-isolated"),
-            VLANDesign(20, "BPCS-FIELD", "Level 0-1 (Field/Control)",
-                       "10.10.20.0/24", "10.10.20.1",
-                       "PLCs, RTUs, I/O modules, field instruments"),
-            VLANDesign(30, "BPCS-SUPERVISORY", "Level 2 (Supervisory)",
-                       "10.10.30.0/24", "10.10.30.1",
-                       "HMIs, engineering workstations, local historian"),
-            VLANDesign(40, "SITE-OPS", "Level 3 (Operations)",
-                       "10.10.40.0/24", "10.10.40.1",
-                       "Site historian, OPC server, MES, alarm management"),
-            VLANDesign(50, "OT-DMZ", "Level 3.5 (DMZ)",
-                       "172.16.50.0/24", "172.16.50.1",
-                       "Data diode, historian mirror, jump server, patch server"),
-            VLANDesign(60, "ENTERPRISE", "Level 4 (Enterprise)",
-                       "10.0.60.0/24", "10.0.60.1",
-                       "Enterprise IT systems accessing OT data"),
-            VLANDesign(999, "QUARANTINE", "Quarantine",
-                       "10.10.99.0/24", "10.10.99.1",
-                       "Quarantine VLAN for unauthorized or untrusted devices"),
-        ]
-        return self.vlans
+ def design_vlans(self):
+ """Create VLAN design based on Purdue levels."""
+ self.vlans = [
+ VLANDesign(10, "SIS-SAFETY", "Level 1 (Safety)",
+ "10.10.10.0/24", "10.10.10.1",
+ "Safety Instrumented Systems - air-gapped or hardware-isolated"),
+ VLANDesign(20, "BPCS-FIELD", "Level 0-1 (Field/Control)",
+ "10.10.20.0/24", "10.10.20.1",
+ "PLCs, RTUs, I/O modules, field instruments"),
+ VLANDesign(30, "BPCS-SUPERVISORY", "Level 2 (Supervisory)",
+ "10.10.30.0/24", "10.10.30.1",
+ "HMIs, engineering workstations, local historian"),
+ VLANDesign(40, "SITE-OPS", "Level 3 (Operations)",
+ "10.10.40.0/24", "10.10.40.1",
+ "Site historian, OPC server, MES, alarm management"),
+ VLANDesign(50, "OT-DMZ", "Level 3.5 (DMZ)",
+ "172.16.50.0/24", "172.16.50.1",
+ "Data diode, historian mirror, jump server, patch server"),
+ VLANDesign(60, "ENTERPRISE", "Level 4 (Enterprise)",
+ "10.0.60.0/24", "10.0.60.1",
+ "Enterprise IT systems accessing OT data"),
+ VLANDesign(999, "QUARANTINE", "Quarantine",
+ "10.10.99.0/24", "10.10.99.1",
+ "Quarantine VLAN for unauthorized or untrusted devices"),
+ ]
+ return self.vlans
 
-    def generate_firewall_rules_from_baseline(self):
-        """Generate firewall rules based on observed legitimate traffic."""
-        self.rules = []
+ def generate_firewall_rules_from_baseline(self):
+ """Generate firewall rules based on observed legitimate traffic."""
+ self.rules = []
 
-        # Default deny rules for each zone boundary
-        zone_pairs = [
-            ("Level 2", "Level 0-1"),
-            ("Level 3", "Level 2"),
-            ("Level 3.5", "Level 3"),
-            ("Level 4", "Level 3.5"),
-        ]
+ # Default deny rules for each zone boundary
+ zone_pairs = [
+ ("Level 2", "Level 0-1"),
+ ("Level 3", "Level 2"),
+ ("Level 3.5", "Level 3"),
+ ("Level 4", "Level 3.5"),
+ ]
 
-        # Generate allow rules from baseline observed traffic
-        for flow in self.baseline.get("cross_zone_flows", []):
-            self.rules.append(FirewallRule(
-                rule_id=self.rule_counter,
-                source_zone=flow["src_level"],
-                source_ip=flow["src"],
-                dest_zone=flow["dst_level"],
-                dest_ip=flow["dst"],
-                protocol=flow.get("protocol", "TCP"),
-                port=flow.get("port", 0),
-                action="ALLOW",
-                dpi_profile=self._get_dpi_profile(flow.get("port", 0)),
-                comment=f"Baseline observed: {flow['src']} -> {flow['dst']}",
-            ))
-            self.rule_counter += 1
+ # Generate allow rules from baseline observed traffic
+ for flow in self.baseline.get("cross_zone_flows", []):
+ self.rules.append(FirewallRule(
+ rule_id=self.rule_counter,
+ source_zone=flow["src_level"],
+ source_ip=flow["src"],
+ dest_zone=flow["dst_level"],
+ dest_ip=flow["dst"],
+ protocol=flow.get("protocol", "TCP"),
+ port=flow.get("port", 0),
+ action="ALLOW",
+ dpi_profile=self._get_dpi_profile(flow.get("port", 0)),
+ comment=f"Baseline observed: {flow['src']} -> {flow['dst']}",
+ ))
+ self.rule_counter += 1
 
-        # Add default deny rules at the end of each zone ACL
-        for src_zone, dst_zone in zone_pairs:
-            self.rules.append(FirewallRule(
-                rule_id=self.rule_counter,
-                source_zone=src_zone,
-                source_ip="any",
-                dest_zone=dst_zone,
-                dest_ip="any",
-                protocol="any",
-                port=0,
-                action="DENY",
-                comment=f"Default deny: {src_zone} -> {dst_zone}",
-            ))
-            self.rule_counter += 1
+ # Add default deny rules at the end of each zone ACL
+ for src_zone, dst_zone in zone_pairs:
+ self.rules.append(FirewallRule(
+ rule_id=self.rule_counter,
+ source_zone=src_zone,
+ source_ip="any",
+ dest_zone=dst_zone,
+ dest_ip="any",
+ protocol="any",
+ port=0,
+ action="DENY",
+ comment=f"Default deny: {src_zone} -> {dst_zone}",
+ ))
+ self.rule_counter += 1
 
-        return self.rules
+ return self.rules
 
-    def _get_dpi_profile(self, port):
-        """Return the appropriate DPI inspection profile for an OT protocol port."""
-        dpi_profiles = {
-            502: "modbus-inspect (allow read FC only from L3)",
-            44818: "enip-inspect",
-            4840: "opcua-inspect (require SignAndEncrypt)",
-            102: "s7comm-inspect",
-            20000: "dnp3-inspect",
-        }
-        return dpi_profiles.get(port, "none")
+ def _get_dpi_profile(self, port):
+ """Return the appropriate DPI inspection profile for an OT protocol port."""
+ dpi_profiles = {
+ 502: "modbus-inspect (allow read FC only from L3)",
+ 44818: "enip-inspect",
+ 4840: "opcua-inspect (require SignAndEncrypt)",
+ 102: "s7comm-inspect",
+ 20000: "dnp3-inspect",
+ }
+ return dpi_profiles.get(port, "none")
 
-    def generate_migration_plan(self):
-        """Generate phased migration plan for network segmentation."""
-        plan = {
-            "phase_1": {
-                "name": "DMZ Implementation (Week 1-2)",
-                "description": "Deploy DMZ between enterprise and OT networks",
-                "steps": [
-                    "Deploy DMZ firewall pair (inside and outside)",
-                    "Migrate historian mirror to DMZ",
-                    "Configure jump server in DMZ with MFA",
-                    "Install data diode for unidirectional historian replication",
-                    "Route enterprise-to-OT traffic through DMZ",
-                    "Verify enterprise access to historian data via DMZ",
-                ],
-                "rollback": "Remove DMZ firewall rules, restore direct routing",
-            },
-            "phase_2": {
-                "name": "L3/L2 Segmentation (Week 3-4)",
-                "description": "Separate operations (L3) from control (L2) zones",
-                "steps": [
-                    "Create VLAN 30 and VLAN 40 on OT switches",
-                    "Deploy industrial firewall between L2 and L3",
-                    "Configure firewall in monitor mode (log only, no blocking)",
-                    "Analyze logs for 1 week to validate rule completeness",
-                    "Switch to enforcement mode during maintenance window",
-                    "Validate all HMI-to-PLC and historian-to-PLC communications",
-                ],
-                "rollback": "Revert VLAN assignments, set firewall to permit-any",
-            },
-            "phase_3": {
-                "name": "Field Device Isolation (Week 5-6)",
-                "description": "Isolate Level 0-1 field devices from Level 2 supervisory",
-                "steps": [
-                    "Create VLAN 20 for PLCs and field instruments",
-                    "Configure port security with MAC binding on PLC ports",
-                    "Apply Modbus function code filtering (block writes from L3)",
-                    "Test all control loops during maintenance window",
-                    "Verify alarm propagation from field to HMI",
-                ],
-                "rollback": "Merge VLAN 20 back into VLAN 30",
-            },
-            "phase_4": {
-                "name": "SIS Isolation (Week 7-8)",
-                "description": "Fully isolate Safety Instrumented Systems",
-                "steps": [
-                    "Verify SIS is on dedicated VLAN 10 or air-gapped",
-                    "Remove any network path between SIS and BPCS",
-                    "Implement dedicated engineering workstation for SIS",
-                    "Apply USB and removable media controls on SIS EWS",
-                    "Test SIS functionality in isolation",
-                ],
-                "rollback": "N/A - SIS isolation should not be reversed",
-            },
-        }
-        return plan
+ def generate_migration_plan(self):
+ """Generate phased migration plan for network segmentation."""
+ plan = {
+ "phase_1": {
+ "name": "DMZ Implementation (Week 1-2)",
+ "description": "Deploy DMZ between enterprise and OT networks",
+ "steps": [
+ "Deploy DMZ firewall pair (inside and outside)",
+ "Migrate historian mirror to DMZ",
+ "Configure jump server in DMZ with MFA",
+ "Install data diode for unidirectional historian replication",
+ "Route enterprise-to-OT traffic through DMZ",
+ "Verify enterprise access to historian data via DMZ",
+ ],
+ "rollback": "Remove DMZ firewall rules, restore direct routing",
+ },
+ "phase_2": {
+ "name": "L3/L2 Segmentation (Week 3-4)",
+ "description": "Separate operations (L3) from control (L2) zones",
+ "steps": [
+ "Create VLAN 30 and VLAN 40 on OT switches",
+ "Deploy industrial firewall between L2 and L3",
+ "Configure firewall in monitor mode (log only, no blocking)",
+ "Analyze logs for 1 week to validate rule completeness",
+ "Switch to enforcement mode during maintenance window",
+ "Validate all HMI-to-PLC and historian-to-PLC communications",
+ ],
+ "rollback": "Revert VLAN assignments, set firewall to permit-any",
+ },
+ "phase_3": {
+ "name": "Field Device Isolation (Week 5-6)",
+ "description": "Isolate Level 0-1 field devices from Level 2 supervisory",
+ "steps": [
+ "Create VLAN 20 for PLCs and field instruments",
+ "Configure port security with MAC binding on PLC ports",
+ "Apply Modbus function code filtering (block writes from L3)",
+ "Test all control loops during maintenance window",
+ "Verify alarm propagation from field to HMI",
+ ],
+ "rollback": "Merge VLAN 20 back into VLAN 30",
+ },
+ "phase_4": {
+ "name": "SIS Isolation (Week 7-8)",
+ "description": "Fully isolate Safety Instrumented Systems",
+ "steps": [
+ "Verify SIS is on dedicated VLAN 10 or air-gapped",
+ "Remove any network path between SIS and BPCS",
+ "Implement dedicated engineering workstation for SIS",
+ "Apply USB and removable media controls on SIS EWS",
+ "Test SIS functionality in isolation",
+ ],
+ "rollback": "N/A - SIS isolation should not be reversed",
+ },
+ }
+ return plan
 
-    def export_design(self, output_file):
-        """Export complete segmentation design."""
-        design = {
-            "vlans": [asdict(v) for v in self.vlans],
-            "firewall_rules": [asdict(r) for r in self.rules],
-            "migration_plan": self.generate_migration_plan(),
-        }
+ def export_design(self, output_file):
+ """Export complete segmentation design."""
+ design = {
+ "vlans": [asdict(v) for v in self.vlans],
+ "firewall_rules": [asdict(r) for r in self.rules],
+ "migration_plan": self.generate_migration_plan(),
+ }
 
-        with open(output_file, "w") as f:
-            json.dump(design, f, indent=2)
+ with open(output_file, "w") as f:
+ json.dump(design, f, indent=2)
 
-        print(f"[*] Segmentation design exported to: {output_file}")
-        print(f"    VLANs: {len(self.vlans)}")
-        print(f"    Firewall Rules: {len(self.rules)}")
+ print(f"[*] Segmentation design exported to: {output_file}")
+ print(f" VLANs: {len(self.vlans)}")
+ print(f" Firewall Rules: {len(self.rules)}")
 
-        return design
+ return design
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python segmentation_designer.py <baseline.json> [output.json]")
-        sys.exit(1)
+ if len(sys.argv) < 2:
+ print("Usage: python segmentation_designer.py <baseline.json> [output.json]")
+ sys.exit(1)
 
-    designer = SegmentationDesigner(sys.argv[1])
-    designer.design_vlans()
-    designer.generate_firewall_rules_from_baseline()
+ designer = SegmentationDesigner(sys.argv[1])
+ designer.design_vlans()
+ designer.generate_firewall_rules_from_baseline()
 
-    output = sys.argv[2] if len(sys.argv) > 2 else "segmentation_design.json"
-    designer.export_design(output)
+ output = sys.argv[2] if len(sys.argv) > 2 else "segmentation_design.json"
+ designer.export_design(output)
 ```
 
 ### Step 2: Configure Industrial Switch VLANs
@@ -289,60 +289,60 @@ Apply VLAN configuration to industrial Ethernet switches with port security and 
 
 # Create VLANs aligned with Purdue levels
 vlan 10
-  name SIS-SAFETY-L1
+ name SIS-SAFETY-L1
 vlan 20
-  name BPCS-FIELD-L01
+ name BPCS-FIELD-L01
 vlan 30
-  name BPCS-SUPERVISORY-L2
+ name BPCS-SUPERVISORY-L2
 vlan 40
-  name SITE-OPS-L3
+ name SITE-OPS-L3
 vlan 50
-  name OT-DMZ-L35
+ name OT-DMZ-L35
 vlan 999
-  name QUARANTINE
+ name QUARANTINE
 
 # PLC access ports with port security
 interface range GigabitEthernet1/0/1-12
-  description PLC Connections
-  switchport mode access
-  switchport access vlan 20
-  switchport port-security
-  switchport port-security maximum 1
-  switchport port-security mac-address sticky
-  switchport port-security violation shutdown
-  storm-control broadcast level 10
-  storm-control multicast level 10
-  spanning-tree portfast
-  spanning-tree bpduguard enable
-  no cdp enable
-  no lldp transmit
-  no lldp receive
+ description PLC Connections
+ switchport mode access
+ switchport access vlan 20
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation shutdown
+ storm-control broadcast level 10
+ storm-control multicast level 10
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+ no cdp enable
+ no lldp transmit
+ no lldp receive
 
 # HMI access ports
 interface range GigabitEthernet1/0/13-18
-  description HMI Stations
-  switchport mode access
-  switchport access vlan 30
-  switchport port-security
-  switchport port-security maximum 1
-  switchport port-security mac-address sticky
-  switchport port-security violation restrict
-  spanning-tree portfast
+ description HMI Stations
+ switchport mode access
+ switchport access vlan 30
+ switchport port-security
+ switchport port-security maximum 1
+ switchport port-security mac-address sticky
+ switchport port-security violation restrict
+ spanning-tree portfast
 
 # Trunk to zone firewall
 interface TenGigabitEthernet1/0/1
-  description Trunk to OT Zone Firewall
-  switchport mode trunk
-  switchport trunk allowed vlan 20,30,40,50
-  switchport trunk native vlan 999
-  switchport nonegotiate
+ description Trunk to OT Zone Firewall
+ switchport mode trunk
+ switchport trunk allowed vlan 20,30,40,50
+ switchport trunk native vlan 999
+ switchport nonegotiate
 
 # Disable and quarantine all unused ports
 interface range GigabitEthernet1/0/19-48
-  description UNUSED - Shutdown
-  switchport mode access
-  switchport access vlan 999
-  shutdown
+ description UNUSED - Shutdown
+ switchport mode access
+ switchport access vlan 999
+ shutdown
 ```
 
 ### Step 3: Validate Segmentation Effectiveness
@@ -367,94 +367,94 @@ from dataclasses import dataclass, asdict
 
 @dataclass
 class ValidationTest:
-    test_id: str
-    description: str
-    source_zone: str
-    target_ip: str
-    target_port: int
-    expected_result: str  # "blocked" or "allowed"
-    actual_result: str = ""
-    status: str = ""  # PASS or FAIL
+ test_id: str
+ description: str
+ source_zone: str
+ target_ip: str
+ target_port: int
+ expected_result: str # "blocked" or "allowed"
+ actual_result: str = ""
+ status: str = "" # PASS or FAIL
 
 
 class SegmentationValidator:
-    """Validates OT network segmentation implementation."""
+ """Validates OT network segmentation implementation."""
 
-    def __init__(self):
-        self.tests = []
-        self.results = []
+ def __init__(self):
+ self.tests = []
+ self.results = []
 
-    def add_test(self, test):
-        self.tests.append(test)
+ def add_test(self, test):
+ self.tests.append(test)
 
-    def run_connectivity_test(self, target_ip, target_port, timeout=3):
-        """Test TCP connectivity to target."""
-        try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(timeout)
-            result = sock.connect_ex((target_ip, target_port))
-            sock.close()
-            return "reachable" if result == 0 else "blocked"
-        except (socket.timeout, ConnectionRefusedError):
-            return "blocked"
-        except Exception:
-            return "error"
+ def run_connectivity_test(self, target_ip, target_port, timeout=3):
+ """Test TCP connectivity to target."""
+ try:
+ sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+ sock.settimeout(timeout)
+ result = sock.connect_ex((target_ip, target_port))
+ sock.close()
+ return "reachable" if result == 0 else "blocked"
+ except (socket.timeout, ConnectionRefusedError):
+ return "blocked"
+ except Exception:
+ return "error"
 
-    def run_all_tests(self):
-        """Execute all segmentation validation tests."""
-        print("=" * 60)
-        print("OT SEGMENTATION VALIDATION")
-        print("=" * 60)
+ def run_all_tests(self):
+ """Execute all segmentation validation tests."""
+ print("=" * 60)
+ print("OT SEGMENTATION VALIDATION")
+ print("=" * 60)
 
-        passed = 0
-        failed = 0
+ passed = 0
+ failed = 0
 
-        for test in self.tests:
-            actual = self.run_connectivity_test(test.target_ip, test.target_port)
-            test.actual_result = actual
+ for test in self.tests:
+ actual = self.run_connectivity_test(test.target_ip, test.target_port)
+ test.actual_result = actual
 
-            if actual == test.expected_result:
-                test.status = "PASS"
-                passed += 1
-            else:
-                test.status = "FAIL"
-                failed += 1
+ if actual == test.expected_result:
+ test.status = "PASS"
+ passed += 1
+ else:
+ test.status = "FAIL"
+ failed += 1
 
-            icon = "[+]" if test.status == "PASS" else "[-]"
-            print(f"  {icon} {test.test_id}: {test.description}")
-            print(f"      Target: {test.target_ip}:{test.target_port}")
-            print(f"      Expected: {test.expected_result} | Actual: {actual} -> {test.status}")
+ icon = "[+]" if test.status == "PASS" else "[-]"
+ print(f" {icon} {test.test_id}: {test.description}")
+ print(f" Target: {test.target_ip}:{test.target_port}")
+ print(f" Expected: {test.expected_result} | Actual: {actual} -> {test.status}")
 
-        print(f"\n  Results: {passed} passed, {failed} failed out of {len(self.tests)} tests")
-        return {"passed": passed, "failed": failed, "total": len(self.tests)}
+ print(f"\n Results: {passed} passed, {failed} failed out of {len(self.tests)} tests")
+ return {"passed": passed, "failed": failed, "total": len(self.tests)}
 
 
 if __name__ == "__main__":
-    validator = SegmentationValidator()
+ validator = SegmentationValidator()
 
-    # Tests from Enterprise zone (Level 4) - should be blocked from OT
-    validator.add_test(ValidationTest(
-        "SEG-001", "Enterprise cannot reach PLCs via Modbus",
-        "Level 4", "10.10.20.10", 502, "blocked"))
-    validator.add_test(ValidationTest(
-        "SEG-002", "Enterprise cannot reach PLCs via EtherNet/IP",
-        "Level 4", "10.10.20.10", 44818, "blocked"))
-    validator.add_test(ValidationTest(
-        "SEG-003", "Enterprise can reach DMZ jump server",
-        "Level 4", "172.16.50.10", 3389, "allowed"))
-    validator.add_test(ValidationTest(
-        "SEG-004", "Enterprise can reach DMZ historian mirror",
-        "Level 4", "172.16.50.20", 443, "allowed"))
+ # Tests from Enterprise zone (Level 4) - should be blocked from OT
+ validator.add_test(ValidationTest(
+ "SEG-001", "Enterprise cannot reach PLCs via Modbus",
+ "Level 4", "10.10.20.10", 502, "blocked"))
+ validator.add_test(ValidationTest(
+ "SEG-002", "Enterprise cannot reach PLCs via EtherNet/IP",
+ "Level 4", "10.10.20.10", 44818, "blocked"))
+ validator.add_test(ValidationTest(
+ "SEG-003", "Enterprise can reach DMZ jump server",
+ "Level 4", "172.16.50.10", 3389, "allowed"))
+ validator.add_test(ValidationTest(
+ "SEG-004", "Enterprise can reach DMZ historian mirror",
+ "Level 4", "172.16.50.20", 443, "allowed"))
 
-    # Tests from Operations zone (Level 3) - limited access to control
-    validator.add_test(ValidationTest(
-        "SEG-005", "Operations can read from PLCs via Modbus",
-        "Level 3", "10.10.20.10", 502, "allowed"))
-    validator.add_test(ValidationTest(
-        "SEG-006", "Operations cannot reach SIS controllers",
-        "Level 3", "10.10.10.10", 1502, "blocked"))
+ # Tests from Operations zone (Level 3) - limited access to control
+ validator.add_test(ValidationTest(
+ "SEG-005", "Operations can read from PLCs via Modbus",
+ "Level 3", "10.10.20.10", 502, "allowed"))
+ validator.add_test(ValidationTest(
+ "SEG-006", "Operations cannot reach SIS controllers",
+ "Level 3", "10.10.10.10", 1502, "blocked"))
 
-    validator.run_all_tests()
+ validator.run_all_tests()
 ```
 
 ## Key Concepts
@@ -483,14 +483,14 @@ OT Network Segmentation Report
 Implementation Date: YYYY-MM-DD
 
 VLAN ARCHITECTURE:
-  VLAN [ID] - [Name] ([Purdue Level])
-    Subnet: [subnet/mask]
-    Devices: [count]
+ VLAN [ID] - [Name] ([Purdue Level])
+ Subnet: [subnet/mask]
+ Devices: [count]
 
 FIREWALL RULES:
-  [Zone A] -> [Zone B]: [allow/deny count]
+ [Zone A] -> [Zone B]: [allow/deny count]
 
 VALIDATION RESULTS:
-  Tests Passed: [N]/[Total]
-  Critical Failures: [N]
+ Tests Passed: [N]/[Total]
+ Critical Failures: [N]
 ```

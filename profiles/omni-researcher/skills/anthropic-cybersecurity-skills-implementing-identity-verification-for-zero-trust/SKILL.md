@@ -1,11 +1,11 @@
 ---
 name: implementing-identity-verification-for-zero-trust
 description: Implements continuous, risk-adaptive identity verification for zero trust
-  using phishing-resistant MFA (FIDO2/WebAuthn), risk-based conditional access, and
-  identity governance aligned with NIST SP 800-207 and the CISA Zero Trust Maturity
-  Model Identity Pillar. Use when designing zero trust identity controls, deploying
-  phishing-resistant MFA, or building conditional access policies based on device
-  posture, behavior, and location.
+ using phishing-resistant MFA (FIDO2/WebAuthn), risk-based conditional access, and
+ identity governance aligned with NIST SP 800-207 and the CISA Zero Trust Maturity
+ Model Identity Pillar. Use when designing zero trust identity controls, deploying
+ phishing-resistant MFA, or building conditional access policies based on device
+ posture, behavior, and location.
 domain: cybersecurity
 subdomain: zero-trust-architecture
 tags:
@@ -35,36 +35,36 @@ mitre_attack:
 - T1566
 - T1598
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - reconnaissance
-  techniques:
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: T1110.004
-    name: 'Brute Force:  Credential Stuffing'
-    tactic: initial-access
-    source: attack
-  - id: T1111
-    name: Multi-Factor Authentication Interception
-    tactic: initial-access
-    source: attack
-  - id: T1557
-    name: Adversary-in-the-Middle
-    tactic: initial-access
-    source: attack
-  - id: T1539
-    name: Steal Web Session Cookie
-    tactic: positioning
-    source: attack
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - reconnaissance
+ techniques:
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: T1110.004
+ name: 'Brute Force: Credential Stuffing'
+ tactic: initial-access
+ source: attack
+ - id: T1111
+ name: Multi-Factor Authentication Interception
+ tactic: initial-access
+ source: attack
+ - id: T1557
+ name: Adversary-in-the-Middle
+ tactic: initial-access
+ source: attack
+ - id: T1539
+ name: Steal Web Session Cookie
+ tactic: positioning
+ source: attack
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
 ---
 
 # Implementing Identity Verification for Zero Trust
@@ -103,40 +103,40 @@ This skill covers implementing phishing-resistant MFA, continuous identity verif
 
 ```
 User Access Request
-    │
-    v
+ │
+ v
 ┌───────────────────────┐
 │ Primary Authentication │
-│ - FIDO2/WebAuthn key  │
-│ - Certificate-based    │
-│ - Passwordless         │
+│ - FIDO2/WebAuthn key │
+│ - Certificate-based │
+│ - Passwordless │
 └──────────┬────────────┘
-           v
+ v
 ┌───────────────────────┐
-│ Contextual Assessment  │
-│ - Device posture       │
-│ - Network location     │
-│ - Geo-velocity check   │
-│ - Time of access       │
-│ - Behavioral baseline  │
+│ Contextual Assessment │
+│ - Device posture │
+│ - Network location │
+│ - Geo-velocity check │
+│ - Time of access │
+│ - Behavioral baseline │
 └──────────┬────────────┘
-           v
+ v
 ┌───────────────────────┐
-│ Risk Scoring Engine    │
-│ - Aggregate signals    │
+│ Risk Scoring Engine │
+│ - Aggregate signals │
 │ - Calculate risk score │
 │ - Compare to threshold │
 └───┬──────────┬────────┘
-    │          │
- Low Risk   High Risk
-    │          │
-    v          v
-┌────────┐  ┌──────────────┐
-│ Grant  │  │ Step-up Auth  │
-│ Access │  │ - Hardware key│
-│        │  │ - Biometric   │
-│        │  │ - Manager OK  │
-└────────┘  └──────────────┘
+ │ │
+ Low Risk High Risk
+ │ │
+ v v
+┌────────┐ ┌──────────────┐
+│ Grant │ │ Step-up Auth │
+│ Access │ │ - Hardware key│
+│ │ │ - Biometric │
+│ │ │ - Manager OK │
+└────────┘ └──────────────┘
 ```
 
 ### Identity Provider Architecture
@@ -166,65 +166,65 @@ AI-driven analytics detect compromised identities through impossible travel dete
 ### Phase 1: Identity Infrastructure
 
 1. **Consolidate Identity Providers**
-   - Audit all identity sources across the organization
-   - Federate to a single authoritative IdP using SAML 2.0 or OIDC
-   - Configure SCIM for automated provisioning and deprovisioning
-   - Eliminate local accounts and shared credentials
+ - Audit all identity sources across the organization
+ - Federate to a single authoritative IdP using SAML 2.0 or OIDC
+ - Configure SCIM for automated provisioning and deprovisioning
+ - Eliminate local accounts and shared credentials
 
 2. **Deploy Phishing-Resistant MFA**
-   - Enroll all users in FIDO2/WebAuthn with hardware security keys
-   - Configure platform authenticators (Windows Hello for Business, macOS Touch ID)
-   - Disable SMS and voice call as MFA methods (phishable)
-   - Create conditional access policy requiring phishing-resistant methods for all sign-ins
+ - Enroll all users in FIDO2/WebAuthn with hardware security keys
+ - Configure platform authenticators (Windows Hello for Business, macOS Touch ID)
+ - Disable SMS and voice call as MFA methods (phishable)
+ - Create conditional access policy requiring phishing-resistant methods for all sign-ins
 
 3. **Configure Conditional Access Policies**
-   - Require compliant device for access to sensitive applications
-   - Block legacy authentication protocols (basic auth, IMAP, POP3)
-   - Require MFA for all users from untrusted locations
-   - Enforce session time limits with re-authentication
-   - Block or require additional verification for high-risk sign-ins
+ - Require compliant device for access to sensitive applications
+ - Block legacy authentication protocols (basic auth, IMAP, POP3)
+ - Require MFA for all users from untrusted locations
+ - Enforce session time limits with re-authentication
+ - Block or require additional verification for high-risk sign-ins
 
 ### Phase 2: Risk-Based Authentication
 
 4. **Enable Identity Threat Detection**
-   - Activate Microsoft Entra ID Protection or Okta ThreatInsight
-   - Configure risk levels: low (allow), medium (require MFA), high (block and investigate)
-   - Enable impossible travel detection and anomalous token alerts
-   - Integrate identity risk signals with SIEM/SOAR
+ - Activate Microsoft Entra ID Protection or Okta ThreatInsight
+ - Configure risk levels: low (allow), medium (require MFA), high (block and investigate)
+ - Enable impossible travel detection and anomalous token alerts
+ - Integrate identity risk signals with SIEM/SOAR
 
 5. **Implement Step-Up Authentication**
-   - For sensitive operations (privilege elevation, financial transactions), require additional verification
-   - Configure step-up policies: re-authenticate with hardware key
-   - Integrate with PAM for privileged session approval workflows
-   - Log all step-up events for audit trail
+ - For sensitive operations (privilege elevation, financial transactions), require additional verification
+ - Configure step-up policies: re-authenticate with hardware key
+ - Integrate with PAM for privileged session approval workflows
+ - Log all step-up events for audit trail
 
 ### Phase 3: Continuous Verification
 
 6. **Deploy Continuous Access Evaluation (CAE)**
-   - Enable Continuous Access Evaluation Protocol (CAEP) for real-time token revocation
-   - Configure critical event triggers: user disabled, password changed, location change
-   - Test that token revocation occurs within minutes (not hours) of security event
-   - Monitor CAE event logs for operational health
+ - Enable Continuous Access Evaluation Protocol (CAEP) for real-time token revocation
+ - Configure critical event triggers: user disabled, password changed, location change
+ - Test that token revocation occurs within minutes (not hours) of security event
+ - Monitor CAE event logs for operational health
 
 7. **Implement Session Controls**
-   - Configure session duration limits based on application sensitivity
-   - Enable sign-in frequency controls (re-authenticate every N hours)
-   - Implement persistent browser session controls
-   - Configure app-enforced restrictions for unmanaged devices
+ - Configure session duration limits based on application sensitivity
+ - Enable sign-in frequency controls (re-authenticate every N hours)
+ - Implement persistent browser session controls
+ - Configure app-enforced restrictions for unmanaged devices
 
 ### Phase 4: Identity Governance
 
 8. **Automate Identity Lifecycle**
-   - Configure joiner-mover-leaver workflows with HR system integration
-   - Automate access provisioning based on role and department
-   - Enable just-in-time access for temporary elevated permissions
-   - Configure automatic access expiration for contractors and guests
+ - Configure joiner-mover-leaver workflows with HR system integration
+ - Automate access provisioning based on role and department
+ - Enable just-in-time access for temporary elevated permissions
+ - Configure automatic access expiration for contractors and guests
 
 9. **Implement Access Reviews**
-   - Schedule quarterly access certification campaigns
-   - Configure automated reminders and escalation
-   - Require manager approval for continued access
-   - Auto-revoke access for unreviewed certifications
+ - Schedule quarterly access certification campaigns
+ - Configure automated reminders and escalation
+ - Require manager approval for continued access
+ - Auto-revoke access for unreviewed certifications
 
 ## Validation Checklist
 

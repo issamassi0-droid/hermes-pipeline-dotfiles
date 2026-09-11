@@ -26,14 +26,14 @@ Tie a tween or timeline to scroll position:
 
 ```javascript
 gsap.to(".box", {
-  x: 500,
-  duration: 1,
-  scrollTrigger: {
-    trigger: ".box",
-    start: "top center",   // when top of trigger hits center of viewport
-    end: "bottom center",  // when the bottom of the trigger hits the center of the viewport
-    toggleActions: "play reverse play reverse" // onEnter play, onLeave reverse, onEnterBack play, onLeaveBack reverse
-  }
+ x: 500,
+ duration: 1,
+ scrollTrigger: {
+ trigger: ".box",
+ start: "top center", // when top of trigger hits center of viewport
+ end: "bottom center", // when the bottom of the trigger hits the center of the viewport
+ toggleActions: "play reverse play reverse" // onEnter play, onLeave reverse, onEnterBack play, onLeaveBack reverse
+ }
 });
 ```
 
@@ -69,10 +69,10 @@ Main properties for the `scrollTrigger` config object (shorthand: `scrollTrigger
 
 ```javascript
 ScrollTrigger.create({
-  trigger: "#id",
-  start: "top top",
-  end: "bottom 50%+=100px",
-  onUpdate: (self) => console.log(self.progress.toFixed(3), self.direction)
+ trigger: "#id",
+ start: "top top",
+ end: "bottom 50%+=100px",
+ onUpdate: (self) => console.log(self.progress.toFixed(3), self.direction)
 });
 ```
 
@@ -93,14 +93,14 @@ ScrollTrigger.create({
 
 ```javascript
 ScrollTrigger.batch(".box", {
-  onEnter: (elements, triggers) => {
-    gsap.to(elements, { opacity: 1, y: 0, stagger: 0.15 });
-  },
-  onLeave: (elements, triggers) => {
-    gsap.to(elements, { opacity: 0, y: 100 });
-  },
-  start: "top 80%",
-  end: "bottom 20%"
+ onEnter: (elements, triggers) => {
+ gsap.to(elements, { opacity: 1, y: 0, stagger: 0.15 });
+ },
+ onLeave: (elements, triggers) => {
+ gsap.to(elements, { opacity: 0, y: 100 });
+ },
+ start: "top 80%",
+ end: "bottom 20%"
 });
 ```
 
@@ -108,10 +108,10 @@ With **batchMax** and **interval** for finer control:
 
 ```javascript
 ScrollTrigger.batch(".card", {
-  interval: 0.1,
-  batchMax: 4,
-  onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, overwrite: true }),
-  onLeaveBack: (batch) => gsap.set(batch, { opacity: 0, y: 50, overwrite: true })
+ interval: 0.1,
+ batchMax: 4,
+ onEnter: (batch) => gsap.to(batch, { opacity: 1, y: 0, stagger: 0.1, overwrite: true }),
+ onLeaveBack: (batch) => gsap.set(batch, { opacity: 0, y: 50, overwrite: true })
 });
 ```
 
@@ -135,13 +135,13 @@ See [ScrollTrigger.batch()](https://gsap.com/docs/v3/Plugins/ScrollTrigger/stati
 ```javascript
 // Example: proxy body scroll to a third-party scroll instance
 ScrollTrigger.scrollerProxy(document.body, {
-  scrollTop(value) {
-    if (arguments.length) scrollbar.scrollTop = value;
-    return scrollbar.scrollTop;
-  },
-  getBoundingClientRect() {
-    return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
-  }
+ scrollTop(value) {
+ if (arguments.length) scrollbar.scrollTop = value;
+ return scrollbar.scrollTop;
+ },
+ getBoundingClientRect() {
+ return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+ }
 });
 scrollbar.addListener(ScrollTrigger.update);
 ```
@@ -154,13 +154,13 @@ Scrub ties animation progress to scroll. Use for “scroll-driven” feel:
 
 ```javascript
 gsap.to(".box", {
-  x: 500,
-  scrollTrigger: {
-    trigger: ".box",
-    start: "top center",
-    end: "bottom center",
-    scrub: true        // or number (smoothness delay in seconds), so 0.5 means it'd take 0.5 seconds to "catch up" to the current scroll position.
-  }
+ x: 500,
+ scrollTrigger: {
+ trigger: ".box",
+ start: "top center",
+ end: "bottom center",
+ scrub: true // or number (smoothness delay in seconds), so 0.5 means it'd take 0.5 seconds to "catch up" to the current scroll position.
+ }
 });
 ```
 
@@ -172,11 +172,11 @@ Pin the trigger element while the scroll range is active:
 
 ```javascript
 scrollTrigger: {
-  trigger: ".section",
-  start: "top top",
-  end: "+=1000",   // pin for 1000px scroll
-  pin: true,
-  scrub: 1
+ trigger: ".section",
+ start: "top top",
+ end: "+=1000", // pin for 1000px scroll
+ pin: true,
+ scrub: 1
 }
 ```
 
@@ -189,10 +189,10 @@ Use during development to see trigger positions:
 
 ```javascript
 scrollTrigger: {
-  trigger: ".box",
-  start: "top center",
-  end: "bottom center",
-  markers: true
+ trigger: ".box",
+ start: "top center",
+ end: "bottom center",
+ markers: true
 }
 ```
 
@@ -204,13 +204,13 @@ Drive a timeline with scroll and optional scrub:
 
 ```javascript
 const tl = gsap.timeline({
-  scrollTrigger: {
-    trigger: ".container",
-    start: "top top",
-    end: "+=2000",
-    scrub: 1,
-    pin: true
-  }
+ scrollTrigger: {
+ trigger: ".container",
+ start: "top top",
+ end: "+=2000",
+ scrub: 1,
+ pin: true
+ }
 });
 tl.to(".a", { x: 100 }).to(".b", { y: 50 }).to(".c", { opacity: 0 });
 ```
@@ -232,25 +232,25 @@ A common pattern: **pin** a section, then as the user scrolls **vertically**, co
 const scrollingEl = document.querySelector(".horizontal-el");
 // Panel = pinned viewport-sized section. .horizontal-wrap = inner content that moves left.
 const scrollTween = gsap.to(scrollingEl, { 
-  xPercent: () => Max.max(0, window.innerWidth - scrollingEl.offsetWidth), 
-  ease: "none", // ease: "none" is required
-  scrollTrigger: {
-    trigger: scrollingEl,
-    pin: scrollingEl.parentNode, // wrapper so that we're not animating the pinned element
-    start: "top top",
-    end: "+=1000"
-  }
+ xPercent: () => Max.max(0, window.innerWidth - scrollingEl.offsetWidth), 
+ ease: "none", // ease: "none" is required
+ scrollTrigger: {
+ trigger: scrollingEl,
+ pin: scrollingEl.parentNode, // wrapper so that we're not animating the pinned element
+ start: "top top",
+ end: "+=1000"
+ }
 }); 
 
 // other tweens that trigger based on horizontal movement should reference the containerAnimation:
 gsap.to(".nested-el-1", {
-  y: 100,
-  scrollTrigger: {
-    containerAnimation: scrollTween, // IMPORTANT
-    trigger: ".nested-wrapper-1",
-    start: "left center", // based on horizontal movement
-    toggleActions: "play none none reset"
-  }
+ y: 100,
+ scrollTrigger: {
+ containerAnimation: scrollTween, // IMPORTANT
+ trigger: ".nested-wrapper-1",
+ start: "left center", // based on horizontal movement
+ toggleActions: "play none none reset"
+ }
 });
 ```
 

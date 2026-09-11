@@ -1,13 +1,13 @@
 ---
 name: implementing-runtime-security-with-tetragon
 description: >-
-  Implements eBPF-based runtime observability and in-kernel enforcement in Kubernetes with
-  Cilium Tetragon, monitoring process execution, file access, network connections, and
-  syscalls, and blocking dangerous calls at the kernel level. Use when deploying Tetragon to
-  detect or block syscalls such as ptrace, mount, and unshare, enforcing kernel-level policy,
-  or adding low-overhead runtime detection to a cluster. Keywords: Tetragon, Cilium, eBPF,
-  TracingPolicy, kprobe, enforcement, process lineage. Do not use for Falco-based detection -
-  use detecting-container-runtime-threats-with-falco.
+ Implements eBPF-based runtime observability and in-kernel enforcement in Kubernetes with
+ Cilium Tetragon, monitoring process execution, file access, network connections, and
+ syscalls, and blocking dangerous calls at the kernel level. Use when deploying Tetragon to
+ detect or block syscalls such as ptrace, mount, and unshare, enforcing kernel-level policy,
+ or adding low-overhead runtime detection to a cluster. Keywords: Tetragon, Cilium, eBPF,
+ TracingPolicy, kprobe, enforcement, process lineage. Do not use for Falco-based detection -
+ use detecting-container-runtime-threats-with-falco.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -83,28 +83,28 @@ Tetragon uses `TracingPolicy` CRDs to define what kernel events to observe and w
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
-  name: detect-privilege-escalation
+ name: detect-privilege-escalation
 spec:
-  kprobes:
-    - call: "security_bprm_check"
-      syscall: false
-      args:
-        - index: 0
-          type: "linux_binprm"
-      selectors:
-        - matchBinaries:
-            - operator: "In"
-              values:
-                - "/bin/su"
-                - "/usr/bin/sudo"
-                - "/usr/bin/passwd"
-          matchNamespaces:
-            - namespace: Pid
-              operator: NotIn
-              values:
-                - "host_ns"
-          matchActions:
-            - action: Post
+ kprobes:
+ - call: "security_bprm_check"
+ syscall: false
+ args:
+ - index: 0
+ type: "linux_binprm"
+ selectors:
+ - matchBinaries:
+ - operator: "In"
+ values:
+ - "/bin/su"
+ - "/usr/bin/sudo"
+ - "/usr/bin/passwd"
+ matchNamespaces:
+ - namespace: Pid
+ operator: NotIn
+ values:
+ - "host_ns"
+ matchActions:
+ - action: Post
 ```
 
 ### Enforcement Actions
@@ -124,10 +124,10 @@ helm repo add cilium https://helm.cilium.io
 helm repo update
 
 helm install tetragon cilium/tetragon \
-  --namespace kube-system \
-  --set tetragon.enableProcessCred=true \
-  --set tetragon.enableProcessNs=true \
-  --set tetragon.grpc.address="localhost:54321"
+ --namespace kube-system \
+ --set tetragon.enableProcessCred=true \
+ --set tetragon.enableProcessNs=true \
+ --set tetragon.grpc.address="localhost:54321"
 ```
 
 ### Step 2: Install the Tetragon CLI
@@ -136,7 +136,7 @@ helm install tetragon cilium/tetragon \
 GOOS=$(go env GOOS)
 GOARCH=$(go env GOARCH)
 curl -L --remote-name-all \
-  https://github.com/cilium/tetragon/releases/latest/download/tetra-${GOOS}-${GOARCH}.tar.gz
+ https://github.com/cilium/tetragon/releases/latest/download/tetra-${GOOS}-${GOARCH}.tar.gz
 tar -xzvf tetra-${GOOS}-${GOARCH}.tar.gz
 sudo install tetra /usr/local/bin/
 ```
@@ -158,24 +158,24 @@ Create a TracingPolicy to detect processes attempting to escape container namesp
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
-  name: detect-container-escape
+ name: detect-container-escape
 spec:
-  kprobes:
-    - call: "__x64_sys_setns"
-      syscall: true
-      args:
-        - index: 0
-          type: "int"
-        - index: 1
-          type: "int"
-      selectors:
-        - matchNamespaces:
-            - namespace: Pid
-              operator: NotIn
-              values:
-                - "host_ns"
-          matchActions:
-            - action: Sigkill
+ kprobes:
+ - call: "__x64_sys_setns"
+ syscall: true
+ args:
+ - index: 0
+ type: "int"
+ - index: 1
+ type: "int"
+ selectors:
+ - matchNamespaces:
+ - namespace: Pid
+ operator: NotIn
+ values:
+ - "host_ns"
+ matchActions:
+ - action: Sigkill
 ```
 
 ### Monitoring Sensitive File Access
@@ -186,24 +186,24 @@ Detect reads of sensitive credentials:
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
-  name: monitor-sensitive-files
+ name: monitor-sensitive-files
 spec:
-  kprobes:
-    - call: "security_file_open"
-      syscall: false
-      args:
-        - index: 0
-          type: "file"
-      selectors:
-        - matchArgs:
-            - index: 0
-              operator: "Prefix"
-              values:
-                - "/etc/shadow"
-                - "/etc/kubernetes/pki"
-                - "/var/run/secrets/kubernetes.io"
-          matchActions:
-            - action: Post
+ kprobes:
+ - call: "security_file_open"
+ syscall: false
+ args:
+ - index: 0
+ type: "file"
+ selectors:
+ - matchArgs:
+ - index: 0
+ operator: "Prefix"
+ values:
+ - "/etc/shadow"
+ - "/etc/kubernetes/pki"
+ - "/var/run/secrets/kubernetes.io"
+ matchActions:
+ - action: Post
 ```
 
 ### Blocking Crypto-Miner Execution
@@ -214,23 +214,23 @@ Prevent known crypto-mining binaries from executing:
 apiVersion: cilium.io/v1alpha1
 kind: TracingPolicy
 metadata:
-  name: block-cryptominers
+ name: block-cryptominers
 spec:
-  kprobes:
-    - call: "security_bprm_check"
-      syscall: false
-      args:
-        - index: 0
-          type: "linux_binprm"
-      selectors:
-        - matchBinaries:
-            - operator: "In"
-              values:
-                - "/usr/bin/xmrig"
-                - "/tmp/xmrig"
-                - "/usr/bin/minerd"
-          matchActions:
-            - action: Sigkill
+ kprobes:
+ - call: "security_bprm_check"
+ syscall: false
+ args:
+ - index: 0
+ type: "linux_binprm"
+ selectors:
+ - matchBinaries:
+ - operator: "In"
+ values:
+ - "/usr/bin/xmrig"
+ - "/tmp/xmrig"
+ - "/usr/bin/minerd"
+ matchActions:
+ - action: Sigkill
 ```
 
 ### Observing Events with Tetra CLI
@@ -240,15 +240,15 @@ Stream runtime events in real-time:
 ```bash
 # Watch all process execution events
 kubectl exec -n kube-system ds/tetragon -c tetragon -- \
-  tetra getevents -o compact --process-only
+ tetra getevents -o compact --process-only
 
 # Filter events for a specific namespace
 kubectl exec -n kube-system ds/tetragon -c tetragon -- \
-  tetra getevents -o compact --namespace production
+ tetra getevents -o compact --namespace production
 
 # Export events in JSON for SIEM integration
 kubectl exec -n kube-system ds/tetragon -c tetragon -- \
-  tetra getevents -o json | tee /var/log/tetragon-events.json
+ tetra getevents -o json | tee /var/log/tetragon-events.json
 ```
 
 ## Integration with SIEM and Alerting
@@ -258,15 +258,15 @@ kubectl exec -n kube-system ds/tetragon -c tetragon -- \
 ```yaml
 # tetragon-helm-values.yaml
 export:
-  stdout:
-    enabledCommand: true
-    enabledArgs: true
-  filenames:
-    - /var/log/tetragon/tetragon.log
-  elasticsearch:
-    enabled: true
-    url: "https://elasticsearch.monitoring:9200"
-    index: "tetragon-events"
+ stdout:
+ enabledCommand: true
+ enabledArgs: true
+ filenames:
+ - /var/log/tetragon/tetragon.log
+ elasticsearch:
+ enabled: true
+ url: "https://elasticsearch.monitoring:9200"
+ index: "tetragon-events"
 ```
 
 ### Prometheus Metrics
@@ -277,15 +277,15 @@ Tetragon exposes metrics at `:2112/metrics`:
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: tetragon-metrics
-  namespace: kube-system
+ name: tetragon-metrics
+ namespace: kube-system
 spec:
-  selector:
-    matchLabels:
-      app.kubernetes.io/name: tetragon
-  endpoints:
-    - port: metrics
-      interval: 15s
+ selector:
+ matchLabels:
+ app.kubernetes.io/name: tetragon
+ endpoints:
+ - port: metrics
+ interval: 15s
 ```
 
 ## Key Metrics and Alerts

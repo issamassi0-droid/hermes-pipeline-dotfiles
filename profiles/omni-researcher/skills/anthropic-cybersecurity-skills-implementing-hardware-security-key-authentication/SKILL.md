@@ -1,13 +1,13 @@
 ---
 name: implementing-hardware-security-key-authentication
 description: 'Builds a FIDO2/WebAuthn relying party server with the python-fido2
-  library, covering registration and authentication ceremonies, YubiKey enrollment,
-  resident key (discoverable credential/passkey) workflows, and user verification
-  policies. Use when implementing phishing-resistant MFA with hardware security keys,
-  building a WebAuthn relying party, enrolling YubiKeys for a workforce, or migrating
-  password-based authentication to passkeys.
+ library, covering registration and authentication ceremonies, YubiKey enrollment,
+ resident key (discoverable credential/passkey) workflows, and user verification
+ policies. Use when implementing phishing-resistant MFA with hardware security keys,
+ building a WebAuthn relying party, enrolling YubiKeys for a workforce, or migrating
+ password-based authentication to passkeys.
 
-  '
+ '
 domain: cybersecurity
 subdomain: identity-and-access-management
 tags:
@@ -70,10 +70,10 @@ Configure the WebAuthn relying party (RP) identity and server:
 - **Define RP identity**: Create a `PublicKeyCredentialRpEntity` with the relying party name (display name shown to users) and RP ID (the effective domain of the application). The RP ID must be a registrable domain suffix of the origin -- for example, `example.com` is valid for `https://auth.example.com` but `other.com` is not.
 - **Initialize Fido2Server**: Instantiate the `Fido2Server` class from the python-fido2 library with the RP entity. The server handles challenge generation, attestation verification, and assertion validation.
 - **Configure attestation preference**: Set the attestation conveyance preference to control whether the server requests proof of the authenticator's identity:
-  - `none`: No attestation requested (simplest, recommended for most deployments)
-  - `indirect`: Attestation may be provided but CA may anonymize it
-  - `direct`: Full attestation chain from the authenticator's manufacturer
-  - `enterprise`: Device-identifying attestation for managed environments
+ - `none`: No attestation requested (simplest, recommended for most deployments)
+ - `indirect`: Attestation may be provided but CA may anonymize it
+ - `direct`: Full attestation chain from the authenticator's manufacturer
+ - `enterprise`: Device-identifying attestation for managed environments
 - **Session management**: Configure server-side sessions to store WebAuthn state between the begin and complete phases of registration/authentication ceremonies. Use secure, httponly cookies with SameSite=Strict.
 - **Credential storage**: Design the database schema to store credential records: `credential_id` (binary), `public_key` (COSE key), `sign_count` (uint32 for clone detection), `user_id`, `created_at`, `last_used`, `display_name`, and `transports` (USB, NFC, BLE, internal).
 
@@ -83,11 +83,11 @@ Implement the WebAuthn registration flow to create new credentials:
 
 - **Begin registration**: Call `server.register_begin()` with the user entity (`PublicKeyCredentialUserEntity` containing user ID, username, and display name), the list of existing credentials for the user (to prevent duplicate registration), and options for `user_verification` and `authenticator_attachment`.
 - **Authenticator selection criteria**:
-  - `authenticator_attachment: cross-platform` restricts to roaming authenticators (USB/NFC keys)
-  - `authenticator_attachment: platform` restricts to built-in authenticators (Touch ID, Windows Hello)
-  - Omitting this field allows both types
-  - `resident_key: required` forces creation of a discoverable credential (passkey) stored on the authenticator
-  - `user_verification: required` enforces PIN or biometric verification on the authenticator
+ - `authenticator_attachment: cross-platform` restricts to roaming authenticators (USB/NFC keys)
+ - `authenticator_attachment: platform` restricts to built-in authenticators (Touch ID, Windows Hello)
+ - Omitting this field allows both types
+ - `resident_key: required` forces creation of a discoverable credential (passkey) stored on the authenticator
+ - `user_verification: required` enforces PIN or biometric verification on the authenticator
 - **Client-side ceremony**: The browser calls `navigator.credentials.create()` with the options from the server. The authenticator generates a new key pair, stores the private key in its secure element, and returns the public key, credential ID, attestation object, and client data JSON.
 - **Complete registration**: Call `server.register_complete()` with the saved state and the client response. The server verifies the attestation signature, extracts the credential public key and ID, and returns `AuthenticatorData` containing the credential data to store.
 - **Store credential**: Persist the `credential_data` (contains `credential_id`, `public_key` as COSE key, and `sign_count`) to the database associated with the user account.
@@ -120,10 +120,10 @@ Plan and execute migration from passwords to passkeys:
 - **Credential upgrade flow**: When a user authenticates with a password, prompt them to register a passkey. Present the WebAuthn registration dialog immediately after successful password login to minimize friction.
 - **Cross-device passkeys**: Support synced passkeys (passkeys stored in platform credential managers like iCloud Keychain, Google Password Manager, or 1Password) for users who do not have hardware security keys. These provide phishing resistance without requiring dedicated hardware.
 - **Account recovery**: Design recovery flows for users who lose all their security keys:
-  - Recovery codes generated at enrollment time (printed, stored in password manager)
-  - Supervised re-enrollment by an administrator after identity verification
-  - Temporary time-limited password login with mandatory key re-enrollment
-  - Never allow recovery via email or SMS alone, as these defeat the phishing resistance
+ - Recovery codes generated at enrollment time (printed, stored in password manager)
+ - Supervised re-enrollment by an administrator after identity verification
+ - Temporary time-limited password login with mandatory key re-enrollment
+ - Never allow recovery via email or SMS alone, as these defeat the phishing resistance
 - **Password deprecation timeline**: After passkey adoption exceeds the target threshold, enforce passkey-only authentication for high-privilege accounts first, then expand to all accounts. Maintain password as a fallback during the transition window.
 - **Monitoring and metrics**: Track registration success rates, authentication failure rates (wrong key, timeout, cancelled), mean time to authenticate, and the ratio of passkey to password logins.
 
@@ -211,15 +211,15 @@ Plan and execute migration from passwords to passkeys:
 - **TOTP Fallback**: 644 (5.0%) -- grace period active
 - **Mean Authentication Time**: 2.3 seconds
 - **Authentication Failures**: 127 (0.99%)
-  - User cancelled: 89
-  - Timeout: 23
-  - Invalid signature: 12
-  - Sign count regression (possible clone): 3
+ - User cancelled: 89
+ - Timeout: 23
+ - Invalid signature: 12
+ - Sign count regression (possible clone): 3
 
 ### Security Events
 - **Lost Key Reports**: 2
-  - User A: primary key lost 2026-03-12, revoked, backup promoted, new backup enrolled
-  - User B: backup key damaged 2026-03-15, revoked, replacement enrolled
+ - User A: primary key lost 2026-03-12, revoked, backup promoted, new backup enrolled
+ - User B: backup key damaged 2026-03-15, revoked, replacement enrolled
 
 ### Credential Details
 | User | Key Label | AAGUID | Registered | Last Used | Sign Count |

@@ -20,23 +20,23 @@
 - **Core insight:** "It's not just about specialization, it's also about efficiency."
 - **Architecture:** Orchestrator + Researcher + Librarian. Group rooms with turn limits. Tool pruning per agent.
 - **Key innovations:**
-  - **Tool pruning:** Each agent gets ONLY the tools it needs (researcher doesn't get wiki skill, orchestrator doesn't get web search). This saved 20 minutes of wasted tool calls in his test.
-  - **Keep bots warm:** 3→5 bots kept loaded for instant switching.
-  - **Group room turn limits:** Prevents infinite loops between agents — the room has a default number of turns before requiring human input.
-  - **Local + cloud delegation:** Researcher on cheaper model, orchestrator on powerful model.
-  - **"Refine" command:** After a session, agents self-review and save learnings to memory.
+ - **Tool pruning:** Each agent gets ONLY the tools it needs (researcher doesn't get wiki skill, orchestrator doesn't get web search). This saved 20 minutes of wasted tool calls in his test.
+ - **Keep bots warm:** 3→5 bots kept loaded for instant switching.
+ - **Group room turn limits:** Prevents infinite loops between agents — the room has a default number of turns before requiring human input.
+ - **Local + cloud delegation:** Researcher on cheaper model, orchestrator on powerful model.
+ - **"Refine" command:** After a session, agents self-review and save learnings to memory.
 
 ### 3. Kanban Board Multi-Agent Workflow (the goldmine video)
 - **Scale:** 18 workers in parallel, 97 tasks in one run
 - **Core insight:** "It isn't setting up the agents themselves, it's getting them to work together on one job without stepping on each other."
 - **Architecture:** Scouts (X + Web) → Orchestrator (judge with rubric) → Parallel Researchers (3 per issue) → Analyst/Video Producer → Human Gate (Telegram) → Builder/Tester → Deliverables.
 - **Key innovations:**
-  - **Deduplication layer:** Multiple scouts find the same things — the orchestrator deduplicates before routing.
-  - **Scoring rubric:** 5-axis rubric (frequency, pain intensity, solvability, solution gap, strategic fit) with a cutoff score (65/100) to decide build vs video vs shelve.
-  - **Human gate via Telegram:** The ONLY place the human is in the loop. A single message: "4 proposals awaiting your approval." Reply approve/shelve/modify.
-  - **Self-healing:** The system detected its own bug (writing to temp directories) and regenerated the deliverable — no human intervention.
-  - **State survives restarts:** SQLite board means a crash loses nothing.
-  - **Open-sourced the workflow skeleton:** "Tombi Studio Hermes multi-agent workflow" — a generalized template anyone can adapt.
+ - **Deduplication layer:** Multiple scouts find the same things — the orchestrator deduplicates before routing.
+ - **Scoring rubric:** 5-axis rubric (frequency, pain intensity, solvability, solution gap, strategic fit) with a cutoff score (65/100) to decide build vs video vs shelve.
+ - **Human gate via Telegram:** The ONLY place the human is in the loop. A single message: "4 proposals awaiting your approval." Reply approve/shelve/modify.
+ - **Self-healing:** The system detected its own bug (writing to temp directories) and regenerated the deliverable — no human intervention.
+ - **State survives restarts:** SQLite board means a crash loses nothing.
+ - **Open-sourced the workflow skeleton:** "Tombi Studio Hermes multi-agent workflow" — a generalized template anyone can adapt.
 
 ---
 

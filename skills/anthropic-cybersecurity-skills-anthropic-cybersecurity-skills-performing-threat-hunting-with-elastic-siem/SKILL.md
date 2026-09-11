@@ -1,12 +1,12 @@
 ---
 name: performing-threat-hunting-with-elastic-siem
 description: 'Performs proactive threat hunting in Elastic Security SIEM using KQL/EQL
-  queries, detection rules, and Timeline investigation to identify threats that evade
-  automated detection. Use when SOC teams need to hunt for specific ATT&CK techniques,
-  investigate anomalous behaviors, or validate detection coverage gaps using Elasticsearch
-  and Kibana Security.
+ queries, detection rules, and Timeline investigation to identify threats that evade
+ automated detection. Use when SOC teams need to hunt for specific ATT&CK techniques,
+ investigate anomalous behaviors, or validate detection coverage gaps using Elasticsearch
+ and Kibana Security.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -92,17 +92,17 @@ Refine to exclude known legitimate use:
 
 ```kql
 process.name: "certutil.exe"
-  and process.args: ("-urlcache" or "-split" or "-decode")
-  and not process.parent.name: ("sccm*.exe" or "ccmexec.exe")
-  and not user.name: "SYSTEM"
+ and process.args: ("-urlcache" or "-split" or "-decode")
+ and not process.parent.name: ("sccm*.exe" or "ccmexec.exe")
+ and not user.name: "SYSTEM"
 ```
 
 For PowerShell-based hunting with encoded commands (T1059.001):
 
 ```kql
 process.name: "powershell.exe"
-  and process.args: ("-enc" or "-encodedcommand" or "-e " or "frombase64string" or "iex" or "invoke-expression")
-  and not process.parent.executable: "C:\\Windows\\System32\\svchost.exe"
+ and process.args: ("-enc" or "-encodedcommand" or "-e " or "frombase64string" or "iex" or "invoke-expression")
+ and not process.parent.executable: "C:\\Windows\\System32\\svchost.exe"
 ```
 
 ### Step 3: Use EQL for Sequence Detection
@@ -113,29 +113,29 @@ Elastic Event Query Language (EQL) enables hunting for multi-step attack sequenc
 
 ```eql
 sequence by host.name with maxspan=5m
-  [process where event.type == "start" and process.name == "explorer.exe"]
-  [process where event.type == "start" and process.parent.name == "explorer.exe"
-    and process.name in ("cmd.exe", "powershell.exe", "rundll32.exe", "regsvr32.exe")]
+ [process where event.type == "start" and process.name == "explorer.exe"]
+ [process where event.type == "start" and process.parent.name == "explorer.exe"
+ and process.name in ("cmd.exe", "powershell.exe", "rundll32.exe", "regsvr32.exe")]
 ```
 
 **Detect credential dumping sequence (T1003):**
 
 ```eql
 sequence by host.name with maxspan=2m
-  [process where event.type == "start"
-    and process.name in ("procdump.exe", "procdump64.exe", "rundll32.exe", "taskmgr.exe")
-    and process.args : "*lsass*"]
-  [file where event.type == "creation"
-    and file.extension in ("dmp", "dump", "bin")]
+ [process where event.type == "start"
+ and process.name in ("procdump.exe", "procdump64.exe", "rundll32.exe", "taskmgr.exe")
+ and process.args : "*lsass*"]
+ [file where event.type == "creation"
+ and file.extension in ("dmp", "dump", "bin")]
 ```
 
 **Detect lateral movement via PsExec (T1021.002):**
 
 ```eql
 sequence by source.ip with maxspan=1m
-  [authentication where event.outcome == "success" and winlog.logon.type == "Network"]
-  [process where event.type == "start"
-    and process.name == "psexesvc.exe"]
+ [authentication where event.outcome == "success" and winlog.logon.type == "Network"]
+ [process where event.type == "start"
+ and process.name == "psexesvc.exe"]
 ```
 
 ### Step 4: Investigate with Elastic Security Timeline
@@ -159,31 +159,31 @@ Convert successful hunting queries into Elastic detection rules:
 
 ```json
 {
-  "name": "Certutil Download Activity",
-  "description": "Detects certutil.exe used for file download, a common LOLBin technique",
-  "risk_score": 73,
-  "severity": "high",
-  "type": "eql",
-  "query": "process where event.type == \"start\" and process.name == \"certutil.exe\" and process.args : (\"-urlcache\", \"-split\", \"-decode\") and not process.parent.name : (\"ccmexec.exe\", \"sccm*.exe\")",
-  "threat": [
-    {
-      "framework": "MITRE ATT&CK",
-      "tactic": {
-        "id": "TA0011",
-        "name": "Command and Control"
-      },
-      "technique": [
-        {
-          "id": "T1105",
-          "name": "Ingress Tool Transfer"
-        }
-      ]
-    }
-  ],
-  "tags": ["Hunting", "LOLBins", "T1105"],
-  "interval": "5m",
-  "from": "now-6m",
-  "enabled": true
+ "name": "Certutil Download Activity",
+ "description": "Detects certutil.exe used for file download, a common LOLBin technique",
+ "risk_score": 73,
+ "severity": "high",
+ "type": "eql",
+ "query": "process where event.type == \"start\" and process.name == \"certutil.exe\" and process.args : (\"-urlcache\", \"-split\", \"-decode\") and not process.parent.name : (\"ccmexec.exe\", \"sccm*.exe\")",
+ "threat": [
+ {
+ "framework": "MITRE ATT&CK",
+ "tactic": {
+ "id": "TA0011",
+ "name": "Command and Control"
+ },
+ "technique": [
+ {
+ "id": "T1105",
+ "name": "Ingress Tool Transfer"
+ }
+ ]
+ }
+ ],
+ "tags": ["Hunting", "LOLBins", "T1105"],
+ "interval": "5m",
+ "from": "now-6m",
+ "enabled": true
 }
 ```
 
@@ -191,10 +191,10 @@ Deploy via Elastic Security API:
 
 ```bash
 curl -X POST "https://kibana:5601/api/detection_engine/rules" \
-  -H "kbn-xsrf: true" \
-  -H "Content-Type: application/json" \
-  -H "Authorization: ApiKey YOUR_API_KEY" \
-  -d @certutil_rule.json
+ -H "kbn-xsrf: true" \
+ -H "Content-Type: application/json" \
+ -H "Authorization: ApiKey YOUR_API_KEY" \
+ -d @certutil_rule.json
 ```
 
 ### Step 6: Aggregate and Visualize Findings
@@ -204,28 +204,28 @@ Create hunting dashboard with aggregations:
 ```json
 GET logs-endpoint.events.process-*/_search
 {
-  "size": 0,
-  "query": {
-    "bool": {
-      "must": [
-        {"term": {"process.name": "certutil.exe"}},
-        {"range": {"@timestamp": {"gte": "now-30d"}}}
-      ]
-    }
-  },
-  "aggs": {
-    "by_host": {
-      "terms": {"field": "host.name", "size": 20},
-      "aggs": {
-        "by_user": {
-          "terms": {"field": "user.name", "size": 10}
-        },
-        "by_args": {
-          "terms": {"field": "process.args", "size": 10}
-        }
-      }
-    }
-  }
+ "size": 0,
+ "query": {
+ "bool": {
+ "must": [
+ {"term": {"process.name": "certutil.exe"}},
+ {"range": {"@timestamp": {"gte": "now-30d"}}}
+ ]
+ }
+ },
+ "aggs": {
+ "by_host": {
+ "terms": {"field": "host.name", "size": 20},
+ "aggs": {
+ "by_user": {
+ "terms": {"field": "user.name", "size": 10}
+ },
+ "by_args": {
+ "terms": {"field": "process.args", "size": 10}
+ }
+ }
+ }
+ }
 }
 ```
 
@@ -270,24 +270,24 @@ Record findings in a structured hunt report and update detection coverage:
 ```
 THREAT HUNT REPORT — TH-2024-012
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Hypothesis:   Attackers using certutil.exe for tool download (T1105)
-Period:       2024-02-15 to 2024-03-15
+Hypothesis: Attackers using certutil.exe for tool download (T1105)
+Period: 2024-02-15 to 2024-03-15
 Data Sources: Elastic Endpoint (process events), Sysmon
 
 Findings:
-  Total certutil executions:     342
-  With -urlcache flag:           12 (3.5%)
-  Suspicious (non-SCCM):        3 confirmed anomalous
+ Total certutil executions: 342
+ With -urlcache flag: 12 (3.5%)
+ Suspicious (non-SCCM): 3 confirmed anomalous
 
 Affected Hosts:
-  WORKSTATION-042 (Finance)  — certutil downloading payload.exe from external IP
-  SERVER-DB-03 (Database)    — certutil decoding base64 encoded binary
-  LAPTOP-EXEC-07 (Executive) — certutil downloading script from Pastebin
+ WORKSTATION-042 (Finance) — certutil downloading payload.exe from external IP
+ SERVER-DB-03 (Database) — certutil decoding base64 encoded binary
+ LAPTOP-EXEC-07 (Executive) — certutil downloading script from Pastebin
 
 Actions Taken:
-  [DONE] 3 hosts isolated for forensic investigation
-  [DONE] Detection rule "Certutil Download Activity" deployed (ID: elastic-th012)
-  [DONE] ATT&CK Navigator updated: T1105 coverage = GREEN
+ [DONE] 3 hosts isolated for forensic investigation
+ [DONE] Detection rule "Certutil Download Activity" deployed (ID: elastic-th012)
+ [DONE] ATT&CK Navigator updated: T1105 coverage = GREEN
 
-Verdict:      HYPOTHESIS CONFIRMED — 3 true positive findings escalated to IR
+Verdict: HYPOTHESIS CONFIRMED — 3 true positive findings escalated to IR
 ```

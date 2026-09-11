@@ -1,14 +1,14 @@
 {
-  "id": "e582fdbe",
-  "subsystem": "memory",
-  "action": "replace",
-  "summary": "background review consolidation (replace on user): - replace: User prefers warm, muted, low-blue color schemes for eye comfort — drives all theme/shader choices. Actively customizes jinxnet.inkmode Om",
-  "origin": "background_review",
-  "created_at": 1789086734.3366835,
-  "payload": {
-    "action": "replace",
-    "target": "user",
-    "content": "User: GitHub issamassi0-droid. Old laptop, no budget for paid services — prefers free/open-source. Customizes Omarchy ink mode shaders (warm muted low-blue palette), pushes to GitHub. Installs LLM proxies in ~/.local/share/llm-proxy. Curates agent skills. Uses FreeLLMAPI at localhost:3001 with auto-reconnect watchdog. Technically sophisticated.",
-    "old_text": "User prefers warm, muted, low-blue color schemes for eye comfort — drives all theme/shader choices. Actively customizes jinxnet.inkmode Omarchy plugin (shaders, modes, parameters) and pushes modifications to https://github.com/issamassi0-droid/omarchy-ink-mode.git. Values professional-grade visual differentiation between modes; notices when modes look too similar."
-  }
+ "id": "e582fdbe",
+ "subsystem": "memory",
+ "action": "replace",
+ "summary": "background review consolidation (replace on user): - replace: User prefers warm, muted, low-blue color schemes for eye comfort — drives all theme/shader choices. Actively customizes jinxnet.inkmode Om",
+ "origin": "background_review",
+ "created_at": 1789086734.3366835,
+ "payload": {
+ "action": "replace",
+ "target": "user",
+ "content": "User: GitHub issamassi0-droid. Old laptop, no budget for paid services — prefers free/open-source. Customizes Omarchy ink mode shaders (warm muted low-blue palette), pushes to GitHub. Installs LLM proxies in ~/.local/share/llm-proxy. Curates agent skills. Uses FreeLLMAPI at localhost:3001 with auto-reconnect watchdog. Technically sophisticated.",
+ "old_text": "User prefers warm, muted, low-blue color schemes for eye comfort — drives all theme/shader choices. Actively customizes jinxnet.inkmode Omarchy plugin (shaders, modes, parameters) and pushes modifications to https://github.com/issamassi0-droid/omarchy-ink-mode.git. Values professional-grade visual differentiation between modes; notices when modes look too similar."
+ }
 }

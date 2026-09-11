@@ -1,7 +1,7 @@
 ---
 name: implementing-secrets-scanning-in-ci-cd
 description: Integrate gitleaks and trufflehog into CI/CD pipelines to detect leaked
-  secrets before deployment
+ secrets before deployment
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -77,16 +77,16 @@ The agent script produces a JSON report containing:
 
 ```json
 {
-  "scan_summary": {
-    "tool": "both",
-    "total_findings": 3,
-    "critical": 1,
-    "high": 1,
-    "medium": 1,
-    "low": 0,
-    "ci_gate": "FAIL",
-    "fail_reason": "Found 1 critical and 1 high severity findings"
-  },
-  "findings": [...]
+ "scan_summary": {
+ "tool": "both",
+ "total_findings": 3,
+ "critical": 1,
+ "high": 1,
+ "medium": 1,
+ "low": 0,
+ "ci_gate": "FAIL",
+ "fail_reason": "Found 1 critical and 1 high severity findings"
+ },
+ "findings": [...]
 }
 ```

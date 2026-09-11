@@ -1,13 +1,13 @@
 ---
 name: implementing-patch-management-for-ot-systems
 description: 'Implements a structured patch management program for OT/ICS environments
-  where IT-style patching can cause process disruption or safety hazards, covering
-  vendor compatibility testing, risk-based prioritization, staged test deployment,
-  maintenance window coordination, rollback procedures, and compensating controls.
-  Use when planning or auditing patching for SCADA, PLCs, or other industrial control
-  systems.
+ where IT-style patching can cause process disruption or safety hazards, covering
+ vendor compatibility testing, risk-based prioritization, staged test deployment,
+ maintenance window coordination, rollback procedures, and compensating controls.
+ Use when planning or auditing patching for SCADA, PLCs, or other industrial control
+ systems.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ot-ics-security
 tags:
@@ -78,190 +78,190 @@ from enum import Enum
 
 
 class PatchStatus(str, Enum):
-    IDENTIFIED = "identified"
-    EVALUATING = "evaluating"
-    TESTING = "testing"
-    APPROVED = "approved"
-    SCHEDULED = "scheduled"
-    DEPLOYED = "deployed"
-    DEFERRED = "deferred"
-    NOT_APPLICABLE = "not_applicable"
+ IDENTIFIED = "identified"
+ EVALUATING = "evaluating"
+ TESTING = "testing"
+ APPROVED = "approved"
+ SCHEDULED = "scheduled"
+ DEPLOYED = "deployed"
+ DEFERRED = "deferred"
+ NOT_APPLICABLE = "not_applicable"
 
 
 @dataclass
 class OTPatch:
-    patch_id: str
-    vendor: str
-    product: str
-    affected_versions: str
-    cve_ids: list
-    cvss_score: float
-    ics_cert_advisory: str
-    description: str
-    status: str = PatchStatus.IDENTIFIED
-    identified_date: str = ""
-    evaluation_deadline: str = ""  # 35 days per CIP-007
-    test_date: str = ""
-    deployment_date: str = ""
-    affected_assets: list = field(default_factory=list)
-    test_results: str = ""
-    compensating_controls: str = ""
-    risk_rating: str = ""
-    maintenance_window: str = ""
-    rollback_procedure: str = ""
+ patch_id: str
+ vendor: str
+ product: str
+ affected_versions: str
+ cve_ids: list
+ cvss_score: float
+ ics_cert_advisory: str
+ description: str
+ status: str = PatchStatus.IDENTIFIED
+ identified_date: str = ""
+ evaluation_deadline: str = "" # 35 days per CIP-007
+ test_date: str = ""
+ deployment_date: str = ""
+ affected_assets: list = field(default_factory=list)
+ test_results: str = ""
+ compensating_controls: str = ""
+ risk_rating: str = ""
+ maintenance_window: str = ""
+ rollback_procedure: str = ""
 
 
 class OTPatchManager:
-    """Manages the OT patch lifecycle."""
+ """Manages the OT patch lifecycle."""
 
-    def __init__(self):
-        self.patches = []
-        self.assets = {}
-        self.vendor_feeds = {}
+ def __init__(self):
+ self.patches = []
+ self.assets = {}
+ self.vendor_feeds = {}
 
-    def add_patch(self, patch: OTPatch):
-        """Register a new patch for tracking."""
-        # Set evaluation deadline (35 calendar days per NERC CIP-007)
-        if not patch.evaluation_deadline:
-            identified = datetime.fromisoformat(patch.identified_date)
-            patch.evaluation_deadline = (identified + timedelta(days=35)).isoformat()
+ def add_patch(self, patch: OTPatch):
+ """Register a new patch for tracking."""
+ # Set evaluation deadline (35 calendar days per NERC CIP-007)
+ if not patch.evaluation_deadline:
+ identified = datetime.fromisoformat(patch.identified_date)
+ patch.evaluation_deadline = (identified + timedelta(days=35)).isoformat()
 
-        self.patches.append(patch)
+ self.patches.append(patch)
 
-    def prioritize_patches(self):
-        """Risk-based prioritization for OT patches."""
-        for patch in self.patches:
-            if patch.status in (PatchStatus.DEPLOYED, PatchStatus.NOT_APPLICABLE):
-                continue
+ def prioritize_patches(self):
+ """Risk-based prioritization for OT patches."""
+ for patch in self.patches:
+ if patch.status in (PatchStatus.DEPLOYED, PatchStatus.NOT_APPLICABLE):
+ continue
 
-            # OT-specific risk scoring
-            score = patch.cvss_score
+ # OT-specific risk scoring
+ score = patch.cvss_score
 
-            # Increase priority for actively exploited vulnerabilities
-            if "CISA KEV" in patch.ics_cert_advisory:
-                score += 2.0
+ # Increase priority for actively exploited vulnerabilities
+ if "CISA KEV" in patch.ics_cert_advisory:
+ score += 2.0
 
-            # Increase priority for network-exposed OT systems
-            for asset_id in patch.affected_assets:
-                asset = self.assets.get(asset_id, {})
-                if asset.get("network_exposed"):
-                    score += 1.0
-                if asset.get("purdue_level") in ("Level 0-1", "Level 2"):
-                    score += 1.5
+ # Increase priority for network-exposed OT systems
+ for asset_id in patch.affected_assets:
+ asset = self.assets.get(asset_id, {})
+ if asset.get("network_exposed"):
+ score += 1.0
+ if asset.get("purdue_level") in ("Level 0-1", "Level 2"):
+ score += 1.5
 
-            score = min(score, 10.0)
+ score = min(score, 10.0)
 
-            if score >= 9.0:
-                patch.risk_rating = "critical"
-            elif score >= 7.0:
-                patch.risk_rating = "high"
-            elif score >= 4.0:
-                patch.risk_rating = "medium"
-            else:
-                patch.risk_rating = "low"
+ if score >= 9.0:
+ patch.risk_rating = "critical"
+ elif score >= 7.0:
+ patch.risk_rating = "high"
+ elif score >= 4.0:
+ patch.risk_rating = "medium"
+ else:
+ patch.risk_rating = "low"
 
-    def get_patches_needing_evaluation(self):
-        """Get patches approaching evaluation deadline."""
-        now = datetime.now()
-        approaching = []
-        for patch in self.patches:
-            if patch.status == PatchStatus.IDENTIFIED:
-                deadline = datetime.fromisoformat(patch.evaluation_deadline)
-                days_remaining = (deadline - now).days
-                if days_remaining <= 7:
-                    approaching.append((patch, days_remaining))
-        return sorted(approaching, key=lambda x: x[1])
+ def get_patches_needing_evaluation(self):
+ """Get patches approaching evaluation deadline."""
+ now = datetime.now()
+ approaching = []
+ for patch in self.patches:
+ if patch.status == PatchStatus.IDENTIFIED:
+ deadline = datetime.fromisoformat(patch.evaluation_deadline)
+ days_remaining = (deadline - now).days
+ if days_remaining <= 7:
+ approaching.append((patch, days_remaining))
+ return sorted(approaching, key=lambda x: x[1])
 
-    def defer_patch(self, patch_id, reason, compensating_controls):
-        """Defer a patch with documented compensating controls."""
-        for patch in self.patches:
-            if patch.patch_id == patch_id:
-                patch.status = PatchStatus.DEFERRED
-                patch.compensating_controls = compensating_controls
-                patch.test_results = f"Deferred: {reason}"
-                break
+ def defer_patch(self, patch_id, reason, compensating_controls):
+ """Defer a patch with documented compensating controls."""
+ for patch in self.patches:
+ if patch.patch_id == patch_id:
+ patch.status = PatchStatus.DEFERRED
+ patch.compensating_controls = compensating_controls
+ patch.test_results = f"Deferred: {reason}"
+ break
 
-    def generate_report(self):
-        """Generate patch management status report."""
-        self.prioritize_patches()
+ def generate_report(self):
+ """Generate patch management status report."""
+ self.prioritize_patches()
 
-        report = []
-        report.append("=" * 70)
-        report.append("OT PATCH MANAGEMENT STATUS REPORT")
-        report.append(f"Date: {datetime.now().isoformat()}")
-        report.append("=" * 70)
+ report = []
+ report.append("=" * 70)
+ report.append("OT PATCH MANAGEMENT STATUS REPORT")
+ report.append(f"Date: {datetime.now().isoformat()}")
+ report.append("=" * 70)
 
-        # Status summary
-        status_counts = defaultdict(int)
-        for p in self.patches:
-            status_counts[p.status] += 1
+ # Status summary
+ status_counts = defaultdict(int)
+ for p in self.patches:
+ status_counts[p.status] += 1
 
-        report.append("\nPATCH STATUS SUMMARY:")
-        for status, count in status_counts.items():
-            report.append(f"  {status}: {count}")
+ report.append("\nPATCH STATUS SUMMARY:")
+ for status, count in status_counts.items():
+ report.append(f" {status}: {count}")
 
-        # Approaching deadlines
-        approaching = self.get_patches_needing_evaluation()
-        if approaching:
-            report.append("\nAPPROACHING EVALUATION DEADLINES:")
-            for patch, days in approaching:
-                report.append(f"  [{patch.patch_id}] {patch.description} - {days} days remaining")
+ # Approaching deadlines
+ approaching = self.get_patches_needing_evaluation()
+ if approaching:
+ report.append("\nAPPROACHING EVALUATION DEADLINES:")
+ for patch, days in approaching:
+ report.append(f" [{patch.patch_id}] {patch.description} - {days} days remaining")
 
-        # Critical/High priority patches
-        urgent = [p for p in self.patches
-                  if p.risk_rating in ("critical", "high")
-                  and p.status not in (PatchStatus.DEPLOYED, PatchStatus.NOT_APPLICABLE)]
-        if urgent:
-            report.append(f"\nURGENT PATCHES ({len(urgent)}):")
-            for p in urgent:
-                report.append(f"  [{p.patch_id}] [{p.risk_rating.upper()}] {p.description}")
-                report.append(f"    CVEs: {', '.join(p.cve_ids)}")
-                report.append(f"    Status: {p.status}")
-                report.append(f"    Affected Assets: {len(p.affected_assets)}")
+ # Critical/High priority patches
+ urgent = [p for p in self.patches
+ if p.risk_rating in ("critical", "high")
+ and p.status not in (PatchStatus.DEPLOYED, PatchStatus.NOT_APPLICABLE)]
+ if urgent:
+ report.append(f"\nURGENT PATCHES ({len(urgent)}):")
+ for p in urgent:
+ report.append(f" [{p.patch_id}] [{p.risk_rating.upper()}] {p.description}")
+ report.append(f" CVEs: {', '.join(p.cve_ids)}")
+ report.append(f" Status: {p.status}")
+ report.append(f" Affected Assets: {len(p.affected_assets)}")
 
-        # Deferred patches with compensating controls
-        deferred = [p for p in self.patches if p.status == PatchStatus.DEFERRED]
-        if deferred:
-            report.append(f"\nDEFERRED PATCHES ({len(deferred)}):")
-            for p in deferred:
-                report.append(f"  [{p.patch_id}] {p.description}")
-                report.append(f"    Reason: {p.test_results}")
-                report.append(f"    Compensating Controls: {p.compensating_controls}")
+ # Deferred patches with compensating controls
+ deferred = [p for p in self.patches if p.status == PatchStatus.DEFERRED]
+ if deferred:
+ report.append(f"\nDEFERRED PATCHES ({len(deferred)}):")
+ for p in deferred:
+ report.append(f" [{p.patch_id}] {p.description}")
+ report.append(f" Reason: {p.test_results}")
+ report.append(f" Compensating Controls: {p.compensating_controls}")
 
-        return "\n".join(report)
+ return "\n".join(report)
 
 
 if __name__ == "__main__":
-    manager = OTPatchManager()
+ manager = OTPatchManager()
 
-    # Example patches
-    manager.add_patch(OTPatch(
-        patch_id="OT-PATCH-001",
-        vendor="Siemens",
-        product="SIMATIC S7-1500",
-        affected_versions="< V3.0.1",
-        cve_ids=["CVE-2023-44374"],
-        cvss_score=8.8,
-        ics_cert_advisory="ICSA-23-348-01",
-        description="S7-1500 memory corruption via crafted packets",
-        identified_date="2026-01-15",
-        affected_assets=["PLC-01", "PLC-02", "PLC-03"],
-    ))
+ # Example patches
+ manager.add_patch(OTPatch(
+ patch_id="OT-PATCH-001",
+ vendor="Siemens",
+ product="SIMATIC S7-1500",
+ affected_versions="< V3.0.1",
+ cve_ids=["CVE-2023-44374"],
+ cvss_score=8.8,
+ ics_cert_advisory="ICSA-23-348-01",
+ description="S7-1500 memory corruption via crafted packets",
+ identified_date="2026-01-15",
+ affected_assets=["PLC-01", "PLC-02", "PLC-03"],
+ ))
 
-    manager.add_patch(OTPatch(
-        patch_id="OT-PATCH-002",
-        vendor="Rockwell Automation",
-        product="FactoryTalk View SE",
-        affected_versions="< V13.0",
-        cve_ids=["CVE-2024-21914"],
-        cvss_score=7.5,
-        ics_cert_advisory="ICSA-24-046-02",
-        description="FactoryTalk View remote code execution",
-        identified_date="2026-02-01",
-        affected_assets=["HMI-01", "HMI-02"],
-    ))
+ manager.add_patch(OTPatch(
+ patch_id="OT-PATCH-002",
+ vendor="Rockwell Automation",
+ product="FactoryTalk View SE",
+ affected_versions="< V13.0",
+ cve_ids=["CVE-2024-21914"],
+ cvss_score=7.5,
+ ics_cert_advisory="ICSA-24-046-02",
+ description="FactoryTalk View remote code execution",
+ identified_date="2026-02-01",
+ affected_assets=["HMI-01", "HMI-02"],
+ ))
 
-    print(manager.generate_report())
+ print(manager.generate_report())
 ```
 
 ### Step 2: Test Patches in Staging Environment
@@ -271,46 +271,46 @@ Never deploy patches directly to production OT systems. Use a test environment t
 ```yaml
 # OT Patch Testing Procedure
 patch_testing:
-  environment:
-    description: "Staging lab mirroring production OT architecture"
-    components:
-      - "Virtual PLC simulators matching production firmware"
-      - "Test HMI stations with identical software versions"
-      - "Test historian with representative data"
-      - "Network configuration matching production VLANs/firewalls"
+ environment:
+ description: "Staging lab mirroring production OT architecture"
+ components:
+ - "Virtual PLC simulators matching production firmware"
+ - "Test HMI stations with identical software versions"
+ - "Test historian with representative data"
+ - "Network configuration matching production VLANs/firewalls"
 
-  test_cases:
-    functional:
-      - "PLC programs execute correctly after OS patch"
-      - "HMI displays update with correct process values"
-      - "Historian data collection continues uninterrupted"
-      - "Alarm and event handling functions properly"
-      - "Communication between PLCs maintains cycle time"
-      - "Safety system trip tests pass (if SIS affected)"
+ test_cases:
+ functional:
+ - "PLC programs execute correctly after OS patch"
+ - "HMI displays update with correct process values"
+ - "Historian data collection continues uninterrupted"
+ - "Alarm and event handling functions properly"
+ - "Communication between PLCs maintains cycle time"
+ - "Safety system trip tests pass (if SIS affected)"
 
-    performance:
-      - "PLC scan time remains within acceptable limits (<50ms increase)"
-      - "HMI screen refresh rate unchanged"
-      - "Historian collection interval maintained"
-      - "Network latency between zones unchanged"
+ performance:
+ - "PLC scan time remains within acceptable limits (<50ms increase)"
+ - "HMI screen refresh rate unchanged"
+ - "Historian collection interval maintained"
+ - "Network latency between zones unchanged"
 
-    compatibility:
-      - "Third-party applications function correctly"
-      - "OPC UA/DA connections establish successfully"
-      - "Custom scripts and batch processes execute"
-      - "Backup and restore procedures work"
+ compatibility:
+ - "Third-party applications function correctly"
+ - "OPC UA/DA connections establish successfully"
+ - "Custom scripts and batch processes execute"
+ - "Backup and restore procedures work"
 
-    rollback:
-      - "System can be reverted to pre-patch state"
-      - "Rollback procedure documented and tested"
-      - "Estimated rollback time: [N] minutes"
+ rollback:
+ - "System can be reverted to pre-patch state"
+ - "Rollback procedure documented and tested"
+ - "Estimated rollback time: [N] minutes"
 
-  documentation:
-    required:
-      - "Test plan with pass/fail criteria"
-      - "Test execution results with screenshots"
-      - "Performance measurements before and after"
-      - "Sign-off by operations, engineering, and security"
+ documentation:
+ required:
+ - "Test plan with pass/fail criteria"
+ - "Test execution results with screenshots"
+ - "Performance measurements before and after"
+ - "Sign-off by operations, engineering, and security"
 ```
 
 ## Key Concepts
@@ -339,14 +339,14 @@ OT Patch Management Report
 Reporting Period: YYYY-MM to YYYY-MM
 
 PATCH STATUS:
-  Identified: [N]
-  Evaluating: [N]
-  Testing: [N]
-  Deployed: [N]
-  Deferred: [N]
+ Identified: [N]
+ Evaluating: [N]
+ Testing: [N]
+ Deployed: [N]
+ Deferred: [N]
 
 COMPLIANCE:
-  Evaluated within 35 days: [N]/[N] (CIP-007-6 R2)
-  Deployed or mitigated: [N]/[N]
-  Deferred with compensating controls: [N]
+ Evaluated within 35 days: [N]/[N] (CIP-007-6 R2)
+ Deployed or mitigated: [N]/[N]
+ Deferred with compensating controls: [N]
 ```

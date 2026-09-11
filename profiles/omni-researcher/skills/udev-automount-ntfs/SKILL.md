@@ -19,71 +19,71 @@ The kernel’s built‑in ntfs3 driver is read‑only on many distros and does n
 * `ntfs-3g` package installed (provides `/usr/bin/mount.ntfs-3g`).
 * `udisks2` daemon running (enabled by default on most desktop installs).
 * A Unix group that will be granted access (e.g. `plugdev`). Create it if missing:
-  ```bash
-  sudo groupadd -f plugdev
-  ```
+ ```bash
+ sudo groupadd -f plugdev
+ ```
 
 ## Step‑by‑step
 
 1. **Create the udev rule**
-   Save the following as `/etc/udev/rules.d/99-ntfs-automount.rules`:
-   ```udev
-   # 99-ntfs-automount.rules
-   # Automatically mount NTFS removable block devices with ntfs-3g.
-   # Gives read/write access to the "plugdev" group.
+ Save the following as `/etc/udev/rules.d/99-ntfs-automount.rules`:
+ ```udev
+ # 99-ntfs-automount.rules
+ # Automatically mount NTFS removable block devices with ntfs-3g.
+ # Gives read/write access to the "plugdev" group.
 
-   KERNEL=="sd*[0-9]", SUBSYSTEM=="block", ENV{ID_FS_TYPE}=="ntfs", \
-       ENV{UDISKS_IGNORE}="0", \
-       TAG+="systemd", ENV{SYSTEMD_WANTS}="udisks2.service", \
-       ENV{UDISKS_FILESYSTEM}="ntfs-3g", \
-       ENV{UDISKS_AUTO}="1", \
-       MODE="0660", GROUP="plugdev"
-   ```
+ KERNEL=="sd*[0-9]", SUBSYSTEM=="block", ENV{ID_FS_TYPE}=="ntfs", \
+ ENV{UDISKS_IGNORE}="0", \
+ TAG+="systemd", ENV{SYSTEMD_WANTS}="udisks2.service", \
+ ENV{UDISKS_FILESYSTEM}="ntfs-3g", \
+ ENV{UDISKS_AUTO}="1", \
+ MODE="0660", GROUP="plugdev"
+ ```
 
-   *Notes*  
-   - `ENV{UDISKS_FILESYSTEM}` tells udisks2 which helper to use.  
-   - `ENV{UDISKS_AUTO}` requests an automatic mount when a user session is active.  
-   - `MODE="0660", GROUP="plugdev"` makes the mount point readable/writable by the group.
+ *Notes* 
+ - `ENV{UDISKS_FILESYSTEM}` tells udisks2 which helper to use. 
+ - `ENV{UDISKS_AUTO}` requests an automatic mount when a user session is active. 
+ - `MODE="0660", GROUP="plugdev"` makes the mount point readable/writable by the group.
 
 2. **Reload udev**
-   ```bash
-   sudo udevadm control --reload-rules
-   sudo udevadm trigger   # apply to already‑present devices
-   ```
+ ```bash
+ sudo udevadm control --reload-rules
+ sudo udevadm trigger # apply to already‑present devices
+ ```
 
 3. **Add users to the group**
-   ```bash
-   sudo gpasswd -a <username> plugdev
-   newgrp plugdev   # or log out/in
-   ```
+ ```bash
+ sudo gpasswd -a <username> plugdev
+ newgrp plugdev # or log out/in
+ ```
 
 4. **Verify the rule** (after plugging in the NTFS stick):
-   ```bash
-   udevadm info --query=property --name=/dev/sdX1 | grep -E 'UDISKS_FILESYSTEM|UDISKS_IGNORE|UDISKS_AUTO'
-   ```
-   Expected output:
-   ```
-   UDISKS_FILESYSTEM=ntfs-3g
-   UDISKS_IGNORE=0
-   UDISKS_AUTO=1
-   ```
+ ```bash
+ udevadm info --query=property --name=/dev/sdX1 | grep -E 'UDISKS_FILESYSTEM|UDISKS_IGNORE|UDISKS_AUTO'
+ ```
+ Expected output:
+ ```
+ UDISKS_FILESYSTEM=ntfs-3g
+ UDISKS_IGNORE=0
+ UDISKS_AUTO=1
+ ```
 
 5. **Mount** (optional manual step)
-   As a regular user:
-   ```bash
-   udisysctl mount -b /dev/sdX1
-   ```
-   To unmount:
-   ```bash
-   udisysctl unmount -b /dev/sdX1
-   ```
+ As a regular user:
+ ```bash
+ udisysctl mount -b /dev/sdX1
+ ```
+ To unmount:
+ ```bash
+ udisysctl unmount -b /dev/sdX1
+ ```
 
 6. **Check that the correct driver is used**
-   After mounting, verify:
-   ```bash
-   grep ntfs /proc/mounts | grep "$(blkid -s UUID -o value /dev/sdX1)"
-   ```
-   You should see `type ntfs-3g` (or `fuseblk`).
+ After mounting, verify:
+ ```bash
+ grep ntfs /proc/mounts | grep "$(blkid -s UUID -o value /dev/sdX1)"
+ ```
+ You should see `type ntfs-3g` (or `fuseblk`).
 
 ## Pitfalls & Troubleshooting
 

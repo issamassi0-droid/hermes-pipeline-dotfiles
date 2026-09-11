@@ -1,0 +1,125 @@
+---
+name: multi-agent-system-design
+description: Use when designing or improving multi-agent AI systems.
+metadata:
+  hermes:
+    requires_tools: [web_search, web_extract, execute_code, terminal, read_file, write_file, patch, skill_view, skill_manage]
+    requires_toolsets: []
+    requires_plugins: []
+    editorial_name: Multi-Agent System Design
+    editorial_description: Build and evaluate multi-agent AI systems with production-grade reliability, quality, and evolution patterns.
+---
+
+# Multi-Agent System Design
+
+## Trigger
+
+Use when the user asks to build, evaluate, or improve a multi-agent AI system — especially around reliability, fault tolerance, dynamic routing, quality standards, or self-learning. Also applies when researching multi-agent architectures, benchmarking agent systems, or hardening an existing agent pipeline.
+
+## Always-On Rules
+
+These rules apply every time you work on a multi-agent system task:
+
+1. **Search first, then verify.** Research existing systems and standards before proposing solutions. Read transcripts, papers, and benchmarks. Never invent capabilities from whole cloth.
+2. **Synthesize, don't summarize.** Extract what people actually experienced and learned. Identify contradictions, depth indicators, and unique angles — not just feature lists.
+3. **Cite every insight.** Every claim traces back to a specific source with timestamp. Untranscribable claims are flagged as `[X]` with an explicit reason.
+4. **No circular validation.** Metrics must be measured against real data, not synthetic. Distinguish "code works" from "quality is proven." Flag when a metric is a target, not a measured result.
+5. **Prioritize engineering economy.** Maximize effectiveness and quality with minimal effort. Save resources. Know the destination and reach it before everyone else. Don't build complex systems — modify what exists to give faster, better results.
+6. **Distinguish structural from production readiness.** A system can be architecturally sound (skeleton) without being production-proven. Be honest about which state you're in. Rate honestly on a 1-10 scale — a 9 or 10 requires real mission history proving metrics hold under load, not paper validation. A system with 17 scripts, 13 contracts, and zero real missions is a 7 at best, regardless of how elegant the architecture is.
+
+## Procedure
+
+### 1. Research & Discovery
+
+Search for similar systems and experiences:
+```
+web_search("site:youtube.com <topic> experience review tutorial", limit=10)
+```
+
+Fetch transcripts for promising videos. Synthesize across multiple sources. Identify gaps, contradictions, and unique angles.
+
+### 2. Architecture Review
+
+Evaluate the system against these axes (from MAS-FIRE, MAESTRO, MTTR-A, ReliabilityBench):
+- **Fault taxonomy coverage**: 15 fault types (7 intra-agent, 8 inter-agent)
+- **4-tier fault tolerance**: mechanism, rule, prompt, reasoning
+- **Dual-level evaluation**: system resilience + process effectiveness
+- **MTTR-A / MTBF / NRR**: recovery latency, time between faults, normalized recovery ratio
+- **3D reliability surface**: R(k, ε, λ) — consistency, robustness, fault tolerance
+- **Silent gray error detection**: 75% of failures throw no exception
+
+### 3. Build/Improve Components
+
+When implementing new capabilities, follow this order (cheapest first):
+
+1. **Circuit breaker + retry with backoff** — prevents cascading failures
+2. **Semantic checkpointing** — recover from last valid state, not naive retry
+3. **Dynamic routing** — select model by complexity/cost/speed, not one-size-fits-all
+4. **Cascade routing** — start cheap, escalate only on failure
+5. **Quality gates** — trajectory-level evaluation, not just final output
+6. **Self-learning loops** — extract learnings, identify patterns, generate skills
+7. **Three-layer naming convention** — technical name (files/APIs), functional name (reports/diagrams), display name (user chat). See `references/naming-convention.md`.
+
+### 4. Verify Honestly
+
+Report metrics as measured values, not targets. Flag:
+- Synthetic vs. real data
+- Infrastructure tests vs. quality tests
+- "Contract exists" vs. "metric proven"
+- Circular validation (metrics measured against themselves)
+
+### 5. Recommend Videos
+
+When presenting findings, recommend 3-5 best videos with:
+- Why watch this (what depth it adds)
+- Key insight (one sentence)
+- Best for (audience level)
+
+## References
+
+- `references/fault-tolerance.md` — MAS-FIRE taxonomy, 4-tier model, MTTR-A/MTBF/NRR, Byzantine tolerance
+- `references/quality-gates.md` — Trajectory evaluation, 5-type hallucination taxonomy, silent gray errors
+- `references/dynamic-routing.md` — Cascade routing, circuit breaker, retry patterns, dynamic model selection
+- `references/self-learning.md` — Learning extraction, pattern identification, skill generation, evolution loops
+- `references/architecture-patterns.md` — Three-layer architecture, dynamic tiering, model gateway, semantic checkpointing
+- `references/research-standards.md` — MAS-FIRE, MTTR-A, ReliabilityBench, MAESTRO, COCO, CP-WBFT, Aegis
+- `references/naming-convention.md` — Three-layer naming (technical/functional/display), naming rules, migration guide
+
+## Scripts
+
+- `scripts/verify_system.py` — Quick verification of contracts, scripts, agents, ledger, protocol
+
+## Pitfalls
+
+- **Measuring what's easy instead of what matters.** Token cost and load time are easy to measure; factual error rate and source verification are what matter. Don't substitute one for the other.
+- **Circular validation.** Measuring a metric using a script you wrote against data you generated produces 100% scores that mean nothing. Always test against real, independent data.
+- **Marking "contract exists" as "problem solved."** A quality charter or scoring rubric is a structural artifact, not proof of quality. The gap between "written down" and "measured" is where most systems fail.
+- **One-size-fits-all model selection.** Using the same model for every task wastes tokens on simple tasks and produces poor quality on complex ones. Route dynamically by task complexity.
+- **Linear pipeline fragility.** Linear architectures (MetaGPT-style) collapse under blind trust faults (0% robustness). Iterative closed-loop designs (Table-Critic-style) neutralize 40%+ of faults that cause catastrophic collapse.
+- **Ignoring semantic failures.** 75% of multi-agent failures are "silent gray errors" — no exception thrown, output looks valid, but content is factually wrong. Schema validation alone won't catch these.
+- **Naive retry.** Retrying without preserving execution history wastes work. Semantic checkpointing enables informed re-computation from the last valid state.
+- **Static model weights.** Routing weights configured once decay as models update. Continuously measure routing success rates and adjust weights based on accumulated data.
+- **Git hygiene for multi-agent repos.** Runtime files (state.db, gateway.lock, *.pyc, node_modules) must be in .gitignore before the first commit. Committing them bloats the repo and causes push/pull conflicts. Always create .gitignore before initial commit.
+
+## Output Format
+
+Present findings as:
+
+```
+## Topic: <user's question>
+
+### What People Experience
+<synthesis of experiences across videos/papers>
+
+### Recommended Resources
+1. **[Title](link)**
+   - Why: <reason>
+   - Key insight: <one sentence>
+   - Best for: <audience>
+
+### Where Sources Disagree
+<if applicable — conflicting viewpoints>
+
+### Honest Assessment
+<structural vs. production readiness, what's proven vs. what's paper>
+```

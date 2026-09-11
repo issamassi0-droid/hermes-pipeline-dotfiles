@@ -27,32 +27,32 @@ mitre_attack:
 - T1003
 - T1110
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - resource-development
-  techniques:
-  - id: T1586
-    name: Compromise Accounts
-    tactic: resource-development
-    source: attack
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: T1110.004
-    name: 'Brute Force:  Credential Stuffing'
-    tactic: initial-access
-    source: attack
-  - id: T1219
-    name: Remote Access Tools
-    tactic: positioning
-    source: attack
-  - id: F1033
-    name: Insider Access Abuse
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - resource-development
+ techniques:
+ - id: T1586
+ name: Compromise Accounts
+ tactic: resource-development
+ source: attack
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: T1110.004
+ name: 'Brute Force: Credential Stuffing'
+ tactic: initial-access
+ source: attack
+ - id: T1219
+ name: Remote Access Tools
+ tactic: positioning
+ source: attack
+ - id: F1033
+ name: Insider Access Abuse
+ tactic: initial-access
+ source: f3
 ---
 
 # Implementing Zero Trust with HashiCorp Boundary
@@ -81,33 +81,33 @@ HashiCorp Boundary is an identity-aware proxy that provides secure, zero trust a
 ## Architecture
 
 ```
-                    Identity Provider (OIDC)
-                           |
-                    Authentication
-                           |
-                  +--------+--------+
-                  |   Boundary      |
-                  |   Controller    |
-                  |  (Control Plane)|
-                  +--------+--------+
-                           |
-              +------------+------------+
-              |                         |
-     +--------+--------+      +--------+--------+
-     | Boundary Worker |      | Boundary Worker |
-     | (Data Plane)    |      | (Data Plane)    |
-     +--------+--------+      +--------+--------+
-              |                         |
-     +--------+--------+      +--------+--------+
-     |  Target Hosts   |      |  Target Hosts   |
-     |  (SSH, RDP,     |      |  (Databases,    |
-     |   K8s, HTTP)    |      |   APIs)         |
-     +-----------------+      +-----------------+
+ Identity Provider (OIDC)
+ |
+ Authentication
+ |
+ +--------+--------+
+ | Boundary |
+ | Controller |
+ | (Control Plane)|
+ +--------+--------+
+ |
+ +------------+------------+
+ | |
+ +--------+--------+ +--------+--------+
+ | Boundary Worker | | Boundary Worker |
+ | (Data Plane) | | (Data Plane) |
+ +--------+--------+ +--------+--------+
+ | |
+ +--------+--------+ +--------+--------+
+ | Target Hosts | | Target Hosts |
+ | (SSH, RDP, | | (Databases, |
+ | K8s, HTTP) | | APIs) |
+ +-----------------+ +-----------------+
 
-     Vault (Credential Brokering)
-     - Dynamic database credentials
-     - SSH certificate signing
-     - Credential libraries
+ Vault (Credential Brokering)
+ - Dynamic database credentials
+ - SSH certificate signing
+ - Credential libraries
 ```
 
 ## Installation and Configuration
@@ -122,7 +122,7 @@ sudo apt-get update && sudo apt-get install boundary
 
 # Initialize the database
 boundary database init \
-  -config=/etc/boundary/controller.hcl
+ -config=/etc/boundary/controller.hcl
 
 # Start the controller
 boundary server -config=/etc/boundary/controller.hcl
@@ -133,47 +133,47 @@ boundary server -config=/etc/boundary/controller.hcl
 ```hcl
 # /etc/boundary/controller.hcl
 controller {
-  name = "boundary-controller-1"
-  description = "Primary Boundary Controller"
-  database {
-    url = "postgresql://boundary:password@localhost:5432/boundary?sslmode=require"
-  }
-  public_cluster_addr = "boundary.example.com"
+ name = "boundary-controller-1"
+ description = "Primary Boundary Controller"
+ database {
+ url = "postgresql://boundary:password@localhost:5432/boundary?sslmode=require"
+ }
+ public_cluster_addr = "boundary.example.com"
 }
 
 listener "tcp" {
-  address = "0.0.0.0:9200"
-  purpose = "api"
-  tls_cert_file = "/etc/boundary/tls/cert.pem"
-  tls_key_file  = "/etc/boundary/tls/key.pem"
+ address = "0.0.0.0:9200"
+ purpose = "api"
+ tls_cert_file = "/etc/boundary/tls/cert.pem"
+ tls_key_file = "/etc/boundary/tls/key.pem"
 }
 
 listener "tcp" {
-  address = "0.0.0.0:9201"
-  purpose = "cluster"
-  tls_cert_file = "/etc/boundary/tls/cert.pem"
-  tls_key_file  = "/etc/boundary/tls/key.pem"
+ address = "0.0.0.0:9201"
+ purpose = "cluster"
+ tls_cert_file = "/etc/boundary/tls/cert.pem"
+ tls_key_file = "/etc/boundary/tls/key.pem"
 }
 
 kms "aead" {
-  purpose = "root"
-  aead_type = "aes-gcm"
-  key = "sP1fnF5Xz85RrXM..."  # Use Vault Transit in production
-  key_id = "global_root"
+ purpose = "root"
+ aead_type = "aes-gcm"
+ key = "sP1fnF5Xz85RrXM..." # Use Vault Transit in production
+ key_id = "global_root"
 }
 
 kms "aead" {
-  purpose = "worker-auth"
-  aead_type = "aes-gcm"
-  key = "8fZBjCUfN0TzjEG..."
-  key_id = "global_worker-auth"
+ purpose = "worker-auth"
+ aead_type = "aes-gcm"
+ key = "8fZBjCUfN0TzjEG..."
+ key_id = "global_worker-auth"
 }
 
 kms "aead" {
-  purpose = "recovery"
-  aead_type = "aes-gcm"
-  key = "8fZBjCUfN0TzjEG..."
-  key_id = "global_recovery"
+ purpose = "recovery"
+ aead_type = "aes-gcm"
+ key = "8fZBjCUfN0TzjEG..."
+ key_id = "global_recovery"
 }
 ```
 
@@ -182,30 +182,30 @@ kms "aead" {
 ```hcl
 # /etc/boundary/worker.hcl
 worker {
-  name = "boundary-worker-1"
-  description = "Worker in production VPC"
-  public_addr = "worker1.example.com"
+ name = "boundary-worker-1"
+ description = "Worker in production VPC"
+ public_addr = "worker1.example.com"
 
-  controllers = [
-    "boundary.example.com:9201"
-  ]
+ controllers = [
+ "boundary.example.com:9201"
+ ]
 
-  tags {
-    type = ["production"]
-    region = ["us-east-1"]
-  }
+ tags {
+ type = ["production"]
+ region = ["us-east-1"]
+ }
 }
 
 listener "tcp" {
-  address = "0.0.0.0:9202"
-  purpose = "proxy"
+ address = "0.0.0.0:9202"
+ purpose = "proxy"
 }
 
 kms "aead" {
-  purpose = "worker-auth"
-  aead_type = "aes-gcm"
-  key = "8fZBjCUfN0TzjEG..."
-  key_id = "global_worker-auth"
+ purpose = "worker-auth"
+ aead_type = "aes-gcm"
+ key = "8fZBjCUfN0TzjEG..."
+ key_id = "global_worker-auth"
 }
 ```
 
@@ -216,65 +216,65 @@ kms "aead" {
 ```hcl
 # main.tf - Boundary resources via Terraform
 terraform {
-  required_providers {
-    boundary = {
-      source  = "hashicorp/boundary"
-      version = "~> 1.1"
-    }
-  }
+ required_providers {
+ boundary = {
+ source = "hashicorp/boundary"
+ version = "~> 1.1"
+ }
+ }
 }
 
 provider "boundary" {
-  addr             = "https://boundary.example.com:9200"
-  recovery_kms_hcl = file("recovery_kms.hcl")
+ addr = "https://boundary.example.com:9200"
+ recovery_kms_hcl = file("recovery_kms.hcl")
 }
 
 # Organization scope
 resource "boundary_scope" "org" {
-  scope_id                 = "global"
-  name                     = "production-org"
-  description              = "Production organization scope"
-  auto_create_admin_role   = true
-  auto_create_default_role = true
+ scope_id = "global"
+ name = "production-org"
+ description = "Production organization scope"
+ auto_create_admin_role = true
+ auto_create_default_role = true
 }
 
 # Project scope
 resource "boundary_scope" "production" {
-  name                     = "production"
-  description              = "Production infrastructure project"
-  scope_id                 = boundary_scope.org.id
-  auto_create_admin_role   = true
-  auto_create_default_role = true
+ name = "production"
+ description = "Production infrastructure project"
+ scope_id = boundary_scope.org.id
+ auto_create_admin_role = true
+ auto_create_default_role = true
 }
 
 # OIDC Auth Method (Okta example)
 resource "boundary_auth_method_oidc" "okta" {
-  scope_id               = boundary_scope.org.id
-  name                   = "okta"
-  description            = "Okta OIDC authentication"
-  issuer                 = "https://company.okta.com/oauth2/default"
-  client_id              = var.okta_client_id
-  client_secret          = var.okta_client_secret
-  signing_algorithms     = ["RS256"]
-  api_url_prefix         = "https://boundary.example.com:9200"
-  claims_scopes          = ["groups"]
-  account_claim_maps     = ["oid=sub"]
-  is_primary_for_scope   = true
+ scope_id = boundary_scope.org.id
+ name = "okta"
+ description = "Okta OIDC authentication"
+ issuer = "https://company.okta.com/oauth2/default"
+ client_id = var.okta_client_id
+ client_secret = var.okta_client_secret
+ signing_algorithms = ["RS256"]
+ api_url_prefix = "https://boundary.example.com:9200"
+ claims_scopes = ["groups"]
+ account_claim_maps = ["oid=sub"]
+ is_primary_for_scope = true
 }
 
 # Managed group for auto-assignment
 resource "boundary_managed_group" "sre_team" {
-  auth_method_id = boundary_auth_method_oidc.okta.id
-  name           = "sre-team"
-  description    = "SRE team members from Okta"
-  filter         = "\"sre-team\" in \"/token/groups\""
+ auth_method_id = boundary_auth_method_oidc.okta.id
+ name = "sre-team"
+ description = "SRE team members from Okta"
+ filter = "\"sre-team\" in \"/token/groups\""
 }
 
 resource "boundary_managed_group" "dev_team" {
-  auth_method_id = boundary_auth_method_oidc.okta.id
-  name           = "dev-team"
-  description    = "Development team from Okta"
-  filter         = "\"dev-team\" in \"/token/groups\""
+ auth_method_id = boundary_auth_method_oidc.okta.id
+ name = "dev-team"
+ description = "Development team from Okta"
+ filter = "\"dev-team\" in \"/token/groups\""
 }
 ```
 
@@ -283,75 +283,75 @@ resource "boundary_managed_group" "dev_team" {
 ```hcl
 # Static host catalog for known infrastructure
 resource "boundary_host_catalog_static" "production_servers" {
-  name     = "production-servers"
-  scope_id = boundary_scope.production.id
+ name = "production-servers"
+ scope_id = boundary_scope.production.id
 }
 
 resource "boundary_host_static" "web_server" {
-  name            = "web-server-1"
-  host_catalog_id = boundary_host_catalog_static.production_servers.id
-  address         = "10.0.1.10"
+ name = "web-server-1"
+ host_catalog_id = boundary_host_catalog_static.production_servers.id
+ address = "10.0.1.10"
 }
 
 resource "boundary_host_static" "db_server" {
-  name            = "db-server-1"
-  host_catalog_id = boundary_host_catalog_static.production_servers.id
-  address         = "10.0.2.20"
+ name = "db-server-1"
+ host_catalog_id = boundary_host_catalog_static.production_servers.id
+ address = "10.0.2.20"
 }
 
 # Host set grouping
 resource "boundary_host_set_static" "web_servers" {
-  name            = "web-servers"
-  host_catalog_id = boundary_host_catalog_static.production_servers.id
-  host_ids        = [boundary_host_static.web_server.id]
+ name = "web-servers"
+ host_catalog_id = boundary_host_catalog_static.production_servers.id
+ host_ids = [boundary_host_static.web_server.id]
 }
 
 resource "boundary_host_set_static" "db_servers" {
-  name            = "database-servers"
-  host_catalog_id = boundary_host_catalog_static.production_servers.id
-  host_ids        = [boundary_host_static.db_server.id]
+ name = "database-servers"
+ host_catalog_id = boundary_host_catalog_static.production_servers.id
+ host_ids = [boundary_host_static.db_server.id]
 }
 
 # SSH target
 resource "boundary_target" "ssh_production" {
-  name         = "ssh-production-servers"
-  description  = "SSH access to production servers"
-  type         = "ssh"
-  scope_id     = boundary_scope.production.id
-  default_port = 22
+ name = "ssh-production-servers"
+ description = "SSH access to production servers"
+ type = "ssh"
+ scope_id = boundary_scope.production.id
+ default_port = 22
 
-  host_source_ids = [
-    boundary_host_set_static.web_servers.id
-  ]
+ host_source_ids = [
+ boundary_host_set_static.web_servers.id
+ ]
 
-  session_max_seconds          = 3600  # 1 hour max session
-  session_connection_limit     = 1
-  enable_session_recording     = true
-  storage_bucket_id            = boundary_storage_bucket.sessions.id
+ session_max_seconds = 3600 # 1 hour max session
+ session_connection_limit = 1
+ enable_session_recording = true
+ storage_bucket_id = boundary_storage_bucket.sessions.id
 
-  injected_application_credential_source_ids = [
-    boundary_credential_library_vault_ssh_certificate.ssh_cert.id
-  ]
+ injected_application_credential_source_ids = [
+ boundary_credential_library_vault_ssh_certificate.ssh_cert.id
+ ]
 }
 
 # Database target with Vault credential brokering
 resource "boundary_target" "postgres_production" {
-  name         = "postgres-production"
-  description  = "PostgreSQL production database"
-  type         = "tcp"
-  scope_id     = boundary_scope.production.id
-  default_port = 5432
+ name = "postgres-production"
+ description = "PostgreSQL production database"
+ type = "tcp"
+ scope_id = boundary_scope.production.id
+ default_port = 5432
 
-  host_source_ids = [
-    boundary_host_set_static.db_servers.id
-  ]
+ host_source_ids = [
+ boundary_host_set_static.db_servers.id
+ ]
 
-  session_max_seconds      = 1800  # 30 min max
-  session_connection_limit = 5
+ session_max_seconds = 1800 # 30 min max
+ session_connection_limit = 5
 
-  brokered_credential_source_ids = [
-    boundary_credential_library_vault.postgres_creds.id
-  ]
+ brokered_credential_source_ids = [
+ boundary_credential_library_vault.postgres_creds.id
+ ]
 }
 ```
 
@@ -360,49 +360,49 @@ resource "boundary_target" "postgres_production" {
 ```hcl
 # Vault credential store
 resource "boundary_credential_store_vault" "vault" {
-  name        = "vault-store"
-  scope_id    = boundary_scope.production.id
-  address     = "https://vault.example.com:8200"
-  token       = var.vault_token
-  namespace   = "production"
+ name = "vault-store"
+ scope_id = boundary_scope.production.id
+ address = "https://vault.example.com:8200"
+ token = var.vault_token
+ namespace = "production"
 }
 
 # Dynamic database credentials from Vault
 resource "boundary_credential_library_vault" "postgres_creds" {
-  name                = "postgres-dynamic-creds"
-  credential_store_id = boundary_credential_store_vault.vault.id
-  path                = "database/creds/readonly"
-  http_method         = "GET"
-  credential_type     = "username_password"
+ name = "postgres-dynamic-creds"
+ credential_store_id = boundary_credential_store_vault.vault.id
+ path = "database/creds/readonly"
+ http_method = "GET"
+ credential_type = "username_password"
 }
 
 # SSH certificate signing via Vault
 resource "boundary_credential_library_vault_ssh_certificate" "ssh_cert" {
-  name                = "ssh-certificate"
-  credential_store_id = boundary_credential_store_vault.vault.id
-  path                = "ssh-client-signer/sign/production"
-  username            = "admin"
-  key_type            = "ed25519"
-  key_bits            = 256
-  extensions = {
-    "permit-pty" = ""
-  }
+ name = "ssh-certificate"
+ credential_store_id = boundary_credential_store_vault.vault.id
+ path = "ssh-client-signer/sign/production"
+ username = "admin"
+ key_type = "ed25519"
+ key_bits = 256
+ extensions = {
+ "permit-pty" = ""
+ }
 }
 
 # Session recording storage
 resource "boundary_storage_bucket" "sessions" {
-  name        = "session-recordings"
-  scope_id    = "global"
-  plugin_name = "aws"
-  bucket_name = "boundary-session-recordings"
-  attributes_json = jsonencode({
-    "region"                      = "us-east-1"
-    "disable_credential_rotation" = true
-  })
-  secrets_json = jsonencode({
-    "access_key_id"     = var.aws_access_key
-    "secret_access_key" = var.aws_secret_key
-  })
+ name = "session-recordings"
+ scope_id = "global"
+ plugin_name = "aws"
+ bucket_name = "boundary-session-recordings"
+ attributes_json = jsonencode({
+ "region" = "us-east-1"
+ "disable_credential_rotation" = true
+ })
+ secrets_json = jsonencode({
+ "access_key_id" = var.aws_access_key
+ "secret_access_key" = var.aws_secret_key
+ })
 }
 ```
 
@@ -411,28 +411,28 @@ resource "boundary_storage_bucket" "sessions" {
 ```hcl
 # SRE team role - full production access
 resource "boundary_role" "sre_production" {
-  name          = "sre-production-access"
-  scope_id      = boundary_scope.production.id
-  grant_strings = [
-    "ids=*;type=target;actions=list,read,authorize-session",
-    "ids=*;type=session;actions=list,read,cancel",
-    "ids=*;type=host;actions=list,read",
-  ]
-  principal_ids = [
-    boundary_managed_group.sre_team.id
-  ]
+ name = "sre-production-access"
+ scope_id = boundary_scope.production.id
+ grant_strings = [
+ "ids=*;type=target;actions=list,read,authorize-session",
+ "ids=*;type=session;actions=list,read,cancel",
+ "ids=*;type=host;actions=list,read",
+ ]
+ principal_ids = [
+ boundary_managed_group.sre_team.id
+ ]
 }
 
 # Dev team role - limited access
 resource "boundary_role" "dev_staging" {
-  name          = "dev-staging-access"
-  scope_id      = boundary_scope.production.id
-  grant_strings = [
-    "ids=${boundary_target.ssh_production.id};type=target;actions=read,authorize-session",
-  ]
-  principal_ids = [
-    boundary_managed_group.dev_team.id
-  ]
+ name = "dev-staging-access"
+ scope_id = boundary_scope.production.id
+ grant_strings = [
+ "ids=${boundary_target.ssh_production.id};type=target;actions=read,authorize-session",
+ ]
+ principal_ids = [
+ boundary_managed_group.dev_team.id
+ ]
 }
 ```
 
@@ -441,19 +441,19 @@ resource "boundary_role" "dev_staging" {
 ```bash
 # Authenticate via OIDC
 boundary authenticate oidc \
-  -auth-method-id amoidc_xxxxx
+ -auth-method-id amoidc_xxxxx
 
 # List available targets
 boundary targets list -scope-id p_xxxxx
 
 # Connect to SSH target (credentials injected by Vault)
 boundary connect ssh \
-  -target-id ttcp_xxxxx
+ -target-id ttcp_xxxxx
 
 # Connect to database (credentials brokered by Vault)
 boundary connect postgres \
-  -target-id ttcp_xxxxx \
-  -dbname production
+ -target-id ttcp_xxxxx \
+ -dbname production
 
 # Use Boundary Desktop client for GUI access
 # Download from: https://developer.hashicorp.com/boundary/install
@@ -464,12 +464,12 @@ boundary connect postgres \
 ```bash
 # List session recordings
 boundary session-recordings list \
-  -scope-id p_xxxxx
+ -scope-id p_xxxxx
 
 # Download session recording for review
 boundary session-recordings download \
-  -id sr_xxxxx \
-  -output recording.cast
+ -id sr_xxxxx \
+ -output recording.cast
 
 # Play back with asciinema
 asciinema play recording.cast
@@ -480,30 +480,30 @@ asciinema play recording.cast
 ```hcl
 # AWS dynamic host catalog - auto-discovers EC2 instances
 resource "boundary_host_catalog_plugin" "aws_catalog" {
-  scope_id    = boundary_scope.production.id
-  name        = "aws-production"
-  plugin_name = "aws"
+ scope_id = boundary_scope.production.id
+ name = "aws-production"
+ plugin_name = "aws"
 
-  attributes_json = jsonencode({
-    "region"                      = "us-east-1"
-    "disable_credential_rotation" = true
-  })
+ attributes_json = jsonencode({
+ "region" = "us-east-1"
+ "disable_credential_rotation" = true
+ })
 
-  secrets_json = jsonencode({
-    "access_key_id"     = var.aws_access_key
-    "secret_access_key" = var.aws_secret_key
-  })
+ secrets_json = jsonencode({
+ "access_key_id" = var.aws_access_key
+ "secret_access_key" = var.aws_secret_key
+ })
 }
 
 resource "boundary_host_set_plugin" "web_tier" {
-  host_catalog_id = boundary_host_catalog_plugin.aws_catalog.id
-  name            = "web-tier"
-  attributes_json = jsonencode({
-    "filters" = [
-      "tag:Environment=production",
-      "tag:Tier=web"
-    ]
-  })
+ host_catalog_id = boundary_host_catalog_plugin.aws_catalog.id
+ name = "web-tier"
+ attributes_json = jsonencode({
+ "filters" = [
+ "tag:Environment=production",
+ "tag:Tier=web"
+ ]
+ })
 }
 ```
 

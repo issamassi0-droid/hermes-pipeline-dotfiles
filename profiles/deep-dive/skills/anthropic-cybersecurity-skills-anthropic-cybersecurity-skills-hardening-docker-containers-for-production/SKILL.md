@@ -1,13 +1,13 @@
 ---
 name: hardening-docker-containers-for-production
 description: >-
-  Hardens Dockerfiles, images, and per-container runtime settings against the CIS Docker
-  Benchmark v1.8.0: non-root users, dropped capabilities, read-only root filesystem, seccomp
-  and AppArmor profiles, and minimal multi-stage builds, validated with docker-bench-security,
-  Hadolint, and Dockle. Use when preparing a container or Dockerfile for production, or
-  auditing images and runtime flags against CIS Docker controls. Keywords: Dockerfile, USER,
-  --cap-drop, read-only rootfs, seccomp, AppArmor, multi-stage, Hadolint, Dockle. Do not use
-  for the Docker daemon's own configuration - use hardening-docker-daemon-configuration.
+ Hardens Dockerfiles, images, and per-container runtime settings against the CIS Docker
+ Benchmark v1.8.0: non-root users, dropped capabilities, read-only root filesystem, seccomp
+ and AppArmor profiles, and minimal multi-stage builds, validated with docker-bench-security,
+ Hadolint, and Dockle. Use when preparing a container or Dockerfile for production, or
+ auditing images and runtime flags against CIS Docker controls. Keywords: Dockerfile, USER,
+ --cap-drop, read-only rootfs, seccomp, AppArmor, multi-stage, Hadolint, Dockle. Do not use
+ for the Docker daemon's own configuration - use hardening-docker-daemon-configuration.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -108,33 +108,33 @@ ENTRYPOINT ["python", "app.py"]
 
 ```json
 {
-  "icc": false,
-  "log-driver": "json-file",
-  "log-opts": {
-    "max-size": "10m",
-    "max-file": "3"
-  },
-  "live-restore": true,
-  "userland-proxy": false,
-  "no-new-privileges": true,
-  "default-ulimits": {
-    "nofile": {
-      "Name": "nofile",
-      "Hard": 64000,
-      "Soft": 64000
-    },
-    "nproc": {
-      "Name": "nproc",
-      "Hard": 1024,
-      "Soft": 1024
-    }
-  },
-  "seccomp-profile": "/etc/docker/seccomp-default.json",
-  "tls": true,
-  "tlscacert": "/etc/docker/tls/ca.pem",
-  "tlscert": "/etc/docker/tls/server-cert.pem",
-  "tlskey": "/etc/docker/tls/server-key.pem",
-  "tlsverify": true
+ "icc": false,
+ "log-driver": "json-file",
+ "log-opts": {
+ "max-size": "10m",
+ "max-file": "3"
+ },
+ "live-restore": true,
+ "userland-proxy": false,
+ "no-new-privileges": true,
+ "default-ulimits": {
+ "nofile": {
+ "Name": "nofile",
+ "Hard": 64000,
+ "Soft": 64000
+ },
+ "nproc": {
+ "Name": "nproc",
+ "Hard": 1024,
+ "Soft": 1024
+ }
+ },
+ "seccomp-profile": "/etc/docker/seccomp-default.json",
+ "tls": true,
+ "tlscacert": "/etc/docker/tls/ca.pem",
+ "tlscert": "/etc/docker/tls/server-cert.pem",
+ "tlskey": "/etc/docker/tls/server-key.pem",
+ "tlsverify": true
 }
 ```
 
@@ -142,27 +142,27 @@ ENTRYPOINT ["python", "app.py"]
 
 ```bash
 docker run -d \
-  --name production-app \
-  --read-only \
-  --tmpfs /tmp:rw,noexec,nosuid,size=100m \
-  --tmpfs /var/run:rw,noexec,nosuid,size=10m \
-  --cap-drop ALL \
-  --cap-add NET_BIND_SERVICE \
-  --security-opt no-new-privileges:true \
-  --security-opt seccomp=/etc/docker/seccomp-default.json \
-  --security-opt apparmor=docker-default \
-  --pids-limit 100 \
-  --memory 512m \
-  --memory-swap 512m \
-  --cpus 1.0 \
-  --user 65534:65534 \
-  --network custom-bridge \
-  --restart on-failure:3 \
-  --health-cmd "curl -f http://localhost:8080/health || exit 1" \
-  --health-interval 30s \
-  --health-timeout 10s \
-  --health-retries 3 \
-  myapp:latest
+ --name production-app \
+ --read-only \
+ --tmpfs /tmp:rw,noexec,nosuid,size=100m \
+ --tmpfs /var/run:rw,noexec,nosuid,size=10m \
+ --cap-drop ALL \
+ --cap-add NET_BIND_SERVICE \
+ --security-opt no-new-privileges:true \
+ --security-opt seccomp=/etc/docker/seccomp-default.json \
+ --security-opt apparmor=docker-default \
+ --pids-limit 100 \
+ --memory 512m \
+ --memory-swap 512m \
+ --cpus 1.0 \
+ --user 65534:65534 \
+ --network custom-bridge \
+ --restart on-failure:3 \
+ --health-cmd "curl -f http://localhost:8080/health || exit 1" \
+ --health-interval 30s \
+ --health-timeout 10s \
+ --health-retries 3 \
+ myapp:latest
 ```
 
 ### Step 4: Enable Docker Content Trust
@@ -202,15 +202,15 @@ systemctl restart auditd
 ```bash
 # Run Docker Bench Security
 docker run --rm --net host --pid host \
-  --userns host --cap-add audit_control \
-  -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
-  -v /etc:/etc:ro \
-  -v /usr/bin/containerd:/usr/bin/containerd:ro \
-  -v /usr/bin/runc:/usr/bin/runc:ro \
-  -v /usr/lib/systemd:/usr/lib/systemd:ro \
-  -v /var/lib:/var/lib:ro \
-  -v /var/run/docker.sock:/var/run/docker.sock:ro \
-  docker/docker-bench-security
+ --userns host --cap-add audit_control \
+ -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
+ -v /etc:/etc:ro \
+ -v /usr/bin/containerd:/usr/bin/containerd:ro \
+ -v /usr/bin/runc:/usr/bin/runc:ro \
+ -v /usr/lib/systemd:/usr/lib/systemd:ro \
+ -v /var/lib:/var/lib:ro \
+ -v /var/run/docker.sock:/var/run/docker.sock:ro \
+ docker/docker-bench-security
 
 # Lint Dockerfile
 hadolint Dockerfile

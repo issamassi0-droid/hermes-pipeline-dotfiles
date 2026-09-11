@@ -1,11 +1,11 @@
 ---
 name: validating-backup-integrity-for-recovery
 description: Validates backup integrity through cryptographic hash verification,
-  automated restore testing, corruption detection, and recoverability checks to
-  confirm backups are reliable for disaster recovery and ransomware response. Use
-  before relying on backups for recovery, when building post-backup validation
-  pipelines, auditing backup infrastructure for compliance, or checking immutable/air-gapped
-  backups for silent corruption or tampering.
+ automated restore testing, corruption detection, and recoverability checks to
+ confirm backups are reliable for disaster recovery and ransomware response. Use
+ before relying on backups for recovery, when building post-backup validation
+ pipelines, auditing backup infrastructure for compliance, or checking immutable/air-gapped
+ backups for silent corruption or tampering.
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -30,27 +30,27 @@ mitre_attack:
 - T1078
 - T1489
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - positioning
-  - monetization
-  techniques:
-  - id: T1531
-    name: Account Access Removal
-    tactic: positioning
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1047
-    name: Transfer of funds
-    tactic: monetization
-    source: f3
-  - id: F1017.001
-    name: 'Conversion to Physical Monetary Instruments: Cash'
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - positioning
+ - monetization
+ techniques:
+ - id: T1531
+ name: Account Access Removal
+ tactic: positioning
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1047
+ name: Transfer of funds
+ tactic: monetization
+ source: f3
+ - id: F1017.001
+ name: 'Conversion to Physical Monetary Instruments: Cash'
+ tactic: monetization
+ source: f3
 ---
 # Validating Backup Integrity for Recovery
 
@@ -85,8 +85,8 @@ find /data/production -type f -exec sha256sum {} \; > /manifests/prod_baseline_$
 
 # Verify manifest format
 head -5 /manifests/prod_baseline_20260319.sha256
-# e3b0c44298fc1c149afbf4c8996fb924...  /data/production/config.yaml
-# a7ffc6f8bf1ed76651c14756a061d662...  /data/production/database.sql
+# e3b0c44298fc1c149afbf4c8996fb924... /data/production/config.yaml
+# a7ffc6f8bf1ed76651c14756a061d662... /data/production/database.sql
 ```
 
 ### Step 2: Verify Backup Archive Integrity
@@ -105,7 +105,7 @@ gzip -t backup_20260319.tar.gz && echo "Archive OK" || echo "Archive CORRUPTED"
 
 # AWS S3: verify object checksums
 aws s3api head-object --bucket backup-bucket --key daily/2026-03-19.tar.gz \
-  --checksum-mode ENABLED
+ --checksum-mode ENABLED
 ```
 
 ### Step 3: Perform Restore Test to Isolated Environment
@@ -119,7 +119,7 @@ find /restore-test -type f -exec sha256sum {} \; > /manifests/restored_$(date +%
 
 # Compare baseline and restored manifests
 diff <(sort /manifests/prod_baseline_20260319.sha256) \
-     <(sort /manifests/restored_20260319.sha256)
+ <(sort /manifests/restored_20260319.sha256)
 ```
 
 ### Step 4: Validate Data Completeness
@@ -134,7 +134,7 @@ echo "Original: $(du -sh /data/production | cut -f1)"
 echo "Restored: $(du -sh /restore-test | cut -f1)"
 
 # Database consistency check after restore
-pg_restore --list backup.dump | wc -l  # Count objects in dump
+pg_restore --list backup.dump | wc -l # Count objects in dump
 psql -c "SELECT schemaname, tablename FROM pg_tables WHERE schemaname='public';" restored_db
 ```
 
@@ -145,15 +145,15 @@ Before trusting a backup for recovery, scan for ransomware indicators:
 ```bash
 # Check for common ransomware file extensions
 find /restore-test -type f \( \
-  -name "*.encrypted" -o -name "*.locked" -o -name "*.crypt" \
-  -o -name "*.ransom" -o -name "*.pay" -o -name "*.wncry" \
-  -o -name "*.cerber" -o -name "*.locky" -o -name "*.zepto" \
+ -name "*.encrypted" -o -name "*.locked" -o -name "*.crypt" \
+ -o -name "*.ransom" -o -name "*.pay" -o -name "*.wncry" \
+ -o -name "*.cerber" -o -name "*.locky" -o -name "*.zepto" \
 \) -print
 
 # Check for ransom notes
 find /restore-test -type f \( \
-  -name "README_TO_DECRYPT*" -o -name "HOW_TO_RECOVER*" \
-  -o -name "DECRYPT_INSTRUCTIONS*" -o -name "HELP_DECRYPT*" \
+ -name "README_TO_DECRYPT*" -o -name "HOW_TO_RECOVER*" \
+ -o -name "DECRYPT_INSTRUCTIONS*" -o -name "HELP_DECRYPT*" \
 \) -print
 
 # Check file entropy (high entropy = possible encryption)

@@ -13,7 +13,7 @@ FFmpeg is the essential tool for video/audio processing. This skill covers commo
 
 ```bash
 ffmpeg -i input.gif -movflags faststart -pix_fmt yuv420p \
-  -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" output.mp4
+ -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" output.mp4
 ```
 
 **Why these flags:**
@@ -156,15 +156,15 @@ ffprobe -v quiet -print_format json -show_format -show_streams input.mp4
 ```bash
 # Speed up demo to fit a scene (e.g., 60s demo into 20s = 3x speed)
 ffmpeg -i demo-raw.mp4 \
-  -filter_complex "[0:v]setpts=0.333*PTS[v];[0:a]atempo=3.0[a]" \
-  -map "[v]" -map "[a]" \
-  public/demos/demo-fast.mp4
+ -filter_complex "[0:v]setpts=0.333*PTS[v];[0:a]atempo=3.0[a]" \
+ -map "[v]" -map "[a]" \
+ public/demos/demo-fast.mp4
 
 # Slow motion for emphasis (0.5x speed)
 ffmpeg -i action.mp4 \
-  -filter_complex "[0:v]setpts=2.0*PTS[v];[0:a]atempo=0.5[a]" \
-  -map "[v]" -map "[a]" \
-  public/demos/action-slow.mp4
+ -filter_complex "[0:v]setpts=2.0*PTS[v];[0:a]atempo=0.5[a]" \
+ -map "[v]" -map "[a]" \
+ public/demos/action-slow.mp4
 
 # Speed up without audio (common for screen recordings)
 ffmpeg -i demo.mp4 -filter:v "setpts=0.5*PTS" -an public/demos/demo-2x.mp4
@@ -192,11 +192,11 @@ ffmpeg -i long-demo.mp4 -filter:v "setpts=0.1*PTS" -an public/demos/timelapse.mp
 ```bash
 # Standard 1080p, 30fps, Remotion-ready
 ffmpeg -i raw-recording.mp4 \
-  -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30" \
-  -c:v libx264 -crf 18 -preset slow \
-  -c:a aac -b:a 192k \
-  -movflags faststart \
-  public/demos/demo.mp4
+ -vf "scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30" \
+ -c:v libx264 -crf 18 -preset slow \
+ -c:a aac -b:a 192k \
+ -movflags faststart \
+ public/demos/demo.mp4
 ```
 
 ### Screen Recording to Remotion Asset
@@ -204,19 +204,19 @@ ffmpeg -i raw-recording.mp4 \
 ```bash
 # From iPhone/iPad recording (usually 60fps, variable resolution)
 ffmpeg -i iphone-recording.mov \
-  -vf "scale=1920:-2,fps=30" \
-  -c:v libx264 -crf 20 \
-  -an \
-  public/demos/mobile-demo.mp4
+ -vf "scale=1920:-2,fps=30" \
+ -c:v libx264 -crf 20 \
+ -an \
+ public/demos/mobile-demo.mp4
 ```
 
 ### Batch Convert GIFs
 
 ```bash
 for f in assets/*.gif; do
-  ffmpeg -i "$f" -movflags faststart -pix_fmt yuv420p \
-    -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" \
-    "public/demos/$(basename "$f" .gif).mp4"
+ ffmpeg -i "$f" -movflags faststart -pix_fmt yuv420p \
+ -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" \
+ "public/demos/$(basename "$f" .gif).mp4"
 done
 ```
 
@@ -250,12 +250,12 @@ After Remotion renders your video (typically to `out/video.mp4`), use FFmpeg to 
 ### Workflow Integration
 
 ```
-Remotion render (master)     FFmpeg optimization      Platform upload
-       ↓                            ↓                       ↓
-   out/video.mp4  ────────→  out/video-youtube.mp4  ───→  YouTube
-                  ────────→  out/video-twitter.mp4  ───→  Twitter/X
-                  ────────→  out/video-linkedin.mp4 ───→  LinkedIn
-                  ────────→  out/video-web.mp4      ───→  Website embed
+Remotion render (master) FFmpeg optimization Platform upload
+ ↓ ↓ ↓
+ out/video.mp4 ────────→ out/video-youtube.mp4 ───→ YouTube
+ ────────→ out/video-twitter.mp4 ───→ Twitter/X
+ ────────→ out/video-linkedin.mp4 ───→ LinkedIn
+ ────────→ out/video-web.mp4 ───→ Website embed
 ```
 
 ### YouTube (Recommended Settings)
@@ -265,18 +265,18 @@ YouTube re-encodes everything, so upload high quality:
 ```bash
 # YouTube optimized (1080p)
 ffmpeg -i out/video.mp4 \
-  -c:v libx264 -preset slow -crf 18 \
-  -profile:v high -level 4.0 \
-  -bf 2 -g 30 \
-  -c:a aac -b:a 192k -ar 48000 \
-  -movflags +faststart \
-  out/video-youtube.mp4
+ -c:v libx264 -preset slow -crf 18 \
+ -profile:v high -level 4.0 \
+ -bf 2 -g 30 \
+ -c:a aac -b:a 192k -ar 48000 \
+ -movflags +faststart \
+ out/video-youtube.mp4
 
 # YouTube Shorts (vertical 1080x1920)
 ffmpeg -i out/video.mp4 \
-  -vf "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2" \
-  -c:v libx264 -crf 18 -c:a aac -b:a 192k \
-  out/video-shorts.mp4
+ -vf "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2" \
+ -c:v libx264 -crf 18 -c:a aac -b:a 192k \
+ out/video-shorts.mp4
 ```
 
 ### Twitter/X
@@ -286,13 +286,13 @@ Twitter has strict limits: max 140s, 512MB, 1920x1200:
 ```bash
 # Twitter optimized (under 15MB target for fast upload)
 ffmpeg -i out/video.mp4 \
-  -c:v libx264 -preset medium -crf 24 \
-  -profile:v main -level 3.1 \
-  -vf "scale='min(1280,iw)':'min(720,ih)':force_original_aspect_ratio=decrease" \
-  -c:a aac -b:a 128k -ar 44100 \
-  -movflags +faststart \
-  -fs 15M \
-  out/video-twitter.mp4
+ -c:v libx264 -preset medium -crf 24 \
+ -profile:v main -level 3.1 \
+ -vf "scale='min(1280,iw)':'min(720,ih)':force_original_aspect_ratio=decrease" \
+ -c:a aac -b:a 128k -ar 44100 \
+ -movflags +faststart \
+ -fs 15M \
+ out/video-twitter.mp4
 
 # Check file size and duration
 ffprobe -v error -show_entries format=duration,size -of csv=p=0 out/video-twitter.mp4
@@ -305,12 +305,12 @@ LinkedIn prefers MP4 with AAC audio, max 10 minutes:
 ```bash
 # LinkedIn optimized
 ffmpeg -i out/video.mp4 \
-  -c:v libx264 -preset medium -crf 22 \
-  -profile:v main \
-  -vf "scale='min(1920,iw)':'min(1080,ih)':force_original_aspect_ratio=decrease" \
-  -c:a aac -b:a 192k -ar 48000 \
-  -movflags +faststart \
-  out/video-linkedin.mp4
+ -c:v libx264 -preset medium -crf 22 \
+ -profile:v main \
+ -vf "scale='min(1920,iw)':'min(1080,ih)':force_original_aspect_ratio=decrease" \
+ -c:a aac -b:a 192k -ar 48000 \
+ -movflags +faststart \
+ out/video-linkedin.mp4
 ```
 
 ### Website/Embed (Optimized for Fast Loading)
@@ -318,20 +318,20 @@ ffmpeg -i out/video.mp4 \
 ```bash
 # Web-optimized MP4 (small file, progressive loading)
 ffmpeg -i out/video.mp4 \
-  -c:v libx264 -preset medium -crf 26 \
-  -profile:v baseline -level 3.0 \
-  -vf "scale=1280:720" \
-  -c:a aac -b:a 128k \
-  -movflags +faststart \
-  out/video-web.mp4
+ -c:v libx264 -preset medium -crf 26 \
+ -profile:v baseline -level 3.0 \
+ -vf "scale=1280:720" \
+ -c:a aac -b:a 128k \
+ -movflags +faststart \
+ out/video-web.mp4
 
 # WebM alternative (better compression, wider browser support)
 ffmpeg -i out/video.mp4 \
-  -c:v libvpx-vp9 -crf 30 -b:v 0 \
-  -vf "scale=1280:720" \
-  -c:a libopus -b:a 128k \
-  -deadline good \
-  out/video-web.webm
+ -c:v libvpx-vp9 -crf 30 -b:v 0 \
+ -vf "scale=1280:720" \
+ -c:a libopus -b:a 128k \
+ -deadline good \
+ out/video-web.webm
 ```
 
 ### GIF (for Previews/Thumbnails)
@@ -339,13 +339,13 @@ ffmpeg -i out/video.mp4 \
 ```bash
 # High-quality GIF (first 5 seconds)
 ffmpeg -i out/video.mp4 -t 5 \
-  -vf "fps=15,scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
-  out/preview.gif
+ -vf "fps=15,scale=480:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+ out/preview.gif
 
 # Smaller file GIF
 ffmpeg -i out/video.mp4 -t 3 \
-  -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
-  out/preview-small.gif
+ -vf "fps=10,scale=320:-1:flags=lanczos,split[s0][s1];[s0]palettegen[p];[s1][p]paletteuse" \
+ out/preview-small.gif
 ```
 
 ### Platform Requirements Quick Reference
@@ -368,25 +368,25 @@ INPUT="out/video.mp4"
 
 # YouTube (high quality)
 ffmpeg -i "$INPUT" -c:v libx264 -preset slow -crf 18 \
-  -c:a aac -b:a 192k -movflags +faststart \
-  out/video-youtube.mp4
+ -c:a aac -b:a 192k -movflags +faststart \
+ out/video-youtube.mp4
 
 # Twitter (compressed)
 ffmpeg -i "$INPUT" -c:v libx264 -crf 24 \
-  -vf "scale='min(1280,iw)':'-2'" \
-  -c:a aac -b:a 128k -movflags +faststart \
-  out/video-twitter.mp4
+ -vf "scale='min(1280,iw)':'-2'" \
+ -c:a aac -b:a 128k -movflags +faststart \
+ out/video-twitter.mp4
 
 # LinkedIn
 ffmpeg -i "$INPUT" -c:v libx264 -crf 22 \
-  -c:a aac -b:a 192k -movflags +faststart \
-  out/video-linkedin.mp4
+ -c:a aac -b:a 192k -movflags +faststart \
+ out/video-linkedin.mp4
 
 # Web embed (small)
 ffmpeg -i "$INPUT" -c:v libx264 -crf 26 \
-  -vf "scale=1280:720" \
-  -c:a aac -b:a 128k -movflags +faststart \
-  out/video-web.mp4
+ -vf "scale=1280:720" \
+ -c:a aac -b:a 128k -movflags +faststart \
+ out/video-web.mp4
 
 echo "Exported:"
 ls -lh out/video-*.mp4
@@ -426,7 +426,7 @@ If this skill is missing information or could be improved:
 - **Missing a command?** Describe what you needed
 - **Found an error?** Let me know what's wrong
 - **Want to contribute?** I can help you:
-  1. Update this skill with improvements
-  2. Create a PR to github.com/digitalsamba/claude-code-video-toolkit
+ 1. Update this skill with improvements
+ 2. Create a PR to github.com/digitalsamba/claude-code-video-toolkit
 
 Just say "improve this skill" and I'll guide you through updating `.claude/skills/ffmpeg/SKILL.md`.

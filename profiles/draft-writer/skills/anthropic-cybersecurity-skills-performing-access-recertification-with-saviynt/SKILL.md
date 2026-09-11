@@ -1,10 +1,10 @@
 ---
 name: performing-access-recertification-with-saviynt
 description: Configure and execute access recertification campaigns in Saviynt Enterprise
-  Identity Cloud to validate user entitlements, revoke excessive access, and maintain
-  compliance with SOX, SOC 2, and HIPAA. Use when launching or managing certification
-  campaigns for users/entitlements, remediating access review findings, or documenting
-  identity governance evidence for an audit.
+ Identity Cloud to validate user entitlements, revoke excessive access, and maintain
+ compliance with SOX, SOC 2, and HIPAA. Use when launching or managing certification
+ campaigns for users/entitlements, remediating access review findings, or documenting
+ identity governance evidence for an audit.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -29,33 +29,33 @@ mitre_attack:
 - T1098
 - T1071
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - defense-impairment
-  - resource-development
-  techniques:
-  - id: T1586
-    name: Compromise Accounts
-    tactic: resource-development
-    source: attack
-  - id: F1033
-    name: Insider Access Abuse
-    tactic: initial-access
-    source: f3
-  - id: F1005
-    name: Account Manipulation
-    tactic: positioning
-    source: f3
-  - id: F1005.002
-    name: 'Account Manipulation: Add Authorized User'
-    tactic: positioning
-    source: f3
-  - id: F1005.007
-    name: 'Account Manipulation: Enable Account Features'
-    tactic: defense-impairment
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - defense-impairment
+ - resource-development
+ techniques:
+ - id: T1586
+ name: Compromise Accounts
+ tactic: resource-development
+ source: attack
+ - id: F1033
+ name: Insider Access Abuse
+ tactic: initial-access
+ source: f3
+ - id: F1005
+ name: Account Manipulation
+ tactic: positioning
+ source: f3
+ - id: F1005.002
+ name: 'Account Manipulation: Add Authorized User'
+ tactic: positioning
+ source: f3
+ - id: F1005.007
+ name: 'Account Manipulation: Enable Account Features'
+ tactic: defense-impairment
+ source: f3
 ---
 
 # Performing Access Recertification with Saviynt
@@ -107,22 +107,22 @@ Access recertification (also called access certification or access review) is a 
 
 ```
 CONFIGURATION → PREVIEW → ACTIVE → IN PROGRESS → COMPLETED → REMEDIATION
-       │            │         │          │             │            │
-       │            │         │          │             │            └── Revoke tickets
-       │            │         │          │             │                executed
-       │            │         │          │             │
-       │            │         │          │             └── All decisions
-       │            │         │          │                 collected
-       │            │         │          │
-       │            │         │          └── Certifiers reviewing
-       │            │         │              and making decisions
-       │            │         │
-       │            │         └── Campaign launched,
-       │            │             notifications sent
-       │            │
-       │            └── Read-only preview for validation
-       │
-       └── Campaign parameters defined
+ │ │ │ │ │ │
+ │ │ │ │ │ └── Revoke tickets
+ │ │ │ │ │ executed
+ │ │ │ │ │
+ │ │ │ │ └── All decisions
+ │ │ │ │ collected
+ │ │ │ │
+ │ │ │ └── Certifiers reviewing
+ │ │ │ and making decisions
+ │ │ │
+ │ │ └── Campaign launched,
+ │ │ notifications sent
+ │ │
+ │ └── Read-only preview for validation
+ │
+ └── Campaign parameters defined
 ```
 
 ## Workflow
@@ -146,15 +146,15 @@ In Saviynt Admin Console:
 | Escalation | Auto-revoke on Day 15 if no decision |
 
 3. Configure scope filters:
-   - Include: All active users
-   - Exclude: Service accounts, break-glass accounts
-   - Application filter: All connected applications
+ - Include: All active users
+ - Exclude: Service accounts, break-glass accounts
+ - Application filter: All connected applications
 
 4. Configure intelligence features:
-   - Enable risk scoring (high-risk entitlements highlighted)
-   - Enable usage data (last access date shown)
-   - Enable peer analysis (compare access to peer group)
-   - Enable SoD violation flagging
+ - Enable risk scoring (high-risk entitlements highlighted)
+ - Enable usage data (last access date shown)
+ - Enable peer analysis (compare access to peer group)
+ - Enable SoD violation flagging
 
 ### Step 2: Configure Certifier Experience
 
@@ -188,65 +188,65 @@ SAVIYNT_URL = "https://tenant.saviyntcloud.com"
 SAVIYNT_TOKEN = "your-api-token"
 
 def create_certification_campaign(campaign_config):
-    """Create and launch a Saviynt certification campaign."""
-    headers = {
-        "Authorization": f"Bearer {SAVIYNT_TOKEN}",
-        "Content-Type": "application/json"
-    }
+ """Create and launch a Saviynt certification campaign."""
+ headers = {
+ "Authorization": f"Bearer {SAVIYNT_TOKEN}",
+ "Content-Type": "application/json"
+ }
 
-    # Create campaign
-    response = requests.post(
-        f"{SAVIYNT_URL}/ECM/api/v5/createCampaign",
-        headers=headers,
-        json={
-            "campaignname": campaign_config["name"],
-            "campaigntype": campaign_config["type"],
-            "description": campaign_config["description"],
-            "certifier": campaign_config["certifier_type"],
-            "duedate": campaign_config["due_date"],
-            "reminderdays": campaign_config["reminder_days"],
-            "autorevoke": campaign_config.get("auto_revoke", True),
-            "autorevokedays": campaign_config.get("auto_revoke_days", 15),
-            "scope": campaign_config.get("scope", {}),
-        }
-    )
-    response.raise_for_status()
-    campaign_id = response.json().get("campaignId")
+ # Create campaign
+ response = requests.post(
+ f"{SAVIYNT_URL}/ECM/api/v5/createCampaign",
+ headers=headers,
+ json={
+ "campaignname": campaign_config["name"],
+ "campaigntype": campaign_config["type"],
+ "description": campaign_config["description"],
+ "certifier": campaign_config["certifier_type"],
+ "duedate": campaign_config["due_date"],
+ "reminderdays": campaign_config["reminder_days"],
+ "autorevoke": campaign_config.get("auto_revoke", True),
+ "autorevokedays": campaign_config.get("auto_revoke_days", 15),
+ "scope": campaign_config.get("scope", {}),
+ }
+ )
+ response.raise_for_status()
+ campaign_id = response.json().get("campaignId")
 
-    # Launch campaign
-    launch_response = requests.post(
-        f"{SAVIYNT_URL}/ECM/api/v5/launchCampaign",
-        headers=headers,
-        json={"campaignId": campaign_id}
-    )
-    launch_response.raise_for_status()
+ # Launch campaign
+ launch_response = requests.post(
+ f"{SAVIYNT_URL}/ECM/api/v5/launchCampaign",
+ headers=headers,
+ json={"campaignId": campaign_id}
+ )
+ launch_response.raise_for_status()
 
-    return {
-        "campaign_id": campaign_id,
-        "status": "launched",
-        "certifications_created": launch_response.json().get("certificationCount", 0)
-    }
+ return {
+ "campaign_id": campaign_id,
+ "status": "launched",
+ "certifications_created": launch_response.json().get("certificationCount", 0)
+ }
 
 def get_campaign_status(campaign_id):
-    """Get current status and progress of a campaign."""
-    headers = {"Authorization": f"Bearer {SAVIYNT_TOKEN}"}
-    response = requests.get(
-        f"{SAVIYNT_URL}/ECM/api/v5/getCampaignDetails",
-        headers=headers,
-        params={"campaignId": campaign_id}
-    )
-    response.raise_for_status()
-    data = response.json()
+ """Get current status and progress of a campaign."""
+ headers = {"Authorization": f"Bearer {SAVIYNT_TOKEN}"}
+ response = requests.get(
+ f"{SAVIYNT_URL}/ECM/api/v5/getCampaignDetails",
+ headers=headers,
+ params={"campaignId": campaign_id}
+ )
+ response.raise_for_status()
+ data = response.json()
 
-    return {
-        "campaign_id": campaign_id,
-        "status": data.get("status"),
-        "total_items": data.get("totalLineItems", 0),
-        "certified": data.get("certifiedCount", 0),
-        "revoked": data.get("revokedCount", 0),
-        "pending": data.get("pendingCount", 0),
-        "completion_rate": data.get("completionPercentage", 0),
-    }
+ return {
+ "campaign_id": campaign_id,
+ "status": data.get("status"),
+ "total_items": data.get("totalLineItems", 0),
+ "certified": data.get("certifiedCount", 0),
+ "revoked": data.get("revokedCount", 0),
+ "pending": data.get("pendingCount", 0),
+ "completion_rate": data.get("completionPercentage", 0),
+ }
 ```
 
 ### Step 4: Monitor Campaign Progress

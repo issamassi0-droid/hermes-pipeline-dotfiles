@@ -1,7 +1,7 @@
 ---
 name: analyzing-docker-container-forensics
 description: Investigate compromised Docker containers by analyzing images, layers,
-  volumes, logs, and runtime artifacts to identify malicious activity and evidence.
+ volumes, logs, and runtime artifacts to identify malicious activity and evidence.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -101,9 +101,9 @@ cat /cases/case-2024-001/docker/layers/manifest.json | python3 -m json.tool
 
 # Examine each layer for changes
 for layer in /cases/case-2024-001/docker/layers/*/layer.tar; do
-    echo "=== Layer: $(dirname $layer | xargs basename) ==="
-    tar -tf "$layer" | head -20
-    echo "..."
+ echo "=== Layer: $(dirname $layer | xargs basename) ==="
+ tar -tf "$layer" | head -20
+ echo "..."
 done
 
 # Use container-diff to compare with original base image
@@ -113,8 +113,8 @@ chmod +x container-diff-linux-amd64
 
 # Compare committed image with original
 ./container-diff-linux-amd64 diff daemon://nginx:latest daemon://forensic-evidence:case-2024-001 \
-   --type=file --type=apt --type=history --json \
-   > /cases/case-2024-001/docker/container_diff.json
+ --type=file --type=apt --type=history --json \
+ > /cases/case-2024-001/docker/container_diff.json
 ```
 
 ### Step 3: Examine Docker Host Artifacts
@@ -133,7 +133,7 @@ CONTAINER_HASH=$(docker inspect $CONTAINER_ID --format '{{.GraphDriver.Data.Merg
 
 # Analyze container configuration files
 cat $DOCKER_ROOT/containers/$CONTAINER_ID/config.v2.json | python3 -m json.tool \
-   > /cases/case-2024-001/docker/container_config.json
+ > /cases/case-2024-001/docker/container_config.json
 
 # Check Docker daemon configuration
 cat /mnt/evidence/etc/docker/daemon.json 2>/dev/null > /cases/case-2024-001/docker/daemon_config.json
@@ -146,7 +146,7 @@ python3 << 'PYEOF'
 import json
 
 with open('/cases/case-2024-001/docker/container_inspect.json') as f:
-    data = json.load(f)
+ data = json.load(f)
 
 inspect = data[0] if isinstance(data, list) else data
 
@@ -155,32 +155,32 @@ print("=== CONTAINER SECURITY ANALYSIS ===\n")
 # Check mounts
 print("Volume Mounts:")
 for mount in inspect.get('Mounts', []):
-    rw = "READ-WRITE" if mount.get('RW') else "READ-ONLY"
-    print(f"  {mount.get('Source', 'N/A')} -> {mount.get('Destination', 'N/A')} ({rw})")
-    if mount.get('Source') in ('/', '/etc', '/var', '/root') and mount.get('RW'):
-        print(f"    WARNING: Sensitive host path mounted read-write!")
+ rw = "READ-WRITE" if mount.get('RW') else "READ-ONLY"
+ print(f" {mount.get('Source', 'N/A')} -> {mount.get('Destination', 'N/A')} ({rw})")
+ if mount.get('Source') in ('/', '/etc', '/var', '/root') and mount.get('RW'):
+ print(f" WARNING: Sensitive host path mounted read-write!")
 
 # Check privileged mode
 host_config = inspect.get('HostConfig', {})
 if host_config.get('Privileged'):
-    print("\nWARNING: Container was running in PRIVILEGED mode!")
+ print("\nWARNING: Container was running in PRIVILEGED mode!")
 
 # Check capabilities
 cap_add = host_config.get('CapAdd', [])
 if cap_add:
-    print(f"\nAdded Capabilities: {cap_add}")
-    dangerous_caps = ['SYS_ADMIN', 'SYS_PTRACE', 'NET_ADMIN', 'SYS_MODULE']
-    for cap in cap_add:
-        if cap in dangerous_caps:
-            print(f"  WARNING: Dangerous capability: {cap}")
+ print(f"\nAdded Capabilities: {cap_add}")
+ dangerous_caps = ['SYS_ADMIN', 'SYS_PTRACE', 'NET_ADMIN', 'SYS_MODULE']
+ for cap in cap_add:
+ if cap in dangerous_caps:
+ print(f" WARNING: Dangerous capability: {cap}")
 
 # Check PID namespace
 if host_config.get('PidMode') == 'host':
-    print("\nWARNING: Container shares host PID namespace!")
+ print("\nWARNING: Container shares host PID namespace!")
 
 # Check network mode
 if host_config.get('NetworkMode') == 'host':
-    print("\nWARNING: Container shares host network namespace!")
+ print("\nWARNING: Container shares host network namespace!")
 
 # Check user
 user = inspect.get('Config', {}).get('User', 'root (default)')
@@ -190,9 +190,9 @@ print(f"\nRunning as user: {user}")
 env_vars = inspect.get('Config', {}).get('Env', [])
 print(f"\nEnvironment Variables: {len(env_vars)}")
 for env in env_vars:
-    key = env.split('=')[0]
-    if any(s in key.upper() for s in ['PASSWORD', 'SECRET', 'KEY', 'TOKEN', 'CREDENTIAL']):
-        print(f"  SENSITIVE: {key}=***REDACTED***")
+ key = env.split('=')[0]
+ if any(s in key.upper() for s in ['PASSWORD', 'SECRET', 'KEY', 'TOKEN', 'CREDENTIAL']):
+ print(f" SENSITIVE: {key}=***REDACTED***")
 PYEOF
 ```
 
@@ -210,14 +210,14 @@ changed = []
 deleted = []
 
 with open('/cases/case-2024-001/docker/filesystem_changes.txt') as f:
-    for line in f:
-        line = line.strip()
-        if line.startswith('A '):
-            added.append(line[2:])
-        elif line.startswith('C '):
-            changed.append(line[2:])
-        elif line.startswith('D '):
-            deleted.append(line[2:])
+ for line in f:
+ line = line.strip()
+ if line.startswith('A '):
+ added.append(line[2:])
+ elif line.startswith('C '):
+ changed.append(line[2:])
+ elif line.startswith('D '):
+ deleted.append(line[2:])
 
 print(f"Files Added: {len(added)}")
 print(f"Files Changed: {len(changed)}")
@@ -225,19 +225,19 @@ print(f"Files Deleted: {len(deleted)}")
 
 # Flag suspicious additions
 suspicious = [f for f in added if any(s in f for s in
-    ['/tmp/', '/dev/shm/', '/root/', '.sh', '.py', '.elf', 'reverse', 'shell', 'backdoor'])]
+ ['/tmp/', '/dev/shm/', '/root/', '.sh', '.py', '.elf', 'reverse', 'shell', 'backdoor'])]
 if suspicious:
-    print(f"\nSuspicious Added Files:")
-    for f in suspicious:
-        print(f"  {f}")
+ print(f"\nSuspicious Added Files:")
+ for f in suspicious:
+ print(f" {f}")
 
 # Flag suspicious changes
 sus_changed = [f for f in changed if any(s in f for s in
-    ['/etc/passwd', '/etc/shadow', '/etc/crontab', '/etc/ssh', '.bashrc'])]
+ ['/etc/passwd', '/etc/shadow', '/etc/crontab', '/etc/ssh', '.bashrc'])]
 if sus_changed:
-    print(f"\nSuspicious Changed Files:")
-    for f in sus_changed:
-        print(f"  {f}")
+ print(f"\nSuspicious Changed Files:")
+ for f in sus_changed:
+ print(f" {f}")
 PYEOF
 
 # Extract and examine the container export
@@ -254,19 +254,19 @@ find /cases/case-2024-001/docker/container_fs/ -name "*.php" -newer /cases/case-
 ```bash
 # Scan the image for known vulnerabilities
 trivy image forensic-evidence:case-2024-001 \
-   --format json \
-   --output /cases/case-2024-001/docker/vulnerability_scan.json
+ --format json \
+ --output /cases/case-2024-001/docker/vulnerability_scan.json
 
 # Scan the exported filesystem
 trivy fs /cases/case-2024-001/docker/container_fs/ \
-   --format table \
-   --output /cases/case-2024-001/docker/fs_vulnerabilities.txt
+ --format table \
+ --output /cases/case-2024-001/docker/fs_vulnerabilities.txt
 
 # Check for secrets in the image
 trivy image forensic-evidence:case-2024-001 \
-   --scanners secret \
-   --format json \
-   --output /cases/case-2024-001/docker/secrets_scan.json
+ --scanners secret \
+ --format json \
+ --output /cases/case-2024-001/docker/secrets_scan.json
 ```
 
 ## Key Concepts
@@ -313,33 +313,33 @@ Identify high-CPU containers, export and analyze the container image for mining 
 
 ```
 Docker Container Forensics Summary:
-  Container: abc123def456 (nginx-app)
-  Image: company/web-app:v2.1
-  Status: Running (started 2024-01-10 09:00 UTC)
-  Host: docker-host-01.corp.local
+ Container: abc123def456 (nginx-app)
+ Image: company/web-app:v2.1
+ Status: Running (started 2024-01-10 09:00 UTC)
+ Host: docker-host-01.corp.local
 
-  Security Configuration:
-    Privileged: No
-    Capabilities Added: NET_ADMIN (WARNING)
-    Volume Mounts: /var/log -> /host-logs (RW)
-    Network Mode: bridge
-    User: root (WARNING)
+ Security Configuration:
+ Privileged: No
+ Capabilities Added: NET_ADMIN (WARNING)
+ Volume Mounts: /var/log -> /host-logs (RW)
+ Network Mode: bridge
+ User: root (WARNING)
 
-  Filesystem Changes:
-    Added: 23 files (5 suspicious)
-    Changed: 12 files (2 suspicious)
-    Deleted: 0 files
+ Filesystem Changes:
+ Added: 23 files (5 suspicious)
+ Changed: 12 files (2 suspicious)
+ Deleted: 0 files
 
-  Suspicious Findings:
-    /tmp/reverse.sh - Reverse shell script (Added)
-    /var/www/html/.hidden/shell.php - PHP webshell (Added)
-    /etc/crontab - Modified (persistence cron entry added)
-    /root/.ssh/authorized_keys - Modified (unauthorized key added)
+ Suspicious Findings:
+ /tmp/reverse.sh - Reverse shell script (Added)
+ /var/www/html/.hidden/shell.php - PHP webshell (Added)
+ /etc/crontab - Modified (persistence cron entry added)
+ /root/.ssh/authorized_keys - Modified (unauthorized key added)
 
-  Vulnerability Scan:
-    Critical: 3 (CVE-2024-xxxx in base image)
-    High: 12
-    Medium: 34
+ Vulnerability Scan:
+ Critical: 3 (CVE-2024-xxxx in base image)
+ High: 12
+ Medium: 34
 
-  Evidence: /cases/case-2024-001/docker/
+ Evidence: /cases/case-2024-001/docker/
 ```

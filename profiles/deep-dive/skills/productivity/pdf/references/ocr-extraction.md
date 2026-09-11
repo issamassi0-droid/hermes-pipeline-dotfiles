@@ -57,12 +57,12 @@ pip install pymupdf pymupdf4llm
 
 **Via helper script**:
 ```bash
-python scripts/extract_pymupdf.py document.pdf              # Plain text
-python scripts/extract_pymupdf.py document.pdf --markdown    # Markdown
-python scripts/extract_pymupdf.py document.pdf --tables      # Tables
+python scripts/extract_pymupdf.py document.pdf # Plain text
+python scripts/extract_pymupdf.py document.pdf --markdown # Markdown
+python scripts/extract_pymupdf.py document.pdf --tables # Tables
 python scripts/extract_pymupdf.py document.pdf --images out/ # Extract images
-python scripts/extract_pymupdf.py document.pdf --metadata    # Title, author, pages
-python scripts/extract_pymupdf.py document.pdf --pages 0-4   # Specific pages
+python scripts/extract_pymupdf.py document.pdf --metadata # Title, author, pages
+python scripts/extract_pymupdf.py document.pdf --pages 0-4 # Specific pages
 ```
 
 **Inline**:
@@ -71,7 +71,7 @@ python -c "
 import pymupdf
 doc = pymupdf.open('document.pdf')
 for page in doc:
-    print(page.get_text())
+ print(page.get_text())
 "
 ```
 
@@ -88,17 +88,17 @@ pip install marker-pdf
 
 **Via helper script**:
 ```bash
-python scripts/extract_marker.py document.pdf                # Markdown
-python scripts/extract_marker.py document.pdf --json         # JSON with metadata
-python scripts/extract_marker.py document.pdf --output_dir out/  # Save images
-python scripts/extract_marker.py scanned.pdf                 # Scanned PDF (OCR)
-python scripts/extract_marker.py document.pdf --use_llm      # LLM-boosted accuracy
+python scripts/extract_marker.py document.pdf # Markdown
+python scripts/extract_marker.py document.pdf --json # JSON with metadata
+python scripts/extract_marker.py document.pdf --output_dir out/ # Save images
+python scripts/extract_marker.py scanned.pdf # Scanned PDF (OCR)
+python scripts/extract_marker.py document.pdf --use_llm # LLM-boosted accuracy
 ```
 
 **CLI** (installed with marker-pdf):
 ```bash
 marker_single document.pdf --output_dir ./output
-marker /path/to/folder --workers 4    # Batch
+marker /path/to/folder --workers 4 # Batch
 ```
 
 ---
@@ -126,7 +126,7 @@ import pymupdf
 doc = pymupdf.open("report.pdf")
 new = pymupdf.open()
 for i in range(5):
-    new.insert_pdf(doc, from_page=i, to_page=i)
+ new.insert_pdf(doc, from_page=i, to_page=i)
 new.save("pages_1-5.pdf")
 ```
 
@@ -135,7 +135,7 @@ new.save("pages_1-5.pdf")
 import pymupdf
 result = pymupdf.open()
 for path in ["a.pdf", "b.pdf", "c.pdf"]:
-    result.insert_pdf(pymupdf.open(path))
+ result.insert_pdf(pymupdf.open(path))
 result.save("merged.pdf")
 ```
 
@@ -144,10 +144,10 @@ result.save("merged.pdf")
 import pymupdf
 doc = pymupdf.open("report.pdf")
 for i, page in enumerate(doc):
-    results = page.search_for("revenue")
-    if results:
-        print(f"Page {i+1}: {len(results)} match(es)")
-        print(page.get_text("text"))
+ results = page.search_for("revenue")
+ if results:
+ print(f"Page {i+1}: {len(results)} match(es)")
+ print(page.get_text("text"))
 ```
 
 No extra dependencies needed — pymupdf covers split, merge, search, and text extraction in one package.

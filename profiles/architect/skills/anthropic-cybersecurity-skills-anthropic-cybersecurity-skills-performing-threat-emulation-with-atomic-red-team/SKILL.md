@@ -1,11 +1,11 @@
 ---
 name: performing-threat-emulation-with-atomic-red-team
 description: 'Executes Atomic Red Team tests for MITRE ATT&CK technique validation
-  using the atomic-operator Python framework. Loads test definitions from YAML atomics,
-  runs attack simulations, and validates detection coverage. Use when testing SIEM
-  detection rules, validating EDR coverage, or conducting purple team exercises.
+ using the atomic-operator Python framework. Loads test definitions from YAML atomics,
+ runs attack simulations, and validates detection coverage. Use when testing SIEM
+ detection rules, validating EDR coverage, or conducting purple team exercises.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -73,8 +73,8 @@ from atomic_operator import AtomicOperator
 operator = AtomicOperator()
 # Run a specific technique test
 operator.run(
-    technique="T1059.001",  # PowerShell execution
-    atomics_path="./atomic-red-team/atomics",
+ technique="T1059.001", # PowerShell execution
+ atomics_path="./atomic-red-team/atomics",
 )
 ```
 
@@ -91,8 +91,8 @@ Key workflow:
 # Parse atomic test YAML definitions
 import yaml
 with open("atomics/T1059.001/T1059.001.yaml") as f:
-    tests = yaml.safe_load(f)
+ tests = yaml.safe_load(f)
 for test in tests.get("atomic_tests", []):
-    print(f"Test: {test['name']}")
-    print(f"  Platforms: {test.get('supported_platforms', [])}")
+ print(f"Test: {test['name']}")
+ print(f" Platforms: {test.get('supported_platforms', [])}")
 ```

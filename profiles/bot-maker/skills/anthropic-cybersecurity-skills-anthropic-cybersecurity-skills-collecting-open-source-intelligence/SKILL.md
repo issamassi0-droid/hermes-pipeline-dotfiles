@@ -1,14 +1,14 @@
 ---
 name: collecting-open-source-intelligence
 description: 'Collects and synthesizes open-source intelligence (OSINT) about threat
-  actors, malicious infrastructure, and attack campaigns using publicly available
-  data sources, passive reconnaissance tools, and dark web monitoring. Use when investigating
-  external threat actor infrastructure, performing pre-engagement reconnaissance for
-  authorized red team assessments, or enriching CTI reports with publicly available
-  adversary context. Activates for requests involving Maltego, Shodan, OSINT framework,
-  SpiderFoot, or infrastructure reconnaissance.
+ actors, malicious infrastructure, and attack campaigns using publicly available
+ data sources, passive reconnaissance tools, and dark web monitoring. Use when investigating
+ external threat actor infrastructure, performing pre-engagement reconnaissance for
+ authorized red team assessments, or enriching CTI reports with publicly available
+ adversary context. Activates for requests involving Maltego, Shodan, OSINT framework,
+ SpiderFoot, or infrastructure reconnaissance.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -68,7 +68,7 @@ Establish the intelligence requirement (IR) before collecting. Document:
 ```bash
 # Passive DNS via SecurityTrails API
 curl "https://api.securitytrails.com/v1/domain/evil-domain.com/dns/a" \
-  -H "apikey: YOUR_KEY"
+ -H "apikey: YOUR_KEY"
 
 # WHOIS history via ARIN / RIPE
 whois -h whois.arin.net evil-domain.com
@@ -89,7 +89,7 @@ api = shodan.Shodan("YOUR_SHODAN_API_KEY")
 # Search for specific C2 framework signatures (Cobalt Strike beacon)
 results = api.search('product:"Cobalt Strike" port:443')
 for r in results['matches']:
-    print(r['ip_str'], r['port'], r['org'], r.get('ssl', {}).get('cert', {}).get('subject', ''))
+ print(r['ip_str'], r['port'], r['org'], r.get('ssl', {}).get('cert', {}).get('subject', ''))
 
 # Find infrastructure associated with a known threat actor's ASN
 results = api.search('asn:AS12345 http.title:"Redirector"')
@@ -119,7 +119,7 @@ Use SpiderFoot HX or manual searches for:
 ```bash
 # SpiderFoot CLI for automated OSINT
 python sf.py -s evil-domain.com -m sfp_shodan,sfp_virustotal,sfp_passivetotal \
-  -o TF -R result.json
+ -o TF -R result.json
 ```
 
 ## Key Concepts

@@ -39,20 +39,20 @@ from elevenlabs import ElevenLabs
 client = ElevenLabs()
 
 agent = client.conversational_ai.agents.create(
-    name="My Assistant",
-    enable_versioning=True,
-    conversation_config={
-        "agent": {
-            "first_message": "Hello! How can I help?",
-            "language": "en",
-            "prompt": {
-                "prompt": "You are a helpful assistant. Be concise and friendly.",
-                "llm": "gemini-2.0-flash",
-                "temperature": 0.7
-            }
-        },
-        "tts": {"voice_id": "JBFqnCBsd6RMkjVDRZzb"}
-    }
+ name="My Assistant",
+ enable_versioning=True,
+ conversation_config={
+ "agent": {
+ "first_message": "Hello! How can I help?",
+ "language": "en",
+ "prompt": {
+ "prompt": "You are a helpful assistant. Be concise and friendly.",
+ "llm": "gemini-2.0-flash",
+ "temperature": 0.7
+ }
+ },
+ "tts": {"voice_id": "JBFqnCBsd6RMkjVDRZzb"}
+ }
 )
 ```
 
@@ -63,20 +63,20 @@ import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 const client = new ElevenLabsClient();
 
 const agent = await client.conversationalAi.agents.create({
-  name: "My Assistant",
-  enableVersioning: true,
-  conversationConfig: {
-    agent: {
-      firstMessage: "Hello! How can I help?",
-      language: "en",
-      prompt: {
-        prompt: "You are a helpful assistant.",
-        llm: "gemini-2.0-flash",
-        temperature: 0.7
-      }
-    },
-    tts: { voiceId: "JBFqnCBsd6RMkjVDRZzb" }
-  }
+ name: "My Assistant",
+ enableVersioning: true,
+ conversationConfig: {
+ agent: {
+ firstMessage: "Hello! How can I help?",
+ language: "en",
+ prompt: {
+ prompt: "You are a helpful assistant.",
+ llm: "gemini-2.0-flash",
+ temperature: 0.7
+ }
+ },
+ tts: { voiceId: "JBFqnCBsd6RMkjVDRZzb" }
+ }
 });
 ```
 
@@ -84,8 +84,8 @@ const agent = await client.conversationalAi.agents.create({
 
 ```bash
 curl -X POST "https://api.elevenlabs.io/v1/convai/agents/create?enable_versioning=true" \
-  -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
-  -d '{"name": "My Assistant", "conversation_config": {"agent": {"first_message": "Hello!", "language": "en", "prompt": {"prompt": "You are helpful.", "llm": "gemini-2.0-flash"}}, "tts": {"voice_id": "JBFqnCBsd6RMkjVDRZzb"}}}'
+ -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
+ -d '{"name": "My Assistant", "conversation_config": {"agent": {"first_message": "Hello!", "language": "en", "prompt": {"prompt": "You are helpful.", "llm": "gemini-2.0-flash"}}, "tts": {"voice_id": "JBFqnCBsd6RMkjVDRZzb"}}}'
 ```
 
 ## Starting Conversations
@@ -93,8 +93,8 @@ curl -X POST "https://api.elevenlabs.io/v1/convai/agents/create?enable_versionin
 **Server-side (Python):** Get signed URL for client connection:
 ```python
 signed_url = client.conversational_ai.conversations.get_signed_url(
-    agent_id="your-agent-id",
-    environment="staging",
+ agent_id="your-agent-id",
+ environment="staging",
 )
 ```
 
@@ -103,11 +103,11 @@ signed_url = client.conversational_ai.conversations.get_signed_url(
 import { Conversation } from "@elevenlabs/client";
 
 const conversation = await Conversation.startSession({
-  agentId: "your-agent-id",
-  environment: "staging",
-  onMessage: (msg) => console.log("Agent:", msg.message),
-  onUserTranscript: (t) => console.log("User:", t.message),
-  onError: (e) => console.error(e)
+ agentId: "your-agent-id",
+ environment: "staging",
+ onMessage: (msg) => console.log("Agent:", msg.message),
+ onUserTranscript: (t) => console.log("User:", t.message),
+ onError: (e) => console.error(e)
 });
 ```
 
@@ -146,31 +146,31 @@ Workspace environment variables can resolve per-environment server tool URLs, he
 
 ```python
 "prompt": {
-    "prompt": "You are a helpful assistant that can check the weather.",
-    "llm": "gemini-2.0-flash",
-    "tools": [
-        # Webhook: server-side API call
-        {"type": "webhook", "name": "get_weather", "description": "Get weather",
-         "api_schema": {"url": "https://api.example.com/weather", "method": "POST",
-             "request_body_schema": {"type": "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
-        # Client: runs in the browser
-        {"type": "client", "name": "show_product", "description": "Display a product",
-         "parameters": {"type": "object", "properties": {"productId": {"type": "string"}}, "required": ["productId"]}}
-    ],
-    "built_in_tools": {
-        "end_call": {},
-        "transfer_to_number": {"transfers": [{"transfer_destination": {"type": "phone", "phone_number": "+1234567890"}, "condition": "User asks for human support"}]}
-    }
+ "prompt": "You are a helpful assistant that can check the weather.",
+ "llm": "gemini-2.0-flash",
+ "tools": [
+ # Webhook: server-side API call
+ {"type": "webhook", "name": "get_weather", "description": "Get weather",
+ "api_schema": {"url": "https://api.example.com/weather", "method": "POST",
+ "request_body_schema": {"type": "object", "properties": {"location": {"type": "string"}}, "required": ["location"]}}},
+ # Client: runs in the browser
+ {"type": "client", "name": "show_product", "description": "Display a product",
+ "parameters": {"type": "object", "properties": {"productId": {"type": "string"}}, "required": ["productId"]}}
+ ],
+ "built_in_tools": {
+ "end_call": {},
+ "transfer_to_number": {"transfers": [{"transfer_destination": {"type": "phone", "phone_number": "+1234567890"}, "condition": "User asks for human support"}]}
+ }
 }
 ```
 
 **Client tools** run in browser:
 ```javascript
 clientTools: {
-  show_product: async ({ productId }) => {
-    document.getElementById("product").src = `/products/${productId}`;
-    return { success: true };
-  }
+ show_product: async ({ productId }) => {
+ document.getElementById("product").src = `/products/${productId}`;
+ return { success: true };
+ }
 }
 ```
 
@@ -195,10 +195,10 @@ Make outbound phone calls using your agent via Twilio integration:
 
 ```python
 response = client.conversational_ai.twilio.outbound_call(
-    agent_id="your-agent-id",
-    agent_phone_number_id="your-phone-number-id",
-    to_number="+1234567890",
-    call_recording_enabled=True
+ agent_id="your-agent-id",
+ agent_phone_number_id="your-phone-number-id",
+ to_number="+1234567890",
+ call_recording_enabled=True
 )
 print(f"Call initiated: {response.conversation_id}")
 ```
@@ -207,10 +207,10 @@ print(f"Call initiated: {response.conversation_id}")
 
 ```javascript
 const response = await client.conversationalAi.twilio.outboundCall({
-  agentId: "your-agent-id",
-  agentPhoneNumberId: "your-phone-number-id",
-  toNumber: "+1234567890",
-  callRecordingEnabled: true,
+ agentId: "your-agent-id",
+ agentPhoneNumberId: "your-phone-number-id",
+ toNumber: "+1234567890",
+ callRecordingEnabled: true,
 });
 ```
 
@@ -218,8 +218,8 @@ const response = await client.conversationalAi.twilio.outboundCall({
 
 ```bash
 curl -X POST "https://api.elevenlabs.io/v1/convai/twilio/outbound-call" \
-  -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
-  -d '{"agent_id": "your-agent-id", "agent_phone_number_id": "your-phone-number-id", "to_number": "+1234567890", "call_recording_enabled": true}'
+ -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
+ -d '{"agent_id": "your-agent-id", "agent_phone_number_id": "your-phone-number-id", "to_number": "+1234567890", "call_recording_enabled": true}'
 ```
 
 See [Outbound Calls Reference](references/outbound-calls.md) for configuration overrides and dynamic variables.
@@ -234,12 +234,12 @@ elevenlabs agents list
 elevenlabs agents status
 
 # Import agents from platform to local config
-elevenlabs agents pull                      # Import all agents
-elevenlabs agents pull --agent <agent-id>   # Import specific agent
+elevenlabs agents pull # Import all agents
+elevenlabs agents pull --agent <agent-id> # Import specific agent
 
 # Push local changes to platform
-elevenlabs agents push              # Upload configurations
-elevenlabs agents push --dry-run    # Preview changes first
+elevenlabs agents push # Upload configurations
+elevenlabs agents push --dry-run # Preview changes first
 
 # Add tools
 elevenlabs tools add-webhook "Weather API"
@@ -252,12 +252,12 @@ The CLI creates a project structure for managing agents:
 
 ```
 your_project/
-├── agents.json       # Agent definitions
-├── tools.json        # Tool configurations
-├── tests.json        # Test configurations
-├── agent_configs/    # Individual agent configs
-├── tool_configs/     # Individual tool configs
-└── test_configs/     # Individual test configs
+├── agents.json # Agent definitions
+├── tools.json # Tool configurations
+├── tests.json # Test configurations
+├── agent_configs/ # Individual agent configs
+├── tool_configs/ # Individual tool configs
+└── test_configs/ # Individual test configs
 ```
 
 ### SDK Examples
@@ -272,9 +272,9 @@ agent = client.conversational_ai.agents.get(agent_id="your-agent-id")
 # Update (partial - only include fields to change)
 client.conversational_ai.agents.update(agent_id="your-agent-id", name="New Name")
 client.conversational_ai.agents.update(agent_id="your-agent-id",
-    conversation_config={
-        "agent": {"prompt": {"prompt": "New instructions", "llm": "claude-sonnet-4"}}
-    })
+ conversation_config={
+ "agent": {"prompt": {"prompt": "New instructions", "llm": "claude-sonnet-4"}}
+ })
 
 # Delete
 client.conversational_ai.agents.delete(agent_id="your-agent-id")
@@ -286,9 +286,9 @@ See [Agent Configuration](references/agent-configuration.md) for all configurati
 
 ```python
 try:
-    agent = client.conversational_ai.agents.create(...)
+ agent = client.conversational_ai.agents.create(...)
 except Exception as e:
-    print(f"API error: {e}")
+ print(f"API error: {e}")
 ```
 
 Common errors: **401** (invalid key), **404** (not found), **422** (invalid config), **429** (rate limit)

@@ -3,11 +3,11 @@ title: "The 2026 AI Coding Assistant Landscape: Why Senior Developers Are Orches
 target_audience: "Senior software developers, engineering leads, and technical decision-makers evaluating AI tooling"
 word_count: 3200
 keywords:
-  - "ai coding assistants": 8
-  - "senior developers": 10
-  - "orchestrator": 6
-  - "governance": 6
-  - "multi-agent": 5
+ - "ai coding assistants": 8
+ - "senior developers": 10
+ - "orchestrator": 6
+ - "governance": 6
+ - "multi-agent": 5
 tone: "authoritative, evidence-dense, contrarian where data supports"
 source_summary: "87% Tier 1-2 sources (14 Tier 1, 12 Tier 2). Primary: JetBrains 2026 survey (10,000+ devs), BCG/Bain 2025 reports, Opsera 2026 benchmark (250k devs), SonarSource 2026, Stack Overflow 2025, Cloud Security Alliance 2026, Anthropic official docs, ICSE-SEIP 2026 academic paper."
 ---
@@ -151,9 +151,9 @@ The feature checklists converge. The workflow fit diverges. Pick the tool that c
 - Code blocks: None required (no technical tutorials in this piece)
 - Tone: Authoritative, evidence-dense, contrarian where data supports — maintained throughout
 - QA flags addressed:
-  - C4 vs C8 presented as conditional, not contradictory ✓
-  - Testing/QA <5% highlighted as blindspot in sections 3.2 and 6.2 ✓
-  - C7 flagged as tier 2 in section 2.1 ✓
+ - C4 vs C8 presented as conditional, not contradictory ✓
+ - Testing/QA <5% highlighted as blindspot in sections 3.2 and 6.2 ✓
+ - C7 flagged as tier 2 in section 2.1 ✓
 - Gaps carried forward noted in frontmatter source_summary
 
 ---

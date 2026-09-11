@@ -1,15 +1,15 @@
 ---
 name: seedance-2-0
 description: |
-  Generate cinematic clips with ByteDance Seedance 2.0 — the preferred premium video model in OpenMontage when a paid gateway is configured. Use when: (1) producing trailers, teasers, hype edits, or premium cinematic clips, (2) needing native synchronized audio (speech, SFX, ambience) in a single pass, (3) needing multi-shot cuts inside one generation, (4) needing director-level camera control, (5) needing lip-sync from quoted dialogue in the prompt, (6) needing reference-conditioned generation with up to 9 images + 3 video clips + 3 audio clips, (7) wanting consistent character identity across shots. Accessible via fal.ai (`seedance_video` tool), HeyGen (Video Agent / Avatar Shots), Replicate, Runway (Enterprise, non-US), Freepik, BytePlus ModelArk, Higgsfield, Pollo, and other aggregators.
+ Generate cinematic clips with ByteDance Seedance 2.0 — the preferred premium video model in OpenMontage when a paid gateway is configured. Use when: (1) producing trailers, teasers, hype edits, or premium cinematic clips, (2) needing native synchronized audio (speech, SFX, ambience) in a single pass, (3) needing multi-shot cuts inside one generation, (4) needing director-level camera control, (5) needing lip-sync from quoted dialogue in the prompt, (6) needing reference-conditioned generation with up to 9 images + 3 video clips + 3 audio clips, (7) wanting consistent character identity across shots. Accessible via fal.ai (`seedance_video` tool), HeyGen (Video Agent / Avatar Shots), Replicate, Runway (Enterprise, non-US), Freepik, BytePlus ModelArk, Higgsfield, Pollo, and other aggregators.
 allowed-tools: Bash, Read, Write
 metadata:
-  openclaw:
-    requires:
-      env_any:
-        - FAL_KEY
-        - HEYGEN_API_KEY
-        - REPLICATE_API_TOKEN
+ openclaw:
+ requires:
+ env_any:
+ - FAL_KEY
+ - HEYGEN_API_KEY
+ - REPLICATE_API_TOKEN
 ---
 
 # Seedance 2.0 (ByteDance)
@@ -50,7 +50,7 @@ Switch away only for a specific reason: strict budget (use the `fast` variant or
 ```
 bytedance/seedance-2.0/text-to-video
 bytedance/seedance-2.0/image-to-video
-bytedance/seedance-2.0/reference-to-video        # 9 img + 3 vid + 3 audio
+bytedance/seedance-2.0/reference-to-video # 9 img + 3 vid + 3 audio
 bytedance/seedance-2.0/fast/text-to-video
 bytedance/seedance-2.0/fast/image-to-video
 bytedance/seedance-2.0/fast/reference-to-video
@@ -68,13 +68,13 @@ from tools.tool_registry import registry
 registry.ensure_discovered()
 selector = registry.get("video_selector")
 result = selector.execute({
-    "prompt": PROMPT,
-    "preferred_provider": "seedance",
-    "operation": "text_to_video",       # or image_to_video / reference_to_video
-    "aspect_ratio": "21:9",             # 21:9 / 16:9 / 9:16 / 4:3 / 1:1 / 3:4
-    "duration": "10",                   # auto / 4..15
-    "resolution": "720p",               # 480p / 720p
-    "output_path": "projects/<proj>/assets/video/clip_01.mp4",
+ "prompt": PROMPT,
+ "preferred_provider": "seedance",
+ "operation": "text_to_video", # or image_to_video / reference_to_video
+ "aspect_ratio": "21:9", # 21:9 / 16:9 / 9:16 / 4:3 / 1:1 / 3:4
+ "duration": "10", # auto / 4..15
+ "resolution": "720p", # 480p / 720p
+ "output_path": "projects/<proj>/assets/video/clip_01.mp4",
 })
 ```
 
@@ -83,15 +83,15 @@ Direct call to the provider tool (only when you must bypass the selector):
 ```python
 seedance = registry.get("seedance_video")
 seedance.execute({
-    "prompt": PROMPT,
-    "model_variant": "standard",   # "standard" or "fast"
-    "operation": "text_to_video",
-    "aspect_ratio": "21:9",
-    "duration": "10",
-    "resolution": "720p",
-    "generate_audio": True,
-    "seed": 12345,                 # optional, for reproducible variations
-    "output_path": "...",
+ "prompt": PROMPT,
+ "model_variant": "standard", # "standard" or "fast"
+ "operation": "text_to_video",
+ "aspect_ratio": "21:9",
+ "duration": "10",
+ "resolution": "720p",
+ "generate_audio": True,
+ "seed": 12345, # optional, for reproducible variations
+ "output_path": "...",
 })
 ```
 
@@ -121,7 +121,7 @@ One continuous shot, POV [setting] perspective, no cuts, no zoom, natural head m
 1. **Environment/location** — sensory detail (wet asphalt, sodium lamps, neon bleed, rain particulates, volumetric haze)
 2. **Character block** — with reference tags and identity-lock language (see Reference-to-video below)
 3. **Enemy/secondary character block** — same detail level
-4. **Beat-by-beat choreography** with TEMPORAL MARKERS: `0–3s: …  3–6s: …  6–10s: …`
+4. **Beat-by-beat choreography** with TEMPORAL MARKERS: `0–3s: … 3–6s: … 6–10s: …`
 5. **VFX inline in brackets:** `[VFX: branching white-blue electric arcs pulsing along forearms, sparks jumping between fingers]`
 6. **Slow-motion markers:** write `RAMPS TO SLOW MOTION` before the impact beat, `SNAPS BACK TO REAL TIME` on resume
 7. **Sound design block:** either `no music, only raw SFX` or explicit SFX sequence. Music language stays textural.

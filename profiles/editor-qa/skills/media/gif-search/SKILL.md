@@ -6,11 +6,11 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 prerequisites:
-  env_vars: [TENOR_API_KEY]
-  commands: [curl, jq]
+ env_vars: [TENOR_API_KEY]
+ commands: [curl, jq]
 metadata:
-  hermes:
-    tags: [GIF, Media, Search, Tenor, API]
+ hermes:
+ tags: [GIF, Media, Search, Tenor, API]
 ---
 
 # GIF Search (Tenor API)

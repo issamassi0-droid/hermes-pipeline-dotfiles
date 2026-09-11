@@ -1,11 +1,11 @@
 ---
 name: analyzing-dns-logs-for-exfiltration
 description: 'Analyzes DNS query logs to detect data exfiltration via DNS tunneling,
-  DGA domain communication, and covert C2 channels using entropy analysis, query volume
-  anomalies, and subdomain length detection in SIEM platforms. Use when SOC teams
-  need to identify DNS-based threats that bypass traditional network security controls.
+ DGA domain communication, and covert C2 channels using entropy analysis, query volume
+ anomalies, and subdomain length detection in SIEM platforms. Use when SOC teams
+ need to identify DNS-based threats that bypass traditional network security controls.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -70,10 +70,10 @@ index=dns sourcetype="stream:dns" query_type IN ("A", "AAAA", "TXT", "CNAME", "M
 | eval registered_domain = mvindex(domain_parts, -2).".".tld
 | where subdomain_len > 50
 | stats count AS queries, dc(query) AS unique_queries,
-        avg(subdomain_len) AS avg_subdomain_len,
-        max(subdomain_len) AS max_subdomain_len,
-        values(src_ip) AS sources
-  by registered_domain
+ avg(subdomain_len) AS avg_subdomain_len,
+ max(subdomain_len) AS max_subdomain_len,
+ values(src_ip) AS sources
+ by registered_domain
 | where queries > 20
 | sort - avg_subdomain_len
 | table registered_domain, queries, unique_queries, avg_subdomain_len, max_subdomain_len, sources
@@ -96,7 +96,7 @@ index=dns sourcetype="stream:dns"
 | eval digit_ratio = if(char_count > 0, digits / char_count, 0)
 | where sld_len > 12 AND (vowel_ratio < 0.2 OR digit_ratio > 0.3)
 | stats count AS queries, dc(query) AS unique_domains, values(src_ip) AS sources
-  by query
+ by query
 | where unique_domains > 10
 | sort - queries
 ```
@@ -108,25 +108,25 @@ import math
 from collections import Counter
 
 def shannon_entropy(text):
-    """Calculate Shannon entropy of a string"""
-    if not text:
-        return 0
-    counter = Counter(text.lower())
-    length = len(text)
-    entropy = -sum(
-        (count / length) * math.log2(count / length)
-        for count in counter.values()
-    )
-    return round(entropy, 4)
+ """Calculate Shannon entropy of a string"""
+ if not text:
+ return 0
+ counter = Counter(text.lower())
+ length = len(text)
+ entropy = -sum(
+ (count / length) * math.log2(count / length)
+ for count in counter.values()
+ )
+ return round(entropy, 4)
 
 # Test with examples
-normal_domain = "google"           # Low entropy
-dga_domain = "x8kj2m9p4qw7n"      # High entropy
-tunnel_subdomain = "aGVsbG8gd29ybGQ.evil.com"  # Base64 encoded data
+normal_domain = "google" # Low entropy
+dga_domain = "x8kj2m9p4qw7n" # High entropy
+tunnel_subdomain = "aGVsbG8gd29ybGQ.evil.com" # Base64 encoded data
 
-print(f"Normal: {shannon_entropy(normal_domain)}")     # ~2.25
-print(f"DGA:    {shannon_entropy(dga_domain)}")         # ~3.70
-print(f"Tunnel: {shannon_entropy(tunnel_subdomain)}")   # ~3.50
+print(f"Normal: {shannon_entropy(normal_domain)}") # ~2.25
+print(f"DGA: {shannon_entropy(dga_domain)}") # ~3.70
+print(f"Tunnel: {shannon_entropy(tunnel_subdomain)}") # ~3.50
 
 # Threshold: entropy > 3.5 for subdomain = likely tunneling/DGA
 ```
@@ -168,13 +168,13 @@ index=dns sourcetype="stream:dns" earliest=-24h
 ```spl
 index=dns sourcetype="stream:dns" query_type="TXT"
 | stats count AS txt_queries, dc(query) AS unique_txt_domains,
-        values(query) AS domains by src_ip
+ values(query) AS domains by src_ip
 | where txt_queries > 100
 | eval suspicion = case(
-    txt_queries > 1000, "CRITICAL — Likely DNS tunneling",
-    txt_queries > 500, "HIGH — Possible DNS tunneling",
-    txt_queries > 100, "MEDIUM — Unusual TXT volume"
-  )
+ txt_queries > 1000, "CRITICAL — Likely DNS tunneling",
+ txt_queries > 500, "HIGH — Possible DNS tunneling",
+ txt_queries > 100, "MEDIUM — Unusual TXT volume"
+ )
 | sort - txt_queries
 | table src_ip, txt_queries, unique_txt_domains, suspicion
 ```
@@ -187,14 +187,14 @@ Search for signatures of common DNS tunneling tools:
 index=dns sourcetype="stream:dns"
 | eval query_lower = lower(query)
 | where (
-    match(query_lower, "\.dnscat\.") OR
-    match(query_lower, "\.dns2tcp\.") OR
-    match(query_lower, "\.iodine\.") OR
-    match(query_lower, "\.dnscapy\.") OR
-    match(query_lower, "\.cobalt.*\.beacon") OR
-    query_type="NULL" OR
-    (query_type="TXT" AND len(query) > 100)
-  )
+ match(query_lower, "\.dnscat\.") OR
+ match(query_lower, "\.dns2tcp\.") OR
+ match(query_lower, "\.iodine\.") OR
+ match(query_lower, "\.dnscapy\.") OR
+ match(query_lower, "\.cobalt.*\.beacon") OR
+ query_type="NULL" OR
+ (query_type="TXT" AND len(query) > 100)
+ )
 | stats count by src_ip, query, query_type
 | sort - count
 ```
@@ -204,7 +204,7 @@ index=dns sourcetype="stream:dns"
 ```spl
 index=proxy OR index=firewall
 dest IN ("1.1.1.1", "1.0.0.1", "8.8.8.8", "8.8.4.4",
-         "9.9.9.9", "149.112.112.112", "208.67.222.222")
+ "9.9.9.9", "149.112.112.112", "208.67.222.222")
 dest_port=443
 | stats sum(bytes_out) AS total_bytes, count AS connections by src_ip, dest
 | where connections > 100 OR total_bytes > 10485760
@@ -219,12 +219,12 @@ Cross-reference suspicious DNS with process data:
 ```spl
 index=dns src_ip="192.168.1.105" query="*.evil-tunnel.com" earliest=-24h
 | stats count AS dns_queries, earliest(_time) AS first_query, latest(_time) AS last_query
-  by src_ip, query
+ by src_ip, query
 | join src_ip [
-    search index=sysmon EventCode=3 DestinationPort=53 Computer="WORKSTATION-042"
-    | stats count AS connections, values(Image) AS processes by SourceIp
-    | rename SourceIp AS src_ip
-  ]
+ search index=sysmon EventCode=3 DestinationPort=53 Computer="WORKSTATION-042"
+ | stats count AS connections, values(Image) AS processes by SourceIp
+ | rename SourceIp AS src_ip
+ ]
 | table src_ip, query, dns_queries, first_query, last_query, processes
 ```
 
@@ -237,9 +237,9 @@ index=dns src_ip="192.168.1.105" query="*.evil-tunnel.com" earliest=-24h
 | eval domain_parts = split(query, ".")
 | eval encoded_data = mvindex(domain_parts, 0)
 | eval encoded_bytes = len(encoded_data)
-| eval decoded_bytes = encoded_bytes * 0.75  -- Base64 decoding factor
+| eval decoded_bytes = encoded_bytes * 0.75 -- Base64 decoding factor
 | stats sum(decoded_bytes) AS total_bytes_estimated, count AS total_queries,
-        earliest(_time) AS first_seen, latest(_time) AS last_seen
+ earliest(_time) AS first_seen, latest(_time) AS last_seen
 | eval estimated_kb = round(total_bytes_estimated / 1024, 1)
 | eval estimated_mb = round(total_bytes_estimated / 1048576, 2)
 | eval duration_hours = round((last_seen - first_seen) / 3600, 1)
@@ -279,31 +279,31 @@ index=dns src_ip="192.168.1.105" query="*.evil-tunnel.com" earliest=-24h
 ```
 DNS EXFILTRATION ANALYSIS — WORKSTATION-042
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Period:       2024-03-14 to 2024-03-15
-Source:       192.168.1.105 (WORKSTATION-042, Finance Dept)
+Period: 2024-03-14 to 2024-03-15
+Source: 192.168.1.105 (WORKSTATION-042, Finance Dept)
 
 Findings:
-  [CRITICAL] DNS tunneling detected to evil-tunnel[.]com
-    Query Volume:       12,847 queries in 18 hours
-    Avg Subdomain Len:  63 characters (normal: <20)
-    Avg Entropy:        3.82 (threshold: 3.5)
-    Query Types:        TXT (89%), A (11%)
-    Estimated Data:     ~4.7 MB exfiltrated via DNS
-    Rate:               0.58 kbps (slow drip pattern)
+ [CRITICAL] DNS tunneling detected to evil-tunnel[.]com
+ Query Volume: 12,847 queries in 18 hours
+ Avg Subdomain Len: 63 characters (normal: <20)
+ Avg Entropy: 3.82 (threshold: 3.5)
+ Query Types: TXT (89%), A (11%)
+ Estimated Data: ~4.7 MB exfiltrated via DNS
+ Rate: 0.58 kbps (slow drip pattern)
 
-  [HIGH] DGA-like domains resolved
-    Unique DGA Domains: 247 domains resolved
-    Pattern:            15-char random alphanumeric.xyz TLD
-    Entropy Range:      3.6 - 4.1
+ [HIGH] DGA-like domains resolved
+ Unique DGA Domains: 247 domains resolved
+ Pattern: 15-char random alphanumeric.xyz TLD
+ Entropy Range: 3.6 - 4.1
 
 Process Attribution:
-  Process:   svchost_update.exe (masquerading — not legitimate svchost)
-  PID:       4892
-  Parent:    explorer.exe
-  Hash:      SHA256: a1b2c3d4... (VT: 34/72 malicious — Cobalt Strike beacon)
+ Process: svchost_update.exe (masquerading — not legitimate svchost)
+ PID: 4892
+ Parent: explorer.exe
+ Hash: SHA256: a1b2c3d4... (VT: 34/72 malicious — Cobalt Strike beacon)
 
 Containment:
-  [DONE] Host isolated via EDR
-  [DONE] Domain evil-tunnel[.]com added to DNS sinkhole
-  [DONE] Incident IR-2024-0448 created
+ [DONE] Host isolated via EDR
+ [DONE] Domain evil-tunnel[.]com added to DNS sinkhole
+ [DONE] Incident IR-2024-0448 created
 ```

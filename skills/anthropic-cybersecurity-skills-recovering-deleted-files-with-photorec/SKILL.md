@@ -1,9 +1,9 @@
 ---
 name: recovering-deleted-files-with-photorec
 description: Recovers deleted files from disk images and storage media using PhotoRec's
-  file signature-based carving engine, which works regardless of file system damage
-  or corruption. Use when recovering deleted or lost files from a forensic disk
-  image, damaged storage device, or corrupted file system during evidence recovery.
+ file signature-based carving engine, which works regardless of file system damage
+ or corruption. Use when recovering deleted or lost files from a forensic disk
+ image, damaged storage device, or corrupted file system during evidence recovery.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -102,38 +102,38 @@ sudo photorec /dev/sdb
 ```bash
 # Non-interactive mode with specific file types
 photorec /d /cases/case-2024-001/recovered/documents/ \
-   /cmd /cases/case-2024-001/images/evidence.dd \
-   partition_table,options,mode,fileopt,search
+ /cmd /cases/case-2024-001/images/evidence.dd \
+ partition_table,options,mode,fileopt,search
 
 # Recover only specific file types using photorec command mode
 photorec /d /cases/case-2024-001/recovered/documents/ \
-   /cmd /cases/case-2024-001/images/evidence.dd \
-   options,keep_corrupted_file,enable \
-   fileopt,everything,disable \
-   fileopt,doc,enable \
-   fileopt,docx,enable \
-   fileopt,pdf,enable \
-   fileopt,xlsx,enable \
-   search
+ /cmd /cases/case-2024-001/images/evidence.dd \
+ options,keep_corrupted_file,enable \
+ fileopt,everything,disable \
+ fileopt,doc,enable \
+ fileopt,docx,enable \
+ fileopt,pdf,enable \
+ fileopt,xlsx,enable \
+ search
 
 # Recover only image files
 photorec /d /cases/case-2024-001/recovered/images/ \
-   /cmd /cases/case-2024-001/images/evidence.dd \
-   fileopt,everything,disable \
-   fileopt,jpg,enable \
-   fileopt,png,enable \
-   fileopt,gif,enable \
-   fileopt,bmp,enable \
-   fileopt,tif,enable \
-   search
+ /cmd /cases/case-2024-001/images/evidence.dd \
+ fileopt,everything,disable \
+ fileopt,jpg,enable \
+ fileopt,png,enable \
+ fileopt,gif,enable \
+ fileopt,bmp,enable \
+ fileopt,tif,enable \
+ search
 
 # Recover database files
 photorec /d /cases/case-2024-001/recovered/databases/ \
-   /cmd /cases/case-2024-001/images/evidence.dd \
-   fileopt,everything,disable \
-   fileopt,sqlite,enable \
-   fileopt,dbf,enable \
-   search
+ /cmd /cases/case-2024-001/images/evidence.dd \
+ fileopt,everything,disable \
+ fileopt,sqlite,enable \
+ fileopt,dbf,enable \
+ search
 ```
 
 ### Step 4: Organize and Catalog Recovered Files
@@ -144,22 +144,22 @@ ls /cases/case-2024-001/recovered/all/
 
 # Count recovered files by type
 find /cases/case-2024-001/recovered/all/ -type f | \
-   sed 's/.*\.//' | sort | uniq -c | sort -rn > /cases/case-2024-001/recovered/file_type_summary.txt
+ sed 's/.*\.//' | sort | uniq -c | sort -rn > /cases/case-2024-001/recovered/file_type_summary.txt
 
 # Sort recovered files into directories by extension
 cd /cases/case-2024-001/recovered/all/
 for ext in jpg png pdf docx xlsx pptx zip sqlite; do
-   mkdir -p /cases/case-2024-001/recovered/sorted/$ext
-   find . -name "*.$ext" -exec cp {} /cases/case-2024-001/recovered/sorted/$ext/ \;
+ mkdir -p /cases/case-2024-001/recovered/sorted/$ext
+ find . -name "*.$ext" -exec cp {} /cases/case-2024-001/recovered/sorted/$ext/ \;
 done
 
 # Generate SHA-256 hashes for all recovered files
 find /cases/case-2024-001/recovered/all/ -type f -exec sha256sum {} \; \
-   > /cases/case-2024-001/recovered/recovered_hashes.txt
+ > /cases/case-2024-001/recovered/recovered_hashes.txt
 
 # Generate file listing with metadata
 find /cases/case-2024-001/recovered/all/ -type f \
-   -printf "%f\t%s\t%T+\t%p\n" | sort > /cases/case-2024-001/recovered/file_listing.txt
+ -printf "%f\t%s\t%T+\t%p\n" | sort > /cases/case-2024-001/recovered/file_listing.txt
 ```
 
 ### Step 5: Validate and Filter Recovered Files
@@ -167,26 +167,26 @@ find /cases/case-2024-001/recovered/all/ -type f \
 ```bash
 # Verify file integrity using file signatures
 find /cases/case-2024-001/recovered/all/ -type f -exec file {} \; \
-   > /cases/case-2024-001/recovered/file_signatures.txt
+ > /cases/case-2024-001/recovered/file_signatures.txt
 
 # Find files with mismatched extension/signature
 while IFS= read -r line; do
-   filepath=$(echo "$line" | cut -d: -f1)
-   filetype=$(echo "$line" | cut -d: -f2-)
-   ext="${filepath##*.}"
-   if [[ "$ext" == "jpg" ]] && ! echo "$filetype" | grep -qi "JPEG"; then
-      echo "MISMATCH: $filepath -> $filetype"
-   fi
+ filepath=$(echo "$line" | cut -d: -f1)
+ filetype=$(echo "$line" | cut -d: -f2-)
+ ext="${filepath##*.}"
+ if [[ "$ext" == "jpg" ]] && ! echo "$filetype" | grep -qi "JPEG"; then
+ echo "MISMATCH: $filepath -> $filetype"
+ fi
 done < /cases/case-2024-001/recovered/file_signatures.txt > /cases/case-2024-001/recovered/mismatches.txt
 
 # Filter out known-good files using NSRL hash comparison
 hashdeep -r -c sha256 /cases/case-2024-001/recovered/all/ | \
-   grep -vFf /opt/nsrl/nsrl_sha256.txt > /cases/case-2024-001/recovered/unknown_files.txt
+ grep -vFf /opt/nsrl/nsrl_sha256.txt > /cases/case-2024-001/recovered/unknown_files.txt
 
 # Remove zero-byte and corrupted files
 find /cases/case-2024-001/recovered/all/ -type f -empty -delete
 find /cases/case-2024-001/recovered/all/ -name "*.jpg" -exec jpeginfo -c {} \; 2>&1 | \
-   grep "ERROR" > /cases/case-2024-001/recovered/corrupted_images.txt
+ grep "ERROR" > /cases/case-2024-001/recovered/corrupted_images.txt
 ```
 
 ## Key Concepts
@@ -233,20 +233,20 @@ When file system metadata is destroyed, PhotoRec bypasses the file system entire
 
 ```
 PhotoRec Recovery Summary:
-  Source Image:     evidence.dd (500 GB)
-  Partition:        NTFS (Partition 2)
-  Scan Mode:        Free space only
+ Source Image: evidence.dd (500 GB)
+ Partition: NTFS (Partition 2)
+ Scan Mode: Free space only
 
-  Files Recovered:  4,523
-    Documents:      234 (doc: 45, docx: 89, pdf: 67, xlsx: 33)
-    Images:         2,145 (jpg: 1,890, png: 198, gif: 57)
-    Videos:         34 (mp4: 22, avi: 12)
-    Archives:       67 (zip: 45, rar: 22)
-    Databases:      12 (sqlite: 8, dbf: 4)
-    Other:          2,031
+ Files Recovered: 4,523
+ Documents: 234 (doc: 45, docx: 89, pdf: 67, xlsx: 33)
+ Images: 2,145 (jpg: 1,890, png: 198, gif: 57)
+ Videos: 34 (mp4: 22, avi: 12)
+ Archives: 67 (zip: 45, rar: 22)
+ Databases: 12 (sqlite: 8, dbf: 4)
+ Other: 2,031
 
-  Data Recovered:   12.4 GB
-  Corrupted Files:  312 (flagged for review)
-  Output Directory: /cases/case-2024-001/recovered/all/
-  Hash Manifest:    /cases/case-2024-001/recovered/recovered_hashes.txt
+ Data Recovered: 12.4 GB
+ Corrupted Files: 312 (flagged for review)
+ Output Directory: /cases/case-2024-001/recovered/all/
+ Hash Manifest: /cases/case-2024-001/recovered/recovered_hashes.txt
 ```

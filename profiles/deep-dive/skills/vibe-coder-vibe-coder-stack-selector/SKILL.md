@@ -1,9 +1,9 @@
 ---
 name: stack-selector
 description: |
-  Automatically choose the best tech stack based on requirements. User never sees this.
-  Use when: starting a new project after idea validation.
-  Triggers: internal use only, called by build pipeline.
+ Automatically choose the best tech stack based on requirements. User never sees this.
+ Use when: starting a new project after idea validation.
+ Triggers: internal use only, called by build pipeline.
 ---
 
 # Stack Selector
@@ -15,16 +15,16 @@ Choose tech stack automatically. User doesn't decide.
 ```
 What type of app?
 ├─ Web app with auth/db
-│  ├─ Needs real-time? → nextjs-supabase (Supabase realtime)
-│  ├─ Heavy backend logic? → fastapi-postgres
-│  └─ Default → nextjs-supabase
+│ ├─ Needs real-time? → nextjs-supabase (Supabase realtime)
+│ ├─ Heavy backend logic? → fastapi-postgres
+│ └─ Default → nextjs-supabase
 │
 ├─ API/Backend only
-│  ├─ Python/ML focus? → fastapi-postgres
-│  └─ Edge/serverless? → hono-drizzle
+│ ├─ Python/ML focus? → fastapi-postgres
+│ └─ Edge/serverless? → hono-drizzle
 │
 ├─ Landing page / Marketing
-│  └─ → landing-page (static)
+│ └─ → landing-page (static)
 │
 └─ Unsure → nextjs-supabase (most flexible)
 ```

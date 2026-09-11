@@ -1,13 +1,13 @@
 ---
 name: implementing-image-provenance-verification-with-cosign
 description: >-
-  Signs and verifies container image provenance with Sigstore Cosign, covering key-based and
-  keyless OIDC signing (Fulcio, Rekor transparency log), SLSA attestations, and enforcing
-  signature verification through Kubernetes admission control. Use when signing images for
-  supply chain security, setting up keyless OIDC signing, attaching attestations, or enforcing
-  a verified-images-only policy at admission. Keywords: Cosign, Sigstore, Fulcio, Rekor,
-  keyless, attestation, cosign verify, admission policy. Do not use for in-toto layout-based
-  pipeline attestation - use implementing-supply-chain-security-with-in-toto.
+ Signs and verifies container image provenance with Sigstore Cosign, covering key-based and
+ keyless OIDC signing (Fulcio, Rekor transparency log), SLSA attestations, and enforcing
+ signature verification through Kubernetes admission control. Use when signing images for
+ supply chain security, setting up keyless OIDC signing, attaching attestations, or enforcing
+ a verified-images-only policy at admission. Keywords: Cosign, Sigstore, Fulcio, Rekor,
+ keyless, attestation, cosign verify, admission policy. Do not use for in-toto layout-based
+ pipeline attestation - use implementing-supply-chain-security-with-in-toto.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -95,9 +95,9 @@ cosign sign --key cosign.key ghcr.io/myorg/myapp:v1.0.0
 
 # Sign with annotations
 cosign sign --key cosign.key \
-  -a "build-id=12345" \
-  -a "git-sha=$(git rev-parse HEAD)" \
-  ghcr.io/myorg/myapp:v1.0.0
+ -a "build-id=12345" \
+ -a "git-sha=$(git rev-parse HEAD)" \
+ ghcr.io/myorg/myapp:v1.0.0
 ```
 
 ### Verify Image with Key
@@ -108,8 +108,8 @@ cosign verify --key cosign.pub ghcr.io/myorg/myapp:v1.0.0
 
 # Verify with annotation check
 cosign verify --key cosign.pub \
-  -a "build-id=12345" \
-  ghcr.io/myorg/myapp:v1.0.0
+ -a "build-id=12345" \
+ ghcr.io/myorg/myapp:v1.0.0
 ```
 
 ## Keyless Signing (OIDC)
@@ -128,12 +128,12 @@ cosign sign ghcr.io/myorg/myapp:v1.0.0
 ```bash
 # GitHub Actions (uses OIDC token automatically)
 cosign sign ghcr.io/myorg/myapp:v1.0.0 \
-  --yes
+ --yes
 
 # With explicit identity token
 cosign sign ghcr.io/myorg/myapp:v1.0.0 \
-  --identity-token=$(cat /var/run/sigstore/cosign/oidc-token) \
-  --yes
+ --identity-token=$(cat /var/run/sigstore/cosign/oidc-token) \
+ --yes
 ```
 
 ### Verify Keyless Signature
@@ -141,18 +141,18 @@ cosign sign ghcr.io/myorg/myapp:v1.0.0 \
 ```bash
 # Verify by email identity
 cosign verify ghcr.io/myorg/myapp:v1.0.0 \
-  --certificate-identity=builder@example.com \
-  --certificate-oidc-issuer=https://accounts.google.com
+ --certificate-identity=builder@example.com \
+ --certificate-oidc-issuer=https://accounts.google.com
 
 # Verify by GitHub Actions workflow
 cosign verify ghcr.io/myorg/myapp:v1.0.0 \
-  --certificate-identity=https://github.com/myorg/myrepo/.github/workflows/build.yml@refs/heads/main \
-  --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+ --certificate-identity=https://github.com/myorg/myrepo/.github/workflows/build.yml@refs/heads/main \
+ --certificate-oidc-issuer=https://token.actions.githubusercontent.com
 
 # Verify with regex matching
 cosign verify ghcr.io/myorg/myapp:v1.0.0 \
-  --certificate-identity-regexp=".*@example.com" \
-  --certificate-oidc-issuer=https://accounts.google.com
+ --certificate-identity-regexp=".*@example.com" \
+ --certificate-oidc-issuer=https://accounts.google.com
 ```
 
 ## Attestations (SLSA Provenance)
@@ -165,14 +165,14 @@ syft ghcr.io/myorg/myapp:v1.0.0 -o cyclonedx-json > sbom.cdx.json
 
 # Attach SBOM as attestation
 cosign attest --key cosign.key \
-  --type cyclonedx \
-  --predicate sbom.cdx.json \
-  ghcr.io/myorg/myapp:v1.0.0
+ --type cyclonedx \
+ --predicate sbom.cdx.json \
+ ghcr.io/myorg/myapp:v1.0.0
 
 # Verify attestation
 cosign verify-attestation --key cosign.pub \
-  --type cyclonedx \
-  ghcr.io/myorg/myapp:v1.0.0
+ --type cyclonedx \
+ ghcr.io/myorg/myapp:v1.0.0
 ```
 
 ### Attach Vulnerability Scan Attestation
@@ -183,9 +183,9 @@ grype ghcr.io/myorg/myapp:v1.0.0 -o json > vuln-scan.json
 
 # Attach scan results as attestation
 cosign attest --key cosign.key \
-  --type vuln \
-  --predicate vuln-scan.json \
-  ghcr.io/myorg/myapp:v1.0.0
+ --type vuln \
+ --predicate vuln-scan.json \
+ ghcr.io/myorg/myapp:v1.0.0
 ```
 
 ### SLSA Provenance Attestation
@@ -193,14 +193,14 @@ cosign attest --key cosign.key \
 ```bash
 # Attach SLSA provenance
 cosign attest --key cosign.key \
-  --type slsaprovenance \
-  --predicate provenance.json \
-  ghcr.io/myorg/myapp:v1.0.0
+ --type slsaprovenance \
+ --predicate provenance.json \
+ ghcr.io/myorg/myapp:v1.0.0
 
 # Verify SLSA provenance
 cosign verify-attestation --key cosign.pub \
-  --type slsaprovenance \
-  ghcr.io/myorg/myapp:v1.0.0
+ --type slsaprovenance \
+ ghcr.io/myorg/myapp:v1.0.0
 ```
 
 ## CI/CD Integration
@@ -210,48 +210,48 @@ cosign verify-attestation --key cosign.pub \
 ```yaml
 name: Sign and Publish
 on:
-  push:
-    tags: ['v*']
+ push:
+ tags: ['v*']
 
 permissions:
-  contents: read
-  packages: write
-  id-token: write  # Required for keyless signing
+ contents: read
+ packages: write
+ id-token: write # Required for keyless signing
 
 jobs:
-  build-sign:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ build-sign:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - uses: sigstore/cosign-installer@v3
+ - uses: sigstore/cosign-installer@v3
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+ - name: Login to GHCR
+ uses: docker/login-action@v3
+ with:
+ registry: ghcr.io
+ username: ${{ github.actor }}
+ password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push
-        id: build
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+ - name: Build and push
+ id: build
+ uses: docker/build-push-action@v5
+ with:
+ push: true
+ tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
 
-      - name: Sign image (keyless)
-        run: |
-          cosign sign --yes \
-            ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+ - name: Sign image (keyless)
+ run: |
+ cosign sign --yes \
+ ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
 
-      - name: Generate and attach SBOM
-        run: |
-          syft ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }} -o cyclonedx-json > sbom.json
-          cosign attest --yes \
-            --type cyclonedx \
-            --predicate sbom.json \
-            ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
+ - name: Generate and attach SBOM
+ run: |
+ syft ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }} -o cyclonedx-json > sbom.json
+ cosign attest --yes \
+ --type cyclonedx \
+ --predicate sbom.json \
+ ghcr.io/${{ github.repository }}@${{ steps.build.outputs.digest }}
 ```
 
 ## Kubernetes Admission Enforcement
@@ -262,7 +262,7 @@ jobs:
 # Install policy-controller
 helm repo add sigstore https://sigstore.github.io/helm-charts
 helm install policy-controller sigstore/policy-controller \
-  --namespace cosign-system --create-namespace
+ --namespace cosign-system --create-namespace
 ```
 
 ```yaml
@@ -270,18 +270,18 @@ helm install policy-controller sigstore/policy-controller \
 apiVersion: policy.sigstore.dev/v1beta1
 kind: ClusterImagePolicy
 metadata:
-  name: require-signed-images
+ name: require-signed-images
 spec:
-  images:
-    - glob: "ghcr.io/myorg/**"
-  authorities:
-    - keyless:
-        url: https://fulcio.sigstore.dev
-        identities:
-          - issuer: https://token.actions.githubusercontent.com
-            subjectRegExp: "https://github.com/myorg/.*"
-      ctlog:
-        url: https://rekor.sigstore.dev
+ images:
+ - glob: "ghcr.io/myorg/**"
+ authorities:
+ - keyless:
+ url: https://fulcio.sigstore.dev
+ identities:
+ - issuer: https://token.actions.githubusercontent.com
+ subjectRegExp: "https://github.com/myorg/.*"
+ ctlog:
+ url: https://rekor.sigstore.dev
 ```
 
 ### Kyverno Integration
@@ -290,25 +290,25 @@ spec:
 apiVersion: kyverno.io/v1
 kind: ClusterPolicy
 metadata:
-  name: verify-image-signature
+ name: verify-image-signature
 spec:
-  validationFailureAction: Enforce
-  rules:
-    - name: verify-cosign-signature
-      match:
-        any:
-          - resources:
-              kinds: ["Pod"]
-      verifyImages:
-        - imageReferences:
-            - "ghcr.io/myorg/*"
-          attestors:
-            - entries:
-                - keyless:
-                    subject: "https://github.com/myorg/*"
-                    issuer: "https://token.actions.githubusercontent.com"
-                    rekor:
-                      url: https://rekor.sigstore.dev
+ validationFailureAction: Enforce
+ rules:
+ - name: verify-cosign-signature
+ match:
+ any:
+ - resources:
+ kinds: ["Pod"]
+ verifyImages:
+ - imageReferences:
+ - "ghcr.io/myorg/*"
+ attestors:
+ - entries:
+ - keyless:
+ subject: "https://github.com/myorg/*"
+ issuer: "https://token.actions.githubusercontent.com"
+ rekor:
+ url: https://rekor.sigstore.dev
 ```
 
 ## Transparency Log (Rekor)
@@ -322,8 +322,8 @@ rekor-cli get --uuid <entry-uuid>
 
 # Verify entry inclusion
 cosign verify ghcr.io/myorg/myapp:v1.0.0 \
-  --certificate-identity=builder@example.com \
-  --certificate-oidc-issuer=https://accounts.google.com
+ --certificate-identity=builder@example.com \
+ --certificate-oidc-issuer=https://accounts.google.com
 ```
 
 ## Best Practices

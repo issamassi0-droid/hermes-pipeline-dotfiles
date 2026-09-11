@@ -1,12 +1,12 @@
 ---
 name: implementing-devsecops-security-scanning
 description: 'Integrates SAST, DAST, and SCA into CI/CD pipelines using Semgrep for
-  SAST, Trivy for SCA and container scanning, OWASP ZAP for DAST, and Gitleaks for
-  secrets detection. Use when setting up automated security scanning in CI/CD, shifting
-  security left, meeting compliance mandates (SOC 2, PCI-DSS, ISO 27001), or gating
-  deployments on critical vulnerabilities.
+ SAST, Trivy for SCA and container scanning, OWASP ZAP for DAST, and Gitleaks for
+ secrets detection. Use when setting up automated security scanning in CI/CD, shifting
+ security left, meeting compliance mandates (SOC 2, PCI-DSS, ISO 27001), or gating
+ deployments on critical vulnerabilities.
 
-  '
+ '
 domain: cybersecurity
 subdomain: application-security
 tags:
@@ -55,10 +55,10 @@ mitre_attack:
 - A staging environment URL for DAST scanning (DAST cannot test static code)
 - Repository access with permissions to modify CI/CD workflow files
 - Tool-specific requirements:
-  - Semgrep: free for open-source rulesets (`p/security-audit`, `p/owasp-top-ten`)
-  - Trivy: free, no account required
-  - OWASP ZAP: free, Docker image available
-  - Gitleaks: free, no account required
+ - Semgrep: free for open-source rulesets (`p/security-audit`, `p/owasp-top-ten`)
+ - Trivy: free, no account required
+ - OWASP ZAP: free, Docker image available
+ - Gitleaks: free, no account required
 
 ## Workflow
 
@@ -69,24 +69,24 @@ Secrets detection runs first because leaked credentials are the highest-priority
 ```yaml
 name: DevSecOps Security Pipeline
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
+ push:
+ branches: [main, develop]
+ pull_request:
+ branches: [main]
 
 jobs:
-  secrets-scan:
-    name: Secrets Detection (Gitleaks)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history for scanning all commits
+ secrets-scan:
+ name: Secrets Detection (Gitleaks)
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ with:
+ fetch-depth: 0 # Full history for scanning all commits
 
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ - name: Run Gitleaks
+ uses: gitleaks/gitleaks-action@v2
+ env:
+ GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 Configure `.gitleaks.toml` in the repository root for custom rules and allowlists:
@@ -98,9 +98,9 @@ useDefault = true
 [allowlist]
 description = "Global allowlist"
 paths = [
-  '''\.gitleaks\.toml''',
-  '''test/fixtures/.*''',
-  '''docs/examples/.*'''
+ '''\.gitleaks\.toml''',
+ '''test/fixtures/.*''',
+ '''docs/examples/.*'''
 ]
 
 [[rules]]
@@ -115,61 +115,61 @@ tags = ["internal", "api-key"]
 Semgrep performs static code analysis to find security vulnerabilities, bugs, and code patterns:
 
 ```yaml
-  sast-scan:
-    name: SAST (Semgrep)
-    runs-on: ubuntu-latest
-    container:
-      image: semgrep/semgrep
-    steps:
-      - uses: actions/checkout@v4
+ sast-scan:
+ name: SAST (Semgrep)
+ runs-on: ubuntu-latest
+ container:
+ image: semgrep/semgrep
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Run Semgrep SAST scan
-        run: |
-          semgrep scan \
-            --config p/security-audit \
-            --config p/owasp-top-ten \
-            --config p/secrets \
-            --severity ERROR \
-            --error \
-            --json \
-            --output semgrep-results.json \
-            .
+ - name: Run Semgrep SAST scan
+ run: |
+ semgrep scan \
+ --config p/security-audit \
+ --config p/owasp-top-ten \
+ --config p/secrets \
+ --severity ERROR \
+ --error \
+ --json \
+ --output semgrep-results.json \
+ .
 
-      - name: Upload SAST results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: semgrep-results
-          path: semgrep-results.json
+ - name: Upload SAST results
+ if: always()
+ uses: actions/upload-artifact@v4
+ with:
+ name: semgrep-results
+ path: semgrep-results.json
 ```
 
 For custom rules, create `.semgrep/custom-rules.yml`:
 
 ```yaml
 rules:
-  - id: no-exec-user-input
-    patterns:
-      - pattern: exec($INPUT)
-      - pattern-not: exec("...")
-    message: >
-      User input passed to exec(). This is a command injection vulnerability.
-    severity: ERROR
-    languages: [python]
-    metadata:
-      cwe: "CWE-78: OS Command Injection"
-      owasp: "A03:2021 - Injection"
+ - id: no-exec-user-input
+ patterns:
+ - pattern: exec($INPUT)
+ - pattern-not: exec("...")
+ message: >
+ User input passed to exec(). This is a command injection vulnerability.
+ severity: ERROR
+ languages: [python]
+ metadata:
+ cwe: "CWE-78: OS Command Injection"
+ owasp: "A03:2021 - Injection"
 
-  - id: no-raw-sql-queries
-    patterns:
-      - pattern: cursor.execute(f"...")
-      - pattern: cursor.execute("..." + ...)
-    message: >
-      SQL query built with string concatenation or f-strings. Use parameterized queries.
-    severity: ERROR
-    languages: [python]
-    metadata:
-      cwe: "CWE-89: SQL Injection"
-      owasp: "A03:2021 - Injection"
+ - id: no-raw-sql-queries
+ patterns:
+ - pattern: cursor.execute(f"...")
+ - pattern: cursor.execute("..." + ...)
+ message: >
+ SQL query built with string concatenation or f-strings. Use parameterized queries.
+ severity: ERROR
+ languages: [python]
+ metadata:
+ cwe: "CWE-89: SQL Injection"
+ owasp: "A03:2021 - Injection"
 ```
 
 ### Step 3: Add SCA Scanning with Trivy
@@ -177,70 +177,70 @@ rules:
 Trivy scans dependencies, container images, IaC files, and generates SBOM:
 
 ```yaml
-  sca-scan:
-    name: SCA & Container Scan (Trivy)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ sca-scan:
+ name: SCA & Container Scan (Trivy)
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Run Trivy filesystem scan (dependencies)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'fs'
-          scan-ref: '.'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-          format: 'json'
-          output: 'trivy-fs-results.json'
+ - name: Run Trivy filesystem scan (dependencies)
+ uses: aquasecurity/trivy-action@0.28.0
+ with:
+ scan-type: 'fs'
+ scan-ref: '.'
+ severity: 'CRITICAL,HIGH'
+ exit-code: '1'
+ format: 'json'
+ output: 'trivy-fs-results.json'
 
-      - name: Run Trivy IaC scan (Terraform, CloudFormation)
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'config'
-          scan-ref: '.'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-          format: 'json'
-          output: 'trivy-iac-results.json'
+ - name: Run Trivy IaC scan (Terraform, CloudFormation)
+ uses: aquasecurity/trivy-action@0.28.0
+ with:
+ scan-type: 'config'
+ scan-ref: '.'
+ severity: 'CRITICAL,HIGH'
+ exit-code: '1'
+ format: 'json'
+ output: 'trivy-iac-results.json'
 
-      - name: Upload SCA results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: trivy-results
-          path: trivy-*.json
+ - name: Upload SCA results
+ if: always()
+ uses: actions/upload-artifact@v4
+ with:
+ name: trivy-results
+ path: trivy-*.json
 
-  container-scan:
-    name: Container Image Scan (Trivy)
-    runs-on: ubuntu-latest
-    needs: [sast-scan]  # Build image only after SAST passes
-    steps:
-      - uses: actions/checkout@v4
+ container-scan:
+ name: Container Image Scan (Trivy)
+ runs-on: ubuntu-latest
+ needs: [sast-scan] # Build image only after SAST passes
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t app:${{ github.sha }} .
+ - name: Build Docker image
+ run: docker build -t app:${{ github.sha }} .
 
-      - name: Scan container image
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: 'app:${{ github.sha }}'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-          format: 'json'
-          output: 'trivy-image-results.json'
+ - name: Scan container image
+ uses: aquasecurity/trivy-action@0.28.0
+ with:
+ image-ref: 'app:${{ github.sha }}'
+ severity: 'CRITICAL,HIGH'
+ exit-code: '1'
+ format: 'json'
+ output: 'trivy-image-results.json'
 
-      - name: Generate SBOM
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: 'app:${{ github.sha }}'
-          format: 'cyclonedx'
-          output: 'sbom.json'
+ - name: Generate SBOM
+ uses: aquasecurity/trivy-action@0.28.0
+ with:
+ image-ref: 'app:${{ github.sha }}'
+ format: 'cyclonedx'
+ output: 'sbom.json'
 
-      - name: Upload SBOM
-        uses: actions/upload-artifact@v4
-        with:
-          name: sbom
-          path: sbom.json
+ - name: Upload SBOM
+ uses: actions/upload-artifact@v4
+ with:
+ name: sbom
+ path: sbom.json
 ```
 
 ### Step 4: Add DAST Scanning with OWASP ZAP
@@ -248,25 +248,25 @@ Trivy scans dependencies, container images, IaC files, and generates SBOM:
 DAST runs against a deployed staging environment. It is slower than SAST/SCA and should run asynchronously or on a schedule:
 
 ```yaml
-  dast-scan:
-    name: DAST (OWASP ZAP)
-    runs-on: ubuntu-latest
-    needs: [deploy-staging]  # Must run after app is deployed to staging
-    steps:
-      - uses: actions/checkout@v4
+ dast-scan:
+ name: DAST (OWASP ZAP)
+ runs-on: ubuntu-latest
+ needs: [deploy-staging] # Must run after app is deployed to staging
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Run ZAP Baseline Scan (fast, suitable for CI)
-        uses: zaproxy/action-baseline@v0.14.0
-        with:
-          target: ${{ vars.STAGING_URL }}
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a -j'
+ - name: Run ZAP Baseline Scan (fast, suitable for CI)
+ uses: zaproxy/action-baseline@v0.14.0
+ with:
+ target: ${{ vars.STAGING_URL }}
+ rules_file_name: '.zap/rules.tsv'
+ cmd_options: '-a -j'
 
-      # For nightly full scans, use action-full-scan instead:
-      # - name: Run ZAP Full Scan (comprehensive, 30-60 min)
-      #   uses: zaproxy/action-full-scan@v0.12.0
-      #   with:
-      #     target: ${{ vars.STAGING_URL }}
+ # For nightly full scans, use action-full-scan instead:
+ # - name: Run ZAP Full Scan (comprehensive, 30-60 min)
+ # uses: zaproxy/action-full-scan@v0.12.0
+ # with:
+ # target: ${{ vars.STAGING_URL }}
 ```
 
 Create `.zap/rules.tsv` to configure alert thresholds:
@@ -288,38 +288,38 @@ Create `.zap/rules.tsv` to configure alert thresholds:
 Create a summary job that aggregates all scan results and enforces pass/fail gates:
 
 ```yaml
-  security-gate:
-    name: Security Gate
-    runs-on: ubuntu-latest
-    needs: [secrets-scan, sast-scan, sca-scan, container-scan]
-    if: always()
-    steps:
-      - name: Check scan results
-        run: |
-          echo "Checking security scan results..."
+ security-gate:
+ name: Security Gate
+ runs-on: ubuntu-latest
+ needs: [secrets-scan, sast-scan, sca-scan, container-scan]
+ if: always()
+ steps:
+ - name: Check scan results
+ run: |
+ echo "Checking security scan results..."
 
-          # Fail the pipeline if any upstream job failed
-          if [[ "${{ needs.secrets-scan.result }}" == "failure" ]]; then
-            echo "BLOCKED: Secrets detected in repository"
-            exit 1
-          fi
+ # Fail the pipeline if any upstream job failed
+ if [[ "${{ needs.secrets-scan.result }}" == "failure" ]]; then
+ echo "BLOCKED: Secrets detected in repository"
+ exit 1
+ fi
 
-          if [[ "${{ needs.sast-scan.result }}" == "failure" ]]; then
-            echo "BLOCKED: SAST found critical/high vulnerabilities"
-            exit 1
-          fi
+ if [[ "${{ needs.sast-scan.result }}" == "failure" ]]; then
+ echo "BLOCKED: SAST found critical/high vulnerabilities"
+ exit 1
+ fi
 
-          if [[ "${{ needs.sca-scan.result }}" == "failure" ]]; then
-            echo "BLOCKED: SCA found critical/high vulnerable dependencies"
-            exit 1
-          fi
+ if [[ "${{ needs.sca-scan.result }}" == "failure" ]]; then
+ echo "BLOCKED: SCA found critical/high vulnerable dependencies"
+ exit 1
+ fi
 
-          if [[ "${{ needs.container-scan.result }}" == "failure" ]]; then
-            echo "BLOCKED: Container image has critical/high vulnerabilities"
-            exit 1
-          fi
+ if [[ "${{ needs.container-scan.result }}" == "failure" ]]; then
+ echo "BLOCKED: Container image has critical/high vulnerabilities"
+ exit 1
+ fi
 
-          echo "All security gates passed"
+ echo "All security gates passed"
 ```
 
 ### Step 6: Configure Branch Protection Rules
@@ -330,13 +330,13 @@ Enforce the security pipeline as a required status check:
 GitHub Repository > Settings > Branches > Branch Protection Rules
 
 Branch name pattern: main
-  Require status checks to pass before merging: Enabled
-    Required status checks:
-      - Secrets Detection (Gitleaks)
-      - SAST (Semgrep)
-      - SCA & Container Scan (Trivy)
-      - Security Gate
-  Require branches to be up to date before merging: Enabled
+ Require status checks to pass before merging: Enabled
+ Required status checks:
+ - Secrets Detection (Gitleaks)
+ - SAST (Semgrep)
+ - SCA & Container Scan (Trivy)
+ - Security Gate
+ Require branches to be up to date before merging: Enabled
 ```
 
 ### Step 7: Set Up Developer Feedback Loop
@@ -346,16 +346,16 @@ Configure pre-commit hooks so developers catch issues before pushing:
 ```yaml
 # .pre-commit-config.yaml
 repos:
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.22.1
-    hooks:
-      - id: gitleaks
+ - repo: https://github.com/gitleaks/gitleaks
+ rev: v8.22.1
+ hooks:
+ - id: gitleaks
 
-  - repo: https://github.com/semgrep/semgrep
-    rev: v1.102.0
-    hooks:
-      - id: semgrep
-        args: ['--config', 'p/security-audit', '--config', 'p/owasp-top-ten', '--error']
+ - repo: https://github.com/semgrep/semgrep
+ rev: v1.102.0
+ hooks:
+ - id: semgrep
+ args: ['--config', 'p/security-audit', '--config', 'p/owasp-top-ten', '--error']
 ```
 
 Install and activate pre-commit:
@@ -363,7 +363,7 @@ Install and activate pre-commit:
 ```bash
 pip install pre-commit
 pre-commit install
-pre-commit run --all-files  # Test against existing codebase
+pre-commit run --all-files # Test against existing codebase
 ```
 
 ## Key Concepts

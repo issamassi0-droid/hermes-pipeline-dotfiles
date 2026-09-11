@@ -1,15 +1,15 @@
 ---
 name: detecting-bluetooth-low-energy-attacks
 description: 'Detects and analyzes Bluetooth Low Energy (BLE) security attacks including
-  sniffing, replay attacks, GATT enumeration abuse, and Man-in-the-Middle interception.
-  Uses Ubertooth One and nRF52840 sniffers for packet capture, the bleak Python library
-  for GATT service enumeration, and crackle for BLE encryption cracking. Use when
-  assessing IoT device BLE security, monitoring for BLE-based attacks on wireless
-  infrastructure, or performing authorized BLE penetration testing. Activates for
-  requests involving BLE security assessment, Ubertooth sniffing, GATT enumeration,
-  or BLE replay detection.
+ sniffing, replay attacks, GATT enumeration abuse, and Man-in-the-Middle interception.
+ Uses Ubertooth One and nRF52840 sniffers for packet capture, the bleak Python library
+ for GATT service enumeration, and crackle for BLE encryption cracking. Use when
+ assessing IoT device BLE security, monitoring for BLE-based attacks on wireless
+ infrastructure, or performing authorized BLE penetration testing. Activates for
+ requests involving BLE security assessment, Ubertooth sniffing, GATT enumeration,
+ or BLE replay detection.
 
-  '
+ '
 domain: cybersecurity
 subdomain: wireless-security
 author: mukul975
@@ -76,11 +76,11 @@ import asyncio
 from bleak import BleakScanner
 
 async def scan():
-    devices = await BleakScanner.discover(timeout=10.0)
-    for d in devices:
-        print(f'{d.address} | RSSI: {d.rssi} | Name: {d.name or \"Unknown\"}')
-        for uuid in d.metadata.get('uuids', []):
-            print(f'  Service: {uuid}')
+ devices = await BleakScanner.discover(timeout=10.0)
+ for d in devices:
+ print(f'{d.address} | RSSI: {d.rssi} | Name: {d.name or \"Unknown\"}')
+ for uuid in d.metadata.get('uuids', []):
+ print(f' Service: {uuid}')
 
 asyncio.run(scan())
 "
@@ -106,16 +106,16 @@ import asyncio
 from bleak import BleakClient
 
 async def enum_gatt(address):
-    async with BleakClient(address) as client:
-        print(f'Connected: {client.is_connected}')
-        for service in client.services:
-            print(f'Service: {service.uuid} - {service.description}')
-            for char in service.characteristics:
-                props = ','.join(char.properties)
-                print(f'  Char: {char.uuid} | Props: {props}')
-                for desc in char.descriptors:
-                    val = await client.read_gatt_descriptor(desc.handle)
-                    print(f'    Desc: {desc.uuid} = {val}')
+ async with BleakClient(address) as client:
+ print(f'Connected: {client.is_connected}')
+ for service in client.services:
+ print(f'Service: {service.uuid} - {service.description}')
+ for char in service.characteristics:
+ props = ','.join(char.properties)
+ print(f' Char: {char.uuid} | Props: {props}')
+ for desc in char.descriptors:
+ val = await client.read_gatt_descriptor(desc.handle)
+ print(f' Desc: {desc.uuid} = {val}')
 
 asyncio.run(enum_gatt('AA:BB:CC:DD:EE:FF'))
 "
@@ -145,7 +145,7 @@ wireshark capture.pcapng
 
 # Extract pairing information with tshark
 tshark -r capture.pcapng -Y "btle.control_opcode == 0x01" -T fields \
-  -e btle.master_bd_addr -e btle.slave_bd_addr
+ -e btle.master_bd_addr -e btle.slave_bd_addr
 ```
 
 ### Step 4: BLE Encryption Analysis with Crackle
@@ -185,21 +185,21 @@ TARGET = 'AA:BB:CC:DD:EE:FF'
 CHAR_UUID = '0000fff1-0000-1000-8000-00805f9b34fb'
 
 async def replay_test():
-    async with BleakClient(TARGET) as client:
-        # Step 1: Read current state
-        val = await client.read_gatt_char(CHAR_UUID)
-        print(f'Current value: {val.hex()}')
+ async with BleakClient(TARGET) as client:
+ # Step 1: Read current state
+ val = await client.read_gatt_char(CHAR_UUID)
+ print(f'Current value: {val.hex()}')
 
-        # Step 2: Write a command (captured from previous session)
-        captured_command = bytes.fromhex('0102030405')
-        await client.write_gatt_char(CHAR_UUID, captured_command)
-        print('Replayed captured command')
+ # Step 2: Write a command (captured from previous session)
+ captured_command = bytes.fromhex('0102030405')
+ await client.write_gatt_char(CHAR_UUID, captured_command)
+ print('Replayed captured command')
 
-        # Step 3: Verify if command was accepted
-        new_val = await client.read_gatt_char(CHAR_UUID)
-        print(f'New value: {new_val.hex()}')
-        if new_val != val:
-            print('VULNERABLE: Device accepted replayed command')
+ # Step 3: Verify if command was accepted
+ new_val = await client.read_gatt_char(CHAR_UUID)
+ print(f'New value: {new_val.hex()}')
+ if new_val != val:
+ print('VULNERABLE: Device accepted replayed command')
 
 asyncio.run(replay_test())
 "
@@ -220,7 +220,7 @@ Detect BLE MITM attacks by monitoring for anomalous behavior:
 
 # Monitor for unexpected connection parameter changes
 tshark -r capture.pcapng -Y "btle.control_opcode == 0x00" -T fields \
-  -e btle.control.interval.min -e btle.control.interval.max
+ -e btle.control.interval.min -e btle.control.interval.max
 
 # Detect GATTacker/BTLEjuice MITM patterns:
 # - Cloned advertising data with different BD_ADDR
@@ -229,7 +229,7 @@ tshark -r capture.pcapng -Y "btle.control_opcode == 0x00" -T fields \
 
 # Monitor for suspicious pairing requests
 tshark -r capture.pcapng -Y "btl2cap.cid == 0x0006" -T fields \
-  -e btsmp.opcode -e btsmp.io_capability -e btsmp.auth_req
+ -e btsmp.opcode -e btsmp.io_capability -e btsmp.auth_req
 ```
 
 ### Step 7: Continuous BLE Security Monitoring

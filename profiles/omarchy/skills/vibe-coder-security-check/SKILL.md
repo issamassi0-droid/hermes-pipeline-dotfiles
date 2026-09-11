@@ -1,9 +1,9 @@
 ---
 name: security-check
 description: |
-  Automatic OWASP security checks on generated code.
-  Use when: any code is generated in the pipeline.
-  Triggers: internal use only.
+ Automatic OWASP security checks on generated code.
+ Use when: any code is generated in the pipeline.
+ Triggers: internal use only.
 ---
 
 # Security Check
@@ -57,8 +57,8 @@ Run OWASP checks programmatically:
 
 ```bash
 python scripts/security_scan.py --path /project/path
-python scripts/security_scan.py --path /project/path --json  # JSON output
-python scripts/security_scan.py --fail-on high  # Fail on high+ severity
+python scripts/security_scan.py --path /project/path --json # JSON output
+python scripts/security_scan.py --fail-on high # Fail on high+ severity
 ```
 
 Checks: SQL injection, hardcoded secrets, unsafe eval, command injection, insecure HTTP.

@@ -1,9 +1,9 @@
 ---
 name: cli-tool
 description: |
-  Build command-line tools with argument parsing, subcommands, and nice UX.
-  Use when: creating CLI, terminal app, command-line utility.
-  Triggers: "cli", "command line", "terminal", "clap", "typer", "commander".
+ Build command-line tools with argument parsing, subcommands, and nice UX.
+ Use when: creating CLI, terminal app, command-line utility.
+ Triggers: "cli", "command line", "terminal", "clap", "typer", "commander".
 ---
 
 # CLI Tool Development
@@ -35,15 +35,15 @@ EOF
 # 2. Setup pre-commit hooks
 cat > .pre-commit-config.yaml << 'EOF'
 repos:
-  - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v5.0.0
-    hooks:
-      - id: detect-private-key
-      - id: check-added-large-files
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.21.2
-    hooks:
-      - id: gitleaks
+ - repo: https://github.com/pre-commit/pre-commit-hooks
+ rev: v5.0.0
+ hooks:
+ - id: detect-private-key
+ - id: check-added-large-files
+ - repo: https://github.com/gitleaks/gitleaks
+ rev: v8.21.2
+ hooks:
+ - id: gitleaks
 EOF
 
 pre-commit install
@@ -79,28 +79,28 @@ use clap::Parser;
 #[command(name = "mytool")]
 #[command(about = "A sample CLI tool")]
 struct Cli {
-    /// Input file
-    input: String,
+ /// Input file
+ input: String,
 
-    /// Output file
-    #[arg(short, long, default_value = "output.txt")]
-    output: String,
+ /// Output file
+ #[arg(short, long, default_value = "output.txt")]
+ output: String,
 
-    /// Verbose output
-    #[arg(short, long)]
-    verbose: bool,
+ /// Verbose output
+ #[arg(short, long)]
+ verbose: bool,
 }
 
 fn main() -> anyhow::Result<()> {
-    let cli = Cli::parse();
+ let cli = Cli::parse();
 
-    if cli.verbose {
-        println!("Input: {}", cli.input);
-        println!("Output: {}", cli.output);
-    }
+ if cli.verbose {
+ println!("Input: {}", cli.input);
+ println!("Output: {}", cli.output);
+ }
 
-    // Do work...
-    Ok(())
+ // Do work...
+ Ok(())
 }
 ```
 
@@ -118,17 +118,17 @@ app = typer.Typer()
 
 @app.command()
 def main(
-    input: str = typer.Argument(..., help="Input file"),
-    output: str = typer.Option("output.txt", "--output", "-o", help="Output file"),
-    verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
+ input: str = typer.Argument(..., help="Input file"),
+ output: str = typer.Option("output.txt", "--output", "-o", help="Output file"),
+ verbose: bool = typer.Option(False, "--verbose", "-v", help="Verbose output"),
 ):
-    """A sample CLI tool."""
-    if verbose:
-        typer.echo(f"Input: {input}")
-        typer.echo(f"Output: {output}")
+ """A sample CLI tool."""
+ if verbose:
+ typer.echo(f"Input: {input}")
+ typer.echo(f"Output: {output}")
 
 if __name__ == "__main__":
-    app()
+ app()
 ```
 
 ### Node (commander)
@@ -138,17 +138,17 @@ if __name__ == "__main__":
 import { program } from 'commander';
 
 program
-  .name('mytool')
-  .description('A sample CLI tool')
-  .argument('<input>', 'Input file')
-  .option('-o, --output <file>', 'Output file', 'output.txt')
-  .option('-v, --verbose', 'Verbose output')
-  .action((input, options) => {
-    if (options.verbose) {
-      console.log(`Input: ${input}`);
-      console.log(`Output: ${options.output}`);
-    }
-  });
+ .name('mytool')
+ .description('A sample CLI tool')
+ .argument('<input>', 'Input file')
+ .option('-o, --output <file>', 'Output file', 'output.txt')
+ .option('-v, --verbose', 'Verbose output')
+ .action((input, options) => {
+ if (options.verbose) {
+ console.log(`Input: ${input}`);
+ console.log(`Output: ${options.output}`);
+ }
+ });
 
 program.parse();
 ```
@@ -165,38 +165,38 @@ use clap::{Parser, Subcommand};
 #[derive(Parser)]
 #[command(name = "mytool")]
 struct Cli {
-    #[command(subcommand)]
-    command: Commands,
+ #[command(subcommand)]
+ command: Commands,
 }
 
 #[derive(Subcommand)]
 enum Commands {
-    /// Add a new item
-    Add {
-        /// Item name
-        name: String,
-    },
-    /// List all items
-    List {
-        /// Show detailed info
-        #[arg(short, long)]
-        detailed: bool,
-    },
-    /// Remove an item
-    Remove {
-        /// Item ID
-        id: u32,
-    },
+ /// Add a new item
+ Add {
+ /// Item name
+ name: String,
+ },
+ /// List all items
+ List {
+ /// Show detailed info
+ #[arg(short, long)]
+ detailed: bool,
+ },
+ /// Remove an item
+ Remove {
+ /// Item ID
+ id: u32,
+ },
 }
 
 fn main() {
-    let cli = Cli::parse();
+ let cli = Cli::parse();
 
-    match cli.command {
-        Commands::Add { name } => println!("Adding: {}", name),
-        Commands::List { detailed } => println!("Listing (detailed: {})", detailed),
-        Commands::Remove { id } => println!("Removing: {}", id),
-    }
+ match cli.command {
+ Commands::Add { name } => println!("Adding: {}", name),
+ Commands::List { detailed } => println!("Listing (detailed: {})", detailed),
+ Commands::Remove { id } => println!("Removing: {}", id),
+ }
 }
 ```
 
@@ -209,21 +209,21 @@ app = typer.Typer()
 
 @app.command()
 def add(name: str):
-    """Add a new item."""
-    typer.echo(f"Adding: {name}")
+ """Add a new item."""
+ typer.echo(f"Adding: {name}")
 
 @app.command()
 def list(detailed: bool = typer.Option(False, "--detailed", "-d")):
-    """List all items."""
-    typer.echo(f"Listing (detailed: {detailed})")
+ """List all items."""
+ typer.echo(f"Listing (detailed: {detailed})")
 
 @app.command()
 def remove(id: int):
-    """Remove an item."""
-    typer.echo(f"Removing: {id}")
+ """Remove an item."""
+ typer.echo(f"Removing: {id}")
 
 if __name__ == "__main__":
-    app()
+ app()
 ```
 
 ---
@@ -238,35 +238,35 @@ use serde::Serialize;
 
 #[derive(ValueEnum, Clone)]
 enum OutputFormat {
-    Text,
-    Json,
-    Table,
+ Text,
+ Json,
+ Table,
 }
 
 #[derive(Serialize)]
 struct Item {
-    id: u32,
-    name: String,
+ id: u32,
+ name: String,
 }
 
 fn output(items: &[Item], format: OutputFormat) {
-    match format {
-        OutputFormat::Text => {
-            for item in items {
-                println!("{}: {}", item.id, item.name);
-            }
-        }
-        OutputFormat::Json => {
-            println!("{}", serde_json::to_string_pretty(items).unwrap());
-        }
-        OutputFormat::Table => {
-            println!("{:<5} {}", "ID", "Name");
-            println!("{}", "-".repeat(20));
-            for item in items {
-                println!("{:<5} {}", item.id, item.name);
-            }
-        }
-    }
+ match format {
+ OutputFormat::Text => {
+ for item in items {
+ println!("{}: {}", item.id, item.name);
+ }
+ }
+ OutputFormat::Json => {
+ println!("{}", serde_json::to_string_pretty(items).unwrap());
+ }
+ OutputFormat::Table => {
+ println!("{:<5} {}", "ID", "Name");
+ println!("{}", "-".repeat(20));
+ for item in items {
+ println!("{:<5} {}", item.id, item.name);
+ }
+ }
+ }
 }
 ```
 
@@ -280,18 +280,18 @@ import json
 console = Console()
 
 def output(items: list, format: str):
-    if format == "text":
-        for item in items:
-            console.print(f"{item['id']}: {item['name']}")
-    elif format == "json":
-        console.print_json(json.dumps(items))
-    elif format == "table":
-        table = Table()
-        table.add_column("ID")
-        table.add_column("Name")
-        for item in items:
-            table.add_row(str(item["id"]), item["name"])
-        console.print(table)
+ if format == "text":
+ for item in items:
+ console.print(f"{item['id']}: {item['name']}")
+ elif format == "json":
+ console.print_json(json.dumps(items))
+ elif format == "table":
+ table = Table()
+ table.add_column("ID")
+ table.add_column("Name")
+ for item in items:
+ table.add_row(str(item["id"]), item["name"])
+ console.print(table)
 ```
 
 ---
@@ -305,13 +305,13 @@ use indicatif::{ProgressBar, ProgressStyle};
 
 let pb = ProgressBar::new(100);
 pb.set_style(ProgressStyle::default_bar()
-    .template("{spinner:.green} [{bar:40.cyan/blue}] {pos}/{len} {msg}")
-    .unwrap());
+ .template("{spinner:.green} [{bar:40.cyan/blue}] {pos}/{len} {msg}")
+ .unwrap());
 
 for i in 0..100 {
-    pb.set_position(i);
-    pb.set_message(format!("Processing item {}", i));
-    std::thread::sleep(std::time::Duration::from_millis(50));
+ pb.set_position(i);
+ pb.set_message(format!("Processing item {}", i));
+ std::thread::sleep(std::time::Duration::from_millis(50));
 }
 pb.finish_with_message("Done!");
 ```
@@ -322,8 +322,8 @@ pb.finish_with_message("Done!");
 from rich.progress import track
 
 for item in track(range(100), description="Processing..."):
-    # Do work
-    pass
+ # Do work
+ pass
 ```
 
 ---
@@ -338,17 +338,17 @@ use serde::Deserialize;
 
 #[derive(Deserialize)]
 struct Settings {
-    api_key: String,
-    timeout: u64,
+ api_key: String,
+ timeout: u64,
 }
 
 fn load_config() -> anyhow::Result<Settings> {
-    let settings = Config::builder()
-        .add_source(File::with_name("config.toml").required(false))
-        .add_source(config::Environment::with_prefix("MYTOOL"))
-        .build()?;
+ let settings = Config::builder()
+ .add_source(File::with_name("config.toml").required(false))
+ .add_source(config::Environment::with_prefix("MYTOOL"))
+ .build()?;
 
-    Ok(settings.try_deserialize()?)
+ Ok(settings.try_deserialize()?)
 }
 ```
 
@@ -365,10 +365,10 @@ import tomllib
 from pathlib import Path
 
 def load_config():
-    config_path = Path.home() / ".config" / "mytool" / "config.toml"
-    if config_path.exists():
-        return tomllib.loads(config_path.read_text())
-    return {}
+ config_path = Path.home() / ".config" / "mytool" / "config.toml"
+ if config_path.exists():
+ return tomllib.loads(config_path.read_text())
+ return {}
 ```
 
 ---
@@ -379,13 +379,13 @@ def load_config():
 use std::process::ExitCode;
 
 fn main() -> ExitCode {
-    match run() {
-        Ok(_) => ExitCode::SUCCESS,
-        Err(e) => {
-            eprintln!("Error: {}", e);
-            ExitCode::FAILURE
-        }
-    }
+ match run() {
+ Ok(_) => ExitCode::SUCCESS,
+ Err(e) => {
+ eprintln!("Error: {}", e);
+ ExitCode::FAILURE
+ }
+ }
 }
 ```
 
@@ -409,18 +409,18 @@ use clap_complete::{generate, Shell};
 
 #[derive(Parser)]
 struct Cli {
-    #[arg(long, value_enum)]
-    completions: Option<Shell>,
+ #[arg(long, value_enum)]
+ completions: Option<Shell>,
 }
 
 fn main() {
-    let cli = Cli::parse();
+ let cli = Cli::parse();
 
-    if let Some(shell) = cli.completions {
-        let mut cmd = Cli::command();
-        generate(shell, &mut cmd, "mytool", &mut std::io::stdout());
-        return;
-    }
+ if let Some(shell) = cli.completions {
+ let mut cmd = Cli::command();
+ generate(shell, &mut cmd, "mytool", &mut std::io::stdout());
+ return;
+ }
 }
 ```
 
@@ -441,18 +441,18 @@ mytool --completions zsh > ~/.zfunc/_mytool
 use dialoguer::{Confirm, Input, Select};
 
 let name: String = Input::new()
-    .with_prompt("Your name")
-    .interact_text()?;
+ .with_prompt("Your name")
+ .interact_text()?;
 
 let proceed = Confirm::new()
-    .with_prompt("Continue?")
-    .interact()?;
+ .with_prompt("Continue?")
+ .interact()?;
 
 let options = vec!["Option 1", "Option 2", "Option 3"];
 let selection = Select::new()
-    .with_prompt("Choose")
-    .items(&options)
-    .interact()?;
+ .with_prompt("Choose")
+ .items(&options)
+ .interact()?;
 ```
 
 ### Python (rich)
@@ -485,47 +485,47 @@ proceed = Confirm.ask("Continue?")
 ```rust
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use assert_cmd::Command;
-    use predicates::prelude::*;
+ use super::*;
+ use assert_cmd::Command;
+ use predicates::prelude::*;
 
-    #[test]
-    fn test_cli_help() {
-        Command::cargo_bin("mytool")
-            .unwrap()
-            .arg("--help")
-            .assert()
-            .success()
-            .stdout(predicate::str::contains("Usage"));
-    }
+ #[test]
+ fn test_cli_help() {
+ Command::cargo_bin("mytool")
+ .unwrap()
+ .arg("--help")
+ .assert()
+ .success()
+ .stdout(predicate::str::contains("Usage"));
+ }
 
-    #[test]
-    fn test_cli_version() {
-        Command::cargo_bin("mytool")
-            .unwrap()
-            .arg("--version")
-            .assert()
-            .success();
-    }
+ #[test]
+ fn test_cli_version() {
+ Command::cargo_bin("mytool")
+ .unwrap()
+ .arg("--version")
+ .assert()
+ .success();
+ }
 
-    #[test]
-    fn test_add_command() {
-        Command::cargo_bin("mytool")
-            .unwrap()
-            .args(["add", "test-item"])
-            .assert()
-            .success()
-            .stdout(predicate::str::contains("Added"));
-    }
+ #[test]
+ fn test_add_command() {
+ Command::cargo_bin("mytool")
+ .unwrap()
+ .args(["add", "test-item"])
+ .assert()
+ .success()
+ .stdout(predicate::str::contains("Added"));
+ }
 
-    #[test]
-    fn test_invalid_input_fails() {
-        Command::cargo_bin("mytool")
-            .unwrap()
-            .args(["add"])  // Missing required arg
-            .assert()
-            .failure();
-    }
+ #[test]
+ fn test_invalid_input_fails() {
+ Command::cargo_bin("mytool")
+ .unwrap()
+ .args(["add"]) // Missing required arg
+ .assert()
+ .failure();
+ }
 }
 ```
 
@@ -538,18 +538,18 @@ from myapp import app
 runner = CliRunner()
 
 def test_help():
-    result = runner.invoke(app, ["--help"])
-    assert result.exit_code == 0
-    assert "Usage" in result.output
+ result = runner.invoke(app, ["--help"])
+ assert result.exit_code == 0
+ assert "Usage" in result.output
 
 def test_add_command():
-    result = runner.invoke(app, ["add", "test-item"])
-    assert result.exit_code == 0
-    assert "Added" in result.output
+ result = runner.invoke(app, ["add", "test-item"])
+ assert result.exit_code == 0
+ assert "Added" in result.output
 
 def test_invalid_input():
-    result = runner.invoke(app, ["add"])  # Missing arg
-    assert result.exit_code != 0
+ result = runner.invoke(app, ["add"]) # Missing arg
+ assert result.exit_code != 0
 ```
 
 ### Node (commander)
@@ -559,15 +559,15 @@ import { describe, it, expect } from 'vitest';
 import { execSync } from 'child_process';
 
 describe('CLI', () => {
-  it('shows help', () => {
-    const output = execSync('node dist/cli.js --help').toString();
-    expect(output).toContain('Usage');
-  });
+ it('shows help', () => {
+ const output = execSync('node dist/cli.js --help').toString();
+ expect(output).toContain('Usage');
+ });
 
-  it('adds item', () => {
-    const output = execSync('node dist/cli.js add test-item').toString();
-    expect(output).toContain('Added');
-  });
+ it('adds item', () => {
+ const output = execSync('node dist/cli.js add test-item').toString();
+ expect(output).toContain('Added');
+ });
 });
 ```
 
@@ -577,17 +577,17 @@ describe('CLI', () => {
 
 ```
 1. Task[tdd-test-writer]: "Create 'add' subcommand"
-   → Writes assert_cmd test
-   → cargo test → FAILS (RED)
+ → Writes assert_cmd test
+ → cargo test → FAILS (RED)
 
 2. Task[rust-developer]: "Implement 'add' subcommand"
-   → Implements minimal code
-   → cargo test → PASSES (GREEN)
+ → Implements minimal code
+ → cargo test → PASSES (GREEN)
 
 3. Repeat for each subcommand
 
 4. Task[code-reviewer]: "Review CLI implementation"
-   → Checks error messages, exit codes, edge cases
+ → Checks error messages, exit codes, edge cases
 ```
 
 ---
@@ -608,15 +608,15 @@ describe('CLI', () => {
 ```
 mytool/
 ├── src/
-│   ├── main.rs
-│   ├── cli.rs      # Argument definitions
-│   ├── commands/   # Subcommand implementations
-│   │   ├── mod.rs
-│   │   ├── add.rs
-│   │   └── list.rs
-│   └── config.rs
+│ ├── main.rs
+│ ├── cli.rs # Argument definitions
+│ ├── commands/ # Subcommand implementations
+│ │ ├── mod.rs
+│ │ ├── add.rs
+│ │ └── list.rs
+│ └── config.rs
 ├── tests/
-│   └── cli_tests.rs  # Integration tests
+│ └── cli_tests.rs # Integration tests
 ├── Cargo.toml
 ├── config.example.toml
 └── README.md

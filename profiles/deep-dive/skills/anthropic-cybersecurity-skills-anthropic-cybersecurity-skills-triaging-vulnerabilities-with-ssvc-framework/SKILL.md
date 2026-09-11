@@ -1,11 +1,11 @@
 ---
 name: triaging-vulnerabilities-with-ssvc-framework
 description: Triages and prioritizes vulnerabilities with CISA's Stakeholder-Specific
-  Vulnerability Categorization (SSVC) decision tree, weighing exploitation status
-  (via the CISA KEV catalog and FIRST EPSS API), technical impact, automatability,
-  and mission prevalence to output Track/Track*/Attend/Act decisions. Use when
-  prioritizing vulnerability scan results (OpenVAS, Nessus, Qualys) for remediation
-  planning beyond raw CVSS scores.
+ Vulnerability Categorization (SSVC) decision tree, weighing exploitation status
+ (via the CISA KEV catalog and FIRST EPSS API), technical impact, automatability,
+ and mission prevalence to output Track/Track*/Attend/Act decisions. Use when
+ prioritizing vulnerability scan results (OpenVAS, Nessus, Qualys) for remediation
+ planning beyond raw CVSS scores.
 domain: cybersecurity
 subdomain: vulnerability-management
 tags:
@@ -63,7 +63,7 @@ Assess current exploitation activity:
 ```bash
 # Check if a CVE is in CISA Known Exploited Vulnerabilities catalog
 curl -s "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json" | \
-  python3 -c "import sys,json; data=json.load(sys.stdin); cves=[v['cveID'] for v in data['vulnerabilities']]; print('Active' if 'CVE-2024-3400' in cves else 'Check PoC/None')"
+ python3 -c "import sys,json; data=json.load(sys.stdin); cves=[v['cveID'] for v in data['vulnerabilities']]; print('Active' if 'CVE-2024-3400' in cves else 'Check PoC/None')"
 ```
 
 ### 2. Technical Impact
@@ -117,52 +117,52 @@ epss_response = requests.get(epss_url, params={"cve": "CVE-2024-3400"}).json()
 ### Step 2: Evaluate Each Decision Point
 ```python
 def evaluate_exploitation(cve_id, kev_set):
-    """Determine exploitation status from CISA KEV and EPSS data."""
-    if cve_id in kev_set:
-        return "active"
-    epss = requests.get(
-        "https://api.first.org/data/v1/epss",
-        params={"cve": cve_id}
-    ).json()
-    if epss.get("data"):
-        score = float(epss["data"][0].get("epss", 0))
-        if score > 0.5:
-            return "poc"
-    return "none"
+ """Determine exploitation status from CISA KEV and EPSS data."""
+ if cve_id in kev_set:
+ return "active"
+ epss = requests.get(
+ "https://api.first.org/data/v1/epss",
+ params={"cve": cve_id}
+ ).json()
+ if epss.get("data"):
+ score = float(epss["data"][0].get("epss", 0))
+ if score > 0.5:
+ return "poc"
+ return "none"
 
 def evaluate_technical_impact(cvss_vector):
-    """Parse CVSS vector for scope and impact metrics."""
-    if "S:C" in cvss_vector or "C:H/I:H/A:H" in cvss_vector:
-        return "total"
-    return "partial"
+ """Parse CVSS vector for scope and impact metrics."""
+ if "S:C" in cvss_vector or "C:H/I:H/A:H" in cvss_vector:
+ return "total"
+ return "partial"
 
 def evaluate_automatability(cvss_vector, cve_description):
-    """Check if attack vector is network-based with low complexity."""
-    if "AV:N" in cvss_vector and "AC:L" in cvss_vector and "UI:N" in cvss_vector:
-        return "yes"
-    return "no"
+ """Check if attack vector is network-based with low complexity."""
+ if "AV:N" in cvss_vector and "AC:L" in cvss_vector and "UI:N" in cvss_vector:
+ return "yes"
+ return "no"
 ```
 
 ### Step 3: Apply SSVC Decision Tree
 ```python
 def ssvc_decision(exploitation, tech_impact, automatability, mission_prevalence, public_wellbeing):
-    """CISA SSVC decision tree implementation."""
-    if exploitation == "active":
-        if tech_impact == "total" or automatability == "yes":
-            return "Act"
-        if mission_prevalence in ("essential", "support"):
-            return "Act"
-        return "Attend"
-    if exploitation == "poc":
-        if automatability == "yes" and tech_impact == "total":
-            return "Attend"
-        if mission_prevalence == "essential":
-            return "Attend"
-        return "Track*"
-    # exploitation == "none"
-    if tech_impact == "total" and mission_prevalence == "essential":
-        return "Track*"
-    return "Track"
+ """CISA SSVC decision tree implementation."""
+ if exploitation == "active":
+ if tech_impact == "total" or automatability == "yes":
+ return "Act"
+ if mission_prevalence in ("essential", "support"):
+ return "Act"
+ return "Attend"
+ if exploitation == "poc":
+ if automatability == "yes" and tech_impact == "total":
+ return "Attend"
+ if mission_prevalence == "essential":
+ return "Attend"
+ return "Track*"
+ # exploitation == "none"
+ if tech_impact == "total" and mission_prevalence == "essential":
+ return "Track*"
+ return "Track"
 ```
 
 ### Step 4: Generate Triage Report
@@ -180,18 +180,18 @@ cat ssvc_triage_report.json | python3 -m json.tool | head -50
 ```bash
 # Export Nessus scan as CSV, then process
 python3 scripts/process.py \
-  --input nessus_export.csv \
-  --format nessus \
-  --output ssvc_results.json
+ --input nessus_export.csv \
+ --format nessus \
+ --output ssvc_results.json
 ```
 
 ### Import from OpenVAS
 ```bash
 # Export OpenVAS results as XML
 python3 scripts/process.py \
-  --input openvas_report.xml \
-  --format openvas \
-  --output ssvc_results.json
+ --input openvas_report.xml \
+ --format openvas \
+ --output ssvc_results.json
 ```
 
 ## Validation and Testing

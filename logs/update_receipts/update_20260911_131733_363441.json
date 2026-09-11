@@ -1,0 +1,79 @@
+{
+ "schema": 1,
+ "started_at": "2026-09-11T12:17:31.089638+00:00",
+ "finished_at": "2026-09-11T12:17:33.192665+00:00",
+ "argv": [
+ "/home/massi/.hermes/hermes-agent/venv/bin/hermes",
+ "update",
+ "--yes",
+ "--gateway",
+ "--keep-stash",
+ "--branch",
+ "main"
+ ],
+ "pid": 363441,
+ "outcome": "failed",
+ "pre_update": {
+ "sha": "cbd03e6e4ca143c1d5c2db881320afb85783c30b",
+ "short_sha": "cbd03e6e",
+ "version": "0.21.1",
+ "source": "git"
+ },
+ "post_update": {
+ "sha": "cbd03e6e4ca143c1d5c2db881320afb85783c30b",
+ "short_sha": "cbd03e6e",
+ "version": "0.21.1",
+ "source": "git"
+ },
+ "steps": [
+ {
+ "name": "sibling_profile_snapshots",
+ "ok": true,
+ "detail": "analytics=20260911-121732-pre-update, architect=20260911-121732-pre-update, bot-maker=20260911-121732-pre-update, deep-dive=20260911-121732-pre-update, draft-writer=20260911-121732-pre-update, editor-qa=20260911-121732-pre-update, omarchy=20260911-121732-pre-update, omni-researcher=20260911-121732-pre-update, publisher=20260911-121732-pre-update, strategist=20260911-121732-pre-update",
+ "at": "2026-09-11T12:17:32.607955+00:00"
+ },
+ {
+ "name": "pre_update_backup",
+ "ok": true,
+ "detail": "snapshot=20260911-121731-pre-update",
+ "at": "2026-09-11T12:17:32.607994+00:00"
+ }
+ ],
+ "skips": [],
+ "gateway_restart": {},
+ "fleet": [],
+ "plan": {
+ "install_method": "git",
+ "updatable_in_place": true,
+ "update_mechanism": "hermes update",
+ "expected_sha": "cbd03e6e4ca143c1d5c2db881320afb85783c30b",
+ "expected_version": "0.21.1",
+ "profiles": [
+ "default",
+ "analytics",
+ "architect",
+ "bot-maker",
+ "deep-dive",
+ "draft-writer",
+ "editor-qa",
+ "omarchy",
+ "omni-researcher",
+ "publisher",
+ "strategist"
+ ],
+ "runtimes": [
+ {
+ "kind": "gateway",
+ "profile": "default",
+ "pid": 98629,
+ "supervisor": "systemd",
+ "code_sha": "cbd03e6e4ca143c1d5c2db881320afb85783c30b",
+ "code_version": "0.21.1",
+ "restart_via": "systemd",
+ "detail": {}
+ }
+ ]
+ },
+ "exit_code": 1,
+ "stop_reason": "sys.exit(1)"
+}

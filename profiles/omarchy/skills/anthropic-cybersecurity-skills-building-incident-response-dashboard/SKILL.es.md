@@ -1,10 +1,10 @@
 ---
 name: building-incident-response-dashboard
 description: >
-  Builds real-time incident response dashboards in Splunk, Elastic, or Grafana to provide SOC
-  analysts and leadership with situational awareness during active incidents, tracking affected
-  systems, containment status, IOC spread, and response timeline. Use when IR teams need unified
-  visibility during incident coordination and post-incident reporting.
+ Builds real-time incident response dashboards in Splunk, Elastic, or Grafana to provide SOC
+ analysts and leadership with situational awareness during active incidents, tracking affected
+ systems, containment status, IOC spread, and response timeline. Use when IR teams need unified
+ visibility during incident coordination and post-incident reporting.
 domain: cybersecurity
 subdomain: soc-operations
 tags: [soc, dashboard, incident-response, splunk, visualization, situational-awareness, metrics]
@@ -41,29 +41,29 @@ Construir un dashboard en Splunk Dashboard Studio para seguimiento de incidentes
 
 ```xml
 <dashboard version="2" theme="dark">
-  <label>Active Incident Response Dashboard</label>
-  <description>Real-time tracking for IR-2024-0450</description>
+ <label>Active Incident Response Dashboard</label>
+ <description>Real-time tracking for IR-2024-0450</description>
 
-  <row>
-    <panel>
-      <title>Incident Summary</title>
-      <single>
-        <search>
-          <query>
+ <row>
+ <panel>
+ <title>Incident Summary</title>
+ <single>
+ <search>
+ <query>
 | makeresults
 | eval incident_id="IR-2024-0450",
-       status="CONTAINMENT",
-       severity="Critical",
-       affected_hosts=7,
-       contained_hosts=5,
-       iocs_identified=23,
-       hours_elapsed=round((now()-strptime("2024-03-15 14:00","%Y-%m-%d %H:%M"))/3600,1)
+ status="CONTAINMENT",
+ severity="Critical",
+ affected_hosts=7,
+ contained_hosts=5,
+ iocs_identified=23,
+ hours_elapsed=round((now()-strptime("2024-03-15 14:00","%Y-%m-%d %H:%M"))/3600,1)
 | table incident_id, status, severity, affected_hosts, contained_hosts, iocs_identified, hours_elapsed
-          </query>
-        </search>
-      </single>
-    </panel>
-  </row>
+ </query>
+ </search>
+ </single>
+ </panel>
+ </row>
 </dashboard>
 ```
 
@@ -74,15 +74,15 @@ Rastrear sistemas afectados y su estado de contención:
 ```spl
 | inputlookup ir_affected_systems.csv
 | eval status_color = case(
-    status="Contained", "#2ecc71",
-    status="Compromised", "#e74c3c",
-    status="Investigating", "#f39c12",
-    status="Recovered", "#3498db",
-    1=1, "#95a5a6"
-  )
+ status="Contained", "#2ecc71",
+ status="Compromised", "#e74c3c",
+ status="Investigating", "#f39c12",
+ status="Recovered", "#3498db",
+ 1=1, "#95a5a6"
+ )
 | stats count by status
 | eval order = case(status="Compromised", 1, status="Investigating", 2,
-                    status="Contained", 3, status="Recovered", 4)
+ status="Contained", 3, status="Recovered", 4)
 | sort order
 | table status, count
 
@@ -90,7 +90,7 @@ Rastrear sistemas afectados y su estado de contención:
 | inputlookup ir_affected_systems.csv
 | lookup asset_lookup_by_cidr ip AS host_ip OUTPUT category, owner, priority
 | table hostname, host_ip, category, owner, status, containment_time,
-        compromise_vector, analyst_assigned
+ compromise_vector, analyst_assigned
 | sort status, hostname
 ```
 
@@ -101,12 +101,12 @@ Monitorear la propagación de IOCs en el entorno:
 ```spl
 --- IOCs identificados durante el incidente
 index=* (src_ip IN ("185.234.218.50", "45.77.123.45") OR
-         dest IN ("evil-c2.com", "malware-drop.com") OR
-         file_hash IN ("a1b2c3d4...", "e5f6a7b8..."))
+ dest IN ("evil-c2.com", "malware-drop.com") OR
+ file_hash IN ("a1b2c3d4...", "e5f6a7b8..."))
 earliest="2024-03-14"
 | stats count AS hits, dc(src_ip) AS unique_sources,
-        dc(dest) AS unique_dests, latest(_time) AS last_seen
-  by sourcetype
+ dc(dest) AS unique_dests, latest(_time) AS last_seen
+ by sourcetype
 | sort - hits
 
 --- Línea de tiempo de IOCs
@@ -129,20 +129,20 @@ Crear una línea de tiempo cronológica del incidente:
 | inputlookup ir_timeline.csv
 | sort _time
 | eval phase = case(
-    action_type="detection", "Detección",
-    action_type="triage", "Triaje",
-    action_type="containment", "Contención",
-    action_type="eradication", "Erradicación",
-    action_type="recovery", "Recuperación",
-    1=1, "Otro"
-  )
+ action_type="detection", "Detección",
+ action_type="triage", "Triaje",
+ action_type="containment", "Contención",
+ action_type="eradication", "Erradicación",
+ action_type="recovery", "Recuperación",
+ 1=1, "Otro"
+ )
 | eval phase_color = case(
-    phase="Detección", "#e74c3c",
-    phase="Triaje", "#f39c12",
-    phase="Contención", "#e67e22",
-    phase="Erradicación", "#2ecc71",
-    phase="Recuperación", "#3498db"
-  )
+ phase="Detección", "#e74c3c",
+ phase="Triaje", "#f39c12",
+ phase="Contención", "#e67e22",
+ phase="Erradicación", "#2ecc71",
+ phase="Recuperación", "#3498db"
+ )
 | table _time, phase, action, analyst, details
 ```
 
@@ -168,14 +168,14 @@ Rastrear las métricas generales de rendimiento del SOC:
 index=notable earliest=-30d
 | stats count by urgency
 | eval order = case(urgency="critical", 1, urgency="high", 2, urgency="medium", 3,
-                    urgency="low", 4, urgency="informational", 5)
+ urgency="low", 4, urgency="informational", 5)
 | sort order
 
 --- MTTD (Tiempo Medio de Detección)
 index=notable earliest=-30d status_label="Resolved*"
 | eval mttd_minutes = round((time_of_first_event - orig_time) / 60, 1)
 | stats avg(mttd_minutes) AS avg_mttd, median(mttd_minutes) AS med_mttd,
-        perc95(mttd_minutes) AS p95_mttd
+ perc95(mttd_minutes) AS p95_mttd
 
 --- MTTR (Tiempo Medio de Respuesta/Resolución)
 index=notable earliest=-30d status_label="Resolved*"
@@ -202,10 +202,10 @@ Crear un dashboard de alto nivel para la dirección durante incidentes mayores:
 --- Panel de resumen ejecutivo
 | makeresults
 | eval metrics = "Impacto de Negocio: 1 servidor de archivos fuera de línea (depto. Finanzas), "
-                ."Recuperación Estimada: 4 horas, "
-                ."Riesgo de Pérdida de Datos: Bajo (respaldos verificados), "
-                ."Impacto al Cliente: Ninguno, "
-                ."Notificación Regulatoria: No requerida (sin exposición de PII confirmada)"
+ ."Recuperación Estimada: 4 horas, "
+ ."Riesgo de Pérdida de Datos: Bajo (respaldos verificados), "
+ ."Impacto al Cliente: Ninguno, "
+ ."Notificación Regulatoria: No requerida (sin exposición de PII confirmada)"
 
 --- Comparación de tendencias (mes actual vs mes anterior)
 index=notable earliest=-60d
@@ -226,10 +226,10 @@ Usar búsquedas programadas de Splunk para mantener los datos del dashboard:
 ```spl
 --- Búsqueda programada para actualizar la tabla de sistemas afectados (se ejecuta cada 5 minutos)
 index=* (src_ip IN [| inputlookup ir_ioc_list.csv | search ioc_type="ip"
-                    | fields ioc_value | rename ioc_value AS src_ip])
+ | fields ioc_value | rename ioc_value AS src_ip])
 earliest=-1h
 | stats latest(_time) AS last_seen, count AS event_count,
-        values(sourcetype) AS data_sources by src_ip
+ values(sourcetype) AS data_sources by src_ip
 | eval status = if(last_seen > relative_time(now(), "-15m"), "Activo", "Inactivo")
 | outputlookup ir_affected_systems_auto.csv
 ```
@@ -269,23 +269,23 @@ DASHBOARD DE RESPUESTA A INCIDENTES — IR-2024-0450
 
 ESTADO: FASE DE CONTENCIÓN (6h 30m transcurridas)
 
-Sistemas Afectados:         Progreso de Contención:
-  Comprometidos:   2        [==========----------] 71%
-  En Investigación: 1       5 de 7 sistemas contenidos
-  Contenidos:      3
-  Recuperados:     1
+Sistemas Afectados: Progreso de Contención:
+ Comprometidos: 2 [==========----------] 71%
+ En Investigación: 1 5 de 7 sistemas contenidos
+ Contenidos: 3
+ Recuperados: 1
 
-Resumen de IOCs:            Línea de Tiempo de Respuesta:
-  IPs:      4               14:00 — Alerta activada
-  Dominios: 2               14:12 — Confirmado como malicioso
-  Hashes:   3               14:23 — Primer host aislado
-  URLs:     5               15:00 — Escaneo empresarial iniciado
-  Correos:  1               15:30 — 3 hosts más aislados
+Resumen de IOCs: Línea de Tiempo de Respuesta:
+ IPs: 4 14:00 — Alerta activada
+ Dominios: 2 14:12 — Confirmado como malicioso
+ Hashes: 3 14:23 — Primer host aislado
+ URLs: 5 15:00 — Escaneo empresarial iniciado
+ Correos: 1 15:30 — 3 hosts más aislados
 
 Métricas Clave:
-  MTTD:    12 minutos
-  MTTC:    23 minutos (primer host)
-  Analistas Activos: 3 (Nivel 2: 2, Nivel 3: 1)
+ MTTD: 12 minutos
+ MTTC: 23 minutos (primer host)
+ Analistas Activos: 3 (Nivel 2: 2, Nivel 3: 1)
 
 Impacto de Negocio: BAJO — Servidor de archivos de Finanzas fuera de línea, sin afectación a sistemas orientados al cliente
 ```

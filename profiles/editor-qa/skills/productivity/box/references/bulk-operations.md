@@ -22,7 +22,7 @@ Prefer deterministic filename, extension, and existing-metadata rules. For seman
 
 ```bash
 box ai:ask --items=id=<FILE_ID>,type=file \
-  --prompt "Classify as invoice, receipt, contract, report, or other." --json
+ --prompt "Classify as invoice, receipt, contract, report, or other." --json
 ```
 
 For known fields, use `ai:extract-structured`; for variable fields, use `ai:extract`. Sample a small representative set before processing a large batch. Disclose Box AI unit use and obtain confirmation before a material AI batch.

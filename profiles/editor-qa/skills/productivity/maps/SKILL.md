@@ -6,11 +6,11 @@ author: Mibayy
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [maps, geocoding, places, routing, distance, directions, nearby, location, openstreetmap, nominatim, overpass, osrm]
-    category: productivity
-    requires_toolsets: [terminal]
-    supersedes: [find-nearby]
+ hermes:
+ tags: [maps, geocoding, places, routing, distance, directions, nearby, location, openstreetmap, nominatim, overpass, osrm]
+ category: productivity
+ requires_toolsets: [terminal]
+ supersedes: [find-nearby]
 ---
 
 # Maps Skill
@@ -161,7 +161,7 @@ current.
 
 **"Find Italian restaurants near the Colosseum":**
 1. `nearby --near "Colosseum Rome" --category restaurant --radius 500`
-   — one command, auto-geocoded
+ — one command, auto-geocoded
 
 **"What's near this location pin they sent?":**
 1. Extract lat/lon from the Telegram message
@@ -180,7 +180,7 @@ current.
 - `nearby` requires lat/lon OR `--near "<address>"` — one of the two is needed
 - OSRM routing coverage is best for Europe and North America
 - Overpass API can be slow during peak hours; the script automatically
-  falls back between mirrors (overpass-api.de → overpass.kumi.systems)
+ falls back between mirrors (overpass-api.de → overpass.kumi.systems)
 - `distance` and `directions` use `--to` flag for the destination (not positional)
 - If a zip code alone gives ambiguous results globally, include country/state
 

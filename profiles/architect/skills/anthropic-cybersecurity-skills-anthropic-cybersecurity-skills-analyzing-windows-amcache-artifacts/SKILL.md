@@ -1,12 +1,12 @@
 ---
 name: analyzing-windows-amcache-artifacts
 description: 'Parses the Windows Amcache.hve registry hive with Eric Zimmerman''s
-  AmcacheParser and Timeline Explorer to extract evidence of program execution, application
-  installation, and driver loading, including SHA-1 hash correlation with threat
-  intel and timeline reconstruction. Use for Amcache forensics, program execution
-  evidence gathering, or application compatibility cache investigations in DFIR work.
+ AmcacheParser and Timeline Explorer to extract evidence of program execution, application
+ installation, and driver loading, including SHA-1 hash correlation with threat
+ intel and timeline reconstruction. Use for Amcache forensics, program execution
+ evidence gathering, or application compatibility cache investigations in DFIR work.
 
-  '
+ '
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -114,15 +114,15 @@ Open the `AssociatedFileEntries.csv` in Timeline Explorer and examine key column
 
 ```
 Key columns to review:
-- ProgramId          : Links file to its parent program entry
-- SHA1               : Hash for threat intel lookups
-- FullPath           : Original file location on disk
-- FileSize           : Size of the executable
+- ProgramId : Links file to its parent program entry
+- SHA1 : Hash for threat intel lookups
+- FullPath : Original file location on disk
+- FileSize : Size of the executable
 - FileKeyLastWriteTimestamp : When the Amcache entry was last updated
-- Name               : File name
-- Publisher           : Code signing publisher (blank = unsigned)
-- BinProductVersion  : Version string from the PE header
-- LinkDate           : PE compilation timestamp (useful for detecting timestomping)
+- Name : File name
+- Publisher : Code signing publisher (blank = unsigned)
+- BinProductVersion : Version string from the PE header
+- LinkDate : PE compilation timestamp (useful for detecting timestomping)
 ```
 
 Filter for suspicious indicators:
@@ -151,18 +151,18 @@ Extract SHA-1 hashes and check against malware databases:
 # Extract unique SHA-1 hashes from the parsed output
 # Using PowerShell to extract the SHA1 column
 Import-Csv "D:\Evidence\Output\Amcache_AssociatedFileEntries.csv" |
-  Select-Object -ExpandProperty SHA1 -Unique |
-  Where-Object { $_ -ne "" } |
-  Out-File "D:\Evidence\Output\extracted_hashes.txt"
+ Select-Object -ExpandProperty SHA1 -Unique |
+ Where-Object { $_ -ne "" } |
+ Out-File "D:\Evidence\Output\extracted_hashes.txt"
 
 # Check hashes against VirusTotal using vt-cli
 foreach ($hash in Get-Content "D:\Evidence\Output\extracted_hashes.txt") {
-    vt file $hash --format json | Select-Object -Property meaningful_name, last_analysis_stats
+ vt file $hash --format json | Select-Object -Property meaningful_name, last_analysis_stats
 }
 
 # Check hashes against CIRCL hashlookup
 foreach ($hash in Get-Content "D:\Evidence\Output\extracted_hashes.txt") {
-    Invoke-RestMethod -Uri "https://hashlookup.circl.lu/lookup/sha1/$hash"
+ Invoke-RestMethod -Uri "https://hashlookup.circl.lu/lookup/sha1/$hash"
 }
 
 # Cross-reference with NSRL to identify known-good vs. unknown
@@ -175,13 +175,13 @@ Review the `ProgramEntries.csv` for software the attacker may have installed:
 
 ```
 Key columns in ProgramEntries:
-- ProgramName        : Display name of installed application
-- ProgramVersion     : Version string
-- Publisher          : Software publisher
-- InstallDate        : When the program was installed
-- Source             : Installation source (msi, exe, etc.)
-- UninstallKey       : Registry uninstall path
-- PathsList         : Installation directories
+- ProgramName : Display name of installed application
+- ProgramVersion : Version string
+- Publisher : Software publisher
+- InstallDate : When the program was installed
+- Source : Installation source (msi, exe, etc.)
+- UninstallKey : Registry uninstall path
+- PathsList : Installation directories
 ```
 
 Look for:
@@ -197,13 +197,13 @@ Review the `DriverBinaries.csv` for suspicious loaded drivers:
 
 ```
 Key columns in DriverBinaries:
-- DriverName         : Name of the driver
-- DriverInBox        : Whether it shipped with Windows (false = third-party)
-- DriverSigned       : Whether the driver has a valid signature
-- DriverTimeStamp    : Compilation timestamp
-- Product            : Product associated with the driver
-- ProductVersion     : Driver version
-- SHA1               : Hash of the driver binary
+- DriverName : Name of the driver
+- DriverInBox : Whether it shipped with Windows (false = third-party)
+- DriverSigned : Whether the driver has a valid signature
+- DriverTimeStamp : Compilation timestamp
+- Product : Product associated with the driver
+- ProductVersion : Driver version
+- SHA1 : Hash of the driver binary
 ```
 
 Filter for `DriverInBox = false` and `DriverSigned = false` to find unsigned third-party drivers that may be rootkits or vulnerable drivers used in BYOVD (Bring Your Own Vulnerable Driver) attacks.

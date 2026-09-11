@@ -16,7 +16,7 @@ Single synchronous call returning raw audio bytes:
 POST https://api.fish.audio/v1/tts
 Authorization: Bearer ${FISH_AUDIO_API_KEY}
 Content-Type: application/json
-model: <backend model>     # HTTP header selects the backend, e.g. s1
+model: <backend model> # HTTP header selects the backend, e.g. s1
 ```
 
 The backend model is chosen with the `model` **HTTP header**, not a body field. In OpenMontage this maps to the tool's `model` input.
@@ -56,11 +56,11 @@ Generate with the TTS selector:
 from tools.audio.tts_selector import TTSSelector
 
 result = TTSSelector().execute({
-    "preferred_provider": "fish_audio",
-    "text": "Here's why compound interest quietly beats every get-rich-quick scheme.",
-    "model": "s1",
-    "reference_id": "<playground voice model id>",
-    "output_path": "projects/my-video/assets/audio/narration.mp3",
+ "preferred_provider": "fish_audio",
+ "text": "Here's why compound interest quietly beats every get-rich-quick scheme.",
+ "model": "s1",
+ "reference_id": "<playground voice model id>",
+ "output_path": "projects/my-video/assets/audio/narration.mp3",
 })
 ```
 
@@ -70,10 +70,10 @@ Or call the provider directly:
 from tools.audio.fish_audio_tts import FishAudioTTS
 
 result = FishAudioTTS().execute({
-    "text": "Short sample line for approval.",
-    "model": "s1",
-    "reference_id": "<playground voice model id>",
-    "output_path": "projects/my-video/assets/audio/fish_sample.mp3",
+ "text": "Short sample line for approval.",
+ "model": "s1",
+ "reference_id": "<playground voice model id>",
+ "output_path": "projects/my-video/assets/audio/fish_sample.mp3",
 })
 ```
 

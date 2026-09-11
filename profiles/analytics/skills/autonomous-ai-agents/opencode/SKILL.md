@@ -6,9 +6,9 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Coding-Agent, OpenCode, Autonomous, Refactoring, Code-Review]
-    related_skills: [claude-code, codex, hermes-agent]
+ hermes:
+ tags: [Coding-Agent, OpenCode, Autonomous, Refactoring, Code-Review]
+ related_skills: [claude-code, codex, hermes-agent]
 ---
 
 # OpenCode CLI
@@ -115,8 +115,8 @@ process(action="kill", session_id="<id>")
 After exiting, OpenCode prints a session ID. Resume with:
 
 ```
-terminal(command="opencode -c", workdir="~/project", background=true, pty=true)  # Continue last session
-terminal(command="opencode -s ses_abc123", workdir="~/project", background=true, pty=true)  # Specific session
+terminal(command="opencode -c", workdir="~/project", background=true, pty=true) # Continue last session
+terminal(command="opencode -s ses_abc123", workdir="~/project", background=true, pty=true) # Specific session
 ```
 
 ## Common Flags
@@ -138,8 +138,8 @@ terminal(command="opencode -s ses_abc123", workdir="~/project", background=true,
 ## Procedure
 
 1. Verify tool readiness:
-   - `terminal(command="opencode --version")`
-   - `terminal(command="opencode auth list")`
+ - `terminal(command="opencode --version")`
+ - `terminal(command="opencode auth list")`
 2. For bounded tasks, use `opencode run '...'` (no pty needed).
 3. For iterative tasks, start `opencode` with `background=true, pty=true`.
 4. Monitor long tasks with `process(action="poll"|"log")`.
@@ -192,7 +192,7 @@ terminal(command="opencode stats --days 7 --models anthropic/claude-sonnet-4")
 - `/exit` is NOT a valid command — it opens an agent selector. Use Ctrl+C to exit the TUI.
 - PATH mismatch can select the wrong OpenCode binary/model config.
 - If OpenCode appears stuck, inspect logs before killing:
-  - `process(action="log", session_id="<id>")`
+ - `process(action="log", session_id="<id>")`
 - Avoid sharing one working directory across parallel OpenCode sessions.
 - Enter may need to be pressed twice to submit in the TUI (once to finalize text, once to send).
 

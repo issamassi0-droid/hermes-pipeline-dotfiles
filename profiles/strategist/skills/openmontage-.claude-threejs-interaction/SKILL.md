@@ -20,15 +20,15 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 function onClick(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+ mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+ mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(scene.children);
+ raycaster.setFromCamera(mouse, camera);
+ const intersects = raycaster.intersectObjects(scene.children);
 
-  if (intersects.length > 0) {
-    console.log("Clicked:", intersects[0].object);
-  }
+ if (intersects.length > 0) {
+ console.log("Clicked:", intersects[0].object);
+ }
 }
 
 window.addEventListener("click", onClick);
@@ -52,15 +52,15 @@ const intersects = raycaster.intersectObjects(objects, recursive);
 
 // intersects array contains:
 // {
-//   distance: number,          // Distance from ray origin
-//   point: Vector3,            // Intersection point in world coords
-//   face: Face3,               // Intersected face
-//   faceIndex: number,         // Face index
-//   object: Object3D,          // Intersected object
-//   uv: Vector2,               // UV coordinates at intersection
-//   uv1: Vector2,              // Second UV channel
-//   normal: Vector3,           // Interpolated face normal
-//   instanceId: number         // For InstancedMesh
+// distance: number, // Distance from ray origin
+// point: Vector3, // Intersection point in world coords
+// face: Face3, // Intersected face
+// faceIndex: number, // Face index
+// object: Object3D, // Intersected object
+// uv: Vector2, // UV coordinates at intersection
+// uv1: Vector2, // Second UV channel
+// normal: Vector3, // Interpolated face normal
+// instanceId: number // For InstancedMesh
 // }
 ```
 
@@ -70,16 +70,16 @@ const intersects = raycaster.intersectObjects(objects, recursive);
 const mouse = new THREE.Vector2();
 
 function updateMouse(event) {
-  // For full window
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+ // For full window
+ mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+ mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 }
 
 // For specific canvas element
 function updateMouseCanvas(event, canvas) {
-  const rect = canvas.getBoundingClientRect();
-  mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-  mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+ const rect = canvas.getBoundingClientRect();
+ mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+ mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 }
 ```
 
@@ -87,20 +87,20 @@ function updateMouseCanvas(event, canvas) {
 
 ```javascript
 function onTouchStart(event) {
-  event.preventDefault();
+ event.preventDefault();
 
-  if (event.touches.length === 1) {
-    const touch = event.touches[0];
-    mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
+ if (event.touches.length === 1) {
+ const touch = event.touches[0];
+ mouse.x = (touch.clientX / window.innerWidth) * 2 - 1;
+ mouse.y = -(touch.clientY / window.innerHeight) * 2 + 1;
 
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(clickableObjects);
+ raycaster.setFromCamera(mouse, camera);
+ const intersects = raycaster.intersectObjects(clickableObjects);
 
-    if (intersects.length > 0) {
-      handleSelection(intersects[0]);
-    }
-  }
+ if (intersects.length > 0) {
+ handleSelection(intersects[0]);
+ }
+ }
 }
 
 renderer.domElement.addEventListener("touchstart", onTouchStart);
@@ -137,11 +137,11 @@ raycaster.layers.set(1);
 // Throttle raycast for hover effects
 let lastRaycast = 0;
 function onMouseMove(event) {
-  const now = Date.now();
-  if (now - lastRaycast < 50) return; // 20fps max
-  lastRaycast = now;
+ const now = Date.now();
+ if (now - lastRaycast < 50) return; // 20fps max
+ lastRaycast = now;
 
-  // Raycast here
+ // Raycast here
 }
 ```
 
@@ -182,8 +182,8 @@ controls.target.set(0, 1, 0);
 
 // Update in animation loop
 function animate() {
-  controls.update(); // Required for damping and auto-rotate
-  renderer.render(scene, camera);
+ controls.update(); // Required for damping and auto-rotate
+ renderer.render(scene, camera);
 }
 ```
 
@@ -199,8 +199,8 @@ controls.dragToLook = true;
 
 // Update with delta
 function animate() {
-  controls.update(clock.getDelta());
-  renderer.render(scene, camera);
+ controls.update(clock.getDelta());
+ renderer.render(scene, camera);
 }
 ```
 
@@ -218,7 +218,7 @@ controls.verticalMin = Math.PI / 4;
 controls.verticalMax = (Math.PI * 3) / 4;
 
 function animate() {
-  controls.update(clock.getDelta());
+ controls.update(clock.getDelta());
 }
 ```
 
@@ -231,15 +231,15 @@ const controls = new PointerLockControls(camera, document.body);
 
 // Lock pointer on click
 document.addEventListener("click", () => {
-  controls.lock();
+ controls.lock();
 });
 
 controls.addEventListener("lock", () => {
-  console.log("Pointer locked");
+ console.log("Pointer locked");
 });
 
 controls.addEventListener("unlock", () => {
-  console.log("Pointer unlocked");
+ console.log("Pointer unlocked");
 });
 
 // Movement
@@ -249,26 +249,26 @@ const moveForward = false;
 const moveBackward = false;
 
 document.addEventListener("keydown", (event) => {
-  switch (event.code) {
-    case "KeyW":
-      moveForward = true;
-      break;
-    case "KeyS":
-      moveBackward = true;
-      break;
-  }
+ switch (event.code) {
+ case "KeyW":
+ moveForward = true;
+ break;
+ case "KeyS":
+ moveBackward = true;
+ break;
+ }
 });
 
 function animate() {
-  if (controls.isLocked) {
-    direction.z = Number(moveForward) - Number(moveBackward);
-    direction.normalize();
+ if (controls.isLocked) {
+ direction.z = Number(moveForward) - Number(moveBackward);
+ direction.normalize();
 
-    velocity.z -= direction.z * 0.1;
-    velocity.z *= 0.9; // Friction
+ velocity.z -= direction.z * 0.1;
+ velocity.z *= 0.9; // Friction
 
-    controls.moveForward(-velocity.z);
-  }
+ controls.moveForward(-velocity.z);
+ }
 }
 ```
 
@@ -284,7 +284,7 @@ controls.panSpeed = 0.8;
 controls.staticMoving = true;
 
 function animate() {
-  controls.update();
+ controls.update();
 }
 ```
 
@@ -324,30 +324,30 @@ transformControls.setSize(1);
 
 // Events
 transformControls.addEventListener("dragging-changed", (event) => {
-  // Disable orbit controls while dragging
-  orbitControls.enabled = !event.value;
+ // Disable orbit controls while dragging
+ orbitControls.enabled = !event.value;
 });
 
 transformControls.addEventListener("change", () => {
-  renderer.render(scene, camera);
+ renderer.render(scene, camera);
 });
 
 // Keyboard shortcuts
 window.addEventListener("keydown", (event) => {
-  switch (event.key) {
-    case "g":
-      transformControls.setMode("translate");
-      break;
-    case "r":
-      transformControls.setMode("rotate");
-      break;
-    case "s":
-      transformControls.setMode("scale");
-      break;
-    case "Escape":
-      transformControls.detach();
-      break;
-  }
+ switch (event.key) {
+ case "g":
+ transformControls.setMode("translate");
+ break;
+ case "r":
+ transformControls.setMode("rotate");
+ break;
+ case "s":
+ transformControls.setMode("scale");
+ break;
+ case "Escape":
+ transformControls.detach();
+ break;
+ }
 });
 ```
 
@@ -360,24 +360,24 @@ import { DragControls } from "three/addons/controls/DragControls.js";
 
 const draggableObjects = [mesh1, mesh2, mesh3];
 const dragControls = new DragControls(
-  draggableObjects,
-  camera,
-  renderer.domElement,
+ draggableObjects,
+ camera,
+ renderer.domElement,
 );
 
 dragControls.addEventListener("dragstart", (event) => {
-  orbitControls.enabled = false;
-  event.object.material.emissive.set(0xaaaaaa);
+ orbitControls.enabled = false;
+ event.object.material.emissive.set(0xaaaaaa);
 });
 
 dragControls.addEventListener("drag", (event) => {
-  // Constrain to ground plane
-  event.object.position.y = 0;
+ // Constrain to ground plane
+ event.object.position.y = 0;
 });
 
 dragControls.addEventListener("dragend", (event) => {
-  orbitControls.enabled = true;
-  event.object.material.emissive.set(0x000000);
+ orbitControls.enabled = true;
+ event.object.material.emissive.set(0x000000);
 });
 ```
 
@@ -391,24 +391,24 @@ const mouse = new THREE.Vector2();
 let selectedObject = null;
 
 function onMouseDown(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+ mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+ mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(selectableObjects);
+ raycaster.setFromCamera(mouse, camera);
+ const intersects = raycaster.intersectObjects(selectableObjects);
 
-  // Deselect previous
-  if (selectedObject) {
-    selectedObject.material.emissive.set(0x000000);
-  }
+ // Deselect previous
+ if (selectedObject) {
+ selectedObject.material.emissive.set(0x000000);
+ }
 
-  // Select new
-  if (intersects.length > 0) {
-    selectedObject = intersects[0].object;
-    selectedObject.material.emissive.set(0x444444);
-  } else {
-    selectedObject = null;
-  }
+ // Select new
+ if (intersects.length > 0) {
+ selectedObject = intersects[0].object;
+ selectedObject.material.emissive.set(0x444444);
+ } else {
+ selectedObject = null;
+ }
 }
 ```
 
@@ -422,32 +422,32 @@ const selectionBox = new SelectionBox(camera, scene);
 const selectionHelper = new SelectionHelper(renderer, "selectBox"); // CSS class
 
 document.addEventListener("pointerdown", (event) => {
-  selectionBox.startPoint.set(
-    (event.clientX / window.innerWidth) * 2 - 1,
-    -(event.clientY / window.innerHeight) * 2 + 1,
-    0.5,
-  );
+ selectionBox.startPoint.set(
+ (event.clientX / window.innerWidth) * 2 - 1,
+ -(event.clientY / window.innerHeight) * 2 + 1,
+ 0.5,
+ );
 });
 
 document.addEventListener("pointermove", (event) => {
-  if (selectionHelper.isDown) {
-    selectionBox.endPoint.set(
-      (event.clientX / window.innerWidth) * 2 - 1,
-      -(event.clientY / window.innerHeight) * 2 + 1,
-      0.5,
-    );
-  }
+ if (selectionHelper.isDown) {
+ selectionBox.endPoint.set(
+ (event.clientX / window.innerWidth) * 2 - 1,
+ -(event.clientY / window.innerHeight) * 2 + 1,
+ 0.5,
+ );
+ }
 });
 
 document.addEventListener("pointerup", (event) => {
-  selectionBox.endPoint.set(
-    (event.clientX / window.innerWidth) * 2 - 1,
-    -(event.clientY / window.innerHeight) * 2 + 1,
-    0.5,
-  );
+ selectionBox.endPoint.set(
+ (event.clientX / window.innerWidth) * 2 - 1,
+ -(event.clientY / window.innerHeight) * 2 + 1,
+ 0.5,
+ );
 
-  const selected = selectionBox.select();
-  console.log("Selected objects:", selected);
+ const selected = selectionBox.select();
+ console.log("Selected objects:", selected);
 });
 ```
 
@@ -459,30 +459,30 @@ const mouse = new THREE.Vector2();
 let hoveredObject = null;
 
 function onMouseMove(event) {
-  mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-  mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+ mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+ mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
-  raycaster.setFromCamera(mouse, camera);
-  const intersects = raycaster.intersectObjects(hoverableObjects);
+ raycaster.setFromCamera(mouse, camera);
+ const intersects = raycaster.intersectObjects(hoverableObjects);
 
-  // Reset previous hover
-  if (hoveredObject) {
-    hoveredObject.material.color.set(hoveredObject.userData.originalColor);
-    document.body.style.cursor = "default";
-  }
+ // Reset previous hover
+ if (hoveredObject) {
+ hoveredObject.material.color.set(hoveredObject.userData.originalColor);
+ document.body.style.cursor = "default";
+ }
 
-  // Apply new hover
-  if (intersects.length > 0) {
-    hoveredObject = intersects[0].object;
-    if (!hoveredObject.userData.originalColor) {
-      hoveredObject.userData.originalColor =
-        hoveredObject.material.color.getHex();
-    }
-    hoveredObject.material.color.set(0xff6600);
-    document.body.style.cursor = "pointer";
-  } else {
-    hoveredObject = null;
-  }
+ // Apply new hover
+ if (intersects.length > 0) {
+ hoveredObject = intersects[0].object;
+ if (!hoveredObject.userData.originalColor) {
+ hoveredObject.userData.originalColor =
+ hoveredObject.material.color.getHex();
+ }
+ hoveredObject.material.color.set(0xff6600);
+ document.body.style.cursor = "pointer";
+ } else {
+ hoveredObject = null;
+ }
 }
 
 window.addEventListener("mousemove", onMouseMove);
@@ -494,22 +494,22 @@ window.addEventListener("mousemove", onMouseMove);
 const keys = {};
 
 document.addEventListener("keydown", (event) => {
-  keys[event.code] = true;
+ keys[event.code] = true;
 });
 
 document.addEventListener("keyup", (event) => {
-  keys[event.code] = false;
+ keys[event.code] = false;
 });
 
 function update() {
-  const speed = 0.1;
+ const speed = 0.1;
 
-  if (keys["KeyW"]) player.position.z -= speed;
-  if (keys["KeyS"]) player.position.z += speed;
-  if (keys["KeyA"]) player.position.x -= speed;
-  if (keys["KeyD"]) player.position.x += speed;
-  if (keys["Space"]) player.position.y += speed;
-  if (keys["ShiftLeft"]) player.position.y -= speed;
+ if (keys["KeyW"]) player.position.z -= speed;
+ if (keys["KeyS"]) player.position.z += speed;
+ if (keys["KeyA"]) player.position.x -= speed;
+ if (keys["KeyD"]) player.position.x += speed;
+ if (keys["Space"]) player.position.y += speed;
+ if (keys["ShiftLeft"]) player.position.y -= speed;
 }
 ```
 
@@ -519,13 +519,13 @@ function update() {
 
 ```javascript
 function worldToScreen(position, camera) {
-  const vector = position.clone();
-  vector.project(camera);
+ const vector = position.clone();
+ vector.project(camera);
 
-  return {
-    x: ((vector.x + 1) / 2) * window.innerWidth,
-    y: (-(vector.y - 1) / 2) * window.innerHeight,
-  };
+ return {
+ x: ((vector.x + 1) / 2) * window.innerWidth,
+ y: (-(vector.y - 1) / 2) * window.innerHeight,
+ };
 }
 
 // Position HTML element over 3D object
@@ -538,18 +538,18 @@ element.style.top = screenPos.y + "px";
 
 ```javascript
 function screenToWorld(screenX, screenY, camera, targetZ = 0) {
-  const vector = new THREE.Vector3(
-    (screenX / window.innerWidth) * 2 - 1,
-    -(screenY / window.innerHeight) * 2 + 1,
-    0.5,
-  );
+ const vector = new THREE.Vector3(
+ (screenX / window.innerWidth) * 2 - 1,
+ -(screenY / window.innerHeight) * 2 + 1,
+ 0.5,
+ );
 
-  vector.unproject(camera);
+ vector.unproject(camera);
 
-  const dir = vector.sub(camera.position).normalize();
-  const distance = (targetZ - camera.position.z) / dir.z;
+ const dir = vector.sub(camera.position).normalize();
+ const distance = (targetZ - camera.position.z) / dir.z;
 
-  return camera.position.clone().add(dir.multiplyScalar(distance));
+ return camera.position.clone().add(dir.multiplyScalar(distance));
 }
 ```
 
@@ -557,13 +557,13 @@ function screenToWorld(screenX, screenY, camera, targetZ = 0) {
 
 ```javascript
 function getRayPlaneIntersection(mouse, camera, plane) {
-  const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(mouse, camera);
+ const raycaster = new THREE.Raycaster();
+ raycaster.setFromCamera(mouse, camera);
 
-  const intersection = new THREE.Vector3();
-  raycaster.ray.intersectPlane(plane, intersection);
+ const intersection = new THREE.Vector3();
+ raycaster.ray.intersectPlane(plane, intersection);
 
-  return intersection;
+ return intersection;
 }
 
 // Ground plane
@@ -575,62 +575,62 @@ const worldPos = getRayPlaneIntersection(mouse, camera, groundPlane);
 
 ```javascript
 class InteractionManager {
-  constructor(camera, renderer, scene) {
-    this.camera = camera;
-    this.renderer = renderer;
-    this.scene = scene;
-    this.raycaster = new THREE.Raycaster();
-    this.mouse = new THREE.Vector2();
-    this.clickables = [];
+ constructor(camera, renderer, scene) {
+ this.camera = camera;
+ this.renderer = renderer;
+ this.scene = scene;
+ this.raycaster = new THREE.Raycaster();
+ this.mouse = new THREE.Vector2();
+ this.clickables = [];
 
-    this.bindEvents();
-  }
+ this.bindEvents();
+ }
 
-  bindEvents() {
-    const canvas = this.renderer.domElement;
+ bindEvents() {
+ const canvas = this.renderer.domElement;
 
-    canvas.addEventListener("click", (e) => this.onClick(e));
-    canvas.addEventListener("mousemove", (e) => this.onMouseMove(e));
-    canvas.addEventListener("touchstart", (e) => this.onTouchStart(e));
-  }
+ canvas.addEventListener("click", (e) => this.onClick(e));
+ canvas.addEventListener("mousemove", (e) => this.onMouseMove(e));
+ canvas.addEventListener("touchstart", (e) => this.onTouchStart(e));
+ }
 
-  updateMouse(event) {
-    const rect = this.renderer.domElement.getBoundingClientRect();
-    this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-  }
+ updateMouse(event) {
+ const rect = this.renderer.domElement.getBoundingClientRect();
+ this.mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+ this.mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+ }
 
-  getIntersects() {
-    this.raycaster.setFromCamera(this.mouse, this.camera);
-    return this.raycaster.intersectObjects(this.clickables, true);
-  }
+ getIntersects() {
+ this.raycaster.setFromCamera(this.mouse, this.camera);
+ return this.raycaster.intersectObjects(this.clickables, true);
+ }
 
-  onClick(event) {
-    this.updateMouse(event);
-    const intersects = this.getIntersects();
+ onClick(event) {
+ this.updateMouse(event);
+ const intersects = this.getIntersects();
 
-    if (intersects.length > 0) {
-      const object = intersects[0].object;
-      if (object.userData.onClick) {
-        object.userData.onClick(intersects[0]);
-      }
-    }
-  }
+ if (intersects.length > 0) {
+ const object = intersects[0].object;
+ if (object.userData.onClick) {
+ object.userData.onClick(intersects[0]);
+ }
+ }
+ }
 
-  addClickable(object, callback) {
-    this.clickables.push(object);
-    object.userData.onClick = callback;
-  }
+ addClickable(object, callback) {
+ this.clickables.push(object);
+ object.userData.onClick = callback;
+ }
 
-  dispose() {
-    // Remove event listeners
-  }
+ dispose() {
+ // Remove event listeners
+ }
 }
 
 // Usage
 const interaction = new InteractionManager(camera, renderer, scene);
 interaction.addClickable(mesh, (intersect) => {
-  console.log("Clicked at:", intersect.point);
+ console.log("Clicked at:", intersect.point);
 });
 ```
 
@@ -646,8 +646,8 @@ interaction.addClickable(mesh, (intersect) => {
 // Use simpler geometry for raycasting
 const complexMesh = loadedModel;
 const collisionMesh = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ visible: false }),
+ new THREE.BoxGeometry(1, 1, 1),
+ new THREE.MeshBasicMaterial({ visible: false }),
 );
 collisionMesh.userData.target = complexMesh;
 clickables.push(collisionMesh);

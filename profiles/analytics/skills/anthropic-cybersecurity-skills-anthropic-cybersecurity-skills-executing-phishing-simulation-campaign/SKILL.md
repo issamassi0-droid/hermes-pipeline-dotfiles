@@ -1,14 +1,14 @@
 ---
 name: executing-phishing-simulation-campaign
 description: 'Executes authorized phishing simulation campaigns to assess an organization''s
-  susceptibility to email-based social engineering attacks. The tester designs realistic
-  phishing scenarios, builds credential harvesting infrastructure, sends targeted
-  phishing emails, and tracks open rates, click-through rates, and credential submission
-  rates to measure human security awareness. Activates for requests involving phishing
-  simulation, social engineering assessment, email security testing, or security awareness
-  measurement.
+ susceptibility to email-based social engineering attacks. The tester designs realistic
+ phishing scenarios, builds credential harvesting infrastructure, sends targeted
+ phishing emails, and tracks open rates, click-through rates, and credential submission
+ rates to measure human security awareness. Activates for requests involving phishing
+ simulation, social engineering assessment, email security testing, or security awareness
+ measurement.
 
-  '
+ '
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -32,37 +32,37 @@ mitre_attack:
 - T1078
 - T1003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - resource-development
-  - initial-access
-  - positioning
-  techniques:
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
-  - id: T1583.001
-    name: 'Acquire Infrastructure: Domains'
-    tactic: resource-development
-    source: attack
-  - id: T1557
-    name: Adversary-in-the-Middle
-    tactic: initial-access
-    source: attack
-  - id: F1004
-    name: Access with Stolen Session Cookie
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - resource-development
+ - initial-access
+ - positioning
+ techniques:
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
+ - id: T1583.001
+ name: 'Acquire Infrastructure: Domains'
+ tactic: resource-development
+ source: attack
+ - id: T1557
+ name: Adversary-in-the-Middle
+ tactic: initial-access
+ source: attack
+ - id: F1004
+ name: Access with Stolen Session Cookie
+ tactic: initial-access
+ source: f3
 ---
 # Executing Phishing Simulation Campaign
 
@@ -92,11 +92,11 @@ mitre_f3:
 Design realistic phishing scenarios based on threats relevant to the target organization:
 
 - **Pretext selection**: Choose scenarios that mirror real-world attacks:
-  - IT support: Password expiration notice requiring immediate action
-  - HR department: Benefits enrollment, policy acknowledgment, W-2/tax document
-  - Executive impersonation: Urgent request from CEO/CFO to review a document
-  - Vendor/supplier: Invoice requiring review, delivery notification
-  - Cloud services: Microsoft 365 shared document, Google Drive access, Zoom meeting invitation
+ - IT support: Password expiration notice requiring immediate action
+ - HR department: Benefits enrollment, policy acknowledgment, W-2/tax document
+ - Executive impersonation: Urgent request from CEO/CFO to review a document
+ - Vendor/supplier: Invoice requiring review, delivery notification
+ - Cloud services: Microsoft 365 shared document, Google Drive access, Zoom meeting invitation
 - **Target segmentation**: Divide employees into groups by department, role, or access level. High-value targets (finance, IT admin, executives) may receive more sophisticated pretexts.
 - **Timing**: Schedule sends during business hours, preferably Tuesday-Thursday when email engagement is highest. Avoid holidays, mass layoff periods, or other sensitive times.
 - **Success metrics**: Define what constitutes campaign success: email open rate, link click rate, credential submission rate, report rate (employees who report the phish to IT)
@@ -108,11 +108,11 @@ Configure the phishing infrastructure:
 - **Domain registration**: Register a domain that resembles the target organization's domain (typosquatting, homograph, or brand-adjacent). Examples: `target-corp.com`, `targetcorp-portal.com`, `targetsupport.net`
 - **SSL certificate**: Obtain a TLS certificate for the phishing domain (Let's Encrypt) to display the padlock icon
 - **GoPhish configuration**:
-  - Set up the GoPhish server on a VPS with the phishing domain
-  - Configure the SMTP sending profile with the phishing domain's mail server
-  - Create the email template with tracking pixel and link to the landing page
-  - Build the credential harvesting landing page that mirrors the target's login portal
-  - Import the target email list and create user groups
+ - Set up the GoPhish server on a VPS with the phishing domain
+ - Configure the SMTP sending profile with the phishing domain's mail server
+ - Create the email template with tracking pixel and link to the landing page
+ - Build the credential harvesting landing page that mirrors the target's login portal
+ - Import the target email list and create user groups
 - **Email authentication**: Configure SPF, DKIM, and DMARC records for the phishing domain to pass email authentication checks and improve delivery rates
 - **Test delivery**: Send test emails to a controlled inbox to verify rendering, link tracking, and landing page functionality
 
@@ -142,11 +142,11 @@ Process captured credentials to demonstrate impact (if authorized):
 Analyze campaign results and produce the assessment report:
 
 - **Metrics analysis**:
-  - Email delivery rate: percentage of emails that reached inboxes
-  - Open rate: percentage of recipients who opened the email
-  - Click rate: percentage who clicked the phishing link
-  - Submission rate: percentage who submitted credentials
-  - Report rate: percentage who reported the email to IT security
+ - Email delivery rate: percentage of emails that reached inboxes
+ - Open rate: percentage of recipients who opened the email
+ - Click rate: percentage who clicked the phishing link
+ - Submission rate: percentage who submitted credentials
+ - Report rate: percentage who reported the email to IT security
 - **Departmental comparison**: Compare susceptibility rates across departments to identify groups needing targeted training
 - **Email security effectiveness**: Document whether the phishing emails bypassed the secure email gateway, whether DMARC/SPF prevented delivery, and whether link scanning tools detected the phishing URL
 - **Recommendations**: Provide actionable recommendations including security awareness training topics, technical controls improvements, and policy changes
@@ -213,10 +213,10 @@ Analyze campaign results and produce the assessment report:
 ### Department Breakdown
 | Department | Employees | Clicked | Submitted | Reported |
 |------------|-----------|---------|-----------|----------|
-| Finance    | 120       | 38.3%   | 28.3%     | 0.8%     |
-| Marketing  | 85        | 35.3%   | 24.7%     | 1.2%     |
-| Engineering| 300       | 15.0%   | 8.3%      | 3.7%     |
-| IT         | 45        | 8.9%    | 4.4%      | 11.1%    |
+| Finance | 120 | 38.3% | 28.3% | 0.8% |
+| Marketing | 85 | 35.3% | 24.7% | 1.2% |
+| Engineering| 300 | 15.0% | 8.3% | 3.7% |
+| IT | 45 | 8.9% | 4.4% | 11.1% |
 
 ### Key Findings
 1. Baseline credential submission rate of 16.9% exceeds industry average (12%)

@@ -45,18 +45,18 @@ This skill covers building both dumb and filtering redirectors with nginx and Ap
 - One or more disposable cloud VPS instances (the redirector edge) and a separate, firewalled team-server host.
 - A registered domain with controllable DNS, ideally aged/categorized.
 - Root on the redirector host. Install the web server and TLS tooling:
-  ```bash
-  # Debian/Ubuntu redirector
-  sudo apt update
-  sudo apt install -y nginx apache2 socat certbot python3-certbot-nginx git
-  # Enable Apache proxy modules if using mod_rewrite redirector
-  sudo a2enmod rewrite proxy proxy_http ssl headers
-  ```
+ ```bash
+ # Debian/Ubuntu redirector
+ sudo apt update
+ sudo apt install -y nginx apache2 socat certbot python3-certbot-nginx git
+ # Enable Apache proxy modules if using mod_rewrite redirector
+ sudo a2enmod rewrite proxy proxy_http ssl headers
+ ```
 - The C2 framework's Malleable C2 profile (Cobalt Strike `.profile`, Sliver/Havoc HTTP profile) defining URIs, User-Agent, and headers.
 - `cs2modrewrite` to auto-generate rules from a Cobalt Strike profile:
-  ```bash
-  git clone https://github.com/threatexpress/cs2modrewrite
-  ```
+ ```bash
+ git clone https://github.com/threatexpress/cs2modrewrite
+ ```
 - Firewall the team server so it only accepts the redirector's source IP on the C2 port.
 
 ## Objectives
@@ -107,28 +107,28 @@ Only proxy requests whose URI matches the malleable profile; send everything els
 ```nginx
 # /etc/nginx/sites-available/redirector.conf
 server {
-    listen 443 ssl;
-    server_name cdn.example.com;
+ listen 443 ssl;
+ server_name cdn.example.com;
 
-    ssl_certificate     /etc/letsencrypt/live/cdn.example.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/cdn.example.com/privkey.pem;
+ ssl_certificate /etc/letsencrypt/live/cdn.example.com/fullchain.pem;
+ ssl_certificate_key /etc/letsencrypt/live/cdn.example.com/privkey.pem;
 
-    # Proxy ONLY profile-matching C2 URIs to the hidden team server
-    location ~ ^/(api/v2/jobs|cm/[a-z0-9]+|push) {
-        # Require the implant's exact User-Agent
-        if ($http_user_agent != "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36") {
-            return 302 https://www.legitimate-decoy.com/;
-        }
-        proxy_pass https://10.0.0.2;
-        proxy_ssl_verify off;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $remote_addr;
-    }
+ # Proxy ONLY profile-matching C2 URIs to the hidden team server
+ location ~ ^/(api/v2/jobs|cm/[a-z0-9]+|push) {
+ # Require the implant's exact User-Agent
+ if ($http_user_agent != "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36") {
+ return 302 https://www.legitimate-decoy.com/;
+ }
+ proxy_pass https://10.0.0.2;
+ proxy_ssl_verify off;
+ proxy_set_header Host $host;
+ proxy_set_header X-Forwarded-For $remote_addr;
+ }
 
-    # Everything else -> benign decoy
-    location / {
-        return 302 https://www.legitimate-decoy.com/;
-    }
+ # Everything else -> benign decoy
+ location / {
+ return 302 https://www.legitimate-decoy.com/;
+ }
 }
 ```
 ```bash
@@ -139,7 +139,7 @@ sudo nginx -t && sudo systemctl reload nginx
 ### 4. Apache mod_rewrite redirector
 Apache's `[P]` flag proxies matching requests to the team server; non-matches get a `302` redirect. This is the format `cs2modrewrite` produces.
 ```apache
-# /etc/apache2/sites-available/redirector.conf  (inside <VirtualHost *:443>)
+# /etc/apache2/sites-available/redirector.conf (inside <VirtualHost *:443>)
 RewriteEngine On
 SSLProxyEngine On
 # Require the implant User-Agent
@@ -161,10 +161,10 @@ Let `cs2modrewrite` build the Apache or nginx rules directly from your Cobalt St
 cd cs2modrewrite
 # Apache mod_rewrite rules
 python3 cs2modrewrite.py -i havex.profile -c https://10.0.0.2 \
-  -r https://www.legitimate-decoy.com -o /etc/apache2/redirect.rules
+ -r https://www.legitimate-decoy.com -o /etc/apache2/redirect.rules
 # nginx config
 python3 cs2nginx.py -i havex.profile -c https://10.0.0.2 \
-  -r https://www.legitimate-decoy.com -H cdn.example.com > /etc/nginx/sites-available/c2.conf
+ -r https://www.legitimate-decoy.com -H cdn.example.com > /etc/nginx/sites-available/c2.conf
 ```
 
 ### 6. Terminate TLS with Let's Encrypt
@@ -181,9 +181,9 @@ Layer defenses against blue-team analysis: validate headers, geofence to the tar
 # Example: drop non-target geographies at the firewall with ipset/GeoIP,
 # require a custom auth header in the profile, and rotate the redirector
 # domain/IP on a schedule. Check the redirector only forwards matched traffic:
-curl -k https://cdn.example.com/                       # expect 302 to decoy
+curl -k https://cdn.example.com/ # expect 302 to decoy
 curl -k -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
-  https://cdn.example.com/api/v2/jobs                  # expect proxied response
+ https://cdn.example.com/api/v2/jobs # expect proxied response
 ```
 
 ## Tools and Resources

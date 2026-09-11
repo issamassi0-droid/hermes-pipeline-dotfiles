@@ -1,13 +1,13 @@
 ---
 name: detecting-evasion-techniques-in-endpoint-logs
 description: 'Detects defense evasion techniques used by adversaries in endpoint logs
-  including log tampering, timestomping, process injection, and security tool disabling.
-  Use when investigating suspicious endpoint behavior, building detection rules for
-  evasion tactics, or conducting threat hunting for stealthy adversary activity. Activates
-  for requests involving evasion detection, defense evasion analysis, log tampering
-  detection, or MITRE ATT&CK TA0005.
+ including log tampering, timestomping, process injection, and security tool disabling.
+ Use when investigating suspicious endpoint behavior, building detection rules for
+ evasion tactics, or conducting threat hunting for stealthy adversary activity. Activates
+ for requests involving evasion detection, defense evasion analysis, log tampering
+ detection, or MITRE ATT&CK TA0005.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -81,8 +81,8 @@ CommandLine contains: "Clear-EventLog" OR "Remove-EventLog"
 
 # Splunk query:
 index=windows (EventCode=1102 OR EventCode=104)
-  OR (EventCode=1 CommandLine="*wevtutil*cl*")
-  OR (EventCode=1 CommandLine="*Clear-EventLog*")
+ OR (EventCode=1 CommandLine="*wevtutil*cl*")
+ OR (EventCode=1 CommandLine="*Clear-EventLog*")
 | table _time host user CommandLine EventCode
 ```
 
@@ -101,7 +101,7 @@ DeviceFileEvents
 | extend TimeDiff = datetime_diff('day', Timestamp, ReportedFileCreationTime)
 | where TimeDiff > 30
 | project Timestamp, DeviceName, FileName, FolderPath,
-    ReportedFileCreationTime, InitiatingProcessFileName
+ ReportedFileCreationTime, InitiatingProcessFileName
 ```
 
 ### Step 2: Detect Process Injection (T1055)
@@ -112,7 +112,7 @@ EventID: 8
 # Alert when source process is unusual (not system processes)
 # Filter out known legitimate: antivirus, debugging tools
 SourceImage NOT IN ("C:\Windows\System32\csrss.exe",
-                     "C:\Windows\System32\lsass.exe")
+ "C:\Windows\System32\lsass.exe")
 
 # Sysmon Event ID 10 - ProcessAccess with suspicious access masks
 EventID: 10
@@ -122,7 +122,7 @@ GrantedAccess contains: "0x1F0FFF" OR "0x1FFFFF" OR "0x001F0FFF"
 
 # Sysmon Event ID 25 - Process Tampering
 EventID: 25
-Type: "Image is replaced"  # Process hollowing indicator
+Type: "Image is replaced" # Process hollowing indicator
 
 # Splunk detection:
 index=sysmon EventCode=8
@@ -138,19 +138,19 @@ index=sysmon EventCode=8
 # Service stopped events for security services
 EventID: 7045 (new service) OR 7036 (service state change)
 ServiceName IN ("WinDefend", "Sense", "CrowdStrike Falcon Sensor",
-                 "SentinelAgent", "csagent", "MBAMService")
+ "SentinelAgent", "csagent", "MBAMService")
 
 # Sysmon Event ID 1 - Processes that disable Defender
 CommandLine contains: "Set-MpPreference -DisableRealtimeMonitoring"
-  OR "sc stop WinDefend"
-  OR "sc config WinDefend start= disabled"
-  OR "net stop" AND ("windefend" OR "sense" OR "csagent")
+ OR "sc stop WinDefend"
+ OR "sc config WinDefend start= disabled"
+ OR "net stop" AND ("windefend" OR "sense" OR "csagent")
 
 # Registry modification to disable security features
 # Sysmon Event ID 13 - Registry value set
 TargetObject contains: "DisableAntiSpyware"
-  OR "DisableRealtimeMonitoring"
-  OR "DisableBehaviorMonitoring"
+ OR "DisableRealtimeMonitoring"
+ OR "DisableBehaviorMonitoring"
 Details: "DWORD (0x00000001)"
 
 # MDE KQL:
@@ -182,7 +182,7 @@ TargetFilename matches: "*\.pdf\.exe" OR "*\.doc\.exe" OR "*\.jpg\.exe"
 index=sysmon EventCode=1
 | eval process_name=mvindex(split(Image,"\\"),-1)
 | where (process_name="svchost.exe" AND NOT match(Image,"(?i)C:\\\\Windows\\\\System32"))
-  OR (process_name="csrss.exe" AND NOT match(Image,"(?i)C:\\\\Windows\\\\System32"))
+ OR (process_name="csrss.exe" AND NOT match(Image,"(?i)C:\\\\Windows\\\\System32"))
 | table _time host Image ParentImage CommandLine User
 ```
 
@@ -228,12 +228,12 @@ CommandLine NOT contains: ".sln" AND NOT contains: ".csproj"
 # Splunk correlation search:
 index=sysmon host=*
 | eval technique=case(
-    EventCode=2, "timestomping",
-    EventCode=8 AND NOT match(SourceImage,"csrss|svchost"), "process_injection",
-    EventCode=1 AND match(CommandLine,"(?i)wevtutil.*cl"), "log_clearing",
-    EventCode=13 AND match(TargetObject,"DisableRealtimeMonitoring"), "security_disable",
-    EventCode=1 AND match(CommandLine,"(?i)(mshta|certutil.*urlcache|regsvr32.*/s.*/n)"), "lolbin_abuse",
-    true(), NULL
+ EventCode=2, "timestomping",
+ EventCode=8 AND NOT match(SourceImage,"csrss|svchost"), "process_injection",
+ EventCode=1 AND match(CommandLine,"(?i)wevtutil.*cl"), "log_clearing",
+ EventCode=13 AND match(TargetObject,"DisableRealtimeMonitoring"), "security_disable",
+ EventCode=1 AND match(CommandLine,"(?i)(mshta|certutil.*urlcache|regsvr32.*/s.*/n)"), "lolbin_abuse",
+ true(), NULL
 )
 | where isnotnull(technique)
 | bin _time span=1h

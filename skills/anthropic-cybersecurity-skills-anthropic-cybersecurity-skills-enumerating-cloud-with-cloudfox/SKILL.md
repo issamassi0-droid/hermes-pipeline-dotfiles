@@ -1,10 +1,10 @@
 ---
 name: enumerating-cloud-with-cloudfox
 description: Run CloudFox's read-only Describe/List/Get enumeration (all-checks,
-  role-trusts, secrets, endpoints, and permissions commands) to map AWS and Azure attack
-  paths and surface exploitable misconfigurations. Use immediately after obtaining a cloud
-  credential to build situational awareness, find exposed resources and secrets, or map
-  sts:AssumeRole trust relationships for lateral-movement/privilege-escalation planning.
+ role-trusts, secrets, endpoints, and permissions commands) to map AWS and Azure attack
+ paths and surface exploitable misconfigurations. Use immediately after obtaining a cloud
+ credential to build situational awareness, find exposed resources and secrets, or map
+ sts:AssumeRole trust relationships for lateral-movement/privilege-escalation planning.
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -47,23 +47,23 @@ This skill covers installing CloudFox, authenticating to AWS and Azure, running 
 ## Prerequisites
 
 - CloudFox installed:
-  ```bash
-  # Homebrew
-  brew install cloudfox
-  # Go (1.21+)
-  go install github.com/BishopFox/cloudfox@latest
-  # or download a release binary from GitHub and chmod +x
-  ```
+ ```bash
+ # Homebrew
+ brew install cloudfox
+ # Go (1.21+)
+ go install github.com/BishopFox/cloudfox@latest
+ # or download a release binary from GitHub and chmod +x
+ ```
 - Valid cloud credentials in scope:
-  ```bash
-  # AWS — configure a named profile and verify
-  aws configure --profile assess
-  aws sts get-caller-identity --profile assess
+ ```bash
+ # AWS — configure a named profile and verify
+ aws configure --profile assess
+ aws sts get-caller-identity --profile assess
 
-  # Azure
-  az login
-  az account show
-  ```
+ # Azure
+ az login
+ az account show
+ ```
 - A signed authorization / Rules of Engagement defining the in-scope accounts
 - `awscli` (AWS) and/or `azure-cli` (Azure) installed for credential setup and follow-up
 
@@ -166,12 +166,12 @@ many `Describe*`/`List*`/`Get*` API calls in a short burst, which is highly visi
 to defenders:
 
 - **CloudTrail** records every read call. A spike of `iam:ListUsers`, `iam:ListRoles`,
-  `secretsmanager:ListSecrets`, `ec2:DescribeInstances`, and `sts:GetCallerIdentity`
-  from one principal within seconds is a strong enumeration signal.
+ `secretsmanager:ListSecrets`, `ec2:DescribeInstances`, and `sts:GetCallerIdentity`
+ from one principal within seconds is a strong enumeration signal.
 - **GuardDuty** finding types such as `Discovery:IAMUser/AnomalousBehavior` and
-  `Discovery:S3/MaliciousIPCaller` can fire on this burst pattern.
+ `Discovery:S3/MaliciousIPCaller` can fire on this burst pattern.
 - Defenders should baseline normal API-call rates per principal and alert on
-  enumeration bursts, especially from new IPs/ASNs or newly created credentials.
+ enumeration bursts, especially from new IPs/ASNs or newly created credentials.
 
 For an authorized assessment, document the source IP and timestamp of CloudFox runs
 so the blue team can correlate, and prefer running from an in-scope, attributable host.

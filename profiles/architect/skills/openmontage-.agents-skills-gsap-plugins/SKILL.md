@@ -57,9 +57,9 @@ Smooth scroll wrapper (smooths native scroll). Requires ScrollTrigger and a spec
 ```html
 <body>
 	<div id="smooth-wrapper">
-		<div id="smooth-content">
-			<!--- ALL YOUR CONTENT HERE --->
-		</div>
+ <div id="smooth-content">
+ <!--- ALL YOUR CONTENT HERE --->
+ </div>
 	</div>
 	<!-- position: fixed elements can go outside --->
 </body>
@@ -144,12 +144,12 @@ Normalizes pointer and scroll input across devices. Use for swipe, scroll direct
 gsap.registerPlugin(Observer);
 
 Observer.create({
-  target: "#area",
-  onUp: () => {},
-  onDown: () => {},
-  onLeft: () => {},
-  onRight: () => {},
-  tolerance: 10
+ target: "#area",
+ onUp: () => {},
+ onDown: () => {},
+ onLeft: () => {},
+ onRight: () => {},
+ tolerance: 10
 });
 ```
 
@@ -180,11 +180,11 @@ With **onSplit()** (v3.13.0+), animations run on each split and on re-split when
 
 ```javascript
 SplitText.create(".split", {
-  type: "lines",
-  autoSplit: true,
-  onSplit(self) {
-    return gsap.from(self.lines, { y: 100, opacity: 0, stagger: 0.05, duration: 0.5 });
-  }
+ type: "lines",
+ autoSplit: true,
+ onSplit(self) {
+ return gsap.from(self.lines, { y: 100, opacity: 0, stagger: 0.05, duration: 0.5 });
+ }
 });
 ```
 
@@ -220,8 +220,8 @@ Animates text with a scramble/glitch effect. Use when revealing or transitioning
 gsap.registerPlugin(ScrambleTextPlugin);
 
 gsap.to(".text", {
-  duration: 1,
-  scrambleText: { text: "New message", chars: "01", revealDelay: 0.5 }
+ duration: 1,
+ scrambleText: { text: "New message", chars: "01", revealDelay: 0.5 }
 });
 ```
 
@@ -265,8 +265,8 @@ MorphSVGPlugin.convertToPath("circle, rect, ellipse, line");
 gsap.to("#diamond", { duration: 1, morphSVG: "#lightning", ease: "power2.inOut" });
 // object form:
 gsap.to("#diamond", {
-  duration: 1,
-  morphSVG: { shape: "#lightning", type: "rotational", shapeIndex: 2 }
+ duration: 1,
+ morphSVG: { shape: "#lightning", type: "rotational", shapeIndex: 2 }
 });
 
 ```
@@ -301,8 +301,8 @@ Animates an element along an SVG path. Use when moving an object along a path (e
 gsap.registerPlugin(MotionPathPlugin);
 
 gsap.to(".dot", {
-  duration: 2,
-  motionPath: { path: "#path", align: "#path", alignOrigin: [0.5, 0.5] }
+ duration: 2,
+ motionPath: { path: "#path", align: "#path", alignOrigin: [0.5, 0.5] }
 });
 ```
 
@@ -361,12 +361,12 @@ Bounce-style easing with configurable strength.
 gsap.registerPlugin(Physics2DPlugin);
 
 gsap.to(".ball", {
-  duration: 2,
-  physics2D: {
-    velocity: 250,
-    angle: 80,
-    gravity: 500
-  }
+ duration: 2,
+ physics2D: {
+ velocity: 250,
+ angle: 80,
+ gravity: 500
+ }
 });
 ```
 
@@ -378,11 +378,11 @@ Applies physics to property values. Use for physics-driven property animation.
 gsap.registerPlugin(PhysicsPropsPlugin);
 
 gsap.to(".obj", {
-  duration: 2,
-  physicsProps: {
-    x: { velocity: 100, end: 300 },
-    y: { velocity: -50, acceleration: 200 }
-  }
+ duration: 2,
+ physicsProps: {
+ x: { velocity: 100, end: 300 },
+ y: { velocity: -50, acceleration: 200 }
+ }
 });
 ```
 

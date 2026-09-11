@@ -1,10 +1,10 @@
 ---
 name: ui-generator
 description: |
-  Generate UI components from natural language descriptions.
-  Use when: user asks for a page, component, or UI element.
-  Triggers: "create page", "add component", "show form", "make button",
-  "страница", "компонент", "форма".
+ Generate UI components from natural language descriptions.
+ Use when: user asks for a page, component, or UI element.
+ Triggers: "create page", "add component", "show form", "make button",
+ "страница", "компонент", "форма".
 ---
 
 # UI Generator
@@ -14,23 +14,23 @@ Create beautiful UI from descriptions. Integrates with theme-factory.
 ## Process
 
 1. **Understand request**
-   - "Login page" → form with email/password
-   - "Dashboard" → stats cards, charts, tables
-   - "Settings" → form sections, toggles
+ - "Login page" → form with email/password
+ - "Dashboard" → stats cards, charts, tables
+ - "Settings" → form sections, toggles
 
 2. **Apply theme**
-   - Load current theme from theme-factory
-   - Use theme colors and fonts
-   - Follow frontend-design principles
+ - Load current theme from theme-factory
+ - Use theme colors and fonts
+ - Follow frontend-design principles
 
 3. **Generate code**
-   - React/Next.js components
-   - Tailwind CSS styling
-   - Responsive by default
+ - React/Next.js components
+ - Tailwind CSS styling
+ - Responsive by default
 
 4. **Preview**
-   - Hot reload in browser
-   - User sees result immediately
+ - Hot reload in browser
+ - User sees result immediately
 
 ## Component Patterns
 

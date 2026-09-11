@@ -1,13 +1,13 @@
 ---
 name: analyzing-indicators-of-compromise
 description: 'Analyzes indicators of compromise (IOCs) including IP addresses, domains,
-  file hashes, URLs, and email artifacts to determine maliciousness confidence, campaign
-  attribution, and blocking priority. Use when triaging IOCs from phishing emails,
-  security alerts, or external threat feeds; enriching raw IOCs with multi-source
-  intelligence; or making block/monitor/whitelist decisions. Activates for requests
-  involving VirusTotal, AbuseIPDB, MalwareBazaar, MISP, or IOC enrichment pipelines.
+ file hashes, URLs, and email artifacts to determine maliciousness confidence, campaign
+ attribution, and blocking priority. Use when triaging IOCs from phishing emails,
+ security alerts, or external threat feeds; enriching raw IOCs with multi-source
+ intelligence; or making block/monitor/whitelist decisions. Activates for requests
+ involving VirusTotal, AbuseIPDB, MalwareBazaar, MISP, or IOC enrichment pipelines.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -35,28 +35,28 @@ mitre_attack:
 - T1041
 - T1567
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - resource-development
-  - initial-access
-  techniques:
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1583.001
-    name: 'Acquire Infrastructure: Domains'
-    tactic: resource-development
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - resource-development
+ - initial-access
+ techniques:
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1583.001
+ name: 'Acquire Infrastructure: Domains'
+ tactic: resource-development
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
 ---
 # Analyzing Indicators of Compromise
 
@@ -114,9 +114,9 @@ client.close()
 import requests
 
 response = requests.get(
-    "https://api.abuseipdb.com/api/v2/check",
-    headers={"Key": "YOUR_KEY", "Accept": "application/json"},
-    params={"ipAddress": "1.2.3.4", "maxAgeInDays": 90}
+ "https://api.abuseipdb.com/api/v2/check",
+ headers={"Key": "YOUR_KEY", "Accept": "application/json"},
+ params={"ipAddress": "1.2.3.4", "maxAgeInDays": 90}
 )
 data = response.json()["data"]
 print(f"Confidence: {data['abuseConfidenceScore']}%, Reports: {data['totalReports']}")
@@ -125,12 +125,12 @@ print(f"Confidence: {data['abuseConfidenceScore']}%, Reports: {data['totalReport
 **MalwareBazaar (file hashes)**:
 ```python
 response = requests.post(
-    "https://mb-api.abuse.ch/api/v1/",
-    data={"query": "get_info", "hash": sha256_hash}
+ "https://mb-api.abuse.ch/api/v1/",
+ data={"query": "get_info", "hash": sha256_hash}
 )
 result = response.json()
 if result["query_status"] == "ok":
-    print(result["data"][0]["tags"], result["data"][0]["signature"])
+ print(result["data"][0]["tags"], result["data"][0]["signature"])
 ```
 
 ### Step 3: Contextualize with Campaign Attribution
@@ -142,7 +142,7 @@ from pymisp import PyMISP
 misp = PyMISP("https://misp.example.com", "API_KEY")
 results = misp.search(value="evil-domain.com", type_attribute="domain")
 for event in results:
-    print(event["Event"]["info"], event["Event"]["threat_level_id"])
+ print(event["Event"]["info"], event["Event"]["threat_level_id"])
 ```
 
 Check Shodan for IP context (hosting provider, open ports, banners) to identify if the IP belongs to bulletproof hosting or a legitimate cloud provider (false positive risk).

@@ -6,12 +6,12 @@ author: Jakub Wolniewicz (@frizikk) + Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [kanban, review, quality, verification]
-    category: devops
-    requires_toolsets: [kanban]
+ hermes:
+ tags: [kanban, review, quality, verification]
+ category: devops
+ requires_toolsets: [kanban]
 environments:
-  - kanban
+ - kanban
 ---
 
 # SDLC Review Skill
@@ -112,8 +112,8 @@ Approve only when the acceptance criteria are satisfied and the evidence is suff
 
 ```text
 kanban_complete(
-    summary="Reviewed and approved. <what was verified>",
-    metadata={"review_outcome": "approved", "reviewer_checks": [...]}
+ summary="Reviewed and approved. <what was verified>",
+ metadata={"review_outcome": "approved", "reviewer_checks": [...]}
 )
 ```
 
@@ -125,8 +125,8 @@ Use this for specific, correctable defects. First record actionable findings:
 
 ```text
 kanban_comment(
-    task_id="<current-task-id>",
-    body="Changes requested:\n1. <file or artifact + defect>\n2. <required correction>",
+ task_id="<current-task-id>",
+ body="Changes requested:\n1. <file or artifact + defect>\n2. <required correction>",
 )
 ```
 
@@ -134,7 +134,7 @@ Then return the same task to its implementer:
 
 ```text
 kanban_request_changes(
-    reason="<concise summary of the required corrections>"
+ reason="<concise summary of the required corrections>"
 )
 ```
 
@@ -146,7 +146,7 @@ Use escalation only when the reviewer and implementer cannot resolve the problem
 
 ```text
 kanban_block(
-    reason="escalation: <decision or prerequisite required>"
+ reason="escalation: <decision or prerequisite required>"
 )
 ```
 

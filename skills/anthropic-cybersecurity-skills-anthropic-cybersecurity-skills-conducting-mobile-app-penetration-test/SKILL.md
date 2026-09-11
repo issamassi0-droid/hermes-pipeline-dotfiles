@@ -1,14 +1,14 @@
 ---
 name: conducting-mobile-app-penetration-test
 description: 'Conducts penetration testing of iOS and Android mobile applications
-  following the OWASP Mobile Application Security Testing Guide (MASTG) to identify
-  vulnerabilities in data storage, network communication, authentication, cryptography,
-  and platform-specific security controls. The tester performs static analysis of
-  application binaries, dynamic analysis at runtime, and API security testing to evaluate
-  the complete mobile attack surface. Activates for requests involving mobile app
-  pentest, iOS security assessment, Android security testing, or OWASP MASTG assessment.
+ following the OWASP Mobile Application Security Testing Guide (MASTG) to identify
+ vulnerabilities in data storage, network communication, authentication, cryptography,
+ and platform-specific security controls. The tester performs static analysis of
+ application binaries, dynamic analysis at runtime, and API security testing to evaluate
+ the complete mobile attack surface. Activates for requests involving mobile app
+ pentest, iOS security assessment, Android security testing, or OWASP MASTG assessment.
 
-  '
+ '
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -93,13 +93,13 @@ Intercept and analyze all network communications:
 - Exercise all application functionality while Burp captures API traffic
 - **SSL/TLS validation**: Verify the app validates server certificates properly. If the app fails to connect through the proxy, it may implement certificate pinning.
 - **Certificate pinning bypass**:
-  - Android: Use Frida script: `frida -U -f com.target.app -l ssl-pinning-bypass.js --no-pause`
-  - iOS: Use SSL Kill Switch or Objection: `objection -g "Target App" explore --startup-command "ios sslpinning disable"`
+ - Android: Use Frida script: `frida -U -f com.target.app -l ssl-pinning-bypass.js --no-pause`
+ - iOS: Use SSL Kill Switch or Objection: `objection -g "Target App" explore --startup-command "ios sslpinning disable"`
 - **API traffic analysis**: Review all API calls for:
-  - Sensitive data transmitted without encryption
-  - Authentication tokens in URL parameters (visible in logs)
-  - Excessive data in API responses beyond what the UI displays
-  - Missing or weak authentication on API endpoints
+ - Sensitive data transmitted without encryption
+ - Authentication tokens in URL parameters (visible in logs)
+ - Excessive data in API responses beyond what the UI displays
+ - Missing or weak authentication on API endpoints
 - **WebSocket and custom protocols**: Check for non-HTTP communication channels that may bypass standard proxy interception
 
 ### Step 3: Data Storage Analysis
@@ -136,10 +136,10 @@ Test mobile-specific authentication controls:
 Test the application's resistance to runtime attacks:
 
 - **Frida hooking**: Use Frida to hook and modify application functions at runtime:
-  - Bypass root detection: hook the detection function to return false
-  - Modify return values of authentication checks
-  - Intercept encryption functions to capture plaintext data before encryption
-  - Bypass certificate pinning by hooking SSL verification
+ - Bypass root detection: hook the detection function to return false
+ - Modify return values of authentication checks
+ - Intercept encryption functions to capture plaintext data before encryption
+ - Bypass certificate pinning by hooking SSL verification
 - **Method swizzling** (iOS): Use Frida to replace Objective-C method implementations
 - **Intent manipulation** (Android): Send crafted intents to exported components: `adb shell am start -n com.target.app/.InternalActivity -e "user_id" "admin"`
 - **Tampering detection**: Modify the APK/IPA (add code, change resources), re-sign, and install. Verify whether the app detects tampering.
@@ -204,11 +204,11 @@ frida -U -f com.bank.mobileapp -l bypass-biometric.js --no-pause
 
 // bypass-biometric.js
 Java.perform(function() {
-  var BiometricCallback = Java.use("com.bank.mobileapp.auth.BiometricCallback");
-  BiometricCallback.onAuthenticationSucceeded.implementation = function(result) {
-    console.log("[*] Biometric bypassed");
-    this.onAuthenticationSucceeded(result);
-  };
+ var BiometricCallback = Java.use("com.bank.mobileapp.auth.BiometricCallback");
+ BiometricCallback.onAuthenticationSucceeded.implementation = function(result) {
+ console.log("[*] Biometric bypassed");
+ this.onAuthenticationSucceeded(result);
+ };
 });
 
 **Impact**:
@@ -218,9 +218,9 @@ and view financial data without biometric verification.
 
 **Remediation**:
 1. Implement server-side biometric verification using Android BiometricPrompt
-   CryptoObject tied to a Keystore key
+ CryptoObject tied to a Keystore key
 2. Require the biometric operation to decrypt a server-side challenge, making
-   client-side bypass ineffective
+ client-side bypass ineffective
 3. Add runtime integrity checks to detect Frida and other instrumentation frameworks
 4. Implement step-up authentication for high-risk operations (transfers > threshold)
 ```

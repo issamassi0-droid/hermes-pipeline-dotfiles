@@ -1,9 +1,9 @@
 ---
 name: implementing-scim-provisioning-with-okta
 description: Implement automated user lifecycle provisioning and deprovisioning using
-  the SCIM 2.0 protocol with Okta as the identity provider. Use when automating account
-  creation, attribute sync, or deactivation across downstream applications through
-  Okta SCIM integration, or when troubleshooting SCIM provisioning failures.
+ the SCIM 2.0 protocol with Okta as the identity provider. Use when automating account
+ creation, attribute sync, or deactivation across downstream applications through
+ Okta SCIM integration, or when troubleshooting SCIM provisioning failures.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -28,32 +28,32 @@ mitre_attack:
 - T1556
 - T1098
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  - resource-development
-  techniques:
-  - id: T1586
-    name: Compromise Accounts
-    tactic: resource-development
-    source: attack
-  - id: F1005.002
-    name: 'Account Manipulation: Add Authorized User'
-    tactic: positioning
-    source: f3
-  - id: F1005.004
-    name: 'Account Manipulation: Change Account Details'
-    tactic: positioning
-    source: f3
-  - id: F1042
-    name: Reactivate Account
-    tactic: positioning
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ - resource-development
+ techniques:
+ - id: T1586
+ name: Compromise Accounts
+ tactic: resource-development
+ source: attack
+ - id: F1005.002
+ name: 'Account Manipulation: Add Authorized User'
+ tactic: positioning
+ source: f3
+ - id: F1005.004
+ name: 'Account Manipulation: Change Account Details'
+ tactic: positioning
+ source: f3
+ - id: F1042
+ name: Reactivate Account
+ tactic: positioning
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
 ---
 
 # Implementing SCIM Provisioning with Okta
@@ -98,11 +98,11 @@ SCIM defines a standard schema for representing users and groups via JSON, with 
 
 ```
 Okta (IdP) ──SCIM 2.0 over HTTPS──> SCIM Server ──> Application Database
-     │                                     │
-     ├── User Assignment                   ├── Create/Update User
-     ├── User Unassignment                 ├── Deactivate User
-     ├── Profile Push                      ├── Sync Attributes
-     └── Group Push                        └── Manage Groups
+ │ │
+ ├── User Assignment ├── Create/Update User
+ ├── User Unassignment ├── Deactivate User
+ ├── Profile Push ├── Sync Attributes
+ └── Group Push └── Manage Groups
 ```
 
 ### Required SCIM Endpoints
@@ -135,69 +135,69 @@ app = Flask(__name__)
 SCIM_BEARER_TOKEN = "your-secure-token-here"
 
 def require_auth(f):
-    def wrapper(*args, **kwargs):
-        auth = request.headers.get("Authorization", "")
-        if not auth.startswith("Bearer ") or auth[7:] != SCIM_BEARER_TOKEN:
-            return jsonify({"detail": "Unauthorized"}), 401
-        return f(*args, **kwargs)
-    wrapper.__name__ = f.__name__
-    return wrapper
+ def wrapper(*args, **kwargs):
+ auth = request.headers.get("Authorization", "")
+ if not auth.startswith("Bearer ") or auth[7:] != SCIM_BEARER_TOKEN:
+ return jsonify({"detail": "Unauthorized"}), 401
+ return f(*args, **kwargs)
+ wrapper.__name__ = f.__name__
+ return wrapper
 
 @app.route("/scim/v2/Users", methods=["POST"])
 @require_auth
 def create_user():
-    data = request.json
-    user_id = str(uuid.uuid4())
-    user = {
-        "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
-        "id": user_id,
-        "userName": data.get("userName"),
-        "name": data.get("name", {}),
-        "emails": data.get("emails", []),
-        "active": True,
-        "meta": {
-            "resourceType": "User",
-            "created": datetime.utcnow().isoformat() + "Z",
-            "lastModified": datetime.utcnow().isoformat() + "Z",
-            "location": f"/scim/v2/Users/{user_id}"
-        }
-    }
-    # Persist user to database
-    return jsonify(user), 201
+ data = request.json
+ user_id = str(uuid.uuid4())
+ user = {
+ "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
+ "id": user_id,
+ "userName": data.get("userName"),
+ "name": data.get("name", {}),
+ "emails": data.get("emails", []),
+ "active": True,
+ "meta": {
+ "resourceType": "User",
+ "created": datetime.utcnow().isoformat() + "Z",
+ "lastModified": datetime.utcnow().isoformat() + "Z",
+ "location": f"/scim/v2/Users/{user_id}"
+ }
+ }
+ # Persist user to database
+ return jsonify(user), 201
 
 @app.route("/scim/v2/Users", methods=["GET"])
 @require_auth
 def list_users():
-    filter_param = request.args.get("filter", "")
-    start_index = int(request.args.get("startIndex", 1))
-    count = int(request.args.get("count", 100))
-    # Parse filter: userName eq "john@example.com"
-    # Query database with filter
-    return jsonify({
-        "schemas": ["urn:ietf:params:scim:api:messages:2.0:ListResponse"],
-        "totalResults": 0,
-        "startIndex": start_index,
-        "itemsPerPage": count,
-        "Resources": []
-    })
+ filter_param = request.args.get("filter", "")
+ start_index = int(request.args.get("startIndex", 1))
+ count = int(request.args.get("count", 100))
+ # Parse filter: userName eq "john@example.com"
+ # Query database with filter
+ return jsonify({
+ "schemas": ["urn:ietf:params:scim:api:messages:2.0:ListResponse"],
+ "totalResults": 0,
+ "startIndex": start_index,
+ "itemsPerPage": count,
+ "Resources": []
+ })
 ```
 
 ### Step 2: Configure Okta Application
 
 1. **Create SCIM App Integration**:
-   - Navigate to Okta Admin Console > Applications > Create App Integration
-   - Select SWA or SAML 2.0 as sign-on method
-   - In the General tab, select SCIM for Provisioning
+ - Navigate to Okta Admin Console > Applications > Create App Integration
+ - Select SWA or SAML 2.0 as sign-on method
+ - In the General tab, select SCIM for Provisioning
 
 2. **Configure SCIM Connection**:
-   - SCIM connector base URL: `https://your-app.com/scim/v2`
-   - Unique identifier field: `userName`
-   - Supported provisioning actions: Push New Users, Push Profile Updates, Push Groups
-   - Authentication Mode: HTTP Header (Bearer Token)
+ - SCIM connector base URL: `https://your-app.com/scim/v2`
+ - Unique identifier field: `userName`
+ - Supported provisioning actions: Push New Users, Push Profile Updates, Push Groups
+ - Authentication Mode: HTTP Header (Bearer Token)
 
 3. **Enable Provisioning Features**:
-   - To App: Create Users, Update User Attributes, Deactivate Users
-   - Configure attribute mappings between Okta profile and SCIM schema
+ - To App: Create Users, Update User Attributes, Deactivate Users
+ - Configure attribute mappings between Okta profile and SCIM schema
 
 ### Step 3: Map Attributes
 
@@ -217,10 +217,10 @@ SCIM specifies standard error response format:
 
 ```json
 {
-  "schemas": ["urn:ietf:params:scim:api:messages:2.0:Error"],
-  "detail": "User already exists",
-  "status": "409",
-  "scimType": "uniqueness"
+ "schemas": ["urn:ietf:params:scim:api:messages:2.0:Error"],
+ "detail": "User already exists",
+ "status": "409",
+ "scimType": "uniqueness"
 }
 ```
 

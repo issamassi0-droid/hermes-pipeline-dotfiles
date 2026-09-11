@@ -1,10 +1,10 @@
 ---
 name: analyzing-mft-for-deleted-file-recovery
 description: Analyze the NTFS Master File Table ($MFT) with MFTECmd, analyzeMFT,
-  and X-Ways Forensics to recover metadata and content of deleted files by examining
-  MFT record entries, $LogFile, $UsnJrnl, and MFT slack space. Use when recovering
-  evidence of deleted files, reconstructing NTFS file-system timelines, or detecting
-  anti-forensic timestomping during a Windows forensic examination.
+ and X-Ways Forensics to recover metadata and content of deleted files by examining
+ MFT record entries, $LogFile, $UsnJrnl, and MFT slack space. Use when recovering
+ evidence of deleted files, reconstructing NTFS file-system timelines, or detecting
+ anti-forensic timestomping during a Windows forensic examination.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -117,8 +117,8 @@ The USN Journal records all changes to files on an NTFS volume, including creati
 MFTECmd.exe -f "C:\Evidence\$J" --csv C:\Output --csvf usn_journal.csv
 
 # Key USN reason codes for deletion evidence:
-# USN_REASON_FILE_DELETE     = 0x00000200
-# USN_REASON_CLOSE           = 0x80000000
+# USN_REASON_FILE_DELETE = 0x00000200
+# USN_REASON_CLOSE = 0x80000000
 # USN_REASON_RENAME_OLD_NAME = 0x00001000
 # USN_REASON_RENAME_NEW_NAME = 0x00002000
 ```
@@ -145,39 +145,39 @@ MFT slack space exists between the end of the used portion of an MFT record and 
 import struct
 
 def parse_mft_slack(mft_path: str, output_path: str):
-    """Extract and analyze MFT slack space for deleted file remnants."""
-    with open(mft_path, "rb") as f:
-        record_size = 1024
-        record_num = 0
-        slack_findings = []
+ """Extract and analyze MFT slack space for deleted file remnants."""
+ with open(mft_path, "rb") as f:
+ record_size = 1024
+ record_num = 0
+ slack_findings = []
 
-        while True:
-            record = f.read(record_size)
-            if len(record) < record_size:
-                break
+ while True:
+ record = f.read(record_size)
+ if len(record) < record_size:
+ break
 
-            # Verify FILE signature
-            if record[:4] != b"FILE":
-                record_num += 1
-                continue
+ # Verify FILE signature
+ if record[:4] != b"FILE":
+ record_num += 1
+ continue
 
-            # Get used size from offset 0x18
-            used_size = struct.unpack("<I", record[0x18:0x1C])[0]
+ # Get used size from offset 0x18
+ used_size = struct.unpack("<I", record[0x18:0x1C])[0]
 
-            if used_size < record_size:
-                slack = record[used_size:]
-                # Check if slack contains readable strings or attribute headers
-                if any(c > 0x20 and c < 0x7F for c in slack[:50]):
-                    slack_findings.append({
-                        "record": record_num,
-                        "used_size": used_size,
-                        "slack_size": record_size - used_size,
-                        "slack_preview": slack[:100].hex()
-                    })
+ if used_size < record_size:
+ slack = record[used_size:]
+ # Check if slack contains readable strings or attribute headers
+ if any(c > 0x20 and c < 0x7F for c in slack[:50]):
+ slack_findings.append({
+ "record": record_num,
+ "used_size": used_size,
+ "slack_size": record_size - used_size,
+ "slack_preview": slack[:100].hex()
+ })
 
-            record_num += 1
+ record_num += 1
 
-    return slack_findings
+ return slack_findings
 ```
 
 ## Correlation with Supporting Artifacts
@@ -230,30 +230,30 @@ Total MFT Entries: 395,264
 Parsing MFT entries... Done (12.4 seconds)
 
 --- Deleted File Recovery Summary ---
-Total Entries:          395,264
-Active Files:           245,832
-Deleted Files:          149,432
-  Recoverable:          87,234 (resident data or clusters not reallocated)
-  Partially Recoverable: 31,456 (some clusters overwritten)
-  Unrecoverable:        30,742 (all clusters reallocated)
+Total Entries: 395,264
+Active Files: 245,832
+Deleted Files: 149,432
+ Recoverable: 87,234 (resident data or clusters not reallocated)
+ Partially Recoverable: 31,456 (some clusters overwritten)
+ Unrecoverable: 30,742 (all clusters reallocated)
 
 --- Recently Deleted Files (Incident Window: 2024-01-15 to 2024-01-18) ---
-MFT Entry | Filename                          | Path                               | Size      | Deleted (UTC)         | Recoverable
+MFT Entry | Filename | Path | Size | Deleted (UTC) | Recoverable
 ----------|-----------------------------------|------------------------------------|-----------|-----------------------|------------
-148923    | exfil_tool.exe                    | C:\ProgramData\Updates\            | 1,258,496 | 2024-01-17 02:45:12   | YES
-148924    | exfil_tool.log                    | C:\ProgramData\Updates\            | 45,312    | 2024-01-17 02:45:14   | YES
-149001    | passwords.txt                     | C:\Users\jsmith\Desktop\           | 2,048     | 2024-01-17 02:50:33   | YES
-149150    | scan_results.csv                  | C:\Users\jsmith\AppData\Local\Temp | 892,416   | 2024-01-17 03:00:01   | PARTIAL
-149200    | mimikatz.exe                      | C:\Windows\Temp\                   | 1,250,816 | 2024-01-18 01:15:22   | YES
-149201    | sekurlsa.log                      | C:\Windows\Temp\                   | 32,768    | 2024-01-18 01:15:25   | YES
-149302    | .bash_history                     | C:\Users\jsmith\                   | 4,096     | 2024-01-18 03:00:00   | NO
-149400    | ClearEventLogs.ps1                | C:\Windows\Temp\                   | 1,536     | 2024-01-18 03:01:12   | YES
+148923 | exfil_tool.exe | C:\ProgramData\Updates\ | 1,258,496 | 2024-01-17 02:45:12 | YES
+148924 | exfil_tool.log | C:\ProgramData\Updates\ | 45,312 | 2024-01-17 02:45:14 | YES
+149001 | passwords.txt | C:\Users\jsmith\Desktop\ | 2,048 | 2024-01-17 02:50:33 | YES
+149150 | scan_results.csv | C:\Users\jsmith\AppData\Local\Temp | 892,416 | 2024-01-17 03:00:01 | PARTIAL
+149200 | mimikatz.exe | C:\Windows\Temp\ | 1,250,816 | 2024-01-18 01:15:22 | YES
+149201 | sekurlsa.log | C:\Windows\Temp\ | 32,768 | 2024-01-18 01:15:25 | YES
+149302 | .bash_history | C:\Users\jsmith\ | 4,096 | 2024-01-18 03:00:00 | NO
+149400 | ClearEventLogs.ps1 | C:\Windows\Temp\ | 1,536 | 2024-01-18 03:01:12 | YES
 
 --- $STANDARD_INFORMATION vs $FILE_NAME Timestamp Analysis (Timestomping Detection) ---
-MFT Entry | Filename            | $SI Created          | $FN Created          | Delta     | Verdict
+MFT Entry | Filename | $SI Created | $FN Created | Delta | Verdict
 ----------|---------------------|----------------------|----------------------|-----------|----------
-148923    | exfil_tool.exe      | 2023-06-15 10:00:00  | 2024-01-15 14:34:02  | -214 days | TIMESTOMPED
-149200    | mimikatz.exe        | 2022-01-01 00:00:00  | 2024-01-16 02:30:15  | -745 days | TIMESTOMPED
+148923 | exfil_tool.exe | 2023-06-15 10:00:00 | 2024-01-15 14:34:02 | -214 days | TIMESTOMPED
+149200 | mimikatz.exe | 2022-01-01 00:00:00 | 2024-01-16 02:30:15 | -745 days | TIMESTOMPED
 
 Recovered files exported to: /analysis/mft_output/recovered/
 Full CSV report: /analysis/mft_output/mft_analysis.csv (395,264 rows)

@@ -73,7 +73,7 @@ Monospace fonts have fixed character widths — zero kerning issues by design.
 | Math | Use `MathTex` (renders via LaTeX, not Pango) | — |
 
 ```python
-MONO = "Menlo"  # define once at top of file
+MONO = "Menlo" # define once at top of file
 
 title = Text("Fourier Series", font_size=48, color=PRIMARY, weight=BOLD, font=MONO)
 label = Text("n=1: (4/pi) sin(x)", font_size=20, color=BLUE, font=MONO)

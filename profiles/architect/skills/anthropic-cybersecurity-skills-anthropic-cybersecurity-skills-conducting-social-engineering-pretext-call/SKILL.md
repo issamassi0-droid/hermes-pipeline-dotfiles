@@ -1,8 +1,8 @@
 ---
 name: conducting-social-engineering-pretext-call
 description: Plan and execute authorized vishing (voice phishing) pretext calls to
-  assess employee susceptibility to social engineering and evaluate security awareness
-  controls.
+ assess employee susceptibility to social engineering and evaluate security awareness
+ controls.
 domain: cybersecurity
 subdomain: red-teaming
 tags:
@@ -39,36 +39,36 @@ mitre_attack:
 - T1591
 - T1598
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - initial-access
-  - stealth
-  techniques:
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: F1034
-    name: Interactive Voice Response Mapping
-    tactic: reconnaissance
-    source: f3
-  - id: F1029
-    name: Gather Customer Information
-    tactic: reconnaissance
-    source: f3
-  - id: F1032
-    name: Impersonate Official
-    tactic: initial-access
-    source: f3
-  - id: F1040
-    name: Phone Number Spoofing
-    tactic: stealth
-    source: f3
-  - id: F1040.002
-    name: 'Phone Number Spoofing: Official Phone Number Spoofing'
-    tactic: stealth
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - initial-access
+ - stealth
+ techniques:
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: F1034
+ name: Interactive Voice Response Mapping
+ tactic: reconnaissance
+ source: f3
+ - id: F1029
+ name: Gather Customer Information
+ tactic: reconnaissance
+ source: f3
+ - id: F1032
+ name: Impersonate Official
+ tactic: initial-access
+ source: f3
+ - id: F1040
+ name: Phone Number Spoofing
+ tactic: stealth
+ source: f3
+ - id: F1040.002
+ name: 'Phone Number Spoofing: Official Phone Number Spoofing'
+ tactic: stealth
+ source: f3
 ---
 
 # Conducting Social Engineering Pretext Call

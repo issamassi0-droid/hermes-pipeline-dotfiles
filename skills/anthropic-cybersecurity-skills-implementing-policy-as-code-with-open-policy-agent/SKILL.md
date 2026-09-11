@@ -1,13 +1,13 @@
 ---
 name: implementing-policy-as-code-with-open-policy-agent
 description: 'Implements policy-as-code enforcement with Open Policy Agent (OPA)
-  and Gatekeeper for Kubernetes and CI/CD pipelines, covering writing Rego policies,
-  deploying OPA Gatekeeper as a Kubernetes admission controller, testing policies
-  in development, and integrating policy evaluation into deployment pipelines. Use
-  when writing Rego policies, deploying Gatekeeper admission control, or gating
-  CI/CD pipelines with policy-as-code checks.
+ and Gatekeeper for Kubernetes and CI/CD pipelines, covering writing Rego policies,
+ deploying OPA Gatekeeper as a Kubernetes admission controller, testing policies
+ in development, and integrating policy evaluation into deployment pipelines. Use
+ when writing Rego policies, deploying Gatekeeper admission control, or gating
+ CI/CD pipelines with policy-as-code checks.
 
-  '
+ '
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -65,10 +65,10 @@ mitre_attack:
 # Install Gatekeeper via Helm
 helm repo add gatekeeper https://open-policy-agent.github.io/gatekeeper/charts
 helm install gatekeeper gatekeeper/gatekeeper \
-  --namespace gatekeeper-system --create-namespace \
-  --set replicas=3 \
-  --set audit.replicas=1 \
-  --set audit.writeToRAMDisk=true
+ --namespace gatekeeper-system --create-namespace \
+ --set replicas=3 \
+ --set audit.replicas=1 \
+ --set audit.writeToRAMDisk=true
 ```
 
 ### Step 2: Create Constraint Templates
@@ -78,91 +78,91 @@ helm install gatekeeper gatekeeper/gatekeeper \
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
-  name: k8srequiredlabels
+ name: k8srequiredlabels
 spec:
-  crd:
-    spec:
-      names:
-        kind: K8sRequiredLabels
-      validation:
-        openAPIV3Schema:
-          type: object
-          properties:
-            labels:
-              type: array
-              items:
-                type: string
-  targets:
-    - target: admission.k8s.gatekeeper.sh
-      rego: |
-        package k8srequiredlabels
-        violation[{"msg": msg}] {
-          provided := {label | input.review.object.metadata.labels[label]}
-          required := {label | label := input.parameters.labels[_]}
-          missing := required - provided
-          count(missing) > 0
-          msg := sprintf("Missing required labels: %v", [missing])
-        }
+ crd:
+ spec:
+ names:
+ kind: K8sRequiredLabels
+ validation:
+ openAPIV3Schema:
+ type: object
+ properties:
+ labels:
+ type: array
+ items:
+ type: string
+ targets:
+ - target: admission.k8s.gatekeeper.sh
+ rego: |
+ package k8srequiredlabels
+ violation[{"msg": msg}] {
+ provided := {label | input.review.object.metadata.labels[label]}
+ required := {label | label := input.parameters.labels[_]}
+ missing := required - provided
+ count(missing) > 0
+ msg := sprintf("Missing required labels: %v", [missing])
+ }
 
 ---
 # templates/k8s-container-limits.yaml
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
-  name: k8scontainerlimits
+ name: k8scontainerlimits
 spec:
-  crd:
-    spec:
-      names:
-        kind: K8sContainerLimits
-      validation:
-        openAPIV3Schema:
-          type: object
-          properties:
-            cpu:
-              type: string
-            memory:
-              type: string
-  targets:
-    - target: admission.k8s.gatekeeper.sh
-      rego: |
-        package k8scontainerlimits
-        violation[{"msg": msg}] {
-          container := input.review.object.spec.containers[_]
-          not container.resources.limits.cpu
-          msg := sprintf("Container %v has no CPU limit", [container.name])
-        }
-        violation[{"msg": msg}] {
-          container := input.review.object.spec.containers[_]
-          not container.resources.limits.memory
-          msg := sprintf("Container %v has no memory limit", [container.name])
-        }
+ crd:
+ spec:
+ names:
+ kind: K8sContainerLimits
+ validation:
+ openAPIV3Schema:
+ type: object
+ properties:
+ cpu:
+ type: string
+ memory:
+ type: string
+ targets:
+ - target: admission.k8s.gatekeeper.sh
+ rego: |
+ package k8scontainerlimits
+ violation[{"msg": msg}] {
+ container := input.review.object.spec.containers[_]
+ not container.resources.limits.cpu
+ msg := sprintf("Container %v has no CPU limit", [container.name])
+ }
+ violation[{"msg": msg}] {
+ container := input.review.object.spec.containers[_]
+ not container.resources.limits.memory
+ msg := sprintf("Container %v has no memory limit", [container.name])
+ }
 
 ---
 # templates/k8s-block-privileged.yaml
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
-  name: k8sblockprivileged
+ name: k8sblockprivileged
 spec:
-  crd:
-    spec:
-      names:
-        kind: K8sBlockPrivileged
-  targets:
-    - target: admission.k8s.gatekeeper.sh
-      rego: |
-        package k8sblockprivileged
-        violation[{"msg": msg}] {
-          container := input.review.object.spec.containers[_]
-          container.securityContext.privileged == true
-          msg := sprintf("Privileged container not allowed: %v", [container.name])
-        }
-        violation[{"msg": msg}] {
-          container := input.review.object.spec.initContainers[_]
-          container.securityContext.privileged == true
-          msg := sprintf("Privileged init container not allowed: %v", [container.name])
-        }
+ crd:
+ spec:
+ names:
+ kind: K8sBlockPrivileged
+ targets:
+ - target: admission.k8s.gatekeeper.sh
+ rego: |
+ package k8sblockprivileged
+ violation[{"msg": msg}] {
+ container := input.review.object.spec.containers[_]
+ container.securityContext.privileged == true
+ msg := sprintf("Privileged container not allowed: %v", [container.name])
+ }
+ violation[{"msg": msg}] {
+ container := input.review.object.spec.initContainers[_]
+ container.securityContext.privileged == true
+ msg := sprintf("Privileged init container not allowed: %v", [container.name])
+ }
 ```
 
 ### Step 3: Apply Constraints
@@ -172,40 +172,40 @@ spec:
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sRequiredLabels
 metadata:
-  name: require-team-labels
+ name: require-team-labels
 spec:
-  enforcementAction: deny
-  match:
-    kinds:
-      - apiGroups: [""]
-        kinds: ["Namespace"]
-      - apiGroups: ["apps"]
-        kinds: ["Deployment", "StatefulSet"]
-    excludedNamespaces:
-      - kube-system
-      - gatekeeper-system
-  parameters:
-    labels:
-      - "team"
-      - "environment"
-      - "cost-center"
+ enforcementAction: deny
+ match:
+ kinds:
+ - apiGroups: [""]
+ kinds: ["Namespace"]
+ - apiGroups: ["apps"]
+ kinds: ["Deployment", "StatefulSet"]
+ excludedNamespaces:
+ - kube-system
+ - gatekeeper-system
+ parameters:
+ labels:
+ - "team"
+ - "environment"
+ - "cost-center"
 
 ---
 # constraints/block-privileged.yaml
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sBlockPrivileged
 metadata:
-  name: block-privileged-containers
+ name: block-privileged-containers
 spec:
-  enforcementAction: deny
-  match:
-    kinds:
-      - apiGroups: [""]
-        kinds: ["Pod"]
-      - apiGroups: ["apps"]
-        kinds: ["Deployment", "DaemonSet", "StatefulSet"]
-    excludedNamespaces:
-      - kube-system
+ enforcementAction: deny
+ match:
+ kinds:
+ - apiGroups: [""]
+ kinds: ["Pod"]
+ - apiGroups: ["apps"]
+ kinds: ["Deployment", "DaemonSet", "StatefulSet"]
+ excludedNamespaces:
+ - kube-system
 ```
 
 ### Step 4: Test Policies with conftest
@@ -229,17 +229,17 @@ conftest test Dockerfile --policy policies/docker/
 package kubernetes
 
 deny[msg] {
-  input.kind == "Deployment"
-  container := input.spec.template.spec.containers[_]
-  endswith(container.image, ":latest")
-  msg := sprintf("Container %v uses :latest tag. Pin to specific version.", [container.name])
+ input.kind == "Deployment"
+ container := input.spec.template.spec.containers[_]
+ endswith(container.image, ":latest")
+ msg := sprintf("Container %v uses :latest tag. Pin to specific version.", [container.name])
 }
 
 deny[msg] {
-  input.kind == "Deployment"
-  container := input.spec.template.spec.containers[_]
-  not contains(container.image, ":")
-  msg := sprintf("Container %v has no tag. Pin to specific version.", [container.name])
+ input.kind == "Deployment"
+ container := input.spec.template.spec.containers[_]
+ not contains(container.image, ":")
+ msg := sprintf("Container %v has no tag. Pin to specific version.", [container.name])
 }
 ```
 
@@ -250,23 +250,23 @@ deny[msg] {
 name: Policy Validation
 
 on:
-  pull_request:
-    paths: ['k8s/**', 'terraform/**', 'policies/**']
+ pull_request:
+ paths: ['k8s/**', 'terraform/**', 'policies/**']
 
 jobs:
-  conftest:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Install conftest
-        run: |
-          wget -q https://github.com/open-policy-agent/conftest/releases/download/v0.50.0/conftest_0.50.0_Linux_x86_64.tar.gz
-          tar xzf conftest_0.50.0_Linux_x86_64.tar.gz
-          sudo mv conftest /usr/local/bin/
-      - name: Test K8s manifests
-        run: conftest test k8s/**/*.yaml --policy policies/kubernetes/ --output json
-      - name: Test Terraform
-        run: conftest test terraform/*.tf --policy policies/terraform/ --parser hcl2
+ conftest:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - name: Install conftest
+ run: |
+ wget -q https://github.com/open-policy-agent/conftest/releases/download/v0.50.0/conftest_0.50.0_Linux_x86_64.tar.gz
+ tar xzf conftest_0.50.0_Linux_x86_64.tar.gz
+ sudo mv conftest /usr/local/bin/
+ - name: Test K8s manifests
+ run: conftest test k8s/**/*.yaml --policy policies/kubernetes/ --output json
+ - name: Test Terraform
+ run: conftest test terraform/*.tf --policy policies/terraform/ --parser hcl2
 ```
 
 ## Key Concepts
@@ -315,18 +315,18 @@ Date: 2026-02-23
 Gatekeeper Version: 3.16.0
 
 CONSTRAINT SUMMARY:
-  K8sRequiredLabels:        12 violations (warn)
-  K8sBlockPrivileged:        0 violations (deny)
-  K8sContainerLimits:        8 violations (deny)
-  K8sBlockLatestTag:         3 violations (deny)
+ K8sRequiredLabels: 12 violations (warn)
+ K8sBlockPrivileged: 0 violations (deny)
+ K8sContainerLimits: 8 violations (deny)
+ K8sBlockLatestTag: 3 violations (deny)
 
 BLOCKED DEPLOYMENTS (deny):
-  [K8sContainerLimits] deployment/api-server in ns/payments
-    - Container 'api' has no memory limit
-  [K8sBlockLatestTag] deployment/frontend in ns/web
-    - Container 'nginx' uses :latest tag
+ [K8sContainerLimits] deployment/api-server in ns/payments
+ - Container 'api' has no memory limit
+ [K8sBlockLatestTag] deployment/frontend in ns/web
+ - Container 'nginx' uses :latest tag
 
 AUDIT VIOLATIONS (warn):
-  [K8sRequiredLabels] namespace/staging
-    - Missing labels: {cost-center}
+ [K8sRequiredLabels] namespace/staging
+ - Missing labels: {cost-center}
 ```

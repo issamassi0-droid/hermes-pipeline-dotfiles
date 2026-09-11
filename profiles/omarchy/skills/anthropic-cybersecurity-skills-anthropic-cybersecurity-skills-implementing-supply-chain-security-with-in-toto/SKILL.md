@@ -1,13 +1,13 @@
 ---
 name: implementing-supply-chain-security-with-in-toto
 description: >-
-  Implements supply chain integrity verification for container builds with the in-toto
-  framework: generating signing keys, defining a supply chain layout, recording pipeline steps
-  as signed link metadata, verifying before deployment, enforcing at Kubernetes admission, and
-  integrating with SLSA. Use when attesting CI/CD pipeline steps, proving an image followed
-  the approved build process, or enforcing provenance at admission. Keywords: in-toto, layout,
-  link metadata, step, inspection, SLSA, provenance, admission. Do not use for signing and
-  verifying images with Cosign - use implementing-image-provenance-verification-with-cosign.
+ Implements supply chain integrity verification for container builds with the in-toto
+ framework: generating signing keys, defining a supply chain layout, recording pipeline steps
+ as signed link metadata, verifying before deployment, enforcing at Kubernetes admission, and
+ integrating with SLSA. Use when attesting CI/CD pipeline steps, proving an image followed
+ the approved build process, or enforcing provenance at admission. Keywords: in-toto, layout,
+ link metadata, step, inspection, SLSA, provenance, admission. Do not use for signing and
+ verifying images with Cosign - use implementing-image-provenance-verification-with-cosign.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -150,75 +150,75 @@ from securesystemslib.signer import CryptoSigner
 from securesystemslib.interface import import_ed25519_publickey_from_file
 
 def create_container_build_layout():
-    layout = Layout()
-    layout.set_relative_expiration(months=6)
+ layout = Layout()
+ layout.set_relative_expiration(months=6)
 
-    # Load functionary public keys
-    builder_key = import_ed25519_publickey_from_file("keys/builder.pub")
-    scanner_key = import_ed25519_publickey_from_file("keys/scanner.pub")
+ # Load functionary public keys
+ builder_key = import_ed25519_publickey_from_file("keys/builder.pub")
+ scanner_key = import_ed25519_publickey_from_file("keys/scanner.pub")
 
-    layout.keys = {
-        builder_key["keyid"]: builder_key,
-        scanner_key["keyid"]: scanner_key,
-    }
+ layout.keys = {
+ builder_key["keyid"]: builder_key,
+ scanner_key["keyid"]: scanner_key,
+ }
 
-    # Step 1: Source code checkout
-    checkout = Step(name="checkout")
-    checkout.expected_materials = []
-    checkout.expected_products = [
-        ["CREATE", "Dockerfile"],
-        ["CREATE", "src/*"],
-        ["CREATE", "requirements.txt"],
-    ]
-    checkout.pubkeys = [builder_key["keyid"]]
-    checkout.threshold = 1
+ # Step 1: Source code checkout
+ checkout = Step(name="checkout")
+ checkout.expected_materials = []
+ checkout.expected_products = [
+ ["CREATE", "Dockerfile"],
+ ["CREATE", "src/*"],
+ ["CREATE", "requirements.txt"],
+ ]
+ checkout.pubkeys = [builder_key["keyid"]]
+ checkout.threshold = 1
 
-    # Step 2: Build container image
-    build = Step(name="build")
-    build.expected_materials = [
-        ["MATCH", "Dockerfile", "WITH", "PRODUCTS", "FROM", "checkout"],
-        ["MATCH", "src/*", "WITH", "PRODUCTS", "FROM", "checkout"],
-    ]
-    build.expected_products = [["CREATE", "image-digest.txt"]]
-    build.pubkeys = [builder_key["keyid"]]
-    build.threshold = 1
+ # Step 2: Build container image
+ build = Step(name="build")
+ build.expected_materials = [
+ ["MATCH", "Dockerfile", "WITH", "PRODUCTS", "FROM", "checkout"],
+ ["MATCH", "src/*", "WITH", "PRODUCTS", "FROM", "checkout"],
+ ]
+ build.expected_products = [["CREATE", "image-digest.txt"]]
+ build.pubkeys = [builder_key["keyid"]]
+ build.threshold = 1
 
-    # Step 3: Security scan
-    scan = Step(name="scan")
-    scan.expected_materials = [
-        ["MATCH", "image-digest.txt", "WITH", "PRODUCTS", "FROM", "build"]
-    ]
-    scan.expected_products = [
-        ["CREATE", "vulnerability-report.json"],
-        ["CREATE", "sbom.json"],
-    ]
-    scan.pubkeys = [scanner_key["keyid"]]
-    scan.threshold = 1
+ # Step 3: Security scan
+ scan = Step(name="scan")
+ scan.expected_materials = [
+ ["MATCH", "image-digest.txt", "WITH", "PRODUCTS", "FROM", "build"]
+ ]
+ scan.expected_products = [
+ ["CREATE", "vulnerability-report.json"],
+ ["CREATE", "sbom.json"],
+ ]
+ scan.pubkeys = [scanner_key["keyid"]]
+ scan.threshold = 1
 
-    # Inspection: Verify no critical vulnerabilities
-    inspect_vulns = Inspection(name="verify-no-critical-vulns")
-    inspect_vulns.expected_materials = [
-        ["MATCH", "vulnerability-report.json", "WITH", "PRODUCTS", "FROM", "scan"]
-    ]
-    inspect_vulns.run = [
-        "python", "-c",
-        "import json,sys; r=json.load(open('vulnerability-report.json')); "
-        "sys.exit(1) if any(v['severity']=='CRITICAL' for v in r.get('vulnerabilities',[])) else sys.exit(0)"
-    ]
+ # Inspection: Verify no critical vulnerabilities
+ inspect_vulns = Inspection(name="verify-no-critical-vulns")
+ inspect_vulns.expected_materials = [
+ ["MATCH", "vulnerability-report.json", "WITH", "PRODUCTS", "FROM", "scan"]
+ ]
+ inspect_vulns.run = [
+ "python", "-c",
+ "import json,sys; r=json.load(open('vulnerability-report.json')); "
+ "sys.exit(1) if any(v['severity']=='CRITICAL' for v in r.get('vulnerabilities',[])) else sys.exit(0)"
+ ]
 
-    layout.steps = [checkout, build, scan]
-    layout.inspect = [inspect_vulns]
+ layout.steps = [checkout, build, scan]
+ layout.inspect = [inspect_vulns]
 
-    return layout
+ return layout
 
 if __name__ == "__main__":
-    layout = create_container_build_layout()
-    # Sign with owner key and save
-    owner_signer = CryptoSigner.from_priv_key_uri("file:keys/owner")
-    envelope = Envelope.from_signable(layout)
-    envelope.create_signature(owner_signer)
-    envelope.dump("root.layout")
-    print("Layout created and signed: root.layout")
+ layout = create_container_build_layout()
+ # Sign with owner key and save
+ owner_signer = CryptoSigner.from_priv_key_uri("file:keys/owner")
+ envelope = Envelope.from_signable(layout)
+ envelope.create_signature(owner_signer)
+ envelope.dump("root.layout")
+ print("Layout created and signed: root.layout")
 ```
 
 ### Step 3: Record Pipeline Steps
@@ -228,23 +228,23 @@ if __name__ == "__main__":
 
 # Step 1: Checkout
 in-toto-run --step-name checkout \
-  --key keys/builder \
-  --products Dockerfile src/* requirements.txt \
-  -- git clone https://github.com/org/app.git .
+ --key keys/builder \
+ --products Dockerfile src/* requirements.txt \
+ -- git clone https://github.com/org/app.git .
 
 # Step 2: Build
 in-toto-run --step-name build \
-  --key keys/builder \
-  --materials Dockerfile src/* \
-  --products image-digest.txt \
-  -- bash -c "docker build -t app:latest . && docker inspect --format='{{.Id}}' app:latest > image-digest.txt"
+ --key keys/builder \
+ --materials Dockerfile src/* \
+ --products image-digest.txt \
+ -- bash -c "docker build -t app:latest . && docker inspect --format='{{.Id}}' app:latest > image-digest.txt"
 
 # Step 3: Scan
 in-toto-run --step-name scan \
-  --key keys/scanner \
-  --materials image-digest.txt \
-  --products vulnerability-report.json sbom.json \
-  -- bash -c "trivy image --format json app:latest > vulnerability-report.json && syft app:latest -o json > sbom.json"
+ --key keys/scanner \
+ --materials image-digest.txt \
+ --products vulnerability-report.json sbom.json \
+ -- bash -c "trivy image --format json app:latest > vulnerability-report.json && syft app:latest -o json > sbom.json"
 ```
 
 ### Step 4: Verify Before Deployment
@@ -252,16 +252,16 @@ in-toto-run --step-name scan \
 ```bash
 # Verify the entire supply chain
 in-toto-verify --layout root.layout \
-  --layout-key keys/owner.pub \
-  --link-dir ./link-metadata/
+ --layout-key keys/owner.pub \
+ --link-dir ./link-metadata/
 
 # If verification passes, proceed with deployment
 if [ $? -eq 0 ]; then
-  kubectl apply -f deployment.yaml
-  echo "Supply chain verification passed - deploying"
+ kubectl apply -f deployment.yaml
+ echo "Supply chain verification passed - deploying"
 else
-  echo "SUPPLY CHAIN VERIFICATION FAILED - blocking deployment"
-  exit 1
+ echo "SUPPLY CHAIN VERIFICATION FAILED - blocking deployment"
+ exit 1
 fi
 ```
 
@@ -273,21 +273,21 @@ Integrate with a policy engine to verify attestations at admission:
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingWebhookConfiguration
 metadata:
-  name: in-toto-verifier
+ name: in-toto-verifier
 webhooks:
-  - name: verify.in-toto.io
-    rules:
-      - apiGroups: ["apps"]
-        resources: ["deployments"]
-        operations: ["CREATE", "UPDATE"]
-    clientConfig:
-      service:
-        name: in-toto-webhook
-        namespace: security
-        path: /verify
-    failurePolicy: Fail
-    sideEffects: None
-    admissionReviewVersions: ["v1"]
+ - name: verify.in-toto.io
+ rules:
+ - apiGroups: ["apps"]
+ resources: ["deployments"]
+ operations: ["CREATE", "UPDATE"]
+ clientConfig:
+ service:
+ name: in-toto-webhook
+ namespace: security
+ path: /verify
+ failurePolicy: Fail
+ sideEffects: None
+ admissionReviewVersions: ["v1"]
 ```
 
 ## SLSA Integration

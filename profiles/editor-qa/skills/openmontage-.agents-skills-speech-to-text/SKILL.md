@@ -22,7 +22,7 @@ from elevenlabs import ElevenLabs
 client = ElevenLabs()
 
 with open("audio.mp3", "rb") as audio_file:
-    result = client.speech_to_text.convert(file=audio_file, model_id="scribe_v2")
+ result = client.speech_to_text.convert(file=audio_file, model_id="scribe_v2")
 
 print(result.text)
 ```
@@ -35,8 +35,8 @@ import { createReadStream } from "fs";
 
 const client = new ElevenLabsClient();
 const result = await client.speechToText.convert({
-  file: createReadStream("audio.mp3"),
-  modelId: "scribe_v2",
+ file: createReadStream("audio.mp3"),
+ modelId: "scribe_v2",
 });
 console.log(result.text);
 ```
@@ -45,7 +45,7 @@ console.log(result.text);
 
 ```bash
 curl -X POST "https://api.elevenlabs.io/v1/speech-to-text" \
-  -H "xi-api-key: $ELEVENLABS_API_KEY" -F "file=@audio.mp3" -F "model_id=scribe_v2"
+ -H "xi-api-key: $ELEVENLABS_API_KEY" -F "file=@audio.mp3" -F "model_id=scribe_v2"
 ```
 
 ## Models
@@ -61,11 +61,11 @@ Word-level timestamps include type classification and speaker identification:
 
 ```python
 result = client.speech_to_text.convert(
-    file=audio_file, model_id="scribe_v2", timestamps_granularity="word"
+ file=audio_file, model_id="scribe_v2", timestamps_granularity="word"
 )
 
 for word in result.words:
-    print(f"{word.text}: {word.start}s - {word.end}s (type: {word.type})")
+ print(f"{word.text}: {word.start}s - {word.end}s (type: {word.type})")
 
 ```
 
@@ -75,13 +75,13 @@ Identify WHO said WHAT - the model labels each word with a speaker ID, useful fo
 
 ```python
 result = client.speech_to_text.convert(
-    file=audio_file,
-    model_id="scribe_v2",
-    diarize=True
+ file=audio_file,
+ model_id="scribe_v2",
+ diarize=True
 )
 
 for word in result.words:
-    print(f"[{word.speaker_id}] {word.text}")
+ print(f"[{word.speaker_id}] {word.text}")
 ```
 
 ## Keyterm Prompting
@@ -90,9 +90,9 @@ Help the model recognize specific words it might otherwise mishear - product nam
 
 ```python
 result = client.speech_to_text.convert(
-    file=audio_file,
-    model_id="scribe_v2",
-    keyterms=["ElevenLabs", "Scribe", "API"]
+ file=audio_file,
+ model_id="scribe_v2",
+ keyterms=["ElevenLabs", "Scribe", "API"]
 )
 ```
 
@@ -102,9 +102,9 @@ Automatic detection with optional language hint:
 
 ```python
 result = client.speech_to_text.convert(
-    file=audio_file,
-    model_id="scribe_v2",
-    language_code="eng"  # ISO 639-1 or ISO 639-3 code
+ file=audio_file,
+ model_id="scribe_v2",
+ language_code="eng" # ISO 639-1 or ISO 639-3 code
 )
 
 print(f"Detected: {result.language_code} ({result.language_probability:.0%})")
@@ -121,13 +121,13 @@ print(f"Detected: {result.language_code} ({result.language_probability:.0%})")
 
 ```json
 {
-  "text": "The full transcription text",
-  "language_code": "eng",
-  "language_probability": 0.98,
-  "words": [
-    {"text": "The", "start": 0.0, "end": 0.15, "type": "word", "speaker_id": "speaker_0"},
-    {"text": " ", "start": 0.15, "end": 0.16, "type": "spacing", "speaker_id": "speaker_0"}
-  ]
+ "text": "The full transcription text",
+ "language_code": "eng",
+ "language_probability": 0.98,
+ "words": [
+ {"text": "The", "start": 0.0, "end": 0.15, "type": "word", "speaker_id": "speaker_0"},
+ {"text": " ", "start": 0.15, "end": 0.16, "type": "spacing", "speaker_id": "speaker_0"}
+ ]
 }
 ```
 
@@ -140,9 +140,9 @@ print(f"Detected: {result.language_code} ({result.language_probability:.0%})")
 
 ```python
 try:
-    result = client.speech_to_text.convert(file=audio_file, model_id="scribe_v2")
+ result = client.speech_to_text.convert(file=audio_file, model_id="scribe_v2")
 except Exception as e:
-    print(f"Transcription failed: {e}")
+ print(f"Transcription failed: {e}")
 ```
 
 Common errors:
@@ -178,17 +178,17 @@ from elevenlabs import ElevenLabs
 client = ElevenLabs()
 
 async def transcribe_realtime():
-    async with client.speech_to_text.realtime.connect(
-        model_id="scribe_v2_realtime",
-        include_timestamps=True,
-    ) as connection:
-        await connection.stream_url("https://example.com/audio.mp3")
+ async with client.speech_to_text.realtime.connect(
+ model_id="scribe_v2_realtime",
+ include_timestamps=True,
+ ) as connection:
+ await connection.stream_url("https://example.com/audio.mp3")
 
-        async for event in connection:
-            if event.type == "partial_transcript":
-                print(f"Partial: {event.text}")
-            elif event.type == "committed_transcript":
-                print(f"Final: {event.text}")
+ async for event in connection:
+ if event.type == "partial_transcript":
+ print(f"Partial: {event.text}")
+ elif event.type == "committed_transcript":
+ print(f"Final: {event.text}")
 
 asyncio.run(transcribe_realtime())
 ```
@@ -199,26 +199,26 @@ asyncio.run(transcribe_realtime())
 import { useScribe, CommitStrategy } from "@elevenlabs/react";
 
 function TranscriptionComponent() {
-  const [transcript, setTranscript] = useState("");
+ const [transcript, setTranscript] = useState("");
 
-  const scribe = useScribe({
-    modelId: "scribe_v2_realtime",
-    commitStrategy: CommitStrategy.VAD, // Auto-commit on silence for mic input
-    onPartialTranscript: (data) => console.log("Partial:", data.text),
-    onCommittedTranscript: (data) => setTranscript((prev) => prev + data.text),
-  });
+ const scribe = useScribe({
+ modelId: "scribe_v2_realtime",
+ commitStrategy: CommitStrategy.VAD, // Auto-commit on silence for mic input
+ onPartialTranscript: (data) => console.log("Partial:", data.text),
+ onCommittedTranscript: (data) => setTranscript((prev) => prev + data.text),
+ });
 
-  const start = async () => {
-    // Get token from your backend (never expose API key to client)
-    const { token } = await fetch("/scribe-token").then((r) => r.json());
+ const start = async () => {
+ // Get token from your backend (never expose API key to client)
+ const { token } = await fetch("/scribe-token").then((r) => r.json());
 
-    await scribe.connect({
-      token,
-      microphone: { echoCancellation: true, noiseSuppression: true },
-    });
-  };
+ await scribe.connect({
+ token,
+ microphone: { echoCancellation: true, noiseSuppression: true },
+ });
+ };
 
-  return <button onClick={start}>Start Recording</button>;
+ return <button onClick={start}>Start Recording</button>;
 }
 ```
 
@@ -234,22 +234,22 @@ function TranscriptionComponent() {
 import { useScribe, CommitStrategy } from "@elevenlabs/react";
 
 const scribe = useScribe({
-  modelId: "scribe_v2_realtime",
-  commitStrategy: CommitStrategy.VAD,
-  // Optional VAD tuning:
-  vadSilenceThresholdSecs: 1.5,
-  vadThreshold: 0.4,
+ modelId: "scribe_v2_realtime",
+ commitStrategy: CommitStrategy.VAD,
+ // Optional VAD tuning:
+ vadSilenceThresholdSecs: 1.5,
+ vadThreshold: 0.4,
 });
 ```
 
 ```javascript
 // JavaScript client: pass vad config on connect
 const connection = await client.speechToText.realtime.connect({
-  modelId: "scribe_v2_realtime",
-  vad: {
-    silenceThresholdSecs: 1.5,
-    threshold: 0.4,
-  },
+ modelId: "scribe_v2_realtime",
+ vad: {
+ silenceThresholdSecs: 1.5,
+ threshold: 0.4,
+ },
 });
 ```
 

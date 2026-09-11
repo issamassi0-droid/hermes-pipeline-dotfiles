@@ -30,14 +30,14 @@ Do not continuously animate every part. Holds make the acting readable.
 
 ```json
 {
-  "pose": "surprised",
-  "parts": {
-    "head": { "rotation": -6, "y": -4 },
-    "pupil_left": { "x": 4, "y": -6 },
-    "mouth": "small_o"
-  },
-  "hold_frames": 18,
-  "transition": "back.out"
+ "pose": "surprised",
+ "parts": {
+ "head": { "rotation": -6, "y": -4 },
+ "pupil_left": { "x": 4, "y": -6 },
+ "mouth": "small_o"
+ },
+ "hold_frames": 18,
+ "transition": "back.out"
 }
 ```
 
@@ -51,8 +51,8 @@ Do not continuously animate every part. Holds make the acting readable.
 ## Sources
 
 - GSAP timeline sequencing for readable multi-step poses:
-  https://gsap.com/docs/v3/GSAP/Timeline/
+ https://gsap.com/docs/v3/GSAP/Timeline/
 - Remotion interpolation for frame-based transitions:
-  https://www.remotion.dev/docs/interpolate
+ https://www.remotion.dev/docs/interpolate
 - Remotion spring for natural motion:
-  https://www.remotion.dev/docs/spring
+ https://www.remotion.dev/docs/spring

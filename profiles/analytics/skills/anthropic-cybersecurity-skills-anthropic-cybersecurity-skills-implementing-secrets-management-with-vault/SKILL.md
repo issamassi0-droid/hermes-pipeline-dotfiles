@@ -1,13 +1,13 @@
 ---
 name: implementing-secrets-management-with-vault
 description: 'Deploy HashiCorp Vault for centralized secrets management, covering dynamic
-  secret generation for databases and cloud providers, transit encryption, PKI certificate
-  management, and Kubernetes integration. Use when eliminating hardcoded credentials
-  from application code or CI/CD pipelines, migrating to short-lived auto-rotated
-  secrets, or giving Kubernetes workloads secure access to database or cloud provider
-  credentials.
+ secret generation for databases and cloud providers, transit encryption, PKI certificate
+ management, and Kubernetes integration. Use when eliminating hardcoded credentials
+ from application code or CI/CD pipelines, migrating to short-lived auto-rotated
+ secrets, or giving Kubernetes workloads secure access to database or cloud provider
+ credentials.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -60,34 +60,34 @@ Deploy Vault using Integrated Storage (Raft) for HA without external dependencie
 ```hcl
 # vault-config.hcl
 storage "raft" {
-  path    = "/opt/vault/data"
-  node_id = "vault-node-1"
+ path = "/opt/vault/data"
+ node_id = "vault-node-1"
 
-  retry_join {
-    leader_api_addr = "https://vault-node-2.internal:8200"
-  }
-  retry_join {
-    leader_api_addr = "https://vault-node-3.internal:8200"
-  }
+ retry_join {
+ leader_api_addr = "https://vault-node-2.internal:8200"
+ }
+ retry_join {
+ leader_api_addr = "https://vault-node-3.internal:8200"
+ }
 }
 
 listener "tcp" {
-  address     = "0.0.0.0:8200"
-  tls_cert_file = "/opt/vault/tls/vault.crt"
-  tls_key_file  = "/opt/vault/tls/vault.key"
+ address = "0.0.0.0:8200"
+ tls_cert_file = "/opt/vault/tls/vault.crt"
+ tls_key_file = "/opt/vault/tls/vault.key"
 }
 
 seal "awskms" {
-  region     = "us-east-1"
-  kms_key_id = "alias/vault-unseal-key"
+ region = "us-east-1"
+ kms_key_id = "alias/vault-unseal-key"
 }
 
-api_addr      = "https://vault-node-1.internal:8200"
-cluster_addr  = "https://vault-node-1.internal:8201"
+api_addr = "https://vault-node-1.internal:8200"
+cluster_addr = "https://vault-node-1.internal:8201"
 
 telemetry {
-  prometheus_retention_time = "30s"
-  disable_hostname         = true
+ prometheus_retention_time = "30s"
+ disable_hostname = true
 }
 ```
 
@@ -110,27 +110,27 @@ Enable authentication backends for human operators, applications, and CI/CD pipe
 # Enable OIDC auth for human users via Okta
 vault auth enable oidc
 vault write auth/oidc/config \
-  oidc_discovery_url="https://company.okta.com/oauth2/default" \
-  oidc_client_id="vault-client-id" \
-  oidc_client_secret="vault-client-secret" \
-  default_role="default"
+ oidc_discovery_url="https://company.okta.com/oauth2/default" \
+ oidc_client_id="vault-client-id" \
+ oidc_client_secret="vault-client-secret" \
+ default_role="default"
 
 # Enable AppRole for application authentication
 vault auth enable approle
 vault write auth/approle/role/web-app \
-  secret_id_ttl=10m \
-  token_num_uses=10 \
-  token_ttl=20m \
-  token_max_ttl=30m \
-  secret_id_num_uses=1 \
-  token_policies="web-app-policy"
+ secret_id_ttl=10m \
+ token_num_uses=10 \
+ token_ttl=20m \
+ token_max_ttl=30m \
+ secret_id_num_uses=1 \
+ token_policies="web-app-policy"
 
 # Enable Kubernetes auth for pod-based access
 vault auth enable kubernetes
 vault write auth/kubernetes/config \
-  kubernetes_host="https://kubernetes.default.svc:443" \
-  token_reviewer_jwt=@/var/run/secrets/kubernetes.io/serviceaccount/token \
-  kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+ kubernetes_host="https://kubernetes.default.svc:443" \
+ token_reviewer_jwt=@/var/run/secrets/kubernetes.io/serviceaccount/token \
+ kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 ```
 
 ### Step 3: Enable Dynamic Secret Engines
@@ -141,34 +141,34 @@ Configure database secret engines to generate short-lived credentials on demand.
 # Enable database secrets engine for PostgreSQL
 vault secrets enable database
 vault write database/config/production-db \
-  plugin_name=postgresql-database-plugin \
-  allowed_roles="readonly,readwrite" \
-  connection_url="postgresql://{{username}}:{{password}}@db.internal:5432/production?sslmode=require" \
-  username="vault_admin" \
-  password="initial-password"
+ plugin_name=postgresql-database-plugin \
+ allowed_roles="readonly,readwrite" \
+ connection_url="postgresql://{{username}}:{{password}}@db.internal:5432/production?sslmode=require" \
+ username="vault_admin" \
+ password="initial-password"
 
 # Rotate the root credentials so Vault manages them exclusively
 vault write -force database/rotate-root/production-db
 
 # Create a readonly role with 1-hour TTL
 vault write database/roles/readonly \
-  db_name=production-db \
-  creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
-  revocation_statements="REVOKE ALL ON ALL TABLES IN SCHEMA public FROM \"{{name}}\"; DROP ROLE IF EXISTS \"{{name}}\";" \
-  default_ttl="1h" \
-  max_ttl="24h"
+ db_name=production-db \
+ creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+ revocation_statements="REVOKE ALL ON ALL TABLES IN SCHEMA public FROM \"{{name}}\"; DROP ROLE IF EXISTS \"{{name}}\";" \
+ default_ttl="1h" \
+ max_ttl="24h"
 
 # Enable AWS secrets engine for dynamic IAM credentials
 vault secrets enable aws
 vault write aws/config/root \
-  access_key=AKIAEXAMPLE \
-  secret_key=secretkey \
-  region=us-east-1
+ access_key=AKIAEXAMPLE \
+ secret_key=secretkey \
+ region=us-east-1
 
 vault write aws/roles/deploy-role \
-  credential_type=iam_user \
-  policy_document=@deploy-policy.json \
-  default_sts_ttl=3600
+ credential_type=iam_user \
+ policy_document=@deploy-policy.json \
+ default_sts_ttl=3600
 ```
 
 ### Step 4: Integrate with Kubernetes Workloads
@@ -180,25 +180,25 @@ Use the Vault Agent Injector or CSI Provider to deliver secrets to pods without 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: web-app
+ name: web-app
 spec:
-  template:
-    metadata:
-      annotations:
-        vault.hashicorp.com/agent-inject: "true"
-        vault.hashicorp.com/role: "web-app"
-        vault.hashicorp.com/agent-inject-secret-db-creds: "database/creds/readonly"
-        vault.hashicorp.com/agent-inject-template-db-creds: |
-          {{- with secret "database/creds/readonly" -}}
-          export DB_USERNAME="{{ .Data.username }}"
-          export DB_PASSWORD="{{ .Data.password }}"
-          {{- end }}
-    spec:
-      serviceAccountName: web-app
-      containers:
-        - name: web-app
-          image: company/web-app:v2.1
-          command: ["/bin/sh", "-c", "source /vault/secrets/db-creds && ./start.sh"]
+ template:
+ metadata:
+ annotations:
+ vault.hashicorp.com/agent-inject: "true"
+ vault.hashicorp.com/role: "web-app"
+ vault.hashicorp.com/agent-inject-secret-db-creds: "database/creds/readonly"
+ vault.hashicorp.com/agent-inject-template-db-creds: |
+ {{- with secret "database/creds/readonly" -}}
+ export DB_USERNAME="{{ .Data.username }}"
+ export DB_PASSWORD="{{ .Data.password }}"
+ {{- end }}
+ spec:
+ serviceAccountName: web-app
+ containers:
+ - name: web-app
+ image: company/web-app:v2.1
+ command: ["/bin/sh", "-c", "source /vault/secrets/db-creds && ./start.sh"]
 ```
 
 ### Step 5: Implement Transit Encryption and PKI
@@ -212,7 +212,7 @@ vault write -f transit/keys/payment-data type=aes256-gcm96
 
 # Encrypt sensitive data
 vault write transit/encrypt/payment-data \
-  plaintext=$(echo "card-number-4111-1111-1111-1111" | base64)
+ plaintext=$(echo "card-number-4111-1111-1111-1111" | base64)
 
 # Enable PKI for internal certificate management
 vault secrets enable pki
@@ -220,20 +220,20 @@ vault secrets tune -max-lease-ttl=87600h pki
 
 # Generate root CA
 vault write pki/root/generate/internal \
-  common_name="Internal Root CA" \
-  ttl=87600h
+ common_name="Internal Root CA" \
+ ttl=87600h
 
 # Configure intermediate CA for issuing certificates
 vault secrets enable -path=pki_int pki
 vault write pki_int/intermediate/generate/internal \
-  common_name="Internal Intermediate CA" \
-  ttl=43800h
+ common_name="Internal Intermediate CA" \
+ ttl=43800h
 
 # Create a role for issuing certificates
 vault write pki_int/roles/internal-services \
-  allowed_domains="internal.company.com" \
-  allow_subdomains=true \
-  max_ttl=720h
+ allowed_domains="internal.company.com" \
+ allow_subdomains=true \
+ max_ttl=720h
 ```
 
 ### Step 6: Establish Policies and Audit Trail
@@ -243,24 +243,24 @@ Define fine-grained ACL policies following least privilege. Enable comprehensive
 ```hcl
 # web-app-policy.hcl
 path "database/creds/readonly" {
-  capabilities = ["read"]
+ capabilities = ["read"]
 }
 
 path "transit/encrypt/payment-data" {
-  capabilities = ["update"]
+ capabilities = ["update"]
 }
 
 path "transit/decrypt/payment-data" {
-  capabilities = ["update"]
+ capabilities = ["update"]
 }
 
 path "secret/data/web-app/*" {
-  capabilities = ["read", "list"]
+ capabilities = ["read", "list"]
 }
 
 # Deny access to admin paths
 path "sys/*" {
-  capabilities = ["deny"]
+ capabilities = ["deny"]
 }
 ```
 
@@ -321,28 +321,28 @@ Seal Type: AWS KMS Auto-Unseal
 Report Date: 2025-02-23
 
 SECRET ENGINES:
-  database/         PostgreSQL dynamic creds   Leases Active: 47
-  aws/              Dynamic IAM credentials    Leases Active: 12
-  transit/          Encryption as a service    Keys: 8
-  pki/              Root CA                    Certs Issued: 0
-  pki_int/          Intermediate CA            Certs Issued: 234
-  secret/           KV v2 static secrets       Versions: 1,892
+ database/ PostgreSQL dynamic creds Leases Active: 47
+ aws/ Dynamic IAM credentials Leases Active: 12
+ transit/ Encryption as a service Keys: 8
+ pki/ Root CA Certs Issued: 0
+ pki_int/ Intermediate CA Certs Issued: 234
+ secret/ KV v2 static secrets Versions: 1,892
 
 AUTH METHODS:
-  oidc/             Okta SSO for humans        Active Tokens: 23
-  approle/          CI/CD pipelines            Active Tokens: 156
-  kubernetes/       Pod-based auth             Active Tokens: 89
+ oidc/ Okta SSO for humans Active Tokens: 23
+ approle/ CI/CD pipelines Active Tokens: 156
+ kubernetes/ Pod-based auth Active Tokens: 89
 
 AUDIT FINDINGS:
-  [WARN] 3 AppRole secret_id_num_uses set to 0 (unlimited)
-  [WARN] 12 KV secrets not accessed in 90+ days (potential orphans)
-  [PASS] All dynamic secret TTLs under 24 hours
-  [PASS] Audit logging enabled on all nodes
-  [PASS] Root token revoked after initial setup
+ [WARN] 3 AppRole secret_id_num_uses set to 0 (unlimited)
+ [WARN] 12 KV secrets not accessed in 90+ days (potential orphans)
+ [PASS] All dynamic secret TTLs under 24 hours
+ [PASS] Audit logging enabled on all nodes
+ [PASS] Root token revoked after initial setup
 
 CREDENTIAL HYGIENE:
-  Static Secrets (KV): 234
-  Dynamic Secrets Active: 59
-  Average Lease TTL: 2.3 hours
-  Secrets Rotated This Month: 12,456
+ Static Secrets (KV): 234
+ Dynamic Secrets Active: 59
+ Average Lease TTL: 2.3 hours
+ Secrets Rotated This Month: 12,456
 ```

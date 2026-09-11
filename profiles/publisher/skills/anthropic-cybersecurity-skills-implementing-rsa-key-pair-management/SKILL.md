@@ -1,10 +1,10 @@
 ---
 name: implementing-rsa-key-pair-management
 description: Generates, stores, rotates, and manages RSA key pairs following NIST
-  SP 800-57 guidelines, covering serialization formats (PEM, DER, PKCS#8), passphrase
-  protection, and key strength validation. Use when creating or rotating RSA keys
-  for signatures, key exchange, or encryption, or when auditing existing keys for
-  proper storage and NIST-compliant strength.
+ SP 800-57 guidelines, covering serialization formats (PEM, DER, PKCS#8), passphrase
+ protection, and key strength validation. Use when creating or rotating RSA keys
+ for signatures, key exchange, or encryption, or when auditing existing keys for
+ proper storage and NIST-compliant strength.
 domain: cybersecurity
 subdomain: cryptography
 tags:
@@ -63,16 +63,16 @@ RSA (Rivest-Shamir-Adleman) is the most widely deployed asymmetric cryptographic
 
 | Key Size (bits) | Security Strength (bits) | Recommended Until |
 |-----------------|-------------------------|-------------------|
-| 2048            | 112                     | 2030              |
-| 3072            | 128                     | Beyond 2030       |
-| 4096            | ~140                    | Beyond 2030       |
+| 2048 | 112 | 2030 |
+| 3072 | 128 | Beyond 2030 |
+| 4096 | ~140 | Beyond 2030 |
 
 ### RSA Padding Schemes
 
 | Scheme | Use Case | Standard |
 |--------|----------|----------|
-| OAEP   | Encryption | PKCS#1 v2.2 (RFC 8017) |
-| PSS    | Signatures | PKCS#1 v2.2 (RFC 8017) |
+| OAEP | Encryption | PKCS#1 v2.2 (RFC 8017) |
+| PSS | Signatures | PKCS#1 v2.2 (RFC 8017) |
 | PKCS#1 v1.5 | Legacy only | Deprecated for new systems |
 
 ### Key Storage Formats

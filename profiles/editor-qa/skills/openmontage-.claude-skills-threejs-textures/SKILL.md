@@ -16,7 +16,7 @@ const texture = loader.load("texture.jpg");
 
 // Apply to material
 const material = new THREE.MeshStandardMaterial({
-  map: texture,
+ map: texture,
 });
 ```
 
@@ -29,10 +29,10 @@ const loader = new THREE.TextureLoader();
 
 // Async with callbacks
 loader.load(
-  "texture.jpg",
-  (texture) => console.log("Loaded"),
-  (progress) => console.log("Progress"),
-  (error) => console.error("Error"),
+ "texture.jpg",
+ (texture) => console.log("Loaded"),
+ (progress) => console.log("Progress"),
+ (error) => console.error("Error"),
 );
 
 // Synchronous style (loads async internally)
@@ -44,16 +44,16 @@ material.map = texture;
 
 ```javascript
 function loadTexture(url) {
-  return new Promise((resolve, reject) => {
-    new THREE.TextureLoader().load(url, resolve, undefined, reject);
-  });
+ return new Promise((resolve, reject) => {
+ new THREE.TextureLoader().load(url, resolve, undefined, reject);
+ });
 }
 
 // Usage
 const [colorMap, normalMap, roughnessMap] = await Promise.all([
-  loadTexture("color.jpg"),
-  loadTexture("normal.jpg"),
-  loadTexture("roughness.jpg"),
+ loadTexture("color.jpg"),
+ loadTexture("normal.jpg"),
+ loadTexture("roughness.jpg"),
 ]);
 ```
 
@@ -145,13 +145,13 @@ const size = 256;
 const data = new Uint8Array(size * size * 4);
 
 for (let i = 0; i < size; i++) {
-  for (let j = 0; j < size; j++) {
-    const index = (i * size + j) * 4;
-    data[index] = i; // R
-    data[index + 1] = j; // G
-    data[index + 2] = 128; // B
-    data[index + 3] = 255; // A
-  }
+ for (let j = 0; j < size; j++) {
+ const index = (i * size + j) * 4;
+ data[index] = i; // R
+ data[index + 1] = j; // G
+ data[index + 2] = 128; // B
+ data[index + 3] = 255; // A
+ }
 }
 
 const texture = new THREE.DataTexture(data, size, size);
@@ -204,7 +204,7 @@ ktx2Loader.setTranscoderPath("path/to/basis/");
 ktx2Loader.detectSupport(renderer);
 
 ktx2Loader.load("texture.ktx2", (texture) => {
-  material.map = texture;
+ material.map = texture;
 });
 ```
 
@@ -217,12 +217,12 @@ For environment maps and skyboxes.
 ```javascript
 const loader = new THREE.CubeTextureLoader();
 const cubeTexture = loader.load([
-  "px.jpg",
-  "nx.jpg", // +X, -X
-  "py.jpg",
-  "ny.jpg", // +Y, -Y
-  "pz.jpg",
-  "nz.jpg", // +Z, -Z
+ "px.jpg",
+ "nx.jpg", // +X, -X
+ "py.jpg",
+ "ny.jpg", // +Y, -Y
+ "pz.jpg",
+ "nz.jpg", // +Z, -Z
 ]);
 
 // As background
@@ -242,12 +242,12 @@ const pmremGenerator = new THREE.PMREMGenerator(renderer);
 pmremGenerator.compileEquirectangularShader();
 
 new RGBELoader().load("environment.hdr", (texture) => {
-  const envMap = pmremGenerator.fromEquirectangular(texture).texture;
-  scene.environment = envMap;
-  scene.background = envMap;
+ const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+ scene.environment = envMap;
+ scene.background = envMap;
 
-  texture.dispose();
-  pmremGenerator.dispose();
+ texture.dispose();
+ pmremGenerator.dispose();
 });
 ```
 
@@ -260,9 +260,9 @@ import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 
 const loader = new RGBELoader();
 loader.load("environment.hdr", (texture) => {
-  texture.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = texture;
-  scene.background = texture;
+ texture.mapping = THREE.EquirectangularReflectionMapping;
+ scene.environment = texture;
+ scene.background = texture;
 });
 ```
 
@@ -273,8 +273,8 @@ import { EXRLoader } from "three/examples/jsm/loaders/EXRLoader.js";
 
 const loader = new EXRLoader();
 loader.load("environment.exr", (texture) => {
-  texture.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = texture;
+ texture.mapping = THREE.EquirectangularReflectionMapping;
+ scene.environment = texture;
 });
 ```
 
@@ -294,9 +294,9 @@ Render to texture for effects.
 ```javascript
 // Create render target
 const renderTarget = new THREE.WebGLRenderTarget(512, 512, {
-  minFilter: THREE.LinearFilter,
-  magFilter: THREE.LinearFilter,
-  format: THREE.RGBAFormat,
+ minFilter: THREE.LinearFilter,
+ magFilter: THREE.LinearFilter,
+ format: THREE.RGBAFormat,
 });
 
 // Render scene to target
@@ -313,9 +313,9 @@ material.map = renderTarget.texture;
 ```javascript
 const renderTarget = new THREE.WebGLRenderTarget(512, 512);
 renderTarget.depthTexture = new THREE.DepthTexture(
-  512,
-  512,
-  THREE.UnsignedShortType,
+ 512,
+ 512,
+ THREE.UnsignedShortType,
 );
 
 // Access depth
@@ -326,7 +326,7 @@ const depthTexture = renderTarget.depthTexture;
 
 ```javascript
 const renderTarget = new THREE.WebGLRenderTarget(512, 512, {
-  samples: 4, // MSAA
+ samples: 4, // MSAA
 });
 ```
 
@@ -336,8 +336,8 @@ Dynamic environment maps for reflections.
 
 ```javascript
 const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, {
-  generateMipmaps: true,
-  minFilter: THREE.LinearMipmapLinearFilter,
+ generateMipmaps: true,
+ minFilter: THREE.LinearMipmapLinearFilter,
 });
 
 const cubeCamera = new THREE.CubeCamera(0.1, 1000, cubeRenderTarget);
@@ -348,11 +348,11 @@ reflectiveMaterial.envMap = cubeRenderTarget.texture;
 
 // Update in animation loop (expensive!)
 function animate() {
-  // Hide reflective object, update env map, show again
-  reflectiveObject.visible = false;
-  cubeCamera.position.copy(reflectiveObject.position);
-  cubeCamera.update(renderer, scene);
-  reflectiveObject.visible = true;
+ // Hide reflective object, update env map, show again
+ reflectiveObject.visible = false;
+ cubeCamera.position.copy(reflectiveObject.position);
+ cubeCamera.update(renderer, scene);
+ reflectiveObject.visible = true;
 }
 ```
 
@@ -388,29 +388,29 @@ geometry.setAttribute("uv2", new THREE.BufferAttribute(uv2, 2));
 
 ```javascript
 const material = new THREE.ShaderMaterial({
-  uniforms: {
-    map: { value: texture },
-    uvOffset: { value: new THREE.Vector2(0, 0) },
-    uvScale: { value: new THREE.Vector2(1, 1) },
-  },
-  vertexShader: `
-    varying vec2 vUv;
-    uniform vec2 uvOffset;
-    uniform vec2 uvScale;
+ uniforms: {
+ map: { value: texture },
+ uvOffset: { value: new THREE.Vector2(0, 0) },
+ uvScale: { value: new THREE.Vector2(1, 1) },
+ },
+ vertexShader: `
+ varying vec2 vUv;
+ uniform vec2 uvOffset;
+ uniform vec2 uvScale;
 
-    void main() {
-      vUv = uv * uvScale + uvOffset;
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    varying vec2 vUv;
-    uniform sampler2D map;
+ void main() {
+ vUv = uv * uvScale + uvOffset;
+ gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+ }
+ `,
+ fragmentShader: `
+ varying vec2 vUv;
+ uniform sampler2D map;
 
-    void main() {
-      gl_FragColor = texture2D(map, vUv);
-    }
-  `,
+ void main() {
+ gl_FragColor = texture2D(map, vUv);
+ }
+ `,
 });
 ```
 
@@ -426,8 +426,8 @@ atlas.wrapT = THREE.ClampToEdgeWrapping;
 
 // Select sprite by UV offset/scale
 function selectSprite(row, col, gridSize = 2) {
-  atlas.offset.set(col / gridSize, 1 - (row + 1) / gridSize);
-  atlas.repeat.set(1 / gridSize, 1 / gridSize);
+ atlas.offset.set(col / gridSize, 1 - (row + 1) / gridSize);
+ atlas.repeat.set(1 / gridSize, 1 / gridSize);
 }
 
 // Select top-left sprite
@@ -440,38 +440,38 @@ selectSprite(0, 0);
 
 ```javascript
 const material = new THREE.MeshStandardMaterial({
-  // Base color (sRGB)
-  map: colorTexture,
+ // Base color (sRGB)
+ map: colorTexture,
 
-  // Surface detail (Linear)
-  normalMap: normalTexture,
-  normalScale: new THREE.Vector2(1, 1),
+ // Surface detail (Linear)
+ normalMap: normalTexture,
+ normalScale: new THREE.Vector2(1, 1),
 
-  // Roughness (Linear, grayscale)
-  roughnessMap: roughnessTexture,
-  roughness: 1, // Multiplier
+ // Roughness (Linear, grayscale)
+ roughnessMap: roughnessTexture,
+ roughness: 1, // Multiplier
 
-  // Metalness (Linear, grayscale)
-  metalnessMap: metalnessTexture,
-  metalness: 1, // Multiplier
+ // Metalness (Linear, grayscale)
+ metalnessMap: metalnessTexture,
+ metalness: 1, // Multiplier
 
-  // Ambient occlusion (Linear, uses uv2)
-  aoMap: aoTexture,
-  aoMapIntensity: 1,
+ // Ambient occlusion (Linear, uses uv2)
+ aoMap: aoTexture,
+ aoMapIntensity: 1,
 
-  // Self-illumination (sRGB)
-  emissiveMap: emissiveTexture,
-  emissive: 0xffffff,
-  emissiveIntensity: 1,
+ // Self-illumination (sRGB)
+ emissiveMap: emissiveTexture,
+ emissive: 0xffffff,
+ emissiveIntensity: 1,
 
-  // Vertex displacement (Linear)
-  displacementMap: displacementTexture,
-  displacementScale: 0.1,
-  displacementBias: 0,
+ // Vertex displacement (Linear)
+ displacementMap: displacementTexture,
+ displacementScale: 0.1,
+ displacementBias: 0,
 
-  // Alpha (Linear)
-  alphaMap: alphaTexture,
-  transparent: true,
+ // Alpha (Linear)
+ alphaMap: alphaTexture,
+ transparent: true,
 });
 
 // Don't forget UV2 for AO
@@ -494,19 +494,19 @@ material.normalMapType = THREE.ObjectSpaceNormalMap;
 
 ```javascript
 function generateNoiseTexture(size = 256) {
-  const data = new Uint8Array(size * size * 4);
+ const data = new Uint8Array(size * size * 4);
 
-  for (let i = 0; i < size * size; i++) {
-    const value = Math.random() * 255;
-    data[i * 4] = value;
-    data[i * 4 + 1] = value;
-    data[i * 4 + 2] = value;
-    data[i * 4 + 3] = 255;
-  }
+ for (let i = 0; i < size * size; i++) {
+ const value = Math.random() * 255;
+ data[i * 4] = value;
+ data[i * 4 + 1] = value;
+ data[i * 4 + 2] = value;
+ data[i * 4 + 3] = 255;
+ }
 
-  const texture = new THREE.DataTexture(data, size, size);
-  texture.needsUpdate = true;
-  return texture;
+ const texture = new THREE.DataTexture(data, size, size);
+ texture.needsUpdate = true;
+ return texture;
 }
 ```
 
@@ -514,19 +514,19 @@ function generateNoiseTexture(size = 256) {
 
 ```javascript
 function generateGradientTexture(color1, color2, size = 256) {
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = 1;
-  const ctx = canvas.getContext("2d");
+ const canvas = document.createElement("canvas");
+ canvas.width = size;
+ canvas.height = 1;
+ const ctx = canvas.getContext("2d");
 
-  const gradient = ctx.createLinearGradient(0, 0, size, 0);
-  gradient.addColorStop(0, color1);
-  gradient.addColorStop(1, color2);
+ const gradient = ctx.createLinearGradient(0, 0, size, 0);
+ gradient.addColorStop(0, color1);
+ gradient.addColorStop(1, color2);
 
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size, 1);
+ ctx.fillStyle = gradient;
+ ctx.fillRect(0, 0, size, 1);
 
-  return new THREE.CanvasTexture(canvas);
+ return new THREE.CanvasTexture(canvas);
 }
 ```
 
@@ -540,28 +540,28 @@ texture.dispose();
 
 // Material textures
 function disposeMaterial(material) {
-  const maps = [
-    "map",
-    "normalMap",
-    "roughnessMap",
-    "metalnessMap",
-    "aoMap",
-    "emissiveMap",
-    "displacementMap",
-    "alphaMap",
-    "envMap",
-    "lightMap",
-    "bumpMap",
-    "specularMap",
-  ];
+ const maps = [
+ "map",
+ "normalMap",
+ "roughnessMap",
+ "metalnessMap",
+ "aoMap",
+ "emissiveMap",
+ "displacementMap",
+ "alphaMap",
+ "envMap",
+ "lightMap",
+ "bumpMap",
+ "specularMap",
+ ];
 
-  maps.forEach((mapName) => {
-    if (material[mapName]) {
-      material[mapName].dispose();
-    }
-  });
+ maps.forEach((mapName) => {
+ if (material[mapName]) {
+ material[mapName].dispose();
+ }
+ });
 
-  material.dispose();
+ material.dispose();
 }
 ```
 
@@ -569,36 +569,36 @@ function disposeMaterial(material) {
 
 ```javascript
 class TexturePool {
-  constructor() {
-    this.textures = new Map();
-    this.loader = new THREE.TextureLoader();
-  }
+ constructor() {
+ this.textures = new Map();
+ this.loader = new THREE.TextureLoader();
+ }
 
-  async get(url) {
-    if (this.textures.has(url)) {
-      return this.textures.get(url);
-    }
+ async get(url) {
+ if (this.textures.has(url)) {
+ return this.textures.get(url);
+ }
 
-    const texture = await new Promise((resolve, reject) => {
-      this.loader.load(url, resolve, undefined, reject);
-    });
+ const texture = await new Promise((resolve, reject) => {
+ this.loader.load(url, resolve, undefined, reject);
+ });
 
-    this.textures.set(url, texture);
-    return texture;
-  }
+ this.textures.set(url, texture);
+ return texture;
+ }
 
-  dispose(url) {
-    const texture = this.textures.get(url);
-    if (texture) {
-      texture.dispose();
-      this.textures.delete(url);
-    }
-  }
+ dispose(url) {
+ const texture = this.textures.get(url);
+ if (texture) {
+ texture.dispose();
+ this.textures.delete(url);
+ }
+ }
 
-  disposeAll() {
-    this.textures.forEach((t) => t.dispose());
-    this.textures.clear();
-  }
+ disposeAll() {
+ this.textures.forEach((t) => t.dispose());
+ this.textures.clear();
+ }
 }
 ```
 

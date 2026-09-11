@@ -5,9 +5,9 @@ version: 1.0.0
 author: deep-dive
 license: MIT
 metadata:
-  hermes:
-    tags: [YouTube, Research, Synthesis, System-Change]
-    related_skills: [research, youtube-content]
+ hermes:
+ tags: [YouTube, Research, Synthesis, System-Change]
+ related_skills: [research, youtube-content]
 ---
 
 # YouTube Research → System Change

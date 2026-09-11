@@ -68,9 +68,9 @@ ring = Annulus(inner_radius=1, outer_radius=2, fill_opacity=0.5, color=GREEN)
 
 # Annular sector (partial ring)
 partial_ring = AnnularSector(
-    inner_radius=1, outer_radius=2,
-    angle=PI / 2, start_angle=0,
-    fill_opacity=0.7, color=TEAL
+ inner_radius=1, outer_radius=2,
+ angle=PI / 2, start_angle=0,
+ fill_opacity=0.7, color=TEAL
 )
 
 # Cutout (punch holes in a shape)
@@ -84,11 +84,11 @@ Use cases: pie charts, ring progress indicators, Venn diagrams with arcs, geomet
 ## Positioning
 
 ```python
-mob.move_to(ORIGIN)                        # center
-mob.move_to(UP * 2 + RIGHT)               # relative
-label.next_to(circle, DOWN, buff=0.3)     # next to another
-title.to_edge(UP, buff=0.5)               # screen edge (buff >= 0.5!)
-mob.to_corner(UL, buff=0.5)               # corner
+mob.move_to(ORIGIN) # center
+mob.move_to(UP * 2 + RIGHT) # relative
+label.next_to(circle, DOWN, buff=0.3) # next to another
+title.to_edge(UP, buff=0.5) # screen edge (buff >= 0.5!)
+mob.to_corner(UL, buff=0.5) # corner
 ```
 
 ## VGroup vs Group
@@ -121,7 +121,7 @@ mob.set_color(BLUE)
 mob.set_fill(RED, opacity=0.5)
 mob.set_stroke(WHITE, width=2)
 mob.set_opacity(0.4)
-mob.set_z_index(1)                         # layering
+mob.set_z_index(1) # layering
 ```
 
 ## Specialized Mobjects
@@ -138,11 +138,11 @@ bg = BackgroundRectangle(equation, fill_opacity=0.7, buff=0.2)
 
 ```python
 class NetworkNode(Group):
-    def __init__(self, label_text, color=BLUE, **kwargs):
-        super().__init__(**kwargs)
-        self.circle = Circle(radius=0.4, color=color, fill_opacity=0.3)
-        self.label = Text(label_text, font_size=20).move_to(self.circle)
-        self.add(self.circle, self.label)
+ def __init__(self, label_text, color=BLUE, **kwargs):
+ super().__init__(**kwargs)
+ self.circle = Circle(radius=0.4, color=color, fill_opacity=0.3)
+ self.label = Text(label_text, font_size=20).move_to(self.circle)
+ self.add(self.circle, self.label)
 ```
 
 ## Matrix Mobjects
@@ -158,8 +158,8 @@ m = DecimalMatrix([[1.5, 2.7], [3.1, 4.9]], element_to_mobject_config={"num_deci
 
 # Mobject matrix (any mobject in each cell)
 m = MobjectMatrix([
-    [MathTex(r"\pi"), MathTex(r"e")],
-    [MathTex(r"\phi"), MathTex(r"\tau")]
+ [MathTex(r"\pi"), MathTex(r"e")],
+ [MathTex(r"\phi"), MathTex(r"\tau")]
 ])
 
 # Bracket types: "(" "[" "|" or "\\{"
@@ -183,7 +183,7 @@ self.play(FadeIn(logo))
 
 # SVG submobjects are individually animatable
 for part in logo.submobjects:
-    self.play(part.animate.set_color(random_color()))
+ self.play(part.animate.set_color(random_color()))
 ```
 
 ## ImageMobject — Display Images
@@ -214,10 +214,10 @@ Cleaner than manual `DecimalNumber` + `add_updater` for simple labeled-value dis
 
 ```python
 bullets = BulletedList(
-    "First key point",
-    "Second important fact",
-    "Third conclusion",
-    font_size=28
+ "First key point",
+ "Second important fact",
+ "Third conclusion",
+ font_size=28
 )
 bullets.to_edge(LEFT, buff=1.0)
 self.play(Write(bullets))
@@ -236,7 +236,7 @@ dashed = DashedLine(LEFT * 3, RIGHT * 3, color=SUBTLE, dash_length=0.15)
 line1 = Line(ORIGIN, RIGHT * 2)
 line2 = Line(ORIGIN, UP * 2 + RIGHT)
 angle = Angle(line1, line2, radius=0.5, color=YELLOW)
-angle_label = angle.get_value()  # returns the angle in radians
+angle_label = angle.get_value() # returns the angle in radians
 
 # Right angle marker
 right_angle = RightAngle(line1, Line(ORIGIN, UP * 2), length=0.3, color=WHITE)
@@ -276,14 +276,14 @@ Auto-handles label positioning — cleaner than manual `Arrow` + `Text().next_to
 ```python
 # Color specific words (t2c = text-to-color)
 text = Text(
-    "Gradient descent minimizes the loss function",
-    t2c={"Gradient descent": BLUE, "loss function": RED}
+ "Gradient descent minimizes the loss function",
+ t2c={"Gradient descent": BLUE, "loss function": RED}
 )
 
 # Different fonts per word (t2f = text-to-font)
 text = Text(
-    "Use Menlo for code and Inter for prose",
-    t2f={"Menlo": "Menlo", "Inter": "Inter"}
+ "Use Menlo for code and Inter for prose",
+ t2f={"Menlo": "Menlo", "Inter": "Inter"}
 )
 
 # Italic/slant per word (t2s = text-to-slant)
@@ -305,7 +305,7 @@ label.set_stroke(BLACK, width=5, background=True)
 
 # Apply to a group
 for mob in labels:
-    mob.set_stroke(BLACK, width=4, background=True)
+ mob.set_stroke(BLACK, width=4, background=True)
 ```
 
 This is how 3Blue1Brown keeps text readable over complex backgrounds without using BackgroundRectangle.
@@ -317,16 +317,16 @@ Apply complex functions to entire mobjects — transforms the plane:
 ```python
 c_grid = ComplexPlane()
 moving_grid = c_grid.copy()
-moving_grid.prepare_for_nonlinear_transform()  # adds more sample points for smooth deformation
+moving_grid.prepare_for_nonlinear_transform() # adds more sample points for smooth deformation
 
 self.play(
-    moving_grid.animate.apply_complex_function(lambda z: z**2),
-    run_time=5,
+ moving_grid.animate.apply_complex_function(lambda z: z**2),
+ run_time=5,
 )
 
 # Also works with R3->R3 functions:
 self.play(grid.animate.apply_function(
-    lambda p: [p[0] + 0.5 * math.sin(p[1]), p[1] + 0.5 * math.sin(p[0]), p[2]]
+ lambda p: [p[0] + 0.5 * math.sin(p[1]), p[1] + 0.5 * math.sin(p[0]), p[2]]
 ), run_time=5)
 ```
 

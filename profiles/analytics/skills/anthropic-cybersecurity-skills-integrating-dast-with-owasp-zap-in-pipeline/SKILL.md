@@ -52,85 +52,85 @@ mitre_attack:
 name: DAST Security Scan
 
 on:
-  deployment_status:
-  workflow_dispatch:
-    inputs:
-      target_url:
-        description: 'Target URL to scan'
-        required: true
+ deployment_status:
+ workflow_dispatch:
+ inputs:
+ target_url:
+ description: 'Target URL to scan'
+ required: true
 
 jobs:
-  zap-baseline:
-    name: ZAP Baseline Scan
-    runs-on: ubuntu-latest
-    services:
-      webapp:
-        image: ${{ github.repository }}:${{ github.sha }}
-        ports:
-          - 8080:8080
-        options: --health-cmd="curl -f http://localhost:8080/health" --health-interval=10s --health-timeout=5s --health-retries=5
+ zap-baseline:
+ name: ZAP Baseline Scan
+ runs-on: ubuntu-latest
+ services:
+ webapp:
+ image: ${{ github.repository }}:${{ github.sha }}
+ ports:
+ - 8080:8080
+ options: --health-cmd="curl -f http://localhost:8080/health" --health-interval=10s --health-timeout=5s --health-retries=5
 
-    steps:
-      - uses: actions/checkout@v4
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: ZAP Baseline Scan
-        uses: zaproxy/action-baseline@v0.12.0
-        with:
-          target: 'http://webapp:8080'
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a -j'
-          allow_issue_writing: false
+ - name: ZAP Baseline Scan
+ uses: zaproxy/action-baseline@v0.12.0
+ with:
+ target: 'http://webapp:8080'
+ rules_file_name: '.zap/rules.tsv'
+ cmd_options: '-a -j'
+ allow_issue_writing: false
 
-      - name: Upload ZAP Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-baseline-report
-          path: report_html.html
+ - name: Upload ZAP Report
+ if: always()
+ uses: actions/upload-artifact@v4
+ with:
+ name: zap-baseline-report
+ path: report_html.html
 ```
 
 ### Step 2: Configure ZAP Full Scan for Comprehensive Testing
 
 ```yaml
-  zap-full-scan:
-    name: ZAP Full Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ zap-full-scan:
+ name: ZAP Full Scan
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: ZAP Full Scan
-        uses: zaproxy/action-full-scan@v0.12.0
-        with:
-          target: ${{ github.event.inputs.target_url || 'https://staging.example.com' }}
-          rules_file_name: '.zap/rules.tsv'
-          cmd_options: '-a -j -T 60'
+ - name: ZAP Full Scan
+ uses: zaproxy/action-full-scan@v0.12.0
+ with:
+ target: ${{ github.event.inputs.target_url || 'https://staging.example.com' }}
+ rules_file_name: '.zap/rules.tsv'
+ cmd_options: '-a -j -T 60'
 
-      - name: Upload Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap-full-report
-          path: |
-            report_html.html
-            report_json.json
+ - name: Upload Reports
+ if: always()
+ uses: actions/upload-artifact@v4
+ with:
+ name: zap-full-report
+ path: |
+ report_html.html
+ report_json.json
 ```
 
 ### Step 3: Configure API Scan with OpenAPI Specification
 
 ```yaml
-  zap-api-scan:
-    name: ZAP API Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ zap-api-scan:
+ name: ZAP API Scan
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: ZAP API Scan
-        uses: zaproxy/action-api-scan@v0.12.0
-        with:
-          target: 'https://staging.example.com/api/openapi.json'
-          format: openapi
-          rules_file_name: '.zap/api-rules.tsv'
-          cmd_options: '-a -j'
+ - name: ZAP API Scan
+ uses: zaproxy/action-api-scan@v0.12.0
+ with:
+ target: 'https://staging.example.com/api/openapi.json'
+ format: openapi
+ rules_file_name: '.zap/api-rules.tsv'
+ cmd_options: '-a -j'
 ```
 
 ### Step 4: Configure ZAP Scan Rules
@@ -158,30 +158,30 @@ jobs:
 # docker-compose.zap.yml
 version: '3.8'
 services:
-  webapp:
-    build: .
-    ports:
-      - "8080:8080"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-      interval: 10s
-      retries: 5
+ webapp:
+ build: .
+ ports:
+ - "8080:8080"
+ healthcheck:
+ test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+ interval: 10s
+ retries: 5
 
-  zap:
-    image: zaproxy/zap-stable:latest
-    depends_on:
-      webapp:
-        condition: service_healthy
-    command: >
-      zap-baseline.py
-        -t http://webapp:8080
-        -r /zap/wrk/report.html
-        -J /zap/wrk/report.json
-        -c /zap/wrk/rules.tsv
-        -I
-    volumes:
-      - ./zap-reports:/zap/wrk
-      - ./.zap/rules.tsv:/zap/wrk/rules.tsv
+ zap:
+ image: zaproxy/zap-stable:latest
+ depends_on:
+ webapp:
+ condition: service_healthy
+ command: >
+ zap-baseline.py
+ -t http://webapp:8080
+ -r /zap/wrk/report.html
+ -J /zap/wrk/report.json
+ -c /zap/wrk/rules.tsv
+ -I
+ volumes:
+ - ./zap-reports:/zap/wrk
+ - ./.zap/rules.tsv:/zap/wrk/rules.tsv
 ```
 
 ## Key Concepts
@@ -233,24 +233,24 @@ Date: 2026-02-23
 Duration: 4m 32s
 
 FINDINGS:
-  FAIL: 3
-  WARN: 7
-  INFO: 12
-  PASS: 45
+ FAIL: 3
+ WARN: 7
+ INFO: 12
+ PASS: 45
 
 FAILING ALERTS:
-  [HIGH] 40012 - Cross Site Scripting (Reflected)
-    URL: https://staging.example.com/search?q=<script>
-    Method: GET
-    Evidence: <script>alert(1)</script>
+ [HIGH] 40012 - Cross Site Scripting (Reflected)
+ URL: https://staging.example.com/search?q=<script>
+ Method: GET
+ Evidence: <script>alert(1)</script>
 
-  [MEDIUM] 10021 - X-Content-Type-Options Missing
-    URL: https://staging.example.com/api/v1/*
-    Evidence: Response header missing
+ [MEDIUM] 10021 - X-Content-Type-Options Missing
+ URL: https://staging.example.com/api/v1/*
+ Evidence: Response header missing
 
-  [MEDIUM] 10035 - Strict-Transport-Security Missing
-    URL: https://staging.example.com/
-    Evidence: HSTS header not present
+ [MEDIUM] 10035 - Strict-Transport-Security Missing
+ URL: https://staging.example.com/
+ Evidence: HSTS header not present
 
 QUALITY GATE: FAILED (1 HIGH, 2 MEDIUM findings)
 ```

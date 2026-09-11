@@ -61,23 +61,23 @@ This skill covers deploying SDP using the CSA v2.0 specification, implementing S
 
 ```
 ┌─────────────────────┐
-│ SDP Controller       │
-│ - Authentication     │
-│ - Authorization      │
-│ - Policy management  │
-│ - Key management     │
+│ SDP Controller │
+│ - Authentication │
+│ - Authorization │
+│ - Policy management │
+│ - Key management │
 └──────────┬──────────┘
-           │
-    ┌──────┴──────┐
-    │             │
-    v             v
-┌────────┐  ┌────────────┐
-│ IH     │  │ AH         │
-│(Client)│  │(Gateway)   │
-│        │  │            │
-│ SPA    │──│ Protected  │
-│ mTLS   │  │ Resources  │
-└────────┘  └────────────┘
+ │
+ ┌──────┴──────┐
+ │ │
+ v v
+┌────────┐ ┌────────────┐
+│ IH │ │ AH │
+│(Client)│ │(Gateway) │
+│ │ │ │
+│ SPA │──│ Protected │
+│ mTLS │ │ Resources │
+└────────┘ └────────────┘
 
 IH = Initiating Host (User Device)
 AH = Accepting Host (Application Gateway)
@@ -106,67 +106,67 @@ SDP connections are provisioned on-demand based on real-time policy evaluation. 
 ### Phase 1: SDP Controller Deployment
 
 1. **Deploy SDP Controller**
-   - Install SDP controller on hardened, redundant infrastructure
-   - Configure PKI integration for certificate issuance
-   - Set up authentication backend (LDAP, SAML, OIDC)
-   - Configure policy database with application definitions
-   - Enable audit logging for all controller decisions
+ - Install SDP controller on hardened, redundant infrastructure
+ - Configure PKI integration for certificate issuance
+ - Set up authentication backend (LDAP, SAML, OIDC)
+ - Configure policy database with application definitions
+ - Enable audit logging for all controller decisions
 
 2. **Configure Authentication**
-   - Integrate with enterprise IdP via SAML 2.0 or OIDC
-   - Configure device certificate enrollment (SCEP/EST)
-   - Enable multi-factor authentication requirements
-   - Set up certificate revocation checking (OCSP/CRL)
+ - Integrate with enterprise IdP via SAML 2.0 or OIDC
+ - Configure device certificate enrollment (SCEP/EST)
+ - Enable multi-factor authentication requirements
+ - Set up certificate revocation checking (OCSP/CRL)
 
 3. **Define Access Policies**
-   - Map users/groups to authorized applications
-   - Define device posture requirements per application
-   - Configure contextual conditions (location, time, risk level)
-   - Set session duration and re-authentication intervals
+ - Map users/groups to authorized applications
+ - Define device posture requirements per application
+ - Configure contextual conditions (location, time, risk level)
+ - Set session duration and re-authentication intervals
 
 ### Phase 2: SDP Gateway Deployment
 
 4. **Deploy Accepting Hosts (Gateways)**
-   - Install SDP gateway instances in front of protected applications
-   - Configure default-drop firewall rules (deny all inbound)
-   - Enable SPA listener on designated ports
-   - Configure mTLS with controller-issued certificates
-   - Set up health monitoring and failover
+ - Install SDP gateway instances in front of protected applications
+ - Configure default-drop firewall rules (deny all inbound)
+ - Enable SPA listener on designated ports
+ - Configure mTLS with controller-issued certificates
+ - Set up health monitoring and failover
 
 5. **Configure Application Definitions**
-   - Register each protected application with the controller
-   - Define backend server IPs, ports, and protocols
-   - Configure load balancing for multi-instance applications
-   - Set up application health checks
+ - Register each protected application with the controller
+ - Define backend server IPs, ports, and protocols
+ - Configure load balancing for multi-instance applications
+ - Set up application health checks
 
 ### Phase 3: Client Deployment
 
 6. **Deploy Initiating Hosts (Clients)**
-   - Install SDP client software on user endpoints
-   - Enroll device certificates through automated provisioning
-   - Configure SPA key material distribution
-   - Test authentication flow: SPA → mTLS → application access
+ - Install SDP client software on user endpoints
+ - Enroll device certificates through automated provisioning
+ - Configure SPA key material distribution
+ - Test authentication flow: SPA → mTLS → application access
 
 7. **Validate End-to-End Flow**
-   - Verify SPA packets are accepted by gateway
-   - Confirm mTLS handshake succeeds with valid certificates
-   - Test application access through the SDP tunnel
-   - Verify unauthorized access is blocked (no SPA = invisible gateway)
+ - Verify SPA packets are accepted by gateway
+ - Confirm mTLS handshake succeeds with valid certificates
+ - Test application access through the SDP tunnel
+ - Verify unauthorized access is blocked (no SPA = invisible gateway)
 
 ### Phase 4: Operational Validation
 
 8. **Security Testing**
-   - Port scan the SDP gateway to confirm invisibility (all ports show filtered/closed)
-   - Attempt connection without valid SPA (must fail silently)
-   - Test with revoked client certificate (must be denied)
-   - Attempt lateral movement from one authorized app to another unauthorized app
-   - Validate audit trail completeness
+ - Port scan the SDP gateway to confirm invisibility (all ports show filtered/closed)
+ - Attempt connection without valid SPA (must fail silently)
+ - Test with revoked client certificate (must be denied)
+ - Attempt lateral movement from one authorized app to another unauthorized app
+ - Validate audit trail completeness
 
 9. **Monitoring and Maintenance**
-   - Configure SIEM integration for SDP controller and gateway logs
-   - Set up alerting for failed SPA attempts and certificate errors
-   - Establish certificate rotation schedule
-   - Document incident response procedures for SDP events
+ - Configure SIEM integration for SDP controller and gateway logs
+ - Set up alerting for failed SPA attempts and certificate errors
+ - Establish certificate rotation schedule
+ - Document incident response procedures for SDP events
 
 ## Validation Checklist
 

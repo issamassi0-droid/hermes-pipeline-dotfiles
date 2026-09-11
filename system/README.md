@@ -29,7 +29,7 @@ The `system/` directory closes every one of those gaps.
 
 | File | Purpose |
 |---|---|
-| `registry.json` | Master inventory of all 10 agents: role, ministry, tiers, upstream/downstream, who can DM whom, and the pipeline definition per tier. **Single source of truth.** |
+| `registry.json` | Master inventory of all 10 agents: role, , tiers, upstream/downstream, who can DM whom, and the pipeline definition per tier. **Single source of truth.** |
 | `protocol.md` | The inter-agent envelope + payload types + reply semantics + message budget. Defines *how* agents talk via `message_agent`. |
 | `ledger-schema.json` | Schema for the per-mission task ledger. Every stage writes one file; the Architect writes the ticket and the coverage matrix. |
 | `routing.yaml` | External, versionable tiering rules: 4 tiers, escalation signals, stakes floors, latent-need checks, model selection, budget enforcement, compression contracts. The Architect SOUL embeds a copy of this. |
@@ -62,17 +62,17 @@ bash ~/.hermes/system/bootstrap.sh --restore
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│  CONSTITUTIONAL  (frozen — amend only by re-author)  │
-│  • the five Canon items                              │
-│  • refusal lines in every Boundary                   │
-│  • the 5 evidence labels                             │
+│ CONSTITUTIONAL (frozen — amend only by re-author) │
+│ • the five Canon items │
+│ • refusal lines in every Boundary │
+│ • the 5 evidence labels │
 ├──────────────────────────────────────────────────────┤
-│  SYSTEM  (versioned, amendable via evolution.md)     │
-│  • registry.json · protocol.md · ledger-schema.json  │
-│  • routing.yaml · quality-charter.md · evolution.md  │
+│ SYSTEM (versioned, amendable via evolution.md) │
+│ • registry.json · protocol.md · ledger-schema.json │
+│ • routing.yaml · quality-charter.md · evolution.md │
 ├────────────────────────────────────���─────────────────┤
-│  AGENT  (per-profile SOUL.md — amended by bot-maker) │
-│  • 10 SOULs, each with Creed/Canon/Skills/Boundary   │
+│ AGENT (per-profile SOUL.md — amended by bot-maker) │
+│ • 10 SOULs, each with Creed/Canon/Skills/Boundary │
 └──────────────────────────────────────────────────────┘
 ```
 

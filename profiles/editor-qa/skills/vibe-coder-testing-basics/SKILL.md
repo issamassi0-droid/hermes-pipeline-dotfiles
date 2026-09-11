@@ -1,9 +1,9 @@
 ---
 name: testing-basics
 description: |
-  Essential testing patterns for any project.
-  Use when: writing tests, setting up testing, or fixing test issues.
-  Triggers: "test", "testing", "unit test", "write tests".
+ Essential testing patterns for any project.
+ Use when: writing tests, setting up testing, or fixing test issues.
+ Triggers: "test", "testing", "unit test", "write tests".
 ---
 
 # Testing Basics
@@ -77,11 +77,11 @@ Mock external dependencies, not internal logic:
 # Good: mock external service
 @patch('app.services.email.send')
 def test_signup_sends_welcome_email(mock_send):
-    signup(user)
-    mock_send.assert_called_once()
+ signup(user)
+ mock_send.assert_called_once()
 
 # Bad: mock internal implementation
-@patch('app.models.user.User._validate')  # Don't do this
+@patch('app.models.user.User._validate') # Don't do this
 ```
 
 ## Coverage

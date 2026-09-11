@@ -6,9 +6,9 @@ author: Ben Barclay (benbarclay), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Prices, Availability, Shopping, Travel, Alerts]
-    related_skills: [maps]
+ hermes:
+ tags: [Prices, Availability, Shopping, Travel, Alerts]
+ related_skills: [maps]
 ---
 
 # Product Price Monitor
@@ -41,9 +41,9 @@ Fetch a bounded live result with `web_extract` or `browser_navigate` and record 
 
 ```
 cronjob(action="create",
-        schedule="every 6h",
-        prompt="Load the product-price-monitor skill and run the tick for the watch contract at ~/.hermes/price-watches/<watch-slug>.json.",
-        deliver=<user's destination>)
+ schedule="every 6h",
+ prompt="Load the product-price-monitor skill and run the tick for the watch contract at ~/.hermes/price-watches/<watch-slug>.json.",
+ deliver=<user's destination>)
 ```
 
 Pick a cadence that respects rate limits and site terms. Done when the baseline matches the exact item contract and the job exists.

@@ -40,7 +40,7 @@ git clone https://github.com/tashfeenahmed/freellmapi.git .
 
 ```bash
 npm install
-npm run build -w server   # adjust if proxy uses different workspace
+npm run build -w server # adjust if proxy uses different workspace
 npm run build -w cli
 ```
 
@@ -52,7 +52,7 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 # Create .env
 cat > .env <<EOF
 ENCRYPTION_KEY=<64-char-hex-key>
-PORT=3001   # or any free port
+PORT=3001 # or any free port
 EOF
 ```
 
@@ -78,7 +78,7 @@ EOF
 
 systemctl --user daemon-reload
 systemctl --user enable --now llm-proxy
-systemctl --user status llm-proxy  # verify active
+systemctl --user status llm-proxy # verify active
 ```
 
 ### 5. Create Admin Account
@@ -95,8 +95,8 @@ Visit `http://localhost:3001` on the same machine, enter the code, email, and pa
 
 ```bash
 curl -s -X POST http://localhost:3001/api/auth/setup \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"admin@local","password":"SecurePass123!","name":"Admin"}'
+ -H 'Content-Type: application/json' \
+ -d '{"email":"admin@local","password":"SecurePass123!","name":"Admin"}'
 ```
 
 This returns a JWT token; save it for the next step.
@@ -115,9 +115,9 @@ Then add provider keys via the proxy's API (requires admin token from step 5):
 ```bash
 ADMIN_TOKEN=<token-from-setup>
 curl -s -X POST http://localhost:3001/api/keys \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $ADMIN_TOKEN" \
-  -d '{"name":"Google Gemini","platform":"google","key":"<GEMINI_API_KEY>","notes":""}'
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $ADMIN_TOKEN" \
+ -d '{"name":"Google Gemini","platform":"google","key":"<GEMINI_API_KEY>","notes":""}'
 ```
 
 Repeat for other providers as needed.
@@ -133,33 +133,33 @@ source ~/.bashrc
 
 2. Edit Hermes configuration (`~/.hermes/config.yaml`):
 
-   **Important:** The `custom_providers` block cannot be added via `hermes config set`; you must edit the file directly or use an overlay.
+ **Important:** The `custom_providers` block cannot be added via `hermes config set`; you must edit the file directly or use an overlay.
 
-   First, update the `model` section to use the proxy:
+ First, update the `model` section to use the proxy:
 
 ```yaml
 model:
-  provider: custom
-  default: auto              # let proxy choose best model
-  base_url: http://localhost:3001/v1
-  api_key: ${HERMES_LLMPROXY_KEY}
+ provider: custom
+ default: auto # let proxy choose best model
+ base_url: http://localhost:3001/v1
+ api_key: ${HERMES_LLMPROXY_KEY}
 ```
 
-   Then, append the following to the end of the file (or insert under a `custom_providers:` key if it exists):
+ Then, append the following to the end of the file (or insert under a `custom_providers:` key if it exists):
 
 ```yaml
 custom_providers:
-  - name: LLMProxy
-    base_url: http://localhost:3001/v1
-    key_env: HERMES_LLMPROXY_KEY
-    model: auto
-    models:
-      auto: {}
-      fusion: {}
-    models_discovered: false
+ - name: LLMProxy
+ base_url: http://localhost:3001/v1
+ key_env: HERMES_LLMPROXY_KEY
+ model: auto
+ models:
+ auto: {}
+ fusion: {}
+ models_discovered: false
 ```
 
-   **Note:** If you already have a `custom_providers` list, add the new entry under that list instead of duplicating the key.
+ **Note:** If you already have a `custom_providers` list, add the new entry under that list instead of duplicating the key.
 
 ### 8. Verify Integration
 
@@ -196,8 +196,8 @@ The dashboard is gated behind an account. On first boot:
 
 ```bash
 curl -s -X POST http://localhost:3001/api/auth/setup \
-  -H 'Content-Type: application/json' \
-  -d '{"email":"admin@local","password":"SecurePass123!","name":"Admin"}'
+ -H 'Content-Type: application/json' \
+ -d '{"email":"admin@local","password":"SecurePass123!","name":"Admin"}'
 ```
 
 3. Subsequent visits show **Sign in** with the same email/password. The session token is stored in `localStorage` (`freellmapi_dashboard_token`).
@@ -210,11 +210,11 @@ curl -s -X POST http://localhost:3001/api/auth/setup \
 # Static checks (all should be 200):
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3001/
 curl -s -o /dev/null -w '%{http_code}\n' http://localhost:3001/assets/index-*.js
-curl -s http://localhost:3001/api/auth/status   # {"needsSetup":...,"authenticated":...}
+curl -s http://localhost:3001/api/auth/status # {"needsSetup":...,"authenticated":...}
 
 # Render check — headless Chromium, confirm #root is populated:
 chromium --headless --no-sandbox --disable-dev-shm-usage --dump-dom \
-  --virtual-time-budget=3000 http://localhost:3001/ | grep -oE 'Sign in|Dashboard|Providers|API Keys'
+ --virtual-time-budget=3000 http://localhost:3001/ | grep -oE 'Sign in|Dashboard|Providers|API Keys'
 ```
 
 A blank `#root` or a `NotFoundError` HTML body (instead of `index.html`) for non-API routes means the SPA fallback in `server/src/app.ts` is broken — see Troubleshooting.
@@ -226,7 +226,7 @@ cd ~/.local/share/llm-proxy
 git pull
 npm install
 npm run build -w server
-npm run build -w client   # rebuild the dashboard too
+npm run build -w client # rebuild the dashboard too
 npm run build -w cli
 systemctl --user restart llm-proxy
 ```

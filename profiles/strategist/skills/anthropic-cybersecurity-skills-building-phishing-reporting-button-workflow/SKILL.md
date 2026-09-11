@@ -1,10 +1,10 @@
 ---
 name: building-phishing-reporting-button-workflow
 description: Implement a phishing report button (Microsoft 365 built-in Report button
-  or third-party like KnowBe4/Cofense) in email clients with a SOAR-driven automated
-  triage workflow that classifies reported emails, extracts IOCs, takes remediation
-  actions, and gives feedback to reporters. Use when deploying user-reported phishing
-  intake or automating triage of the resulting reporting mailbox.
+ or third-party like KnowBe4/Cofense) in email clients with a SOAR-driven automated
+ triage workflow that classifies reported emails, extracts IOCs, takes remediation
+ actions, and gives feedback to reporters. Use when deploying user-reported phishing
+ intake or automating triage of the resulting reporting mailbox.
 domain: cybersecurity
 subdomain: phishing-defense
 tags:
@@ -22,29 +22,29 @@ mitre_attack:
 - T1204.001
 - T1534
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - resource-development
-  - initial-access
-  - stealth
-  techniques:
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1672
-    name: Email Spoofing
-    tactic: stealth
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - resource-development
+ - initial-access
+ - stealth
+ techniques:
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1672
+ name: Email Spoofing
+ tactic: stealth
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
 version: '1.0'
 author: mahipal
 license: Apache-2.0

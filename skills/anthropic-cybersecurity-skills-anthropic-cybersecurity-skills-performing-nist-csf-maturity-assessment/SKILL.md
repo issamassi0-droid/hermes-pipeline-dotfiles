@@ -84,21 +84,21 @@ The NIST Cybersecurity Framework (CSF) 2.0, released in February 2024, provides 
 ### Phase 2: Current State Assessment (Weeks 3-6)
 1. Assess each CSF Category and Subcategory against Implementation Tiers
 2. For each subcategory, evaluate:
-   - Policy/documentation maturity
-   - Implementation completeness
-   - Automation level
-   - Measurement and metrics
-   - Continuous improvement evidence
+ - Policy/documentation maturity
+ - Implementation completeness
+ - Automation level
+ - Measurement and metrics
+ - Continuous improvement evidence
 3. Score using tier criteria (1-4 scale)
 4. Document evidence supporting each tier rating
 5. Identify strengths, gaps, and improvement areas
 
 ### Phase 3: Target State Definition (Weeks 7-8)
 1. Define target tier for each Function based on:
-   - Risk appetite and tolerance
-   - Industry requirements and benchmarks
-   - Regulatory obligations
-   - Available resources and budget
+ - Risk appetite and tolerance
+ - Industry requirements and benchmarks
+ - Regulatory obligations
+ - Available resources and budget
 2. Create Target Profile documenting desired maturity state
 3. Validate target state with executive leadership
 
@@ -106,9 +106,9 @@ The NIST Cybersecurity Framework (CSF) 2.0, released in February 2024, provides 
 1. Compare Current Profile to Target Profile
 2. Prioritize gaps based on risk reduction potential
 3. Develop improvement roadmap with:
-   - Short-term quick wins (0-3 months)
-   - Medium-term improvements (3-12 months)
-   - Long-term strategic initiatives (12-24 months)
+ - Short-term quick wins (0-3 months)
+ - Medium-term improvements (3-12 months)
+ - Long-term strategic initiatives (12-24 months)
 4. Estimate resource requirements for each initiative
 5. Assign ownership and timelines
 

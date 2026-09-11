@@ -1,12 +1,12 @@
 ---
 name: implementing-delinea-secret-server-for-pam
 description: 'Implements Delinea Secret Server for privileged access management,
-  covering secret vault configuration, role-based access policies, automated password
-  rotation, session recording, and Active Directory/cloud integration. Use when centralizing
-  privileged credential management, replacing spreadsheet-based secrets, automating
-  password rotation, or meeting PAM compliance (SOX, PCI-DSS, HIPAA, NIST 800-53).
+ covering secret vault configuration, role-based access policies, automated password
+ rotation, session recording, and Active Directory/cloud integration. Use when centralizing
+ privileged credential management, replacing spreadsheet-based secrets, automating
+ password rotation, or meeting PAM compliance (SOX, PCI-DSS, HIPAA, NIST 800-53).
 
-  '
+ '
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -31,32 +31,32 @@ mitre_attack:
 - T1098
 - T1003
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - initial-access
-  - positioning
-  techniques:
-  - id: T1555.005
-    name: 'Credentials from Password Stores: Password Managers'
-    tactic: reconnaissance
-    source: attack
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: F1005
-    name: Account Manipulation
-    tactic: positioning
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - initial-access
+ - positioning
+ techniques:
+ - id: T1555.005
+ name: 'Credentials from Password Stores: Password Managers'
+ tactic: reconnaissance
+ source: attack
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: F1005
+ name: Account Manipulation
+ tactic: positioning
+ source: f3
 ---
 
 # Implementing Delinea Secret Server for PAM
@@ -126,42 +126,42 @@ Define secret templates and organize the vault hierarchy:
 # Connect to Secret Server API
 $baseUrl = "https://pam.corp.local/SecretServer"
 $creds = @{
-    username = "ss-admin"
-    password = $env:SS_ADMIN_PASSWORD
-    grant_type = "password"
+ username = "ss-admin"
+ password = $env:SS_ADMIN_PASSWORD
+ grant_type = "password"
 }
 $token = (Invoke-RestMethod "$baseUrl/oauth2/token" -Method POST -Body $creds).access_token
 $headers = @{ Authorization = "Bearer $token" }
 
 # Create folder structure for organizing secrets
 $folders = @(
-    @{ folderName = "Windows Servers"; parentFolderId = -1; inheritPermissions = $false },
-    @{ folderName = "Linux Servers"; parentFolderId = -1; inheritPermissions = $false },
-    @{ folderName = "Network Devices"; parentFolderId = -1; inheritPermissions = $false },
-    @{ folderName = "Cloud Accounts"; parentFolderId = -1; inheritPermissions = $false },
-    @{ folderName = "Service Accounts"; parentFolderId = -1; inheritPermissions = $false },
-    @{ folderName = "Database Accounts"; parentFolderId = -1; inheritPermissions = $false }
+ @{ folderName = "Windows Servers"; parentFolderId = -1; inheritPermissions = $false },
+ @{ folderName = "Linux Servers"; parentFolderId = -1; inheritPermissions = $false },
+ @{ folderName = "Network Devices"; parentFolderId = -1; inheritPermissions = $false },
+ @{ folderName = "Cloud Accounts"; parentFolderId = -1; inheritPermissions = $false },
+ @{ folderName = "Service Accounts"; parentFolderId = -1; inheritPermissions = $false },
+ @{ folderName = "Database Accounts"; parentFolderId = -1; inheritPermissions = $false }
 )
 
 foreach ($folder in $folders) {
-    Invoke-RestMethod "$baseUrl/api/v1/folders" -Method POST -Headers $headers `
-        -ContentType "application/json" -Body ($folder | ConvertTo-Json)
+ Invoke-RestMethod "$baseUrl/api/v1/folders" -Method POST -Headers $headers `
+ -ContentType "application/json" -Body ($folder | ConvertTo-Json)
 }
 
 # Create custom secret template for database credentials
 $template = @{
-    name = "Database Credential"
-    fields = @(
-        @{ name = "Server"; isRequired = $true; fieldType = "Text" },
-        @{ name = "Port"; isRequired = $true; fieldType = "Text" },
-        @{ name = "Database"; isRequired = $true; fieldType = "Text" },
-        @{ name = "Username"; isRequired = $true; fieldType = "Text" },
-        @{ name = "Password"; isRequired = $true; fieldType = "Password" },
-        @{ name = "Connection String"; isRequired = $false; fieldType = "Notes" }
-    )
+ name = "Database Credential"
+ fields = @(
+ @{ name = "Server"; isRequired = $true; fieldType = "Text" },
+ @{ name = "Port"; isRequired = $true; fieldType = "Text" },
+ @{ name = "Database"; isRequired = $true; fieldType = "Text" },
+ @{ name = "Username"; isRequired = $true; fieldType = "Text" },
+ @{ name = "Password"; isRequired = $true; fieldType = "Password" },
+ @{ name = "Connection String"; isRequired = $false; fieldType = "Notes" }
+ )
 }
 Invoke-RestMethod "$baseUrl/api/v1/secret-templates" -Method POST -Headers $headers `
-    -ContentType "application/json" -Body ($template | ConvertTo-Json -Depth 3)
+ -ContentType "application/json" -Body ($template | ConvertTo-Json -Depth 3)
 ```
 
 ### Step 3: Configure Discovery and Account Onboarding
@@ -171,44 +171,44 @@ Set up automated discovery of privileged accounts across the environment:
 ```powershell
 # Configure Active Directory discovery source
 $adDiscovery = @{
-    name = "Corporate AD Discovery"
-    discoverySourceType = "ActiveDirectory"
-    active = $true
-    settings = @{
-        domainName = "corp.local"
-        friendlyName = "Corporate Domain"
-        discoveryAccountId = 12  # Service account secret ID
-        ouFilters = @(
-            "OU=Servers,DC=corp,DC=local",
-            "OU=Workstations,DC=corp,DC=local"
-        )
-    }
-    scanInterval = 86400  # 24 hours
+ name = "Corporate AD Discovery"
+ discoverySourceType = "ActiveDirectory"
+ active = $true
+ settings = @{
+ domainName = "corp.local"
+ friendlyName = "Corporate Domain"
+ discoveryAccountId = 12 # Service account secret ID
+ ouFilters = @(
+ "OU=Servers,DC=corp,DC=local",
+ "OU=Workstations,DC=corp,DC=local"
+ )
+ }
+ scanInterval = 86400 # 24 hours
 }
 Invoke-RestMethod "$baseUrl/api/v1/discovery" -Method POST -Headers $headers `
-    -ContentType "application/json" -Body ($adDiscovery | ConvertTo-Json -Depth 3)
+ -ContentType "application/json" -Body ($adDiscovery | ConvertTo-Json -Depth 3)
 
 # Configure local account discovery for Windows servers
 $localDiscovery = @{
-    name = "Windows Local Account Discovery"
-    discoverySourceType = "Machine"
-    active = $true
-    settings = @{
-        machineType = "Windows"
-        accountScanTemplate = "Windows Local Account"
-        dependencyScanTemplate = "Windows Service"
-    }
+ name = "Windows Local Account Discovery"
+ discoverySourceType = "Machine"
+ active = $true
+ settings = @{
+ machineType = "Windows"
+ accountScanTemplate = "Windows Local Account"
+ dependencyScanTemplate = "Windows Service"
+ }
 }
 Invoke-RestMethod "$baseUrl/api/v1/discovery" -Method POST -Headers $headers `
-    -ContentType "application/json" -Body ($localDiscovery | ConvertTo-Json -Depth 3)
+ -ContentType "application/json" -Body ($localDiscovery | ConvertTo-Json -Depth 3)
 
 # Import discovered accounts as secrets
 # After discovery runs, review and import found accounts
 $discoveredAccounts = Invoke-RestMethod "$baseUrl/api/v1/discovery/status" -Headers $headers
 Write-Host "Discovered $($discoveredAccounts.totalAccounts) accounts"
-Write-Host "  - Domain Admins: $($discoveredAccounts.domainAdmins)"
-Write-Host "  - Local Admins: $($discoveredAccounts.localAdmins)"
-Write-Host "  - Service Accounts: $($discoveredAccounts.serviceAccounts)"
+Write-Host " - Domain Admins: $($discoveredAccounts.domainAdmins)"
+Write-Host " - Local Admins: $($discoveredAccounts.localAdmins)"
+Write-Host " - Service Accounts: $($discoveredAccounts.serviceAccounts)"
 ```
 
 ### Step 4: Implement Password Rotation Policies
@@ -218,48 +218,48 @@ Configure automated password rotation with complexity requirements:
 ```powershell
 # Create password rotation policy
 $rotationPolicy = @{
-    name = "High-Security 30-Day Rotation"
-    rotationIntervalDays = 30
-    passwordRequirements = @{
-        minimumLength = 24
-        maximumLength = 32
-        requireUpperCase = $true
-        requireLowerCase = $true
-        requireNumbers = $true
-        requireSymbols = $true
-        allowedSymbols = "!@#$%^&*()-_=+[]{}|;:,.<>?"
-    }
-    rotationType = "AutoChange"
-    autoChangeSchedule = @{
-        changeType = "RecurringSchedule"
-        recurrenceType = "Monthly"
-        dayOfMonth = 1
-        startTime = "02:00"
-    }
+ name = "High-Security 30-Day Rotation"
+ rotationIntervalDays = 30
+ passwordRequirements = @{
+ minimumLength = 24
+ maximumLength = 32
+ requireUpperCase = $true
+ requireLowerCase = $true
+ requireNumbers = $true
+ requireSymbols = $true
+ allowedSymbols = "!@#$%^&*()-_=+[]{}|;:,.<>?"
+ }
+ rotationType = "AutoChange"
+ autoChangeSchedule = @{
+ changeType = "RecurringSchedule"
+ recurrenceType = "Monthly"
+ dayOfMonth = 1
+ startTime = "02:00"
+ }
 }
 Invoke-RestMethod "$baseUrl/api/v1/remote-password-changing/configuration" -Method POST `
-    -Headers $headers -ContentType "application/json" -Body ($rotationPolicy | ConvertTo-Json -Depth 4)
+ -Headers $headers -ContentType "application/json" -Body ($rotationPolicy | ConvertTo-Json -Depth 4)
 
 # Configure Remote Password Changing (RPC) for Windows accounts
 $rpcConfig = @{
-    secretId = 100  # Target secret
-    autoChangeEnabled = $true
-    autoChangeNextPassword = $true
-    privilegedAccountSecretId = 50  # Account used to perform the change
-    changePasswordUsing = "PrivilegedAccount"
+ secretId = 100 # Target secret
+ autoChangeEnabled = $true
+ autoChangeNextPassword = $true
+ privilegedAccountSecretId = 50 # Account used to perform the change
+ changePasswordUsing = "PrivilegedAccount"
 }
 Invoke-RestMethod "$baseUrl/api/v1/secrets/100/remote-password-changing" -Method PUT `
-    -Headers $headers -ContentType "application/json" -Body ($rpcConfig | ConvertTo-Json)
+ -Headers $headers -ContentType "application/json" -Body ($rpcConfig | ConvertTo-Json)
 
 # Configure heartbeat monitoring to verify credential validity
 $heartbeat = @{
-    enabled = $true
-    intervalMinutes = 60
-    onFailure = "SendAlert"
-    alertEmailGroupId = 5
+ enabled = $true
+ intervalMinutes = 60
+ onFailure = "SendAlert"
+ alertEmailGroupId = 5
 }
 Invoke-RestMethod "$baseUrl/api/v1/secrets/100/heartbeat" -Method PUT `
-    -Headers $headers -ContentType "application/json" -Body ($heartbeat | ConvertTo-Json)
+ -Headers $headers -ContentType "application/json" -Body ($heartbeat | ConvertTo-Json)
 ```
 
 ### Step 5: Configure Session Recording and Monitoring
@@ -269,51 +269,51 @@ Enable session recording for privileged access sessions:
 ```powershell
 # Enable session recording policy
 $sessionPolicy = @{
-    name = "Full Recording Policy"
-    recordSessions = $true
-    recordKeystrokes = $true
-    recordApplications = $true
-    maxSessionDurationMinutes = 480
-    requireComment = $true
-    requireTicketNumber = $true
-    ticketSystemId = 1  # ServiceNow integration
-    settings = @{
-        videoCodec = "H264"
-        videoQuality = "High"
-        captureInterval = 1000  # milliseconds
-        storageLocation = "\\\\fileserver\\SSRecordings"
-        retentionDays = 365
-    }
+ name = "Full Recording Policy"
+ recordSessions = $true
+ recordKeystrokes = $true
+ recordApplications = $true
+ maxSessionDurationMinutes = 480
+ requireComment = $true
+ requireTicketNumber = $true
+ ticketSystemId = 1 # ServiceNow integration
+ settings = @{
+ videoCodec = "H264"
+ videoQuality = "High"
+ captureInterval = 1000 # milliseconds
+ storageLocation = "\\\\fileserver\\SSRecordings"
+ retentionDays = 365
+ }
 }
 Invoke-RestMethod "$baseUrl/api/v1/secret-policy" -Method POST -Headers $headers `
-    -ContentType "application/json" -Body ($sessionPolicy | ConvertTo-Json -Depth 3)
+ -ContentType "application/json" -Body ($sessionPolicy | ConvertTo-Json -Depth 3)
 
 # Configure session launcher for RDP sessions
 $rdpLauncher = @{
-    launcherType = "RDP"
-    enableRecording = $true
-    enableDualControl = $true
-    approverGroupId = 10  # Security team group
-    connectAsSecretId = 100
-    settings = @{
-        useSSL = $true
-        restrictedEndpoints = @("192.168.1.0/24")
-        inactivityTimeout = 30  # minutes
-    }
+ launcherType = "RDP"
+ enableRecording = $true
+ enableDualControl = $true
+ approverGroupId = 10 # Security team group
+ connectAsSecretId = 100
+ settings = @{
+ useSSL = $true
+ restrictedEndpoints = @("192.168.1.0/24")
+ inactivityTimeout = 30 # minutes
+ }
 }
 Invoke-RestMethod "$baseUrl/api/v1/launchers" -Method POST -Headers $headers `
-    -ContentType "application/json" -Body ($rdpLauncher | ConvertTo-Json -Depth 3)
+ -ContentType "application/json" -Body ($rdpLauncher | ConvertTo-Json -Depth 3)
 
 # Configure dual control / approval workflow
 $approvalWorkflow = @{
-    name = "Tier-0 Account Approval"
-    requireApproval = $true
-    approvers = @(
-        @{ groupId = 10; requiredApprovals = 1 }
-    )
-    accessRequestExpirationMinutes = 60
-    notifyOnApproval = $true
-    notifyOnDenial = $true
+ name = "Tier-0 Account Approval"
+ requireApproval = $true
+ approvers = @(
+ @{ groupId = 10; requiredApprovals = 1 }
+ )
+ accessRequestExpirationMinutes = 60
+ notifyOnApproval = $true
+ notifyOnDenial = $true
 }
 ```
 
@@ -324,46 +324,46 @@ Connect Secret Server events to security monitoring:
 ```powershell
 # Configure Syslog forwarding to SIEM
 $syslogConfig = @{
-    enabled = $true
-    syslogServer = "siem.corp.local"
-    port = 514
-    protocol = "TLS"
-    facility = "Auth"
-    severity = "Informational"
-    events = @(
-        "SecretView", "SecretEdit", "SecretCreate", "SecretDelete",
-        "PasswordChange", "PasswordChangeFailure",
-        "SessionStart", "SessionEnd",
-        "LoginFailure", "LoginSuccess",
-        "PermissionChange", "ApprovalRequest"
-    )
+ enabled = $true
+ syslogServer = "siem.corp.local"
+ port = 514
+ protocol = "TLS"
+ facility = "Auth"
+ severity = "Informational"
+ events = @(
+ "SecretView", "SecretEdit", "SecretCreate", "SecretDelete",
+ "PasswordChange", "PasswordChangeFailure",
+ "SessionStart", "SessionEnd",
+ "LoginFailure", "LoginSuccess",
+ "PermissionChange", "ApprovalRequest"
+ )
 }
 Invoke-RestMethod "$baseUrl/api/v1/configuration/syslog" -Method PUT -Headers $headers `
-    -ContentType "application/json" -Body ($syslogConfig | ConvertTo-Json -Depth 2)
+ -ContentType "application/json" -Body ($syslogConfig | ConvertTo-Json -Depth 2)
 
 # Generate compliance report
 $report = @{
-    reportType = "PasswordCompliance"
-    dateRange = @{
-        startDate = (Get-Date).AddDays(-30).ToString("yyyy-MM-dd")
-        endDate = (Get-Date).ToString("yyyy-MM-dd")
-    }
-    filters = @{
-        folderIds = @(1, 2, 3, 4, 5, 6)
-        includeSubFolders = $true
-    }
+ reportType = "PasswordCompliance"
+ dateRange = @{
+ startDate = (Get-Date).AddDays(-30).ToString("yyyy-MM-dd")
+ endDate = (Get-Date).ToString("yyyy-MM-dd")
+ }
+ filters = @{
+ folderIds = @(1, 2, 3, 4, 5, 6)
+ includeSubFolders = $true
+ }
 }
 $reportResult = Invoke-RestMethod "$baseUrl/api/v1/reports" -Method POST -Headers $headers `
-    -ContentType "application/json" -Body ($report | ConvertTo-Json -Depth 3)
+ -ContentType "application/json" -Body ($report | ConvertTo-Json -Depth 3)
 
 # Display compliance summary
 Write-Host "PAM Compliance Report"
 Write-Host "====================="
-Write-Host "Total Secrets:         $($reportResult.totalSecrets)"
-Write-Host "Rotation Compliant:    $($reportResult.rotationCompliant) ($($reportResult.rotationCompliancePct)%)"
-Write-Host "Heartbeat Healthy:     $($reportResult.heartbeatHealthy) ($($reportResult.heartbeatHealthyPct)%)"
-Write-Host "Password Age > 90d:    $($reportResult.passwordAgeViolations)"
-Write-Host "Orphaned Accounts:     $($reportResult.orphanedAccounts)"
+Write-Host "Total Secrets: $($reportResult.totalSecrets)"
+Write-Host "Rotation Compliant: $($reportResult.rotationCompliant) ($($reportResult.rotationCompliancePct)%)"
+Write-Host "Heartbeat Healthy: $($reportResult.heartbeatHealthy) ($($reportResult.heartbeatHealthyPct)%)"
+Write-Host "Password Age > 90d: $($reportResult.passwordAgeViolations)"
+Write-Host "Orphaned Accounts: $($reportResult.orphanedAccounts)"
 ```
 
 ## Key Concepts
@@ -413,38 +413,38 @@ Write-Host "Orphaned Accounts:     $($reportResult.orphanedAccounts)"
 ```
 DELINEA SECRET SERVER PAM DEPLOYMENT REPORT
 =============================================
-Environment:       Hybrid (On-Premises + Azure)
-Version:           Secret Server 11.6
-Deployment Mode:   On-Premises (High Availability)
+Environment: Hybrid (On-Premises + Azure)
+Version: Secret Server 11.6
+Deployment Mode: On-Premises (High Availability)
 
 VAULT STATISTICS
-Total Secrets:           1,247
-  Windows Credentials:   523
-  Linux/SSH Keys:        312
-  Database Accounts:     198
-  Network Devices:       87
-  Cloud API Keys:        127
+Total Secrets: 1,247
+ Windows Credentials: 523
+ Linux/SSH Keys: 312
+ Database Accounts: 198
+ Network Devices: 87
+ Cloud API Keys: 127
 
 PASSWORD ROTATION STATUS
-Auto-Change Enabled:     1,089 / 1,247 (87.3%)
-Rotation Compliant:      1,056 / 1,089 (97.0%)
-Heartbeat Healthy:       1,198 / 1,247 (96.1%)
-Failed Rotations (30d):  12
+Auto-Change Enabled: 1,089 / 1,247 (87.3%)
+Rotation Compliant: 1,056 / 1,089 (97.0%)
+Heartbeat Healthy: 1,198 / 1,247 (96.1%)
+Failed Rotations (30d): 12
 
 SESSION MANAGEMENT
-Active Sessions:         23
+Active Sessions: 23
 Recorded Sessions (30d): 4,567
-Average Session Length:  22 minutes
+Average Session Length: 22 minutes
 Approval Requests (30d): 189 (174 approved, 15 denied)
 
 DISCOVERY RESULTS
-Scanned Systems:         2,340
-Discovered Accounts:     3,891
-Onboarded to Vault:      1,247 (32.1%)
-Pending Review:          892
+Scanned Systems: 2,340
+Discovered Accounts: 3,891
+Onboarded to Vault: 1,247 (32.1%)
+Pending Review: 892
 
 COMPLIANCE
-SOX Controls Met:        12/12
-PCI-DSS Requirements:    8/8
+SOX Controls Met: 12/12
+PCI-DSS Requirements: 8/8
 Password Age Violations: 3 (remediation in progress)
 ```

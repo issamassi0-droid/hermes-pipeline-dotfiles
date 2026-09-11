@@ -44,17 +44,17 @@ This skill provides a repeatable triage workflow centered on **GuardDog** (Datad
 
 - An isolated VM or disposable container with **no production credentials** and snapshot/rollback capability.
 - GuardDog:
-  ```bash
-  pip install guarddog
-  # or run via Docker without local install:
-  docker pull ghcr.io/datadog/guarddog
-  alias guarddog='docker run --rm ghcr.io/datadog/guarddog'
-  ```
+ ```bash
+ pip install guarddog
+ # or run via Docker without local install:
+ docker pull ghcr.io/datadog/guarddog
+ alias guarddog='docker run --rm ghcr.io/datadog/guarddog'
+ ```
 - Node.js + npm (use `--ignore-scripts` when downloading for analysis).
 - `jq`, `tar`, and optionally OSV-Scanner for known-vulnerability/known-malicious cross-checks:
-  ```bash
-  go install github.com/google/osv-scanner/cmd/osv-scanner@v1
-  ```
+ ```bash
+ go install github.com/google/osv-scanner/cmd/osv-scanner@v1
+ ```
 - For dynamic analysis: a sandbox with egress logging (e.g., `tcpdump`, a DNS sink, or a network namespace).
 
 ## Objectives
@@ -83,11 +83,11 @@ Fetch the tarball with scripts disabled so nothing runs during acquisition.
 ```bash
 mkdir triage && cd triage
 # Resolve the tarball URL and download it (no install, no scripts)
-npm pack express@4.18.2            # produces express-4.18.2.tgz
+npm pack express@4.18.2 # produces express-4.18.2.tgz
 # or for an arbitrary version:
 npm view some-pkg@1.2.3 dist.tarball
 curl -sL "$(npm view some-pkg@1.2.3 dist.tarball)" -o some-pkg.tgz
-tar -xzf some-pkg.tgz              # extracts into ./package
+tar -xzf some-pkg.tgz # extracts into ./package
 ```
 
 ### 2. Scan a single package with GuardDog
@@ -114,19 +114,19 @@ guarddog npm verify /path/to/repo/package.json
 Filter to the npm rules most indicative of malware to cut noise during triage.
 ```bash
 guarddog npm scan some-pkg \
-  --rules npm-install-script \
-  --rules npm-serialize-environment \
-  --rules npm-exec-base64 \
-  --rules npm-silent-process-execution \
-  --rules npm-obfuscation \
-  --rules shady-links \
-  --rules typosquatting
+ --rules npm-install-script \
+ --rules npm-serialize-environment \
+ --rules npm-exec-base64 \
+ --rules npm-silent-process-execution \
+ --rules npm-obfuscation \
+ --rules shady-links \
+ --rules typosquatting
 ```
 
 ### 5. Emit machine-readable output for pipelines
 JSON for tooling, SARIF for GitHub code scanning.
 ```bash
-guarddog npm scan some-pkg --output-format=json   > guarddog.json
+guarddog npm scan some-pkg --output-format=json > guarddog.json
 guarddog npm verify package.json --output-format=sarif > guarddog.sarif
 ```
 
@@ -138,7 +138,7 @@ jq '.scripts' package/package.json
 
 # Hunt for exfiltration / execution primitives in the source
 grep -rEn "child_process|exec\(|spawn|eval\(|Buffer\.from\(.*base64|process\.env|https?://" package/ \
-  --include='*.js' --include='*.ts' | head -50
+ --include='*.js' --include='*.ts' | head -50
 ```
 
 ### 7. Cross-check lockfiles against known-malicious versions
@@ -155,7 +155,7 @@ osv-scanner --lockfile=package-lock.json
 Run the install inside a disposable, network-monitored sandbox.
 ```bash
 # In a throwaway container / VM with egress capture running (tcpdump -w capture.pcap):
-npm install ./some-pkg.tgz            # scripts WILL run — sandbox only
+npm install ./some-pkg.tgz # scripts WILL run — sandbox only
 # Baseline-diff the filesystem afterwards for writes outside node_modules,
 # and inspect capture.pcap for unexpected DNS / HTTP beacons.
 ```

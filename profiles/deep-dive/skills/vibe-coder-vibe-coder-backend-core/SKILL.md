@@ -1,10 +1,10 @@
 ---
 name: backend-core
 description: |
-  Language-agnostic backend patterns: API design, authentication, security, databases.
-  Use when: designing APIs, implementing auth, securing endpoints, modeling data.
-  Triggers: "api design", "rest api", "graphql", "authentication", "jwt", "oauth",
-  "security", "owasp", "database schema", "migrations", "sql".
+ Language-agnostic backend patterns: API design, authentication, security, databases.
+ Use when: designing APIs, implementing auth, securing endpoints, modeling data.
+ Triggers: "api design", "rest api", "graphql", "authentication", "jwt", "oauth",
+ "security", "owasp", "database schema", "migrations", "sql".
 ---
 
 # Backend Core Patterns

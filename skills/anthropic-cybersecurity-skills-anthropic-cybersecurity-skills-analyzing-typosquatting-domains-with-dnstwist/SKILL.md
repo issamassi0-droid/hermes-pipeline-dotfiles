@@ -1,9 +1,9 @@
 ---
 name: analyzing-typosquatting-domains-with-dnstwist
 description: Generate domain permutations with dnstwist and check DNS resolution
-  to detect typosquatting, homograph phishing, and brand impersonation domains registered
-  against your organization. Use when asked to monitor for lookalike domains, investigate
-  a phishing domain, or assess brand-impersonation risk.
+ to detect typosquatting, homograph phishing, and brand impersonation domains registered
+ against your organization. Use when asked to monitor for lookalike domains, investigate
+ a phishing domain, or assess brand-impersonation risk.
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -32,32 +32,32 @@ mitre_attack:
 - T1598.003
 - T1583.006
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - resource-development
-  - reconnaissance
-  - initial-access
-  techniques:
-  - id: T1583.001
-    name: 'Acquire Infrastructure: Domains'
-    tactic: resource-development
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1593
-    name: Search Open Websites/Domains
-    tactic: reconnaissance
-    source: attack
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
+ version: '1.1'
+ tactics:
+ - resource-development
+ - reconnaissance
+ - initial-access
+ techniques:
+ - id: T1583.001
+ name: 'Acquire Infrastructure: Domains'
+ tactic: resource-development
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1593
+ name: Search Open Websites/Domains
+ tactic: reconnaissance
+ source: attack
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
 ---
 # Analyzing Typosquatting Domains with DNSTwist
 
@@ -106,36 +106,36 @@ import csv
 from datetime import datetime
 
 def run_dnstwist_scan(domain, output_file=None):
-    """Run dnstwist scan against a target domain."""
-    cmd = [
-        "dnstwist",
-        "--registered",     # Only show registered domains
-        "--format", "json", # Output in JSON
-        "--nameservers", "8.8.8.8,1.1.1.1",
-        "--threads", "50",
-        "--mxcheck",        # Check MX records
-        "--ssdeep",         # Fuzzy hash comparison
-        "--geoip",          # GeoIP lookup
-        domain,
-    ]
+ """Run dnstwist scan against a target domain."""
+ cmd = [
+ "dnstwist",
+ "--registered", # Only show registered domains
+ "--format", "json", # Output in JSON
+ "--nameservers", "8.8.8.8,1.1.1.1",
+ "--threads", "50",
+ "--mxcheck", # Check MX records
+ "--ssdeep", # Fuzzy hash comparison
+ "--geoip", # GeoIP lookup
+ domain,
+ ]
 
-    print(f"[*] Scanning permutations for: {domain}")
-    result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
+ print(f"[*] Scanning permutations for: {domain}")
+ result = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
 
-    if result.returncode == 0:
-        results = json.loads(result.stdout)
-        registered = [r for r in results if r.get("dns_a") or r.get("dns_aaaa")]
-        print(f"[+] Found {len(registered)} registered lookalike domains")
+ if result.returncode == 0:
+ results = json.loads(result.stdout)
+ registered = [r for r in results if r.get("dns_a") or r.get("dns_aaaa")]
+ print(f"[+] Found {len(registered)} registered lookalike domains")
 
-        if output_file:
-            with open(output_file, "w") as f:
-                json.dump(registered, f, indent=2)
-            print(f"[+] Results saved to {output_file}")
+ if output_file:
+ with open(output_file, "w") as f:
+ json.dump(registered, f, indent=2)
+ print(f"[+] Results saved to {output_file}")
 
-        return registered
-    else:
-        print(f"[-] dnstwist error: {result.stderr}")
-        return []
+ return registered
+ else:
+ print(f"[-] dnstwist error: {result.stderr}")
+ return []
 
 results = run_dnstwist_scan("example.com", "typosquat_results.json")
 ```
@@ -144,86 +144,86 @@ results = run_dnstwist_scan("example.com", "typosquat_results.json")
 
 ```python
 def analyze_results(results, legitimate_ips=None):
-    """Analyze dnstwist results and prioritize threats."""
-    legitimate_ips = legitimate_ips or set()
-    high_risk = []
-    medium_risk = []
-    low_risk = []
+ """Analyze dnstwist results and prioritize threats."""
+ legitimate_ips = legitimate_ips or set()
+ high_risk = []
+ medium_risk = []
+ low_risk = []
 
-    for entry in results:
-        domain = entry.get("domain", "")
-        fuzzer = entry.get("fuzzer", "")
-        dns_a = entry.get("dns_a", [])
-        dns_mx = entry.get("dns_mx", [])
-        ssdeep_score = entry.get("ssdeep_score", 0)
+ for entry in results:
+ domain = entry.get("domain", "")
+ fuzzer = entry.get("fuzzer", "")
+ dns_a = entry.get("dns_a", [])
+ dns_mx = entry.get("dns_mx", [])
+ ssdeep_score = entry.get("ssdeep_score", 0)
 
-        risk_score = 0
-        risk_factors = []
+ risk_score = 0
+ risk_factors = []
 
-        # High similarity to legitimate site
-        if ssdeep_score and ssdeep_score > 50:
-            risk_score += 40
-            risk_factors.append(f"high web similarity ({ssdeep_score}%)")
+ # High similarity to legitimate site
+ if ssdeep_score and ssdeep_score > 50:
+ risk_score += 40
+ risk_factors.append(f"high web similarity ({ssdeep_score}%)")
 
-        # Has MX records (can receive email / phishing)
-        if dns_mx:
-            risk_score += 20
-            risk_factors.append("has MX records (email capable)")
+ # Has MX records (can receive email / phishing)
+ if dns_mx:
+ risk_score += 20
+ risk_factors.append("has MX records (email capable)")
 
-        # Recently registered (if whois data available)
-        whois_created = entry.get("whois_created", "")
-        if whois_created:
-            try:
-                created = datetime.fromisoformat(whois_created.replace("Z", "+00:00"))
-                age_days = (datetime.now(created.tzinfo) - created).days
-                if age_days < 30:
-                    risk_score += 30
-                    risk_factors.append(f"recently registered ({age_days} days)")
-                elif age_days < 90:
-                    risk_score += 15
-                    risk_factors.append(f"registered {age_days} days ago")
-            except (ValueError, TypeError):
-                pass
+ # Recently registered (if whois data available)
+ whois_created = entry.get("whois_created", "")
+ if whois_created:
+ try:
+ created = datetime.fromisoformat(whois_created.replace("Z", "+00:00"))
+ age_days = (datetime.now(created.tzinfo) - created).days
+ if age_days < 30:
+ risk_score += 30
+ risk_factors.append(f"recently registered ({age_days} days)")
+ elif age_days < 90:
+ risk_score += 15
+ risk_factors.append(f"registered {age_days} days ago")
+ except (ValueError, TypeError):
+ pass
 
-        # Homoglyph attacks are highest risk
-        if fuzzer == "homoglyph":
-            risk_score += 25
-            risk_factors.append("homoglyph (visually identical)")
-        elif fuzzer in ("addition", "replacement", "transposition"):
-            risk_score += 10
-            risk_factors.append(f"permutation type: {fuzzer}")
+ # Homoglyph attacks are highest risk
+ if fuzzer == "homoglyph":
+ risk_score += 25
+ risk_factors.append("homoglyph (visually identical)")
+ elif fuzzer in ("addition", "replacement", "transposition"):
+ risk_score += 10
+ risk_factors.append(f"permutation type: {fuzzer}")
 
-        # Not pointing to legitimate infrastructure
-        if dns_a and not set(dns_a).intersection(legitimate_ips):
-            risk_score += 10
-            risk_factors.append("different IP from legitimate")
+ # Not pointing to legitimate infrastructure
+ if dns_a and not set(dns_a).intersection(legitimate_ips):
+ risk_score += 10
+ risk_factors.append("different IP from legitimate")
 
-        entry["risk_score"] = risk_score
-        entry["risk_factors"] = risk_factors
+ entry["risk_score"] = risk_score
+ entry["risk_factors"] = risk_factors
 
-        if risk_score >= 50:
-            high_risk.append(entry)
-        elif risk_score >= 25:
-            medium_risk.append(entry)
-        else:
-            low_risk.append(entry)
+ if risk_score >= 50:
+ high_risk.append(entry)
+ elif risk_score >= 25:
+ medium_risk.append(entry)
+ else:
+ low_risk.append(entry)
 
-    high_risk.sort(key=lambda x: x["risk_score"], reverse=True)
-    medium_risk.sort(key=lambda x: x["risk_score"], reverse=True)
+ high_risk.sort(key=lambda x: x["risk_score"], reverse=True)
+ medium_risk.sort(key=lambda x: x["risk_score"], reverse=True)
 
-    print(f"\n=== Typosquatting Analysis ===")
-    print(f"High Risk: {len(high_risk)}")
-    print(f"Medium Risk: {len(medium_risk)}")
-    print(f"Low Risk: {len(low_risk)}")
+ print(f"\n=== Typosquatting Analysis ===")
+ print(f"High Risk: {len(high_risk)}")
+ print(f"Medium Risk: {len(medium_risk)}")
+ print(f"Low Risk: {len(low_risk)}")
 
-    if high_risk:
-        print(f"\n--- High Risk Domains ---")
-        for entry in high_risk[:10]:
-            print(f"  {entry['domain']} (score: {entry['risk_score']})")
-            for factor in entry['risk_factors']:
-                print(f"    - {factor}")
+ if high_risk:
+ print(f"\n--- High Risk Domains ---")
+ for entry in high_risk[:10]:
+ print(f" {entry['domain']} (score: {entry['risk_score']})")
+ for factor in entry['risk_factors']:
+ print(f" - {factor}")
 
-    return {"high": high_risk, "medium": medium_risk, "low": low_risk}
+ return {"high": high_risk, "medium": medium_risk, "low": low_risk}
 
 analysis = analyze_results(results, legitimate_ips={"93.184.216.34"})
 ```
@@ -235,56 +235,56 @@ import time
 import hashlib
 
 class TyposquatMonitor:
-    def __init__(self, domains, known_domains_file="known_typosquats.json"):
-        self.domains = domains
-        self.known_file = known_domains_file
-        self.known_domains = self._load_known()
+ def __init__(self, domains, known_domains_file="known_typosquats.json"):
+ self.domains = domains
+ self.known_file = known_domains_file
+ self.known_domains = self._load_known()
 
-    def _load_known(self):
-        try:
-            with open(self.known_file, "r") as f:
-                return json.load(f)
-        except FileNotFoundError:
-            return {}
+ def _load_known(self):
+ try:
+ with open(self.known_file, "r") as f:
+ return json.load(f)
+ except FileNotFoundError:
+ return {}
 
-    def _save_known(self):
-        with open(self.known_file, "w") as f:
-            json.dump(self.known_domains, f, indent=2)
+ def _save_known(self):
+ with open(self.known_file, "w") as f:
+ json.dump(self.known_domains, f, indent=2)
 
-    def scan_all_domains(self):
-        """Scan all monitored domains for new typosquats."""
-        new_findings = []
-        for domain in self.domains:
-            results = run_dnstwist_scan(domain)
-            for entry in results:
-                domain_key = entry.get("domain", "")
-                if domain_key not in self.known_domains:
-                    entry["first_seen"] = datetime.now().isoformat()
-                    entry["monitored_domain"] = domain
-                    self.known_domains[domain_key] = entry
-                    new_findings.append(entry)
-                    print(f"  [NEW] {domain_key} ({entry.get('fuzzer', '')})")
+ def scan_all_domains(self):
+ """Scan all monitored domains for new typosquats."""
+ new_findings = []
+ for domain in self.domains:
+ results = run_dnstwist_scan(domain)
+ for entry in results:
+ domain_key = entry.get("domain", "")
+ if domain_key not in self.known_domains:
+ entry["first_seen"] = datetime.now().isoformat()
+ entry["monitored_domain"] = domain
+ self.known_domains[domain_key] = entry
+ new_findings.append(entry)
+ print(f" [NEW] {domain_key} ({entry.get('fuzzer', '')})")
 
-        self._save_known()
-        print(f"\n[+] New typosquatting domains found: {len(new_findings)}")
-        return new_findings
+ self._save_known()
+ print(f"\n[+] New typosquatting domains found: {len(new_findings)}")
+ return new_findings
 
-    def generate_alert(self, findings):
-        """Generate alert for new high-risk typosquatting domains."""
-        analysis = analyze_results(findings)
-        alerts = []
-        for entry in analysis["high"]:
-            alerts.append({
-                "severity": "HIGH",
-                "domain": entry["domain"],
-                "target": entry.get("monitored_domain", ""),
-                "risk_score": entry["risk_score"],
-                "risk_factors": entry["risk_factors"],
-                "dns_a": entry.get("dns_a", []),
-                "dns_mx": entry.get("dns_mx", []),
-                "timestamp": datetime.now().isoformat(),
-            })
-        return alerts
+ def generate_alert(self, findings):
+ """Generate alert for new high-risk typosquatting domains."""
+ analysis = analyze_results(findings)
+ alerts = []
+ for entry in analysis["high"]:
+ alerts.append({
+ "severity": "HIGH",
+ "domain": entry["domain"],
+ "target": entry.get("monitored_domain", ""),
+ "risk_score": entry["risk_score"],
+ "risk_factors": entry["risk_factors"],
+ "dns_a": entry.get("dns_a", []),
+ "dns_mx": entry.get("dns_mx", []),
+ "timestamp": datetime.now().isoformat(),
+ })
+ return alerts
 
 monitor = TyposquatMonitor(["mycompany.com", "mycompany.org"])
 new_findings = monitor.scan_all_domains()
@@ -295,24 +295,24 @@ alerts = monitor.generate_alert(new_findings)
 
 ```python
 def export_blocklist(analysis, output_file="blocklist.txt"):
-    """Export high-risk domains as blocklist for firewall/proxy."""
-    domains = []
-    for entry in analysis["high"] + analysis["medium"]:
-        domain = entry.get("domain", "")
-        if domain:
-            domains.append(domain)
+ """Export high-risk domains as blocklist for firewall/proxy."""
+ domains = []
+ for entry in analysis["high"] + analysis["medium"]:
+ domain = entry.get("domain", "")
+ if domain:
+ domains.append(domain)
 
-    with open(output_file, "w") as f:
-        f.write(f"# Typosquatting blocklist generated {datetime.now().isoformat()}\n")
-        for d in sorted(set(domains)):
-            f.write(f"{d}\n")
+ with open(output_file, "w") as f:
+ f.write(f"# Typosquatting blocklist generated {datetime.now().isoformat()}\n")
+ for d in sorted(set(domains)):
+ f.write(f"{d}\n")
 
-    print(f"[+] Blocklist saved: {len(domains)} domains -> {output_file}")
-    return domains
+ print(f"[+] Blocklist saved: {len(domains)} domains -> {output_file}")
+ return domains
 
 def generate_takedown_report(high_risk_domains):
-    """Generate takedown request report."""
-    report = f"""# Domain Takedown Request
+ """Generate takedown request report."""
+ report = f"""# Domain Takedown Request
 Generated: {datetime.now().isoformat()}
 
 ## Summary
@@ -320,8 +320,8 @@ Generated: {datetime.now().isoformat()}
 
 ## Domains Requiring Takedown
 """
-    for entry in high_risk_domains:
-        report += f"""
+ for entry in high_risk_domains:
+ report += f"""
 ### {entry['domain']}
 - **Permutation Type**: {entry.get('fuzzer', 'unknown')}
 - **IP Address**: {', '.join(entry.get('dns_a', ['N/A']))}
@@ -330,9 +330,9 @@ Generated: {datetime.now().isoformat()}
 - **Risk Factors**: {'; '.join(entry.get('risk_factors', []))}
 - **Web Similarity**: {entry.get('ssdeep_score', 'N/A')}%
 """
-    with open("takedown_report.md", "w") as f:
-        f.write(report)
-    print("[+] Takedown report generated: takedown_report.md")
+ with open("takedown_report.md", "w") as f:
+ f.write(report)
+ print("[+] Takedown report generated: takedown_report.md")
 
 export_blocklist(analysis)
 generate_takedown_report(analysis["high"])

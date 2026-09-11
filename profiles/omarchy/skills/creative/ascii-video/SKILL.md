@@ -6,9 +6,9 @@ author: SHL0MS, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [ASCII, Video, FFmpeg, Terminal-Art]
-    related_skills: []
+ hermes:
+ tags: [ASCII, Video, FFmpeg, Terminal-Art]
+ related_skills: []
 ---
 
 # ASCII Video Production Pipeline
@@ -170,11 +170,11 @@ This is the #1 visual issue. ASCII on black is inherently dark. **Never use `can
 
 ```python
 def tonemap(canvas, gamma=0.75):
-    f = canvas.astype(np.float32)
-    lo, hi = np.percentile(f[::4, ::4], [1, 99.5])
-    if hi - lo < 10: hi = lo + 10
-    f = np.clip((f - lo) / (hi - lo), 0, 1) ** gamma
-    return (f * 255).astype(np.uint8)
+ f = canvas.astype(np.float32)
+ lo, hi = np.percentile(f[::4, ::4], [1, 99.5])
+ if hi - lo < 10: hi = lo + 10
+ f = np.clip((f - lo) / (hi - lo), 0, 1) ** gamma
+ return (f * 255).astype(np.uint8)
 ```
 
 Pipeline: `scene_fn() → tonemap() → FeedbackBuffer → ShaderChain → ffmpeg`

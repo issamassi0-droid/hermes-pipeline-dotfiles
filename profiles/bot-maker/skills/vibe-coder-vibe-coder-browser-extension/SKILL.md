@@ -1,9 +1,9 @@
 ---
 name: browser-extension
 description: |
-  Build browser extensions with WXT framework, Manifest V3, and TypeScript.
-  Use when: creating Chrome extension, Firefox addon, browser plugin.
-  Triggers: "extension", "browser extension", "chrome extension", "firefox addon", "manifest v3", "wxt".
+ Build browser extensions with WXT framework, Manifest V3, and TypeScript.
+ Use when: creating Chrome extension, Firefox addon, browser plugin.
+ Triggers: "extension", "browser extension", "chrome extension", "firefox addon", "manifest v3", "wxt".
 ---
 
 # Browser Extension Development with WXT
@@ -34,21 +34,21 @@ npm run zip
 
 ```
 my-extension/
-├── wxt.config.ts           # WXT configuration
+├── wxt.config.ts # WXT configuration
 ├── entrypoints/
-│   ├── background.ts       # Service worker
-│   ├── content.ts          # Content script
-│   ├── popup/
-│   │   ├── index.html
-│   │   ├── main.tsx
-│   │   └── App.tsx
-│   └── options/
-│       ├── index.html
-│       └── main.tsx
-├── components/             # Shared React components
+│ ├── background.ts # Service worker
+│ ├── content.ts # Content script
+│ ├── popup/
+│ │ ├── index.html
+│ │ ├── main.tsx
+│ │ └── App.tsx
+│ └── options/
+│ ├── index.html
+│ └── main.tsx
+├── components/ # Shared React components
 ├── assets/
-│   └── icon.png           # Auto-generates all sizes
-├── public/                 # Static files
+│ └── icon.png # Auto-generates all sizes
+├── public/ # Static files
 ├── package.json
 └── tsconfig.json
 ```
@@ -64,13 +64,13 @@ my-extension/
 import { defineConfig } from 'wxt';
 
 export default defineConfig({
-  modules: ['@wxt-dev/module-react'],
-  manifest: {
-    name: 'My Extension',
-    description: 'A browser extension built with WXT',
-    permissions: ['storage', 'activeTab'],
-    host_permissions: ['https://*.example.com/*'],
-  },
+ modules: ['@wxt-dev/module-react'],
+ manifest: {
+ name: 'My Extension',
+ description: 'A browser extension built with WXT',
+ permissions: ['storage', 'activeTab'],
+ host_permissions: ['https://*.example.com/*'],
+ },
 });
 ```
 
@@ -81,27 +81,27 @@ export default defineConfig({
 ```typescript
 // entrypoints/background.ts
 export default defineBackground(() => {
-  console.log('Extension installed', { id: browser.runtime.id });
+ console.log('Extension installed', { id: browser.runtime.id });
 
-  // Listen for messages
-  browser.runtime.onMessage.addListener((message, sender) => {
-    if (message.type === 'GET_DATA') {
-      return fetchData(); // Return promise for async response
-    }
-  });
+ // Listen for messages
+ browser.runtime.onMessage.addListener((message, sender) => {
+ if (message.type === 'GET_DATA') {
+ return fetchData(); // Return promise for async response
+ }
+ });
 
-  // Context menu
-  browser.contextMenus.create({
-    id: 'my-action',
-    title: 'Do Something',
-    contexts: ['selection'],
-  });
+ // Context menu
+ browser.contextMenus.create({
+ id: 'my-action',
+ title: 'Do Something',
+ contexts: ['selection'],
+ });
 
-  browser.contextMenus.onClicked.addListener((info, tab) => {
-    if (info.menuItemId === 'my-action') {
-      console.log('Selected:', info.selectionText);
-    }
-  });
+ browser.contextMenus.onClicked.addListener((info, tab) => {
+ if (info.menuItemId === 'my-action') {
+ console.log('Selected:', info.selectionText);
+ }
+ });
 });
 ```
 
@@ -112,25 +112,25 @@ export default defineBackground(() => {
 ```typescript
 // entrypoints/content.ts
 export default defineContentScript({
-  matches: ['https://*.example.com/*'],
-  main() {
-    console.log('Content script loaded');
+ matches: ['https://*.example.com/*'],
+ main() {
+ console.log('Content script loaded');
 
-    // DOM manipulation
-    const button = document.createElement('button');
-    button.textContent = 'My Extension';
-    button.onclick = () => {
-      browser.runtime.sendMessage({ type: 'BUTTON_CLICKED' });
-    };
-    document.body.appendChild(button);
+ // DOM manipulation
+ const button = document.createElement('button');
+ button.textContent = 'My Extension';
+ button.onclick = () => {
+ browser.runtime.sendMessage({ type: 'BUTTON_CLICKED' });
+ };
+ document.body.appendChild(button);
 
-    // Listen for messages from background
-    browser.runtime.onMessage.addListener((message) => {
-      if (message.type === 'HIGHLIGHT') {
-        document.body.style.backgroundColor = 'yellow';
-      }
-    });
-  },
+ // Listen for messages from background
+ browser.runtime.onMessage.addListener((message) => {
+ if (message.type === 'HIGHLIGHT') {
+ document.body.style.backgroundColor = 'yellow';
+ }
+ });
+ },
 });
 ```
 
@@ -142,24 +142,24 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 
 export default defineContentScript({
-  matches: ['https://*.example.com/*'],
-  cssInjectionMode: 'ui',
+ matches: ['https://*.example.com/*'],
+ cssInjectionMode: 'ui',
 
-  main(ctx) {
-    const ui = createIntegratedUi(ctx, {
-      position: 'inline',
-      anchor: 'body',
-      onMount: (container) => {
-        const root = ReactDOM.createRoot(container);
-        root.render(<App />);
-        return root;
-      },
-      onRemove: (root) => {
-        root.unmount();
-      },
-    });
-    ui.mount();
-  },
+ main(ctx) {
+ const ui = createIntegratedUi(ctx, {
+ position: 'inline',
+ anchor: 'body',
+ onMount: (container) => {
+ const root = ReactDOM.createRoot(container);
+ root.render(<App />);
+ return root;
+ },
+ onRemove: (root) => {
+ root.unmount();
+ },
+ });
+ ui.mount();
+ },
 });
 ```
 
@@ -172,11 +172,11 @@ export default defineContentScript({
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8" />
+ <meta charset="UTF-8" />
 </head>
 <body>
-  <div id="root"></div>
-  <script type="module" src="./main.tsx"></script>
+ <div id="root"></div>
+ <script type="module" src="./main.tsx"></script>
 </body>
 </html>
 ```
@@ -197,44 +197,44 @@ import { storage } from 'wxt/storage';
 
 // Type-safe storage
 const enabledStorage = storage.defineItem<boolean>('sync:enabled', {
-  fallback: true,
+ fallback: true,
 });
 
 export default function App() {
-  const [enabled, setEnabled] = useState(true);
+ const [enabled, setEnabled] = useState(true);
 
-  useEffect(() => {
-    enabledStorage.getValue().then(setEnabled);
-  }, []);
+ useEffect(() => {
+ enabledStorage.getValue().then(setEnabled);
+ }, []);
 
-  const toggle = async () => {
-    const newValue = !enabled;
-    await enabledStorage.setValue(newValue);
-    setEnabled(newValue);
-  };
+ const toggle = async () => {
+ const newValue = !enabled;
+ await enabledStorage.setValue(newValue);
+ setEnabled(newValue);
+ };
 
-  const handleAction = async () => {
-    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
-    if (tab.id) {
-      browser.tabs.sendMessage(tab.id, { type: 'HIGHLIGHT' });
-    }
-  };
+ const handleAction = async () => {
+ const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+ if (tab.id) {
+ browser.tabs.sendMessage(tab.id, { type: 'HIGHLIGHT' });
+ }
+ };
 
-  return (
-    <div className="p-4 w-64">
-      <h1 className="text-lg font-bold mb-4">My Extension</h1>
-      <label className="flex items-center gap-2 mb-4">
-        <input type="checkbox" checked={enabled} onChange={toggle} />
-        Enabled
-      </label>
-      <button
-        onClick={handleAction}
-        className="w-full bg-blue-500 text-white py-2 rounded"
-      >
-        Do Something
-      </button>
-    </div>
-  );
+ return (
+ <div className="p-4 w-64">
+ <h1 className="text-lg font-bold mb-4">My Extension</h1>
+ <label className="flex items-center gap-2 mb-4">
+ <input type="checkbox" checked={enabled} onChange={toggle} />
+ Enabled
+ </label>
+ <button
+ onClick={handleAction}
+ className="w-full bg-blue-500 text-white py-2 rounded"
+ >
+ Do Something
+ </button>
+ </div>
+ );
 }
 ```
 
@@ -248,14 +248,14 @@ import { storage } from 'wxt/storage';
 
 // Define typed storage items
 export const settings = storage.defineItem<{
-  enabled: boolean;
-  theme: 'light' | 'dark';
-  apiKey?: string;
+ enabled: boolean;
+ theme: 'light' | 'dark';
+ apiKey?: string;
 }>('sync:settings', {
-  fallback: {
-    enabled: true,
-    theme: 'light',
-  },
+ fallback: {
+ enabled: true,
+ theme: 'light',
+ },
 });
 
 // Usage
@@ -264,7 +264,7 @@ await settings.setValue({ ...current, theme: 'dark' });
 
 // Watch for changes
 settings.watch((newValue) => {
-  console.log('Settings changed:', newValue);
+ console.log('Settings changed:', newValue);
 });
 ```
 
@@ -275,13 +275,13 @@ settings.watch((newValue) => {
 ```typescript
 // Define message types
 interface Messages {
-  getData: { query: string };
-  highlight: { color: string };
+ getData: { query: string };
+ highlight: { color: string };
 }
 
 // Background
 browser.runtime.onMessage.addListener((message: Messages[keyof Messages]) => {
-  // Handle messages
+ // Handle messages
 });
 
 // Content/Popup → Background
@@ -298,25 +298,25 @@ await browser.tabs.sendMessage(tabId, { type: 'highlight', color: 'yellow' });
 ```typescript
 // wxt.config.ts
 export default defineConfig({
-  manifest: {
-    // Required permissions (always active)
-    permissions: ['storage', 'activeTab'],
+ manifest: {
+ // Required permissions (always active)
+ permissions: ['storage', 'activeTab'],
 
-    // Optional permissions (request at runtime)
-    optional_permissions: ['tabs', 'history'],
+ // Optional permissions (request at runtime)
+ optional_permissions: ['tabs', 'history'],
 
-    // Host permissions
-    host_permissions: ['https://*.example.com/*'],
-    optional_host_permissions: ['https://*/*'],
-  },
+ // Host permissions
+ host_permissions: ['https://*.example.com/*'],
+ optional_host_permissions: ['https://*/*'],
+ },
 });
 ```
 
 ```typescript
 // Request optional permission
 const granted = await browser.permissions.request({
-  permissions: ['tabs'],
-  origins: ['https://other-site.com/*'],
+ permissions: ['tabs'],
+ origins: ['https://other-site.com/*'],
 });
 ```
 
@@ -337,10 +337,10 @@ const tabs = await browser.tabs.query({ active: true });
 
 Build for specific browser:
 ```bash
-npm run build           # Chrome (default)
-npm run build:firefox   # Firefox
-npm run build:safari    # Safari
-npm run build:edge      # Edge
+npm run build # Chrome (default)
+npm run build:firefox # Firefox
+npm run build:safari # Safari
+npm run build:edge # Edge
 ```
 
 ---
@@ -355,19 +355,19 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fakeBrowser } from 'wxt/testing';
 
 describe('Settings storage', () => {
-  beforeEach(() => {
-    fakeBrowser.reset();
-  });
+ beforeEach(() => {
+ fakeBrowser.reset();
+ });
 
-  it('saves and loads settings', async () => {
-    const { settings } = await import('../utils/storage');
+ it('saves and loads settings', async () => {
+ const { settings } = await import('../utils/storage');
 
-    await settings.setValue({ enabled: false, theme: 'dark' });
-    const result = await settings.getValue();
+ await settings.setValue({ enabled: false, theme: 'dark' });
+ const result = await settings.getValue();
 
-    expect(result.enabled).toBe(false);
-    expect(result.theme).toBe('dark');
-  });
+ expect(result.enabled).toBe(false);
+ expect(result.theme).toBe('dark');
+ });
 });
 ```
 
@@ -377,16 +377,16 @@ describe('Settings storage', () => {
 import { test, expect } from '@playwright/test';
 
 test('popup opens and toggles', async ({ page, context }) => {
-  // Load extension
-  const extensionId = // ... get from context
+ // Load extension
+ const extensionId = // ... get from context
 
-  await page.goto(`chrome-extension://${extensionId}/popup.html`);
+ await page.goto(`chrome-extension://${extensionId}/popup.html`);
 
-  const checkbox = page.getByRole('checkbox');
-  await expect(checkbox).toBeChecked();
+ const checkbox = page.getByRole('checkbox');
+ await expect(checkbox).toBeChecked();
 
-  await checkbox.click();
-  await expect(checkbox).not.toBeChecked();
+ await checkbox.click();
+ await expect(checkbox).not.toBeChecked();
 });
 ```
 
@@ -399,11 +399,11 @@ test('popup opens and toggles', async ({ page, context }) => {
 ```typescript
 // entrypoints/content.ts
 export default defineContentScript({
-  matches: ['https://*.example.com/*'],
-  css: ['./styles.css'], // Auto-injected
-  main() {
-    // ...
-  },
+ matches: ['https://*.example.com/*'],
+ css: ['./styles.css'], // Auto-injected
+ main() {
+ // ...
+ },
 });
 ```
 
@@ -411,11 +411,11 @@ export default defineContentScript({
 
 ```typescript
 export default defineContentScript({
-  matches: ['*://*/*'],
-  runAt: 'document_start', // Before page loads
-  main() {
-    // Block/modify requests early
-  },
+ matches: ['*://*/*'],
+ runAt: 'document_start', // Before page loads
+ main() {
+ // Block/modify requests early
+ },
 });
 ```
 
@@ -424,13 +424,13 @@ export default defineContentScript({
 ```typescript
 // entrypoints/background.ts
 export default defineBackground(() => {
-  browser.alarms.create('sync', { periodInMinutes: 30 });
+ browser.alarms.create('sync', { periodInMinutes: 30 });
 
-  browser.alarms.onAlarm.addListener((alarm) => {
-    if (alarm.name === 'sync') {
-      syncData();
-    }
-  });
+ browser.alarms.onAlarm.addListener((alarm) => {
+ if (alarm.name === 'sync') {
+ syncData();
+ }
+ });
 });
 ```
 
@@ -441,7 +441,7 @@ export default defineBackground(() => {
 ### Chrome Web Store
 
 ```bash
-npm run zip              # Creates .output/my-extension-x.x.x-chrome.zip
+npm run zip # Creates .output/my-extension-x.x.x-chrome.zip
 # Upload to Chrome Web Store Developer Dashboard
 ```
 
@@ -479,7 +479,7 @@ Call to action.
 ### Firefox Add-ons
 
 ```bash
-npm run zip:firefox      # Creates .output/my-extension-x.x.x-firefox.zip
+npm run zip:firefox # Creates .output/my-extension-x.x.x-firefox.zip
 # Also creates .output/my-extension-x.x.x-sources.zip (required for review)
 # Upload to Firefox Add-ons Developer Hub
 ```
@@ -491,23 +491,23 @@ Firefox requires `browser_specific_settings.gecko.data_collection_permissions` f
 ```typescript
 // wxt.config.ts
 export default defineConfig({
-  manifest: {
-    // ... other config
-    browser_specific_settings: {
-      gecko: {
-        id: 'your-extension@your-domain.com',
-        strict_min_version: '142.0', // Required for data_collection_permissions
-        data_collection_permissions: {
-          // For extensions that DON'T collect data:
-          required: ['none'],
+ manifest: {
+ // ... other config
+ browser_specific_settings: {
+ gecko: {
+ id: 'your-extension@your-domain.com',
+ strict_min_version: '142.0', // Required for data_collection_permissions
+ data_collection_permissions: {
+ // For extensions that DON'T collect data:
+ required: ['none'],
 
-          // For extensions that DO collect data, specify types:
-          // required: ['browsingActivity', 'websiteContent'],
-          // optional: ['locationInfo'],
-        },
-      },
-    },
-  },
+ // For extensions that DO collect data, specify types:
+ // required: ['browsingActivity', 'websiteContent'],
+ // optional: ['locationInfo'],
+ },
+ },
+ },
+ },
 });
 ```
 
@@ -533,8 +533,8 @@ Initial release of [Extension Name] - [brief description].
 Notes for reviewer:
 - No account required to test
 - To test:
-  1. Install extension
-  2. [Step by step testing instructions]
+ 1. Install extension
+ 2. [Step by step testing instructions]
 - No external services or APIs used
 - All data stored locally via browser.storage
 ```
@@ -543,7 +543,7 @@ Notes for reviewer:
 
 ```bash
 # Use the same Chrome zip - Edge is Chromium-based
-npm run zip              # Creates .output/my-extension-x.x.x-chrome.zip
+npm run zip # Creates .output/my-extension-x.x.x-chrome.zip
 # Upload to Edge Add-ons Developer Dashboard
 ```
 

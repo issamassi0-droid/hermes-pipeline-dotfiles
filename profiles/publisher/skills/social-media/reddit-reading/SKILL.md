@@ -6,9 +6,9 @@ author: Teknium (teknium1), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Reddit, Social Media, Research, Discussions, Community]
-    related_skills: [rss-feeds, grounded-citations, blocked-page-recovery, xurl]
+ hermes:
+ tags: [Reddit, Social Media, Research, Discussions, Community]
+ related_skills: [rss-feeds, grounded-citations, blocked-page-recovery, xurl]
 ---
 
 # Reddit Reading Skill
@@ -21,10 +21,10 @@ backend routing in [Agent Reach](https://github.com/Panniantong/Agent-Reach).
 ## When to Use
 
 - "What is r/LocalLLaMA saying about X", "find Reddit threads on Y", "summarise this
-  Reddit thread", "what has u/someone posted lately".
+ Reddit thread", "what has u/someone posted lately".
 - Any `reddit.com` URL the user shares. `web_extract`, `browser_navigate` and the
-  `.json` endpoints all fail from server IPs (403 or a "Prove your humanity" wall);
-  this skill is the working path.
+ `.json` endpoints all fail from server IPs (403 or a "Prove your humanity" wall);
+ this skill is the working path.
 - Not for posting, voting, messaging, or anything needing a user login.
 
 ## Prerequisites
@@ -61,12 +61,12 @@ missing or rejected it falls back to the anonymous feeds and says so on stderr.
 Run every command through `terminal` with the skill-relative script path:
 
 ```bash
-python3 scripts/reddit.py doctor                                  # which backend, current rate-limit window
+python3 scripts/reddit.py doctor # which backend, current rate-limit window
 python3 scripts/reddit.py sub LocalLLaMA --sort hot --limit 15
 python3 scripts/reddit.py search "hermes agent" --sub LocalLLaMA --sort new
 python3 scripts/reddit.py thread https://www.reddit.com/r/x/comments/abc123/slug/ --limit 40
 python3 scripts/reddit.py user spez --limit 10
-python3 scripts/reddit.py --json search "topic"                  # machine-readable
+python3 scripts/reddit.py --json search "topic" # machine-readable
 ```
 
 ## Quick Reference
@@ -106,19 +106,19 @@ account. Never ask for a Reddit password or browser cookies.
 ## Pitfalls
 
 - `www.reddit.com/…/.json`, `api.reddit.com` and `old.reddit.com` return 403 or an
-  empty "Welcome to Reddit" shell for datacentre IPs. Do not fall back to them; do not
-  spoof a browser User-Agent (also 403).
+ empty "Welcome to Reddit" shell for datacentre IPs. Do not fall back to them; do not
+ spoof a browser User-Agent (also 403).
 - `r.jina.ai` and the `browser_navigate` tool hit the same block ("blocked by network
-  security" / humanity check). `blocked-page-recovery`'s Wayback route can still recover
-  an **old** thread that was archived; it cannot fetch fresh ones.
+ security" / humanity check). `blocked-page-recovery`'s Wayback route can still recover
+ an **old** thread that was archived; it cannot fetch fresh ones.
 - Anonymous thread feeds only contain the post plus top-level comments (Reddit caps the
-  feed at a handful of entries); scores and reply nesting are OAuth-only.
+ feed at a handful of entries); scores and reply nesting are OAuth-only.
 - Reddit's `limit` on feeds is advisory — expect 5–25 entries regardless of what you ask.
 - Never paste `REDDIT_CLIENT_SECRET` into a chat or log; the script reads it from the
-  environment only.
+ environment only.
 - Do not "fix" a 429 by retrying in a loop or adding a proxy; the throttle is per IP and
-  the script already waits out the window once. More than one 429 in a row means the
-  task needs the app credentials.
+ the script already waits out the window once. More than one 429 in a row means the
+ task needs the app credentials.
 
 ## Verification
 

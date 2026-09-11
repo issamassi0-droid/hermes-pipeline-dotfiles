@@ -1,10 +1,10 @@
 ---
 name: extracting-browser-history-artifacts
 description: Extracts and analyzes browser history, cookies, cache, downloads, and
-  bookmarks from Chrome, Firefox, and Edge using sqlite3, DB Browser for SQLite,
-  Hindsight, and NirSoft tools (BrowsingHistoryView, ChromeCacheView, MZCacheView).
-  Use when performing digital forensics or incident response on a disk image or
-  live system and you need timeline evidence of a user's web activity.
+ bookmarks from Chrome, Firefox, and Edge using sqlite3, DB Browser for SQLite,
+ Hindsight, and NirSoft tools (BrowsingHistoryView, ChromeCacheView, MZCacheView).
+ Use when performing digital forensics or incident response on a disk image or
+ live system and you need timeline evidence of a user's web activity.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -58,12 +58,12 @@ mount -o ro,loop,offset=$((2048*512)) /cases/case-2024-001/images/evidence.dd /m
 # Chrome artifact locations (Windows)
 CHROME_WIN="/mnt/evidence/Users/suspect/AppData/Local/Google/Chrome/User Data/Default"
 # Key files: History, Cookies, Login Data, Web Data, Bookmarks, Preferences,
-#            Cache/, GPUCache/, Local Storage/, Session Storage/, IndexedDB/
+# Cache/, GPUCache/, Local Storage/, Session Storage/, IndexedDB/
 
 # Firefox artifact locations (Windows)
 FIREFOX_WIN="/mnt/evidence/Users/suspect/AppData/Roaming/Mozilla/Firefox/Profiles/*.default-release"
 # Key files: places.sqlite, cookies.sqlite, formhistory.sqlite, logins.json,
-#            key4.db, sessionstore.jsonlz4, webappsstore.sqlite
+# key4.db, sessionstore.jsonlz4, webappsstore.sqlite
 
 # Edge (Chromium) artifact locations (Windows)
 EDGE_WIN="/mnt/evidence/Users/suspect/AppData/Local/Microsoft/Edge/User Data/Default"
@@ -71,15 +71,15 @@ EDGE_WIN="/mnt/evidence/Users/suspect/AppData/Local/Microsoft/Edge/User Data/Def
 # Copy artifacts to working directory
 mkdir -p /cases/case-2024-001/browser/{chrome,firefox,edge}
 cp -r "$CHROME_WIN"/{History,Cookies,Downloads,"Login Data","Web Data",Bookmarks} \
-   /cases/case-2024-001/browser/chrome/ 2>/dev/null
+ /cases/case-2024-001/browser/chrome/ 2>/dev/null
 cp -r $FIREFOX_WIN/{places.sqlite,cookies.sqlite,formhistory.sqlite,logins.json} \
-   /cases/case-2024-001/browser/firefox/ 2>/dev/null
+ /cases/case-2024-001/browser/firefox/ 2>/dev/null
 cp -r "$EDGE_WIN"/{History,Cookies,Downloads} \
-   /cases/case-2024-001/browser/edge/ 2>/dev/null
+ /cases/case-2024-001/browser/edge/ 2>/dev/null
 
 # Hash artifacts for integrity
 find /cases/case-2024-001/browser/ -type f -exec sha256sum {} \; \
-   > /cases/case-2024-001/browser/artifact_hashes.txt
+ > /cases/case-2024-001/browser/artifact_hashes.txt
 ```
 
 ### Step 2: Extract Chrome Browsing History and Downloads
@@ -92,12 +92,12 @@ sqlite3 /cases/case-2024-001/browser/chrome/History << 'SQL'
 .output /cases/case-2024-001/analysis/chrome_history.csv
 
 SELECT
-    urls.url,
-    urls.title,
-    datetime(urls.last_visit_time/1000000-11644473600, 'unixepoch') AS last_visit,
-    urls.visit_count,
-    urls.typed_count,
-    visits.transition & 0xFF AS transition_type
+ urls.url,
+ urls.title,
+ datetime(urls.last_visit_time/1000000-11644473600, 'unixepoch') AS last_visit,
+ urls.visit_count,
+ urls.typed_count,
+ visits.transition & 0xFF AS transition_type
 FROM urls
 LEFT JOIN visits ON urls.id = visits.url
 ORDER BY urls.last_visit_time DESC;
@@ -110,14 +110,14 @@ sqlite3 /cases/case-2024-001/browser/chrome/History << 'SQL'
 .output /cases/case-2024-001/analysis/chrome_downloads.csv
 
 SELECT
-    current_path,
-    tab_url AS source_url,
-    total_bytes,
-    datetime(start_time/1000000-11644473600, 'unixepoch') AS start_time,
-    datetime(end_time/1000000-11644473600, 'unixepoch') AS end_time,
-    state,
-    danger_type,
-    mime_type
+ current_path,
+ tab_url AS source_url,
+ total_bytes,
+ datetime(start_time/1000000-11644473600, 'unixepoch') AS start_time,
+ datetime(end_time/1000000-11644473600, 'unixepoch') AS end_time,
+ state,
+ danger_type,
+ mime_type
 FROM downloads
 ORDER BY start_time DESC;
 SQL
@@ -129,9 +129,9 @@ sqlite3 /cases/case-2024-001/browser/chrome/History << 'SQL'
 .output /cases/case-2024-001/analysis/chrome_searches.csv
 
 SELECT
-    term,
-    urls.url,
-    datetime(urls.last_visit_time/1000000-11644473600, 'unixepoch') AS search_time
+ term,
+ urls.url,
+ datetime(urls.last_visit_time/1000000-11644473600, 'unixepoch') AS search_time
 FROM keyword_search_terms
 JOIN urls ON keyword_search_terms.url_id = urls.id
 ORDER BY urls.last_visit_time DESC;
@@ -148,11 +148,11 @@ sqlite3 /cases/case-2024-001/browser/firefox/places.sqlite << 'SQL'
 .output /cases/case-2024-001/analysis/firefox_history.csv
 
 SELECT
-    moz_places.url,
-    moz_places.title,
-    datetime(moz_historyvisits.visit_date/1000000, 'unixepoch') AS visit_date,
-    moz_places.visit_count,
-    moz_historyvisits.visit_type
+ moz_places.url,
+ moz_places.title,
+ datetime(moz_historyvisits.visit_date/1000000, 'unixepoch') AS visit_date,
+ moz_places.visit_count,
+ moz_historyvisits.visit_type
 FROM moz_places
 JOIN moz_historyvisits ON moz_places.id = moz_historyvisits.place_id
 ORDER BY moz_historyvisits.visit_date DESC;
@@ -165,10 +165,10 @@ sqlite3 /cases/case-2024-001/browser/firefox/places.sqlite << 'SQL'
 .output /cases/case-2024-001/analysis/firefox_bookmarks.csv
 
 SELECT
-    moz_bookmarks.title,
-    moz_places.url,
-    datetime(moz_bookmarks.dateAdded/1000000, 'unixepoch') AS date_added,
-    datetime(moz_bookmarks.lastModified/1000000, 'unixepoch') AS last_modified
+ moz_bookmarks.title,
+ moz_places.url,
+ datetime(moz_bookmarks.dateAdded/1000000, 'unixepoch') AS date_added,
+ datetime(moz_bookmarks.lastModified/1000000, 'unixepoch') AS last_modified
 FROM moz_bookmarks
 JOIN moz_places ON moz_bookmarks.fk = moz_places.id
 WHERE moz_bookmarks.type = 1
@@ -182,11 +182,11 @@ sqlite3 /cases/case-2024-001/browser/firefox/formhistory.sqlite << 'SQL'
 .output /cases/case-2024-001/analysis/firefox_forms.csv
 
 SELECT
-    fieldname,
-    value,
-    timesUsed,
-    datetime(firstUsed/1000000, 'unixepoch') AS first_used,
-    datetime(lastUsed/1000000, 'unixepoch') AS last_used
+ fieldname,
+ value,
+ timesUsed,
+ datetime(firstUsed/1000000, 'unixepoch') AS first_used,
+ datetime(lastUsed/1000000, 'unixepoch') AS last_used
 FROM moz_formhistory
 ORDER BY lastUsed DESC;
 SQL
@@ -202,15 +202,15 @@ sqlite3 /cases/case-2024-001/browser/chrome/Cookies << 'SQL'
 .output /cases/case-2024-001/analysis/chrome_cookies.csv
 
 SELECT
-    host_key,
-    name,
-    path,
-    datetime(creation_utc/1000000-11644473600, 'unixepoch') AS created,
-    datetime(expires_utc/1000000-11644473600, 'unixepoch') AS expires,
-    datetime(last_access_utc/1000000-11644473600, 'unixepoch') AS last_access,
-    is_secure,
-    is_httponly,
-    is_persistent
+ host_key,
+ name,
+ path,
+ datetime(creation_utc/1000000-11644473600, 'unixepoch') AS created,
+ datetime(expires_utc/1000000-11644473600, 'unixepoch') AS expires,
+ datetime(last_access_utc/1000000-11644473600, 'unixepoch') AS last_access,
+ is_secure,
+ is_httponly,
+ is_persistent
 FROM cookies
 ORDER BY last_access_utc DESC;
 SQL
@@ -222,14 +222,14 @@ sqlite3 /cases/case-2024-001/browser/firefox/cookies.sqlite << 'SQL'
 .output /cases/case-2024-001/analysis/firefox_cookies.csv
 
 SELECT
-    host,
-    name,
-    path,
-    datetime(creationTime/1000000, 'unixepoch') AS created,
-    datetime(expiry, 'unixepoch') AS expires,
-    datetime(lastAccessed/1000000, 'unixepoch') AS last_access,
-    isSecure,
-    isHttpOnly
+ host,
+ name,
+ path,
+ datetime(creationTime/1000000, 'unixepoch') AS created,
+ datetime(expiry, 'unixepoch') AS expires,
+ datetime(lastAccessed/1000000, 'unixepoch') AS last_access,
+ isSecure,
+ isHttpOnly
 FROM moz_cookies
 ORDER BY lastAccessed DESC;
 SQL
@@ -242,12 +242,12 @@ sqlite3 /cases/case-2024-001/browser/chrome/"Login Data" << 'SQL'
 .output /cases/case-2024-001/analysis/chrome_logins.csv
 
 SELECT
-    origin_url,
-    action_url,
-    username_value,
-    datetime(date_created/1000000-11644473600, 'unixepoch') AS date_created,
-    datetime(date_last_used/1000000-11644473600, 'unixepoch') AS date_last_used,
-    times_used
+ origin_url,
+ action_url,
+ username_value,
+ datetime(date_created/1000000-11644473600, 'unixepoch') AS date_created,
+ datetime(date_last_used/1000000-11644473600, 'unixepoch') AS date_last_used,
+ times_used
 FROM logins
 ORDER BY date_last_used DESC;
 SQL
@@ -261,8 +261,8 @@ pip install pyhindsight
 
 # Run Hindsight against Chrome profile
 hindsight -i "/cases/case-2024-001/browser/chrome/" \
-   -o /cases/case-2024-001/analysis/hindsight_report \
-   -f xlsx
+ -o /cases/case-2024-001/analysis/hindsight_report \
+ -f xlsx
 
 # Hindsight automatically extracts:
 # - Browsing history with timestamps
@@ -277,8 +277,8 @@ hindsight -i "/cases/case-2024-001/browser/chrome/" \
 
 # For JSONL output (easier to parse)
 hindsight -i "/cases/case-2024-001/browser/chrome/" \
-   -o /cases/case-2024-001/analysis/hindsight_report \
-   -f jsonl
+ -o /cases/case-2024-001/analysis/hindsight_report \
+ -f jsonl
 ```
 
 ## Key Concepts
@@ -325,30 +325,30 @@ Trace the chain of redirects leading to a drive-by download, examine the downloa
 
 ```
 Browser Forensics Summary:
-  User Profile: suspect (Windows 10)
-  Browsers Found: Chrome 120, Firefox 121, Edge 120
+ User Profile: suspect (Windows 10)
+ Browsers Found: Chrome 120, Firefox 121, Edge 120
 
-  Chrome Analysis:
-    History Entries:    12,456
-    Downloads:          234
-    Saved Passwords:    67 sites (encrypted)
-    Cookies:            3,456
-    Bookmarks:          89
+ Chrome Analysis:
+ History Entries: 12,456
+ Downloads: 234
+ Saved Passwords: 67 sites (encrypted)
+ Cookies: 3,456
+ Bookmarks: 89
 
-  Firefox Analysis:
-    History Entries:    5,678
-    Form Entries:       234
-    Bookmarks:          45
-    Cookies:            1,234
+ Firefox Analysis:
+ History Entries: 5,678
+ Form Entries: 234
+ Bookmarks: 45
+ Cookies: 1,234
 
-  Suspicious Findings:
-    - Visited known phishing URL at 2024-01-15 14:32 UTC
-    - Downloaded "invoice_update.exe" from suspicious domain
-    - Cloud storage (mega.nz) accessed 15 times in 2-hour window
-    - Search queries: "how to encrypt files", "secure file transfer"
+ Suspicious Findings:
+ - Visited known phishing URL at 2024-01-15 14:32 UTC
+ - Downloaded "invoice_update.exe" from suspicious domain
+ - Cloud storage (mega.nz) accessed 15 times in 2-hour window
+ - Search queries: "how to encrypt files", "secure file transfer"
 
-  Reports:
-    Chrome History:   /analysis/chrome_history.csv
-    Firefox History:  /analysis/firefox_history.csv
-    Full Report:      /analysis/hindsight_report.xlsx
+ Reports:
+ Chrome History: /analysis/chrome_history.csv
+ Firefox History: /analysis/firefox_history.csv
+ Full Report: /analysis/hindsight_report.xlsx
 ```

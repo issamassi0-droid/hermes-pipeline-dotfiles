@@ -87,7 +87,7 @@ import requests
 url = 'https://crt.sh/?q=%.target.com&output=json'
 r = requests.get(url)
 for cert in r.json():
-    print(cert['name_value'])
+ print(cert['name_value'])
 " | sort -u > subdomains.txt
 
 # LinkedIn employee enumeration

@@ -1,12 +1,12 @@
 ---
 name: performing-steganography-detection
 description: >-
-  Detects and extracts hidden data embedded in images, audio, and other media
-  files using steganalysis tools such as StegDetect, zsteg, stegsolve,
-  binwalk, steghide, and OpenStego to uncover covert communication channels.
-  Use when investigating suspected data hiding or exfiltration via media
-  files, espionage/insider-threat cases, or anomalies in media file
-  properties found during standard file analysis.
+ Detects and extracts hidden data embedded in images, audio, and other media
+ files using steganalysis tools such as StegDetect, zsteg, stegsolve,
+ binwalk, steghide, and OpenStego to uncover covert communication channels.
+ Use when investigating suspected data hiding or exfiltration via media
+ files, espionage/insider-threat cases, or anomalies in media file
+ properties found during standard file analysis.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -57,7 +57,7 @@ mitre_attack:
 sudo apt-get install steghide stegsnow
 pip install zsteg
 pip install stegoveritas
-gem install zsteg  # Ruby-based tool for PNG/BMP
+gem install zsteg # Ruby-based tool for PNG/BMP
 
 # Examine file metadata for anomalies
 exiftool /cases/case-2024-001/media/suspect_image.jpg | tee /cases/case-2024-001/analysis/metadata.txt
@@ -77,30 +77,30 @@ filepath = '/cases/case-2024-001/media/suspect_image.jpg'
 filesize = os.path.getsize(filepath)
 
 with open(filepath, 'rb') as f:
-    data = f.read()
+ data = f.read()
 
 # JPEG files end with FF D9
 jpeg_end = data.rfind(b'\xff\xd9')
 if jpeg_end > 0:
-    trailing_bytes = filesize - jpeg_end - 2
-    if trailing_bytes > 0:
-        print(f"WARNING: {trailing_bytes} bytes of data after JPEG end marker!")
-        print(f"  File size: {filesize} bytes")
-        print(f"  JPEG data: {jpeg_end + 2} bytes")
-        print(f"  Hidden data: {trailing_bytes} bytes")
-        # Extract trailing data
-        with open('/cases/case-2024-001/analysis/trailing_data.bin', 'wb') as out:
-            out.write(data[jpeg_end + 2:])
-    else:
-        print("No trailing data detected after JPEG end marker")
+ trailing_bytes = filesize - jpeg_end - 2
+ if trailing_bytes > 0:
+ print(f"WARNING: {trailing_bytes} bytes of data after JPEG end marker!")
+ print(f" File size: {filesize} bytes")
+ print(f" JPEG data: {jpeg_end + 2} bytes")
+ print(f" Hidden data: {trailing_bytes} bytes")
+ # Extract trailing data
+ with open('/cases/case-2024-001/analysis/trailing_data.bin', 'wb') as out:
+ out.write(data[jpeg_end + 2:])
+ else:
+ print("No trailing data detected after JPEG end marker")
 
 # Check for embedded ZIP/RAR archives
 zip_offset = data.find(b'PK\x03\x04')
 rar_offset = data.find(b'Rar!\x1a\x07')
 if zip_offset > 0:
-    print(f"ZIP archive found at offset {zip_offset}")
+ print(f"ZIP archive found at offset {zip_offset}")
 if rar_offset > 0:
-    print(f"RAR archive found at offset {rar_offset}")
+ print(f"RAR archive found at offset {rar_offset}")
 PYEOF
 ```
 
@@ -112,7 +112,7 @@ binwalk /cases/case-2024-001/media/suspect_image.jpg | tee /cases/case-2024-001/
 
 # Extract embedded files
 binwalk --extract --directory /cases/case-2024-001/analysis/binwalk_extracted/ \
-   /cases/case-2024-001/media/suspect_image.jpg
+ /cases/case-2024-001/media/suspect_image.jpg
 
 # Use zsteg for PNG and BMP analysis (LSB detection)
 zsteg /cases/case-2024-001/media/suspect_image.png | tee /cases/case-2024-001/analysis/zsteg_results.txt
@@ -122,7 +122,7 @@ zsteg -a /cases/case-2024-001/media/suspect_image.png
 
 # Use stegoveritas for comprehensive analysis
 stegoveritas /cases/case-2024-001/media/suspect_image.jpg \
-   -out /cases/case-2024-001/analysis/stegoveritas/
+ -out /cases/case-2024-001/analysis/stegoveritas/
 
 # Stegoveritas performs:
 # - Metadata extraction
@@ -135,15 +135,15 @@ stegoveritas /cases/case-2024-001/media/suspect_image.jpg \
 # Use steghide for JPEG/BMP/WAV/AU extraction attempts
 # Try with empty password
 steghide extract -sf /cases/case-2024-001/media/suspect_image.jpg -p "" \
-   -xf /cases/case-2024-001/analysis/steghide_extract.bin 2>&1
+ -xf /cases/case-2024-001/analysis/steghide_extract.bin 2>&1
 
 # Try with common passwords
 for pwd in password secret hidden stego test 123456 admin; do
-    result=$(steghide extract -sf /cases/case-2024-001/media/suspect_image.jpg \
-       -p "$pwd" -xf "/cases/case-2024-001/analysis/steghide_$pwd.bin" 2>&1)
-    if echo "$result" | grep -q "extracted"; then
-        echo "SUCCESS with password: $pwd"
-    fi
+ result=$(steghide extract -sf /cases/case-2024-001/media/suspect_image.jpg \
+ -p "$pwd" -xf "/cases/case-2024-001/analysis/steghide_$pwd.bin" 2>&1)
+ if echo "$result" | grep -q "extracted"; then
+ echo "SUCCESS with password: $pwd"
+ fi
 done
 ```
 
@@ -160,22 +160,22 @@ pixels = np.array(img)
 
 # Extract LSB from each color channel
 for channel, name in enumerate(['Red', 'Green', 'Blue']):
-    if channel >= pixels.shape[2]:
-        break
+ if channel >= pixels.shape[2]:
+ break
 
-    lsb_data = pixels[:, :, channel] & 1
+ lsb_data = pixels[:, :, channel] & 1
 
-    # Count distribution (should be ~50/50 for natural images)
-    zeros = np.sum(lsb_data == 0)
-    ones = np.sum(lsb_data == 1)
-    total = zeros + ones
-    ratio = ones / total
+ # Count distribution (should be ~50/50 for natural images)
+ zeros = np.sum(lsb_data == 0)
+ ones = np.sum(lsb_data == 1)
+ total = zeros + ones
+ ratio = ones / total
 
-    print(f"{name} channel LSB: 0s={zeros} ({zeros/total*100:.1f}%), 1s={ones} ({ones/total*100:.1f}%)")
-    if abs(ratio - 0.5) < 0.01:
-        print(f"  NEUTRAL - Close to random (could be stego or natural)")
-    elif ratio > 0.55 or ratio < 0.45:
-        print(f"  ANOMALY - Significant deviation from expected distribution")
+ print(f"{name} channel LSB: 0s={zeros} ({zeros/total*100:.1f}%), 1s={ones} ({ones/total*100:.1f}%)")
+ if abs(ratio - 0.5) < 0.01:
+ print(f" NEUTRAL - Close to random (could be stego or natural)")
+ elif ratio > 0.55 or ratio < 0.45:
+ print(f" ANOMALY - Significant deviation from expected distribution")
 
 # Extract LSB data as bytes
 lsb_bits = (pixels[:, :, 0] & 1).flatten()
@@ -183,20 +183,20 @@ lsb_bytes = np.packbits(lsb_bits)
 
 # Check if extracted data has structure
 with open('/cases/case-2024-001/analysis/lsb_extracted.bin', 'wb') as f:
-    f.write(lsb_bytes.tobytes())
+ f.write(lsb_bytes.tobytes())
 
 # Check for known file signatures in extracted data
 import struct
 header = bytes(lsb_bytes[:16])
 print(f"\nLSB extracted header (hex): {header.hex()}")
 if header[:4] == b'PK\x03\x04':
-    print("  DETECTED: ZIP archive in LSB data!")
+ print(" DETECTED: ZIP archive in LSB data!")
 elif header[:3] == b'GIF':
-    print("  DETECTED: GIF image in LSB data!")
+ print(" DETECTED: GIF image in LSB data!")
 elif header[:4] == b'\x89PNG':
-    print("  DETECTED: PNG image in LSB data!")
+ print(" DETECTED: PNG image in LSB data!")
 elif header[:2] == b'\xff\xd8':
-    print("  DETECTED: JPEG image in LSB data!")
+ print(" DETECTED: JPEG image in LSB data!")
 
 # Generate LSB visualization
 lsb_img = Image.fromarray((lsb_data * 255).astype(np.uint8))
@@ -215,31 +215,31 @@ import numpy as np
 
 # Analyze WAV file for audio steganography
 with wave.open('/cases/case-2024-001/media/suspect_audio.wav', 'r') as wav:
-    frames = wav.readframes(wav.getnframes())
-    samples = np.frombuffer(frames, dtype=np.int16)
+ frames = wav.readframes(wav.getnframes())
+ samples = np.frombuffer(frames, dtype=np.int16)
 
-    # LSB analysis of audio samples
-    lsb = samples & 1
-    zeros = np.sum(lsb == 0)
-    ones = np.sum(lsb == 1)
-    total = len(lsb)
+ # LSB analysis of audio samples
+ lsb = samples & 1
+ zeros = np.sum(lsb == 0)
+ ones = np.sum(lsb == 1)
+ total = len(lsb)
 
-    print(f"Audio LSB Analysis:")
-    print(f"  Samples: {total}")
-    print(f"  LSB 0s: {zeros} ({zeros/total*100:.1f}%)")
-    print(f"  LSB 1s: {ones} ({ones/total*100:.1f}%)")
+ print(f"Audio LSB Analysis:")
+ print(f" Samples: {total}")
+ print(f" LSB 0s: {zeros} ({zeros/total*100:.1f}%)")
+ print(f" LSB 1s: {ones} ({ones/total*100:.1f}%)")
 
-    # Extract LSB data
-    lsb_bytes = np.packbits(lsb)
-    with open('/cases/case-2024-001/analysis/audio_lsb.bin', 'wb') as f:
-        f.write(lsb_bytes.tobytes())
+ # Extract LSB data
+ lsb_bytes = np.packbits(lsb)
+ with open('/cases/case-2024-001/analysis/audio_lsb.bin', 'wb') as f:
+ f.write(lsb_bytes.tobytes())
 
-    # Chi-square test for randomness
-    from scipy import stats
-    chi2, p_value = stats.chisquare([zeros, ones])
-    print(f"  Chi-square: {chi2:.4f}, p-value: {p_value:.4f}")
-    if p_value < 0.05:
-        print(f"  ANOMALY: LSB distribution is not random (potential stego)")
+ # Chi-square test for randomness
+ from scipy import stats
+ chi2, p_value = stats.chisquare([zeros, ones])
+ print(f" Chi-square: {chi2:.4f}, p-value: {p_value:.4f}")
+ if p_value < 0.05:
+ print(f" ANOMALY: LSB distribution is not random (potential stego)")
 PYEOF
 
 # Use steghide on audio files
@@ -257,24 +257,24 @@ python3 << 'PYEOF'
 import os, json
 
 report = {
-    "case": "2024-001",
-    "files_analyzed": [],
-    "findings": []
+ "case": "2024-001",
+ "files_analyzed": [],
+ "findings": []
 }
 
 analysis_dir = '/cases/case-2024-001/analysis/'
 for f in os.listdir(analysis_dir):
-    if f.endswith('.txt'):
-        with open(os.path.join(analysis_dir, f)) as fh:
-            content = fh.read()
-            if 'DETECTED' in content or 'SUCCESS' in content or 'WARNING' in content:
-                report["findings"].append({
-                    "source": f,
-                    "content": content[:500]
-                })
+ if f.endswith('.txt'):
+ with open(os.path.join(analysis_dir, f)) as fh:
+ content = fh.read()
+ if 'DETECTED' in content or 'SUCCESS' in content or 'WARNING' in content:
+ report["findings"].append({
+ "source": f,
+ "content": content[:500]
+ })
 
 with open('/cases/case-2024-001/analysis/steg_report.json', 'w') as f:
-    json.dump(report, f, indent=2)
+ json.dump(report, f, indent=2)
 
 print("Steganalysis report generated")
 print(f"Total findings: {len(report['findings'])}")
@@ -325,31 +325,31 @@ Analyze audio files for embedded documents in LSB, check spectrograms for visual
 
 ```
 Steganalysis Summary:
-  Files Analyzed: 45 (32 images, 8 audio, 5 video)
+ Files Analyzed: 45 (32 images, 8 audio, 5 video)
 
-  Detection Results:
-    suspect_image_03.png:
-      zsteg: Text detected in R channel LSB
-      Content: "Meet at location B, Tuesday 1400"
-      Method: LSB embedding in Red channel
+ Detection Results:
+ suspect_image_03.png:
+ zsteg: Text detected in R channel LSB
+ Content: "Meet at location B, Tuesday 1400"
+ Method: LSB embedding in Red channel
 
-    suspect_photo_17.jpg:
-      steghide: Data extracted with password "secret123"
-      Hidden file: confidential_report.pdf (234 KB)
-      Method: DCT coefficient modification
+ suspect_photo_17.jpg:
+ steghide: Data extracted with password "secret123"
+ Hidden file: confidential_report.pdf (234 KB)
+ Method: DCT coefficient modification
 
-    profile_pic.png:
-      binwalk: ZIP archive embedded at offset 45678
-      Contents: 3 spreadsheet files with financial data
-      Method: Data appended after PNG IEND marker
+ profile_pic.png:
+ binwalk: ZIP archive embedded at offset 45678
+ Contents: 3 spreadsheet files with financial data
+ Method: Data appended after PNG IEND marker
 
-    recording_05.wav:
-      LSB analysis: Non-random distribution (p < 0.001)
-      Extracted: 12 KB binary payload (further analysis needed)
-      Method: Audio LSB embedding
+ recording_05.wav:
+ LSB analysis: Non-random distribution (p < 0.001)
+ Extracted: 12 KB binary payload (further analysis needed)
+ Method: Audio LSB embedding
 
-  Clean Files: 41 (no steganographic indicators)
-  Suspicious Files: 4 (data extracted)
+ Clean Files: 41 (no steganographic indicators)
+ Suspicious Files: 4 (data extracted)
 
-  Report: /cases/case-2024-001/analysis/steg_report.json
+ Report: /cases/case-2024-001/analysis/steg_report.json
 ```

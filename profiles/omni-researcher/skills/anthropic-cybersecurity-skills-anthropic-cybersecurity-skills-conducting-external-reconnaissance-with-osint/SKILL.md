@@ -51,9 +51,9 @@ Enumerate all domains, subdomains, and DNS records associated with the target:
 
 - **Root domain identification**: Start with the primary domain and identify all related domains through reverse WHOIS lookups on registrant name, email, and organization using `whoxy.com` or `domaintools.com`
 - **Subdomain enumeration**: Run multiple tools for comprehensive coverage:
-  - `amass enum -passive -d target.com -o amass_subs.txt` for passive subdomain discovery from 40+ data sources
-  - `subfinder -d target.com -all -o subfinder_subs.txt` for fast passive enumeration
-  - `crt.sh` certificate transparency log queries: `curl -s "https://crt.sh/?q=%25.target.com&output=json" | jq -r '.[].name_value' | sort -u`
+ - `amass enum -passive -d target.com -o amass_subs.txt` for passive subdomain discovery from 40+ data sources
+ - `subfinder -d target.com -all -o subfinder_subs.txt` for fast passive enumeration
+ - `crt.sh` certificate transparency log queries: `curl -s "https://crt.sh/?q=%25.target.com&output=json" | jq -r '.[].name_value' | sort -u`
 - **DNS record analysis**: Query for all record types: `dig target.com ANY`, check for SPF, DKIM, DMARC records that reveal email infrastructure, and enumerate MX records to identify email providers
 - **Zone transfer attempt**: `dig axfr @ns1.target.com target.com` to check for misconfigured DNS servers
 - **Consolidate results**: Merge, deduplicate, and resolve all discovered subdomains to IP addresses. Map IP addresses to ASN and hosting providers.
@@ -86,14 +86,14 @@ Search for exposed credentials and sensitive data:
 - **Breach databases**: Check `haveibeenpwned.com` API for breached email addresses associated with the target domain
 - **Paste sites**: Search Pastebin, GitHub Gists, and similar paste sites for leaked credentials, configuration files, or internal documents
 - **Code repositories**: Search GitHub, GitLab, and Bitbucket for:
-  - `org:target "password"`, `org:target "api_key"`, `org:target "secret"`
-  - Use `trufflehog` or `gitleaks` for automated secret scanning across the target's public repositories
+ - `org:target "password"`, `org:target "api_key"`, `org:target "secret"`
+ - Use `trufflehog` or `gitleaks` for automated secret scanning across the target's public repositories
 - **Document metadata**: Download publicly available documents (PDF, DOCX, XLSX) from the target website and extract metadata using `exiftool` to reveal internal usernames, software versions, printer names, and file paths
 - **Google dorking**: Use targeted search operators:
-  - `site:target.com filetype:pdf` for public documents
-  - `site:target.com inurl:admin` for admin panels
-  - `site:target.com "index of /"` for directory listings
-  - `site:pastebin.com "target.com"` for paste site mentions
+ - `site:target.com filetype:pdf` for public documents
+ - `site:target.com inurl:admin` for admin panels
+ - `site:target.com "index of /"` for directory listings
+ - `site:pastebin.com "target.com"` for paste site mentions
 
 ### Step 5: Technology Stack Profiling
 

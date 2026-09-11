@@ -1,13 +1,13 @@
 ---
 name: configuring-windows-event-logging-for-detection
 description: 'Configures Windows Event Logging with advanced audit policies to generate
-  high-fidelity security events for threat detection and forensic investigation. Use
-  when enabling audit policies for logon events, process creation, privilege use,
-  and object access to feed SIEM detection rules. Activates for requests involving
-  Windows audit policy, event log configuration, security logging, or detection-oriented
-  logging.
+ high-fidelity security events for threat detection and forensic investigation. Use
+ when enabling audit policies for logon events, process creation, privilege use,
+ and object access to feed SIEM detection rules. Activates for requests involving
+ Windows audit policy, event log configuration, security logging, or detection-oriented
+ logging.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -56,38 +56,38 @@ Use this skill when:
 
 ```
 Computer Configuration → Windows Settings → Security Settings
-  → Advanced Audit Policy Configuration → Audit Policies
+ → Advanced Audit Policy Configuration → Audit Policies
 
 Recommended settings:
 Account Logon:
-  - Audit Credential Validation: Success, Failure
-  - Audit Kerberos Authentication: Success, Failure
+ - Audit Credential Validation: Success, Failure
+ - Audit Kerberos Authentication: Success, Failure
 
 Account Management:
-  - Audit Security Group Management: Success
-  - Audit User Account Management: Success, Failure
+ - Audit Security Group Management: Success
+ - Audit User Account Management: Success, Failure
 
 Logon/Logoff:
-  - Audit Logon: Success, Failure
-  - Audit Logoff: Success
-  - Audit Special Logon: Success
-  - Audit Other Logon/Logoff Events: Success, Failure
+ - Audit Logon: Success, Failure
+ - Audit Logoff: Success
+ - Audit Special Logon: Success
+ - Audit Other Logon/Logoff Events: Success, Failure
 
 Object Access:
-  - Audit File Share: Success, Failure
-  - Audit Removable Storage: Success, Failure
-  - Audit SAM: Success
+ - Audit File Share: Success, Failure
+ - Audit Removable Storage: Success, Failure
+ - Audit SAM: Success
 
 Policy Change:
-  - Audit Audit Policy Change: Success, Failure
-  - Audit Authentication Policy Change: Success
+ - Audit Audit Policy Change: Success, Failure
+ - Audit Authentication Policy Change: Success
 
 Privilege Use:
-  - Audit Sensitive Privilege Use: Success, Failure
+ - Audit Sensitive Privilege Use: Success, Failure
 
 Detailed Tracking:
-  - Audit Process Creation: Success
-  - Audit DPAPI Activity: Success, Failure
+ - Audit Process Creation: Success
+ - Audit DPAPI Activity: Success, Failure
 ```
 
 ### Step 2: Enable Command Line in Process Creation Events
@@ -95,7 +95,7 @@ Detailed Tracking:
 ```powershell
 # Registry: Enable command line logging in Event 4688
 New-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System\Audit" `
-  -Name ProcessCreationIncludeCmdLine_Enabled -Value 1 -PropertyType DWORD -Force
+ -Name ProcessCreationIncludeCmdLine_Enabled -Value 1 -PropertyType DWORD -Force
 
 # GPO: Computer Configuration → Administrative Templates → System → Audit Process Creation
 # "Include command line in process creation events" → Enabled
@@ -115,7 +115,7 @@ wevtutil sl Security /rt:false
 
 # Configure via GPO:
 # Computer Configuration → Administrative Templates → Windows Components
-#   → Event Log Service → Security
+# → Event Log Service → Security
 # Maximum log file size (KB): 1048576
 ```
 
@@ -133,7 +133,7 @@ wecutil qc /q
 # On source endpoints (GPO):
 # Configure WinRM: winrm quickconfig
 # Configure event forwarding: Computer Configuration → Admin Templates
-#   → Windows Components → Event Forwarding
+# → Windows Components → Event Forwarding
 # Configure target Subscription Manager: Server=http://collector:5985/wsman/SubscriptionManager/WEC
 ```
 
@@ -141,33 +141,33 @@ wecutil qc /q
 
 ```
 Authentication Events:
-  4624 - Successful logon (Type 2=Interactive, 3=Network, 10=RemoteInteractive)
-  4625 - Failed logon attempt
-  4648 - Logon using explicit credentials (RunAs, pass-the-hash indicator)
-  4672 - Special privileges assigned (admin logon)
-  4776 - NTLM credential validation
+ 4624 - Successful logon (Type 2=Interactive, 3=Network, 10=RemoteInteractive)
+ 4625 - Failed logon attempt
+ 4648 - Logon using explicit credentials (RunAs, pass-the-hash indicator)
+ 4672 - Special privileges assigned (admin logon)
+ 4776 - NTLM credential validation
 
 Process Events:
-  4688 - Process creation (with command line if enabled)
-  4689 - Process termination
+ 4688 - Process creation (with command line if enabled)
+ 4689 - Process termination
 
 Account Events:
-  4720 - User account created
-  4722 - User account enabled
-  4724 - Password reset attempted
-  4728 - Member added to security group
-  4732 - Member added to local group
-  4756 - Member added to universal group
+ 4720 - User account created
+ 4722 - User account enabled
+ 4724 - Password reset attempted
+ 4728 - Member added to security group
+ 4732 - Member added to local group
+ 4756 - Member added to universal group
 
 Service/System Events:
-  7045 - New service installed (persistence indicator)
-  1102 - Audit log cleared (evidence tampering)
-  4697 - Service installed in the system
+ 7045 - New service installed (persistence indicator)
+ 1102 - Audit log cleared (evidence tampering)
+ 4697 - Service installed in the system
 
 Lateral Movement Indicators:
-  4648 + 4624(Type 3) - Credential-based lateral movement
-  5140 - Network share accessed
-  5145 - Network share access check (detailed file share)
+ 4648 + 4624(Type 3) - Credential-based lateral movement
+ 5140 - Network share accessed
+ 5145 - Network share access check (detailed file share)
 ```
 
 ## Key Concepts

@@ -6,11 +6,11 @@ author: community
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Email, IMAP, SMTP, CLI, Communication]
-    homepage: https://github.com/pimalaya/himalaya
+ hermes:
+ tags: [Email, IMAP, SMTP, CLI, Communication]
+ homepage: https://github.com/pimalaya/himalaya
 prerequisites:
-  commands: [himalaya]
+ commands: [himalaya]
 ---
 
 # Himalaya Email CLI
@@ -68,7 +68,7 @@ backend.port = 993
 backend.encryption.type = "tls"
 backend.login = "you@example.com"
 backend.auth.type = "password"
-backend.auth.cmd = "pass show email/imap"  # or use keyring
+backend.auth.cmd = "pass show email/imap" # or use keyring
 
 message.send.backend.type = "smtp"
 message.send.backend.host = "smtp.example.com"

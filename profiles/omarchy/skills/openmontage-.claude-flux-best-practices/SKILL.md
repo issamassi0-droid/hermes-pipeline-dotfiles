@@ -2,9 +2,9 @@
 name: flux-best-practices
 description: Comprehensive guide for BFL FLUX image generation models. Covers prompting, T2I, I2I, structured JSON, hex colors, typography, multi-reference editing, and model-specific best practices for FLUX.2 and FLUX.1 families.
 metadata:
-  author: Black Forest Labs
-  version: "1.0.0"
-  tags: flux, bfl, image-generation, prompting, t2i, i2i
+ author: Black Forest Labs
+ version: "1.0.0"
+ tags: flux, bfl, image-generation, prompting, t2i, i2i
 ---
 
 # FLUX Best Practices
@@ -33,16 +33,16 @@ Use this skill when generating prompts for any BFL FLUX model to ensure optimal 
 
 ### Model Selection
 
-| Use Case            | Recommended Model | Notes                                  |
+| Use Case | Recommended Model | Notes |
 | ------------------- | ----------------- | -------------------------------------- |
-| Fastest generation  | FLUX.2 [klein]    | 4B or 9B, sub-second                   |
-| Highest quality     | FLUX.2 [max]      | Best detail, grounding search          |
-| Production balanced | FLUX.2 [pro]      | Quality + speed                        |
-| Typography/text     | FLUX.2 [flex]     | Best text rendering                    |
-| Local/development   | FLUX.2 [dev]      | Open weights                           |
-| Image editing       | FLUX.2 [pro/max]  | Pass image URL directly to input_image |
-| Inpainting          | FLUX.1 Fill       | Object removal/completion              |
-| Context editing     | FLUX.1 Kontext    | Older model, prefer FLUX.2             |
+| Fastest generation | FLUX.2 [klein] | 4B or 9B, sub-second |
+| Highest quality | FLUX.2 [max] | Best detail, grounding search |
+| Production balanced | FLUX.2 [pro] | Quality + speed |
+| Typography/text | FLUX.2 [flex] | Best text rendering |
+| Local/development | FLUX.2 [dev] | Open weights |
+| Image editing | FLUX.2 [pro/max] | Pass image URL directly to input_image |
+| Inpainting | FLUX.1 Fill | Object removal/completion |
+| Context editing | FLUX.1 Kontext | Older model, prefer FLUX.2 |
 
 ### Critical Rules
 

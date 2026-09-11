@@ -53,11 +53,11 @@ cd Havoc
 
 # Debian/Ubuntu/Kali build dependencies
 sudo apt update && sudo apt install -y \
-  git build-essential cmake libfontconfig1 libglu1-mesa-dev libgtest-dev \
-  libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev \
-  libreadline-dev libffi-dev libsqlite3-dev libbz2-dev qtbase5-dev qtchooser \
-  qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev \
-  qtdeclarative5-dev golang-go python3.10 python3.10-dev mingw-w64 nasm
+ git build-essential cmake libfontconfig1 libglu1-mesa-dev libgtest-dev \
+ libspdlog-dev libboost-all-dev libncurses5-dev libgdbm-dev libssl-dev \
+ libreadline-dev libffi-dev libsqlite3-dev libbz2-dev qtbase5-dev qtchooser \
+ qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev \
+ qtdeclarative5-dev golang-go python3.10 python3.10-dev mingw-w64 nasm
 
 # Build the team server
 make ts-build
@@ -99,42 +99,42 @@ Create `profiles/engagement.yaotl` defining the team server, an operator, and an
 
 ```hcl
 Teamserver {
-    Host = "0.0.0.0"
-    Port = 40056
+ Host = "0.0.0.0"
+ Port = 40056
 
-    Build {
-        Compiler64 = "/usr/bin/x86_64-w64-mingw32-gcc"
-        Nasm = "/usr/bin/nasm"
-    }
+ Build {
+ Compiler64 = "/usr/bin/x86_64-w64-mingw32-gcc"
+ Nasm = "/usr/bin/nasm"
+ }
 }
 
 Operators {
-    user "operator1" {
-        Password = "ChangeMe_Str0ng!"
-    }
+ user "operator1" {
+ Password = "ChangeMe_Str0ng!"
+ }
 }
 
 Listeners {
-    Http {
-        Name     = "https-listener"
-        Hosts    = ["c2.example.com"]
-        HostBind = "0.0.0.0"
-        PortBind = 443
-        PortConn = 443
-        Secure   = true   # HTTPS
-    }
+ Http {
+ Name = "https-listener"
+ Hosts = ["c2.example.com"]
+ HostBind = "0.0.0.0"
+ PortBind = 443
+ PortConn = 443
+ Secure = true # HTTPS
+ }
 }
 
 Demon {
-    Sleep = 30
-    Jitter = 25
+ Sleep = 30
+ Jitter = 25
 
-    TrustXForwardedFor = false
+ TrustXForwardedFor = false
 
-    Injection {
-        Spawn64 = "C:\\Windows\\System32\\notepad.exe"
-        Spawn32 = "C:\\Windows\\SysWOW64\\notepad.exe"
-    }
+ Injection {
+ Spawn64 = "C:\\Windows\\System32\\notepad.exe"
+ Spawn32 = "C:\\Windows\\SysWOW64\\notepad.exe"
+ }
 }
 ```
 

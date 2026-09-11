@@ -1,12 +1,12 @@
 ---
 name: performing-dns-tunneling-detection
 description: 'Detects DNS tunneling by computing Shannon entropy of DNS query names,
-  analyzing query length distributions, inspecting TXT record payloads, and identifying
-  high subdomain cardinality. Uses scapy for packet capture analysis and statistical
-  methods to distinguish legitimate DNS from covert channels. Use when hunting for
-  data exfiltration.
+ analyzing query length distributions, inspecting TXT record payloads, and identifying
+ high subdomain cardinality. Uses scapy for packet capture analysis and statistical
+ methods to distinguish legitimate DNS from covert channels. Use when hunting for
+ data exfiltration.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -59,11 +59,11 @@ import math
 from collections import Counter
 
 def shannon_entropy(data):
-    if not data:
-        return 0
-    counter = Counter(data)
-    length = len(data)
-    return -sum((c/length) * math.log2(c/length) for c in counter.values())
+ if not data:
+ return 0
+ counter = Counter(data)
+ length = len(data)
+ return -sum((c/length) * math.log2(c/length) for c in counter.values())
 
 # Legitimate domain: low entropy (~3.0-3.5)
 print(shannon_entropy("www.google.com"))
@@ -84,9 +84,9 @@ Key detection indicators:
 from scapy.all import rdpcap, DNS, DNSQR
 packets = rdpcap("dns_traffic.pcap")
 for pkt in packets:
-    if pkt.haslayer(DNSQR):
-        query = pkt[DNSQR].qname.decode()
-        entropy = shannon_entropy(query)
-        if entropy > 4.0:
-            print(f"Suspicious: {query} (entropy={entropy:.2f})")
+ if pkt.haslayer(DNSQR):
+ query = pkt[DNSQR].qname.decode()
+ entropy = shannon_entropy(query)
+ if entropy > 4.0:
+ print(f"Suspicious: {query} (entropy={entropy:.2f})")
 ```

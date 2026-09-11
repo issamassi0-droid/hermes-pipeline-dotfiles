@@ -33,8 +33,8 @@ Create effective subagents that handle autonomous tasks via the Task tool.
 ```
 agents/
 └── agent-name.md
-    ├── YAML frontmatter (metadata)
-    └── Markdown body (system prompt)
+ ├── YAML frontmatter (metadata)
+ └── Markdown body (system prompt)
 ```
 
 ### Frontmatter Fields
@@ -51,10 +51,10 @@ agents/
 ### Tools Reference
 
 ```
-Read-only:     Glob, Grep, Read, WebFetch, WebSearch
-Write:         Edit, Write, NotebookEdit
-Execute:       Bash
-All:           * (or omit field)
+Read-only: Glob, Grep, Read, WebFetch, WebSearch
+Write: Edit, Write, NotebookEdit
+Execute: Bash
+All: * (or omit field)
 ```
 
 ### Permission Modes

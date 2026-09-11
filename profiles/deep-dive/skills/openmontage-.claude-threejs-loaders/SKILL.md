@@ -14,7 +14,7 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 // Load GLTF model
 const loader = new GLTFLoader();
 loader.load("model.glb", (gltf) => {
-  scene.add(gltf.scene);
+ scene.add(gltf.scene);
 });
 
 // Load texture
@@ -31,22 +31,22 @@ const manager = new THREE.LoadingManager();
 
 // Callbacks
 manager.onStart = (url, loaded, total) => {
-  console.log(`Started loading: ${url}`);
+ console.log(`Started loading: ${url}`);
 };
 
 manager.onLoad = () => {
-  console.log("All assets loaded!");
-  startGame();
+ console.log("All assets loaded!");
+ startGame();
 };
 
 manager.onProgress = (url, loaded, total) => {
-  const progress = (loaded / total) * 100;
-  console.log(`Loading: ${progress.toFixed(1)}%`);
-  updateProgressBar(progress);
+ const progress = (loaded / total) * 100;
+ console.log(`Loading: ${progress.toFixed(1)}%`);
+ updateProgressBar(progress);
 };
 
 manager.onError = (url) => {
-  console.error(`Error loading: ${url}`);
+ console.error(`Error loading: ${url}`);
 };
 
 // Use manager with loaders
@@ -69,17 +69,17 @@ const loader = new THREE.TextureLoader();
 
 // Callback style
 loader.load(
-  "texture.jpg",
-  (texture) => {
-    // onLoad
-    material.map = texture;
-    material.needsUpdate = true;
-  },
-  undefined, // onProgress - not supported for image loading
-  (error) => {
-    // onError
-    console.error("Error loading texture", error);
-  },
+ "texture.jpg",
+ (texture) => {
+ // onLoad
+ material.map = texture;
+ material.needsUpdate = true;
+ },
+ undefined, // onProgress - not supported for image loading
+ (error) => {
+ // onError
+ console.error("Error loading texture", error);
+ },
 );
 
 // Synchronous (returns texture, loads async)
@@ -91,35 +91,35 @@ material.map = texture;
 
 ```javascript
 const texture = loader.load("texture.jpg", (tex) => {
-  // Color space (important for color accuracy)
-  tex.colorSpace = THREE.SRGBColorSpace; // For color/albedo maps
-  // tex.colorSpace = THREE.LinearSRGBColorSpace;  // For data maps (normal, roughness)
+ // Color space (important for color accuracy)
+ tex.colorSpace = THREE.SRGBColorSpace; // For color/albedo maps
+ // tex.colorSpace = THREE.LinearSRGBColorSpace; // For data maps (normal, roughness)
 
-  // Wrapping
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  // ClampToEdgeWrapping, RepeatWrapping, MirroredRepeatWrapping
+ // Wrapping
+ tex.wrapS = THREE.RepeatWrapping;
+ tex.wrapT = THREE.RepeatWrapping;
+ // ClampToEdgeWrapping, RepeatWrapping, MirroredRepeatWrapping
 
-  // Repeat/offset
-  tex.repeat.set(2, 2);
-  tex.offset.set(0.5, 0.5);
-  tex.rotation = Math.PI / 4;
-  tex.center.set(0.5, 0.5);
+ // Repeat/offset
+ tex.repeat.set(2, 2);
+ tex.offset.set(0.5, 0.5);
+ tex.rotation = Math.PI / 4;
+ tex.center.set(0.5, 0.5);
 
-  // Filtering
-  tex.minFilter = THREE.LinearMipmapLinearFilter; // Default
-  tex.magFilter = THREE.LinearFilter; // Default
-  // NearestFilter - pixelated
-  // LinearFilter - smooth
-  // LinearMipmapLinearFilter - smooth with mipmaps
+ // Filtering
+ tex.minFilter = THREE.LinearMipmapLinearFilter; // Default
+ tex.magFilter = THREE.LinearFilter; // Default
+ // NearestFilter - pixelated
+ // LinearFilter - smooth
+ // LinearMipmapLinearFilter - smooth with mipmaps
 
-  // Anisotropic filtering (sharper at angles)
-  tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+ // Anisotropic filtering (sharper at angles)
+ tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-  // Flip Y (usually true for standard textures)
-  tex.flipY = true;
+ // Flip Y (usually true for standard textures)
+ tex.flipY = true;
 
-  tex.needsUpdate = true;
+ tex.needsUpdate = true;
 });
 ```
 
@@ -132,12 +132,12 @@ const loader = new THREE.CubeTextureLoader();
 
 // Load 6 faces
 const cubeTexture = loader.load([
-  "px.jpg",
-  "nx.jpg", // positive/negative X
-  "py.jpg",
-  "ny.jpg", // positive/negative Y
-  "pz.jpg",
-  "nz.jpg", // positive/negative Z
+ "px.jpg",
+ "nx.jpg", // positive/negative X
+ "py.jpg",
+ "ny.jpg", // positive/negative Y
+ "pz.jpg",
+ "nz.jpg", // positive/negative Z
 ]);
 
 // Use as background
@@ -157,16 +157,16 @@ import { EXRLoader } from "three/addons/loaders/EXRLoader.js";
 // HDR
 const rgbeLoader = new RGBELoader();
 rgbeLoader.load("environment.hdr", (texture) => {
-  texture.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = texture;
-  scene.background = texture;
+ texture.mapping = THREE.EquirectangularReflectionMapping;
+ scene.environment = texture;
+ scene.background = texture;
 });
 
 // EXR
 const exrLoader = new EXRLoader();
 exrLoader.load("environment.exr", (texture) => {
-  texture.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = texture;
+ texture.mapping = THREE.EquirectangularReflectionMapping;
+ scene.environment = texture;
 });
 ```
 
@@ -181,13 +181,13 @@ const pmremGenerator = new THREE.PMREMGenerator(renderer);
 pmremGenerator.compileEquirectangularShader();
 
 new RGBELoader().load("environment.hdr", (texture) => {
-  const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+ const envMap = pmremGenerator.fromEquirectangular(texture).texture;
 
-  scene.environment = envMap;
-  scene.background = envMap;
+ scene.environment = envMap;
+ scene.background = envMap;
 
-  texture.dispose();
-  pmremGenerator.dispose();
+ texture.dispose();
+ pmremGenerator.dispose();
 });
 ```
 
@@ -201,27 +201,27 @@ import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 const loader = new GLTFLoader();
 
 loader.load("model.glb", (gltf) => {
-  // The loaded scene
-  const model = gltf.scene;
-  scene.add(model);
+ // The loaded scene
+ const model = gltf.scene;
+ scene.add(model);
 
-  // Animations
-  const animations = gltf.animations;
-  if (animations.length > 0) {
-    const mixer = new THREE.AnimationMixer(model);
-    animations.forEach((clip) => {
-      mixer.clipAction(clip).play();
-    });
-  }
+ // Animations
+ const animations = gltf.animations;
+ if (animations.length > 0) {
+ const mixer = new THREE.AnimationMixer(model);
+ animations.forEach((clip) => {
+ mixer.clipAction(clip).play();
+ });
+ }
 
-  // Cameras (if any)
-  const cameras = gltf.cameras;
+ // Cameras (if any)
+ const cameras = gltf.cameras;
 
-  // Asset info
-  console.log(gltf.asset); // Version, generator, etc.
+ // Asset info
+ console.log(gltf.asset); // Version, generator, etc.
 
-  // User data from Blender/etc
-  console.log(gltf.userData);
+ // User data from Blender/etc
+ console.log(gltf.userData);
 });
 ```
 
@@ -233,7 +233,7 @@ import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath(
-  "https://www.gstatic.com/draco/versioned/decoders/1.5.6/",
+ "https://www.gstatic.com/draco/versioned/decoders/1.5.6/",
 );
 dracoLoader.preload();
 
@@ -241,7 +241,7 @@ const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(dracoLoader);
 
 gltfLoader.load("compressed-model.glb", (gltf) => {
-  scene.add(gltf.scene);
+ scene.add(gltf.scene);
 });
 ```
 
@@ -253,7 +253,7 @@ import { KTX2Loader } from "three/addons/loaders/KTX2Loader.js";
 
 const ktx2Loader = new KTX2Loader();
 ktx2Loader.setTranscoderPath(
-  "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/",
+ "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/libs/basis/",
 );
 ktx2Loader.detectSupport(renderer);
 
@@ -261,7 +261,7 @@ const gltfLoader = new GLTFLoader();
 gltfLoader.setKTX2Loader(ktx2Loader);
 
 gltfLoader.load("model-with-ktx2.glb", (gltf) => {
-  scene.add(gltf.scene);
+ scene.add(gltf.scene);
 });
 ```
 
@@ -269,36 +269,36 @@ gltfLoader.load("model-with-ktx2.glb", (gltf) => {
 
 ```javascript
 loader.load("model.glb", (gltf) => {
-  const model = gltf.scene;
+ const model = gltf.scene;
 
-  // Enable shadows
-  model.traverse((child) => {
-    if (child.isMesh) {
-      child.castShadow = true;
-      child.receiveShadow = true;
-    }
-  });
+ // Enable shadows
+ model.traverse((child) => {
+ if (child.isMesh) {
+ child.castShadow = true;
+ child.receiveShadow = true;
+ }
+ });
 
-  // Find specific mesh
-  const head = model.getObjectByName("Head");
+ // Find specific mesh
+ const head = model.getObjectByName("Head");
 
-  // Adjust materials
-  model.traverse((child) => {
-    if (child.isMesh && child.material) {
-      child.material.envMapIntensity = 0.5;
-    }
-  });
+ // Adjust materials
+ model.traverse((child) => {
+ if (child.isMesh && child.material) {
+ child.material.envMapIntensity = 0.5;
+ }
+ });
 
-  // Center and scale
-  const box = new THREE.Box3().setFromObject(model);
-  const center = box.getCenter(new THREE.Vector3());
-  const size = box.getSize(new THREE.Vector3());
+ // Center and scale
+ const box = new THREE.Box3().setFromObject(model);
+ const center = box.getCenter(new THREE.Vector3());
+ const size = box.getSize(new THREE.Vector3());
 
-  model.position.sub(center);
-  const maxDim = Math.max(size.x, size.y, size.z);
-  model.scale.setScalar(1 / maxDim);
+ model.position.sub(center);
+ const maxDim = Math.max(size.x, size.y, size.z);
+ model.scale.setScalar(1 / maxDim);
 
-  scene.add(model);
+ scene.add(model);
 });
 ```
 
@@ -312,13 +312,13 @@ import { MTLLoader } from "three/addons/loaders/MTLLoader.js";
 
 const mtlLoader = new MTLLoader();
 mtlLoader.load("model.mtl", (materials) => {
-  materials.preload();
+ materials.preload();
 
-  const objLoader = new OBJLoader();
-  objLoader.setMaterials(materials);
-  objLoader.load("model.obj", (object) => {
-    scene.add(object);
-  });
+ const objLoader = new OBJLoader();
+ objLoader.setMaterials(materials);
+ objLoader.load("model.obj", (object) => {
+ scene.add(object);
+ });
 });
 ```
 
@@ -329,16 +329,16 @@ import { FBXLoader } from "three/addons/loaders/FBXLoader.js";
 
 const loader = new FBXLoader();
 loader.load("model.fbx", (object) => {
-  // FBX often has large scale
-  object.scale.setScalar(0.01);
+ // FBX often has large scale
+ object.scale.setScalar(0.01);
 
-  // Animations
-  const mixer = new THREE.AnimationMixer(object);
-  object.animations.forEach((clip) => {
-    mixer.clipAction(clip).play();
-  });
+ // Animations
+ const mixer = new THREE.AnimationMixer(object);
+ object.animations.forEach((clip) => {
+ mixer.clipAction(clip).play();
+ });
 
-  scene.add(object);
+ scene.add(object);
 });
 ```
 
@@ -349,9 +349,9 @@ import { STLLoader } from "three/addons/loaders/STLLoader.js";
 
 const loader = new STLLoader();
 loader.load("model.stl", (geometry) => {
-  const material = new THREE.MeshStandardMaterial({ color: 0x888888 });
-  const mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+ const material = new THREE.MeshStandardMaterial({ color: 0x888888 });
+ const mesh = new THREE.Mesh(geometry, material);
+ scene.add(mesh);
 });
 ```
 
@@ -362,10 +362,10 @@ import { PLYLoader } from "three/addons/loaders/PLYLoader.js";
 
 const loader = new PLYLoader();
 loader.load("model.ply", (geometry) => {
-  geometry.computeVertexNormals();
-  const material = new THREE.MeshStandardMaterial({ vertexColors: true });
-  const mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+ geometry.computeVertexNormals();
+ const material = new THREE.MeshStandardMaterial({ vertexColors: true });
+ const mesh = new THREE.Mesh(geometry, material);
+ scene.add(mesh);
 });
 ```
 
@@ -375,19 +375,19 @@ loader.load("model.ply", (geometry) => {
 
 ```javascript
 function loadModel(url) {
-  return new Promise((resolve, reject) => {
-    loader.load(url, resolve, undefined, reject);
-  });
+ return new Promise((resolve, reject) => {
+ loader.load(url, resolve, undefined, reject);
+ });
 }
 
 // Usage
 async function init() {
-  try {
-    const gltf = await loadModel("model.glb");
-    scene.add(gltf.scene);
-  } catch (error) {
-    console.error("Failed to load model:", error);
-  }
+ try {
+ const gltf = await loadModel("model.glb");
+ scene.add(gltf.scene);
+ } catch (error) {
+ console.error("Failed to load model:", error);
+ }
 }
 ```
 
@@ -395,42 +395,42 @@ async function init() {
 
 ```javascript
 async function loadAssets() {
-  const [modelGltf, envTexture, colorTexture] = await Promise.all([
-    loadGLTF("model.glb"),
-    loadRGBE("environment.hdr"),
-    loadTexture("color.jpg"),
-  ]);
+ const [modelGltf, envTexture, colorTexture] = await Promise.all([
+ loadGLTF("model.glb"),
+ loadRGBE("environment.hdr"),
+ loadTexture("color.jpg"),
+ ]);
 
-  scene.add(modelGltf.scene);
-  scene.environment = envTexture;
-  material.map = colorTexture;
+ scene.add(modelGltf.scene);
+ scene.environment = envTexture;
+ material.map = colorTexture;
 }
 
 // Helper functions
 function loadGLTF(url) {
-  return new Promise((resolve, reject) => {
-    new GLTFLoader().load(url, resolve, undefined, reject);
-  });
+ return new Promise((resolve, reject) => {
+ new GLTFLoader().load(url, resolve, undefined, reject);
+ });
 }
 
 function loadRGBE(url) {
-  return new Promise((resolve, reject) => {
-    new RGBELoader().load(
-      url,
-      (texture) => {
-        texture.mapping = THREE.EquirectangularReflectionMapping;
-        resolve(texture);
-      },
-      undefined,
-      reject,
-    );
-  });
+ return new Promise((resolve, reject) => {
+ new RGBELoader().load(
+ url,
+ (texture) => {
+ texture.mapping = THREE.EquirectangularReflectionMapping;
+ resolve(texture);
+ },
+ undefined,
+ reject,
+ );
+ });
 }
 
 function loadTexture(url) {
-  return new Promise((resolve, reject) => {
-    new THREE.TextureLoader().load(url, resolve, undefined, reject);
-  });
+ return new Promise((resolve, reject) => {
+ new THREE.TextureLoader().load(url, resolve, undefined, reject);
+ });
 }
 ```
 
@@ -455,44 +455,44 @@ THREE.Cache.remove("key");
 
 ```javascript
 class AssetManager {
-  constructor() {
-    this.textures = new Map();
-    this.models = new Map();
-    this.gltfLoader = new GLTFLoader();
-    this.textureLoader = new THREE.TextureLoader();
-  }
+ constructor() {
+ this.textures = new Map();
+ this.models = new Map();
+ this.gltfLoader = new GLTFLoader();
+ this.textureLoader = new THREE.TextureLoader();
+ }
 
-  async loadTexture(key, url) {
-    if (this.textures.has(key)) {
-      return this.textures.get(key);
-    }
+ async loadTexture(key, url) {
+ if (this.textures.has(key)) {
+ return this.textures.get(key);
+ }
 
-    const texture = await new Promise((resolve, reject) => {
-      this.textureLoader.load(url, resolve, undefined, reject);
-    });
+ const texture = await new Promise((resolve, reject) => {
+ this.textureLoader.load(url, resolve, undefined, reject);
+ });
 
-    this.textures.set(key, texture);
-    return texture;
-  }
+ this.textures.set(key, texture);
+ return texture;
+ }
 
-  async loadModel(key, url) {
-    if (this.models.has(key)) {
-      return this.models.get(key).clone();
-    }
+ async loadModel(key, url) {
+ if (this.models.has(key)) {
+ return this.models.get(key).clone();
+ }
 
-    const gltf = await new Promise((resolve, reject) => {
-      this.gltfLoader.load(url, resolve, undefined, reject);
-    });
+ const gltf = await new Promise((resolve, reject) => {
+ this.gltfLoader.load(url, resolve, undefined, reject);
+ });
 
-    this.models.set(key, gltf.scene);
-    return gltf.scene.clone();
-  }
+ this.models.set(key, gltf.scene);
+ return gltf.scene.clone();
+ }
 
-  dispose() {
-    this.textures.forEach((t) => t.dispose());
-    this.textures.clear();
-    this.models.clear();
-  }
+ dispose() {
+ this.textures.forEach((t) => t.dispose());
+ this.textures.clear();
+ this.models.clear();
+ }
 }
 
 // Usage
@@ -514,10 +514,10 @@ const texture = loader.load("data:image/png;base64,iVBORw0KGgo...");
 
 ```javascript
 async function loadFromBlob(blob) {
-  const url = URL.createObjectURL(blob);
-  const texture = await loadTexture(url);
-  URL.revokeObjectURL(url);
-  return texture;
+ const url = URL.createObjectURL(blob);
+ const texture = await loadTexture(url);
+ URL.revokeObjectURL(url);
+ return texture;
 }
 ```
 
@@ -531,7 +531,7 @@ const buffer = await response.arrayBuffer();
 // Parse with loader
 const loader = new GLTFLoader();
 loader.parse(buffer, "", (gltf) => {
-  scene.add(gltf.scene);
+ scene.add(gltf.scene);
 });
 ```
 
@@ -547,7 +547,7 @@ loader.setResourcePath("assets/textures/");
 
 // Custom URL modifier
 manager.setURLModifier((url) => {
-  return `https://cdn.example.com/${url}`;
+ return `https://cdn.example.com/${url}`;
 });
 ```
 
@@ -556,41 +556,41 @@ manager.setURLModifier((url) => {
 ```javascript
 // Graceful fallback
 async function loadWithFallback(primaryUrl, fallbackUrl) {
-  try {
-    return await loadModel(primaryUrl);
-  } catch (error) {
-    console.warn(`Primary failed, trying fallback: ${error}`);
-    return await loadModel(fallbackUrl);
-  }
+ try {
+ return await loadModel(primaryUrl);
+ } catch (error) {
+ console.warn(`Primary failed, trying fallback: ${error}`);
+ return await loadModel(fallbackUrl);
+ }
 }
 
 // Retry logic
 async function loadWithRetry(url, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      return await loadModel(url);
-    } catch (error) {
-      if (i === maxRetries - 1) throw error;
-      await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
-    }
-  }
+ for (let i = 0; i < maxRetries; i++) {
+ try {
+ return await loadModel(url);
+ } catch (error) {
+ if (i === maxRetries - 1) throw error;
+ await new Promise((r) => setTimeout(r, 1000 * (i + 1)));
+ }
+ }
 }
 
 // Timeout
 async function loadWithTimeout(url, timeout = 30000) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+ const controller = new AbortController();
+ const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-  try {
-    const response = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
-    return response;
-  } catch (error) {
-    if (error.name === "AbortError") {
-      throw new Error("Loading timed out");
-    }
-    throw error;
-  }
+ try {
+ const response = await fetch(url, { signal: controller.signal });
+ clearTimeout(timeoutId);
+ return response;
+ } catch (error) {
+ if (error.name === "AbortError") {
+ throw new Error("Loading timed out");
+ }
+ throw error;
+ }
 }
 ```
 
@@ -605,14 +605,14 @@ async function loadWithTimeout(url, timeout = 30000) {
 ```javascript
 // Progressive loading with placeholder
 const placeholder = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ wireframe: true }),
+ new THREE.BoxGeometry(1, 1, 1),
+ new THREE.MeshBasicMaterial({ wireframe: true }),
 );
 scene.add(placeholder);
 
 loadModel("model.glb").then((gltf) => {
-  scene.remove(placeholder);
-  scene.add(gltf.scene);
+ scene.remove(placeholder);
+ scene.add(gltf.scene);
 });
 ```
 

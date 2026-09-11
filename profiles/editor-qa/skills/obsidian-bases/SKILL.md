@@ -21,47 +21,47 @@ Base files use the `.base` extension and contain valid YAML.
 ```yaml
 # Global filters apply to ALL views in the base
 filters:
-  # Can be a single filter string
-  # OR a recursive filter object with exactly ONE key: and, or, or not
-  and:
-    - 'status == "active"'
-    - not:
-        - 'file.hasTag("archived")'
+ # Can be a single filter string
+ # OR a recursive filter object with exactly ONE key: and, or, or not
+ and:
+ - 'status == "active"'
+ - not:
+ - 'file.hasTag("archived")'
 
 # Define formula properties that can be used across all views
 formulas:
-  formula_name: 'expression'
+ formula_name: 'expression'
 
 # Configure display names and settings for properties
 properties:
-  property_name:
-    displayName: "Display Name"
-  formula.formula_name:
-    displayName: "Formula Display Name"
-  file.ext:
-    displayName: "Extension"
+ property_name:
+ displayName: "Display Name"
+ formula.formula_name:
+ displayName: "Formula Display Name"
+ file.ext:
+ displayName: "Extension"
 
 # Define custom summary formulas
 summaries:
-  custom_summary_name: 'values.mean().round(3)'
+ custom_summary_name: 'values.mean().round(3)'
 
 # Define one or more views
 views:
-  - type: table | cards | list | map
-    name: "View Name"
-    limit: 10                    # Optional: limit results
-    groupBy:                     # Optional: group results
-      property: property_name
-      direction: ASC | DESC
-    filters:                     # View-specific filters follow the same rules
-      and:
-        - 'status == "active"'
-    order:                       # Properties to display in order
-      - file.name
-      - property_name
-      - formula.formula_name
-    summaries:                   # Map properties to summary formulas
-      property_name: Average
+ - type: table | cards | list | map
+ name: "View Name"
+ limit: 10 # Optional: limit results
+ groupBy: # Optional: group results
+ property: property_name
+ direction: ASC | DESC
+ filters: # View-specific filters follow the same rules
+ and:
+ - 'status == "active"'
+ order: # Properties to display in order
+ - file.name
+ - property_name
+ - formula.formula_name
+ summaries: # Map properties to summary formulas
+ property_name: Average
 ```
 
 ## Filter Syntax
@@ -76,31 +76,31 @@ filters: 'status == "done"'
 
 # AND - all conditions must be true
 filters:
-  and:
-    - 'status == "done"'
-    - 'priority > 3'
+ and:
+ - 'status == "done"'
+ - 'priority > 3'
 
 # OR - any condition can be true
 filters:
-  or:
-    - 'file.hasTag("book")'
-    - 'file.hasTag("article")'
+ or:
+ - 'file.hasTag("book")'
+ - 'file.hasTag("article")'
 
 # NOT - exclude matching items
 filters:
-  not:
-    - 'file.hasTag("archived")'
+ not:
+ - 'file.hasTag("archived")'
 
 # Nested filters
 filters:
-  or:
-    - file.hasTag("tag")
-    - and:
-        - file.hasTag("book")
-        - file.hasLink("Textbook")
-    - not:
-        - file.hasTag("book")
-        - file.inFolder("Required Reading")
+ or:
+ - file.hasTag("tag")
+ - and:
+ - file.hasTag("book")
+ - file.hasLink("Textbook")
+ - not:
+ - file.hasTag("book")
+ - file.inFolder("Required Reading")
 ```
 
 ### Filter Operators
@@ -155,23 +155,23 @@ Formulas compute values from properties. Defined in the `formulas` section.
 
 ```yaml
 formulas:
-  # Simple arithmetic
-  total: "price * quantity"
+ # Simple arithmetic
+ total: "price * quantity"
 
-  # Conditional logic
-  status_icon: 'if(done, "✅", "⏳")'
+ # Conditional logic
+ status_icon: 'if(done, "✅", "⏳")'
 
-  # String formatting
-  formatted_price: 'if(price, price.toFixed(2) + " dollars")'
+ # String formatting
+ formatted_price: 'if(price, price.toFixed(2) + " dollars")'
 
-  # Date formatting
-  created: 'file.ctime.format("YYYY-MM-DD")'
+ # Date formatting
+ created: 'file.ctime.format("YYYY-MM-DD")'
 
-  # Calculate days since created (use .days for Duration)
-  days_old: '(now() - file.ctime).days'
+ # Calculate days since created (use .days for Duration)
+ days_old: '(now() - file.ctime).days'
 
-  # Calculate days until due date
-  days_until_due: 'if(due_date, (date(due_date) - today()).days, "")'
+ # Calculate days until due date
+ days_until_due: 'if(due_date, (date(due_date) - today()).days, "")'
 ```
 
 ## Key Functions
@@ -198,23 +198,23 @@ When subtracting two dates, the result is a **Duration** type (not a number).
 
 ```yaml
 # CORRECT: Calculate days between dates
-"(date(due_date) - today()).days"                    # Returns number of days
-"(now() - file.ctime).days"                          # Days since created
-"(date(due_date) - today()).days.round(0)"           # Rounded days
+"(date(due_date) - today()).days" # Returns number of days
+"(now() - file.ctime).days" # Days since created
+"(date(due_date) - today()).days.round(0)" # Rounded days
 
 # WRONG - will cause error:
-# "((date(due) - today()) / 86400000).round(0)"      # Duration doesn't support division then round
+# "((date(due) - today()) / 86400000).round(0)" # Duration doesn't support division then round
 ```
 
 ### Date Arithmetic
 
 ```yaml
 # Duration units: y/year/years, M/month/months, d/day/days,
-#                 w/week/weeks, h/hour/hours, m/minute/minutes, s/second/seconds
-"now() + \"1 day\""       # Tomorrow
-"today() + \"7d\""        # A week from today
-"now() - file.ctime"      # Returns Duration
-"(now() - file.ctime).days"  # Get days as number
+# w/week/weeks, h/hour/hours, m/minute/minutes, s/second/seconds
+"now() + \"1 day\"" # Tomorrow
+"today() + \"7d\"" # A week from today
+"now() - file.ctime" # Returns Duration
+"(now() - file.ctime).days" # Get days as number
 ```
 
 ## View Types
@@ -223,38 +223,38 @@ When subtracting two dates, the result is a **Duration** type (not a number).
 
 ```yaml
 views:
-  - type: table
-    name: "My Table"
-    order:
-      - file.name
-      - status
-      - due_date
-    summaries:
-      price: Sum
-      count: Average
+ - type: table
+ name: "My Table"
+ order:
+ - file.name
+ - status
+ - due_date
+ summaries:
+ price: Sum
+ count: Average
 ```
 
 ### Cards View
 
 ```yaml
 views:
-  - type: cards
-    name: "Gallery"
-    order:
-      - file.name
-      - cover_image
-      - description
+ - type: cards
+ name: "Gallery"
+ order:
+ - file.name
+ - cover_image
+ - description
 ```
 
 ### List View
 
 ```yaml
 views:
-  - type: list
-    name: "Simple List"
-    order:
-      - file.name
-      - status
+ - type: list
+ name: "Simple List"
+ order:
+ - file.name
+ - status
 ```
 
 ### Map View
@@ -263,9 +263,9 @@ Requires latitude/longitude properties and the Maps community plugin.
 
 ```yaml
 views:
-  - type: map
-    name: "Locations"
-    # Map-specific settings for lat/lng properties
+ - type: map
+ name: "Locations"
+ # Map-specific settings for lat/lng properties
 ```
 
 ## Default Summary Formulas
@@ -294,123 +294,123 @@ views:
 
 ```yaml
 filters:
-  and:
-    - file.hasTag("task")
-    - 'file.ext == "md"'
+ and:
+ - file.hasTag("task")
+ - 'file.ext == "md"'
 
 formulas:
-  days_until_due: 'if(due, (date(due) - today()).days, "")'
-  is_overdue: 'if(due, date(due) < today() && status != "done", false)'
-  priority_label: 'if(priority == 1, "🔴 High", if(priority == 2, "🟡 Medium", "🟢 Low"))'
+ days_until_due: 'if(due, (date(due) - today()).days, "")'
+ is_overdue: 'if(due, date(due) < today() && status != "done", false)'
+ priority_label: 'if(priority == 1, "🔴 High", if(priority == 2, "🟡 Medium", "🟢 Low"))'
 
 properties:
-  status:
-    displayName: Status
-  formula.days_until_due:
-    displayName: "Days Until Due"
-  formula.priority_label:
-    displayName: Priority
+ status:
+ displayName: Status
+ formula.days_until_due:
+ displayName: "Days Until Due"
+ formula.priority_label:
+ displayName: Priority
 
 views:
-  - type: table
-    name: "Active Tasks"
-    filters:
-      and:
-        - 'status != "done"'
-    order:
-      - file.name
-      - status
-      - formula.priority_label
-      - due
-      - formula.days_until_due
-    groupBy:
-      property: status
-      direction: ASC
-    summaries:
-      formula.days_until_due: Average
+ - type: table
+ name: "Active Tasks"
+ filters:
+ and:
+ - 'status != "done"'
+ order:
+ - file.name
+ - status
+ - formula.priority_label
+ - due
+ - formula.days_until_due
+ groupBy:
+ property: status
+ direction: ASC
+ summaries:
+ formula.days_until_due: Average
 
-  - type: table
-    name: "Completed"
-    filters:
-      and:
-        - 'status == "done"'
-    order:
-      - file.name
-      - completed_date
+ - type: table
+ name: "Completed"
+ filters:
+ and:
+ - 'status == "done"'
+ order:
+ - file.name
+ - completed_date
 ```
 
 ### Reading List Base
 
 ```yaml
 filters:
-  or:
-    - file.hasTag("book")
-    - file.hasTag("article")
+ or:
+ - file.hasTag("book")
+ - file.hasTag("article")
 
 formulas:
-  reading_time: 'if(pages, (pages * 2).toString() + " min", "")'
-  status_icon: 'if(status == "reading", "📖", if(status == "done", "✅", "📚"))'
-  year_read: 'if(finished_date, date(finished_date).year, "")'
+ reading_time: 'if(pages, (pages * 2).toString() + " min", "")'
+ status_icon: 'if(status == "reading", "📖", if(status == "done", "✅", "📚"))'
+ year_read: 'if(finished_date, date(finished_date).year, "")'
 
 properties:
-  author:
-    displayName: Author
-  formula.status_icon:
-    displayName: ""
-  formula.reading_time:
-    displayName: "Est. Time"
+ author:
+ displayName: Author
+ formula.status_icon:
+ displayName: ""
+ formula.reading_time:
+ displayName: "Est. Time"
 
 views:
-  - type: cards
-    name: "Library"
-    order:
-      - cover
-      - file.name
-      - author
-      - formula.status_icon
-    filters:
-      not:
-        - 'status == "dropped"'
+ - type: cards
+ name: "Library"
+ order:
+ - cover
+ - file.name
+ - author
+ - formula.status_icon
+ filters:
+ not:
+ - 'status == "dropped"'
 
-  - type: table
-    name: "Reading List"
-    filters:
-      and:
-        - 'status == "to-read"'
-    order:
-      - file.name
-      - author
-      - pages
-      - formula.reading_time
+ - type: table
+ name: "Reading List"
+ filters:
+ and:
+ - 'status == "to-read"'
+ order:
+ - file.name
+ - author
+ - pages
+ - formula.reading_time
 ```
 
 ### Daily Notes Index
 
 ```yaml
 filters:
-  and:
-    - file.inFolder("Daily Notes")
-    - '/^\d{4}-\d{2}-\d{2}$/.matches(file.basename)'
+ and:
+ - file.inFolder("Daily Notes")
+ - '/^\d{4}-\d{2}-\d{2}$/.matches(file.basename)'
 
 formulas:
-  word_estimate: '(file.size / 5).round(0)'
-  day_of_week: 'date(file.basename).format("dddd")'
+ word_estimate: '(file.size / 5).round(0)'
+ day_of_week: 'date(file.basename).format("dddd")'
 
 properties:
-  formula.day_of_week:
-    displayName: "Day"
-  formula.word_estimate:
-    displayName: "~Words"
+ formula.day_of_week:
+ displayName: "Day"
+ formula.word_estimate:
+ displayName: "~Words"
 
 views:
-  - type: table
-    name: "Recent Notes"
-    limit: 30
-    order:
-      - file.name
-      - formula.day_of_week
-      - formula.word_estimate
-      - file.mtime
+ - type: table
+ name: "Recent Notes"
+ limit: 30
+ order:
+ - file.name
+ - formula.day_of_week
+ - formula.word_estimate
+ - file.mtime
 ```
 
 ## Embedding Bases
@@ -449,11 +449,11 @@ displayName: "Status: Active"
 ```yaml
 # WRONG - double quotes inside double quotes
 formulas:
-  label: "if(done, "Yes", "No")"
+ label: "if(done, "Yes", "No")"
 
 # CORRECT - single quotes wrapping double quotes
 formulas:
-  label: 'if(done, "Yes", "No")'
+ label: 'if(done, "Yes", "No")'
 ```
 
 ### Common Formula Errors
@@ -483,11 +483,11 @@ formulas:
 ```yaml
 # This will fail silently if 'total' is not defined in formulas
 order:
-  - formula.total
+ - formula.total
 
 # Fix: define it
 formulas:
-  total: "price * quantity"
+ total: "price * quantity"
 ```
 
 ## References

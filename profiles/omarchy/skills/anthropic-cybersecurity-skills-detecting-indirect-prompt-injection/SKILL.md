@@ -1,10 +1,10 @@
 ---
 name: detecting-indirect-prompt-injection
 description: Detect and defend against indirect prompt injection hidden in web pages, documents,
-  and images consumed by an agent, via content extraction (HTML/PDF/OCR), normalization,
-  and scanning with LLM Guard's PromptInjection scanner or Hugging Face Prompt Guard 2.
-  Use when an agent ingests untrusted external content and you need to screen it for
-  injected instructions before the LLM processes it.
+ and images consumed by an agent, via content extraction (HTML/PDF/OCR), normalization,
+ and scanning with LLM Guard's PromptInjection scanner or Hugging Face Prompt Guard 2.
+ Use when an agent ingests untrusted external content and you need to screen it for
+ injected instructions before the LLM processes it.
 domain: cybersecurity
 subdomain: ai-security
 tags:
@@ -59,9 +59,9 @@ pip install transformers torch
 # Content extraction: HTML, PDF, images
 pip install beautifulsoup4 pypdf pillow pytesseract
 # pytesseract requires the Tesseract OCR engine:
-#   Debian/Ubuntu: sudo apt-get install -y tesseract-ocr
-#   macOS:         brew install tesseract
-#   Windows:       choco install tesseract
+# Debian/Ubuntu: sudo apt-get install -y tesseract-ocr
+# macOS: brew install tesseract
+# Windows: choco install tesseract
 ```
 
 - Access (gated) to `meta-llama/Llama-Prompt-Guard-2-86M` on Hugging Face, or use the open `protectai/deberta-v3-base-prompt-injection-v2` classifier.
@@ -93,16 +93,16 @@ Pull comments, hidden elements, and metadata that a human never sees but the mod
 from bs4 import BeautifulSoup, Comment
 
 def extract_hidden(html: str):
-    soup = BeautifulSoup(html, "html.parser")
-    hidden = []
-    for c in soup.find_all(string=lambda t: isinstance(t, Comment)):
-        hidden.append(("comment", c.strip()))
-    for el in soup.select('[style*="display:none"],[style*="visibility:hidden"],[hidden]'):
-        hidden.append(("css-hidden", el.get_text(strip=True)))
-    for img in soup.find_all("img"):
-        if img.get("alt"):
-            hidden.append(("alt-text", img["alt"]))
-    return [h for h in hidden if h[1]]
+ soup = BeautifulSoup(html, "html.parser")
+ hidden = []
+ for c in soup.find_all(string=lambda t: isinstance(t, Comment)):
+ hidden.append(("comment", c.strip()))
+ for el in soup.select('[style*="display:none"],[style*="visibility:hidden"],[hidden]'):
+ hidden.append(("css-hidden", el.get_text(strip=True)))
+ for img in soup.find_all("img"):
+ if img.get("alt"):
+ hidden.append(("alt-text", img["alt"]))
+ return [h for h in hidden if h[1]]
 ```
 
 ### 2. Normalize and de-obfuscate
@@ -113,21 +113,21 @@ Strip zero-width / Unicode-tag characters and decode common encodings so detecto
 import base64, codecs, re, unicodedata
 
 ZERO_WIDTH = dict.fromkeys(map(ord, "​‌‍⁠﻿"), None)
-TAG_RANGE = range(0xE0000, 0xE0080)  # Unicode tag chars used to smuggle text
+TAG_RANGE = range(0xE0000, 0xE0080) # Unicode tag chars used to smuggle text
 
 def normalize(text: str) -> str:
-    text = text.translate(ZERO_WIDTH)
-    text = "".join(ch for ch in text if ord(ch) not in TAG_RANGE)
-    text = unicodedata.normalize("NFKC", text)
-    for token in re.findall(r"[A-Za-z0-9+/=]{20,}", text):
-        try:
-            decoded = base64.b64decode(token).decode("utf-8", "ignore")
-            if decoded.isprintable():
-                text += f"\n[decoded-b64] {decoded}"
-        except Exception:
-            pass
-    text += "\n[decoded-rot13] " + codecs.decode(text, "rot_13")
-    return text
+ text = text.translate(ZERO_WIDTH)
+ text = "".join(ch for ch in text if ord(ch) not in TAG_RANGE)
+ text = unicodedata.normalize("NFKC", text)
+ for token in re.findall(r"[A-Za-z0-9+/=]{20,}", text):
+ try:
+ decoded = base64.b64decode(token).decode("utf-8", "ignore")
+ if decoded.isprintable():
+ text += f"\n[decoded-b64] {decoded}"
+ except Exception:
+ pass
+ text += "\n[decoded-rot13] " + codecs.decode(text, "rot_13")
+ return text
 ```
 
 ### 3. Scan with LLM Guard's PromptInjection scanner
@@ -141,8 +141,8 @@ from llm_guard.input_scanners.prompt_injection import MatchType
 scanner = PromptInjection(threshold=0.5, match_type=MatchType.FULL)
 
 def scan(text: str):
-    sanitized, is_valid, risk = scanner.scan(text)
-    return {"is_valid": is_valid, "risk": risk}  # is_valid=False => injection detected
+ sanitized, is_valid, risk = scanner.scan(text)
+ return {"is_valid": is_valid, "risk": risk} # is_valid=False => injection detected
 ```
 
 ### 4. Add a dedicated detector model (Prompt Guard 2 / deberta)
@@ -154,11 +154,11 @@ from transformers import pipeline
 
 # Open classifier (no gating); swap to meta-llama/Llama-Prompt-Guard-2-86M if licensed
 clf = pipeline("text-classification",
-               model="protectai/deberta-v3-base-prompt-injection-v2")
+ model="protectai/deberta-v3-base-prompt-injection-v2")
 
 def is_injection(text: str, threshold: float = 0.5) -> bool:
-    out = clf(text[:512])[0]
-    return out["label"].upper() == "INJECTION" and out["score"] >= threshold
+ out = clf(text[:512])[0]
+ return out["label"].upper() == "INJECTION" and out["score"] >= threshold
 ```
 
 ### 5. Extract and scan text rendered inside images
@@ -170,7 +170,7 @@ from PIL import Image
 import pytesseract
 
 def ocr(path: str) -> str:
-    return pytesseract.image_to_string(Image.open(path))
+ return pytesseract.image_to_string(Image.open(path))
 # Feed ocr(path) through normalize() + scan() + is_injection()
 ```
 
@@ -183,18 +183,18 @@ import json, hashlib
 from datetime import datetime, timezone
 
 def decide(source, raw, normalized, llmguard_invalid, model_flag):
-    flagged = llmguard_invalid or model_flag
-    event = {
-        "ts": datetime.now(timezone.utc).isoformat(),
-        "source": source,
-        "sha256": hashlib.sha256(raw.encode("utf-8", "ignore")).hexdigest(),
-        "atlas": "AML.T0051.001",
-        "llmguard_injection": llmguard_invalid,
-        "model_injection": model_flag,
-        "decision": "block" if flagged else "allow",
-    }
-    print(json.dumps(event))
-    return event["decision"]
+ flagged = llmguard_invalid or model_flag
+ event = {
+ "ts": datetime.now(timezone.utc).isoformat(),
+ "source": source,
+ "sha256": hashlib.sha256(raw.encode("utf-8", "ignore")).hexdigest(),
+ "atlas": "AML.T0051.001",
+ "llmguard_injection": llmguard_invalid,
+ "model_injection": model_flag,
+ "decision": "block" if flagged else "allow",
+ }
+ print(json.dumps(event))
+ return event["decision"]
 ```
 
 ### 7. Validate against a corpus and tune thresholds

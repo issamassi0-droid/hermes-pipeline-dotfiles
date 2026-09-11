@@ -1,13 +1,13 @@
 ---
 name: collecting-indicators-of-compromise
 description: 'Systematically collects, categorizes, and distributes indicators of
-  compromise (IOCs) during and after security incidents to enable detection, blocking,
-  and threat intelligence sharing. Covers network, host, email, and behavioral indicators
-  using STIX/TAXII formats and threat intelligence platforms. Activates for requests
-  involving IOC collection, indicator extraction, threat indicator sharing, compromise
-  indicators, STIX export, or IOC enrichment.
+ compromise (IOCs) during and after security incidents to enable detection, blocking,
+ and threat intelligence sharing. Covers network, host, email, and behavioral indicators
+ using STIX/TAXII formats and threat intelligence platforms. Activates for requests
+ involving IOC collection, indicator extraction, threat indicator sharing, compromise
+ indicators, STIX export, or IOC enrichment.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -111,12 +111,12 @@ strings -n 8 pid.3847.dmp | grep -E "(http|https)://"
 **From Malware Analysis:**
 ```
 Sandbox Report IOC Extraction:
-- Dropped files:      3 (hashes extracted)
-- DNS queries:        update.evil[.]com, cdn.malware[.]net
-- HTTP connections:   POST to https://185.220.101[.]42/gate.php
-- Registry modified:  HKCU\Software\Microsoft\Windows\CurrentVersion\Run\svcupdate
-- Mutex created:      Global\MTX_0x1234ABCD
-- Named pipe:         \\.\pipe\MSSE-1234-server
+- Dropped files: 3 (hashes extracted)
+- DNS queries: update.evil[.]com, cdn.malware[.]net
+- HTTP connections: POST to https://185.220.101[.]42/gate.php
+- Registry modified: HKCU\Software\Microsoft\Windows\CurrentVersion\Run\svcupdate
+- Mutex created: Global\MTX_0x1234ABCD
+- Named pipe: \\.\pipe\MSSE-1234-server
 ```
 
 ### Step 3: Enrich IOCs with Context
@@ -127,22 +127,22 @@ Add threat intelligence context to each indicator:
 IOC Enrichment Report:
 ━━━━━━━━━━━━━━━━━━━━━
 IP: 185.220.101.42
-  VirusTotal:     12/89 vendors flag as malicious
-  Shodan:         Open ports: 443, 8443, 80
-  Geolocation:    Netherlands, AS208476
-  First Seen:     2025-10-01
-  Threat Intel:   Associated with Qakbot C2 infrastructure
-  Confidence:     High
-  TLP:            AMBER
+ VirusTotal: 12/89 vendors flag as malicious
+ Shodan: Open ports: 443, 8443, 80
+ Geolocation: Netherlands, AS208476
+ First Seen: 2025-10-01
+ Threat Intel: Associated with Qakbot C2 infrastructure
+ Confidence: High
+ TLP: AMBER
 
 Domain: update.evil[.]com
-  Registration:   2025-10-28 (recently registered)
-  Registrar:      Namecheap
-  WHOIS Privacy:  Yes
-  VirusTotal:     8/89 vendors flag as malicious
-  DNS History:    Resolved to 185.220.101.42, 91.215.85.17
-  Confidence:     High
-  TLP:            AMBER
+ Registration: 2025-10-28 (recently registered)
+ Registrar: Namecheap
+ WHOIS Privacy: Yes
+ VirusTotal: 8/89 vendors flag as malicious
+ DNS History: Resolved to 185.220.101.42, 91.215.85.17
+ Confidence: High
+ TLP: AMBER
 ```
 
 ### Step 4: Score and Prioritize IOCs
@@ -152,10 +152,10 @@ Assign confidence and risk scores to each indicator:
 | Score | Confidence Level | Criteria |
 |-------|-----------------|----------|
 | 90-100 | Confirmed Malicious | Multiple TI sources confirm, observed in active attack |
-| 70-89  | Highly Suspicious | Single TI source confirms, behavioral analysis supports |
-| 50-69  | Suspicious | Limited TI data, contextually suspicious |
-| 30-49  | Unconfirmed | No TI matches, but anomalous in environment |
-| 0-29   | Likely Benign | False positive indicators or legitimate infrastructure |
+| 70-89 | Highly Suspicious | Single TI source confirms, behavioral analysis supports |
+| 50-69 | Suspicious | Limited TI data, contextually suspicious |
+| 30-49 | Unconfirmed | No TI matches, but anomalous in environment |
+| 0-29 | Likely Benign | False positive indicators or legitimate infrastructure |
 
 ### Step 5: Distribute IOCs for Detection and Blocking
 
@@ -174,19 +174,19 @@ Package IOCs in STIX 2.1 format for sharing:
 
 ```json
 {
-  "type": "indicator",
-  "spec_version": "2.1",
-  "id": "indicator--a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-  "created": "2025-11-15T18:00:00Z",
-  "modified": "2025-11-15T18:00:00Z",
-  "name": "Qakbot C2 Server IP",
-  "indicator_types": ["malicious-activity"],
-  "pattern": "[ipv4-addr:value = '185.220.101.42']",
-  "pattern_type": "stix",
-  "valid_from": "2025-11-15T14:23:00Z",
-  "confidence": 95,
-  "labels": ["c2", "qakbot"],
-  "object_marking_refs": ["marking-definition--f88d31f6-486f-44da-b317-01333bde0b82"]
+ "type": "indicator",
+ "spec_version": "2.1",
+ "id": "indicator--a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+ "created": "2025-11-15T18:00:00Z",
+ "modified": "2025-11-15T18:00:00Z",
+ "name": "Qakbot C2 Server IP",
+ "indicator_types": ["malicious-activity"],
+ "pattern": "[ipv4-addr:value = '185.220.101.42']",
+ "pattern_type": "stix",
+ "valid_from": "2025-11-15T14:23:00Z",
+ "confidence": 95,
+ "labels": ["c2", "qakbot"],
+ "object_marking_refs": ["marking-definition--f88d31f6-486f-44da-b317-01333bde0b82"]
 }
 ```
 
@@ -237,36 +237,36 @@ Submit to MISP, ISAC portals, and TAXII servers per sharing agreements.
 ```
 INDICATOR OF COMPROMISE REPORT
 ================================
-Incident:     INC-2025-1547
-Date:         2025-11-15
-TLP:          AMBER
-Sharing:      FS-ISAC, internal SOC
+Incident: INC-2025-1547
+Date: 2025-11-15
+TLP: AMBER
+Sharing: FS-ISAC, internal SOC
 
 NETWORK INDICATORS
-Type     | Value                    | Confidence | Context
+Type | Value | Confidence | Context
 ---------|--------------------------|------------|--------
-IPv4     | 185.220.101[.]42         | 95         | Qakbot C2 server
-IPv4     | 91.215.85[.]17           | 90         | Cobalt Strike C2
-Domain   | update.evil[.]com        | 95         | Staging domain
-URL      | hxxps://185.220[.]101.42/gate.php | 95  | C2 check-in
-JA3      | a0e9f5d64349fb13191bc7...| 80         | Qakbot TLS fingerprint
+IPv4 | 185.220.101[.]42 | 95 | Qakbot C2 server
+IPv4 | 91.215.85[.]17 | 90 | Cobalt Strike C2
+Domain | update.evil[.]com | 95 | Staging domain
+URL | hxxps://185.220[.]101.42/gate.php | 95 | C2 check-in
+JA3 | a0e9f5d64349fb13191bc7...| 80 | Qakbot TLS fingerprint
 
 HOST INDICATORS
-Type     | Value                    | Confidence | Context
+Type | Value | Confidence | Context
 ---------|--------------------------|------------|--------
-SHA-256  | a1b2c3d4e5f6...         | 100        | Qakbot dropper
-SHA-256  | b2c3d4e5f6a7...         | 100        | Cobalt Strike beacon
+SHA-256 | a1b2c3d4e5f6... | 100 | Qakbot dropper
+SHA-256 | b2c3d4e5f6a7... | 100 | Cobalt Strike beacon
 FilePath | C:\Users\*\AppData\Local\Temp\update.exe | 85 | Dropper location
-RegKey   | HKCU\...\Run\svcupdate  | 90         | Persistence
-Mutex    | Global\MTX_0x1234ABCD   | 95         | Qakbot instance lock
-Task     | WindowsUpdate           | 90         | Scheduled task persistence
+RegKey | HKCU\...\Run\svcupdate | 90 | Persistence
+Mutex | Global\MTX_0x1234ABCD | 95 | Qakbot instance lock
+Task | WindowsUpdate | 90 | Scheduled task persistence
 
 EMAIL INDICATORS
-Type     | Value                    | Confidence | Context
+Type | Value | Confidence | Context
 ---------|--------------------------|------------|--------
-Sender   | billing@spoofed[.]com   | 95         | Phishing sender
-Subject  | "Invoice-Nov2025"       | 70         | Phishing subject line
-Hash     | c3d4e5f6a7b8...         | 100        | Malicious .docm attachment
+Sender | billing@spoofed[.]com | 95 | Phishing sender
+Subject | "Invoice-Nov2025" | 70 | Phishing subject line
+Hash | c3d4e5f6a7b8... | 100 | Malicious .docm attachment
 
 TOTAL: 14 indicators | HIGH confidence avg: 91
 ```

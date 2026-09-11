@@ -6,8 +6,8 @@ author: Hermes Agent
 license: MIT
 platforms: [macos]
 metadata:
-  hermes:
-    tags: [FindMy, AirTag, location, tracking, macOS, Apple]
+ hermes:
+ tags: [FindMy, AirTag, location, tracking, macOS, Apple]
 ---
 
 # Find My (Apple)
@@ -22,7 +22,7 @@ screen capture to read device locations.
 - Devices/AirTags already registered in Find My
 - Screen Recording permission for terminal (System Settings → Privacy → Screen Recording)
 - **Optional but recommended**: Install `peekaboo` for better UI automation:
-  `brew install steipete/tap/peekaboo`
+ `brew install steipete/tap/peekaboo`
 
 ## When to Use
 
@@ -57,17 +57,17 @@ vision_analyze(image_url="/tmp/findmy.png", question="What devices/items are sho
 # Switch to Devices tab
 osascript -e '
 tell application "System Events"
-    tell process "FindMy"
-        click button "Devices" of toolbar 1 of window 1
-    end tell
+ tell process "FindMy"
+ click button "Devices" of toolbar 1 of window 1
+ end tell
 end tell'
 
 # Switch to Items tab (AirTags)
 osascript -e '
 tell application "System Events"
-    tell process "FindMy"
-        click button "Items" of toolbar 1 of window 1
-    end tell
+ tell process "FindMy"
+ click button "Items" of toolbar 1 of window 1
+ end tell
 end tell'
 ```
 
@@ -108,8 +108,8 @@ sleep 3
 
 # 3. Periodically capture location
 while true; do
-    screencapture -w -o /tmp/findmy-$(date +%H%M%S).png
-    sleep 300  # Every 5 minutes
+ screencapture -w -o /tmp/findmy-$(date +%H%M%S).png
+ sleep 300 # Every 5 minutes
 done
 ```
 

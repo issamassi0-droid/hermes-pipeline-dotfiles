@@ -60,8 +60,8 @@ gcloud services enable container.googleapis.com
 
 # Enable Binary Authorization on GKE cluster
 gcloud container clusters update CLUSTER_NAME \
-  --enable-binauthz \
-  --zone us-central1-a
+ --enable-binauthz \
+ --zone us-central1-a
 ```
 
 ## Create Attestor
@@ -71,14 +71,14 @@ gcloud container clusters update CLUSTER_NAME \
 ```bash
 # Create keyring
 gcloud kms keyrings create binauthz-keyring \
-  --location global
+ --location global
 
 # Create signing key
 gcloud kms keys create attestor-key \
-  --keyring binauthz-keyring \
-  --location global \
-  --algorithm ec-sign-p256-sha256 \
-  --purpose asymmetric-signing
+ --keyring binauthz-keyring \
+ --location global \
+ --algorithm ec-sign-p256-sha256 \
+ --purpose asymmetric-signing
 ```
 
 ### Create Container Analysis note
@@ -86,36 +86,36 @@ gcloud kms keys create attestor-key \
 ```bash
 cat > /tmp/note.json << 'EOF'
 {
-  "attestation": {
-    "hint": {
-      "humanReadableName": "Production Build Attestor"
-    }
-  }
+ "attestation": {
+ "hint": {
+ "humanReadableName": "Production Build Attestor"
+ }
+ }
 }
 EOF
 
 curl -X POST \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-  "https://containeranalysis.googleapis.com/v1/projects/PROJECT_ID/notes/?noteId=prod-build-note" \
-  -d @/tmp/note.json
+ -H "Content-Type: application/json" \
+ -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+ "https://containeranalysis.googleapis.com/v1/projects/PROJECT_ID/notes/?noteId=prod-build-note" \
+ -d @/tmp/note.json
 ```
 
 ### Create the attestor
 
 ```bash
 gcloud container binauthz attestors create prod-build-attestor \
-  --attestation-authority-note=prod-build-note \
-  --attestation-authority-note-project=PROJECT_ID
+ --attestation-authority-note=prod-build-note \
+ --attestation-authority-note-project=PROJECT_ID
 
 # Add KMS key to attestor
 gcloud container binauthz attestors public-keys add \
-  --attestor=prod-build-attestor \
-  --keyversion-project=PROJECT_ID \
-  --keyversion-location=global \
-  --keyversion-keyring=binauthz-keyring \
-  --keyversion-key=attestor-key \
-  --keyversion=1
+ --attestor=prod-build-attestor \
+ --keyversion-project=PROJECT_ID \
+ --keyversion-location=global \
+ --keyversion-keyring=binauthz-keyring \
+ --keyversion-key=attestor-key \
+ --keyversion=1
 ```
 
 ## Configure Policy
@@ -125,16 +125,16 @@ gcloud container binauthz attestors public-keys add \
 ```yaml
 # binauthz-policy.yaml
 admissionWhitelistPatterns:
-  - namePattern: "gcr.io/google_containers/*"
-  - namePattern: "gcr.io/google-containers/*"
-  - namePattern: "k8s.gcr.io/**"
-  - namePattern: "gke.gcr.io/**"
-  - namePattern: "gcr.io/stackdriver-agents/*"
+ - namePattern: "gcr.io/google_containers/*"
+ - namePattern: "gcr.io/google-containers/*"
+ - namePattern: "k8s.gcr.io/**"
+ - namePattern: "gke.gcr.io/**"
+ - namePattern: "gcr.io/stackdriver-agents/*"
 defaultAdmissionRule:
-  evaluationMode: REQUIRE_ATTESTATION
-  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
-  requireAttestationsBy:
-    - projects/PROJECT_ID/attestors/prod-build-attestor
+ evaluationMode: REQUIRE_ATTESTATION
+ enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+ requireAttestationsBy:
+ - projects/PROJECT_ID/attestors/prod-build-attestor
 globalPolicyEvaluationMode: ENABLE
 ```
 
@@ -146,19 +146,19 @@ gcloud container binauthz policy import binauthz-policy.yaml
 
 ```yaml
 admissionWhitelistPatterns:
-  - namePattern: "gcr.io/google_containers/*"
+ - namePattern: "gcr.io/google_containers/*"
 clusterAdmissionRules:
-  us-central1-a.production-cluster:
-    evaluationMode: REQUIRE_ATTESTATION
-    enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
-    requireAttestationsBy:
-      - projects/PROJECT_ID/attestors/prod-build-attestor
-  us-central1-a.staging-cluster:
-    evaluationMode: ALWAYS_ALLOW
-    enforcementMode: DRYRUN_AUDIT_LOG_ONLY
+ us-central1-a.production-cluster:
+ evaluationMode: REQUIRE_ATTESTATION
+ enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+ requireAttestationsBy:
+ - projects/PROJECT_ID/attestors/prod-build-attestor
+ us-central1-a.staging-cluster:
+ evaluationMode: ALWAYS_ALLOW
+ enforcementMode: DRYRUN_AUDIT_LOG_ONLY
 defaultAdmissionRule:
-  evaluationMode: ALWAYS_DENY
-  enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
+ evaluationMode: ALWAYS_DENY
+ enforcementMode: ENFORCED_BLOCK_AND_AUDIT_LOG
 ```
 
 ## Create Attestations
@@ -168,19 +168,19 @@ defaultAdmissionRule:
 ```bash
 # Get image digest
 IMAGE_DIGEST=$(gcloud container images describe \
-  gcr.io/PROJECT_ID/my-app:latest \
-  --format='get(image_summary.digest)')
+ gcr.io/PROJECT_ID/my-app:latest \
+ --format='get(image_summary.digest)')
 
 # Create attestation
 gcloud container binauthz attestations sign-and-create \
-  --artifact-url="gcr.io/PROJECT_ID/my-app@${IMAGE_DIGEST}" \
-  --attestor="prod-build-attestor" \
-  --attestor-project="PROJECT_ID" \
-  --keyversion-project="PROJECT_ID" \
-  --keyversion-location="global" \
-  --keyversion-keyring="binauthz-keyring" \
-  --keyversion-key="attestor-key" \
-  --keyversion="1"
+ --artifact-url="gcr.io/PROJECT_ID/my-app@${IMAGE_DIGEST}" \
+ --attestor="prod-build-attestor" \
+ --attestor-project="PROJECT_ID" \
+ --keyversion-project="PROJECT_ID" \
+ --keyversion-location="global" \
+ --keyversion-keyring="binauthz-keyring" \
+ --keyversion-key="attestor-key" \
+ --keyversion="1"
 ```
 
 ### Cloud Build integration
@@ -188,40 +188,40 @@ gcloud container binauthz attestations sign-and-create \
 ```yaml
 # cloudbuild.yaml
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-app:$SHORT_SHA', '.']
+ - name: 'gcr.io/cloud-builders/docker'
+ args: ['build', '-t', 'gcr.io/$PROJECT_ID/my-app:$SHORT_SHA', '.']
 
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/my-app:$SHORT_SHA']
+ - name: 'gcr.io/cloud-builders/docker'
+ args: ['push', 'gcr.io/$PROJECT_ID/my-app:$SHORT_SHA']
 
-  # Vulnerability scanning
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        gcloud artifacts docker images scan \
-          gcr.io/$PROJECT_ID/my-app:$SHORT_SHA \
-          --format='value(response.scan)'
+ # Vulnerability scanning
+ - name: 'gcr.io/cloud-builders/gcloud'
+ entrypoint: 'bash'
+ args:
+ - '-c'
+ - |
+ gcloud artifacts docker images scan \
+ gcr.io/$PROJECT_ID/my-app:$SHORT_SHA \
+ --format='value(response.scan)'
 
-  # Create attestation after successful scan
-  - name: 'gcr.io/cloud-builders/gcloud'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |
-        IMAGE_DIGEST=$(gcloud container images describe \
-          gcr.io/$PROJECT_ID/my-app:$SHORT_SHA \
-          --format='get(image_summary.digest)')
-        gcloud container binauthz attestations sign-and-create \
-          --artifact-url="gcr.io/$PROJECT_ID/my-app@$${IMAGE_DIGEST}" \
-          --attestor="prod-build-attestor" \
-          --attestor-project="$PROJECT_ID" \
-          --keyversion-project="$PROJECT_ID" \
-          --keyversion-location="global" \
-          --keyversion-keyring="binauthz-keyring" \
-          --keyversion-key="attestor-key" \
-          --keyversion="1"
+ # Create attestation after successful scan
+ - name: 'gcr.io/cloud-builders/gcloud'
+ entrypoint: 'bash'
+ args:
+ - '-c'
+ - |
+ IMAGE_DIGEST=$(gcloud container images describe \
+ gcr.io/$PROJECT_ID/my-app:$SHORT_SHA \
+ --format='get(image_summary.digest)')
+ gcloud container binauthz attestations sign-and-create \
+ --artifact-url="gcr.io/$PROJECT_ID/my-app@$${IMAGE_DIGEST}" \
+ --attestor="prod-build-attestor" \
+ --attestor-project="$PROJECT_ID" \
+ --keyversion-project="$PROJECT_ID" \
+ --keyversion-location="global" \
+ --keyversion-keyring="binauthz-keyring" \
+ --keyversion-key="attestor-key" \
+ --keyversion="1"
 ```
 
 ## Continuous Validation
@@ -229,8 +229,8 @@ steps:
 ```bash
 # Enable CV on a GKE cluster
 gcloud container clusters update CLUSTER_NAME \
-  --enable-binauthz-monitoring \
-  --zone us-central1-a
+ --enable-binauthz-monitoring \
+ --zone us-central1-a
 ```
 
 ### Monitor CV violations in Cloud Logging
@@ -247,7 +247,7 @@ logName="projects/PROJECT_ID/logs/binaryauthorization.googleapis.com%2Fcontinuou
 ```bash
 # This should be blocked
 kubectl run test-unapproved \
-  --image=docker.io/library/nginx:latest
+ --image=docker.io/library/nginx:latest
 
 # Verify the pod was denied
 kubectl get events --field-selector reason=FailedCreate
@@ -257,8 +257,8 @@ kubectl get events --field-selector reason=FailedCreate
 
 ```bash
 gcloud container binauthz attestations list \
-  --attestor=prod-build-attestor \
-  --attestor-project=PROJECT_ID
+ --attestor=prod-build-attestor \
+ --attestor-project=PROJECT_ID
 ```
 
 ## Break-Glass Override
@@ -269,15 +269,15 @@ For emergency deployments bypassing Binary Authorization:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: emergency-pod
-  labels:
-    image-policy.k8s.io/break-glass: "true"
-  annotations:
-    alpha.image-policy.k8s.io/break-glass: "Emergency deployment - ticket INC-12345"
+ name: emergency-pod
+ labels:
+ image-policy.k8s.io/break-glass: "true"
+ annotations:
+ alpha.image-policy.k8s.io/break-glass: "Emergency deployment - ticket INC-12345"
 spec:
-  containers:
-    - name: emergency
-      image: gcr.io/PROJECT_ID/emergency-fix:latest
+ containers:
+ - name: emergency
+ image: gcr.io/PROJECT_ID/emergency-fix:latest
 ```
 
 ## References

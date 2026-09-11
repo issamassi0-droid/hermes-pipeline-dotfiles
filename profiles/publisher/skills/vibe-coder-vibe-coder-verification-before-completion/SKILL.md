@@ -28,8 +28,8 @@ BEFORE claiming any status:
 2. RUN: Execute the FULL command (fresh, complete)
 3. READ: Full output, check exit code, count failures
 4. VERIFY: Does output confirm the claim?
-   - If NO: State actual status with evidence
-   - If YES: State claim WITH evidence
+ - If NO: State actual status with evidence
+ - If YES: State claim WITH evidence
 5. ONLY THEN: Make the claim
 
 Skip any step = lying, not verifying

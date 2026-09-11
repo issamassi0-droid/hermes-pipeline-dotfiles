@@ -1,9 +1,9 @@
 ---
 name: design-preferences
 description: |
-  Gather user design preferences before building UI.
-  Use when: starting a project with visual interface (Web App, Mobile, Browser Extension).
-  Triggers: "design preferences", "visual style", "choose theme", "design step".
+ Gather user design preferences before building UI.
+ Use when: starting a project with visual interface (Web App, Mobile, Browser Extension).
+ Triggers: "design preferences", "visual style", "choose theme", "design step".
 ---
 
 # Design Preferences
@@ -35,12 +35,12 @@ Gather user preferences for visual design before building. Creates `docs/DESIGN.
 question: "Насколько важен дизайн для этого проекта?"
 header: "Design"
 options:
-  - label: "Профессиональный"
-    description: "Уникальный стиль, впечатляет пользователей"
-  - label: "Функциональный"
-    description: "Чистый и понятный, без лишнего"
-  - label: "Минимальный MVP"
-    description: "Работает -> достаточно, стиль потом"
+ - label: "Профессиональный"
+ description: "Уникальный стиль, впечатляет пользователей"
+ - label: "Функциональный"
+ description: "Чистый и понятный, без лишнего"
+ - label: "Минимальный MVP"
+ description: "Работает -> достаточно, стиль потом"
 ```
 
 **If "Минимальный MVP"** -> Skip remaining questions, use defaults.
@@ -51,16 +51,16 @@ options:
 question: "Какой визуальный стиль ближе?"
 header: "Style"
 options:
-  - label: "Minimalist"
-    description: "Много пространства, чистые линии"
-  - label: "Bold & Modern"
-    description: "Яркие акценты, современный"
-  - label: "Soft & Friendly"
-    description: "Округлые формы, мягкие тона"
-  - label: "Dark & Professional"
-    description: "Тёмная тема, серьёзный"
-  - label: "Colorful & Playful"
-    description: "Яркие цвета, игривый"
+ - label: "Minimalist"
+ description: "Много пространства, чистые линии"
+ - label: "Bold & Modern"
+ description: "Яркие акценты, современный"
+ - label: "Soft & Friendly"
+ description: "Округлые формы, мягкие тона"
+ - label: "Dark & Professional"
+ description: "Тёмная тема, серьёзный"
+ - label: "Colorful & Playful"
+ description: "Яркие цвета, игривый"
 ```
 
 ### Step 3: Theme Selection
@@ -79,12 +79,12 @@ Based on aesthetic direction, offer matching themes from theme-factory:
 question: "Какая цветовая схема?"
 header: "Theme"
 options:
-  - label: "{Theme 1}"
-    description: "{Primary colors}"
-  - label: "{Theme 2}"
-    description: "{Primary colors}"
-  - label: "Custom"
-    description: "Опишу свои цвета"
+ - label: "{Theme 1}"
+ description: "{Primary colors}"
+ - label: "{Theme 2}"
+ description: "{Primary colors}"
+ - label: "Custom"
+ description: "Опишу свои цвета"
 ```
 
 **If "Custom"** -> Ask follow-up: "Опиши желаемые цвета или бренд"
@@ -95,12 +95,12 @@ options:
 question: "Какой стиль текста?"
 header: "Fonts"
 options:
-  - label: "Sans-Serif (современный)"
-    description: "Чистый, технологичный"
-  - label: "Serif (классический)"
-    description: "Традиционный, солидный"
-  - label: "Mixed (заголовки/текст)"
-    description: "Display + body fonts"
+ - label: "Sans-Serif (современный)"
+ description: "Чистый, технологичный"
+ - label: "Serif (классический)"
+ description: "Традиционный, солидный"
+ - label: "Mixed (заголовки/текст)"
+ description: "Display + body fonts"
 ```
 
 ### Step 5: Animation Level
@@ -109,14 +109,14 @@ options:
 question: "Сколько анимации?"
 header: "Motion"
 options:
-  - label: "Subtle"
-    description: "Только hover эффекты"
-  - label: "Moderate"
-    description: "Переходы, hover, scroll"
-  - label: "Rich"
-    description: "Page transitions, stagger, parallax"
-  - label: "None"
-    description: "Без анимации"
+ - label: "Subtle"
+ description: "Только hover эффекты"
+ - label: "Moderate"
+ description: "Переходы, hover, scroll"
+ - label: "Rich"
+ description: "Page transitions, stagger, parallax"
+ - label: "None"
+ description: "Без анимации"
 ```
 
 ---
@@ -178,15 +178,15 @@ Place this step between Phase 1 (Idea Validation) and Phase 2 (Project Setup):
 
 ```
 Phase 1: Idea Validation
-  -> Step 1.6: Create PRD
+ -> Step 1.6: Create PRD
 
-Phase 1.5: Design Preferences   <-- NEW
-  -> Ask design questions
-  -> Create DESIGN.md
+Phase 1.5: Design Preferences <-- NEW
+ -> Ask design questions
+ -> Create DESIGN.md
 
 Phase 2: Project Setup
-  -> Read PRD.md + DESIGN.md
-  -> Apply theme to templates
+ -> Read PRD.md + DESIGN.md
+ -> Apply theme to templates
 ```
 
 ---

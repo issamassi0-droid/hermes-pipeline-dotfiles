@@ -92,8 +92,8 @@ mitre_attack:
 ```spl
 index=wineventlog EventCode=4662
 | where Properties IN ("*1131f6aa-9c07-11d1-f79f-00c04fc2dcd2*",
-    "*1131f6ad-9c07-11d1-f79f-00c04fc2dcd2*",
-    "*89e95b76-444d-4c62-991a-0facbeda640c*")
+ "*1131f6ad-9c07-11d1-f79f-00c04fc2dcd2*",
+ "*89e95b76-444d-4c62-991a-0facbeda640c*")
 | where NOT match(SubjectUserName, ".*\\$$")
 | where NOT SubjectUserName IN ("known_svc_account1", "known_svc_account2")
 | stats count values(Properties) as ReplicationRights by SubjectUserName SubjectDomainName Computer
@@ -106,7 +106,7 @@ index=wineventlog EventCode=4662
 SecurityEvent
 | where EventID == 4662
 | where Properties has "1131f6ad-9c07-11d1-f79f-00c04fc2dcd2"
-    or Properties has "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2"
+ or Properties has "1131f6aa-9c07-11d1-f79f-00c04fc2dcd2"
 | where SubjectUserName !endswith "$"
 | where SubjectUserName !in ("AzureADConnect", "MSOL_*")
 | project TimeGenerated, SubjectUserName, SubjectDomainName, Computer, Properties
@@ -118,21 +118,21 @@ SecurityEvent
 title: DCSync Activity Detected - Non-DC Replication Request
 status: stable
 logsource:
-    product: windows
-    service: security
+ product: windows
+ service: security
 detection:
-    selection:
-        EventID: 4662
-        Properties|contains:
-            - '1131f6aa-9c07-11d1-f79f-00c04fc2dcd2'
-            - '1131f6ad-9c07-11d1-f79f-00c04fc2dcd2'
-    filter_dc:
-        SubjectUserName|endswith: '$'
-    condition: selection and not filter_dc
+ selection:
+ EventID: 4662
+ Properties|contains:
+ - '1131f6aa-9c07-11d1-f79f-00c04fc2dcd2'
+ - '1131f6ad-9c07-11d1-f79f-00c04fc2dcd2'
+ filter_dc:
+ SubjectUserName|endswith: '$'
+ condition: selection and not filter_dc
 level: critical
 tags:
-    - attack.credential_access
-    - attack.t1003.006
+ - attack.credential_access
+ - attack.t1003.006
 ```
 
 ## Common Scenarios

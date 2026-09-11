@@ -1,10 +1,10 @@
 ---
 name: implementing-cisa-zero-trust-maturity-model
 description: Assess, gap-analyze, and progressively implement the CISA Zero Trust
-  Maturity Model v2.0 across five pillars (Identity, Devices, Networks, Applications
-  & Workloads, Data) and three cross-cutting capabilities (Visibility/Analytics, Automation/Orchestration,
-  Governance), from Traditional through Optimal maturity. Use for a federal/enterprise
-  ZTMM assessment, phased roadmap, or mapping controls to NIST SP 800-207 and EO 14028.
+ Maturity Model v2.0 across five pillars (Identity, Devices, Networks, Applications
+ & Workloads, Data) and three cross-cutting capabilities (Visibility/Analytics, Automation/Orchestration,
+ Governance), from Traditional through Optimal maturity. Use for a federal/enterprise
+ ZTMM assessment, phased roadmap, or mapping controls to NIST SP 800-207 and EO 14028.
 domain: cybersecurity
 subdomain: zero-trust-architecture
 tags:
@@ -202,9 +202,9 @@ Data encompasses all structured and unstructured information, at rest, in transi
 ```
 Maturity Progression:
 Traditional -> Manual log review, limited SIEM
-Initial     -> Centralized logging, basic SIEM correlation
-Advanced    -> UEBA, automated threat detection, data lake analytics
-Optimal     -> AI/ML-driven continuous monitoring, predictive analytics
+Initial -> Centralized logging, basic SIEM correlation
+Advanced -> UEBA, automated threat detection, data lake analytics
+Optimal -> AI/ML-driven continuous monitoring, predictive analytics
 ```
 
 ### Automation and Orchestration
@@ -212,9 +212,9 @@ Optimal     -> AI/ML-driven continuous monitoring, predictive analytics
 ```
 Maturity Progression:
 Traditional -> Manual incident response, ad-hoc scripts
-Initial     -> Basic SOAR playbooks, automated alerting
-Advanced    -> Integrated SOAR with multi-pillar orchestration
-Optimal     -> Fully autonomous response, self-healing infrastructure
+Initial -> Basic SOAR playbooks, automated alerting
+Advanced -> Integrated SOAR with multi-pillar orchestration
+Optimal -> Fully autonomous response, self-healing infrastructure
 ```
 
 ### Governance
@@ -222,9 +222,9 @@ Optimal     -> Fully autonomous response, self-healing infrastructure
 ```
 Maturity Progression:
 Traditional -> Ad-hoc policies, manual compliance checks
-Initial     -> Documented zero trust strategy, basic policy framework
-Advanced    -> Policy-as-code, continuous compliance monitoring
-Optimal     -> Dynamic policy engine, real-time governance decisions
+Initial -> Documented zero trust strategy, basic policy framework
+Advanced -> Policy-as-code, continuous compliance monitoring
+Optimal -> Dynamic policy engine, real-time governance decisions
 ```
 
 ## Implementation Process
@@ -240,46 +240,46 @@ Optimal     -> Dynamic policy engine, real-time governance decisions
 ```python
 # Example: CISA ZTMM Maturity Assessment Scoring
 class ZTMMAssessment:
-    PILLARS = ['Identity', 'Devices', 'Networks', 'Applications', 'Data']
-    STAGES = ['Traditional', 'Initial', 'Advanced', 'Optimal']
-    CROSS_CUTTING = ['Visibility_Analytics', 'Automation_Orchestration', 'Governance']
+ PILLARS = ['Identity', 'Devices', 'Networks', 'Applications', 'Data']
+ STAGES = ['Traditional', 'Initial', 'Advanced', 'Optimal']
+ CROSS_CUTTING = ['Visibility_Analytics', 'Automation_Orchestration', 'Governance']
 
-    def __init__(self):
-        self.scores = {}
+ def __init__(self):
+ self.scores = {}
 
-    def assess_pillar(self, pillar, capabilities):
-        """
-        Assess a pillar against ZTMM criteria.
-        capabilities: dict of capability_name -> maturity_stage
-        """
-        stage_values = {stage: i for i, stage in enumerate(self.STAGES)}
-        scores = [stage_values.get(stage, 0) for stage in capabilities.values()]
-        avg_score = sum(scores) / len(scores) if scores else 0
+ def assess_pillar(self, pillar, capabilities):
+ """
+ Assess a pillar against ZTMM criteria.
+ capabilities: dict of capability_name -> maturity_stage
+ """
+ stage_values = {stage: i for i, stage in enumerate(self.STAGES)}
+ scores = [stage_values.get(stage, 0) for stage in capabilities.values()]
+ avg_score = sum(scores) / len(scores) if scores else 0
 
-        overall_stage = self.STAGES[int(avg_score)]
-        self.scores[pillar] = {
-            'capabilities': capabilities,
-            'average_score': avg_score,
-            'overall_stage': overall_stage
-        }
-        return self.scores[pillar]
+ overall_stage = self.STAGES[int(avg_score)]
+ self.scores[pillar] = {
+ 'capabilities': capabilities,
+ 'average_score': avg_score,
+ 'overall_stage': overall_stage
+ }
+ return self.scores[pillar]
 
-    def generate_roadmap(self):
-        """Generate prioritized improvement roadmap."""
-        roadmap = []
-        for pillar, data in self.scores.items():
-            for capability, stage in data['capabilities'].items():
-                stage_idx = self.STAGES.index(stage)
-                if stage_idx < 3:  # Not yet Optimal
-                    next_stage = self.STAGES[stage_idx + 1]
-                    roadmap.append({
-                        'pillar': pillar,
-                        'capability': capability,
-                        'current': stage,
-                        'target': next_stage,
-                        'priority': 3 - stage_idx  # Higher priority for lower maturity
-                    })
-        return sorted(roadmap, key=lambda x: x['priority'], reverse=True)
+ def generate_roadmap(self):
+ """Generate prioritized improvement roadmap."""
+ roadmap = []
+ for pillar, data in self.scores.items():
+ for capability, stage in data['capabilities'].items():
+ stage_idx = self.STAGES.index(stage)
+ if stage_idx < 3: # Not yet Optimal
+ next_stage = self.STAGES[stage_idx + 1]
+ roadmap.append({
+ 'pillar': pillar,
+ 'capability': capability,
+ 'current': stage,
+ 'target': next_stage,
+ 'priority': 3 - stage_idx # Higher priority for lower maturity
+ })
+ return sorted(roadmap, key=lambda x: x['priority'], reverse=True)
 ```
 
 ### Phase 2: Identity Foundation

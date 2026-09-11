@@ -13,11 +13,11 @@ The registry provides reusable blocks and components installable via `hyperframe
 ## Quick reference
 
 ```bash
-hyperframes add data-chart              # install a block
-hyperframes add grain-overlay           # install a component
-hyperframes add shimmer-sweep --dir .   # target a specific project
-hyperframes add data-chart --json       # machine-readable output
-hyperframes add data-chart --no-clipboard  # skip clipboard (CI/headless)
+hyperframes add data-chart # install a block
+hyperframes add grain-overlay # install a component
+hyperframes add shimmer-sweep --dir . # target a specific project
+hyperframes add data-chart --json # machine-readable output
+hyperframes add data-chart --no-clipboard # skip clipboard (CI/headless)
 ```
 
 After install, the CLI prints which files were written and a snippet to paste into your host composition. The snippet is a starting point — you'll need to add `data-composition-id` (must match the block's internal composition ID), `data-start`, and `data-track-index` attributes when wiring blocks.
@@ -33,12 +33,12 @@ These paths are configurable in `hyperframes.json`:
 
 ```json
 {
-  "registry": "https://raw.githubusercontent.com/heygen-com/hyperframes/main/registry",
-  "paths": {
-    "blocks": "compositions",
-    "components": "compositions/components",
-    "assets": "assets"
-  }
+ "registry": "https://raw.githubusercontent.com/heygen-com/hyperframes/main/registry",
+ "paths": {
+ "blocks": "compositions",
+ "components": "compositions/components",
+ "assets": "assets"
+ }
 }
 ```
 
@@ -50,13 +50,13 @@ Blocks are standalone compositions — include them via `data-composition-src` i
 
 ```html
 <div
-  data-composition-id="data-chart"
-  data-composition-src="compositions/data-chart.html"
-  data-start="2"
-  data-duration="15"
-  data-track-index="1"
-  data-width="1920"
-  data-height="1080"
+ data-composition-id="data-chart"
+ data-composition-src="compositions/data-chart.html"
+ data-start="2"
+ data-duration="15"
+ data-track-index="1"
+ data-width="1920"
+ data-height="1080"
 ></div>
 ```
 

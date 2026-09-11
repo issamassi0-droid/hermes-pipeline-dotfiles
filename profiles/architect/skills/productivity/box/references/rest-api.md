@@ -18,9 +18,9 @@ When asked to create a Box Note, create the native note with the Box Notes API; 
 
 ```bash
 box request /notes/convert -X POST \
-  --header "box-version: 2026.0" \
-  --body '{"content":"# Hello world\n\nhello world","content_format":"markdown","parent":{"id":"0"},"name":"hello-world"}' \
-  --json
+ --header "box-version: 2026.0" \
+ --body '{"content":"# Hello world\n\nhello world","content_format":"markdown","parent":{"id":"0"},"name":"hello-world"}' \
+ --json
 box files:get <RETURNED_FILE_ID> --json --fields id,name,type,parent
 ```
 

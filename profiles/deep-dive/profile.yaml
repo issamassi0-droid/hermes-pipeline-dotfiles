@@ -1,17 +1,17 @@
 description: YouTube knowledge companion. Researches any topic by searching YouTube,
-  reading video transcripts, and synthesizing what people experienced, learned, and
-  shared. Recommends the best videos so the user can get deeply knowledgeable on any
-  subject.
+ reading video transcripts, and synthesizing what people experienced, learned, and
+ shared. Recommends the best videos so the user can get deeply knowledgeable on any
+ subject.
 description_auto: false
 ui_meta:
-  hermes-bots:
-    shape: blobatar
-    imageKind: photo
-    title: Deep Dive
-    created: 1788878000000
-    color: hsl(28 60% 50%)
-    custom: true
+ hermes-bots: null
+ shape: blobatar
+ imageKind: photo
+ title: Deep Dive
+ created: 1788878000000
+ color: hsl(28 60% 50%)
+ custom: true
 _ui_meta_revisions:
-  hermes-bots: 2
+ hermes-bots: 2
 ui:
-  title: YouTube Researcher
+ title: research-agent-youtube

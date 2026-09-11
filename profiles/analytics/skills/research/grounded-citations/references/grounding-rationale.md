@@ -44,10 +44,10 @@ to read:
 - Marker directly after the terminal punctuation, no space: `water.[1]`
 - Each id in its own brackets: `[1][2]`, not `[1, 2]`
 - At most 3 ids per sentence — beyond that the citation stops identifying which
-  source carries the claim
+ source carries the claim
 - Never cite a source not actually consulted
 - Query classes that shouldn't be cited (translation, creative writing, casual
-  chat) are exempted by instruction, not by a separate classifier
+ chat) are exempted by instruction, not by a separate classifier
 
 Perplexity forbids raw URLs in the answer because its UI renders source cards.
 Hermes has no such UI layer in chat or in a written file, so this skill renders

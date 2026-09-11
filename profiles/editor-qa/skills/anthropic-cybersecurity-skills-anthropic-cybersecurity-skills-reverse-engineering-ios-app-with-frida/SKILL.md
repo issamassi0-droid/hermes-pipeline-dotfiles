@@ -1,14 +1,14 @@
 ---
 name: reverse-engineering-ios-app-with-frida
 description: 'Reverse engineers iOS applications using Frida dynamic instrumentation
-  to understand internal logic, extract encryption keys, bypass security controls,
-  and discover hidden functionality without source code access. Use when performing
-  authorized iOS penetration testing, analyzing proprietary protocols, understanding
-  obfuscated logic, or extracting runtime secrets from iOS binaries. Activates for
-  requests involving iOS reverse engineering, Frida iOS hooking, Objective-C/Swift
-  method tracing, or iOS binary analysis.
+ to understand internal logic, extract encryption keys, bypass security controls,
+ and discover hidden functionality without source code access. Use when performing
+ authorized iOS penetration testing, analyzing proprietary protocols, understanding
+ obfuscated logic, or extracting runtime secrets from iOS binaries. Activates for
+ requests involving iOS reverse engineering, Frida iOS hooking, Objective-C/Swift
+ method tracing, or iOS binary analysis.
 
-  '
+ '
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -70,31 +70,31 @@ dump.py com.target.app
 
 # Extract Objective-C class headers
 class-dump -H decrypted_binary -o headers/
-ls headers/  # Lists all class header files
+ls headers/ # Lists all class header files
 ```
 
 ### Step 2: Enumerate Classes and Methods at Runtime
 
 ```javascript
 // enumerate_classes.js - List all loaded classes
-Java.perform(function() {});  // N/A for iOS
+Java.perform(function() {}); // N/A for iOS
 
 // iOS uses ObjC runtime
 if (ObjC.available) {
-    var classes = ObjC.classes;
-    for (var className in classes) {
-        if (className.indexOf("Target") !== -1 ||
-            className.indexOf("Auth") !== -1 ||
-            className.indexOf("Crypto") !== -1) {
-            console.log("[Class] " + className);
+ var classes = ObjC.classes;
+ for (var className in classes) {
+ if (className.indexOf("Target") !== -1 ||
+ className.indexOf("Auth") !== -1 ||
+ className.indexOf("Crypto") !== -1) {
+ console.log("[Class] " + className);
 
-            // List methods
-            var methods = classes[className].$ownMethods;
-            for (var i = 0; i < methods.length; i++) {
-                console.log("  [Method] " + methods[i]);
-            }
-        }
-    }
+ // List methods
+ var methods = classes[className].$ownMethods;
+ for (var i = 0; i < methods.length; i++) {
+ console.log(" [Method] " + methods[i]);
+ }
+ }
+ }
 }
 ```
 
@@ -122,49 +122,49 @@ frida-trace -U -n TargetApp -m "*[*$s*Auth*]"
 ```javascript
 // hook_auth.js - Intercept authentication logic
 if (ObjC.available) {
-    // Hook Objective-C method
-    var AuthManager = ObjC.classes.AuthManager;
-    if (AuthManager) {
-        Interceptor.attach(AuthManager["- validateToken:"].implementation, {
-            onEnter: function(args) {
-                // args[0] = self, args[1] = selector, args[2+] = method args
-                var token = new ObjC.Object(args[2]);
-                console.log("[Auth] validateToken called with: " + token.toString());
-            },
-            onLeave: function(retval) {
-                console.log("[Auth] validateToken returned: " + retval);
-                // Optionally modify return value
-                // retval.replace(ptr(1));  // Force return true
-            }
-        });
-    }
+ // Hook Objective-C method
+ var AuthManager = ObjC.classes.AuthManager;
+ if (AuthManager) {
+ Interceptor.attach(AuthManager["- validateToken:"].implementation, {
+ onEnter: function(args) {
+ // args[0] = self, args[1] = selector, args[2+] = method args
+ var token = new ObjC.Object(args[2]);
+ console.log("[Auth] validateToken called with: " + token.toString());
+ },
+ onLeave: function(retval) {
+ console.log("[Auth] validateToken returned: " + retval);
+ // Optionally modify return value
+ // retval.replace(ptr(1)); // Force return true
+ }
+ });
+ }
 
-    // Hook CommonCrypto for encryption analysis
-    var CCCrypt = Module.findExportByName("libcommonCrypto.dylib", "CCCrypt");
-    if (CCCrypt) {
-        Interceptor.attach(CCCrypt, {
-            onEnter: function(args) {
-                this.operation = args[0].toInt32();  // 0=encrypt, 1=decrypt
-                this.algorithm = args[1].toInt32();  // 0=AES128, 1=DES, 2=3DES
-                this.keyLength = args[4].toInt32();
-                this.key = Memory.readByteArray(args[3], this.keyLength);
-                console.log("[CCCrypt] Op:" + (this.operation === 0 ? "Encrypt" : "Decrypt"));
-                console.log("[CCCrypt] Key: " + hexify(this.key));
-            },
-            onLeave: function(retval) {
-                console.log("[CCCrypt] Status: " + retval);
-            }
-        });
-    }
+ // Hook CommonCrypto for encryption analysis
+ var CCCrypt = Module.findExportByName("libcommonCrypto.dylib", "CCCrypt");
+ if (CCCrypt) {
+ Interceptor.attach(CCCrypt, {
+ onEnter: function(args) {
+ this.operation = args[0].toInt32(); // 0=encrypt, 1=decrypt
+ this.algorithm = args[1].toInt32(); // 0=AES128, 1=DES, 2=3DES
+ this.keyLength = args[4].toInt32();
+ this.key = Memory.readByteArray(args[3], this.keyLength);
+ console.log("[CCCrypt] Op:" + (this.operation === 0 ? "Encrypt" : "Decrypt"));
+ console.log("[CCCrypt] Key: " + hexify(this.key));
+ },
+ onLeave: function(retval) {
+ console.log("[CCCrypt] Status: " + retval);
+ }
+ });
+ }
 }
 
 function hexify(buffer) {
-    var bytes = new Uint8Array(buffer);
-    var hex = [];
-    for (var i = 0; i < bytes.length; i++) {
-        hex.push(("0" + bytes[i].toString(16)).slice(-2));
-    }
-    return hex.join("");
+ var bytes = new Uint8Array(buffer);
+ var hex = [];
+ for (var i = 0; i < bytes.length; i++) {
+ hex.push(("0" + bytes[i].toString(16)).slice(-2));
+ }
+ return hex.join("");
 }
 ```
 
@@ -176,28 +176,28 @@ function hexify(buffer) {
 // Use frida-trace to discover actual mangled names first
 
 if (ObjC.available) {
-    // Swift classes that inherit from NSObject are accessible via ObjC runtime
-    var swiftClasses = Object.keys(ObjC.classes).filter(function(name) {
-        return name.indexOf("_TtC") === 0 || name.indexOf("TargetApp.") !== -1;
-    });
+ // Swift classes that inherit from NSObject are accessible via ObjC runtime
+ var swiftClasses = Object.keys(ObjC.classes).filter(function(name) {
+ return name.indexOf("_TtC") === 0 || name.indexOf("TargetApp.") !== -1;
+ });
 
-    swiftClasses.forEach(function(className) {
-        console.log("[Swift] " + className);
-        var methods = ObjC.classes[className].$ownMethods;
-        methods.forEach(function(method) {
-            console.log("  " + method);
-        });
-    });
+ swiftClasses.forEach(function(className) {
+ console.log("[Swift] " + className);
+ var methods = ObjC.classes[className].$ownMethods;
+ methods.forEach(function(method) {
+ console.log(" " + method);
+ });
+ });
 }
 
 // For pure Swift (non-ObjC-bridged), use Module.enumerateExports
 Module.enumerateExports("TargetApp", {
-    onMatch: function(exp) {
-        if (exp.name.indexOf("Auth") !== -1 || exp.name.indexOf("Crypto") !== -1) {
-            console.log("[Export] " + exp.name + " @ " + exp.address);
-        }
-    },
-    onComplete: function() {}
+ onMatch: function(exp) {
+ if (exp.name.indexOf("Auth") !== -1 || exp.name.indexOf("Crypto") !== -1) {
+ console.log("[Export] " + exp.name + " @ " + exp.address);
+ }
+ },
+ onComplete: function() {}
 });
 ```
 
@@ -206,30 +206,30 @@ Module.enumerateExports("TargetApp", {
 ```javascript
 // extract_secrets.js
 if (ObjC.available) {
-    // Hook NSUserDefaults
-    var NSUserDefaults = ObjC.classes.NSUserDefaults;
-    Interceptor.attach(NSUserDefaults["- objectForKey:"].implementation, {
-        onEnter: function(args) {
-            this.key = new ObjC.Object(args[2]).toString();
-        },
-        onLeave: function(retval) {
-            if (retval.isNull()) return;
-            var value = new ObjC.Object(retval);
-            console.log("[NSUserDefaults] " + this.key + " = " + value.toString());
-        }
-    });
+ // Hook NSUserDefaults
+ var NSUserDefaults = ObjC.classes.NSUserDefaults;
+ Interceptor.attach(NSUserDefaults["- objectForKey:"].implementation, {
+ onEnter: function(args) {
+ this.key = new ObjC.Object(args[2]).toString();
+ },
+ onLeave: function(retval) {
+ if (retval.isNull()) return;
+ var value = new ObjC.Object(retval);
+ console.log("[NSUserDefaults] " + this.key + " = " + value.toString());
+ }
+ });
 
-    // Hook Keychain access
-    var SecItemCopyMatching = Module.findExportByName("Security", "SecItemCopyMatching");
-    Interceptor.attach(SecItemCopyMatching, {
-        onEnter: function(args) {
-            var query = new ObjC.Object(args[0]);
-            console.log("[Keychain] Query: " + query.toString());
-        },
-        onLeave: function(retval) {
-            console.log("[Keychain] Result: " + retval);
-        }
-    });
+ // Hook Keychain access
+ var SecItemCopyMatching = Module.findExportByName("Security", "SecItemCopyMatching");
+ Interceptor.attach(SecItemCopyMatching, {
+ onEnter: function(args) {
+ var query = new ObjC.Object(args[0]);
+ console.log("[Keychain] Query: " + query.toString());
+ },
+ onLeave: function(retval) {
+ console.log("[Keychain] Result: " + retval);
+ }
+ });
 }
 ```
 

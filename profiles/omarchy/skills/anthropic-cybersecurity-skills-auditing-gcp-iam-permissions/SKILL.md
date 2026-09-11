@@ -1,10 +1,10 @@
 ---
 name: auditing-gcp-iam-permissions
 description: 'Auditing Google Cloud Platform IAM permissions to identify overly permissive
-  bindings, primitive role usage, service account key proliferation, and cross-project
-  access risks using gcloud CLI, Policy Analyzer, and IAM Recommender.
+ bindings, primitive role usage, service account key proliferation, and cross-project
+ access risks using gcloud CLI, Policy Analyzer, and IAM Recommender.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -59,34 +59,34 @@ List all IAM bindings at organization, folder, and project levels to understand 
 ```bash
 # Organization-level IAM bindings
 gcloud organizations get-iam-policy ORG_ID \
-  --format=json > org-iam-policy.json
+ --format=json > org-iam-policy.json
 
 # Search all IAM policies across the organization
 gcloud asset search-all-iam-policies \
-  --scope=organizations/ORG_ID \
-  --format="table(resource, policy.bindings.role, policy.bindings.members)" \
-  --limit=500
+ --scope=organizations/ORG_ID \
+ --format="table(resource, policy.bindings.role, policy.bindings.members)" \
+ --limit=500
 
 # Find all users and service accounts with Owner role
 gcloud asset search-all-iam-policies \
-  --scope=organizations/ORG_ID \
-  --query="policy:roles/owner" \
-  --format="table(resource, policy.bindings.members)"
+ --scope=organizations/ORG_ID \
+ --query="policy:roles/owner" \
+ --format="table(resource, policy.bindings.members)"
 
 # Find all bindings using primitive roles (Owner, Editor, Viewer)
 gcloud asset search-all-iam-policies \
-  --scope=organizations/ORG_ID \
-  --query="policy:roles/owner OR policy:roles/editor" \
-  --format=json | python3 -c "
+ --scope=organizations/ORG_ID \
+ --query="policy:roles/owner OR policy:roles/editor" \
+ --format=json | python3 -c "
 import json, sys
 data = json.load(sys.stdin)
 for result in data:
-    resource = result.get('resource', '')
-    for binding in result.get('policy', {}).get('bindings', []):
-        role = binding.get('role', '')
-        if role in ['roles/owner', 'roles/editor']:
-            for member in binding.get('members', []):
-                print(f'{resource} | {role} | {member}')
+ resource = result.get('resource', '')
+ for binding in result.get('policy', {}).get('bindings', []):
+ role = binding.get('role', '')
+ if role in ['roles/owner', 'roles/editor']:
+ for member in binding.get('members', []):
+ print(f'{resource} | {role} | {member}')
 "
 ```
 
@@ -97,31 +97,31 @@ Identify service accounts with excessive permissions, user-managed keys, and unu
 ```bash
 # List all service accounts in a project
 gcloud iam service-accounts list \
-  --project=PROJECT_ID \
-  --format="table(email, displayName, disabled)"
+ --project=PROJECT_ID \
+ --format="table(email, displayName, disabled)"
 
 # Check for user-managed keys (should be minimized)
 for sa in $(gcloud iam service-accounts list --project=PROJECT_ID --format="value(email)"); do
-  keys=$(gcloud iam service-accounts keys list \
-    --iam-account="$sa" \
-    --managed-by=user \
-    --format="table(name.basename(),validAfterTime,validBeforeTime)")
-  if [ -n "$keys" ]; then
-    echo "=== $sa ==="
-    echo "$keys"
-  fi
+ keys=$(gcloud iam service-accounts keys list \
+ --iam-account="$sa" \
+ --managed-by=user \
+ --format="table(name.basename(),validAfterTime,validBeforeTime)")
+ if [ -n "$keys" ]; then
+ echo "=== $sa ==="
+ echo "$keys"
+ fi
 done
 
 # Find service accounts with admin roles across all projects
 gcloud asset search-all-iam-policies \
-  --scope=organizations/ORG_ID \
-  --query="policy.bindings.members:serviceAccount AND (policy:roles/owner OR policy:roles/editor OR policy:admin)" \
-  --format="table(resource, policy.bindings.role, policy.bindings.members)"
+ --scope=organizations/ORG_ID \
+ --query="policy.bindings.members:serviceAccount AND (policy:roles/owner OR policy:roles/editor OR policy:admin)" \
+ --format="table(resource, policy.bindings.role, policy.bindings.members)"
 
 # Check service account IAM policies (who can impersonate)
 for sa in $(gcloud iam service-accounts list --project=PROJECT_ID --format="value(email)"); do
-  echo "=== $sa ==="
-  gcloud iam service-accounts get-iam-policy "$sa" --format=json 2>/dev/null
+ echo "=== $sa ==="
+ gcloud iam service-accounts get-iam-policy "$sa" --format=json 2>/dev/null
 done
 ```
 
@@ -132,31 +132,31 @@ Leverage GCP's IAM Recommender to find roles that grant more access than actuall
 ```bash
 # List IAM role recommendations for a project
 gcloud recommender recommendations list \
-  --project=PROJECT_ID \
-  --recommender=google.iam.policy.Recommender \
-  --location=global \
-  --format="table(name, description, priority, stateInfo.state)"
+ --project=PROJECT_ID \
+ --recommender=google.iam.policy.Recommender \
+ --location=global \
+ --format="table(name, description, priority, stateInfo.state)"
 
 # Get detailed recommendation
 gcloud recommender recommendations describe RECOMMENDATION_ID \
-  --project=PROJECT_ID \
-  --recommender=google.iam.policy.Recommender \
-  --location=global \
-  --format=json
+ --project=PROJECT_ID \
+ --recommender=google.iam.policy.Recommender \
+ --location=global \
+ --format=json
 
 # List insights about IAM usage
 gcloud recommender insights list \
-  --project=PROJECT_ID \
-  --insight-type=google.iam.policy.Insight \
-  --location=global \
-  --format="table(name, description, severity, category)"
+ --project=PROJECT_ID \
+ --insight-type=google.iam.policy.Insight \
+ --location=global \
+ --format="table(name, description, severity, category)"
 
 # Apply a recommendation (after review)
 gcloud recommender recommendations mark-claimed RECOMMENDATION_ID \
-  --project=PROJECT_ID \
-  --recommender=google.iam.policy.Recommender \
-  --location=global \
-  --etag=ETAG
+ --project=PROJECT_ID \
+ --recommender=google.iam.policy.Recommender \
+ --location=global \
+ --etag=ETAG
 ```
 
 ### Step 4: Analyze Effective Permissions with Policy Analyzer
@@ -166,28 +166,28 @@ Use Policy Analyzer to determine effective access for specific principals or res
 ```bash
 # Check who has access to a specific resource
 gcloud asset analyze-iam-policy \
-  --organization=ORG_ID \
-  --full-resource-name="//storage.googleapis.com/projects/_/buckets/sensitive-data-bucket" \
-  --format="table(identityList.identities, accessControlLists.accesses.role)"
+ --organization=ORG_ID \
+ --full-resource-name="//storage.googleapis.com/projects/_/buckets/sensitive-data-bucket" \
+ --format="table(identityList.identities, accessControlLists.accesses.role)"
 
 # Check what resources a specific user can access
 gcloud asset analyze-iam-policy \
-  --organization=ORG_ID \
-  --identity="user:developer@company.com" \
-  --format="table(accessControlLists.resources.fullResourceName, accessControlLists.accesses.role)"
+ --organization=ORG_ID \
+ --identity="user:developer@company.com" \
+ --format="table(accessControlLists.resources.fullResourceName, accessControlLists.accesses.role)"
 
 # Check who can perform a specific action
 gcloud asset analyze-iam-policy \
-  --organization=ORG_ID \
-  --full-resource-name="//cloudresourcemanager.googleapis.com/projects/PROJECT_ID" \
-  --permissions="iam.serviceAccounts.actAs,iam.serviceAccountKeys.create" \
-  --format="table(identityList.identities, accessControlLists.accesses.permission)"
+ --organization=ORG_ID \
+ --full-resource-name="//cloudresourcemanager.googleapis.com/projects/PROJECT_ID" \
+ --permissions="iam.serviceAccounts.actAs,iam.serviceAccountKeys.create" \
+ --format="table(identityList.identities, accessControlLists.accesses.permission)"
 
 # Find all principals with allUsers or allAuthenticatedUsers access
 gcloud asset search-all-iam-policies \
-  --scope=organizations/ORG_ID \
-  --query="policy:allUsers OR policy:allAuthenticatedUsers" \
-  --format="table(resource, policy.bindings.role, policy.bindings.members)"
+ --scope=organizations/ORG_ID \
+ --query="policy:allUsers OR policy:allAuthenticatedUsers" \
+ --format="table(resource, policy.bindings.role, policy.bindings.members)"
 ```
 
 ### Step 5: Check for Domain-Wide Delegation and Impersonation Risks
@@ -201,24 +201,24 @@ gcloud iam service-accounts list --project=PROJECT_ID --format=json | python3 -c
 import json, sys
 accounts = json.load(sys.stdin)
 for sa in accounts:
-    email = sa.get('email', '')
-    # Check if the SA has domain-wide delegation enabled
-    # This requires Admin SDK API access
-    print(f'SA: {email} - Check admin.google.com for delegation status')
+ email = sa.get('email', '')
+ # Check if the SA has domain-wide delegation enabled
+ # This requires Admin SDK API access
+ print(f'SA: {email} - Check admin.google.com for delegation status')
 "
 
 # Find service accounts that other identities can impersonate
 for sa in $(gcloud iam service-accounts list --project=PROJECT_ID --format="value(email)"); do
-  policy=$(gcloud iam service-accounts get-iam-policy "$sa" --format=json 2>/dev/null)
-  if echo "$policy" | python3 -c "
+ policy=$(gcloud iam service-accounts get-iam-policy "$sa" --format=json 2>/dev/null)
+ if echo "$policy" | python3 -c "
 import json, sys
 p = json.load(sys.stdin)
 for b in p.get('bindings', []):
-    if b['role'] in ['roles/iam.serviceAccountTokenCreator', 'roles/iam.serviceAccountUser']:
-        print(f'  {b[\"role\"]}: {b[\"members\"]}')
+ if b['role'] in ['roles/iam.serviceAccountTokenCreator', 'roles/iam.serviceAccountUser']:
+ print(f' {b[\"role\"]}: {b[\"members\"]}')
 " 2>/dev/null; then
-    echo "=== Impersonation risk: $sa ==="
-  fi
+ echo "=== Impersonation risk: $sa ==="
+ fi
 done
 ```
 
@@ -229,20 +229,20 @@ Compile findings and implement recommended permission reductions.
 ```bash
 # Remove primitive role and replace with predefined role
 gcloud projects remove-iam-policy-binding PROJECT_ID \
-  --member="user:developer@company.com" \
-  --role="roles/editor"
+ --member="user:developer@company.com" \
+ --role="roles/editor"
 
 gcloud projects add-iam-policy-binding PROJECT_ID \
-  --member="user:developer@company.com" \
-  --role="roles/compute.viewer"
+ --member="user:developer@company.com" \
+ --role="roles/compute.viewer"
 
 gcloud projects add-iam-policy-binding PROJECT_ID \
-  --member="user:developer@company.com" \
-  --role="roles/storage.objectViewer"
+ --member="user:developer@company.com" \
+ --role="roles/storage.objectViewer"
 
 # Delete unused service account keys
 gcloud iam service-accounts keys delete KEY_ID \
-  --iam-account=SA_EMAIL
+ --iam-account=SA_EMAIL
 
 # Disable unused service accounts
 gcloud iam service-accounts disable SA_EMAIL --project=PROJECT_ID
@@ -294,33 +294,33 @@ Projects Audited: 25
 Audit Date: 2026-02-23
 
 IAM BINDING SUMMARY:
-  Total bindings:                    342
-  Using primitive roles:             205 (60%)
-  Using predefined roles:            112 (33%)
-  Using custom roles:                 25 (7%)
+ Total bindings: 342
+ Using primitive roles: 205 (60%)
+ Using predefined roles: 112 (33%)
+ Using custom roles: 25 (7%)
 
 CRITICAL FINDINGS:
 [IAM-001] Service Account with Owner Role
-  SA: admin-sa@prod-project.iam.gserviceaccount.com
-  Role: roles/owner on project prod-project
-  User-Managed Keys: 3 (oldest: 14 months)
-  Remediation: Replace with specific predefined roles, delete old keys
+ SA: admin-sa@prod-project.iam.gserviceaccount.com
+ Role: roles/owner on project prod-project
+ User-Managed Keys: 3 (oldest: 14 months)
+ Remediation: Replace with specific predefined roles, delete old keys
 
 [IAM-002] allAuthenticatedUsers Binding
-  Resource: gs://public-data-bucket
-  Role: roles/storage.objectViewer
-  Risk: Any Google account holder can read bucket contents
-  Remediation: Restrict to specific user groups or service accounts
+ Resource: gs://public-data-bucket
+ Role: roles/storage.objectViewer
+ Risk: Any Google account holder can read bucket contents
+ Remediation: Restrict to specific user groups or service accounts
 
 SERVICE ACCOUNT HEALTH:
-  Total service accounts:            67
-  With user-managed keys:            23
-  Keys older than 90 days:           18
-  Unused accounts (90+ days):        12
-  With domain-wide delegation:        2
+ Total service accounts: 67
+ With user-managed keys: 23
+ Keys older than 90 days: 18
+ Unused accounts (90+ days): 12
+ With domain-wide delegation: 2
 
 RECOMMENDER SUGGESTIONS:
-  Total recommendations:             45
-  Priority HIGH:                     12
-  Estimated permissions reduced:     2,847 individual permissions
+ Total recommendations: 45
+ Priority HIGH: 12
+ Estimated permissions reduced: 2,847 individual permissions
 ```

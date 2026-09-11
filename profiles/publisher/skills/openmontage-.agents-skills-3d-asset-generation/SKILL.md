@@ -30,7 +30,7 @@ estimated unit cost, and number of requested outputs. Generate one sample before
 a batch. As of 2026-08-13:
 
 - Atlas Tripo H3.1: $0.22 untextured; $0.33 standard textures; $0.44 HD
-  textures; detailed geometry adds $0.22; quad mesh adds $0.055.
+ textures; detailed geometry adds $0.22; quad mesh adds $0.055.
 - fal Hunyuan 3D v3.1 Rapid: $0.225 per generation; PBR adds $0.15.
 - fal SAM 3D Objects: $0.02 per reconstruction.
 

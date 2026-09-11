@@ -4,10 +4,10 @@
 
 ```javascript
 function setup() {
-  createCanvas(1920, 1080, WEBGL);
-  // Origin is CENTER, not top-left
-  // Y-axis points UP (opposite of 2D mode)
-  // Z-axis points toward viewer
+ createCanvas(1920, 1080, WEBGL);
+ // Origin is CENTER, not top-left
+ // Y-axis points UP (opposite of 2D mode)
+ // Z-axis points toward viewer
 }
 ```
 
@@ -15,33 +15,33 @@ function setup() {
 
 ```javascript
 function draw() {
-  translate(-width/2, -height/2);  // shift origin to top-left
-  // Now coordinates work like P2D
+ translate(-width/2, -height/2); // shift origin to top-left
+ // Now coordinates work like P2D
 }
 ```
 
 ## 3D Primitives
 
 ```javascript
-box(w, h, d);             // rectangular prism
+box(w, h, d); // rectangular prism
 sphere(radius, detailX, detailY);
 cylinder(radius, height, detailX, detailY);
 cone(radius, height, detailX, detailY);
 torus(radius, tubeRadius, detailX, detailY);
-plane(width, height);     // flat rectangle
-ellipsoid(rx, ry, rz);    // stretched sphere
+plane(width, height); // flat rectangle
+ellipsoid(rx, ry, rz); // stretched sphere
 ```
 
 ### 3D Transforms
 
 ```javascript
 push();
-  translate(x, y, z);
-  rotateX(angleX);
-  rotateY(angleY);
-  rotateZ(angleZ);
-  scale(s);
-  box(100);
+ translate(x, y, z);
+ rotateX(angleX);
+ rotateY(angleY);
+ rotateZ(angleZ);
+ scale(s);
+ box(100);
 pop();
 ```
 
@@ -51,9 +51,9 @@ pop();
 
 ```javascript
 camera(
-  eyeX, eyeY, eyeZ,       // camera position
-  centerX, centerY, centerZ, // look-at target
-  upX, upY, upZ             // up direction
+ eyeX, eyeY, eyeZ, // camera position
+ centerX, centerY, centerZ, // look-at target
+ upX, upY, upZ // up direction
 );
 
 // Default: camera(0, 0, (height/2)/tan(PI/6), 0, 0, 0, 0, 1, 0)
@@ -63,8 +63,8 @@ camera(
 
 ```javascript
 function draw() {
-  orbitControl();  // mouse drag to rotate, scroll to zoom
-  box(200);
+ orbitControl(); // mouse drag to rotate, scroll to zoom
+ box(200);
 }
 ```
 
@@ -74,20 +74,20 @@ function draw() {
 let cam;
 
 function setup() {
-  createCanvas(800, 800, WEBGL);
-  cam = createCamera();
-  cam.setPosition(300, -200, 500);
-  cam.lookAt(0, 0, 0);
+ createCanvas(800, 800, WEBGL);
+ cam = createCamera();
+ cam.setPosition(300, -200, 500);
+ cam.lookAt(0, 0, 0);
 }
 
 // Camera methods
 cam.setPosition(x, y, z);
 cam.lookAt(x, y, z);
-cam.move(dx, dy, dz);      // relative to camera orientation
-cam.pan(angle);              // horizontal rotation
-cam.tilt(angle);             // vertical rotation
-cam.roll(angle);             // z-axis rotation
-cam.slerp(otherCam, t);     // smooth interpolation between cameras
+cam.move(dx, dy, dz); // relative to camera orientation
+cam.pan(angle); // horizontal rotation
+cam.tilt(angle); // vertical rotation
+cam.roll(angle); // z-axis rotation
+cam.slerp(otherCam, t); // smooth interpolation between cameras
 ```
 
 ### Perspective and Orthographic
@@ -107,19 +107,19 @@ ortho(-width/2, width/2, -height/2, height/2, 0, 2000);
 
 ```javascript
 // Ambient (uniform, no direction)
-ambientLight(50, 50, 50);     // dim fill light
+ambientLight(50, 50, 50); // dim fill light
 
 // Directional (parallel rays, like sun)
-directionalLight(255, 255, 255, 0, -1, 0);  // color + direction
+directionalLight(255, 255, 255, 0, -1, 0); // color + direction
 
 // Point (radiates from position)
-pointLight(255, 200, 150, 200, -300, 400);   // color + position
+pointLight(255, 200, 150, 200, -300, 400); // color + position
 
 // Spot (cone from position toward target)
-spotLight(255, 255, 255,       // color
-          0, -300, 300,         // position
-          0, 1, -1,             // direction
-          PI / 4, 5);           // angle, concentration
+spotLight(255, 255, 255, // color
+ 0, -300, 300, // position
+ 0, 1, -1, // direction
+ PI / 4, 5); // angle, concentration
 
 // Image-based lighting
 imageLight(myHDRI);
@@ -135,16 +135,16 @@ lights();
 
 ```javascript
 function setupLighting() {
-  ambientLight(30, 30, 40);                    // dim blue fill
+ ambientLight(30, 30, 40); // dim blue fill
 
-  // Key light (main, warm)
-  directionalLight(255, 240, 220, -1, -1, -1);
+ // Key light (main, warm)
+ directionalLight(255, 240, 220, -1, -1, -1);
 
-  // Fill light (softer, cooler, opposite side)
-  directionalLight(80, 100, 140, 1, -0.5, -1);
+ // Fill light (softer, cooler, opposite side)
+ directionalLight(80, 100, 140, 1, -0.5, -1);
 
-  // Rim light (behind subject, for edge definition)
-  pointLight(200, 200, 255, 0, -200, -400);
+ // Rim light (behind subject, for edge definition)
+ pointLight(200, 200, 255, 0, -200, -400);
 }
 ```
 
@@ -162,8 +162,8 @@ emissiveMaterial(255, 0, 100);
 
 // Specular (shiny reflections)
 specularMaterial(255);
-shininess(50);                // 1-200 (higher = tighter highlight)
-metalness(100);               // 0-200 (metallic reflection)
+shininess(50); // 1-200 (higher = tighter highlight)
+metalness(100); // 0-200 (metallic reflection)
 
 // Fill works too (no lighting response)
 fill(255, 0, 0);
@@ -176,11 +176,11 @@ let img;
 function preload() { img = loadImage('texture.jpg'); }
 
 function draw() {
-  texture(img);
-  textureMode(NORMAL);  // UV coords 0-1
-  // textureMode(IMAGE); // UV coords in pixels
-  textureWrap(REPEAT);  // or CLAMP, MIRROR
-  box(200);
+ texture(img);
+ textureMode(NORMAL); // UV coords 0-1
+ // textureMode(IMAGE); // UV coords in pixels
+ textureWrap(REPEAT); // or CLAMP, MIRROR
+ box(200);
 }
 ```
 
@@ -192,19 +192,19 @@ function draw() {
 let myShape;
 
 function setup() {
-  createCanvas(800, 800, WEBGL);
-  myShape = buildGeometry(() => {
-    for (let i = 0; i < 50; i++) {
-      push();
-      translate(random(-200, 200), random(-200, 200), random(-200, 200));
-      sphere(10);
-      pop();
-    }
-  });
+ createCanvas(800, 800, WEBGL);
+ myShape = buildGeometry(() => {
+ for (let i = 0; i < 50; i++) {
+ push();
+ translate(random(-200, 200), random(-200, 200), random(-200, 200));
+ sphere(10);
+ pop();
+ }
+ });
 }
 
 function draw() {
-  model(myShape);  // renders once-built geometry efficiently
+ model(myShape); // renders once-built geometry efficiently
 }
 ```
 
@@ -212,32 +212,32 @@ function draw() {
 
 ```javascript
 beginGeometry();
-  // draw shapes here
-  box(50);
-  translate(100, 0, 0);
-  sphere(30);
+ // draw shapes here
+ box(50);
+ translate(100, 0, 0);
+ sphere(30);
 let geo = endGeometry();
 
-model(geo);  // reuse
+model(geo); // reuse
 ```
 
 ### Manual Geometry (p5.Geometry)
 
 ```javascript
 let geo = new p5.Geometry(detailX, detailY, function() {
-  for (let i = 0; i <= detailX; i++) {
-    for (let j = 0; j <= detailY; j++) {
-      let u = i / detailX;
-      let v = j / detailY;
-      let x = cos(u * TWO_PI) * (100 + 30 * cos(v * TWO_PI));
-      let y = sin(u * TWO_PI) * (100 + 30 * cos(v * TWO_PI));
-      let z = 30 * sin(v * TWO_PI);
-      this.vertices.push(createVector(x, y, z));
-      this.uvs.push(u, v);
-    }
-  }
-  this.computeFaces();
-  this.computeNormals();
+ for (let i = 0; i <= detailX; i++) {
+ for (let j = 0; j <= detailY; j++) {
+ let u = i / detailX;
+ let v = j / detailY;
+ let x = cos(u * TWO_PI) * (100 + 30 * cos(v * TWO_PI));
+ let y = sin(u * TWO_PI) * (100 + 30 * cos(v * TWO_PI));
+ let z = 30 * sin(v * TWO_PI);
+ this.vertices.push(createVector(x, y, z));
+ this.uvs.push(u, v);
+ }
+ }
+ this.computeFaces();
+ this.computeNormals();
 });
 ```
 
@@ -249,44 +249,44 @@ let geo = new p5.Geometry(detailX, detailY, function() {
 let myShader;
 
 function setup() {
-  createCanvas(800, 800, WEBGL);
+ createCanvas(800, 800, WEBGL);
 
-  let vert = `
-    precision mediump float;
-    attribute vec3 aPosition;
-    attribute vec2 aTexCoord;
-    varying vec2 vTexCoord;
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-    void main() {
-      vTexCoord = aTexCoord;
-      vec4 pos = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
-      gl_Position = pos;
-    }
-  `;
+ let vert = `
+ precision mediump float;
+ attribute vec3 aPosition;
+ attribute vec2 aTexCoord;
+ varying vec2 vTexCoord;
+ uniform mat4 uModelViewMatrix;
+ uniform mat4 uProjectionMatrix;
+ void main() {
+ vTexCoord = aTexCoord;
+ vec4 pos = uProjectionMatrix * uModelViewMatrix * vec4(aPosition, 1.0);
+ gl_Position = pos;
+ }
+ `;
 
-  let frag = `
-    precision mediump float;
-    varying vec2 vTexCoord;
-    uniform float uTime;
-    uniform vec2 uResolution;
+ let frag = `
+ precision mediump float;
+ varying vec2 vTexCoord;
+ uniform float uTime;
+ uniform vec2 uResolution;
 
-    void main() {
-      vec2 uv = vTexCoord;
-      vec3 col = 0.5 + 0.5 * cos(uTime + uv.xyx + vec3(0, 2, 4));
-      gl_FragColor = vec4(col, 1.0);
-    }
-  `;
+ void main() {
+ vec2 uv = vTexCoord;
+ vec3 col = 0.5 + 0.5 * cos(uTime + uv.xyx + vec3(0, 2, 4));
+ gl_FragColor = vec4(col, 1.0);
+ }
+ `;
 
-  myShader = createShader(vert, frag);
+ myShader = createShader(vert, frag);
 }
 
 function draw() {
-  shader(myShader);
-  myShader.setUniform('uTime', millis() / 1000.0);
-  myShader.setUniform('uResolution', [width, height]);
-  rect(0, 0, width, height);
-  resetShader();
+ shader(myShader);
+ myShader.setUniform('uTime', millis() / 1000.0);
+ myShader.setUniform('uResolution', [width, height]);
+ rect(0, 0, width, height);
+ resetShader();
 }
 ```
 
@@ -298,34 +298,34 @@ Simpler — only needs a fragment shader. Automatically gets the canvas as a tex
 let blurShader;
 
 function setup() {
-  createCanvas(800, 800, WEBGL);
+ createCanvas(800, 800, WEBGL);
 
-  blurShader = createFilterShader(`
-    precision mediump float;
-    varying vec2 vTexCoord;
-    uniform sampler2D tex0;
-    uniform vec2 texelSize;
+ blurShader = createFilterShader(`
+ precision mediump float;
+ varying vec2 vTexCoord;
+ uniform sampler2D tex0;
+ uniform vec2 texelSize;
 
-    void main() {
-      vec4 sum = vec4(0.0);
-      for (int x = -2; x <= 2; x++) {
-        for (int y = -2; y <= 2; y++) {
-          sum += texture2D(tex0, vTexCoord + vec2(float(x), float(y)) * texelSize);
-        }
-      }
-      gl_FragColor = sum / 25.0;
-    }
-  `);
+ void main() {
+ vec4 sum = vec4(0.0);
+ for (int x = -2; x <= 2; x++) {
+ for (int y = -2; y <= 2; y++) {
+ sum += texture2D(tex0, vTexCoord + vec2(float(x), float(y)) * texelSize);
+ }
+ }
+ gl_FragColor = sum / 25.0;
+ }
+ `);
 }
 
 function draw() {
-  // Draw scene normally
-  background(0);
-  fill(255, 0, 0);
-  sphere(100);
+ // Draw scene normally
+ background(0);
+ fill(255, 0, 0);
+ sphere(100);
 
-  // Apply post-processing filter
-  filter(blurShader);
+ // Apply post-processing filter
+ filter(blurShader);
 }
 ```
 
@@ -335,8 +335,8 @@ function draw() {
 myShader.setUniform('uTime', millis() / 1000.0);
 myShader.setUniform('uResolution', [width, height]);
 myShader.setUniform('uMouse', [mouseX / width, mouseY / height]);
-myShader.setUniform('uTexture', myGraphics);  // pass p5.Graphics as texture
-myShader.setUniform('uValue', 0.5);           // float
+myShader.setUniform('uTexture', myGraphics); // pass p5.Graphics as texture
+myShader.setUniform('uValue', 0.5); // float
 myShader.setUniform('uColor', [1.0, 0.0, 0.5, 1.0]); // vec4
 ```
 
@@ -370,21 +370,21 @@ gl_FragColor = col - scanline;
 let fbo;
 
 function setup() {
-  createCanvas(800, 800, WEBGL);
-  fbo = createFramebuffer();
+ createCanvas(800, 800, WEBGL);
+ fbo = createFramebuffer();
 }
 
 function draw() {
-  // Render to framebuffer
-  fbo.begin();
-  clear();
-  rotateY(frameCount * 0.01);
-  box(200);
-  fbo.end();
+ // Render to framebuffer
+ fbo.begin();
+ clear();
+ rotateY(frameCount * 0.01);
+ box(200);
+ fbo.end();
 
-  // Use framebuffer as texture
-  texture(fbo.color);
-  plane(width, height);
+ // Use framebuffer as texture
+ texture(fbo.color);
+ plane(width, height);
 }
 ```
 
@@ -394,30 +394,30 @@ function draw() {
 let sceneBuffer, blurBuffer;
 
 function setup() {
-  createCanvas(800, 800, WEBGL);
-  sceneBuffer = createFramebuffer();
-  blurBuffer = createFramebuffer();
+ createCanvas(800, 800, WEBGL);
+ sceneBuffer = createFramebuffer();
+ blurBuffer = createFramebuffer();
 }
 
 function draw() {
-  // Pass 1: render scene
-  sceneBuffer.begin();
-  clear();
-  lights();
-  rotateY(frameCount * 0.01);
-  box(200);
-  sceneBuffer.end();
+ // Pass 1: render scene
+ sceneBuffer.begin();
+ clear();
+ lights();
+ rotateY(frameCount * 0.01);
+ box(200);
+ sceneBuffer.end();
 
-  // Pass 2: blur
-  blurBuffer.begin();
-  shader(blurShader);
-  blurShader.setUniform('uTexture', sceneBuffer.color);
-  rect(0, 0, width, height);
-  resetShader();
-  blurBuffer.end();
+ // Pass 2: blur
+ blurBuffer.begin();
+ shader(blurShader);
+ blurShader.setUniform('uTexture', sceneBuffer.color);
+ rect(0, 0, width, height);
+ resetShader();
+ blurBuffer.end();
 
-  // Final: composite
-  texture(blurBuffer.color);
-  plane(width, height);
+ // Final: composite
+ texture(blurBuffer.color);
+ plane(width, height);
 }
 ```

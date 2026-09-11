@@ -267,18 +267,18 @@ Auto-detects CPU count, RAM, platform, ffmpeg. Adapts worker count, resolution, 
 ## File structure
 
 ```
-├── SKILL.md                 # Modes, workflow, creative direction
-├── README.md                # This file
+├── SKILL.md # Modes, workflow, creative direction
+├── README.md # This file
 └── references/
-    ├── architecture.md      # Grid system, fonts, palettes, color, _render_vf()
-    ├── effects.md           # Value fields, hue fields, backgrounds, particles
-    ├── shaders.md           # 38 shaders, ShaderChain, tint presets, transitions
-    ├── composition.md       # Blend modes, multi-grid, tonemap, FeedbackBuffer
-    ├── scenes.md            # Scene protocol, SCENES table, render_clip(), examples
-    ├── design-patterns.md   # Layer hierarchy, directional arcs, scene concepts
-    ├── inputs.md            # Audio analysis, video sampling, text, TTS
-    ├── optimization.md      # Hardware detection, vectorized patterns, parallelism
-    └── troubleshooting.md   # Broadcasting traps, blend pitfalls, diagnostics
+ ├── architecture.md # Grid system, fonts, palettes, color, _render_vf()
+ ├── effects.md # Value fields, hue fields, backgrounds, particles
+ ├── shaders.md # 38 shaders, ShaderChain, tint presets, transitions
+ ├── composition.md # Blend modes, multi-grid, tonemap, FeedbackBuffer
+ ├── scenes.md # Scene protocol, SCENES table, render_clip(), examples
+ ├── design-patterns.md # Layer hierarchy, directional arcs, scene concepts
+ ├── inputs.md # Audio analysis, video sampling, text, TTS
+ ├── optimization.md # Hardware detection, vectorized patterns, parallelism
+ └── troubleshooting.md # Broadcasting traps, blend pitfalls, diagnostics
 ```
 
 ## Projects built with this

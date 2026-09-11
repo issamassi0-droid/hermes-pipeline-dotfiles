@@ -1,10 +1,10 @@
 ---
 name: detecting-lateral-movement-in-network
 description: 'Identifies lateral movement techniques in enterprise networks by analyzing
-  authentication logs, network flows, SMB traffic, and RDP sessions using Zeek, Velociraptor,
-  and SIEM correlation rules to detect attackers moving between systems.
+ authentication logs, network flows, SMB traffic, and RDP sessions using Zeek, Velociraptor,
+ and SIEM correlation rules to detect attackers moving between systems.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -61,16 +61,16 @@ mitre_attack:
 ```bash
 # Windows Event Logs to collect (via WEF or agent):
 # Security Log:
-#   4624 - Successful logon (Type 3=Network, Type 10=RemoteInteractive)
-#   4625 - Failed logon
-#   4648 - Logon using explicit credentials (RunAs, PsExec)
-#   4672 - Special privileges assigned (admin logon)
-#   4768 - Kerberos TGT request
-#   4769 - Kerberos service ticket request
-#   4776 - NTLM authentication (credential validation)
+# 4624 - Successful logon (Type 3=Network, Type 10=RemoteInteractive)
+# 4625 - Failed logon
+# 4648 - Logon using explicit credentials (RunAs, PsExec)
+# 4672 - Special privileges assigned (admin logon)
+# 4768 - Kerberos TGT request
+# 4769 - Kerberos service ticket request
+# 4776 - NTLM authentication (credential validation)
 # System Log:
-#   7045 - New service installed (PsExec indicator)
-#   7036 - Service started/stopped
+# 7045 - New service installed (PsExec indicator)
+# 7036 - Service started/stopped
 
 # Configure Windows Event Forwarding (WEF) subscription
 # On the collector server (PowerShell):
@@ -79,25 +79,25 @@ mitre_attack:
 # Filebeat configuration for Windows Event Log shipping
 cat > /etc/filebeat/modules.d/security.yml << 'EOF'
 - module: system
-  auth:
-    enabled: true
-    var.paths: ["/var/log/auth.log"]
-  syslog:
-    enabled: true
+ auth:
+ enabled: true
+ var.paths: ["/var/log/auth.log"]
+ syslog:
+ enabled: true
 
 - module: zeek
-  connection:
-    enabled: true
-    var.paths: ["/opt/zeek/logs/current/conn.log"]
-  dns:
-    enabled: true
-    var.paths: ["/opt/zeek/logs/current/dns.log"]
-  smb_mapping:
-    enabled: true
-    var.paths: ["/opt/zeek/logs/current/smb_mapping.log"]
-  dce_rpc:
-    enabled: true
-    var.paths: ["/opt/zeek/logs/current/dce_rpc.log"]
+ connection:
+ enabled: true
+ var.paths: ["/opt/zeek/logs/current/conn.log"]
+ dns:
+ enabled: true
+ var.paths: ["/opt/zeek/logs/current/dns.log"]
+ smb_mapping:
+ enabled: true
+ var.paths: ["/opt/zeek/logs/current/smb_mapping.log"]
+ dce_rpc:
+ enabled: true
+ var.paths: ["/opt/zeek/logs/current/dce_rpc.log"]
 EOF
 
 # Zeek configuration for lateral movement detection
@@ -136,9 +136,9 @@ sudo zeekctl deploy
 
 # Elastic SIEM detection rules (KQL)
 # event.code: "4624" and winlog.event_data.LogonType: "3"
-#   and winlog.event_data.AuthenticationPackageName: "NTLM"
-#   and not winlog.event_data.TargetUserName: *$
-#   and source.ip: (10.0.0.0/8 or 172.16.0.0/12 or 192.168.0.0/16)
+# and winlog.event_data.AuthenticationPackageName: "NTLM"
+# and not winlog.event_data.TargetUserName: *$
+# and source.ip: (10.0.0.0/8 or 172.16.0.0/12 or 192.168.0.0/16)
 ```
 
 ```bash
@@ -152,25 +152,25 @@ id: f8d98d6c-7a07-4d74-b064-dd4a3c244528
 status: experimental
 description: Detects network logon with NTLM authentication to multiple hosts
 logsource:
-    product: windows
-    service: security
+ product: windows
+ service: security
 detection:
-    selection:
-        EventID: 4624
-        LogonType: 3
-        AuthenticationPackageName: NTLM
-    filter:
-        TargetUserName|endswith: '$'
-    condition: selection and not filter
-    timeframe: 15m
-    count:
-        field: ComputerName
-        min: 3
-        group-by: TargetUserName
+ selection:
+ EventID: 4624
+ LogonType: 3
+ AuthenticationPackageName: NTLM
+ filter:
+ TargetUserName|endswith: '$'
+ condition: selection and not filter
+ timeframe: 15m
+ count:
+ field: ComputerName
+ min: 3
+ group-by: TargetUserName
 level: high
 tags:
-    - attack.lateral_movement
-    - attack.t1550.002
+ - attack.lateral_movement
+ - attack.t1550.002
 EOF
 
 # Convert Sigma rule to Splunk SPL
@@ -185,31 +185,31 @@ sigma convert -t elasticsearch lateral_movement_pth.yml
 ```bash
 # Detect SMB lateral movement (admin$ and c$ share access)
 cat /opt/zeek/logs/current/smb_mapping.log | \
-  zeek-cut ts id.orig_h id.resp_h path | \
-  grep -iE "(admin\$|c\$|ipc\$)" | \
-  sort -t$'\t' -k2 | uniq -c | sort -rn
+ zeek-cut ts id.orig_h id.resp_h path | \
+ grep -iE "(admin\$|c\$|ipc\$)" | \
+ sort -t$'\t' -k2 | uniq -c | sort -rn
 
 # Detect hosts connecting to many internal hosts on port 445 (SMB spreading)
 cat /opt/zeek/logs/current/conn.log | \
-  zeek-cut ts id.orig_h id.resp_h id.resp_p | \
-  awk '$4 == 445' | \
-  awk '{print $2}' | sort | uniq -c | sort -rn | head -10
+ zeek-cut ts id.orig_h id.resp_h id.resp_p | \
+ awk '$4 == 445' | \
+ awk '{print $2}' | sort | uniq -c | sort -rn | head -10
 
 # Detect WMI lateral movement (DCE-RPC to IWbemServices)
 cat /opt/zeek/logs/current/dce_rpc.log | \
-  zeek-cut ts id.orig_h id.resp_h operation | \
-  grep -i "wbem\|wmi" | sort | uniq -c | sort -rn
+ zeek-cut ts id.orig_h id.resp_h operation | \
+ grep -i "wbem\|wmi" | sort | uniq -c | sort -rn
 
 # Detect RDP connections between internal hosts
 cat /opt/zeek/logs/current/conn.log | \
-  zeek-cut ts id.orig_h id.resp_h id.resp_p duration | \
-  awk '$4 == 3389 && $5 > 60' | \
-  sort -t$'\t' -k2 | head -20
+ zeek-cut ts id.orig_h id.resp_h id.resp_p duration | \
+ awk '$4 == 3389 && $5 > 60' | \
+ sort -t$'\t' -k2 | head -20
 
 # Detect Kerberos ticket-granting anomalies
 cat /opt/zeek/logs/current/kerberos.log | \
-  zeek-cut ts id.orig_h id.resp_h client service success error_msg | \
-  grep -v "true" | head -20
+ zeek-cut ts id.orig_h id.resp_h client service success error_msg | \
+ grep -v "true" | head -20
 
 # Custom Zeek script for lateral movement detection
 sudo tee /opt/zeek/share/zeek/site/custom-detections/lateral-movement.zeek << 'ZEEKEOF'
@@ -219,49 +219,49 @@ sudo tee /opt/zeek/share/zeek/site/custom-detections/lateral-movement.zeek << 'Z
 module LateralMovement;
 
 export {
-    redef enum Notice::Type += {
-        SMB_Lateral_Spread,
-        RDP_Lateral_Chain
-    };
-    const smb_host_threshold: count = 5 &redef;
-    const smb_time_window: interval = 15min &redef;
+ redef enum Notice::Type += {
+ SMB_Lateral_Spread,
+ RDP_Lateral_Chain
+ };
+ const smb_host_threshold: count = 5 &redef;
+ const smb_time_window: interval = 15min &redef;
 }
 
 event zeek_init()
 {
-    local r1 = SumStats::Reducer(
-        $stream="lateral.smb",
-        $apply=set(SumStats::UNIQUE)
-    );
+ local r1 = SumStats::Reducer(
+ $stream="lateral.smb",
+ $apply=set(SumStats::UNIQUE)
+ );
 
-    SumStats::create([
-        $name="detect-smb-lateral",
-        $epoch=smb_time_window,
-        $reducers=set(r1),
-        $threshold_val(key: SumStats::Key, result: SumStats::Result) = {
-            return result["lateral.smb"]$unique + 0.0;
-        },
-        $threshold=smb_host_threshold + 0.0,
-        $threshold_crossed(key: SumStats::Key, result: SumStats::Result) = {
-            NOTICE([
-                $note=SMB_Lateral_Spread,
-                $msg=fmt("Host %s connected to %d SMB hosts in %s",
-                         key$str, result["lateral.smb"]$unique, smb_time_window),
-                $identifier=key$str
-            ]);
-        }
-    ]);
+ SumStats::create([
+ $name="detect-smb-lateral",
+ $epoch=smb_time_window,
+ $reducers=set(r1),
+ $threshold_val(key: SumStats::Key, result: SumStats::Result) = {
+ return result["lateral.smb"]$unique + 0.0;
+ },
+ $threshold=smb_host_threshold + 0.0,
+ $threshold_crossed(key: SumStats::Key, result: SumStats::Result) = {
+ NOTICE([
+ $note=SMB_Lateral_Spread,
+ $msg=fmt("Host %s connected to %d SMB hosts in %s",
+ key$str, result["lateral.smb"]$unique, smb_time_window),
+ $identifier=key$str
+ ]);
+ }
+ ]);
 }
 
 event connection_state_remove(c: connection)
 {
-    if ( c$id$resp_p == 445/tcp && c$id$resp_h in Site::local_nets )
-    {
-        SumStats::observe("lateral.smb",
-            [$str=cat(c$id$orig_h)],
-            [$str=cat(c$id$resp_h)]
-        );
-    }
+ if ( c$id$resp_p == 445/tcp && c$id$resp_h in Site::local_nets )
+ {
+ SumStats::observe("lateral.smb",
+ [$str=cat(c$id$orig_h)],
+ [$str=cat(c$id$resp_h)]
+ );
+ }
 }
 ZEEKEOF
 
@@ -286,32 +286,32 @@ sudo zeekctl deploy
 # Network flow analysis for lateral movement patterns
 # Look for hosts that suddenly start communicating with many internal hosts
 cat /opt/zeek/logs/current/conn.log | \
-  zeek-cut ts id.orig_h id.resp_h | \
-  awk '{
-    key = $2
-    targets[key][$3] = 1
-  }
-  END {
-    for (src in targets) {
-      count = 0
-      for (dst in targets[src]) count++
-      if (count > 20) print src, count
-    }
-  }' | sort -k2 -rn
+ zeek-cut ts id.orig_h id.resp_h | \
+ awk '{
+ key = $2
+ targets[key][$3] = 1
+ }
+ END {
+ for (src in targets) {
+ count = 0
+ for (dst in targets[src]) count++
+ if (count > 20) print src, count
+ }
+ }' | sort -k2 -rn
 
 # Detect credential dumping artifacts (large LSASS reads)
 # Look for connections from hosts that suddenly pivot
 cat /opt/zeek/logs/current/conn.log | \
-  zeek-cut ts id.orig_h id.resp_h id.resp_p orig_bytes | \
-  awk '$4 == 445 && $5 > 10000000' | sort -t$'\t' -k5 -rn
+ zeek-cut ts id.orig_h id.resp_h id.resp_p orig_bytes | \
+ awk '$4 == 445 && $5 > 10000000' | sort -t$'\t' -k5 -rn
 
 # Timeline analysis: map the attack path
 # index=wineventlog (EventCode=4624 OR EventCode=7045)
 # | eval stage=case(
-#     EventCode=4624 AND LogonType=3, "Network Logon",
-#     EventCode=4624 AND LogonType=10, "RDP Logon",
-#     EventCode=7045, "Service Creation"
-#   )
+# EventCode=4624 AND LogonType=3, "Network Logon",
+# EventCode=4624 AND LogonType=10, "RDP Logon",
+# EventCode=7045, "Service Creation"
+# )
 # | timechart span=5m count by stage
 ```
 
@@ -373,9 +373,9 @@ sudo iptables -I FORWARD -s 10.10.5.23 -j DROP
 
 # Export Kibana dashboard
 # curl -X GET "elastic-siem:5601/api/saved_objects/_export" \
-#   -H "kbn-xsrf: true" \
-#   -d '{"type":"dashboard","objects":[{"id":"lateral-movement-dashboard","type":"dashboard"}]}' \
-#   > lateral_movement_dashboard.ndjson
+# -H "kbn-xsrf: true" \
+# -d '{"type":"dashboard","objects":[{"id":"lateral-movement-dashboard","type":"dashboard"}]}' \
+# > lateral_movement_dashboard.ndjson
 ```
 
 ## Key Concepts

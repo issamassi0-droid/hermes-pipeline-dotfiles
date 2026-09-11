@@ -1,10 +1,10 @@
 ---
 name: performing-gcp-penetration-testing-with-gcpbucketbrute
 description: Performs authorized GCP security testing using GCPBucketBrute to enumerate
-  publicly accessible storage buckets, combined with gcloud CLI IAM enumeration to
-  find privilege escalation paths and audit service account permissions. Use when
-  penetration testing a GCP project for exposed buckets, overly permissive IAM bindings,
-  or service account key exposure.
+ publicly accessible storage buckets, combined with gcloud CLI IAM enumeration to
+ find privilege escalation paths and audit service account permissions. Use when
+ penetration testing a GCP project for exposed buckets, overly permissive IAM bindings,
+ or service account key exposure.
 domain: cybersecurity
 subdomain: cloud-security
 tags:

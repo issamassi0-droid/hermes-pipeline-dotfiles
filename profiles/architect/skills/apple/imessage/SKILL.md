@@ -6,10 +6,10 @@ author: Hermes Agent
 license: MIT
 platforms: [macos]
 metadata:
-  hermes:
-    tags: [iMessage, SMS, messaging, macOS, Apple]
+ hermes:
+ tags: [iMessage, SMS, messaging, macOS, Apple]
 prerequisites:
-  commands: [imsg]
+ commands: [imsg]
 ---
 
 # iMessage

@@ -1,8 +1,8 @@
 ---
 name: hunting-for-beaconing-with-frequency-analysis
 description: Identify command-and-control beaconing patterns in network traffic by
-  applying statistical frequency analysis, jitter calculation, and coefficient of
-  variation scoring to detect periodic callbacks from compromised endpoints.
+ applying statistical frequency analysis, jitter calculation, and coefficient of
+ variation scoring to detect periodic callbacks from compromised endpoints.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:
@@ -104,7 +104,7 @@ index=proxy OR index=firewall
 | streamstats current=f last(_time) as prev_time by src_ip dest
 | eval interval=_time-prev_time
 | stats count avg(interval) as avg_interval stdev(interval) as stdev_interval
-  min(interval) as min_interval max(interval) as max_interval by src_ip dest
+ min(interval) as min_interval max(interval) as max_interval by src_ip dest
 | where count > 50
 | eval cv=stdev_interval/avg_interval
 | where cv < 0.20 AND avg_interval > 30 AND avg_interval < 86400
@@ -121,10 +121,10 @@ DeviceNetworkEvents
 | where Count > 50
 | extend Intervals = array_sort_asc(ConnectionTimes)
 | mv-apply Intervals on (
-    extend NextTime = next(Intervals)
-    | where isnotempty(NextTime)
-    | extend IntervalSec = datetime_diff('second', NextTime, Intervals)
-    | summarize AvgInterval=avg(IntervalSec), StdDev=stdev(IntervalSec)
+ extend NextTime = next(Intervals)
+ | where isnotempty(NextTime)
+ | extend IntervalSec = datetime_diff('second', NextTime, Intervals)
+ | summarize AvgInterval=avg(IntervalSec), StdDev=stdev(IntervalSec)
 )
 | extend CV = StdDev / AvgInterval
 | where CV < 0.2 and AvgInterval > 30
@@ -136,16 +136,16 @@ DeviceNetworkEvents
 title: Potential C2 Beaconing Pattern Detected
 status: experimental
 logsource:
-    category: proxy
+ category: proxy
 detection:
-    selection:
-        dst_ip|cidr: '!10.0.0.0/8'
-    timeframe: 24h
-    condition: selection | count(dst) by src_ip > 50
+ selection:
+ dst_ip|cidr: '!10.0.0.0/8'
+ timeframe: 24h
+ condition: selection | count(dst) by src_ip > 50
 level: medium
 tags:
-    - attack.command_and_control
-    - attack.t1071.001
+ - attack.command_and_control
+ - attack.t1071.001
 ```
 
 ## Common Scenarios

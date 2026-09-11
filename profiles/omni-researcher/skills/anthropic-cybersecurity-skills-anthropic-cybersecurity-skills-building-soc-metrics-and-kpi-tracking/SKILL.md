@@ -1,12 +1,12 @@
 ---
 name: building-soc-metrics-and-kpi-tracking
 description: 'Builds SOC performance metrics and KPI tracking dashboards measuring
-  Mean Time to Detect (MTTD), Mean Time to Respond (MTTR), alert quality ratios, analyst
-  productivity, and detection coverage using SIEM data. Use when SOC leadership needs
-  operational visibility, continuous improvement tracking, or executive-level reporting
-  on security operations effectiveness.
+ Mean Time to Detect (MTTD), Mean Time to Respond (MTTR), alert quality ratios, analyst
+ productivity, and detection coverage using SIEM data. Use when SOC leadership needs
+ operational visibility, continuous improvement tracking, or executive-level reporting
+ on security operations effectiveness.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -84,12 +84,12 @@ Establish the key metrics aligned to NIST CSF functions:
 ```spl
 index=notable earliest=-30d status_label="Resolved*"
 | eval mttd_seconds = _time - orig_time
-| where mttd_seconds > 0 AND mttd_seconds < 86400  --- Exclude data quality issues
+| where mttd_seconds > 0 AND mttd_seconds < 86400 --- Exclude data quality issues
 | stats avg(mttd_seconds) AS avg_mttd,
-        median(mttd_seconds) AS med_mttd,
-        perc90(mttd_seconds) AS p90_mttd,
-        perc95(mttd_seconds) AS p95_mttd
-  by urgency
+ median(mttd_seconds) AS med_mttd,
+ perc90(mttd_seconds) AS p90_mttd,
+ perc95(mttd_seconds) AS p95_mttd
+ by urgency
 | eval avg_mttd_min = round(avg_mttd / 60, 1)
 | eval med_mttd_min = round(med_mttd / 60, 1)
 | eval p90_mttd_min = round(p90_mttd / 60, 1)
@@ -100,11 +100,11 @@ index=notable earliest=-30d status_label="Resolved*"
 ```spl
 index=notable earliest=-30d status_label="Resolved*"
 | eval mttr_seconds = status_end - _time
-| where mttr_seconds > 0 AND mttr_seconds < 604800  --- <7 days
+| where mttr_seconds > 0 AND mttr_seconds < 604800 --- <7 days
 | stats avg(mttr_seconds) AS avg_mttr,
-        median(mttr_seconds) AS med_mttr,
-        perc90(mttr_seconds) AS p90_mttr
-  by urgency
+ median(mttr_seconds) AS med_mttr,
+ perc90(mttr_seconds) AS p90_mttr
+ by urgency
 | eval avg_mttr_hours = round(avg_mttr / 3600, 1)
 | eval med_mttr_hours = round(med_mttr / 3600, 1)
 | eval p90_mttr_hours = round(p90_mttr / 3600, 1)
@@ -118,7 +118,7 @@ index=notable earliest=-90d status_label="Resolved*"
 | eval mttr_hours = (status_end - _time) / 3600
 | bin _time span=1w
 | stats avg(mttd_min) AS avg_mttd_min, avg(mttr_hours) AS avg_mttr_hours,
-        count AS incidents by _time
+ count AS incidents by _time
 | table _time, incidents, avg_mttd_min, avg_mttr_hours
 ```
 
@@ -128,10 +128,10 @@ index=notable earliest=-90d status_label="Resolved*"
 ```spl
 index=notable earliest=-30d
 | stats count AS total,
-        sum(eval(if(status_label="Resolved - True Positive", 1, 0))) AS tp,
-        sum(eval(if(status_label="Resolved - False Positive", 1, 0))) AS fp,
-        sum(eval(if(status_label="Resolved - Benign", 1, 0))) AS benign,
-        sum(eval(if(status_label="New" OR status_label="In Progress", 1, 0))) AS pending
+ sum(eval(if(status_label="Resolved - True Positive", 1, 0))) AS tp,
+ sum(eval(if(status_label="Resolved - False Positive", 1, 0))) AS fp,
+ sum(eval(if(status_label="Resolved - Benign", 1, 0))) AS benign,
+ sum(eval(if(status_label="New" OR status_label="In Progress", 1, 0))) AS pending
 | eval tp_rate = round(tp / total * 100, 1)
 | eval fp_rate = round(fp / total * 100, 1)
 | eval signal_noise = round(tp / (fp + 0.01), 2)
@@ -142,9 +142,9 @@ index=notable earliest=-30d
 ```spl
 index=notable earliest=-30d status_label="Resolved*"
 | stats count AS alerts_resolved,
-        avg(eval((status_end - status_transition_time) / 60)) AS avg_triage_min,
-        dc(rule_name) AS unique_rule_types
-  by owner
+ avg(eval((status_end - status_transition_time) / 60)) AS avg_triage_min,
+ dc(rule_name) AS unique_rule_types
+ by owner
 | eval alerts_per_day = round(alerts_resolved / 30, 1)
 | sort - alerts_resolved
 | table owner, alerts_resolved, alerts_per_day, avg_triage_min, unique_rule_types
@@ -155,10 +155,10 @@ index=notable earliest=-30d status_label="Resolved*"
 index=notable earliest=-30d
 | eval hour = strftime(_time, "%H")
 | eval shift = case(
-    hour >= 6 AND hour < 14, "Day (06-14)",
-    hour >= 14 AND hour < 22, "Swing (14-22)",
-    1=1, "Night (22-06)"
-  )
+ hour >= 6 AND hour < 14, "Day (06-14)",
+ hour >= 14 AND hour < 22, "Swing (14-22)",
+ 1=1, "Night (22-06)"
+ )
 | stats count AS alerts, dc(owner) AS analysts by shift
 | eval alerts_per_analyst = round(alerts / analysts / 30, 1)
 | table shift, alerts, analysts, alerts_per_analyst
@@ -171,9 +171,9 @@ index=notable earliest=-30d
 | inputlookup detection_rules_attack_mapping.csv
 | stats dc(technique_id) AS covered_techniques by tactic
 | join tactic type=left [
-    | inputlookup attack_techniques_total.csv
-    | stats dc(technique_id) AS total_techniques by tactic
-  ]
+ | inputlookup attack_techniques_total.csv
+ | stats dc(technique_id) AS total_techniques by tactic
+ ]
 | eval coverage_pct = round(covered_techniques / total_techniques * 100, 1)
 | sort tactic
 | table tactic, covered_techniques, total_techniques, coverage_pct
@@ -183,10 +183,10 @@ index=notable earliest=-30d
 ```spl
 | inputlookup expected_data_sources.csv
 | join data_source type=left [
-    | tstats count where index=* by sourcetype
-    | rename sourcetype AS data_source
-    | eval status = "Active"
-  ]
+ | tstats count where index=* by sourcetype
+ | rename sourcetype AS data_source
+ | eval status = "Active"
+ ]
 | eval source_status = if(isnotnull(status), "Collecting", "MISSING")
 | stats count by source_status
 | table source_status, count
@@ -200,7 +200,7 @@ index=notable earliest=-30d
 index=notable earliest=-30d status_label="Resolved*"
 | stats count by urgency
 | eval order = case(urgency="critical", 1, urgency="high", 2, urgency="medium", 3,
-                    urgency="low", 4, urgency="informational", 5)
+ urgency="low", 4, urgency="informational", 5)
 | sort order
 
 --- Month-over-month comparison
@@ -219,13 +219,13 @@ index=notable earliest=-30d status_label="Resolved - True Positive"
 ```spl
 | makeresults
 | eval metrics = mvappend(
-    "MTTD: 8.3 min (Target: <15 min) | STATUS: GREEN",
-    "MTTR: 3.2 hours (Target: <4 hours) | STATUS: GREEN",
-    "FP Rate: 27% (Target: <30%) | STATUS: GREEN",
-    "Detection Coverage: 64% (Target: >60%) | STATUS: GREEN",
-    "Analyst Utilization: 78% (Target: 60-80%) | STATUS: GREEN",
-    "Incident Backlog: 12 (Target: <20) | STATUS: GREEN"
-  )
+ "MTTD: 8.3 min (Target: <15 min) | STATUS: GREEN",
+ "MTTR: 3.2 hours (Target: <4 hours) | STATUS: GREEN",
+ "FP Rate: 27% (Target: <30%) | STATUS: GREEN",
+ "Detection Coverage: 64% (Target: >60%) | STATUS: GREEN",
+ "Analyst Utilization: 78% (Target: 60-80%) | STATUS: GREEN",
+ "Incident Backlog: 12 (Target: <20) | STATUS: GREEN"
+ )
 | mvexpand metrics
 | table metrics
 ```
@@ -238,10 +238,10 @@ Track improvement initiatives and their impact:
 --- Improvement initiative tracking
 | inputlookup soc_improvement_initiatives.csv
 | eval status_color = case(
-    status="Completed", "green",
-    status="In Progress", "yellow",
-    status="Planned", "gray"
-  )
+ status="Completed", "green",
+ status="In Progress", "yellow",
+ status="Planned", "gray"
+ )
 | table initiative, start_date, target_date, status, metric_impact, baseline, current
 ```
 
@@ -288,26 +288,26 @@ SOC PERFORMANCE REPORT — March 2024
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 KEY METRICS:
-  Metric              Current    Target     Trend    Status
-  MTTD                8.3 min    <15 min    -12%     GREEN
-  MTTR                3.2 hrs    <4 hrs     -18%     GREEN
-  FP Rate             27%        <30%       -5%      GREEN
-  TP Rate             41%        >40%       +3%      GREEN
-  ATT&CK Coverage     64%        >60%       +3%      GREEN
-  Alerts/Analyst/Day  24         <50        -84%     GREEN
+ Metric Current Target Trend Status
+ MTTD 8.3 min <15 min -12% GREEN
+ MTTR 3.2 hrs <4 hrs -18% GREEN
+ FP Rate 27% <30% -5% GREEN
+ TP Rate 41% >40% +3% GREEN
+ ATT&CK Coverage 64% >60% +3% GREEN
+ Alerts/Analyst/Day 24 <50 -84% GREEN
 
 INCIDENT SUMMARY:
-  Total Incidents:     147 (Critical: 3, High: 23, Medium: 78, Low: 43)
-  Avg Resolution:      3.2 hours (Critical: 1.8h, High: 2.9h, Medium: 4.1h)
-  SLA Compliance:      94% (Target: >90%)
+ Total Incidents: 147 (Critical: 3, High: 23, Medium: 78, Low: 43)
+ Avg Resolution: 3.2 hours (Critical: 1.8h, High: 2.9h, Medium: 4.1h)
+ SLA Compliance: 94% (Target: >90%)
 
 IMPROVEMENT HIGHLIGHTS:
-  [1] RBA deployment reduced daily alerts from 1,847 to 287 (-84%)
-  [2] New Sigma rules added 12 ATT&CK techniques to coverage
-  [3] SOAR phishing playbook reduced phishing MTTR by 60%
+ [1] RBA deployment reduced daily alerts from 1,847 to 287 (-84%)
+ [2] New Sigma rules added 12 ATT&CK techniques to coverage
+ [3] SOAR phishing playbook reduced phishing MTTR by 60%
 
 AREAS FOR IMPROVEMENT:
-  [1] Lateral movement detection coverage at 58% (below 60% target)
-  [2] Night shift MTTD 23% slower than day shift
-  [3] 4 critical vulnerability scan tickets overdue on SLA
+ [1] Lateral movement detection coverage at 58% (below 60% target)
+ [2] Night shift MTTD 23% slower than day shift
+ [3] 4 critical vulnerability scan tickets overdue on SLA
 ```

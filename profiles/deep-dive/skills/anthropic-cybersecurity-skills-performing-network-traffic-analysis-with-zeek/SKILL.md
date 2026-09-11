@@ -96,7 +96,7 @@ sudo apt-get install -y zeek
 
 # Or install from Zeek repository
 echo 'deb http://download.opensuse.org/repositories/security:/zeek/xUbuntu_22.04/ /' | \
-    sudo tee /etc/apt/sources.list.d/zeek.list
+ sudo tee /etc/apt/sources.list.d/zeek.list
 sudo apt-get update && sudo apt-get install -y zeek-lts
 
 # Verify installation
@@ -133,9 +133,9 @@ Configure network definitions in `/opt/zeek/etc/networks.cfg`:
 
 ```
 # Internal network ranges
-10.0.0.0/8         Private RFC1918
-172.16.0.0/12      Private RFC1918
-192.168.0.0/16     Private RFC1918
+10.0.0.0/8 Private RFC1918
+172.16.0.0/12 Private RFC1918
+192.168.0.0/16 Private RFC1918
 ```
 
 ### Step 2: Configure Logging and Output
@@ -196,41 +196,41 @@ Create detection scripts for common threats:
 module DNSTunnel;
 
 export {
-    redef enum Notice::Type += {
-        DNS_Tunnel_Suspected
-    };
+ redef enum Notice::Type += {
+ DNS_Tunnel_Suspected
+ };
 
-    # Threshold for suspicious DNS query length
-    const query_len_threshold = 50 &redef;
+ # Threshold for suspicious DNS query length
+ const query_len_threshold = 50 &redef;
 
-    # Track query counts per host per domain
-    global dns_query_counts: table[addr, string] of count &default=0 &create_expire=5min;
+ # Track query counts per host per domain
+ global dns_query_counts: table[addr, string] of count &default=0 &create_expire=5min;
 
-    # High query volume threshold
-    const query_volume_threshold = 100 &redef;
+ # High query volume threshold
+ const query_volume_threshold = 100 &redef;
 }
 
 event dns_request(c: connection, msg: dns_msg, query: string, qtype: count, qclass: count)
 {
-    if ( |query| > query_len_threshold )
-    {
-        local parts = split_string(query, /\./);
-        if ( |parts| > 3 )
-        {
-            local base_domain = cat(parts[|parts|-2], ".", parts[|parts|-1]);
-            dns_query_counts[c$id$orig_h, base_domain] += 1;
+ if ( |query| > query_len_threshold )
+ {
+ local parts = split_string(query, /\./);
+ if ( |parts| > 3 )
+ {
+ local base_domain = cat(parts[|parts|-2], ".", parts[|parts|-1]);
+ dns_query_counts[c$id$orig_h, base_domain] += 1;
 
-            if ( dns_query_counts[c$id$orig_h, base_domain] > query_volume_threshold )
-            {
-                NOTICE([$note=DNS_Tunnel_Suspected,
-                        $msg=fmt("Possible DNS tunneling: %s queries to %s with long query names",
-                                 c$id$orig_h, base_domain),
-                        $conn=c,
-                        $identifier=cat(c$id$orig_h, base_domain),
-                        $suppress_for=30min]);
-            }
-        }
-    }
+ if ( dns_query_counts[c$id$orig_h, base_domain] > query_volume_threshold )
+ {
+ NOTICE([$note=DNS_Tunnel_Suspected,
+ $msg=fmt("Possible DNS tunneling: %s queries to %s with long query names",
+ c$id$orig_h, base_domain),
+ $conn=c,
+ $identifier=cat(c$id$orig_h, base_domain),
+ $suppress_for=30min]);
+ }
+ }
+ }
 }
 ```
 
@@ -242,66 +242,66 @@ event dns_request(c: connection, msg: dns_msg, query: string, qtype: count, qcla
 module Beaconing;
 
 export {
-    redef enum Notice::Type += {
-        C2_Beacon_Detected
-    };
+ redef enum Notice::Type += {
+ C2_Beacon_Detected
+ };
 
-    # Track connection intervals
-    global conn_intervals: table[addr, addr, port] of vector of time &create_expire=1hr;
+ # Track connection intervals
+ global conn_intervals: table[addr, addr, port] of vector of time &create_expire=1hr;
 
-    const min_connections = 20 &redef;
-    const jitter_threshold = 0.15 &redef;
+ const min_connections = 20 &redef;
+ const jitter_threshold = 0.15 &redef;
 }
 
 event connection_state_remove(c: connection)
 {
-    if ( c$id$resp_p == 80/tcp || c$id$resp_p == 443/tcp )
-    {
-        local key = [c$id$orig_h, c$id$resp_h, c$id$resp_p];
+ if ( c$id$resp_p == 80/tcp || c$id$resp_p == 443/tcp )
+ {
+ local key = [c$id$orig_h, c$id$resp_h, c$id$resp_p];
 
-        if ( key !in conn_intervals )
-            conn_intervals[key] = vector();
+ if ( key !in conn_intervals )
+ conn_intervals[key] = vector();
 
-        conn_intervals[key] += network_time();
+ conn_intervals[key] += network_time();
 
-        if ( |conn_intervals[key]| >= min_connections )
-        {
-            local intervals: vector of interval = vector();
-            local i = 1;
-            while ( i < |conn_intervals[key]| )
-            {
-                intervals += conn_intervals[key][i] - conn_intervals[key][i-1];
-                i += 1;
-            }
+ if ( |conn_intervals[key]| >= min_connections )
+ {
+ local intervals: vector of interval = vector();
+ local i = 1;
+ while ( i < |conn_intervals[key]| )
+ {
+ intervals += conn_intervals[key][i] - conn_intervals[key][i-1];
+ i += 1;
+ }
 
-            # Calculate mean and standard deviation
-            local sum_val = 0.0;
-            for ( idx in intervals )
-                sum_val += interval_to_double(intervals[idx]);
+ # Calculate mean and standard deviation
+ local sum_val = 0.0;
+ for ( idx in intervals )
+ sum_val += interval_to_double(intervals[idx]);
 
-            local mean_val = sum_val / |intervals|;
+ local mean_val = sum_val / |intervals|;
 
-            local variance = 0.0;
-            for ( idx in intervals )
-            {
-                local diff = interval_to_double(intervals[idx]) - mean_val;
-                variance += diff * diff;
-            }
-            variance = variance / |intervals|;
-            local stddev = sqrt(variance);
+ local variance = 0.0;
+ for ( idx in intervals )
+ {
+ local diff = interval_to_double(intervals[idx]) - mean_val;
+ variance += diff * diff;
+ }
+ variance = variance / |intervals|;
+ local stddev = sqrt(variance);
 
-            if ( mean_val > 0 && (stddev / mean_val) < jitter_threshold )
-            {
-                NOTICE([$note=C2_Beacon_Detected,
-                        $msg=fmt("Possible C2 beaconing: %s -> %s:%s (interval=%.1fs, jitter=%.2f)",
-                                 c$id$orig_h, c$id$resp_h, c$id$resp_p,
-                                 mean_val, stddev/mean_val),
-                        $conn=c,
-                        $identifier=cat(c$id$orig_h, c$id$resp_h),
-                        $suppress_for=1hr]);
-            }
-        }
-    }
+ if ( mean_val > 0 && (stddev / mean_val) < jitter_threshold )
+ {
+ NOTICE([$note=C2_Beacon_Detected,
+ $msg=fmt("Possible C2 beaconing: %s -> %s:%s (interval=%.1fs, jitter=%.2f)",
+ c$id$orig_h, c$id$resp_h, c$id$resp_p,
+ mean_val, stddev/mean_val),
+ $conn=c,
+ $identifier=cat(c$id$orig_h, c$id$resp_h),
+ $suppress_for=1hr]);
+ }
+ }
+ }
 }
 ```
 
@@ -315,9 +315,9 @@ Load threat intelligence feeds into Zeek:
 @load frameworks/intel/do_notice
 
 redef Intel::read_files += {
-    "/opt/zeek/intel/malicious-ips.intel",
-    "/opt/zeek/intel/malicious-domains.intel",
-    "/opt/zeek/intel/malicious-hashes.intel",
+ "/opt/zeek/intel/malicious-ips.intel",
+ "/opt/zeek/intel/malicious-domains.intel",
+ "/opt/zeek/intel/malicious-hashes.intel",
 };
 ```
 
@@ -357,19 +357,19 @@ sudo /opt/zeek/bin/zeekctl cron
 
 ```yaml
 filebeat.inputs:
-  - type: log
-    enabled: true
-    paths:
-      - /opt/zeek/logs/current/*.log
-    json.keys_under_root: true
-    json.add_error_key: true
-    fields:
-      source: zeek
-    fields_under_root: true
+ - type: log
+ enabled: true
+ paths:
+ - /opt/zeek/logs/current/*.log
+ json.keys_under_root: true
+ json.add_error_key: true
+ fields:
+ source: zeek
+ fields_under_root: true
 
 output.elasticsearch:
-  hosts: ["https://elasticsearch:9200"]
-  index: "zeek-%{+yyyy.MM.dd}"
+ hosts: ["https://elasticsearch:9200"]
+ index: "zeek-%{+yyyy.MM.dd}"
 
 setup.template.name: "zeek"
 setup.template.pattern: "zeek-*"

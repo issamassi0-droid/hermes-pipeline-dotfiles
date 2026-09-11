@@ -20,16 +20,16 @@ The user declares available models in `model-registry.json`. Each model entry:
 
 ```json
 {
-  "id": "claude-sonnet-4",
-  "provider": "anthropic",
-  "model_id": "claude-sonnet-4-20250514",
-  "params": "1T",
-  "context_window": 200000,
-  "cost_per_1m_tokens": {"input": 3.0, "output": 15.0},
-  "tier": "capable",
-  "best_for": ["strategy", "drafting", "verification"],
-  "speed": "medium",
-  "enabled": true
+ "id": "claude-sonnet-4",
+ "provider": "anthropic",
+ "model_id": "claude-sonnet-4-20250514",
+ "params": "1T",
+ "context_window": 200000,
+ "cost_per_1m_tokens": {"input": 3.0, "output": 15.0},
+ "tier": "capable",
+ "best_for": ["strategy", "drafting", "verification"],
+ "speed": "medium",
+ "enabled": true
 }
 ```
 
@@ -94,16 +94,16 @@ Every model call is logged with:
 
 ```json
 {
-  "timestamp": "2026-09-11T10:30:00Z",
-  "model_id": "claude-sonnet-4",
-  "mission_id": "20260911_abcd12",
-  "agent": "editor-qa",
-  "stage": "verify",
-  "input_tokens": 4500,
-  "output_tokens": 1200,
-  "cost_usd": 0.0195,
-  "cached": false,
-  "fallback_used": false
+ "timestamp": "2026-09-11T10:30:00Z",
+ "model_id": "claude-sonnet-4",
+ "mission_id": "20260911_abcd12",
+ "agent": "editor-qa",
+ "stage": "verify",
+ "input_tokens": 4500,
+ "output_tokens": 1200,
+ "cost_usd": 0.0195,
+ "cached": false,
+ "fallback_used": false
 }
 ```
 
@@ -123,10 +123,10 @@ Stored in `model-preferences.json`:
 
 ```json
 {
-  "task_type": "research",
-  "preferred_model": "ling-3.0-flash-fin-free",
-  "switch_count": 3,
-  "acceptance_rate": 0.85
+ "task_type": "research",
+ "preferred_model": "ling-3.0-flash-fin-free",
+ "switch_count": 3,
+ "acceptance_rate": 0.85
 }
 ```
 

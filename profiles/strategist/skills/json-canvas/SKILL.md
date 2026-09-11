@@ -11,8 +11,8 @@ A canvas file (`.canvas`) contains two top-level arrays following the [JSON Canv
 
 ```json
 {
-  "nodes": [],
-  "edges": []
+ "nodes": [],
+ "edges": []
 }
 ```
 
@@ -80,13 +80,13 @@ Nodes are objects placed on the canvas. Array order determines z-index: first no
 
 ```json
 {
-  "id": "6f0ad84f44ce9c17",
-  "type": "text",
-  "x": 0,
-  "y": 0,
-  "width": 400,
-  "height": 200,
-  "text": "# Hello World\n\nThis is **Markdown** content."
+ "id": "6f0ad84f44ce9c17",
+ "type": "text",
+ "x": 0,
+ "y": 0,
+ "width": 400,
+ "height": 200,
+ "text": "# Hello World\n\nThis is **Markdown** content."
 }
 ```
 
@@ -101,13 +101,13 @@ Nodes are objects placed on the canvas. Array order determines z-index: first no
 
 ```json
 {
-  "id": "a1b2c3d4e5f67890",
-  "type": "file",
-  "x": 500,
-  "y": 0,
-  "width": 400,
-  "height": 300,
-  "file": "Attachments/diagram.png"
+ "id": "a1b2c3d4e5f67890",
+ "type": "file",
+ "x": 500,
+ "y": 0,
+ "width": 400,
+ "height": 300,
+ "file": "Attachments/diagram.png"
 }
 ```
 
@@ -119,13 +119,13 @@ Nodes are objects placed on the canvas. Array order determines z-index: first no
 
 ```json
 {
-  "id": "c3d4e5f678901234",
-  "type": "link",
-  "x": 1000,
-  "y": 0,
-  "width": 400,
-  "height": 200,
-  "url": "https://obsidian.md"
+ "id": "c3d4e5f678901234",
+ "type": "link",
+ "x": 1000,
+ "y": 0,
+ "width": 400,
+ "height": 200,
+ "url": "https://obsidian.md"
 }
 ```
 
@@ -141,14 +141,14 @@ Groups are visual containers for organizing other nodes. Position child nodes in
 
 ```json
 {
-  "id": "d4e5f6789012345a",
-  "type": "group",
-  "x": -50,
-  "y": -50,
-  "width": 1000,
-  "height": 600,
-  "label": "Project Overview",
-  "color": "4"
+ "id": "d4e5f6789012345a",
+ "type": "group",
+ "x": -50,
+ "y": -50,
+ "width": 1000,
+ "height": 600,
+ "label": "Project Overview",
+ "color": "4"
 }
 ```
 
@@ -170,13 +170,13 @@ Edges connect nodes via `fromNode` and `toNode` IDs.
 
 ```json
 {
-  "id": "0123456789abcdef",
-  "fromNode": "6f0ad84f44ce9c17",
-  "fromSide": "right",
-  "toNode": "a1b2c3d4e5f67890",
-  "toSide": "left",
-  "toEnd": "arrow",
-  "label": "leads to"
+ "id": "0123456789abcdef",
+ "fromNode": "6f0ad84f44ce9c17",
+ "fromSide": "right",
+ "toNode": "a1b2c3d4e5f67890",
+ "toSide": "left",
+ "toEnd": "arrow",
+ "label": "leads to"
 }
 ```
 

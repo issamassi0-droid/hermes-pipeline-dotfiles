@@ -1,10 +1,10 @@
 ---
 name: performing-windows-artifact-analysis-with-eric-zimmerman-tools
 description: Performs comprehensive Windows forensic artifact analysis using Eric
-  Zimmerman's open-source EZ Tools suite (KAPE, MFTECmd, PECmd, LECmd, JLECmd, Timeline
-  Explorer) to parse registry hives, prefetch files, event logs, and file system
-  metadata. Use during DFIR investigations that need a timeline of program execution,
-  file access, and persistence built from Windows artifacts.
+ Zimmerman's open-source EZ Tools suite (KAPE, MFTECmd, PECmd, LECmd, JLECmd, Timeline
+ Explorer) to parse registry hives, prefetch files, event logs, and file system
+ metadata. Use during DFIR investigations that need a timeline of program execution,
+ file access, and persistence built from Windows artifacts.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -71,8 +71,8 @@ KAPE is the primary orchestration tool that automates artifact collection (Targe
 # Extract to C:\Tools\KAPE
 
 # Update KAPE targets and modules
-C:\Tools\KAPE\gkape.exe  # GUI version
-C:\Tools\KAPE\kape.exe   # CLI version
+C:\Tools\KAPE\gkape.exe # GUI version
+C:\Tools\KAPE\kape.exe # CLI version
 
 # Sync latest EZ Tools binaries
 C:\Tools\KAPE\Get-KAPEUpdate.ps1

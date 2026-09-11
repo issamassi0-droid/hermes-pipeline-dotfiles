@@ -1,10 +1,10 @@
 ---
 name: performing-cloud-forensics-with-aws-cloudtrail
 description: Investigate AWS account compromise by querying CloudTrail with boto3's LookupEvents
-  or AWS Athena SQL over S3-delivered logs, filtering on suspicious user agents, source IPs, and
-  event names to reconstruct an attacker timeline. Use when tracing unauthorized API calls, S3
-  data exfiltration, IAM privilege escalation, or credential exposure, and building a forensic
-  report of findings and remediation steps.
+ or AWS Athena SQL over S3-delivered logs, filtering on suspicious user agents, source IPs, and
+ event names to reconstruct an attacker timeline. Use when tracing unauthorized API calls, S3
+ data exfiltration, IAM privilege escalation, or credential exposure, and building a forensic
+ report of findings and remediation steps.
 domain: cybersecurity
 subdomain: cloud-security
 tags:

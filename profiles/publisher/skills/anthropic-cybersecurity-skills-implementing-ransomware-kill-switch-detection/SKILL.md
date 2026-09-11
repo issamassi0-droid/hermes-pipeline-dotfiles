@@ -1,12 +1,12 @@
 ---
 name: implementing-ransomware-kill-switch-detection
 description: 'Analyzes ransomware kill switch mechanisms, including mutex-based execution
-  guards, domain-based kill switches (e.g. WannaCry-style), and registry termination
-  checks, then implements mutex vaccination and kill switch domain monitoring to stop
-  ransomware before it runs. Use when analyzing a sample''s execution guards or deploying
-  vaccination/monitoring as a defensive control.
+ guards, domain-based kill switches (e.g. WannaCry-style), and registry termination
+ checks, then implements mutex vaccination and kill switch domain monitoring to stop
+ ransomware before it runs. Use when analyzing a sample''s execution guards or deploying
+ vaccination/monitoring as a defensive control.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -31,27 +31,27 @@ mitre_attack:
 - T1486
 - T1490
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - positioning
-  - monetization
-  techniques:
-  - id: T1219
-    name: Remote Access Tools
-    tactic: positioning
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1017
-    name: Conversion to Physical Monetary Instruments
-    tactic: monetization
-    source: f3
-  - id: F1047
-    name: Transfer of funds
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - positioning
+ - monetization
+ techniques:
+ - id: T1219
+ name: Remote Access Tools
+ tactic: positioning
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1017
+ name: Conversion to Physical Monetary Instruments
+ tactic: monetization
+ source: f3
+ - id: F1047
+ name: Transfer of funds
+ tactic: monetization
+ source: f3
 ---
 
 # Implementing Ransomware Kill Switch Detection
@@ -85,37 +85,37 @@ Analyze samples for common kill switch patterns:
 Kill Switch Types Found in Ransomware:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. MUTEX-BASED (most common):
-   - Ransomware creates a named mutex at startup
-   - If mutex already exists → another instance is running → exit
-   - Defense: Pre-create the mutex to prevent execution
-   - Examples:
-     WannaCry:     Global\MsWinZonesCacheCounterMutexA
-     Conti:        kasKDJSAFJauisiudUASIIQWUA82
-     REvil:        Global\{GUID-based-on-machine}
-     Ryuk:         Global\YOURPRODUCT_MUTEX
+ - Ransomware creates a named mutex at startup
+ - If mutex already exists → another instance is running → exit
+ - Defense: Pre-create the mutex to prevent execution
+ - Examples:
+ WannaCry: Global\MsWinZonesCacheCounterMutexA
+ Conti: kasKDJSAFJauisiudUASIIQWUA82
+ REvil: Global\{GUID-based-on-machine}
+ Ryuk: Global\YOURPRODUCT_MUTEX
 
 2. DOMAIN-BASED:
-   - Ransomware resolves a hardcoded domain before executing
-   - If domain resolves → security sandbox detected → exit
-   - Defense: Register/sinkhole the domain to activate kill switch
-   - Examples:
-     WannaCry v1:  iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com
-     WannaCry v1:  fferfsodp9ifjaposdfjhgosurijfaewrwergwea.com
+ - Ransomware resolves a hardcoded domain before executing
+ - If domain resolves → security sandbox detected → exit
+ - Defense: Register/sinkhole the domain to activate kill switch
+ - Examples:
+ WannaCry v1: iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com
+ WannaCry v1: fferfsodp9ifjaposdfjhgosurijfaewrwergwea.com
 
 3. REGISTRY-BASED:
-   - Check for specific registry key/value before executing
-   - If key exists → exit (anti-analysis or kill switch)
-   - Defense: Create the registry key proactively
+ - Check for specific registry key/value before executing
+ - If key exists → exit (anti-analysis or kill switch)
+ - Defense: Create the registry key proactively
 
 4. FILE-BASED:
-   - Check for existence of specific file or directory
-   - If marker file exists → exit
-   - Defense: Create the marker file on all endpoints
+ - Check for existence of specific file or directory
+ - If marker file exists → exit
+ - Defense: Create the marker file on all endpoints
 
 5. LANGUAGE-BASED:
-   - Check system language/keyboard layout
-   - Exit if Russian/CIS country keyboard detected
-   - Common in Eastern European ransomware groups
+ - Check system language/keyboard layout
+ - Exit if Russian/CIS country keyboard detected
+ - Common in Eastern European ransomware groups
 ```
 
 ### Step 2: Deploy Mutex Vaccination
@@ -130,21 +130,21 @@ from ctypes import wintypes
 kernel32 = ctypes.WinDLL('kernel32', use_last_error=True)
 
 def create_mutex(name):
-    """Create a named mutex to vaccinate against ransomware."""
-    handle = kernel32.CreateMutexW(None, False, name)
-    error = ctypes.get_last_error()
-    if handle == 0:
-        return False, f"Failed to create mutex: error {error}"
-    if error == 183:  # ERROR_ALREADY_EXISTS
-        return True, f"Mutex already exists (already vaccinated): {name}"
-    return True, f"Mutex created successfully: {name}"
+ """Create a named mutex to vaccinate against ransomware."""
+ handle = kernel32.CreateMutexW(None, False, name)
+ error = ctypes.get_last_error()
+ if handle == 0:
+ return False, f"Failed to create mutex: error {error}"
+ if error == 183: # ERROR_ALREADY_EXISTS
+ return True, f"Mutex already exists (already vaccinated): {name}"
+ return True, f"Mutex created successfully: {name}"
 
 KNOWN_RANSOMWARE_MUTEXES = [
-    "Global\\MsWinZonesCacheCounterMutexA",        # WannaCry
-    "Global\\kasKDJSAFJauisiudUASIIQWUA82",        # Conti
-    "Global\\YOURPRODUCT_MUTEX",                     # Ryuk variant
-    "Global\\JhbGjhBsSQjz",                         # Maze
-    "Global\\sdjfhksjdhfsd",                         # Generic ransomware
+ "Global\\MsWinZonesCacheCounterMutexA", # WannaCry
+ "Global\\kasKDJSAFJauisiudUASIIQWUA82", # Conti
+ "Global\\YOURPRODUCT_MUTEX", # Ryuk variant
+ "Global\\JhbGjhBsSQjz", # Maze
+ "Global\\sdjfhksjdhfsd", # Generic ransomware
 ]
 ```
 
@@ -155,13 +155,13 @@ Use Sysmon to detect when ransomware creates its characteristic mutexes:
 ```xml
 <!-- Sysmon configuration for mutex monitoring -->
 <Sysmon schemaversion="4.90">
-  <EventFiltering>
-    <!-- Event ID 1: Process creation with mutex indicators -->
-    <ProcessCreate onmatch="include">
-      <CommandLine condition="contains">mutex</CommandLine>
-      <CommandLine condition="contains">CreateMutex</CommandLine>
-    </ProcessCreate>
-  </EventFiltering>
+ <EventFiltering>
+ <!-- Event ID 1: Process creation with mutex indicators -->
+ <ProcessCreate onmatch="include">
+ <CommandLine condition="contains">mutex</CommandLine>
+ <CommandLine condition="contains">CreateMutex</CommandLine>
+ </ProcessCreate>
+ </EventFiltering>
 </Sysmon>
 ```
 
@@ -169,17 +169,17 @@ Use Sysmon to detect when ransomware creates its characteristic mutexes:
 Detection via Event Logs:
 ━━━━━━━━━━━━━━━━━━━━━━━━
 Windows Security Log:
-  Event ID 4688: Process creation (enable command line logging)
+ Event ID 4688: Process creation (enable command line logging)
 
 Sysmon:
-  Event ID 1:  Process create (includes command line and hashes)
-  Event ID 17: Pipe created (named pipes, similar to mutexes)
+ Event ID 1: Process create (includes command line and hashes)
+ Event ID 17: Pipe created (named pipes, similar to mutexes)
 
 PowerShell detection:
-  Event ID 4104: Script block logging (detect mutex creation in scripts)
+ Event ID 4104: Script block logging (detect mutex creation in scripts)
 
 Velociraptor artifact:
-  Windows.Detection.Mutants - Enumerates all named mutant objects
+ Windows.Detection.Mutants - Enumerates all named mutant objects
 ```
 
 ### Step 4: Monitor DNS for Kill Switch Domains
@@ -191,16 +191,16 @@ DNS Monitoring for Kill Switch Domains:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. Monitor DNS queries for known kill switch domains
 2. High-entropy domain names (>4.0 entropy in domain label) may indicate
-   ransomware kill switch domains or DGA-generated C2 domains
+ ransomware kill switch domains or DGA-generated C2 domains
 3. Queries to newly registered domains from endpoints that typically
-   only access well-established domains
+ only access well-established domains
 
 Indicators:
-  - Domain with no prior resolution history
-  - Domain registered in last 24-72 hours
-  - High character entropy in domain name
-  - Resolution attempt followed by either mass encryption (kill switch failed)
-    or process termination (kill switch activated)
+ - Domain with no prior resolution history
+ - Domain registered in last 24-72 hours
+ - High character entropy in domain name
+ - Resolution attempt followed by either mass encryption (kill switch failed)
+ or process termination (kill switch activated)
 ```
 
 ### Step 5: Enumerate Active Mutexes for Incident Response

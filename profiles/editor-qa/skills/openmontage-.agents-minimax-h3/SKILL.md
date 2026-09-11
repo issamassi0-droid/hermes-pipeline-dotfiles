@@ -1,7 +1,7 @@
 ---
 name: minimax-h3
 description: |
-  Generate MiniMax H3 (Hailuo 3.0) video through the official MiniMax v2 API, fal.ai, Runway, ComfyUI Partner Nodes, or local open weights in ComfyUI. Use for 4-15 second 2K clips, first/last-frame animation, and image/video/audio reference-conditioned video.
+ Generate MiniMax H3 (Hailuo 3.0) video through the official MiniMax v2 API, fal.ai, Runway, ComfyUI Partner Nodes, or local open weights in ComfyUI. Use for 4-15 second 2K clips, first/last-frame animation, and image/video/audio reference-conditioned video.
 ---
 
 # MiniMax H3
@@ -31,7 +31,7 @@ does not silently download large weights.
 - Image-to-video: provide a first frame.
 - First/last-frame: provide both images and describe the motion between them.
 - Reference-to-video: images, videos, and audio can be combined. Audio needs at
-  least one visual reference.
+ least one visual reference.
 
 Write prompts as subject + action + camera path + environment + lighting +
 audio intent. MiniMax responds well to explicit camera direction. Keep the

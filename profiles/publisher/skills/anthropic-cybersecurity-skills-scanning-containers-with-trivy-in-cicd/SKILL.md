@@ -1,13 +1,13 @@
 ---
 name: scanning-containers-with-trivy-in-cicd
 description: 'Integrates Aqua Security''s Trivy scanner into CI/CD pipelines to detect
-  OS package and application dependency CVEs, Dockerfile misconfigurations, and issues
-  in filesystems or git repositories, and to enforce severity-based quality gates that
-  block vulnerable images from being deployed. Use when building Docker images in
-  CI/CD and needing automated vulnerability scanning and pass/fail gates before registry
-  push or production deployment.
+ OS package and application dependency CVEs, Dockerfile misconfigurations, and issues
+ in filesystems or git repositories, and to enforce severity-based quality gates that
+ block vulnerable images from being deployed. Use when building Docker images in
+ CI/CD and needing automated vulnerability scanning and pass/fail gates before registry
+ push or production deployment.
 
-  '
+ '
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -63,55 +63,55 @@ Set up a GitHub Actions workflow that builds a Docker image and scans it with Tr
 name: Container Security Scan
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-    paths:
-      - 'Dockerfile'
-      - 'docker-compose*.yml'
-      - 'src/**'
-      - 'requirements*.txt'
-      - 'package*.json'
+ push:
+ branches: [main]
+ pull_request:
+ branches: [main]
+ paths:
+ - 'Dockerfile'
+ - 'docker-compose*.yml'
+ - 'src/**'
+ - 'requirements*.txt'
+ - 'package*.json'
 
 jobs:
-  build-and-scan:
-    runs-on: ubuntu-latest
-    permissions:
-      security-events: write
-      contents: read
+ build-and-scan:
+ runs-on: ubuntu-latest
+ permissions:
+ security-events: write
+ contents: read
 
-    steps:
-      - uses: actions/checkout@v4
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t app:${{ github.sha }} .
+ - name: Build Docker image
+ run: docker build -t app:${{ github.sha }} .
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          image-ref: 'app:${{ github.sha }}'
-          format: 'sarif'
-          output: 'trivy-results.sarif'
-          severity: 'CRITICAL,HIGH'
-          exit-code: '1'
-          ignore-unfixed: true
+ - name: Run Trivy vulnerability scanner
+ uses: aquasecurity/trivy-action@0.28.0
+ with:
+ image-ref: 'app:${{ github.sha }}'
+ format: 'sarif'
+ output: 'trivy-results.sarif'
+ severity: 'CRITICAL,HIGH'
+ exit-code: '1'
+ ignore-unfixed: true
 
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: 'trivy-results.sarif'
-          category: 'trivy-container'
+ - name: Upload Trivy scan results
+ uses: github/codeql-action/upload-sarif@v3
+ if: always()
+ with:
+ sarif_file: 'trivy-results.sarif'
+ category: 'trivy-container'
 
-      - name: Run Trivy misconfiguration scanner
-        uses: aquasecurity/trivy-action@0.28.0
-        with:
-          scan-type: 'config'
-          scan-ref: '.'
-          format: 'table'
-          exit-code: '1'
-          severity: 'CRITICAL,HIGH'
+ - name: Run Trivy misconfiguration scanner
+ uses: aquasecurity/trivy-action@0.28.0
+ with:
+ scan-type: 'config'
+ scan-ref: '.'
+ format: 'table'
+ exit-code: '1'
+ severity: 'CRITICAL,HIGH'
 ```
 
 ### Step 2: Scan Dockerfiles for Misconfigurations
@@ -138,55 +138,55 @@ trivy config --policy ./security-policies --severity MEDIUM,HIGH,CRITICAL .
 ```yaml
 # .gitlab-ci.yml
 stages:
-  - build
-  - scan
-  - push
+ - build
+ - scan
+ - push
 
 variables:
-  TRIVY_CACHE_DIR: .trivycache/
+ TRIVY_CACHE_DIR: .trivycache/
 
 build:
-  stage: build
-  script:
-    - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
-    - docker save $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -o image.tar
-  artifacts:
-    paths:
-      - image.tar
+ stage: build
+ script:
+ - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+ - docker save $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA -o image.tar
+ artifacts:
+ paths:
+ - image.tar
 
 trivy-scan:
-  stage: scan
-  image:
-    name: aquasec/trivy:latest
-    entrypoint: [""]
-  cache:
-    paths:
-      - .trivycache/
-  script:
-    - trivy image
-        --input image.tar
-        --exit-code 1
-        --severity CRITICAL,HIGH
-        --ignore-unfixed
-        --format json
-        --output trivy-report.json
-    - trivy image
-        --input image.tar
-        --severity CRITICAL,HIGH,MEDIUM
-        --format table
-  artifacts:
-    reports:
-      container_scanning: trivy-report.json
-    paths:
-      - trivy-report.json
-  allow_failure: false
+ stage: scan
+ image:
+ name: aquasec/trivy:latest
+ entrypoint: [""]
+ cache:
+ paths:
+ - .trivycache/
+ script:
+ - trivy image
+ --input image.tar
+ --exit-code 1
+ --severity CRITICAL,HIGH
+ --ignore-unfixed
+ --format json
+ --output trivy-report.json
+ - trivy image
+ --input image.tar
+ --severity CRITICAL,HIGH,MEDIUM
+ --format table
+ artifacts:
+ reports:
+ container_scanning: trivy-report.json
+ paths:
+ - trivy-report.json
+ allow_failure: false
 
 push:
-  stage: push
-  needs: [trivy-scan]
-  script:
-    - docker load -i image.tar
-    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+ stage: push
+ needs: [trivy-scan]
+ script:
+ - docker load -i image.tar
+ - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
 ```
 
 ### Step 4: Configure Trivy Ignore and Exception Handling
@@ -196,19 +196,19 @@ Manage false positives and accepted risks through Trivy's ignore file and VEX st
 ```yaml
 # .trivyignore.yaml
 vulnerabilities:
-  - id: CVE-2023-44487    # HTTP/2 rapid reset - mitigated at load balancer
-    statement: "Mitigated by WAF rate limiting at ingress layer"
-    expires: 2026-06-01
+ - id: CVE-2023-44487 # HTTP/2 rapid reset - mitigated at load balancer
+ statement: "Mitigated by WAF rate limiting at ingress layer"
+ expires: 2026-06-01
 
-  - id: CVE-2024-21626    # runc container escape - patched in base image update
-    statement: "Tracked in JIRA-SEC-1234, base image update scheduled"
-    expires: 2026-03-15
+ - id: CVE-2024-21626 # runc container escape - patched in base image update
+ statement: "Tracked in JIRA-SEC-1234, base image update scheduled"
+ expires: 2026-03-15
 
 misconfigurations:
-  - id: DS002             # User not set - required for init containers
-    paths:
-      - "docker/init-container/Dockerfile"
-    statement: "Init container requires root for volume permission setup"
+ - id: DS002 # User not set - required for init containers
+ paths:
+ - "docker/init-container/Dockerfile"
+ statement: "Init container requires root for volume permission setup"
 ```
 
 ### Step 5: Implement Database Caching and Offline Scanning
@@ -218,21 +218,21 @@ Cache the Trivy vulnerability database in CI/CD to reduce scan times and enable 
 ```yaml
 # GitHub Actions with database caching
 - name: Cache Trivy DB
-  uses: actions/cache@v4
-  with:
-    path: /tmp/trivy-db
-    key: trivy-db-${{ hashFiles('.github/workflows/container-security.yml') }}
-    restore-keys: trivy-db-
+ uses: actions/cache@v4
+ with:
+ path: /tmp/trivy-db
+ key: trivy-db-${{ hashFiles('.github/workflows/container-security.yml') }}
+ restore-keys: trivy-db-
 
 - name: Run Trivy with cached DB
-  uses: aquasecurity/trivy-action@0.28.0
-  with:
-    image-ref: 'app:${{ github.sha }}'
-    cache-dir: /tmp/trivy-db
-    format: 'json'
-    output: 'trivy-results.json'
-    severity: 'CRITICAL,HIGH'
-    exit-code: '1'
+ uses: aquasecurity/trivy-action@0.28.0
+ with:
+ image-ref: 'app:${{ github.sha }}'
+ cache-dir: /tmp/trivy-db
+ format: 'json'
+ output: 'trivy-results.json'
+ severity: 'CRITICAL,HIGH'
+ exit-code: '1'
 ```
 
 ```bash
@@ -307,25 +307,25 @@ Scan Date: 2026-02-23
 DB Version: 2026-02-23T00:15:00Z
 
 VULNERABILITY SUMMARY:
-  Total: 47
-  Critical: 2
-  High: 5
-  Medium: 18
-  Low: 22
-  Unfixed: 8 (excluded from gate)
+ Total: 47
+ Critical: 2
+ High: 5
+ Medium: 18
+ Low: 22
+ Unfixed: 8 (excluded from gate)
 
 CRITICAL FINDINGS:
-  CVE-2025-12345  libssl3    3.0.11-1  3.0.13-1  OpenSSL buffer overflow
-  CVE-2025-67890  curl       7.88.1-10 7.88.1-12 curl HSTS bypass
+ CVE-2025-12345 libssl3 3.0.11-1 3.0.13-1 OpenSSL buffer overflow
+ CVE-2025-67890 curl 7.88.1-10 7.88.1-12 curl HSTS bypass
 
 HIGH FINDINGS:
-  CVE-2025-11111  zlib1g     1.2.13    1.2.13.1  zlib heap buffer overflow
-  CVE-2025-22222  python3.12 3.12.1    3.12.3    CPython path traversal
-  CVE-2025-33333  requests   2.31.0    2.32.0    requests SSRF in redirects
+ CVE-2025-11111 zlib1g 1.2.13 1.2.13.1 zlib heap buffer overflow
+ CVE-2025-22222 python3.12 3.12.1 3.12.3 CPython path traversal
+ CVE-2025-33333 requests 2.31.0 2.32.0 requests SSRF in redirects
 
 MISCONFIGURATION:
-  DS002  [HIGH]   Dockerfile: USER instruction not set (running as root)
-  DS026  [MEDIUM] Dockerfile: No HEALTHCHECK defined
+ DS002 [HIGH] Dockerfile: USER instruction not set (running as root)
+ DS026 [MEDIUM] Dockerfile: No HEALTHCHECK defined
 
 QUALITY GATE: FAILED (2 Critical, 5 High findings)
 ```

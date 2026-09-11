@@ -6,9 +6,9 @@ author: Hermes Agent (adapted from obra/superpowers)
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [testing, tdd, development, quality, red-green-refactor]
-    related_skills: [systematic-debugging, subagent-driven-development]
+ hermes:
+ tags: [testing, tdd, development, quality, red-green-refactor]
+ related_skills: [systematic-debugging, subagent-driven-development]
 ---
 
 # Test-Driven Development (TDD)
@@ -61,28 +61,28 @@ Write one minimal test showing what should happen.
 **Good test:**
 ```python
 def test_retries_failed_operations_3_times():
-    attempts = 0
-    def operation():
-        nonlocal attempts
-        attempts += 1
-        if attempts < 3:
-            raise Exception('fail')
-        return 'success'
+ attempts = 0
+ def operation():
+ nonlocal attempts
+ attempts += 1
+ if attempts < 3:
+ raise Exception('fail')
+ return 'success'
 
-    result = retry_operation(operation)
+ result = retry_operation(operation)
 
-    assert result == 'success'
-    assert attempts == 3
+ assert result == 'success'
+ assert attempts == 3
 ```
 Clear name, tests real behavior, one thing.
 
 **Bad test:**
 ```python
 def test_retry_works():
-    mock = MagicMock()
-    mock.side_effect = [Exception(), Exception(), 'success']
-    result = retry_operation(mock)
-    assert result == 'success'  # What about retry count? Timing?
+ mock = MagicMock()
+ mock.side_effect = [Exception(), Exception(), 'success']
+ result = retry_operation(mock)
+ assert result == 'success' # What about retry count? Timing?
 ```
 Vague name, tests mock not real code.
 
@@ -117,15 +117,15 @@ Write the simplest code to pass the test. Nothing more.
 **Good:**
 ```python
 def add(a, b):
-    return a + b  # Nothing extra
+ return a + b # Nothing extra
 ```
 
 **Bad:**
 ```python
 def add(a, b):
-    result = a + b
-    logging.info(f"Adding {a} + {b} = {result}")  # Extra!
-    return result
+ result = a + b
+ logging.info(f"Adding {a} + {b} = {result}") # Extra!
+ return result
 ```
 
 Don't add features, refactor other code, or "improve" beyond the test.
@@ -183,13 +183,13 @@ Use vertical tracer bullets instead:
 
 ```text
 WRONG:
-  RED:   test1, test2, test3, test4
-  GREEN: impl1, impl2, impl3, impl4
+ RED: test1, test2, test3, test4
+ GREEN: impl1, impl2, impl3, impl4
 
 RIGHT:
-  RED→GREEN: test1→impl1
-  RED→GREEN: test2→impl2
-  RED→GREEN: test3→impl3
+ RED→GREEN: test1→impl1
+ RED→GREEN: test2→impl2
+ RED→GREEN: test3→impl3
 ```
 
 A tracer bullet is one end-to-end behavior slice. It proves the path works, teaches you about the interface, and keeps each next test grounded in what you just learned.
@@ -322,20 +322,20 @@ When dispatching subagents for implementation, enforce TDD in the goal:
 
 ```python
 delegate_task(
-    goal="Implement [feature] using strict TDD",
-    context="""
-    Follow test-driven-development skill:
-    1. Write failing test FIRST
-    2. Run test to verify it fails
-    3. Write minimal code to pass
-    4. Run test to verify it passes
-    5. Refactor if needed
-    6. Commit
+ goal="Implement [feature] using strict TDD",
+ context="""
+ Follow test-driven-development skill:
+ 1. Write failing test FIRST
+ 2. Run test to verify it fails
+ 3. Write minimal code to pass
+ 4. Run test to verify it passes
+ 5. Refactor if needed
+ 6. Commit
 
-    Project test command: pytest tests/ -q
-    Project structure: [describe relevant files]
-    """,
-    toolsets=['terminal', 'file']
+ Project test command: pytest tests/ -q
+ Project structure: [describe relevant files]
+ """,
+ toolsets=['terminal', 'file']
 )
 ```
 

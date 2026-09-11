@@ -91,10 +91,10 @@ HIGHLIGHT = "#FF6B6B"
 MONO = "Menlo"
 
 # Color meanings for THIS paper
-MODEL_COLOR = PRIMARY      # "the model"
-DATA_COLOR = SECONDARY     # "training data"
+MODEL_COLOR = PRIMARY # "the model"
+DATA_COLOR = SECONDARY # "training data"
 BASELINE_COLOR = HIGHLIGHT # "previous approach"
-RESULT_COLOR = ACCENT      # "our result"
+RESULT_COLOR = ACCENT # "our result"
 ```
 
 ## First-principles equation explanation
@@ -128,13 +128,13 @@ self.play(FadeIn(eq))
 
 # Highlight Q, K, V one at a time with color + label
 for part, color, label_text in [
-    (r"Q", PRIMARY, "Query: what am I looking for?"),
-    (r"K", SECONDARY, "Key: what do I contain?"),
-    (r"V", ACCENT, "Value: what do I output?"),
+ (r"Q", PRIMARY, "Query: what am I looking for?"),
+ (r"K", SECONDARY, "Key: what do I contain?"),
+ (r"V", ACCENT, "Value: what do I output?"),
 ]:
-    eq.set_color_by_tex(part, color)
-    label = Text(label_text, font_size=18, color=color, font=MONO)
-    # position label, animate it, wait, then dim it
+ eq.set_color_by_tex(part, color)
+ label = Text(label_text, font_size=18, color=color, font=MONO)
+ # position label, animate it, wait, then dim it
 ```
 
 ## Building architecture diagrams
@@ -151,20 +151,20 @@ Don't show the full architecture at once. Build it:
 ```python
 # Component factory
 def make_box(label, color, width=2.0, height=0.8):
-    box = RoundedRectangle(corner_radius=0.1, width=width, height=height,
-                           color=color, fill_opacity=0.1, stroke_width=1.5)
-    text = Text(label, font_size=18, font=MONO, color=color).move_to(box)
-    return Group(box, text)
+ box = RoundedRectangle(corner_radius=0.1, width=width, height=height,
+ color=color, fill_opacity=0.1, stroke_width=1.5)
+ text = Text(label, font_size=18, font=MONO, color=color).move_to(box)
+ return Group(box, text)
 
 encoder = make_box("Encoder", PRIMARY)
 decoder = make_box("Decoder", SECONDARY).next_to(encoder, RIGHT, buff=1.5)
 arrow = Arrow(encoder.get_right(), decoder.get_left(), color=DIM, stroke_width=1.5)
 
 self.play(FadeIn(encoder))
-self.wait(1)  # explain encoder
+self.wait(1) # explain encoder
 self.play(GrowArrow(arrow))
 self.play(FadeIn(decoder))
-self.wait(1)  # explain decoder
+self.wait(1) # explain decoder
 ```
 
 ### Data flow animation
@@ -191,9 +191,9 @@ after_data = [78, 85, 72, 91]
 labels = ["Task A", "Task B", "Task C", "Task D"]
 
 before_chart = BarChart(before_data, bar_names=labels,
-    y_range=[0, 100, 20], bar_colors=[HIGHLIGHT]*4).scale(0.6).shift(LEFT*3)
+ y_range=[0, 100, 20], bar_colors=[HIGHLIGHT]*4).scale(0.6).shift(LEFT*3)
 after_chart = BarChart(after_data, bar_names=labels,
-    y_range=[0, 100, 20], bar_colors=[SECONDARY]*4).scale(0.6).shift(RIGHT*3)
+ y_range=[0, 100, 20], bar_colors=[SECONDARY]*4).scale(0.6).shift(RIGHT*3)
 
 before_label = Text("Baseline", font_size=20, color=HIGHLIGHT, font=MONO)
 after_label = Text("Ours", font_size=20, color=SECONDARY, font=MONO)
@@ -214,11 +214,11 @@ self.play(FadeIn(improvement))
 ```python
 tracker = ValueTracker(0)
 curve = always_redraw(lambda: axes.plot(
-    lambda x: 1 - 0.8 * np.exp(-x / 3),
-    x_range=[0, tracker.get_value()], color=PRIMARY
+ lambda x: 1 - 0.8 * np.exp(-x / 3),
+ x_range=[0, tracker.get_value()], color=PRIMARY
 ))
 epoch_label = always_redraw(lambda: Text(
-    f"Epoch {int(tracker.get_value())}", font_size=18, font=MONO
+ f"Epoch {int(tracker.get_value())}", font_size=18, font=MONO
 ).to_corner(UR))
 
 self.add(curve, epoch_label)

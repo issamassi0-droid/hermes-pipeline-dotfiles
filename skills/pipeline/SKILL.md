@@ -31,13 +31,13 @@ If `pipeline-orchestrator` is not in `PATH`, assume it is at `~/.local/bin/pipel
 
 **Examples:**
 
-- User: `pipeline "Compare React and Vue for 2026"`  
-  → Run `pipeline-orchestrator "Compare React and Vue for 2026"`
+- User: `pipeline "Compare React and Vue for 2026"` 
+ → Run `pipeline-orchestrator "Compare React and Vue for 2026"`
 
-- User: `pipe --tier lite "What is the latest Python version?"`  
-  → Run `pipeline-orchestrator --tier lite "What is the latest Python version?"`
+- User: `pipe --tier lite "What is the latest Python version?"` 
+ → Run `pipeline-orchestrator --tier lite "What is the latest Python version?"`
 
-- User: `pipeline --dry-run "Explain quantum computing"`  
-  → Run `pipeline-orchestrator --dry-run "Explain quantum computing"`
+- User: `pipeline --dry-run "Explain quantum computing"` 
+ → Run `pipeline-orchestrator --dry-run "Explain quantum computing"`
 
 Always report the full output to the user, including the final artifact path.

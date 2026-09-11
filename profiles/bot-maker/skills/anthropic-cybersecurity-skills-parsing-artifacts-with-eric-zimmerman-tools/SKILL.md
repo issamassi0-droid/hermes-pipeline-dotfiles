@@ -47,11 +47,11 @@ Output is designed to load into **Timeline Explorer** (also by Eric Zimmerman), 
 ## Prerequisites
 
 - Download EZ Tools via the official downloader (keeps tools current):
-  ```powershell
-  # Download/update all .NET 6 tools into C:\Tools\EZ
-  .\Get-ZimmermanTools.ps1 -Dest C:\Tools\EZ
-  ```
-  Source: https://ericzimmerman.github.io/ and https://github.com/EricZimmerman/Get-ZimmermanTools
+ ```powershell
+ # Download/update all .NET 6 tools into C:\Tools\EZ
+ .\Get-ZimmermanTools.ps1 -Dest C:\Tools\EZ
+ ```
+ Source: https://ericzimmerman.github.io/ and https://github.com/EricZimmerman/Get-ZimmermanTools
 - .NET runtime (bundled with current releases).
 - Forensic copies of the artifacts (mounted image, KAPE collection, or extracted hives).
 

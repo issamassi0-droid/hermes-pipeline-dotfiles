@@ -1,10 +1,10 @@
 ---
 name: testing-ransomware-recovery-procedures
 description: Tests and validates ransomware recovery procedures - backup restore operations
-  (e.g. with Restic), RTO/RPO target verification, recovery sequencing, and clean-restore
-  validation - to confirm organizational resilience against destructive ransomware attacks.
-  Use when validating that recovery plans work under realistic conditions, measuring
-  RTO/RPO against business requirements, or testing restore integrity after simulated encryption.
+ (e.g. with Restic), RTO/RPO target verification, recovery sequencing, and clean-restore
+ validation - to confirm organizational resilience against destructive ransomware attacks.
+ Use when validating that recovery plans work under realistic conditions, measuring
+ RTO/RPO against business requirements, or testing restore integrity after simulated encryption.
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -30,27 +30,27 @@ mitre_attack:
 - T1078
 - T1489
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - positioning
-  - monetization
-  techniques:
-  - id: T1531
-    name: Account Access Removal
-    tactic: positioning
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1047
-    name: Transfer of funds
-    tactic: monetization
-    source: f3
-  - id: F1017.001
-    name: 'Conversion to Physical Monetary Instruments: Cash'
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - positioning
+ - monetization
+ techniques:
+ - id: T1531
+ name: Account Access Removal
+ tactic: positioning
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1047
+ name: Transfer of funds
+ tactic: monetization
+ source: f3
+ - id: F1017.001
+ name: 'Conversion to Physical Monetary Instruments: Cash'
+ tactic: monetization
+ source: f3
 ---
 # Testing Ransomware Recovery Procedures
 
@@ -91,7 +91,7 @@ Identify critical systems and their tiered recovery targets:
 ```bash
 # Verify isolated recovery network is segmented
 # No routes to production should exist
-ip route show | grep -v "192.168.100.0/24"  # recovery VLAN only
+ip route show | grep -v "192.168.100.0/24" # recovery VLAN only
 
 # Verify backup catalog is accessible
 restic snapshots --repo s3:s3.amazonaws.com/backup-bucket --password-file /etc/restic/pw
@@ -111,14 +111,14 @@ For each tiered system, measure the full recovery timeline:
 
 ```
 Recovery Timeline Measurement:
-  T0: Incident declared (simulated ransomware detection)
-  T1: Recovery team assembled and backup identified
-  T2: Restore initiated from clean backup
-  T3: Restore completed, integrity checks passed
-  T4: Application validated and service restored
+ T0: Incident declared (simulated ransomware detection)
+ T1: Recovery team assembled and backup identified
+ T2: Restore initiated from clean backup
+ T3: Restore completed, integrity checks passed
+ T4: Application validated and service restored
 
-  Actual RTO = T4 - T0
-  Actual RPO = T0 - backup_timestamp
+ Actual RTO = T4 - T0
+ Actual RPO = T0 - backup_timestamp
 ```
 
 ### Step 4: Validate Data Integrity Post-Restore
@@ -151,16 +151,16 @@ After restore, validate that security controls are re-established:
 
 ```
 Recovery Test Report:
-  System: [Name]
-  Tier: [1-4]
-  RTO Target: [target]    Actual RTO: [measured]    Gap: [delta]
-  RPO Target: [target]    Actual RPO: [measured]    Gap: [delta]
-  Data Integrity: [PASS/FAIL]
-  Application Validation: [PASS/FAIL]
-  Security Controls Restored: [PASS/FAIL]
+ System: [Name]
+ Tier: [1-4]
+ RTO Target: [target] Actual RTO: [measured] Gap: [delta]
+ RPO Target: [target] Actual RPO: [measured] Gap: [delta]
+ Data Integrity: [PASS/FAIL]
+ Application Validation: [PASS/FAIL]
+ Security Controls Restored: [PASS/FAIL]
 
-  Status: [MEETS TARGET / EXCEEDS TARGET / FAILS TARGET]
-  Remediation Required: [description if FAILS]
+ Status: [MEETS TARGET / EXCEEDS TARGET / FAILS TARGET]
+ Remediation Required: [description if FAILS]
 ```
 
 ## Key Concepts

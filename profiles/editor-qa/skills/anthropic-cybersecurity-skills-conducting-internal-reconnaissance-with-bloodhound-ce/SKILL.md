@@ -78,86 +78,86 @@ BloodHound Community Edition (CE) is a modern, web-based Active Directory reconn
 
 ### Phase 1: BloodHound CE Deployment
 1. Deploy BloodHound CE using Docker Compose:
-   ```bash
-   curl -L https://ghst.ly/getbhce -o docker-compose.yml
-   docker compose pull
-   docker compose up -d
-   ```
+ ```bash
+ curl -L https://ghst.ly/getbhce -o docker-compose.yml
+ docker compose pull
+ docker compose up -d
+ ```
 2. Access the web interface at https://localhost:8080
 3. Log in with the default admin credentials (displayed in Docker logs):
-   ```bash
-   docker compose logs | grep "Initial Password"
-   ```
+ ```bash
+ docker compose logs | grep "Initial Password"
+ ```
 4. Change the default admin password immediately
 
 ### Phase 2: Data Collection with SharpHound v2
 1. Transfer SharpHound v2 to the compromised Windows host:
-   ```powershell
-   # Execute full collection
-   .\SharpHound.exe -c All --outputdirectory C:\Temp
+ ```powershell
+ # Execute full collection
+ .\SharpHound.exe -c All --outputdirectory C:\Temp
 
-   # DCOnly collection (LDAP only, stealthier)
-   .\SharpHound.exe -c DCOnly
+ # DCOnly collection (LDAP only, stealthier)
+ .\SharpHound.exe -c DCOnly
 
-   # Session collection for logged-on user mapping
-   .\SharpHound.exe -c Session --loop --loopduration 02:00:00
+ # Session collection for logged-on user mapping
+ .\SharpHound.exe -c Session --loop --loopduration 02:00:00
 
-   # Collect from specific domain
-   .\SharpHound.exe -c All -d child.domain.local
-   ```
+ # Collect from specific domain
+ .\SharpHound.exe -c All -d child.domain.local
+ ```
 2. Alternative: Use BloodHound.py from Linux:
-   ```bash
-   bloodhound-python -u user -p 'Password123' -d domain.local -ns 10.10.10.1 -c All
-   ```
+ ```bash
+ bloodhound-python -u user -p 'Password123' -d domain.local -ns 10.10.10.1 -c All
+ ```
 3. Exfiltrate the generated ZIP file to the analysis workstation
 
 ### Phase 3: Data Import and Initial Analysis
 1. Upload collected data via the BloodHound CE web interface (File Ingest)
 2. Mark compromised accounts as "Owned" in the interface
 3. Run built-in analysis queries:
-   - Shortest Path to Domain Admin
-   - Kerberoastable Users with Path to DA
-   - AS-REP Roastable Users
-   - Users with DCSync Rights
-   - Computers with Unconstrained Delegation
+ - Shortest Path to Domain Admin
+ - Kerberoastable Users with Path to DA
+ - AS-REP Roastable Users
+ - Users with DCSync Rights
+ - Computers with Unconstrained Delegation
 
 ### Phase 4: Custom Cypher Queries
 1. Execute custom Cypher queries in the BloodHound CE search bar:
-   ```cypher
-   // Find shortest path from owned principals to Domain Admins
-   MATCH p=shortestPath((n {owned:true})-[*1..]->(m:Group {name:"DOMAIN ADMINS@DOMAIN.LOCAL"}))
-   RETURN p
+ ```cypher
+ // Find shortest path from owned principals to Domain Admins
+ MATCH p=shortestPath((n {owned:true})-[*1..]->(m:Group {name:"DOMAIN ADMINS@DOMAIN.LOCAL"}))
+ RETURN p
 
-   // Find Kerberoastable users with path to DA
-   MATCH (u:User {hasspn:true})
-   MATCH p=shortestPath((u)-[*1..]->(g:Group {name:"DOMAIN ADMINS@DOMAIN.LOCAL"}))
-   RETURN p
+ // Find Kerberoastable users with path to DA
+ MATCH (u:User {hasspn:true})
+ MATCH p=shortestPath((u)-[*1..]->(g:Group {name:"DOMAIN ADMINS@DOMAIN.LOCAL"}))
+ RETURN p
 
-   // Find computers with sessions of DA members
-   MATCH (c:Computer)-[:HasSession]->(u:User)-[:MemberOf*1..]->(g:Group {name:"DOMAIN ADMINS@DOMAIN.LOCAL"})
-   RETURN c.name, u.name
+ // Find computers with sessions of DA members
+ MATCH (c:Computer)-[:HasSession]->(u:User)-[:MemberOf*1..]->(g:Group {name:"DOMAIN ADMINS@DOMAIN.LOCAL"})
+ RETURN c.name, u.name
 
-   // Find ACL-based attack paths (GenericAll, WriteDACL, GenericWrite)
-   MATCH p=(u:User)-[:GenericAll|GenericWrite|WriteDacl|WriteOwner|ForceChangePassword*1..]->(t)
-   WHERE u.owned = true
-   RETURN p
+ // Find ACL-based attack paths (GenericAll, WriteDACL, GenericWrite)
+ MATCH p=(u:User)-[:GenericAll|GenericWrite|WriteDacl|WriteOwner|ForceChangePassword*1..]->(t)
+ WHERE u.owned = true
+ RETURN p
 
-   // Find users who can DCSync
-   MATCH (u)-[:MemberOf*0..]->()-[:DCSync|GetChanges|GetChangesAll*1..]->(d:Domain)
-   RETURN u.name, d.name
+ // Find users who can DCSync
+ MATCH (u)-[:MemberOf*0..]->()-[:DCSync|GetChanges|GetChangesAll*1..]->(d:Domain)
+ RETURN u.name, d.name
 
-   // Find computers with LAPS but readable by non-admins
-   MATCH (c:Computer {haslaps:true})
-   MATCH p=(u:User)-[:ReadLAPSPassword]->(c)
-   RETURN p
-   ```
+ // Find computers with LAPS but readable by non-admins
+ MATCH (c:Computer {haslaps:true})
+ MATCH p=(u:User)-[:ReadLAPSPassword]->(c)
+ RETURN p
+ ```
 
 ### Phase 5: Attack Path Prioritization
 1. Score identified attack paths by:
-   - Number of hops (shorter = higher priority)
-   - Stealth requirements (avoid noisy techniques)
-   - Tool availability for each hop
-   - Likelihood of detection at each step
+ - Number of hops (shorter = higher priority)
+ - Stealth requirements (avoid noisy techniques)
+ - Tool availability for each hop
+ - Likelihood of detection at each step
 2. Create an execution plan for the highest-priority paths
 3. Identify required tools for each step in the chain
 4. Plan OPSEC considerations for each technique

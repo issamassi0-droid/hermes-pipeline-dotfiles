@@ -1,12 +1,12 @@
 ---
 name: implementing-secret-scanning-with-gitleaks
 description: 'This skill covers implementing Gitleaks for detecting and preventing
-  hardcoded secrets in git repositories. It addresses configuring pre-commit hooks,
-  CI/CD pipeline integration, custom rule authoring for organization-specific secrets,
-  baseline management for existing repositories, and remediation workflows for exposed
-  credentials.
+ hardcoded secrets in git repositories. It addresses configuring pre-commit hooks,
+ CI/CD pipeline integration, custom rule authoring for organization-specific secrets,
+ baseline management for existing repositories, and remediation workflows for exposed
+ credentials.
 
-  '
+ '
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -59,7 +59,7 @@ Perform a baseline scan of the repository to identify all existing secrets in th
 
 ```bash
 # Install Gitleaks
-brew install gitleaks  # macOS
+brew install gitleaks # macOS
 # or download binary from https://github.com/gitleaks/gitleaks/releases
 
 # Scan entire git history for secrets
@@ -82,15 +82,15 @@ Set up Gitleaks as a pre-commit hook to prevent secrets from being committed.
 ```yaml
 # .pre-commit-config.yaml
 repos:
-  - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.21.2
-    hooks:
-      - id: gitleaks
-        name: gitleaks
-        description: Detect hardcoded secrets using Gitleaks
-        entry: gitleaks protect --staged --verbose --redact
-        language: golang
-        pass_filenames: false
+ - repo: https://github.com/gitleaks/gitleaks
+ rev: v8.21.2
+ hooks:
+ - id: gitleaks
+ name: gitleaks
+ description: Detect hardcoded secrets using Gitleaks
+ entry: gitleaks protect --staged --verbose --redact
+ language: golang
+ pass_filenames: false
 ```
 
 ```bash
@@ -106,7 +106,7 @@ pre-commit run gitleaks --all-files
 # Test the hook with a deliberate secret
 echo 'AWS_SECRET_ACCESS_KEY="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"' >> test.txt
 git add test.txt
-git commit -m "test"  # Should be blocked by gitleaks
+git commit -m "test" # Should be blocked by gitleaks
 ```
 
 ### Step 3: Integrate into GitHub Actions
@@ -116,57 +116,57 @@ git commit -m "test"  # Should be blocked by gitleaks
 name: Secret Scanning
 
 on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
+ push:
+ branches: [main, develop]
+ pull_request:
+ branches: [main]
 
 jobs:
-  gitleaks:
-    name: Gitleaks Secret Scan
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0  # Full history for comprehensive scanning
+ gitleaks:
+ name: Gitleaks Secret Scan
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ with:
+ fetch-depth: 0 # Full history for comprehensive scanning
 
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}  # Required for gitleaks-action v2
+ - name: Run Gitleaks
+ uses: gitleaks/gitleaks-action@v2
+ env:
+ GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }} # Required for gitleaks-action v2
 
-      # Alternative: Run Gitleaks directly
-      - name: Install Gitleaks
-        run: |
-          wget -q https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz
-          tar -xzf gitleaks_8.21.2_linux_x64.tar.gz
-          chmod +x gitleaks
+ # Alternative: Run Gitleaks directly
+ - name: Install Gitleaks
+ run: |
+ wget -q https://github.com/gitleaks/gitleaks/releases/download/v8.21.2/gitleaks_8.21.2_linux_x64.tar.gz
+ tar -xzf gitleaks_8.21.2_linux_x64.tar.gz
+ chmod +x gitleaks
 
-      - name: Scan for secrets
-        run: |
-          if [ "${{ github.event_name }}" == "pull_request" ]; then
-            ./gitleaks detect \
-              --source . \
-              --log-opts="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" \
-              --report-format sarif \
-              --report-path gitleaks.sarif \
-              --exit-code 1
-          else
-            ./gitleaks detect \
-              --source . \
-              --report-format sarif \
-              --report-path gitleaks.sarif \
-              --exit-code 1 \
-              --baseline-path .gitleaks-baseline.json
-          fi
+ - name: Scan for secrets
+ run: |
+ if [ "${{ github.event_name }}" == "pull_request" ]; then
+ ./gitleaks detect \
+ --source . \
+ --log-opts="${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" \
+ --report-format sarif \
+ --report-path gitleaks.sarif \
+ --exit-code 1
+ else
+ ./gitleaks detect \
+ --source . \
+ --report-format sarif \
+ --report-path gitleaks.sarif \
+ --exit-code 1 \
+ --baseline-path .gitleaks-baseline.json
+ fi
 
-      - name: Upload SARIF
-        if: always()
-        uses: github/codeql-action/upload-sarif@v3
-        with:
-          sarif_file: gitleaks.sarif
-          category: gitleaks
+ - name: Upload SARIF
+ if: always()
+ uses: github/codeql-action/upload-sarif@v3
+ with:
+ sarif_file: gitleaks.sarif
+ category: gitleaks
 ```
 
 ### Step 4: Author Custom Detection Rules
@@ -178,7 +178,7 @@ Create organization-specific rules for internal secret patterns.
 title = "Organization Gitleaks Configuration"
 
 [extend]
-useDefault = true  # Include all default rules
+useDefault = true # Include all default rules
 
 # Custom rule for internal API tokens
 [[rules]]
@@ -207,21 +207,21 @@ keywords = ["jwt_secret", "jwt-secret", "jwt_key", "jwt-key"]
 [allowlist]
 description = "Global allowlist"
 paths = [
-  '''(^|/)test(s)?/''',
-  '''(^|/)spec/''',
-  '''\.test\.(js|ts|py)$''',
-  '''\.spec\.(js|ts|py)$''',
-  '''__mocks__/''',
-  '''fixtures/''',
-  '''(^|/)vendor/''',
-  '''node_modules/'''
+ '''(^|/)test(s)?/''',
+ '''(^|/)spec/''',
+ '''\.test\.(js|ts|py)$''',
+ '''\.spec\.(js|ts|py)$''',
+ '''__mocks__/''',
+ '''fixtures/''',
+ '''(^|/)vendor/''',
+ '''node_modules/'''
 ]
 regexes = [
-  '''EXAMPLE''',
-  '''example\.com''',
-  '''test[-_]?(key|secret|token|password)''',
-  '''(?i)placeholder''',
-  '''000000+'''
+ '''EXAMPLE''',
+ '''example\.com''',
+ '''test[-_]?(key|secret|token|password)''',
+ '''(?i)placeholder''',
+ '''000000+'''
 ]
 ```
 
@@ -246,9 +246,9 @@ When a secret is detected, follow the rotation and history cleanup procedure.
 
 ```bash
 # 1. Immediately rotate the exposed credential
-#    - Revoke the old API key/token in the service provider
-#    - Generate a new credential
-#    - Store the new credential in a secrets manager
+# - Revoke the old API key/token in the service provider
+# - Generate a new credential
+# - Store the new credential in a secrets manager
 
 # 2. Remove secret from git history using git-filter-repo
 pip install git-filter-repo
@@ -262,7 +262,7 @@ EOF
 git filter-repo --replace-text /tmp/expressions.txt --force
 
 # 3. Force-push the cleaned history (coordinate with team)
-# git push --force --all  # WARNING: Requires team coordination
+# git push --force --all # WARNING: Requires team coordination
 
 # 4. Add the secret pattern to .gitleaks.toml rules
 # 5. Update the baseline file to remove the resolved finding
@@ -316,29 +316,29 @@ Commits Scanned: 4,523
 Date: 2026-02-23
 
 FINDINGS:
-  Total: 12
-  New (not in baseline): 3
-  Baseline (pre-existing): 9
+ Total: 12
+ New (not in baseline): 3
+ Baseline (pre-existing): 9
 
 NEW FINDINGS (blocking):
-  [1] AWS Access Key ID
-      Rule: aws-access-key-id
-      File: src/config/aws.py:23
-      Commit: a1b2c3d (2026-02-22, dev@company.com)
-      Secret: AKIA...REDACTED
-      Entropy: 3.8
+ [1] AWS Access Key ID
+ Rule: aws-access-key-id
+ File: src/config/aws.py:23
+ Commit: a1b2c3d (2026-02-22, dev@company.com)
+ Secret: AKIA...REDACTED
+ Entropy: 3.8
 
-  [2] GitHub Personal Access Token
-      Rule: github-pat
-      File: scripts/deploy.sh:15
-      Commit: d4e5f6g (2026-02-21, ops@company.com)
-      Secret: ghp_...REDACTED
-      Entropy: 4.2
+ [2] GitHub Personal Access Token
+ Rule: github-pat
+ File: scripts/deploy.sh:15
+ Commit: d4e5f6g (2026-02-21, ops@company.com)
+ Secret: ghp_...REDACTED
+ Entropy: 4.2
 
-  [3] Internal API Token
-      Rule: internal-api-token
-      File: src/services/auth.py:89
-      Commit: h7i8j9k (2026-02-20, dev@company.com)
+ [3] Internal API Token
+ Rule: internal-api-token
+ File: src/services/auth.py:89
+ Commit: h7i8j9k (2026-02-20, dev@company.com)
 
 QUALITY GATE: FAILED (3 new findings)
 Action: Rotate exposed credentials immediately.

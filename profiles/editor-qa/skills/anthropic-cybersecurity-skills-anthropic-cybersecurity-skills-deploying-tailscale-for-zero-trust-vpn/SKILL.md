@@ -53,24 +53,24 @@ Tailscale is a zero trust mesh VPN built on WireGuard that creates encrypted pee
 ## Architecture
 
 ```
-                    Tailscale Coordination Server
-                    (or self-hosted Headscale)
-                           |
-                    Key Distribution
-                    & NAT Traversal
-                           |
-         +-----------------+-----------------+
-         |                 |                 |
-    +----+----+      +----+----+      +----+----+
-    | Node A  |<---->| Node B  |<---->| Node C  |
-    | (Linux) |      | (macOS) |      |(Windows)|
-    +---------+      +---------+      +---------+
-    WireGuard         WireGuard        WireGuard
-    Encrypted         Encrypted        Encrypted
-    P2P Tunnel        P2P Tunnel       P2P Tunnel
+ Tailscale Coordination Server
+ (or self-hosted Headscale)
+ |
+ Key Distribution
+ & NAT Traversal
+ |
+ +-----------------+-----------------+
+ | | |
+ +----+----+ +----+----+ +----+----+
+ | Node A |<---->| Node B |<---->| Node C |
+ | (Linux) | | (macOS) | |(Windows)|
+ +---------+ +---------+ +---------+
+ WireGuard WireGuard WireGuard
+ Encrypted Encrypted Encrypted
+ P2P Tunnel P2P Tunnel P2P Tunnel
 
-    Each node connects directly to every other node.
-    DERP relay servers used only when direct P2P fails.
+ Each node connects directly to every other node.
+ DERP relay servers used only when direct P2P fails.
 ```
 
 ## Installation and Setup
@@ -108,24 +108,24 @@ brew install --cask tailscale
 # docker-compose.yml for Tailscale sidecar
 version: '3.8'
 services:
-  tailscale:
-    image: tailscale/tailscale:latest
-    container_name: tailscale
-    hostname: my-service
-    environment:
-      - TS_AUTHKEY=tskey-auth-xxxxx  # Pre-auth key
-      - TS_STATE_DIR=/var/lib/tailscale
-      - TS_EXTRA_ARGS=--advertise-tags=tag:container
-    volumes:
-      - tailscale-state:/var/lib/tailscale
-      - /dev/net/tun:/dev/net/tun
-    cap_add:
-      - net_admin
-      - sys_module
-    restart: unless-stopped
+ tailscale:
+ image: tailscale/tailscale:latest
+ container_name: tailscale
+ hostname: my-service
+ environment:
+ - TS_AUTHKEY=tskey-auth-xxxxx # Pre-auth key
+ - TS_STATE_DIR=/var/lib/tailscale
+ - TS_EXTRA_ARGS=--advertise-tags=tag:container
+ volumes:
+ - tailscale-state:/var/lib/tailscale
+ - /dev/net/tun:/dev/net/tun
+ cap_add:
+ - net_admin
+ - sys_module
+ restart: unless-stopped
 
 volumes:
-  tailscale-state:
+ tailscale-state:
 ```
 
 ### Kubernetes Deployment
@@ -135,42 +135,42 @@ volumes:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: tailscale-auth
-  namespace: tailscale
+ name: tailscale-auth
+ namespace: tailscale
 type: Opaque
 stringData:
-  TS_AUTHKEY: "tskey-auth-xxxxx"
+ TS_AUTHKEY: "tskey-auth-xxxxx"
 ---
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: tailscale
-  namespace: tailscale
+ name: tailscale
+ namespace: tailscale
 spec:
-  selector:
-    matchLabels:
-      app: tailscale
-  template:
-    metadata:
-      labels:
-        app: tailscale
-    spec:
-      containers:
-      - name: tailscale
-        image: tailscale/tailscale:latest
-        env:
-        - name: TS_AUTHKEY
-          valueFrom:
-            secretKeyRef:
-              name: tailscale-auth
-              key: TS_AUTHKEY
-        - name: TS_KUBE_SECRET
-          value: tailscale-state
-        - name: TS_USERSPACE
-          value: "true"
-        securityContext:
-          capabilities:
-            add: ["NET_ADMIN"]
+ selector:
+ matchLabels:
+ app: tailscale
+ template:
+ metadata:
+ labels:
+ app: tailscale
+ spec:
+ containers:
+ - name: tailscale
+ image: tailscale/tailscale:latest
+ env:
+ - name: TS_AUTHKEY
+ valueFrom:
+ secretKeyRef:
+ name: tailscale-auth
+ key: TS_AUTHKEY
+ - name: TS_KUBE_SECRET
+ value: tailscale-state
+ - name: TS_USERSPACE
+ value: "true"
+ securityContext:
+ capabilities:
+ add: ["NET_ADMIN"]
 ```
 
 ## Access Control Lists (ACLs)
@@ -179,69 +179,69 @@ Tailscale ACLs define who can access what within your tailnet using a declarativ
 
 ```json
 {
-  "acls": [
-    // Engineering team can access development servers
-    {
-      "action": "accept",
-      "src": ["group:engineering"],
-      "dst": ["tag:dev-server:*"]
-    },
-    // SRE team can access production infrastructure
-    {
-      "action": "accept",
-      "src": ["group:sre"],
-      "dst": ["tag:production:22,443,8080"]
-    },
-    // Database access restricted to backend services
-    {
-      "action": "accept",
-      "src": ["tag:backend"],
-      "dst": ["tag:database:5432,3306,27017"]
-    },
-    // All employees can access internal tools
-    {
-      "action": "accept",
-      "src": ["group:employees"],
-      "dst": ["tag:internal-tools:443"]
-    }
-  ],
+ "acls": [
+ // Engineering team can access development servers
+ {
+ "action": "accept",
+ "src": ["group:engineering"],
+ "dst": ["tag:dev-server:*"]
+ },
+ // SRE team can access production infrastructure
+ {
+ "action": "accept",
+ "src": ["group:sre"],
+ "dst": ["tag:production:22,443,8080"]
+ },
+ // Database access restricted to backend services
+ {
+ "action": "accept",
+ "src": ["tag:backend"],
+ "dst": ["tag:database:5432,3306,27017"]
+ },
+ // All employees can access internal tools
+ {
+ "action": "accept",
+ "src": ["group:employees"],
+ "dst": ["tag:internal-tools:443"]
+ }
+ ],
 
-  "groups": {
-    "group:engineering": ["user@company.com", "dev@company.com"],
-    "group:sre": ["sre@company.com", "oncall@company.com"],
-    "group:employees": ["autogroup:members"]
-  },
+ "groups": {
+ "group:engineering": ["user@company.com", "dev@company.com"],
+ "group:sre": ["sre@company.com", "oncall@company.com"],
+ "group:employees": ["autogroup:members"]
+ },
 
-  "tagOwners": {
-    "tag:dev-server": ["group:engineering"],
-    "tag:production": ["group:sre"],
-    "tag:backend": ["group:sre"],
-    "tag:database": ["group:sre"],
-    "tag:internal-tools": ["group:sre"],
-    "tag:container": ["group:sre"]
-  },
+ "tagOwners": {
+ "tag:dev-server": ["group:engineering"],
+ "tag:production": ["group:sre"],
+ "tag:backend": ["group:sre"],
+ "tag:database": ["group:sre"],
+ "tag:internal-tools": ["group:sre"],
+ "tag:container": ["group:sre"]
+ },
 
-  "ssh": [
-    {
-      "action": "check",
-      "src": ["group:sre"],
-      "dst": ["tag:production"],
-      "users": ["root", "admin"]
-    },
-    {
-      "action": "accept",
-      "src": ["group:engineering"],
-      "dst": ["tag:dev-server"],
-      "users": ["autogroup:nonroot"]
-    }
-  ],
+ "ssh": [
+ {
+ "action": "check",
+ "src": ["group:sre"],
+ "dst": ["tag:production"],
+ "users": ["root", "admin"]
+ },
+ {
+ "action": "accept",
+ "src": ["group:engineering"],
+ "dst": ["tag:dev-server"],
+ "users": ["autogroup:nonroot"]
+ }
+ ],
 
-  "nodeAttrs": [
-    {
-      "target": ["autogroup:members"],
-      "attr": ["funnel:deny"]
-    }
-  ]
+ "nodeAttrs": [
+ {
+ "target": ["autogroup:members"],
+ "attr": ["funnel:deny"]
+ }
+ ]
 }
 ```
 
@@ -257,7 +257,7 @@ sudo tailscale up --advertise-exit-node
 sudo tailscale up --exit-node=<exit-node-ip>
 
 # Verify exit node routing
-curl ifconfig.me  # Should show exit node's public IP
+curl ifconfig.me # Should show exit node's public IP
 ```
 
 ### Subnet Router Configuration
@@ -284,7 +284,7 @@ Tailscale SSH replaces traditional SSH key management with identity-based access
 sudo tailscale up --ssh
 
 # Connect using Tailscale SSH (no SSH keys needed)
-ssh user@hostname  # Authenticates via Tailscale identity
+ssh user@hostname # Authenticates via Tailscale identity
 
 # Session recording (audit logging)
 # Configure in ACL policy:
@@ -297,7 +297,7 @@ ssh user@hostname  # Authenticates via Tailscale identity
 ```bash
 # MagicDNS is enabled by default in new tailnets
 # Access devices by hostname instead of IP
-ping my-server  # Resolves via MagicDNS
+ping my-server # Resolves via MagicDNS
 
 # Custom DNS configuration via admin console
 # Split DNS: route specific domains to internal DNS servers
@@ -318,11 +318,11 @@ sudo headscale generate config > /etc/headscale/config.yaml
 
 # Edit config for your environment
 # Key settings:
-#   server_url: https://headscale.example.com
-#   listen_addr: 0.0.0.0:8080
-#   private_key_path: /etc/headscale/private.key
-#   db_type: sqlite3
-#   db_path: /var/lib/headscale/db.sqlite
+# server_url: https://headscale.example.com
+# listen_addr: 0.0.0.0:8080
+# private_key_path: /etc/headscale/private.key
+# db_type: sqlite3
+# db_path: /var/lib/headscale/db.sqlite
 
 # Start Headscale
 sudo headscale serve
@@ -354,22 +354,22 @@ sudo tailscale up --authkey=tskey-auth-xxxxx
 
 ```json
 {
-  "nodeAttrs": [
-    {
-      "target": ["autogroup:members"],
-      "attr": [
-        "mullvad:deny",
-        "funnel:deny"
-      ]
-    }
-  ],
-  "autoApprovers": {
-    "routes": {
-      "10.0.0.0/24": ["group:sre"],
-      "192.168.0.0/16": ["group:sre"]
-    },
-    "exitNode": ["group:sre"]
-  }
+ "nodeAttrs": [
+ {
+ "target": ["autogroup:members"],
+ "attr": [
+ "mullvad:deny",
+ "funnel:deny"
+ ]
+ }
+ ],
+ "autoApprovers": {
+ "routes": {
+ "10.0.0.0/24": ["group:sre"],
+ "192.168.0.0/16": ["group:sre"]
+ },
+ "exitNode": ["group:sre"]
+ }
 }
 ```
 

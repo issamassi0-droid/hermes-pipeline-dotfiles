@@ -1,11 +1,11 @@
 ---
 name: implementing-network-access-control-with-cisco-ise
 description: Deploys Cisco Identity Services Engine (ISE) as a RADIUS policy server for 802.1X
-  wired and wireless authentication, MAC Authentication Bypass, posture assessment,
-  dynamic VLAN assignment, downloadable ACLs, and TrustSec Security Group Tags. Use
-  when deploying enterprise NAC with ISE and Active Directory integration, enforcing
-  endpoint posture compliance, or segmenting access with TrustSec instead of a
-  generic 802.1X/PacketFence setup.
+ wired and wireless authentication, MAC Authentication Bypass, posture assessment,
+ dynamic VLAN assignment, downloadable ACLs, and TrustSec Security Group Tags. Use
+ when deploying enterprise NAC with ISE and Active Directory integration, enforcing
+ endpoint posture compliance, or segmenting access with TrustSec instead of a
+ generic 802.1X/PacketFence setup.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -101,10 +101,10 @@ Navigate to **Administration > Identity Management > External Identity Sources >
 2. Provide domain admin credentials for ISE machine account
 3. Join ISE to the domain
 4. Select AD groups for authorization policies:
-   - `Domain Users` - Standard employee access
-   - `Domain Computers` - Machine authentication
-   - `IT-Admins` - Privileged access
-   - `BYOD-Users` - Personal device access
+ - `Domain Users` - Standard employee access
+ - `Domain Computers` - Machine authentication
+ - `IT-Admins` - Privileged access
+ - `BYOD-Users` - Personal device access
 
 ### Step 2: Configure Network Devices in ISE
 
@@ -122,13 +122,13 @@ Location: Building-A-Floor-1
 Create a Network Device Group hierarchy:
 ```
 Device Type:
-  ├── Cisco Switches
-  │   ├── Access Layer
-  │   └── Distribution Layer
-  └── Wireless Controllers
+ ├── Cisco Switches
+ │ ├── Access Layer
+ │ └── Distribution Layer
+ └── Wireless Controllers
 Location:
-  ├── Building-A
-  └── Building-B
+ ├── Building-A
+ └── Building-B
 ```
 
 ### Step 3: Configure Switch for 802.1X
@@ -243,19 +243,19 @@ Navigate to **Policy > Policy Sets**:
 
 ```
 Profile: VLAN100-Corporate
-  VLAN: 100
-  dACL: PERMIT_ALL
-  SGT: Employees (0x0005)
-  Reauthentication Timer: 28800
+ VLAN: 100
+ dACL: PERMIT_ALL
+ SGT: Employees (0x0005)
+ Reauthentication Timer: 28800
 
 Profile: VLAN200-Remediation
-  VLAN: 200
-  dACL: REMEDIATION-ACL (allow only remediation server access)
-  Web Redirection: Posture Discovery
-  Reauthentication Timer: 300
+ VLAN: 200
+ dACL: REMEDIATION-ACL (allow only remediation server access)
+ Web Redirection: Posture Discovery
+ Reauthentication Timer: 300
 
 Profile: DenyAccess
-  Access Type: ACCESS_REJECT
+ Access Type: ACCESS_REJECT
 ```
 
 ### Step 6: Configure Posture Assessment
@@ -273,17 +273,17 @@ Navigate to **Work Centers > Posture**:
 **Posture Requirements:**
 ```
 Requirement: Corporate-Windows-Compliance
-  OS: Windows All
-  Conditions: Windows Firewall AND Antivirus AND OS Patches
-  Remediation: Auto-remediate with AnyConnect ISE Posture Module
+ OS: Windows All
+ Conditions: Windows Firewall AND Antivirus AND OS Patches
+ Remediation: Auto-remediate with AnyConnect ISE Posture Module
 ```
 
 **Posture Policy:**
 ```
 Rule: Windows-Endpoints
-  Identity Group: Any
-  OS: Windows All
-  Requirement: Corporate-Windows-Compliance
+ Identity Group: Any
+ OS: Windows All
+ Requirement: Corporate-Windows-Compliance
 ```
 
 ### Step 7: Configure TrustSec Segmentation

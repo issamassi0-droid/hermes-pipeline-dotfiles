@@ -1,11 +1,11 @@
 ---
 name: analyzing-api-gateway-access-logs
 description: 'Parses API Gateway access logs (AWS API Gateway, Kong, Nginx) to detect
-  BOLA/IDOR attacks, rate limit bypass, credential scanning, and injection attempts.
-  Uses pandas for statistical analysis of request patterns and anomaly detection.
-  Use when investigating API abuse or building API-specific threat detection rules.
+ BOLA/IDOR attacks, rate limit bypass, credential scanning, and injection attempts.
+ Uses pandas for statistical analysis of request patterns and anomaly detection.
+ Use when investigating API abuse or building API-specific threat detection rules.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -60,7 +60,7 @@ import pandas as pd
 df = pd.read_json("api_gateway_logs.json", lines=True)
 # Detect BOLA: same user accessing many different resource IDs
 bola = df.groupby(["user_id", "endpoint"]).agg(
-    unique_ids=("resource_id", "nunique")).reset_index()
+ unique_ids=("resource_id", "nunique")).reset_index()
 suspicious = bola[bola["unique_ids"] > 50]
 ```
 

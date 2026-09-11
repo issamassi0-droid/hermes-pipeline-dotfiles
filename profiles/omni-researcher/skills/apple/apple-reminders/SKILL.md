@@ -6,10 +6,10 @@ author: Hermes Agent
 license: MIT
 platforms: [macos]
 metadata:
-  hermes:
-    tags: [Reminders, tasks, todo, macOS, Apple]
+ hermes:
+ tags: [Reminders, tasks, todo, macOS, Apple]
 prerequisites:
-  commands: [remindctl]
+ commands: [remindctl]
 ---
 
 # Apple Reminders
@@ -42,22 +42,22 @@ Use `remindctl` to manage Apple Reminders directly from the terminal. Tasks sync
 ### View Reminders
 
 ```bash
-remindctl                    # Today's reminders
-remindctl today              # Today
-remindctl tomorrow           # Tomorrow
-remindctl week               # This week
-remindctl overdue            # Past due
-remindctl all                # Everything
-remindctl 2026-01-04         # Specific date
+remindctl # Today's reminders
+remindctl today # Today
+remindctl tomorrow # Tomorrow
+remindctl week # This week
+remindctl overdue # Past due
+remindctl all # Everything
+remindctl 2026-01-04 # Specific date
 ```
 
 ### Manage Lists
 
 ```bash
-remindctl list               # List all lists
-remindctl list Work          # Show specific list
-remindctl list Projects --create    # Create list
-remindctl list Work --delete        # Delete list
+remindctl list # List all lists
+remindctl list Work # Show specific list
+remindctl list Projects --create # Create list
+remindctl list Work --delete # Delete list
 ```
 
 ### Create Reminders
@@ -103,16 +103,16 @@ Apple's public `EKReminder` docs list only reminder-specific properties. Alarm s
 ### Complete / Delete
 
 ```bash
-remindctl complete 1 2 3          # Complete by ID
-remindctl delete 4A83 --force     # Delete by ID
+remindctl complete 1 2 3 # Complete by ID
+remindctl delete 4A83 --force # Delete by ID
 ```
 
 ### Output Formats
 
 ```bash
-remindctl today --json       # JSON for scripting
-remindctl today --plain      # TSV format
-remindctl today --quiet      # Counts only
+remindctl today --json # JSON for scripting
+remindctl today --plain # TSV format
+remindctl today --quiet # Counts only
 ```
 
 ## Date Formats

@@ -1,11 +1,11 @@
 ---
 name: implementing-api-gateway-security-controls
 description: 'Configures API gateways such as Kong, AWS API Gateway, Azure APIM,
-  or Apigee as a centralized security enforcement point, covering authentication
-  enforcement, rate limiting and throttling, request validation, IP allowlisting,
-  TLS termination, and threat protection. Use when securing API traffic at the gateway
-  layer, setting up gateway-level authentication and quota management, or centralizing
-  API protection before requests reach backend services.'
+ or Apigee as a centralized security enforcement point, covering authentication
+ enforcement, rate limiting and throttling, request validation, IP allowlisting,
+ TLS termination, and threat protection. Use when securing API traffic at the gateway
+ layer, setting up gateway-level authentication and quota management, or centralizing
+ API protection before requests reach backend services.'
 domain: cybersecurity
 subdomain: api-security
 tags:
@@ -60,97 +60,97 @@ mitre_attack:
 _format_version: "3.0"
 
 services:
-  - name: user-service
-    url: http://user-service:8080
-    routes:
-      - name: user-api
-        paths:
-          - /api/v1/users
-        methods:
-          - GET
-          - POST
-          - PUT
-          - PATCH
-          - DELETE
-        strip_path: false
+ - name: user-service
+ url: http://user-service:8080
+ routes:
+ - name: user-api
+ paths:
+ - /api/v1/users
+ methods:
+ - GET
+ - POST
+ - PUT
+ - PATCH
+ - DELETE
+ strip_path: false
 
 plugins:
-  # 1. Authentication: JWT validation
-  - name: jwt
-    config:
-      uri_param_names:
-        - jwt
-      header_names:
-        - Authorization
-      claims_to_verify:
-        - exp
-      maximum_expiration: 3600  # Max 1 hour token TTL
+ # 1. Authentication: JWT validation
+ - name: jwt
+ config:
+ uri_param_names:
+ - jwt
+ header_names:
+ - Authorization
+ claims_to_verify:
+ - exp
+ maximum_expiration: 3600 # Max 1 hour token TTL
 
-  # 2. Rate Limiting
-  - name: rate-limiting
-    config:
-      minute: 60
-      hour: 1000
-      policy: redis
-      redis_host: redis
-      redis_port: 6379
-      fault_tolerant: true
-      hide_client_headers: false
-      limit_by: credential  # Per-user, not per-IP
+ # 2. Rate Limiting
+ - name: rate-limiting
+ config:
+ minute: 60
+ hour: 1000
+ policy: redis
+ redis_host: redis
+ redis_port: 6379
+ fault_tolerant: true
+ hide_client_headers: false
+ limit_by: credential # Per-user, not per-IP
 
-  # 3. Request Size Limiting
-  - name: request-size-limiting
-    config:
-      allowed_payload_size: 1  # 1 MB max
-      size_unit: megabytes
+ # 3. Request Size Limiting
+ - name: request-size-limiting
+ config:
+ allowed_payload_size: 1 # 1 MB max
+ size_unit: megabytes
 
-  # 4. IP Restriction (admin endpoints)
-  - name: ip-restriction
-    service: admin-service
-    config:
-      allow:
-        - 10.0.0.0/8
-        - 172.16.0.0/12
+ # 4. IP Restriction (admin endpoints)
+ - name: ip-restriction
+ service: admin-service
+ config:
+ allow:
+ - 10.0.0.0/8
+ - 172.16.0.0/12
 
-  # 5. Bot Detection
-  - name: bot-detection
-    config:
-      deny:
-        - "sqlmap"
-        - "nikto"
-        - "nmap"
-        - "masscan"
+ # 5. Bot Detection
+ - name: bot-detection
+ config:
+ deny:
+ - "sqlmap"
+ - "nikto"
+ - "nmap"
+ - "masscan"
 
-  # 6. CORS Configuration
-  - name: cors
-    config:
-      origins:
-        - "https://app.example.com"
-      methods:
-        - GET
-        - POST
-        - PUT
-        - PATCH
-        - DELETE
-      headers:
-        - Authorization
-        - Content-Type
-      credentials: true
-      max_age: 3600
+ # 6. CORS Configuration
+ - name: cors
+ config:
+ origins:
+ - "https://app.example.com"
+ methods:
+ - GET
+ - POST
+ - PUT
+ - PATCH
+ - DELETE
+ headers:
+ - Authorization
+ - Content-Type
+ credentials: true
+ max_age: 3600
 
-  # 7. Response Transformer - Remove sensitive headers
-  - name: response-transformer
-    config:
-      remove:
-        headers:
-          - X-Powered-By
-          - Server
-      add:
-        headers:
-          - "X-Content-Type-Options: nosniff"
-          - "X-Frame-Options: DENY"
-          - "Strict-Transport-Security: max-age=31536000; includeSubDomains"
-          - "Content-Security-Policy: default-src 'none'"
+ # 7. Response Transformer - Remove sensitive headers
+ - name: response-transformer
+ config:
+ remove:
+ headers:
+ - X-Powered-By
+ - Server
+ add:
+ headers:
+ - "X-Content-Type-Options: nosniff"
+ - "X-Frame-Options: DENY"
+ - "Strict-Transport-Security: max-age=31536000; includeSubDomains"
+ - "Content-Security-Policy: default-src 'none'"
 ```
 
 ### Step 2: AWS API Gateway Security Configuration
@@ -163,102 +163,102 @@ apigw = boto3.client('apigatewayv2')
 
 # Create API with mutual TLS
 api_response = apigw.create_api(
-    Name='secure-api',
-    ProtocolType='HTTP',
-    DisableExecuteApiEndpoint=True,  # Force custom domain
+ Name='secure-api',
+ ProtocolType='HTTP',
+ DisableExecuteApiEndpoint=True, # Force custom domain
 )
 api_id = api_response['ApiId']
 
 # Configure authorizer (JWT with Cognito)
 authorizer = apigw.create_authorizer(
-    ApiId=api_id,
-    AuthorizerType='JWT',
-    IdentitySource='$request.header.Authorization',
-    Name='cognito-jwt-authorizer',
-    JwtConfiguration={
-        'Audience': ['your-app-client-id'],
-        'Issuer': 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxx'
-    }
+ ApiId=api_id,
+ AuthorizerType='JWT',
+ IdentitySource='$request.header.Authorization',
+ Name='cognito-jwt-authorizer',
+ JwtConfiguration={
+ 'Audience': ['your-app-client-id'],
+ 'Issuer': 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_xxxxx'
+ }
 )
 
 # Create route with authorizer
 apigw.create_route(
-    ApiId=api_id,
-    RouteKey='GET /api/v1/users',
-    AuthorizerId=authorizer['AuthorizerId'],
-    AuthorizationType='JWT',
+ ApiId=api_id,
+ RouteKey='GET /api/v1/users',
+ AuthorizerId=authorizer['AuthorizerId'],
+ AuthorizationType='JWT',
 )
 
 # Configure throttling
 apigw.create_stage(
-    ApiId=api_id,
-    StageName='prod',
-    DefaultRouteSettings={
-        'ThrottlingBurstLimit': 100,
-        'ThrottlingRateLimit': 50.0,  # 50 requests per second
-    },
-    AccessLogSettings={
-        'DestinationArn': 'arn:aws:logs:us-east-1:123456789:log-group:api-access-logs',
-        'Format': json.dumps({
-            'requestId': '$context.requestId',
-            'ip': '$context.identity.sourceIp',
-            'caller': '$context.identity.caller',
-            'user': '$context.identity.user',
-            'requestTime': '$context.requestTime',
-            'httpMethod': '$context.httpMethod',
-            'resourcePath': '$context.resourcePath',
-            'status': '$context.status',
-            'protocol': '$context.protocol',
-            'responseLength': '$context.responseLength'
-        })
-    }
+ ApiId=api_id,
+ StageName='prod',
+ DefaultRouteSettings={
+ 'ThrottlingBurstLimit': 100,
+ 'ThrottlingRateLimit': 50.0, # 50 requests per second
+ },
+ AccessLogSettings={
+ 'DestinationArn': 'arn:aws:logs:us-east-1:123456789:log-group:api-access-logs',
+ 'Format': json.dumps({
+ 'requestId': '$context.requestId',
+ 'ip': '$context.identity.sourceIp',
+ 'caller': '$context.identity.caller',
+ 'user': '$context.identity.user',
+ 'requestTime': '$context.requestTime',
+ 'httpMethod': '$context.httpMethod',
+ 'resourcePath': '$context.resourcePath',
+ 'status': '$context.status',
+ 'protocol': '$context.protocol',
+ 'responseLength': '$context.responseLength'
+ })
+ }
 )
 
 # WAF association
 waf = boto3.client('wafv2')
 web_acl = waf.create_web_acl(
-    Name='api-security-acl',
-    Scope='REGIONAL',
-    DefaultAction={'Allow': {}},
-    Rules=[
-        {
-            'Name': 'AWS-AWSManagedRulesSQLiRuleSet',
-            'Priority': 1,
-            'Statement': {
-                'ManagedRuleGroupStatement': {
-                    'VendorName': 'AWS',
-                    'Name': 'AWSManagedRulesSQLiRuleSet'
-                }
-            },
-            'OverrideAction': {'None': {}},
-            'VisibilityConfig': {
-                'SampledRequestsEnabled': True,
-                'CloudWatchMetricsEnabled': True,
-                'MetricName': 'SQLiRuleSet'
-            }
-        },
-        {
-            'Name': 'RateLimit',
-            'Priority': 2,
-            'Statement': {
-                'RateBasedStatement': {
-                    'Limit': 2000,
-                    'AggregateKeyType': 'IP'
-                }
-            },
-            'Action': {'Block': {}},
-            'VisibilityConfig': {
-                'SampledRequestsEnabled': True,
-                'CloudWatchMetricsEnabled': True,
-                'MetricName': 'RateLimitRule'
-            }
-        },
-    ],
-    VisibilityConfig={
-        'SampledRequestsEnabled': True,
-        'CloudWatchMetricsEnabled': True,
-        'MetricName': 'ApiSecurityACL'
-    }
+ Name='api-security-acl',
+ Scope='REGIONAL',
+ DefaultAction={'Allow': {}},
+ Rules=[
+ {
+ 'Name': 'AWS-AWSManagedRulesSQLiRuleSet',
+ 'Priority': 1,
+ 'Statement': {
+ 'ManagedRuleGroupStatement': {
+ 'VendorName': 'AWS',
+ 'Name': 'AWSManagedRulesSQLiRuleSet'
+ }
+ },
+ 'OverrideAction': {'None': {}},
+ 'VisibilityConfig': {
+ 'SampledRequestsEnabled': True,
+ 'CloudWatchMetricsEnabled': True,
+ 'MetricName': 'SQLiRuleSet'
+ }
+ },
+ {
+ 'Name': 'RateLimit',
+ 'Priority': 2,
+ 'Statement': {
+ 'RateBasedStatement': {
+ 'Limit': 2000,
+ 'AggregateKeyType': 'IP'
+ }
+ },
+ 'Action': {'Block': {}},
+ 'VisibilityConfig': {
+ 'SampledRequestsEnabled': True,
+ 'CloudWatchMetricsEnabled': True,
+ 'MetricName': 'RateLimitRule'
+ }
+ },
+ ],
+ VisibilityConfig={
+ 'SampledRequestsEnabled': True,
+ 'CloudWatchMetricsEnabled': True,
+ 'MetricName': 'ApiSecurityACL'
+ }
 )
 ```
 
@@ -267,41 +267,41 @@ web_acl = waf.create_web_acl(
 ```yaml
 # Kong OAS Validation Plugin configuration
 plugins:
-  - name: oas-validation
-    config:
-      api_spec: |
-        openapi: "3.0.3"
-        info:
-          title: Secure API
-          version: "1.0"
-        paths:
-          /api/v1/users:
-            post:
-              requestBody:
-                required: true
-                content:
-                  application/json:
-                    schema:
-                      type: object
-                      required: [name, email]
-                      properties:
-                        name:
-                          type: string
-                          maxLength: 100
-                          pattern: "^[a-zA-Z ]+$"
-                        email:
-                          type: string
-                          format: email
-                          maxLength: 255
-                      additionalProperties: false  # Block mass assignment
-              responses:
-                '201':
-                  description: User created
-      validate_request_body: true
-      validate_request_header_params: true
-      validate_request_query_params: true
-      validate_request_uri_params: true
-      verbose_response: false  # Do not expose schema details in errors
+ - name: oas-validation
+ config:
+ api_spec: |
+ openapi: "3.0.3"
+ info:
+ title: Secure API
+ version: "1.0"
+ paths:
+ /api/v1/users:
+ post:
+ requestBody:
+ required: true
+ content:
+ application/json:
+ schema:
+ type: object
+ required: [name, email]
+ properties:
+ name:
+ type: string
+ maxLength: 100
+ pattern: "^[a-zA-Z ]+$"
+ email:
+ type: string
+ format: email
+ maxLength: 255
+ additionalProperties: false # Block mass assignment
+ responses:
+ '201':
+ description: User created
+ validate_request_body: true
+ validate_request_header_params: true
+ validate_request_query_params: true
+ validate_request_uri_params: true
+ verbose_response: false # Do not expose schema details in errors
 ```
 
 ### Step 4: Mutual TLS Configuration
@@ -311,26 +311,26 @@ plugins:
 # 1. Create CA
 openssl genrsa -out ca.key 4096
 openssl req -new -x509 -key ca.key -out ca.crt -days 365 \
-    -subj "/CN=API Gateway CA/O=Example Corp"
+ -subj "/CN=API Gateway CA/O=Example Corp"
 
 # 2. Create client certificate
 openssl genrsa -out client.key 2048
 openssl req -new -key client.key -out client.csr \
-    -subj "/CN=api-client/O=Example Corp"
+ -subj "/CN=api-client/O=Example Corp"
 openssl x509 -req -in client.csr -CA ca.crt -CAkey ca.key \
-    -CAcreateserial -out client.crt -days 365
+ -CAcreateserial -out client.crt -days 365
 
 # Kong mTLS configuration
 # Upload CA certificate to Kong
 curl -X POST http://kong-admin:8001/ca_certificates \
-    -F "cert=@ca.crt"
+ -F "cert=@ca.crt"
 
 # Enable mTLS plugin
 curl -X POST http://kong-admin:8001/services/user-service/plugins \
-    --data "name=mtls-auth" \
-    --data "config.ca_certificates[]=$(cat ca_cert_id)" \
-    --data "config.revocation_check_mode=SKIP" \
-    --data "config.authenticated_group_by=CN"
+ --data "name=mtls-auth" \
+ --data "config.ca_certificates[]=$(cat ca_cert_id)" \
+ --data "config.revocation_check_mode=SKIP" \
+ --data "config.authenticated_group_by=CN"
 ```
 
 ### Step 5: Logging and Monitoring Configuration
@@ -344,53 +344,53 @@ logs = boto3.client('logs')
 
 # Create metric filters for security events
 security_filters = [
-    {
-        'name': 'UnauthorizedAccess',
-        'pattern': '{ $.status = 401 || $.status = 403 }',
-        'metric': 'UnauthorizedAccessCount'
-    },
-    {
-        'name': 'RateLimitHits',
-        'pattern': '{ $.status = 429 }',
-        'metric': 'RateLimitHitCount'
-    },
-    {
-        'name': 'ServerErrors',
-        'pattern': '{ $.status >= 500 }',
-        'metric': 'ServerErrorCount'
-    },
-    {
-        'name': 'LargeResponses',
-        'pattern': '{ $.responseLength > 1000000 }',
-        'metric': 'LargeResponseCount'
-    },
+ {
+ 'name': 'UnauthorizedAccess',
+ 'pattern': '{ $.status = 401 || $.status = 403 }',
+ 'metric': 'UnauthorizedAccessCount'
+ },
+ {
+ 'name': 'RateLimitHits',
+ 'pattern': '{ $.status = 429 }',
+ 'metric': 'RateLimitHitCount'
+ },
+ {
+ 'name': 'ServerErrors',
+ 'pattern': '{ $.status >= 500 }',
+ 'metric': 'ServerErrorCount'
+ },
+ {
+ 'name': 'LargeResponses',
+ 'pattern': '{ $.responseLength > 1000000 }',
+ 'metric': 'LargeResponseCount'
+ },
 ]
 
 for sf in security_filters:
-    logs.put_metric_filter(
-        logGroupName='api-access-logs',
-        filterName=sf['name'],
-        filterPattern=sf['pattern'],
-        metricTransformations=[{
-            'metricName': sf['metric'],
-            'metricNamespace': 'APISecurityMetrics',
-            'metricValue': '1',
-            'defaultValue': 0
-        }]
-    )
+ logs.put_metric_filter(
+ logGroupName='api-access-logs',
+ filterName=sf['name'],
+ filterPattern=sf['pattern'],
+ metricTransformations=[{
+ 'metricName': sf['metric'],
+ 'metricNamespace': 'APISecurityMetrics',
+ 'metricValue': '1',
+ 'defaultValue': 0
+ }]
+ )
 
 # Create alarm for unusual 401/403 spike
 cloudwatch.put_metric_alarm(
-    AlarmName='API-UnauthorizedAccessSpike',
-    MetricName='UnauthorizedAccessCount',
-    Namespace='APISecurityMetrics',
-    Statistic='Sum',
-    Period=300,  # 5 minutes
-    EvaluationPeriods=1,
-    Threshold=100,
-    ComparisonOperator='GreaterThanThreshold',
-    AlarmActions=['arn:aws:sns:us-east-1:123456789:security-alerts'],
-    AlarmDescription='More than 100 unauthorized access attempts in 5 minutes'
+ AlarmName='API-UnauthorizedAccessSpike',
+ MetricName='UnauthorizedAccessCount',
+ Namespace='APISecurityMetrics',
+ Statistic='Sum',
+ Period=300, # 5 minutes
+ EvaluationPeriods=1,
+ Threshold=100,
+ ComparisonOperator='GreaterThanThreshold',
+ AlarmActions=['arn:aws:sns:us-east-1:123456789:security-alerts'],
+ AlarmDescription='More than 100 unauthorized access attempts in 5 minutes'
 )
 ```
 

@@ -1,35 +1,35 @@
 {
-  "mission_id": "co-20260911015048",
-  "task": "\u0628\u062d\u062b \u0639\u0646 \u062a\u062c\u0627\u0631\u0628 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646 \u0645\u0639 herdr agent",
-  "tier": "tier_2",
-  "started": "2026-09-11T00:50:48.923133+00:00",
-  "steps": [
-    {
-      "step": "context_budget",
-      "result": {
-        "error": "script not found: context-budget.py"
-      }
-    },
-    {
-      "step": "heartbeat",
-      "result": {
-        "error": "script not found: architect-heartbeat.py"
-      }
-    },
-    {
-      "step": "model_selection",
-      "result": {
-        "error": "script not found: model-gateway.sh"
-      }
-    }
-  ],
-  "status": "completed",
-  "completed": "2026-09-11T00:50:48.923211+00:00",
-  "agents_used": [
-    "omni-researcher",
-    "strategist",
-    "draft-writer",
-    "editor-qa",
-    "publisher"
-  ]
+ "mission_id": "co-20260911015048",
+ "task": "\u0628\u062d\u062b \u0639\u0646 \u062a\u062c\u0627\u0631\u0628 \u0627\u0644\u0645\u0633\u062a\u062e\u062f\u0645\u064a\u0646 \u0645\u0639 herdr agent",
+ "tier": "tier_2",
+ "started": "2026-09-11T00:50:48.923133+00:00",
+ "steps": [
+ {
+ "step": "context_budget",
+ "result": {
+ "error": "script not found: context-budget.py"
+ }
+ },
+ {
+ "step": "heartbeat",
+ "result": {
+ "error": "script not found: architect-heartbeat.py"
+ }
+ },
+ {
+ "step": "model_selection",
+ "result": {
+ "error": "script not found: model-gateway.sh"
+ }
+ }
+ ],
+ "status": "completed",
+ "completed": "2026-09-11T00:50:48.923211+00:00",
+ "agents_used": [
+ "omni-researcher",
+ "strategist",
+ "draft-writer",
+ "editor-qa",
+ "publisher"
+ ]
 }

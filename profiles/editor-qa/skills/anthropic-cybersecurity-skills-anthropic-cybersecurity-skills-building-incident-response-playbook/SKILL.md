@@ -1,10 +1,10 @@
 ---
 name: building-incident-response-playbook
 description: Designs and documents structured incident response playbooks with step-by-step
-  procedures per incident type, decision trees, escalation criteria, RACI matrices,
-  and SOAR platform integration, aligned to NIST SP 800-61r3 and SANS PICERL. Use
-  when creating or maturing an IR program, documenting response runbooks for a new
-  incident type, or designing SOAR playbooks.
+ procedures per incident type, decision trees, escalation criteria, RACI matrices,
+ and SOAR platform integration, aligned to NIST SP 800-61r3 and SANS PICERL. Use
+ when creating or maturing an IR program, documenting response runbooks for a new
+ incident type, or designing SOAR playbooks.
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -83,47 +83,47 @@ Every playbook should follow a consistent structure:
 PLAYBOOK TEMPLATE
 ━━━━━━━━━━━━━━━━
 1. Playbook Metadata
-   - Name, version, owner, last review date
-   - Trigger conditions
-   - Severity criteria
+ - Name, version, owner, last review date
+ - Trigger conditions
+ - Severity criteria
 
 2. RACI Matrix
-   - Who is Responsible, Accountable, Consulted, Informed for each step
+ - Who is Responsible, Accountable, Consulted, Informed for each step
 
 3. Detection & Triage
-   - How the incident is detected
-   - Initial triage checklist
-   - Severity classification criteria
+ - How the incident is detected
+ - Initial triage checklist
+ - Severity classification criteria
 
 4. Containment
-   - Short-term containment actions
-   - Long-term containment actions
-   - Evidence preservation requirements
+ - Short-term containment actions
+ - Long-term containment actions
+ - Evidence preservation requirements
 
 5. Eradication
-   - Root cause identification
-   - Malware/threat removal steps
-   - Verification procedures
+ - Root cause identification
+ - Malware/threat removal steps
+ - Verification procedures
 
 6. Recovery
-   - System restoration steps
-   - Validation criteria
-   - Monitoring requirements post-recovery
+ - System restoration steps
+ - Validation criteria
+ - Monitoring requirements post-recovery
 
 7. Post-Incident
-   - Lessons learned meeting trigger
-   - Report template
-   - Detection improvement actions
+ - Lessons learned meeting trigger
+ - Report template
+ - Detection improvement actions
 
 8. Communication
-   - Internal notification matrix
-   - External notification requirements (regulators, customers, law enforcement)
-   - Status update cadence
+ - Internal notification matrix
+ - External notification requirements (regulators, customers, law enforcement)
+ - Status update cadence
 
 9. Appendices
-   - Tool-specific procedures
-   - Contact lists
-   - Evidence collection checklists
+ - Tool-specific procedures
+ - Contact lists
+ - Evidence collection checklists
 ```
 
 ### Step 3: Write Decision Trees and Escalation Criteria
@@ -133,12 +133,12 @@ Define clear decision points with binary outcomes:
 ```
 Detection Alert Received
 ├── Is the alert a true positive?
-│   ├── YES → Classify severity
-│   │   ├── P1 (Critical) → Page incident commander, begin containment immediately
-│   │   ├── P2 (High) → Notify IR lead, begin investigation within 30 min
-│   │   ├── P3 (Medium) → Queue for investigation within 4 hours
-│   │   └── P4 (Low) → Document and investigate within 24 hours
-│   └── NO → Document as false positive, tune detection rule
+│ ├── YES → Classify severity
+│ │ ├── P1 (Critical) → Page incident commander, begin containment immediately
+│ │ ├── P2 (High) → Notify IR lead, begin investigation within 30 min
+│ │ ├── P3 (Medium) → Queue for investigation within 4 hours
+│ │ └── P4 (Low) → Document and investigate within 24 hours
+│ └── NO → Document as false positive, tune detection rule
 └── Cannot determine → Escalate to Tier 2 for deeper analysis
 ```
 
@@ -234,22 +234,22 @@ Validate the playbook through exercises and maintain currency:
 ```
 INCIDENT RESPONSE PLAYBOOK
 ============================
-Playbook Name:    Phishing Incident Response
-Version:          2.1
-Owner:            SOC Manager
-Last Reviewed:    2025-11-01
-Next Review:      2026-02-01
-Trigger:          Phishing email reported via abuse@corp.com or phish button
+Playbook Name: Phishing Incident Response
+Version: 2.1
+Owner: SOC Manager
+Last Reviewed: 2025-11-01
+Next Review: 2026-02-01
+Trigger: Phishing email reported via abuse@corp.com or phish button
 
 RACI MATRIX
-Activity                    | SOC L1 | SOC L2 | IR Lead | Legal | Comms
-Initial Triage              |   R    |   C    |   I     |       |
-Email Analysis              |   R    |   A    |   I     |       |
-Containment                 |        |   R    |   A     |   I   |
-Credential Reset            |        |   R    |   A     |       |
-User Notification           |        |   C    |   A     |       |   R
-Regulatory Notification     |        |        |   C     |   R   |   A
-Lessons Learned             |   C    |   C    |   R     |   I   |   I
+Activity | SOC L1 | SOC L2 | IR Lead | Legal | Comms
+Initial Triage | R | C | I | |
+Email Analysis | R | A | I | |
+Containment | | R | A | I |
+Credential Reset | | R | A | |
+User Notification | | C | A | | R
+Regulatory Notification | | | C | R | A
+Lessons Learned | C | C | R | I | I
 
 PROCEDURE STEPS
 [Detailed steps with tool-specific instructions]

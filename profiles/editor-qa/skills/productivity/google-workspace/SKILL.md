@@ -6,15 +6,15 @@ author: Nous Research
 license: MIT
 platforms: [linux, macos, windows]
 required_credential_files:
-  - path: google_token.json
-    description: Google OAuth2 token (created by setup script)
-  - path: google_client_secret.json
-    description: Google OAuth2 client credentials (downloaded from Google Cloud Console)
+ - path: google_token.json
+ description: Google OAuth2 token (created by setup script)
+ - path: google_client_secret.json
+ description: Google OAuth2 client credentials (downloaded from Google Cloud Console)
 metadata:
-  hermes:
-    tags: [Google, Gmail, Calendar, Drive, Sheets, Docs, Contacts, Email, OAuth]
-    homepage: https://github.com/NousResearch/hermes-agent
-    related_skills: [himalaya]
+ hermes:
+ tags: [Google, Gmail, Calendar, Drive, Sheets, Docs, Contacts, Email, OAuth]
+ homepage: https://github.com/NousResearch/hermes-agent
+ related_skills: [himalaya]
 ---
 
 # Google Workspace
@@ -58,19 +58,19 @@ Before starting OAuth setup, ask the user TWO questions:
 Calendar/Drive/Sheets/Docs?"**
 
 - **Email only** → They don't need this skill at all. Use the `himalaya` skill
-  instead — it works with a Gmail App Password (Settings → Security → App
-  Passwords) and takes 2 minutes to set up. No Google Cloud project needed.
-  Load the himalaya skill and follow its setup instructions.
+ instead — it works with a Gmail App Password (Settings → Security → App
+ Passwords) and takes 2 minutes to set up. No Google Cloud project needed.
+ Load the himalaya skill and follow its setup instructions.
 
 - **Email + Calendar** → Continue with this skill, but use
-  `--services email,calendar` during auth so the consent screen only asks for
-  the scopes they actually need.
+ `--services email,calendar` during auth so the consent screen only asks for
+ the scopes they actually need.
 
 - **Calendar/Drive/Sheets/Docs only** → Continue with this skill and use a
-  narrower `--services` set like `calendar,drive,sheets,docs`.
+ narrower `--services` set like `calendar,drive,sheets,docs`.
 
 - **Full Workspace access** → Continue with this skill and use the default
-  `all` service set.
+ `all` service set.
 
 **Question 2: "Does your Google account use Advanced Protection (hardware
 security keys required to sign in)? If you're not sure, you probably don't
@@ -78,7 +78,7 @@ security keys required to sign in)? If you're not sure, you probably don't
 
 - **No / Not sure** → Normal setup. Continue below.
 - **Yes** → Their Workspace admin must add the OAuth client ID to the org's
-  allowed apps list before Step 4 will work. Let them know upfront.
+ allowed apps list before Step 4 will work. Let them know upfront.
 
 ### Step 2: Create OAuth credentials (one-time, ~5 minutes)
 
@@ -87,18 +87,18 @@ Tell the user:
 > You need a Google Cloud OAuth client. This is a one-time setup:
 >
 > 1. Create or select a project:
->    https://console.cloud.google.com/projectselector2/home/dashboard
+> https://console.cloud.google.com/projectselector2/home/dashboard
 > 2. Enable the required APIs from the API Library:
->    https://console.cloud.google.com/apis/library
->    Enable: Gmail API, Google Calendar API, Google Drive API,
->    Google Sheets API, Google Docs API, People API
+> https://console.cloud.google.com/apis/library
+> Enable: Gmail API, Google Calendar API, Google Drive API,
+> Google Sheets API, Google Docs API, People API
 > 3. Create the OAuth client here:
->    https://console.cloud.google.com/apis/credentials
->    Credentials → Create Credentials → OAuth 2.0 Client ID
+> https://console.cloud.google.com/apis/credentials
+> Credentials → Create Credentials → OAuth 2.0 Client ID
 > 4. Application type: "Desktop app" → Create
 > 5. If the app is still in Testing, add the user's Google account as a test user here:
->    https://console.cloud.google.com/auth/audience
->    Audience → Test users → Add users
+> https://console.cloud.google.com/auth/audience
+> Audience → Test users → Add users
 > 6. Download the JSON file and tell me the file path
 >
 > Important Hermes CLI note: if the file path starts with `/`, do NOT send only the bare path as its own message in the CLI, because it can be mistaken for a slash command. Send it in a sentence instead, like:
@@ -242,7 +242,7 @@ $GAPI drive create-folder "Q4" --parent FOLDER_ID
 # Share
 $GAPI drive share FILE_ID --email alice@example.com --role reader
 $GAPI drive share FILE_ID --email alice@example.com --role writer --notify
-$GAPI drive share FILE_ID --type anyone --role reader        # anyone with link
+$GAPI drive share FILE_ID --type anyone --role reader # anyone with link
 $GAPI drive share FILE_ID --type domain --domain example.com --role reader
 
 # Delete — defaults to trash (reversible). Use --permanent to skip the trash.

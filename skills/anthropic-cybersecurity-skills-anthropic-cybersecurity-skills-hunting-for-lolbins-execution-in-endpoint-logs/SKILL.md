@@ -1,10 +1,10 @@
 ---
 name: hunting-for-lolbins-execution-in-endpoint-logs
 description: Hunts for LOLBins (Living Off the Land Binaries) abuse, mapped to MITRE
-  T1218, by analyzing endpoint process-creation logs for suspicious execution patterns
-  of legitimate Windows system binaries used for malicious purposes. Use when reviewing
-  endpoint process telemetry for LOLBins-based defense evasion or building detections
-  for signed-binary proxy execution.
+ T1218, by analyzing endpoint process-creation logs for suspicious execution patterns
+ of legitimate Windows system binaries used for malicious purposes. Use when reviewing
+ endpoint process telemetry for LOLBins-based defense evasion or building detections
+ for signed-binary proxy execution.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:
@@ -101,14 +101,14 @@ mitre_attack:
 index=sysmon EventCode=1
 | where match(Image, "(?i)(certutil|mshta|rundll32|regsvr32|msbuild|installutil|cmstp|bitsadmin)\.exe$")
 | eval suspicious=case(
-    match(CommandLine, "(?i)certutil.*(-urlcache|-decode|-encode)"), "certutil_download_decode",
-    match(CommandLine, "(?i)mshta.*(http|https|javascript|vbscript)"), "mshta_remote_exec",
-    match(CommandLine, "(?i)rundll32.*\\\\(temp|appdata|users)"), "rundll32_unusual_dll",
-    match(CommandLine, "(?i)regsvr32.*/s.*/n.*/u.*/i:"), "regsvr32_squiblydoo",
-    match(CommandLine, "(?i)msbuild.*\\\\(temp|appdata|users)"), "msbuild_unusual_project",
-    match(CommandLine, "(?i)bitsadmin.*/transfer"), "bitsadmin_download",
-    match(CommandLine, "(?i)cmstp.*/s.*/ni"), "cmstp_uac_bypass",
-    1=1, "normal"
+ match(CommandLine, "(?i)certutil.*(-urlcache|-decode|-encode)"), "certutil_download_decode",
+ match(CommandLine, "(?i)mshta.*(http|https|javascript|vbscript)"), "mshta_remote_exec",
+ match(CommandLine, "(?i)rundll32.*\\\\(temp|appdata|users)"), "rundll32_unusual_dll",
+ match(CommandLine, "(?i)regsvr32.*/s.*/n.*/u.*/i:"), "regsvr32_squiblydoo",
+ match(CommandLine, "(?i)msbuild.*\\\\(temp|appdata|users)"), "msbuild_unusual_project",
+ match(CommandLine, "(?i)bitsadmin.*/transfer"), "bitsadmin_download",
+ match(CommandLine, "(?i)cmstp.*/s.*/ni"), "cmstp_uac_bypass",
+ 1=1, "normal"
 )
 | where suspicious!="normal"
 | table _time Computer User Image CommandLine ParentImage ParentCommandLine suspicious
@@ -119,10 +119,10 @@ index=sysmon EventCode=1
 DeviceProcessEvents
 | where Timestamp > ago(7d)
 | where FileName in~ ("certutil.exe", "mshta.exe", "rundll32.exe", "regsvr32.exe",
-    "msbuild.exe", "installutil.exe", "cmstp.exe", "bitsadmin.exe")
+ "msbuild.exe", "installutil.exe", "cmstp.exe", "bitsadmin.exe")
 | where ProcessCommandLine matches regex @"(?i)(urlcache|decode|encode|http://|https://|javascript:|vbscript:|/s\s+/n|/transfer)"
 | project Timestamp, DeviceName, AccountName, FileName, ProcessCommandLine,
-    InitiatingProcessFileName, InitiatingProcessCommandLine
+ InitiatingProcessFileName, InitiatingProcessCommandLine
 | sort by Timestamp desc
 ```
 
@@ -131,31 +131,31 @@ DeviceProcessEvents
 title: Suspicious LOLBin Execution with Malicious Arguments
 status: experimental
 logsource:
-    category: process_creation
-    product: windows
+ category: process_creation
+ product: windows
 detection:
-    selection_certutil:
-        Image|endswith: '\certutil.exe'
-        CommandLine|contains:
-            - '-urlcache'
-            - '-decode'
-            - '-encode'
-    selection_mshta:
-        Image|endswith: '\mshta.exe'
-        CommandLine|contains:
-            - 'http://'
-            - 'https://'
-            - 'javascript:'
-    selection_regsvr32:
-        Image|endswith: '\regsvr32.exe'
-        CommandLine|contains|all:
-            - '/s'
-            - '/i:'
-    condition: 1 of selection_*
+ selection_certutil:
+ Image|endswith: '\certutil.exe'
+ CommandLine|contains:
+ - '-urlcache'
+ - '-decode'
+ - '-encode'
+ selection_mshta:
+ Image|endswith: '\mshta.exe'
+ CommandLine|contains:
+ - 'http://'
+ - 'https://'
+ - 'javascript:'
+ selection_regsvr32:
+ Image|endswith: '\regsvr32.exe'
+ CommandLine|contains|all:
+ - '/s'
+ - '/i:'
+ condition: 1 of selection_*
 level: high
 tags:
-    - attack.defense_evasion
-    - attack.t1218
+ - attack.defense_evasion
+ - attack.t1218
 ```
 
 ## Common Scenarios

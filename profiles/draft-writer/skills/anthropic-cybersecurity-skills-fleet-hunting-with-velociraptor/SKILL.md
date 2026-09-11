@@ -43,10 +43,10 @@ This makes Velociraptor ideal for fleet-wide threat hunting: a hypothesis ("are 
 - The Velociraptor binary from the official release page: https://github.com/Velocidex/velociraptor/releases
 - Outbound/inbound connectivity from clients to the server frontend port (default 8000) and admin GUI (default 8889).
 - Make the binary executable on Linux:
-  ```bash
-  chmod +x velociraptor-v0.*-linux-amd64
-  sudo mv velociraptor-v0.*-linux-amd64 /usr/local/bin/velociraptor
-  ```
+ ```bash
+ chmod +x velociraptor-v0.*-linux-amd64
+ sudo mv velociraptor-v0.*-linux-amd64 /usr/local/bin/velociraptor
+ ```
 
 ## Objectives
 
@@ -118,7 +118,7 @@ velociraptor query "
 SELECT Pid, Name, CommandLine
 FROM pslist()
 WHERE Name =~ 'powershell'
-  AND CommandLine =~ '(?i)(-enc|frombase64string|downloadstring|-w hidden|iex)'
+ AND CommandLine =~ '(?i)(-enc|frombase64string|downloadstring|-w hidden|iex)'
 "
 ```
 
@@ -137,8 +137,8 @@ In the GUI: **Hunt Manager** > **New Hunt** > select the artifact (e.g. `Windows
 ```sql
 -- Create a hunt programmatically via a server VQL notebook
 SELECT hunt(
-    description="Suspicious PowerShell fleet sweep",
-    artifacts="Windows.Detection.Powershell"
+ description="Suspicious PowerShell fleet sweep",
+ artifacts="Windows.Detection.Powershell"
 ) FROM scope()
 ```
 
@@ -148,13 +148,13 @@ Custom artifacts are YAML documents containing parameters and VQL `sources`. Sav
 name: Custom.Hunt.SuspiciousPowershell
 description: Find encoded / download-cradle PowerShell across the fleet.
 parameters:
-  - name: regex
-    default: "(?i)(-enc|frombase64string|downloadstring|-w hidden|iex)"
+ - name: regex
+ default: "(?i)(-enc|frombase64string|downloadstring|-w hidden|iex)"
 sources:
-  - query: |
-      SELECT Pid, Name, CommandLine, timestamp(epoch=now()) AS Collected
-      FROM pslist()
-      WHERE Name =~ "powershell" AND CommandLine =~ regex
+ - query: |
+ SELECT Pid, Name, CommandLine, timestamp(epoch=now()) AS Collected
+ FROM pslist()
+ WHERE Name =~ "powershell" AND CommandLine =~ regex
 ```
 
 ### 9. Generate an offline collector

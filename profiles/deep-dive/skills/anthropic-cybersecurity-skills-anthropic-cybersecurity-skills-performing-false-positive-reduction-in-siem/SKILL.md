@@ -1,9 +1,9 @@
 ---
 name: performing-false-positive-reduction-in-siem
 description: Reduces SIEM false positives through systematic rule tuning, threshold
-  adjustment, correlation logic refinement, allowlisting, and threat intelligence
-  enrichment. Use when SOC analysts are overwhelmed by alert noise, when tuning noisy
-  detection rules, or during a quarterly SIEM rule review to cut alert fatigue.
+ adjustment, correlation logic refinement, allowlisting, and threat intelligence
+ enrichment. Use when SOC analysts are overwhelmed by alert noise, when tuning noisy
+ detection rules, or during a quarterly SIEM rule review to cut alert fatigue.
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -73,9 +73,9 @@ index=notable
 # False positive rate per rule
 index=notable
 | stats count as total
-    count(eval(status_label="Closed - False Positive")) as false_positives
-    count(eval(status_label="Closed - True Positive")) as true_positives
-    by rule_name
+ count(eval(status_label="Closed - False Positive")) as false_positives
+ count(eval(status_label="Closed - True Positive")) as true_positives
+ by rule_name
 | eval fp_rate=round(false_positives / total * 100, 1)
 | sort -fp_rate
 | where total > 10
@@ -121,19 +121,19 @@ index=wineventlog EventCode=4688 New_Process_Name="*powershell.exe"
 # After: Multi-signal correlation (precise)
 index=wineventlog EventCode=4688 New_Process_Name="*powershell.exe"
 | join src_ip type=left [
-    search index=wineventlog EventCode=4625
-    | stats count as failed_logins by src_ip
+ search index=wineventlog EventCode=4625
+ | stats count as failed_logins by src_ip
 ]
 | join Computer type=left [
-    search index=sysmon EventCode=3
-    | stats dc(DestinationIp) as unique_external_connections by Computer
-    | where unique_external_connections > 10
+ search index=sysmon EventCode=3
+ | stats dc(DestinationIp) as unique_external_connections by Computer
+ | where unique_external_connections > 10
 ]
 | where isnotnull(failed_logins) OR unique_external_connections > 10
 | eval severity=case(
-    failed_logins > 10 AND unique_external_connections > 10, "critical",
-    failed_logins > 5 OR unique_external_connections > 5, "high",
-    true(), "medium"
+ failed_logins > 10 AND unique_external_connections > 10, "critical",
+ failed_logins > 5 OR unique_external_connections > 5, "high",
+ true(), "medium"
 )
 ```
 
@@ -147,7 +147,7 @@ index=wineventlog EventCode=4688 New_Process_Name="*powershell.exe"
 
 # Exclude known batch job schedules
 | lookup scheduled_tasks_allowlist process_name, schedule_time
-    OUTPUT is_scheduled
+ OUTPUT is_scheduled
 | where isnull(is_scheduled)
 ```
 
@@ -159,10 +159,10 @@ index=wineventlog EventCode=4624
 | bin _time span=1h
 | stats count as logins dc(Computer) as unique_hosts by TargetUserName, _time
 | eventstats avg(logins) as avg_logins stdev(logins) as stdev_logins
-    avg(unique_hosts) as avg_hosts stdev(unique_hosts) as stdev_hosts
-    by TargetUserName
+ avg(unique_hosts) as avg_hosts stdev(unique_hosts) as stdev_hosts
+ by TargetUserName
 | where logins > (avg_logins + 3 * stdev_logins)
-    OR unique_hosts > (avg_hosts + 3 * stdev_hosts)
+ OR unique_hosts > (avg_hosts + 3 * stdev_hosts)
 ```
 
 ### 7. Threat Intelligence Filtering

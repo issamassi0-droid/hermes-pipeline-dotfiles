@@ -38,25 +38,25 @@ Use this skill whenever the user's request involves any of these:
 - **Base URL:** `https://app.resemble.ai/api/v2`
 - **Auth header:** `Authorization: Bearer $RESEMBLE_API_KEY`
 - **Media inputs:** `POST /detect` accepts exactly one of:
-  - direct `multipart/form-data` file upload as `file` (up to 150 MB),
-  - public HTTPS `url`, or
-  - `media_token` from `POST /secure_uploads`.
+ - direct `multipart/form-data` file upload as `file` (up to 150 MB),
+ - public HTTPS `url`, or
+ - `media_token` from `POST /secure_uploads`.
 - **Text input:** `POST /text_detect` takes a JSON body with a `text` string — at least 25 words, at most 100,000 characters. No file or URL.
 
 Never print API keys or paste bearer tokens into chat. Use environment variables in examples and commands.
 
 ## Capability Decision Tree
 
-| User wants to...                                      | Use this                  | API endpoint               |
+| User wants to... | Use this | API endpoint |
 |-------------------------------------------------------|---------------------------|----------------------------|
-| Check if media is AI-generated / deepfake             | **Deepfake Detection**    | `POST /detect`, then `GET /detect/{uuid}` |
-| Upload a private/local file without public hosting    | **Direct Upload**         | `POST /detect` multipart `file=@...` |
-| Analyze a file larger than 150 MB without public URL  | **Secure Upload**         | `POST /secure_uploads`, then `POST /detect` with `media_token` |
-| Know *which AI platform* made fake audio              | **Audio Source Tracing**  | `POST /detect` with `audio_source_tracing: true` |
-| Get speaker info, emotion, transcription from media   | **Intelligence**          | `POST /intelligence`       |
-| Ask questions about a completed detection             | **Detect Intelligence**   | `POST /detects/{uuid}/intelligence`, then poll answer |
-| Run a managed multi-step investigation with a verdict | **Detect Agents**         | `GET /agents`, then `POST /agents/{preset_id}/run` (SSE) |
-| Check if text was written by an AI model              | **Text Detection**        | `POST /text_detect`, then `GET /text_detect/{uuid}` |
+| Check if media is AI-generated / deepfake | **Deepfake Detection** | `POST /detect`, then `GET /detect/{uuid}` |
+| Upload a private/local file without public hosting | **Direct Upload** | `POST /detect` multipart `file=@...` |
+| Analyze a file larger than 150 MB without public URL | **Secure Upload** | `POST /secure_uploads`, then `POST /detect` with `media_token` |
+| Know *which AI platform* made fake audio | **Audio Source Tracing** | `POST /detect` with `audio_source_tracing: true` |
+| Get speaker info, emotion, transcription from media | **Intelligence** | `POST /intelligence` |
+| Ask questions about a completed detection | **Detect Intelligence** | `POST /detects/{uuid}/intelligence`, then poll answer |
+| Run a managed multi-step investigation with a verdict | **Detect Agents** | `GET /agents`, then `POST /agents/{preset_id}/run` (SSE) |
+| Check if text was written by an AI model | **Text Detection** | `POST /text_detect`, then `GET /text_detect/{uuid}` |
 
 When multiple media capabilities apply, combine them in a single `POST /detect` call using flags such as `intelligence: true`, `audio_source_tracing: true`, `visualize: true`, `use_reverse_search: true`, and `zero_retention_mode: true` instead of making separate jobs. Text detection is a separate endpoint and cannot be combined with a media detection.
 
@@ -92,17 +92,17 @@ Use this when the media is already reachable via HTTPS:
 
 ```bash
 curl --request POST "${BASE_URL}/detect" \
-  -H "$AUTH_HEADER" \
-  -H "Prefer: wait" \
-  -H "Content-Type: application/json" \
-  --data '{
-    "url": "https://example.com/media.mp4",
-    "visualize": true,
-    "intelligence": true,
-    "audio_source_tracing": true,
-    "use_reverse_search": true,
-    "zero_retention_mode": true
-  }'
+ -H "$AUTH_HEADER" \
+ -H "Prefer: wait" \
+ -H "Content-Type: application/json" \
+ --data '{
+ "url": "https://example.com/media.mp4",
+ "visualize": true,
+ "intelligence": true,
+ "audio_source_tracing": true,
+ "use_reverse_search": true,
+ "zero_retention_mode": true
+ }'
 ```
 
 For asynchronous mode, omit `Prefer: wait`, capture `.item.uuid`, then poll `GET /detect/{uuid}`.
@@ -113,13 +113,13 @@ Direct file uploads are supported for files up to 150 MB:
 
 ```bash
 curl --request POST "${BASE_URL}/detect" \
-  -H "$AUTH_HEADER" \
-  -H "Prefer: wait" \
-  -F "file=@/path/to/media.mp4" \
-  -F "intelligence=true" \
-  -F "visualize=true" \
-  -F "audio_source_tracing=true" \
-  -F "frame_length=2"
+ -H "$AUTH_HEADER" \
+ -H "Prefer: wait" \
+ -F "file=@/path/to/media.mp4" \
+ -F "intelligence=true" \
+ -F "visualize=true" \
+ -F "audio_source_tracing=true" \
+ -F "frame_length=2"
 ```
 
 Allowed direct-upload extensions include `.wav`, `.mp3`, `.m4a`, `.ogg`, `.aac`, `.flac`, `.amr`, `.3gp`, `.3gpp`, `.mp4`, `.mov`, `.avi`, `.mkv`, `.webm`, `.jpg`, `.jpeg`, `.png`, `.gif`, and `.webp`.
@@ -130,45 +130,45 @@ Use secure uploads when the file is larger than 150 MB or should not be hosted p
 
 ```bash
 curl --request POST "${BASE_URL}/secure_uploads" \
-  -H "$AUTH_HEADER" \
-  -F "file=@/path/to/media.mp4"
+ -H "$AUTH_HEADER" \
+ -F "file=@/path/to/media.mp4"
 ```
 
 Then submit the returned token as `media_token`:
 
 ```bash
 curl --request POST "${BASE_URL}/detect" \
-  -H "$AUTH_HEADER" \
-  -H "Content-Type: application/json" \
-  --data '{
-    "media_token": "SECURE_UPLOAD_TOKEN",
-    "intelligence": true,
-    "visualize": true,
-    "zero_retention_mode": true
-  }'
+ -H "$AUTH_HEADER" \
+ -H "Content-Type: application/json" \
+ --data '{
+ "media_token": "SECURE_UPLOAD_TOKEN",
+ "intelligence": true,
+ "visualize": true,
+ "zero_retention_mode": true
+ }'
 ```
 
 Secure upload tokens are short-lived. Use them promptly.
 
 ### Detection Parameters
 
-| Parameter              | Type    | Required | Description                                              |
+| Parameter | Type | Required | Description |
 |------------------------|---------|----------|----------------------------------------------------------|
-| `file`                 | file    | One of   | Multipart file upload, max 150 MB                        |
-| `url`                  | string  | One of   | Public HTTPS URL to audio, image, or video file          |
-| `media_token`          | string  | One of   | Token from `POST /secure_uploads`                        |
-| `callback_url`         | string  | No       | Webhook URL for async completion notification             |
-| `visualize`            | boolean | No       | Generate heatmap/treeview visualization artifacts         |
-| `intelligence`         | boolean | No       | Run multimodal intelligence analysis alongside detection  |
-| `audio_source_tracing` | boolean | No       | Identify which AI platform synthesized fake audio         |
-| `frame_length`         | integer | No       | Audio/video analysis window size in seconds (1–4, default 2) |
-| `start_region`         | number  | No       | Start of segment to analyze (seconds)                    |
-| `end_region`           | number  | No       | End of segment to analyze (seconds)                      |
-| `max_video_secs`       | number  | No       | Cap processed video duration                             |
-| `model_types`          | string  | No       | `"image"` or `"talking_head"` for video face-swap detection |
-| `use_reverse_search`   | boolean | No       | Enable reverse image search (image only)                 |
-| `use_ood_detector`     | boolean | No       | Enable out-of-distribution detection                     |
-| `zero_retention_mode`  | boolean | No       | Auto-delete submitted media after detection completes    |
+| `file` | file | One of | Multipart file upload, max 150 MB |
+| `url` | string | One of | Public HTTPS URL to audio, image, or video file |
+| `media_token` | string | One of | Token from `POST /secure_uploads` |
+| `callback_url` | string | No | Webhook URL for async completion notification |
+| `visualize` | boolean | No | Generate heatmap/treeview visualization artifacts |
+| `intelligence` | boolean | No | Run multimodal intelligence analysis alongside detection |
+| `audio_source_tracing` | boolean | No | Identify which AI platform synthesized fake audio |
+| `frame_length` | integer | No | Audio/video analysis window size in seconds (1–4, default 2) |
+| `start_region` | number | No | Start of segment to analyze (seconds) |
+| `end_region` | number | No | End of segment to analyze (seconds) |
+| `max_video_secs` | number | No | Cap processed video duration |
+| `model_types` | string | No | `"image"` or `"talking_head"` for video face-swap detection |
+| `use_reverse_search` | boolean | No | Enable reverse image search (image only) |
+| `use_ood_detector` | boolean | No | Enable out-of-distribution detection |
+| `zero_retention_mode` | boolean | No | Auto-delete submitted media after detection completes |
 
 Exactly one of `file`, `url`, or `media_token` must be supplied.
 
@@ -177,7 +177,7 @@ Exactly one of `file`, `url`, or `media_token` must be supplied.
 ```bash
 DETECT_UUID="..."
 curl --request GET "${BASE_URL}/detect/${DETECT_UUID}" \
-  -H "$AUTH_HEADER"
+ -H "$AUTH_HEADER"
 ```
 
 Polling best practice: start at 2-second intervals, back off to 5 seconds, then 10 seconds. Stop when `item.status` is `completed` or `failed`.
@@ -187,12 +187,12 @@ If you need a small polling helper:
 ```bash
 DETECT_UUID="..."
 for delay in 2 2 5 5 10 10 10 10 10 10; do
-  response=$(curl -sS "${BASE_URL}/detect/${DETECT_UUID}" -H "$AUTH_HEADER")
-  printf '%s\n' "$response"
-  status=$(printf '%s' "$response" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("item",{}).get("status",""))')
-  [ "$status" = "completed" ] && break
-  [ "$status" = "failed" ] && break
-  sleep "$delay"
+ response=$(curl -sS "${BASE_URL}/detect/${DETECT_UUID}" -H "$AUTH_HEADER")
+ printf '%s\n' "$response"
+ status=$(printf '%s' "$response" | python3 -c 'import json,sys; print(json.load(sys.stdin).get("item",{}).get("status",""))')
+ [ "$status" = "completed" ] && break
+ [ "$status" = "failed" ] && break
+ sleep "$delay"
 done
 ```
 
@@ -202,11 +202,11 @@ done
 
 ```json
 {
-  "label": "fake",
-  "score": ["0.92", "0.88", "0.95"],
-  "consistency": "0.91",
-  "aggregated_score": "0.92",
-  "image": "https://..."
+ "label": "fake",
+ "score": ["0.92", "0.88", "0.95"],
+ "consistency": "0.91",
+ "aggregated_score": "0.92",
+ "image": "https://..."
 }
 ```
 
@@ -220,14 +220,14 @@ done
 
 ```json
 {
-  "type": "FinalResult",
-  "label": "Fake",
-  "score": 0.87,
-  "image": "https://...",
-  "ifl": { "score": 0.82, "heatmap": "https://..." },
-  "reverse_image_search_sources": [
-    { "url": "...", "title": "...", "verdict": "known_fake", "similarity": 0.95 }
-  ]
+ "type": "FinalResult",
+ "label": "Fake",
+ "score": 0.87,
+ "image": "https://...",
+ "ifl": { "score": 0.82, "heatmap": "https://..." },
+ "reverse_image_search_sources": [
+ { "url": "...", "title": "...", "verdict": "known_fake", "similarity": 0.95 }
+ ]
 }
 ```
 
@@ -235,30 +235,30 @@ done
 
 ```json
 {
-  "label": "Fake",
-  "score": 0.89,
-  "certainty": 0.91,
-  "treeview": "https://...",
-  "children": [
-    {
-      "type": "VideoResult",
-      "conclusion": "Fake",
-      "score": 0.89,
-      "timestamp": 2.5,
-      "children": []
-    }
-  ]
+ "label": "Fake",
+ "score": 0.89,
+ "certainty": 0.91,
+ "treeview": "https://...",
+ "children": [
+ {
+ "type": "VideoResult",
+ "conclusion": "Fake",
+ "score": 0.89,
+ "timestamp": 2.5,
+ "children": []
+ }
+ ]
 }
 ```
 
 ### Interpreting Scores
 
-| Score Range | Interpretation                                      |
+| Score Range | Interpretation |
 |-------------|-----------------------------------------------------|
-| 0.0 – 0.3   | Strong indication of authentic/real media           |
-| 0.3 – 0.5   | Inconclusive — recommend additional analysis        |
-| 0.5 – 0.7   | Likely synthetic — flag for review                  |
-| 0.7 – 1.0   | High confidence synthetic/AI-generated              |
+| 0.0 – 0.3 | Strong indication of authentic/real media |
+| 0.3 – 0.5 | Inconclusive — recommend additional analysis |
+| 0.5 – 0.7 | Likely synthetic — flag for review |
+| 0.7 – 1.0 | High confidence synthetic/AI-generated |
 
 Always present scores with context. Say "The detection returned a score of 0.87, indicating high confidence that this media is AI-generated" — never just "it's fake."
 
@@ -272,25 +272,25 @@ Analyze media for rich structured insights independently or alongside detection.
 
 ```bash
 curl --request POST "${BASE_URL}/intelligence" \
-  -H "$AUTH_HEADER" \
-  -H "Content-Type: application/json" \
-  --data '{
-    "url": "https://example.com/audio.mp3",
-    "media_type": "audio"
-  }'
+ -H "$AUTH_HEADER" \
+ -H "Content-Type: application/json" \
+ --data '{
+ "url": "https://example.com/audio.mp3",
+ "media_type": "audio"
+ }'
 ```
 
 By default, `POST /intelligence` is synchronous. If you provide `callback_url`, it becomes asynchronous and returns an intelligence record that you can poll with `GET /intelligences/{uuid}`.
 
 **Parameters:**
 
-| Parameter      | Type   | Required | Description                                              |
+| Parameter | Type | Required | Description |
 |----------------|--------|----------|----------------------------------------------------------|
-| `url`          | string | One of   | HTTPS URL to media file                                  |
-| `media_token`  | string | One of   | Token from secure upload                                 |
-| `detect_id`    | string | No       | UUID of existing detect to associate                     |
-| `media_type`   | string | No       | `"audio"`, `"video"`, or `"image"` (auto-detected if omitted) |
-| `callback_url` | string | No       | Webhook for async completion                             |
+| `url` | string | One of | HTTPS URL to media file |
+| `media_token` | string | One of | Token from secure upload |
+| `detect_id` | string | No | UUID of existing detect to associate |
+| `media_type` | string | No | `"audio"`, `"video"`, or `"image"` (auto-detected if omitted) |
+| `callback_url` | string | No | Webhook for async completion |
 
 **Audio/video intelligence may include:** speaker info, language/dialect, emotion, speaking style, context, message summary, abnormalities, transcription, translation, and misinformation analysis.
 
@@ -301,7 +301,7 @@ By default, `POST /intelligence` is synchronous. If you provide `callback_url`, 
 ```bash
 INTELLIGENCE_UUID="..."
 curl --request GET "${BASE_URL}/intelligences/${INTELLIGENCE_UUID}" \
-  -H "$AUTH_HEADER"
+ -H "$AUTH_HEADER"
 ```
 
 ### Detect Intelligence — Ask Questions About Completed Detections
@@ -311,9 +311,9 @@ After a detection completes, submit natural-language questions about it:
 ```bash
 DETECT_UUID="..."
 curl --request POST "${BASE_URL}/detects/${DETECT_UUID}/intelligence" \
-  -H "$AUTH_HEADER" \
-  -H "Content-Type: application/json" \
-  --data '{"query": "Summarize the detection results in plain language."}'
+ -H "$AUTH_HEADER" \
+ -H "Content-Type: application/json" \
+ --data '{"query": "Summarize the detection results in plain language."}'
 ```
 
 This returns a question UUID. Poll until the question status is `completed` or `failed`:
@@ -321,7 +321,7 @@ This returns a question UUID. Poll until the question status is `completed` or `
 ```bash
 QUESTION_UUID="..."
 curl --request GET "${BASE_URL}/detects/${DETECT_UUID}/intelligence/${QUESTION_UUID}" \
-  -H "$AUTH_HEADER"
+ -H "$AUTH_HEADER"
 ```
 
 Good questions to suggest:
@@ -344,8 +344,8 @@ Enable it in the `POST /detect` request:
 
 ```json
 {
-  "url": "https://example.com/audio.wav",
-  "audio_source_tracing": true
+ "url": "https://example.com/audio.wav",
+ "audio_source_tracing": true
 }
 ```
 
@@ -353,8 +353,8 @@ Result appears in the detection response under `item.audio_source_tracing`:
 
 ```json
 {
-  "label": "elevenlabs",
-  "error_message": null
+ "label": "elevenlabs",
+ "error_message": null
 }
 ```
 
@@ -378,11 +378,11 @@ Detect Agents are six Resemble-managed investigators that wrap a detection in a 
 | Agent | `preset_id` |
 |-------|-------------|
 | Investigate Social Media Content | `investigate_social_content` |
-| Review an Insurance Claim        | `review_insurance_claim`     |
-| Verify Breaking News Media       | `verify_breaking_news`       |
-| Verify a Document or Receipt     | `verify_document`            |
-| Verify Submitted Evidence        | `verify_evidence`            |
-| Verify an ID                     | `verify_id`                  |
+| Review an Insurance Claim | `review_insurance_claim` |
+| Verify Breaking News Media | `verify_breaking_news` |
+| Verify a Document or Receipt | `verify_document` |
+| Verify Submitted Evidence | `verify_evidence` |
+| Verify an ID | `verify_id` |
 
 List them (the `uuid` is the same stable identifier as `preset_id`):
 
@@ -396,21 +396,21 @@ curl --request GET "${BASE_URL}/agents" -H "$AUTH_HEADER"
 
 ```bash
 curl --no-buffer --request POST "${BASE_URL}/agents/verify_document/run" \
-  -H "$AUTH_HEADER" \
-  -H "Accept: text/event-stream" \
-  -F "file=@/path/to/receipt.pdf" \
-  -F "query=Is this receipt genuine?" \
-  -F "evidence[]=@/path/to/order-confirmation.png" \
-  -F "check_urls=https://example.com/original-listing"
+ -H "$AUTH_HEADER" \
+ -H "Accept: text/event-stream" \
+ -F "file=@/path/to/receipt.pdf" \
+ -F "query=Is this receipt genuine?" \
+ -F "evidence[]=@/path/to/order-confirmation.png" \
+ -F "check_urls=https://example.com/original-listing"
 ```
 
-| Field        | Required    | Description                                          |
+| Field | Required | Description |
 |--------------|-------------|------------------------------------------------------|
-| `file`       | One of      | Media to analyze                                     |
-| `url`        | One of      | Public HTTPS media URL                               |
-| `query`      | No          | The investigation question or objective              |
-| `evidence[]` | No          | Supporting files; repeat the field for multiple      |
-| `check_urls` | No          | Additional URLs for the agent to check               |
+| `file` | One of | Media to analyze |
+| `url` | One of | Public HTTPS media URL |
+| `query` | No | The investigation question or objective |
+| `evidence[]` | No | Supporting files; repeat the field for multiple |
+| `check_urls` | No | Additional URLs for the agent to check |
 
 ### Reading the Stream
 
@@ -457,7 +457,7 @@ The detector does not score text under **25 words**. Below that length no model 
 TEXT="$(cat /path/to/text.txt)"
 WORDS=$(printf '%s' "$TEXT" | wc -w | tr -d ' ')
 if [ "$WORDS" -lt 25 ]; then
-  echo "Only ${WORDS} words — the detector needs at least 25. Not enough text to judge."
+ echo "Only ${WORDS} words — the detector needs at least 25. Not enough text to judge."
 fi
 ```
 
@@ -469,24 +469,24 @@ The model reads roughly the first **350–400 words** (512 tokens). Longer text 
 
 ```bash
 curl --request POST "${BASE_URL}/text_detect" \
-  -H "$AUTH_HEADER" \
-  -H "Prefer: wait" \
-  -H "Content-Type: application/json" \
-  --max-time 320 \
-  --data "$(python3 -c 'import json,sys; print(json.dumps({"text": sys.stdin.read()}))' < /path/to/text.txt)"
+ -H "$AUTH_HEADER" \
+ -H "Prefer: wait" \
+ -H "Content-Type: application/json" \
+ --max-time 320 \
+ --data "$(python3 -c 'import json,sys; print(json.dumps({"text": sys.stdin.read()}))' < /path/to/text.txt)"
 ```
 
 Build the JSON body with `jq -n --arg text "$TEXT" '{text: $text}'` or the `python3` one-liner above — never paste raw text into a hand-written JSON string, since quotes and newlines will break the request.
 
 **Parameters:**
 
-| Parameter             | Type    | Required | Description                                                                                  |
+| Parameter | Type | Required | Description |
 |-----------------------|---------|----------|----------------------------------------------------------------------------------------------|
-| `text`                | string  | Yes      | The text to analyze. At least 25 words, at most 100,000 characters. Send it as-is; the server normalizes unicode, invisible characters, and curly quotes. |
-| `threshold`           | float   | No       | Decision cutoff 0.0–1.0 on the model's AI probability (default `0.5`). Leave the default unless the user has measured a different operating point. |
-| `thinking`            | string  | No       | `"low"` (default), `"medium"`, or `"high"`. Leave at `"low"`.                                 |
-| `callback_url`        | string  | No       | HTTPS webhook called with `{ "success": true, "item": {...} }` on completion, or `{ "success": false, "item": {...}, "error": "..." }` on failure. |
-| `zero_retention_mode` | boolean | No       | If `true`, the submitted text is not stored and `text_content` is omitted from responses. `privacy_mode` is accepted as an alias. |
+| `text` | string | Yes | The text to analyze. At least 25 words, at most 100,000 characters. Send it as-is; the server normalizes unicode, invisible characters, and curly quotes. |
+| `threshold` | float | No | Decision cutoff 0.0–1.0 on the model's AI probability (default `0.5`). Leave the default unless the user has measured a different operating point. |
+| `thinking` | string | No | `"low"` (default), `"medium"`, or `"high"`. Leave at `"low"`. |
+| `callback_url` | string | No | HTTPS webhook called with `{ "success": true, "item": {...} }` on completion, or `{ "success": false, "item": {...}, "error": "..." }` on failure. |
+| `zero_retention_mode` | boolean | No | If `true`, the submitted text is not stored and `text_content` is omitted from responses. `privacy_mode` is accepted as an alias. |
 
 ### Synchronous vs. Asynchronous — This Endpoint Is Different
 
@@ -503,36 +503,36 @@ curl --request GET "${BASE_URL}/text_detect/${TEXT_UUID}" -H "$AUTH_HEADER"
 
 ```json
 {
-  "success": true,
-  "item": {
-    "uuid": "8452e246-…",
-    "status": "completed",
-    "prediction": "ai",
-    "confidence": 0.9973,
-    "text_content": "…",
-    "privacy_mode": false,
-    "created_at": "…",
-    "updated_at": "…"
-  }
+ "success": true,
+ "item": {
+ "uuid": "8452e246-…",
+ "status": "completed",
+ "prediction": "ai",
+ "confidence": 0.9973,
+ "text_content": "…",
+ "privacy_mode": false,
+ "created_at": "…",
+ "updated_at": "…"
+ }
 }
 ```
 
-| Field          | Meaning                                                                                                         |
+| Field | Meaning |
 |----------------|-----------------------------------------------------------------------------------------------------------------|
-| `status`       | `"processing"`, `"completed"`, or `"failed"`. Only `completed` carries a verdict.                                 |
-| `prediction`   | `"ai"` or `"human"`. In rare cases `"uncertain"`, which means the model declined to score the text — report it as "not enough text to judge", never as human or AI. |
-| `confidence`   | 0.0–1.0. **How sure the model is of `prediction`, not an AI probability.** `confidence: 0.97` with `prediction: "human"` means 97% confident it is human. |
-| `text_content` | The submitted text, echoed back. Omitted when `zero_retention_mode` was set.                                     |
+| `status` | `"processing"`, `"completed"`, or `"failed"`. Only `completed` carries a verdict. |
+| `prediction` | `"ai"` or `"human"`. In rare cases `"uncertain"`, which means the model declined to score the text — report it as "not enough text to judge", never as human or AI. |
+| `confidence` | 0.0–1.0. **How sure the model is of `prediction`, not an AI probability.** `confidence: 0.97` with `prediction: "human"` means 97% confident it is human. |
+| `text_content` | The submitted text, echoed back. Omitted when `zero_retention_mode` was set. |
 
 **Do not apply the media score table to `confidence`.** For text, read the two fields together:
 
-| `prediction` | `confidence` | How to present it                                                                          |
+| `prediction` | `confidence` | How to present it |
 |--------------|--------------|--------------------------------------------------------------------------------------------|
-| `ai`         | ≥ 0.90       | "Resemble Detect classified this text as AI-generated with high confidence (0.97)."       |
-| `ai`         | 0.50 – 0.90  | "Resemble Detect leans AI-generated but with moderate confidence (0.68); treat as a flag, not proof." |
-| `human`      | ≥ 0.90       | "Resemble Detect classified this text as human-written with high confidence (0.95)."      |
-| `human`      | 0.50 – 0.90  | "Resemble Detect leans human-written with moderate confidence (0.61)."                    |
-| `uncertain`  | —            | "The detector could not score this text — not enough text to judge."                       |
+| `ai` | ≥ 0.90 | "Resemble Detect classified this text as AI-generated with high confidence (0.97)." |
+| `ai` | 0.50 – 0.90 | "Resemble Detect leans AI-generated but with moderate confidence (0.68); treat as a flag, not proof." |
+| `human` | ≥ 0.90 | "Resemble Detect classified this text as human-written with high confidence (0.95)." |
+| `human` | 0.50 – 0.90 | "Resemble Detect leans human-written with moderate confidence (0.61)." |
+| `uncertain` | — | "The detector could not score this text — not enough text to judge." |
 
 ### List Text Detections
 
@@ -562,16 +562,16 @@ Detection is probabilistic. A verdict is evidence, not proof of authorship, and 
 ### Full Media Forensics (Most Thorough)
 
 1. Submit one `POST /detect` job with all useful flags enabled:
-   ```json
-   {
-     "url": "https://example.com/suspect.mp4",
-     "visualize": true,
-     "intelligence": true,
-     "audio_source_tracing": true,
-     "use_reverse_search": true,
-     "zero_retention_mode": true
-   }
-   ```
+ ```json
+ {
+ "url": "https://example.com/suspect.mp4",
+ "visualize": true,
+ "intelligence": true,
+ "audio_source_tracing": true,
+ "use_reverse_search": true,
+ "zero_retention_mode": true
+ }
+ ```
 2. Poll `GET /detect/{uuid}` until `status: "completed"`.
 3. Read `metrics`, `image_metrics`, or `video_metrics` for the verdict.
 4. Read `intelligence.description` if intelligence was requested.
@@ -581,13 +581,13 @@ Detection is probabilistic. A verdict is evidence, not proof of authorship, and 
 ### Quick Authenticity Check (Fastest)
 
 1. Submit minimal detection using `Prefer: wait`:
-   ```bash
-   curl --request POST "${BASE_URL}/detect" \
-     -H "$AUTH_HEADER" \
-     -H "Prefer: wait" \
-     -H "Content-Type: application/json" \
-     --data '{"url": "https://example.com/media.wav"}'
-   ```
+ ```bash
+ curl --request POST "${BASE_URL}/detect" \
+ -H "$AUTH_HEADER" \
+ -H "Prefer: wait" \
+ -H "Content-Type: application/json" \
+ --data '{"url": "https://example.com/media.wav"}'
+ ```
 2. Confirm `item.status` is `completed`.
 3. Check `item.metrics.label` and `item.metrics.aggregated_score` for audio, or `item.image_metrics.label` / `item.video_metrics.label` and `score` for image/video.
 4. Report the result with score context and detector caveats.
@@ -596,14 +596,14 @@ Detection is probabilistic. A verdict is evidence, not proof of authorship, and 
 
 1. Count words. Under 25 → stop and tell the user there is not enough text to judge (or combine several messages from the same author).
 2. Submit with `Prefer: wait` and `--max-time 320`:
-   ```bash
-   curl --request POST "${BASE_URL}/text_detect" \
-     -H "$AUTH_HEADER" \
-     -H "Prefer: wait" \
-     -H "Content-Type: application/json" \
-     --max-time 320 \
-     --data "$(jq -n --arg text "$TEXT" '{text: $text}')"
-   ```
+ ```bash
+ curl --request POST "${BASE_URL}/text_detect" \
+ -H "$AUTH_HEADER" \
+ -H "Prefer: wait" \
+ -H "Content-Type: application/json" \
+ --max-time 320 \
+ --data "$(jq -n --arg text "$TEXT" '{text: $text}')"
+ ```
 3. Confirm `item.status` is `completed`.
 4. Read `item.prediction` together with `item.confidence`. Present them as a pair ("AI-generated, confidence 0.97"), name the register-specific caveat if the text is a forum post, casual chat, or code review, and remind the user the result is probabilistic.
 

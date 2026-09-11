@@ -1,11 +1,11 @@
 ---
 name: auditing-aws-s3-bucket-permissions
 description: 'Systematically audit AWS S3 bucket permissions to identify publicly
-  accessible buckets, overly permissive ACLs, misconfigured bucket policies, and missing
-  encryption settings using AWS CLI, S3audit, and Prowler to enforce least-privilege
-  data access controls.
+ accessible buckets, overly permissive ACLs, misconfigured bucket policies, and missing
+ encryption settings using AWS CLI, S3audit, and Prowler to enforce least-privilege
+ data access controls.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -60,18 +60,18 @@ Check the account-level S3 Block Public Access settings first, then list all buc
 ```bash
 # Check account-level S3 Block Public Access settings
 aws s3control get-public-access-block \
-  --account-id $(aws sts get-caller-identity --query Account --output text) \
-  --output json
+ --account-id $(aws sts get-caller-identity --query Account --output text) \
+ --output json
 
 # List all buckets with creation dates
 aws s3api list-buckets \
-  --query 'Buckets[*].[Name,CreationDate]' \
-  --output table
+ --query 'Buckets[*].[Name,CreationDate]' \
+ --output table
 
 # Get bucket regions for each bucket
 for bucket in $(aws s3api list-buckets --query 'Buckets[*].Name' --output text); do
-  region=$(aws s3api get-bucket-location --bucket "$bucket" --query 'LocationConstraint' --output text)
-  echo "$bucket -> ${region:-us-east-1}"
+ region=$(aws s3api get-bucket-location --bucket "$bucket" --query 'LocationConstraint' --output text)
+ echo "$bucket -> ${region:-us-east-1}"
 done
 ```
 
@@ -82,13 +82,13 @@ Iterate through all buckets to evaluate their individual public access blocks an
 ```bash
 # Check per-bucket Block Public Access settings
 for bucket in $(aws s3api list-buckets --query 'Buckets[*].Name' --output text); do
-  echo "=== $bucket ==="
-  aws s3api get-public-access-block --bucket "$bucket" 2>/dev/null || echo "  No Block Public Access configured"
+ echo "=== $bucket ==="
+ aws s3api get-public-access-block --bucket "$bucket" 2>/dev/null || echo " No Block Public Access configured"
 
-  # Check ACL for public grants
-  aws s3api get-bucket-acl --bucket "$bucket" \
-    --query 'Grants[?Grantee.URI==`http://acs.amazonaws.com/groups/global/AllUsers` || Grantee.URI==`http://acs.amazonaws.com/groups/global/AuthenticatedUsers`]' \
-    --output json
+ # Check ACL for public grants
+ aws s3api get-bucket-acl --bucket "$bucket" \
+ --query 'Grants[?Grantee.URI==`http://acs.amazonaws.com/groups/global/AllUsers` || Grantee.URI==`http://acs.amazonaws.com/groups/global/AuthenticatedUsers`]' \
+ --output json
 done
 ```
 
@@ -99,21 +99,21 @@ Review bucket policies for wildcard principals, missing conditions, and statemen
 ```bash
 # Extract and analyze bucket policies
 for bucket in $(aws s3api list-buckets --query 'Buckets[*].Name' --output text); do
-  policy=$(aws s3api get-bucket-policy --bucket "$bucket" --output text 2>/dev/null)
-  if [ -n "$policy" ]; then
-    echo "=== $bucket policy ==="
-    echo "$policy" | python3 -c "
+ policy=$(aws s3api get-bucket-policy --bucket "$bucket" --output text 2>/dev/null)
+ if [ -n "$policy" ]; then
+ echo "=== $bucket policy ==="
+ echo "$policy" | python3 -c "
 import json, sys
 policy = json.load(sys.stdin)
 for stmt in policy.get('Statement', []):
-    principal = stmt.get('Principal', {})
-    effect = stmt.get('Effect', '')
-    if principal == '*' or principal == {'AWS': '*'}:
-        print(f'  WARNING: {effect} with wildcard principal')
-        print(f'  Actions: {stmt.get(\"Action\", \"\")}')
-        print(f'  Condition: {stmt.get(\"Condition\", \"NONE\")}')
+ principal = stmt.get('Principal', {})
+ effect = stmt.get('Effect', '')
+ if principal == '*' or principal == {'AWS': '*'}:
+ print(f' WARNING: {effect} with wildcard principal')
+ print(f' Actions: {stmt.get(\"Action\", \"\")}')
+ print(f' Condition: {stmt.get(\"Condition\", \"NONE\")}')
 "
-  fi
+ fi
 done
 ```
 
@@ -124,20 +124,20 @@ Check that all buckets have server-side encryption enabled and versioning config
 ```bash
 # Check encryption and versioning status for all buckets
 for bucket in $(aws s3api list-buckets --query 'Buckets[*].Name' --output text); do
-  echo "=== $bucket ==="
+ echo "=== $bucket ==="
 
-  # Encryption configuration
-  aws s3api get-bucket-encryption --bucket "$bucket" 2>/dev/null \
-    && echo "  Encryption: ENABLED" \
-    || echo "  Encryption: DISABLED"
+ # Encryption configuration
+ aws s3api get-bucket-encryption --bucket "$bucket" 2>/dev/null \
+ && echo " Encryption: ENABLED" \
+ || echo " Encryption: DISABLED"
 
-  # Versioning status
-  aws s3api get-bucket-versioning --bucket "$bucket" \
-    --query 'Status' --output text
+ # Versioning status
+ aws s3api get-bucket-versioning --bucket "$bucket" \
+ --query 'Status' --output text
 
-  # Logging status
-  aws s3api get-bucket-logging --bucket "$bucket" \
-    --query 'LoggingEnabled' --output text 2>/dev/null
+ # Logging status
+ aws s3api get-bucket-logging --bucket "$bucket" \
+ --query 'LoggingEnabled' --output text 2>/dev/null
 done
 ```
 
@@ -148,14 +148,14 @@ Execute Prowler's S3-focused checks aligned with CIS AWS Foundations Benchmark.
 ```bash
 # Run Prowler S3-specific checks
 prowler aws \
-  --checks s3_bucket_public_access \
-           s3_bucket_default_encryption \
-           s3_bucket_policy_public_write_access \
-           s3_bucket_server_access_logging_enabled \
-           s3_bucket_versioning_enabled \
-           s3_bucket_acl_prohibited \
-  -M json-ocsf \
-  -o ./prowler-s3-audit/
+ --checks s3_bucket_public_access \
+ s3_bucket_default_encryption \
+ s3_bucket_policy_public_write_access \
+ s3_bucket_server_access_logging_enabled \
+ s3_bucket_versioning_enabled \
+ s3_bucket_acl_prohibited \
+ -M json-ocsf \
+ -o ./prowler-s3-audit/
 
 # View summary
 prowler aws --checks s3 -M csv -o ./prowler-s3-audit/
@@ -168,15 +168,15 @@ Leverage IAM Access Analyzer to identify buckets shared externally or publicly.
 ```bash
 # List Access Analyzer findings for S3
 aws accessanalyzer list-findings \
-  --analyzer-arn $(aws accessanalyzer list-analyzers --query 'analyzers[0].arn' --output text) \
-  --filter '{"resourceType": {"eq": ["AWS::S3::Bucket"]}}' \
-  --query 'findings[*].[resource,status,condition,principal]' \
-  --output table
+ --analyzer-arn $(aws accessanalyzer list-analyzers --query 'analyzers[0].arn' --output text) \
+ --filter '{"resourceType": {"eq": ["AWS::S3::Bucket"]}}' \
+ --query 'findings[*].[resource,status,condition,principal]' \
+ --output table
 
 # Create an analyzer if one does not exist
 aws accessanalyzer create-analyzer \
-  --analyzer-name s3-access-audit \
-  --type ACCOUNT
+ --analyzer-name s3-access-audit \
+ --type ACCOUNT
 ```
 
 ### Step 7: Generate Audit Report and Remediate
@@ -186,20 +186,20 @@ Compile findings into an actionable report and apply remediation for critical is
 ```bash
 # Quick remediation: Enable Block Public Access on a bucket
 aws s3api put-public-access-block \
-  --bucket TARGET_BUCKET \
-  --public-access-block-configuration \
-  'BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true'
+ --bucket TARGET_BUCKET \
+ --public-access-block-configuration \
+ 'BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true'
 
 # Enable default encryption with SSE-S3
 aws s3api put-bucket-encryption \
-  --bucket TARGET_BUCKET \
-  --server-side-encryption-configuration \
-  '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"aws:kms","KMSMasterKeyID":"alias/aws/s3"},"BucketKeyEnabled":true}]}'
+ --bucket TARGET_BUCKET \
+ --server-side-encryption-configuration \
+ '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"aws:kms","KMSMasterKeyID":"alias/aws/s3"},"BucketKeyEnabled":true}]}'
 
 # Enable versioning
 aws s3api put-bucket-versioning \
-  --bucket TARGET_BUCKET \
-  --versioning-configuration Status=Enabled
+ --bucket TARGET_BUCKET \
+ --versioning-configuration Status=Enabled
 ```
 
 ## Key Concepts
@@ -249,26 +249,26 @@ Auditor: Security Engineering Team
 Total Buckets: 47
 
 ACCOUNT-LEVEL SETTINGS:
-  Block Public Access: ENABLED (all four settings)
+ Block Public Access: ENABLED (all four settings)
 
 CRITICAL FINDINGS:
 [S3-001] Public Read Access via ACL
-  Bucket: marketing-assets-prod
-  Issue: AllUsers group granted READ permission via ACL
-  Risk: Any internet user can list and download bucket contents
-  Data Sensitivity: Contains customer-facing but non-sensitive marketing assets
-  Remediation: Remove AllUsers ACL grant, enable Block Public Access
+ Bucket: marketing-assets-prod
+ Issue: AllUsers group granted READ permission via ACL
+ Risk: Any internet user can list and download bucket contents
+ Data Sensitivity: Contains customer-facing but non-sensitive marketing assets
+ Remediation: Remove AllUsers ACL grant, enable Block Public Access
 
 [S3-002] Wildcard Principal in Bucket Policy
-  Bucket: data-exchange-partner
-  Issue: Policy allows s3:GetObject with Principal "*" and no VPC/IP condition
-  Risk: Intended for partner access but accessible to anyone with the bucket name
-  Remediation: Add aws:SourceVpce or aws:SourceIp condition to restrict access
+ Bucket: data-exchange-partner
+ Issue: Policy allows s3:GetObject with Principal "*" and no VPC/IP condition
+ Risk: Intended for partner access but accessible to anyone with the bucket name
+ Remediation: Add aws:SourceVpce or aws:SourceIp condition to restrict access
 
 SUMMARY:
-  Buckets with public access:           3 / 47
-  Buckets without encryption:           5 / 47
-  Buckets without versioning:          12 / 47
-  Buckets without access logging:      18 / 47
-  Buckets with overly broad policies:   7 / 47
+ Buckets with public access: 3 / 47
+ Buckets without encryption: 5 / 47
+ Buckets without versioning: 12 / 47
+ Buckets without access logging: 18 / 47
+ Buckets with overly broad policies: 7 / 47
 ```

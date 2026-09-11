@@ -1,11 +1,11 @@
 ---
 name: analyzing-azure-activity-logs-for-threats
 description: 'Queries Azure Monitor activity logs and sign-in logs via azure-monitor-query
-  to detect suspicious administrative operations, impossible travel, privilege escalation,
-  and resource modifications. Builds KQL queries for threat hunting in Azure environments.
-  Use when investigating suspicious Azure tenant activity or building cloud SIEM detections.
+ to detect suspicious administrative operations, impossible travel, privilege escalation,
+ and resource modifications. Builds KQL queries for threat hunting in Azure environments.
+ Use when investigating suspicious Azure tenant activity or building cloud SIEM detections.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -62,9 +62,9 @@ credential = DefaultAzureCredential()
 client = LogsQueryClient(credential)
 
 response = client.query_workspace(
-    workspace_id="WORKSPACE_ID",
-    query="AzureActivity | where OperationNameValue has 'MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE' | take 10",
-    timespan=timedelta(hours=24),
+ workspace_id="WORKSPACE_ID",
+ query="AzureActivity | where OperationNameValue has 'MICROSOFT.AUTHORIZATION/ROLEASSIGNMENTS/WRITE' | take 10",
+ timespan=timedelta(hours=24),
 )
 ```
 

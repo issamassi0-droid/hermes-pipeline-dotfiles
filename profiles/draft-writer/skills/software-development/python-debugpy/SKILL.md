@@ -6,9 +6,9 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos]
 metadata:
-  hermes:
-    tags: [debugging, python, pdb, debugpy, breakpoints, dap, post-mortem]
-    related_skills: [systematic-debugging, node-inspect-debugger]
+ hermes:
+ tags: [debugging, python, pdb, debugpy, breakpoints, dap, post-mortem]
+ related_skills: [systematic-debugging, node-inspect-debugger]
 ---
 
 # Python Debugger (pdb + debugpy)
@@ -71,9 +71,9 @@ Easiest. Edit the file:
 
 ```python
 def compute(x, y):
-    result = some_helper(x)
-    breakpoint()           # <-- drops into pdb here
-    return result + y
+ result = some_helper(x)
+ breakpoint() # <-- drops into pdb here
+ return result + y
 ```
 
 Run the code normally. You land at the `breakpoint()` line with full access to locals.
@@ -121,9 +121,9 @@ This bypasses the hermetic-env guarantees — fine for debugging, but re-run und
 ```python
 import pdb, sys
 try:
-    run_the_thing()
+ run_the_thing()
 except Exception:
-    pdb.post_mortem(sys.exc_info()[2])
+ pdb.post_mortem(sys.exc_info()[2])
 ```
 
 Or wrap a whole script:
@@ -138,7 +138,7 @@ Or set a global hook in a repl/jupyter:
 ```python
 import sys
 def excepthook(etype, value, tb):
-    import pdb; pdb.post_mortem(tb)
+ import pdb; pdb.post_mortem(tb)
 sys.excepthook = excepthook
 ```
 
@@ -162,7 +162,7 @@ import debugpy
 debugpy.listen(("127.0.0.1", 5678))
 print("debugpy listening on 5678, waiting for client...", flush=True)
 debugpy.wait_for_client()
-debugpy.breakpoint()       # optional: pause immediately once attached
+debugpy.breakpoint() # optional: pause immediately once attached
 ```
 
 Start the process; it blocks on `wait_for_client()`.
@@ -208,27 +208,27 @@ s = socket.create_connection((HOST, PORT))
 seq = itertools.count(1)
 
 def send(msg):
-    msg["seq"] = next(seq)
-    body = json.dumps(msg).encode()
-    s.sendall(f"Content-Length: {len(body)}\r\n\r\n".encode() + body)
+ msg["seq"] = next(seq)
+ body = json.dumps(msg).encode()
+ s.sendall(f"Content-Length: {len(body)}\r\n\r\n".encode() + body)
 
 def recv():
-    header = b""
-    while b"\r\n\r\n" not in header:
-        header += s.recv(1)
-    length = int(header.decode().split("Content-Length:")[1].split("\r\n")[0].strip())
-    body = b""
-    while len(body) < length:
-        body += s.recv(length - len(body))
-    return json.loads(body)
+ header = b""
+ while b"\r\n\r\n" not in header:
+ header += s.recv(1)
+ length = int(header.decode().split("Content-Length:")[1].split("\r\n")[0].strip())
+ body = b""
+ while len(body) < length:
+ body += s.recv(length - len(body))
+ return json.loads(body)
 
 send({"type": "request", "command": "initialize", "arguments": {"adapterID": "python"}})
 print(recv())
 send({"type": "request", "command": "attach", "arguments": {}})
 print(recv())
 send({"type": "request", "command": "setBreakpoints",
-      "arguments": {"source": {"path": sys.argv[1]},
-                    "breakpoints": [{"line": int(sys.argv[2])}]}})
+ "arguments": {"source": {"path": sys.argv[1]},
+ "breakpoints": [{"line": int(sys.argv[2])}]}})
 print(recv())
 send({"type": "request", "command": "configurationDone"})
 # ... loop reading events and sending continue/stepIn/etc.
@@ -240,14 +240,14 @@ This is fine for one-off automation but painful as an interactive UX.
 
 ```json
 {
-  "name": "Attach to Hermes",
-  "type": "debugpy",
-  "request": "attach",
-  "connect": { "host": "127.0.0.1", "port": 5678 },
-  "justMyCode": false,
-  "pathMappings": [
-    { "localRoot": "${workspaceFolder}", "remoteRoot": "<hermes-agent-repo>" }
-  ]
+ "name": "Attach to Hermes",
+ "type": "debugpy",
+ "request": "attach",
+ "connect": { "host": "127.0.0.1", "port": 5678 },
+ "justMyCode": false,
+ "pathMappings": [
+ { "localRoot": "${workspaceFolder}", "remoteRoot": "<hermes-agent-repo>" }
+ ]
 }
 ```
 
@@ -260,7 +260,7 @@ pip install remote-pdb
 In your code:
 ```python
 from remote_pdb import set_trace
-set_trace(host="127.0.0.1", port=4444)   # blocks until connection
+set_trace(host="127.0.0.1", port=4444) # blocks until connection
 ```
 
 Then from the terminal:
@@ -294,7 +294,7 @@ Start `hermes --tui`. The TUI will appear frozen (its backend is waiting). Attac
 **B. Use `remote-pdb` at a specific handler:**
 ```python
 from remote_pdb import set_trace
-set_trace(host="127.0.0.1", port=4444)   # in the RPC handler you want to trap
+set_trace(host="127.0.0.1", port=4444) # in the RPC handler you want to trap
 ```
 Trigger the matching slash command from the TUI, then `nc 127.0.0.1 4444` in another terminal.
 
@@ -311,9 +311,9 @@ Long-lived. Use `remote-pdb` at a handler, or `debugpy` with `--wait-for-client`
 2. **`breakpoint()` in CI / non-TTY contexts hangs the process.** Safe locally; never commit it. Add a pre-commit grep as a safety net.
 
 3. **`PYTHONBREAKPOINT=0`** disables all `breakpoint()` calls. Check the env if your breakpoint isn't hitting:
-   ```bash
-   echo $PYTHONBREAKPOINT
-   ```
+ ```bash
+ echo $PYTHONBREAKPOINT
+ ```
 
 4. **`debugpy.listen` blocks only if you also call `wait_for_client()`.** Without it, execution continues and your first breakpoint may fire before the client is attached.
 
@@ -334,9 +334,9 @@ Long-lived. Use `remote-pdb` at a handler, or `debugpy` with `--wait-for-client`
 - [ ] First breakpoint actually hits (if it doesn't, you likely have `PYTHONBREAKPOINT=0`, you're under a parallel/capturing runner, or execution finished before attach)
 - [ ] `where` / `w` shows the expected call stack
 - [ ] Post-debug cleanup: no stray `breakpoint()` / `set_trace()` in committed code
-  ```bash
-  rg -n 'breakpoint\(\)|set_trace\(|debugpy\.listen' --type py
-  ```
+ ```bash
+ rg -n 'breakpoint\(\)|set_trace\(|debugpy\.listen' --type py
+ ```
 
 ## One-Shot Recipes
 
@@ -347,12 +347,12 @@ breakpoint()
 # then in pdb:
 (Pdb) pp d
 (Pdb) pp list(d.keys())
-(Pdb) w                # how did we get here
+(Pdb) w # how did we get here
 ```
 
 **"This test passes in isolation but fails in the suite."**
 ```bash
-scripts/run_tests.sh tests/the_test.py   # confirm it fails under the isolated runner first
+scripts/run_tests.sh tests/the_test.py # confirm it fails under the isolated runner first
 # For interactive debugging, or if it only fails WITH other tests:
 source .venv/bin/activate
 python -m pytest tests/ -x --pdb

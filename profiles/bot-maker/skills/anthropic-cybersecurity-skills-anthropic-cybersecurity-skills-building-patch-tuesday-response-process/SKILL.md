@@ -1,10 +1,10 @@
 ---
 name: building-patch-tuesday-response-process
 description: Establish a repeatable operational process for triaging, testing, and
-  deploying Microsoft Patch Tuesday security updates (Windows, Office, Exchange, SQL
-  Server, Azure) via WSUS/SCCM within risk-based remediation SLAs, from advisory review
-  through validation. Use when building or improving a monthly patch management workflow
-  or prioritizing which CVEs to remediate first.
+ deploying Microsoft Patch Tuesday security updates (Windows, Office, Exchange, SQL
+ Server, Azure) via WSUS/SCCM within risk-based remediation SLAs, from advisory review
+ through validation. Use when building or improving a monthly patch management workflow
+ or prioritizing which CVEs to remediate first.
 domain: cybersecurity
 subdomain: vulnerability-management
 tags:
@@ -96,28 +96,28 @@ Microsoft releases security updates on the second Tuesday of each month ("Patch 
 ### Step 1: Pre-Patch Tuesday Preparation (Monday before)
 ```
 Preparation Checklist:
-  [ ] Confirm WSUS/SCCM sync schedules are active
-  [ ] Verify test environment is available and current
-  [ ] Review outstanding patches from previous month
-  [ ] Confirm monitoring dashboards are operational
-  [ ] Pre-stage communication templates
-  [ ] Ensure rollback procedures are documented
-  [ ] Verify backup jobs ran successfully on critical servers
+ [ ] Confirm WSUS/SCCM sync schedules are active
+ [ ] Verify test environment is available and current
+ [ ] Review outstanding patches from previous month
+ [ ] Confirm monitoring dashboards are operational
+ [ ] Pre-stage communication templates
+ [ ] Ensure rollback procedures are documented
+ [ ] Verify backup jobs ran successfully on critical servers
 ```
 
 ### Step 2: Day-of Triage (Patch Tuesday)
 
 ```
 Triage Process:
-  1. Monitor MSRC Update Guide (https://msrc.microsoft.com/update-guide)
-  2. Review Microsoft Security Blog for advisory summaries
-  3. Cross-reference with CISA KEV additions (same day)
-  4. Check vendor advisories (Qualys, Rapid7, CrowdStrike analysis)
-  5. Identify zero-day and actively exploited vulnerabilities
-  6. Classify each CVE by severity and applicability
-  7. Determine deployment rings and timeline for each patch
-  8. Submit emergency change request for zero-day patches
-  9. Communicate triage results to IT Operations and management
+ 1. Monitor MSRC Update Guide (https://msrc.microsoft.com/update-guide)
+ 2. Review Microsoft Security Blog for advisory summaries
+ 3. Cross-reference with CISA KEV additions (same day)
+ 4. Check vendor advisories (Qualys, Rapid7, CrowdStrike analysis)
+ 5. Identify zero-day and actively exploited vulnerabilities
+ 6. Classify each CVE by severity and applicability
+ 7. Determine deployment rings and timeline for each patch
+ 8. Submit emergency change request for zero-day patches
+ 9. Communicate triage results to IT Operations and management
 ```
 
 ### Step 3: Scan and Gap Analysis
@@ -125,81 +125,81 @@ Triage Process:
 ```python
 # Post-Patch-Tuesday scan workflow
 def run_patch_tuesday_scan(scanner_api, target_groups):
-    """Trigger vulnerability scans after Patch Tuesday updates."""
-    for group in target_groups:
-        print(f"[*] Scanning {group['name']}...")
-        scan_id = scanner_api.launch_scan(
-            target=group["targets"],
-            template="patch-tuesday-focused",
-            credentials=group["creds"]
-        )
-        print(f"    Scan launched: {scan_id}")
+ """Trigger vulnerability scans after Patch Tuesday updates."""
+ for group in target_groups:
+ print(f"[*] Scanning {group['name']}...")
+ scan_id = scanner_api.launch_scan(
+ target=group["targets"],
+ template="patch-tuesday-focused",
+ credentials=group["creds"]
+ )
+ print(f" Scan launched: {scan_id}")
 
-    # Wait for scan completion, then generate report
-    results = scanner_api.get_scan_results(scan_id)
-    missing_patches = [r for r in results if r["status"] == "missing"]
+ # Wait for scan completion, then generate report
+ results = scanner_api.get_scan_results(scan_id)
+ missing_patches = [r for r in results if r["status"] == "missing"]
 
-    # Categorize by Patch Tuesday release
-    current_month = [p for p in missing_patches
-                     if p["vendor_advisory_date"] >= patch_tuesday_date]
+ # Categorize by Patch Tuesday release
+ current_month = [p for p in missing_patches
+ if p["vendor_advisory_date"] >= patch_tuesday_date]
 
-    return {
-        "total_missing": len(missing_patches),
-        "current_month": len(current_month),
-        "zero_day": [p for p in current_month if p.get("actively_exploited")],
-        "critical": [p for p in current_month if p["cvss"] >= 9.0],
-    }
+ return {
+ "total_missing": len(missing_patches),
+ "current_month": len(current_month),
+ "zero_day": [p for p in current_month if p.get("actively_exploited")],
+ "critical": [p for p in current_month if p["cvss"] >= 9.0],
+ }
 ```
 
 ### Step 4: Ring-Based Deployment Strategy
 
 ```
 Ring 0 - Emergency (0-48 hours):
-    Scope:     Zero-day and actively exploited CVEs only
-    Method:    Manual or targeted push (SCCM expedite)
-    Targets:   Internet-facing servers, critical infrastructure
-    Approval:  Emergency change, verbal CISO approval
-    Rollback:  Immediate rollback if service degradation
+ Scope: Zero-day and actively exploited CVEs only
+ Method: Manual or targeted push (SCCM expedite)
+ Targets: Internet-facing servers, critical infrastructure
+ Approval: Emergency change, verbal CISO approval
+ Rollback: Immediate rollback if service degradation
 
 Ring 1 - Pilot (Day 2-7):
-    Scope:     All critical and high patches
-    Method:    WSUS/SCCM automatic deployment
-    Targets:   IT department machines, test group (5-10%)
-    Approval:  Standard change with CAB notification
-    Monitoring: 48-hour soak period, check for BSOD, app crashes
+ Scope: All critical and high patches
+ Method: WSUS/SCCM automatic deployment
+ Targets: IT department machines, test group (5-10%)
+ Approval: Standard change with CAB notification
+ Monitoring: 48-hour soak period, check for BSOD, app crashes
 
 Ring 2 - Production Servers (Day 7-14):
-    Scope:     All security patches
-    Method:    SCCM maintenance windows (off-hours)
-    Targets:   Production servers by tier
-    Approval:  Standard change with CAB approval
-    Monitoring: Application health checks, performance baseline
+ Scope: All security patches
+ Method: SCCM maintenance windows (off-hours)
+ Targets: Production servers by tier
+ Approval: Standard change with CAB approval
+ Monitoring: Application health checks, performance baseline
 
 Ring 3 - Workstations (Day 14-21):
-    Scope:     All security patches + quality updates
-    Method:    Windows Update for Business / Intune
-    Targets:   All managed workstations
-    Approval:  Pre-approved standard change
-    Monitoring: Help desk ticket monitoring for issues
+ Scope: All security patches + quality updates
+ Method: Windows Update for Business / Intune
+ Targets: All managed workstations
+ Approval: Pre-approved standard change
+ Monitoring: Help desk ticket monitoring for issues
 
 Ring 4 - Stragglers (Day 21-30):
-    Scope:     Catch remaining unpatched systems
-    Method:    Forced deployment with restart
-    Targets:   Systems that missed prior rings
-    Approval:  Compliance-driven enforcement
+ Scope: Catch remaining unpatched systems
+ Method: Forced deployment with restart
+ Targets: Systems that missed prior rings
+ Approval: Compliance-driven enforcement
 ```
 
 ### Step 5: Validation and Reporting
 
 ```
 Post-Deployment Validation:
-  1. Re-scan environment with updated vulnerability signatures
-  2. Compare pre-patch and post-patch scan results
-  3. Calculate patch compliance rate per ring and department
-  4. Identify failed patches and investigate root causes
-  5. Generate compliance report for management review
-  6. Update risk register with residual unpatched vulnerabilities
-  7. Document exceptions and compensating controls
+ 1. Re-scan environment with updated vulnerability signatures
+ 2. Compare pre-patch and post-patch scan results
+ 3. Calculate patch compliance rate per ring and department
+ 4. Identify failed patches and investigate root causes
+ 5. Generate compliance report for management review
+ 6. Update risk register with residual unpatched vulnerabilities
+ 7. Document exceptions and compensating controls
 ```
 
 ## Best Practices

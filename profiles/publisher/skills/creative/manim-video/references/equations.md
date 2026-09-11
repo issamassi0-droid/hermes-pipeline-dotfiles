@@ -4,7 +4,7 @@
 
 ```python
 eq = MathTex(r"E = mc^2")
-eq = MathTex(r"f(x) &= x^2 + 2x + 1 \\ &= (x + 1)^2")  # multi-line aligned
+eq = MathTex(r"f(x) &= x^2 + 2x + 1 \\ &= (x + 1)^2") # multi-line aligned
 ```
 
 **Always use raw strings (`r""`).**
@@ -57,12 +57,12 @@ self.play(GrowFromCenter(brace), Write(label))
 ## Common LaTeX
 
 ```python
-MathTex(r"\frac{a}{b}")                  # fraction
-MathTex(r"\alpha, \beta, \gamma")         # Greek
-MathTex(r"\sum_{i=1}^{n} x_i")           # summation
-MathTex(r"\int_{0}^{\infty} e^{-x} dx")  # integral
-MathTex(r"\vec{v}")                       # vector
-MathTex(r"\lim_{x \to \infty} f(x)")    # limit
+MathTex(r"\frac{a}{b}") # fraction
+MathTex(r"\alpha, \beta, \gamma") # Greek
+MathTex(r"\sum_{i=1}^{n} x_i") # summation
+MathTex(r"\int_{0}^{\infty} e^{-x} dx") # integral
+MathTex(r"\vec{v}") # vector
+MathTex(r"\lim_{x \to \infty} f(x)") # limit
 ```
 
 ## Matrices
@@ -89,10 +89,10 @@ For matrices you need to animate element-by-element or color individual entries,
 
 ```python
 MathTex(r"""
-    f(x) = \begin{cases}
-        x^2    & \text{if } x \geq 0 \\
-        -x^2   & \text{if } x < 0
-    \end{cases}
+ f(x) = \begin{cases}
+ x^2 & \text{if } x \geq 0 \\
+ -x^2 & \text{if } x < 0
+ \end{cases}
 """)
 ```
 
@@ -102,12 +102,12 @@ For multi-line derivations with alignment, use `aligned` inside `MathTex`:
 
 ```python
 MathTex(r"""
-    \begin{aligned}
-        \nabla \cdot \mathbf{E} &= \frac{\rho}{\epsilon_0} \\
-        \nabla \cdot \mathbf{B} &= 0 \\
-        \nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t} \\
-        \nabla \times \mathbf{B} &= \mu_0 \mathbf{J} + \mu_0 \epsilon_0 \frac{\partial \mathbf{E}}{\partial t}
-    \end{aligned}
+ \begin{aligned}
+ \nabla \cdot \mathbf{E} &= \frac{\rho}{\epsilon_0} \\
+ \nabla \cdot \mathbf{B} &= 0 \\
+ \nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t} \\
+ \nabla \times \mathbf{B} &= \mu_0 \mathbf{J} + \mu_0 \epsilon_0 \frac{\partial \mathbf{E}}{\partial t}
+ \end{aligned}
 """)
 ```
 
@@ -120,14 +120,14 @@ MathTex(r"...", tex_environment="gather*")
 
 ```python
 class DerivationScene(Scene):
-    def construct(self):
-        self.camera.background_color = BG
-        s1 = MathTex(r"ax^2 + bx + c = 0")
-        self.play(Write(s1))
-        self.wait(1.5)
-        s2 = MathTex(r"x^2 + \frac{b}{a}x + \frac{c}{a} = 0")
-        s2.next_to(s1, DOWN, buff=0.8)
-        self.play(s1.animate.set_opacity(0.4), TransformMatchingTex(s1.copy(), s2))
+ def construct(self):
+ self.camera.background_color = BG
+ s1 = MathTex(r"ax^2 + bx + c = 0")
+ self.play(Write(s1))
+ self.wait(1.5)
+ s2 = MathTex(r"x^2 + \frac{b}{a}x + \frac{c}{a} = 0")
+ s2.next_to(s1, DOWN, buff=0.8)
+ self.play(s1.animate.set_opacity(0.4), TransformMatchingTex(s1.copy(), s2))
 ```
 
 ## substrings_to_isolate for Complex Equations
@@ -137,13 +137,13 @@ For dense equations where manually splitting into parts is impractical, use `sub
 ```python
 # Without isolation — the whole expression is one blob
 lagrangian = MathTex(
-    r"\mathcal{L} = \bar{\psi}(i \gamma^\mu D_\mu - m)\psi - \tfrac{1}{4}F_{\mu\nu}F^{\mu\nu}"
+ r"\mathcal{L} = \bar{\psi}(i \gamma^\mu D_\mu - m)\psi - \tfrac{1}{4}F_{\mu\nu}F^{\mu\nu}"
 )
 
 # With isolation — each named substring is a separate submobject
 lagrangian = MathTex(
-    r"\mathcal{L} = \bar{\psi}(i \gamma^\mu D_\mu - m)\psi - \tfrac{1}{4}F_{\mu\nu}F^{\mu\nu}",
-    substrings_to_isolate=[r"\psi", r"D_\mu", r"\gamma^\mu", r"F_{\mu\nu}"]
+ r"\mathcal{L} = \bar{\psi}(i \gamma^\mu D_\mu - m)\psi - \tfrac{1}{4}F_{\mu\nu}F^{\mu\nu}",
+ substrings_to_isolate=[r"\psi", r"D_\mu", r"\gamma^\mu", r"F_{\mu\nu}"]
 )
 # Now you can color individual terms
 lagrangian.set_color_by_tex(r"\psi", BLUE)
@@ -158,8 +158,8 @@ For equations with multiple related lines, pass each line as a separate argument
 
 ```python
 maxwell = MathTex(
-    r"\nabla \cdot \mathbf{E} = \frac{\rho}{\epsilon_0}",
-    r"\nabla \times \mathbf{B} = \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial \mathbf{E}}{\partial t}"
+ r"\nabla \cdot \mathbf{E} = \frac{\rho}{\epsilon_0}",
+ r"\nabla \times \mathbf{B} = \mu_0\mathbf{J} + \mu_0\epsilon_0\frac{\partial \mathbf{E}}{\partial t}"
 ).arrange(DOWN)
 
 # Each line is a separate submobject — animate independently
@@ -177,9 +177,9 @@ eq1 = MathTex(r"A^2 + B^2 = C^2")
 eq2 = MathTex(r"A^2 = C^2 - B^2")
 
 self.play(TransformMatchingTex(
-    eq1, eq2,
-    key_map={"+": "-"},   # map "+" in source to "-" in target
-    path_arc=PI / 2,      # arc the pieces into position
+ eq1, eq2,
+ key_map={"+": "-"}, # map "+" in source to "-" in target
+ path_arc=PI / 2, # arc the pieces into position
 ))
 ```
 
@@ -199,17 +199,17 @@ When matching substrings are ambiguous, specify which to align explicitly:
 ```python
 kw = dict(font_size=72, t2c={"A": BLUE, "B": TEAL, "C": GREEN})
 lines = [
-    MathTex(r"A^2 + B^2 = C^2", **kw),
-    MathTex(r"A^2 = C^2 - B^2", **kw),
-    MathTex(r"A^2 = (C + B)(C - B)", **kw),
-    MathTex(r"A = \sqrt{(C + B)(C - B)}", **kw),
+ MathTex(r"A^2 + B^2 = C^2", **kw),
+ MathTex(r"A^2 = C^2 - B^2", **kw),
+ MathTex(r"A^2 = (C + B)(C - B)", **kw),
+ MathTex(r"A = \sqrt{(C + B)(C - B)}", **kw),
 ]
 
 self.play(TransformMatchingTex(
-    lines[0].copy(), lines[1],
-    matched_keys=["A^2", "B^2", "C^2"],  # explicitly match these
-    key_map={"+": "-"},                    # map + to -
-    path_arc=PI / 2,                       # arc pieces into position
+ lines[0].copy(), lines[1],
+ matched_keys=["A^2", "B^2", "C^2"], # explicitly match these
+ key_map={"+": "-"}, # map + to -
+ path_arc=PI / 2, # arc pieces into position
 ))
 ```
 

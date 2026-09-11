@@ -43,21 +43,21 @@ For lateral movement specifically, NetExec maps directly to MITRE ATT&CK **T1021
 ## Prerequisites
 
 - A Linux operator host (Kali/Parrot/Ubuntu). Install via pipx (recommended):
-  ```bash
-  sudo apt install -y pipx git
-  pipx ensurepath
-  pipx install git+https://github.com/Pennyw0rth/NetExec
-  # verify
-  nxc --version
-  nxc smb --help
-  ```
+ ```bash
+ sudo apt install -y pipx git
+ pipx ensurepath
+ pipx install git+https://github.com/Pennyw0rth/NetExec
+ # verify
+ nxc --version
+ nxc smb --help
+ ```
 - Docker alternative:
-  ```bash
-  git clone https://github.com/Pennyw0rth/NetExec
-  cd NetExec
-  docker build -t netexec .
-  docker run --rm -it netexec smb --help
-  ```
+ ```bash
+ git clone https://github.com/Pennyw0rth/NetExec
+ cd NetExec
+ docker build -t netexec .
+ docker run --rm -it netexec smb --help
+ ```
 - Network reachability to target ports (445/SMB, 5985-5986/WinRM, 389-636/LDAP, 1433/MSSQL).
 - Valid credentials, NT hashes, or Kerberos tickets within an authorized scope.
 - A signed rules-of-engagement document and knowledge of the account-lockout policy before spraying.
@@ -169,7 +169,7 @@ nxc mssql 192.168.1.60 -u sa -p 'Sql2025!' --local-auth -x 'whoami'
 ### 7. Review the workspace and report
 NetExec stores results in a per-protocol SQLite workspace under `~/.nxc/`. Review captured credentials and admin relationships for the report.
 ```bash
-nxc smb -L              # list SMB modules
+nxc smb -L # list SMB modules
 ls ~/.nxc/workspaces/
 nxc smb 192.168.1.0/24 -u jsmith -p 'Summer2025!' --shares --log spray_results.log
 ```

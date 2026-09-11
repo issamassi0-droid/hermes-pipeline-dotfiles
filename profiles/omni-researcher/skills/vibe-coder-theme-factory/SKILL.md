@@ -1,10 +1,10 @@
 ---
 name: theme-factory
 description: |
-  10 ready-to-use themes with colors and fonts for consistent styling.
-  Use when: applying visual themes to pages, components, or design systems.
-  Triggers: "theme", "color palette", "color scheme", "fonts", "branding",
-  "visual identity", "design system colors".
+ 10 ready-to-use themes with colors and fonts for consistent styling.
+ Use when: applying visual themes to pages, components, or design systems.
+ Triggers: "theme", "color palette", "color scheme", "fonts", "branding",
+ "visual identity", "design system colors".
 ---
 
 

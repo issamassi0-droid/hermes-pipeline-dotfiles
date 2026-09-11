@@ -39,9 +39,9 @@ shape.
 ## Pitfalls
 
 - The `client=gtx` endpoint is virtually unusable from a home IP. Always
-  switch to `dict-chrome-ex`.
+ switch to `dict-chrome-ex`.
 - The binary is commit-tracked in the repo — rebuild after any source change
-  and commit the updated binary.
+ and commit the updated binary.
 - The parser is rigid: it expects the exact Google response shape. If Google
-  changes the format, translations will silently fail with "unexpected
-  translate response".
+ changes the format, translations will silently fail with "unexpected
+ translate response".

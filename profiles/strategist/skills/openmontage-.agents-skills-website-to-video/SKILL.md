@@ -113,13 +113,13 @@ Lint, validate, take snapshots scaled to video length (formula: `max(beats × 3,
 
 Typical constraints by video type — use as a starting point, not a formula. Beat count should follow from the content and the narration, not from a target range.
 
-| Type                  | Typical duration | Duration driver    | Narration             |
+| Type | Typical duration | Duration driver | Narration |
 | --------------------- | ---------------- | ------------------ | --------------------- |
-| Social ad (IG/TikTok) | 10–15s           | Platform limit     | Optional              |
-| Product demo          | 30–60s           | Script length      | Full narration        |
-| Feature announcement  | 15–30s           | Feature complexity | Full narration        |
-| Brand reel            | 20–45s           | Music track        | Optional, music focus |
-| Launch teaser         | 10–20s           | Hook energy        | Minimal               |
+| Social ad (IG/TikTok) | 10–15s | Platform limit | Optional |
+| Product demo | 30–60s | Script length | Full narration |
+| Feature announcement | 15–30s | Feature complexity | Full narration |
+| Brand reel | 20–45s | Music track | Optional, music focus |
+| Launch teaser | 10–20s | Hook energy | Minimal |
 
 Beat count is not in this table intentionally — it should come from the storyboard, not from "social ad = 3-4 beats." A social ad for a complex product might need 5 well-timed beats. A brand reel with one strong visual thesis might need 3.
 
@@ -131,15 +131,15 @@ Beat count is not in this table intentionally — it should come from the storyb
 
 ### Reference Files
 
-| File                                                                               | When to read                                                                                                                                   |
+| File | When to read |
 | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| [step-0-capture.md](references/step-0-capture.md)                                  | Step 0 — capture, understand the brand and product, write strategy-first site summary                                                          |
-| [step-1-design.md](references/step-1-design.md)                                    | Step 1 — write DESIGN.md brand cheat sheet (5 sections, 250-350 lines; 50-line fast-path for billboard-style social ads)                       |
-| [step-2-brief.md](references/step-2-brief.md)                                      | Step 2 — align on message, narrative arc, audience with user                                                                                   |
-| [capabilities.md](references/capabilities.md)                                      | Steps 2 & 5 — full inventory of what HyperFrames can do (24 sections). Scan the TOC during the brief, deep-dive specific sections during build |
-| [step-3-storyboard.md](references/step-3-storyboard.md)                            | Step 3 — storyboard + script (combined) with user review gate                                                                                  |
-| [step-4-vo.md](references/step-4-vo.md)                                            | Step 4 — TTS provider choice, generation, timing                                                                                               |
-| [step-5-build.md](references/step-5-build.md)                                      | Step 5 — build index.html + compositions                                                                                                       |
-| [step-6-validate.md](references/step-6-validate.md)                                | Step 6 — lint, validate, snapshots (scaled to video length), preview                                                                           |
-| [techniques.md](../hyperframes/references/techniques.md)                           | Steps 3 & 5 — 13 primitive animation techniques with code patterns (adapt, don't copy-paste)                                                   |
-| [html-in-canvas-patterns.md](../hyperframes/references/html-in-canvas-patterns.md) | Step 5 — complete code patterns for HTML-in-Canvas effects (lives in the hyperframes skill)                                                    |
+| [step-0-capture.md](references/step-0-capture.md) | Step 0 — capture, understand the brand and product, write strategy-first site summary |
+| [step-1-design.md](references/step-1-design.md) | Step 1 — write DESIGN.md brand cheat sheet (5 sections, 250-350 lines; 50-line fast-path for billboard-style social ads) |
+| [step-2-brief.md](references/step-2-brief.md) | Step 2 — align on message, narrative arc, audience with user |
+| [capabilities.md](references/capabilities.md) | Steps 2 & 5 — full inventory of what HyperFrames can do (24 sections). Scan the TOC during the brief, deep-dive specific sections during build |
+| [step-3-storyboard.md](references/step-3-storyboard.md) | Step 3 — storyboard + script (combined) with user review gate |
+| [step-4-vo.md](references/step-4-vo.md) | Step 4 — TTS provider choice, generation, timing |
+| [step-5-build.md](references/step-5-build.md) | Step 5 — build index.html + compositions |
+| [step-6-validate.md](references/step-6-validate.md) | Step 6 — lint, validate, snapshots (scaled to video length), preview |
+| [techniques.md](../hyperframes/references/techniques.md) | Steps 3 & 5 — 13 primitive animation techniques with code patterns (adapt, don't copy-paste) |
+| [html-in-canvas-patterns.md](../hyperframes/references/html-in-canvas-patterns.md) | Step 5 — complete code patterns for HTML-in-Canvas effects (lives in the hyperframes skill) |

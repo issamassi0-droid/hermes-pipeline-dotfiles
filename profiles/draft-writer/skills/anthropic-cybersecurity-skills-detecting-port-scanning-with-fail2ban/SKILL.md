@@ -1,10 +1,10 @@
 ---
 name: detecting-port-scanning-with-fail2ban
 description: 'Configures Fail2ban with custom filters and actions to detect port scanning
-  activity, SSH brute force attempts, and network reconnaissance, automatically banning
-  offending IP addresses and alerting security teams to suspicious network probing.
+ activity, SSH brute force attempts, and network reconnaissance, automatically banning
+ offending IP addresses and alerting security teams to suspicious network probing.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -112,9 +112,9 @@ sudo iptables -A PORTSCAN -j DROP
 
 # Log SYN packets to closed ports (indicates scanning)
 sudo iptables -A INPUT -p tcp --tcp-flags SYN,ACK,FIN,RST SYN -m state --state NEW \
-  -m recent --name portscan --set
+ -m recent --name portscan --set
 sudo iptables -A INPUT -p tcp --tcp-flags SYN,ACK,FIN,RST SYN -m state --state NEW \
-  -m recent --name portscan --rcheck --seconds 10 --hitcount 20 -j PORTSCAN
+ -m recent --name portscan --rcheck --seconds 10 --hitcount 20 -j PORTSCAN
 
 # Create Fail2ban filter for port scanning
 sudo tee /etc/fail2ban/filter.d/portscan.conf << 'EOF'
@@ -130,7 +130,7 @@ sudo tee /etc/fail2ban/filter.d/nmap-scan.conf << 'EOF'
 [Definition]
 # Detect rapid connection attempts to multiple ports from same source
 failregex = kernel: \[.*\] PORTSCAN_DETECTED: .* SRC=<HOST>
-            iptables: .* PORTSCAN .* SRC=<HOST>
+ iptables: .* PORTSCAN .* SRC=<HOST>
 ignoreregex =
 datepattern = {^LN-BEG}
 EOF
@@ -140,9 +140,9 @@ sudo tee /etc/fail2ban/filter.d/http-scan.conf << 'EOF'
 [Definition]
 # Detect scanners probing for common vulnerabilities
 failregex = ^<HOST> .* "(GET|POST|HEAD) /(wp-login|wp-admin|phpmyadmin|admin|.env|xmlrpc|wp-content/uploads).*" (403|404|444)
-            ^<HOST> .* "(GET|POST) /.*\.(php|asp|aspx|jsp|cgi)\?.*" (403|404)
-            ^<HOST> .* "() .*" 400
-            ^<HOST> .* "(GET|POST) /.*" 400
+ ^<HOST> .* "(GET|POST) /.*\.(php|asp|aspx|jsp|cgi)\?.*" (403|404)
+ ^<HOST> .* "() .*" 400
+ ^<HOST> .* "(GET|POST) /.*" 400
 ignoreregex =
 datepattern = {^LN-BEG}
 EOF
@@ -203,19 +203,19 @@ EOF
 sudo tee /etc/fail2ban/action.d/iptables-webhook.conf << 'EOF'
 [Definition]
 actionstart = <iptables> -N f2b-<name>
-              <iptables> -A f2b-<name> -j RETURN
-              <iptables> -I <chain> -p <protocol> -j f2b-<name>
+ <iptables> -A f2b-<name> -j RETURN
+ <iptables> -I <chain> -p <protocol> -j f2b-<name>
 
 actionstop = <iptables> -D <chain> -p <protocol> -j f2b-<name>
-             <iptables> -F f2b-<name>
-             <iptables> -X f2b-<name>
+ <iptables> -F f2b-<name>
+ <iptables> -X f2b-<name>
 
 actioncheck = <iptables> -n -L <chain> | grep -q 'f2b-<name>[ \t]'
 
 actionban = <iptables> -I f2b-<name> 1 -s <ip> -j <blocktype>
-            curl -s -X POST "<webhook_url>" \
-              -H "Content-Type: application/json" \
-              -d '{"text":"[Fail2ban] Banned <ip> from <name> jail (failures: <failures>)"}'
+ curl -s -X POST "<webhook_url>" \
+ -H "Content-Type: application/json" \
+ -d '{"text":"[Fail2ban] Banned <ip> from <name> jail (failures: <failures>)"}'
 
 actionunban = <iptables> -D f2b-<name> -s <ip> -j <blocktype>
 
@@ -229,10 +229,10 @@ EOF
 sudo tee /etc/fail2ban/action.d/escalating-ban.conf << 'EOF'
 [Definition]
 actionban = <iptables> -I f2b-<name> 1 -s <ip> -j DROP
-            echo "$(date) BAN <ip> jail=<name> failures=<failures> bantime=<bantime>" >> /var/log/fail2ban-bans.log
+ echo "$(date) BAN <ip> jail=<name> failures=<failures> bantime=<bantime>" >> /var/log/fail2ban-bans.log
 
 actionunban = <iptables> -D f2b-<name> -s <ip> -j DROP
-              echo "$(date) UNBAN <ip> jail=<name>" >> /var/log/fail2ban-bans.log
+ echo "$(date) UNBAN <ip> jail=<name>" >> /var/log/fail2ban-bans.log
 EOF
 ```
 
@@ -284,11 +284,11 @@ sudo fail2ban-client status | grep "Jail list"
 echo ""
 echo "Currently Banned IPs:"
 for jail in $(sudo fail2ban-client status | grep "Jail list" | sed 's/.*://;s/,//g'); do
-    count=$(sudo fail2ban-client status "$jail" | grep "Currently banned" | awk '{print $NF}')
-    if [ "$count" -gt 0 ]; then
-        echo "  $jail: $count banned"
-        sudo fail2ban-client status "$jail" | grep "Banned IP"
-    fi
+ count=$(sudo fail2ban-client status "$jail" | grep "Currently banned" | awk '{print $NF}')
+ if [ "$count" -gt 0 ]; then
+ echo " $jail: $count banned"
+ sudo fail2ban-client status "$jail" | grep "Banned IP"
+ fi
 done
 echo ""
 echo "Last 24 hours - Ban count by jail:"

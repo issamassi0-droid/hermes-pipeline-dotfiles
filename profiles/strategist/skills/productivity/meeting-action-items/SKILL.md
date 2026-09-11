@@ -6,9 +6,9 @@ author: Ben Barclay (benbarclay), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Meetings, Action-Items, Follow-Up, Productivity]
-    related_skills: [teams-meeting-pipeline, google-workspace, notion]
+ hermes:
+ tags: [Meetings, Action-Items, Follow-Up, Productivity]
+ related_skills: [teams-meeting-pipeline, google-workspace, notion]
 ---
 
 # Meeting Action Items

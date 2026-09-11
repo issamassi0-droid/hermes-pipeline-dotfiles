@@ -1,10 +1,10 @@
 ---
 name: hunting-for-persistence-via-wmi-subscriptions
 description: Hunts for adversary persistence via WMI event subscriptions (MITRE T1546.003)
-  by monitoring the creation of WMI event filters, consumers, and filter-to-consumer
-  bindings that trigger malicious code execution on system events. Use when investigating
-  fileless, trigger-based persistence on Windows hosts or auditing WMI repository
-  contents for malicious event subscriptions.
+ by monitoring the creation of WMI event filters, consumers, and filter-to-consumer
+ bindings that trigger malicious code execution on system events. Use when investigating
+ fileless, trigger-based persistence on Windows hosts or auditing WMI repository
+ contents for malicious event subscriptions.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:
@@ -113,19 +113,19 @@ DeviceProcessEvents
 title: WMI Event Subscription Persistence
 status: stable
 logsource:
-    product: windows
-    category: wmi_event
+ product: windows
+ category: wmi_event
 detection:
-    selection_consumer:
-        EventID: 20
-        Destination|contains:
-            - 'ActiveScriptEventConsumer'
-            - 'CommandLineEventConsumer'
-    condition: selection_consumer
+ selection_consumer:
+ EventID: 20
+ Destination|contains:
+ - 'ActiveScriptEventConsumer'
+ - 'CommandLineEventConsumer'
+ condition: selection_consumer
 level: high
 tags:
-    - attack.persistence
-    - attack.t1546.003
+ - attack.persistence
+ - attack.t1546.003
 ```
 
 ## Common Scenarios

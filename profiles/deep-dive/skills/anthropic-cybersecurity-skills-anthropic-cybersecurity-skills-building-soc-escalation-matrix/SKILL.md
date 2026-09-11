@@ -1,10 +1,10 @@
 ---
 name: building-soc-escalation-matrix
 description: Build a structured SOC escalation matrix defining severity tiers, response
-  SLAs, tiered escalation paths, and notification procedures for security incidents,
-  using context-driven criteria that combine business risk, asset criticality, and
-  data sensitivity. Use when designing or revising how a SOC triages and escalates
-  incidents across analyst tiers.
+ SLAs, tiered escalation paths, and notification procedures for security incidents,
+ using context-driven criteria that combine business risk, asset criticality, and
+ data sensitivity. Use when designing or revising how a SOC triages and escalates
+ incidents across analyst tiers.
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -134,12 +134,12 @@ A SOC escalation matrix defines how security incidents move through the organiza
 ## Escalation Decision Matrix
 
 ```
-                    Asset Criticality
-                    Low        Medium      High        Critical
-Severity  Low      P4         P4          P3          P3
-          Medium   P4         P3          P2          P2
-          High     P3         P2          P2          P1
-          Critical P2         P1          P1          P1
+ Asset Criticality
+ Low Medium High Critical
+Severity Low P4 P4 P3 P3
+ Medium P4 P3 P2 P2
+ High P3 P2 P2 P1
+ Critical P2 P1 P1 P1
 ```
 
 ## Context-Driven Escalation Triggers
@@ -198,21 +198,21 @@ Bridge Line: {conference_details}
 ```yaml
 # XSOAR escalation playbook trigger
 trigger:
-  condition: incident.severity == "critical" AND incident.asset_criticality == "high"
-  action:
-    - assign_tier: 3
-    - notify: [soc_manager, ciso]
-    - create_war_room: true
-    - start_bridge: true
-    - set_sla: 4h
+ condition: incident.severity == "critical" AND incident.asset_criticality == "high"
+ action:
+ - assign_tier: 3
+ - notify: [soc_manager, ciso]
+ - create_war_room: true
+ - start_bridge: true
+ - set_sla: 4h
 
 auto_escalation_rules:
-  - name: P2 Time-Based Escalation
-    condition: incident.severity == "high" AND incident.age > 4h AND incident.status != "resolved"
-    action:
-      - escalate_tier: 3
-      - notify: soc_manager
-      - add_comment: "Auto-escalated due to SLA breach"
+ - name: P2 Time-Based Escalation
+ condition: incident.severity == "high" AND incident.age > 4h AND incident.status != "resolved"
+ action:
+ - escalate_tier: 3
+ - notify: soc_manager
+ - add_comment: "Auto-escalated due to SLA breach"
 ```
 
 ## References

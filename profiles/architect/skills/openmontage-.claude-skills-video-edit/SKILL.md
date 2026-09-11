@@ -1,9 +1,9 @@
 ---
 name: video-edit
 description: |
-  Edit videos locally using ffmpeg. Trim, concat, resize, speed, overlay, extract audio, compress, and convert.
-  Use when: (1) Trimming or cutting video segments, (2) Concatenating multiple clips, (3) Resizing video for social platforms,
-  (4) Extracting or replacing audio, (5) Compressing video, (6) Converting video formats, (7) Getting video info.
+ Edit videos locally using ffmpeg. Trim, concat, resize, speed, overlay, extract audio, compress, and convert.
+ Use when: (1) Trimming or cutting video segments, (2) Concatenating multiple clips, (3) Resizing video for social platforms,
+ (4) Extracting or replacing audio, (5) Compressing video, (6) Converting video formats, (7) Getting video info.
 ---
 
 # Video Edit
@@ -53,8 +53,8 @@ ffmpeg -y -f concat -safe 0 -i list.txt -c copy joined.mp4
 
 ```bash
 ffmpeg -y -i video.mp4 \
-  -vf "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black" \
-  -c:a copy tiktok.mp4
+ -vf "scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black" \
+ -c:a copy tiktok.mp4
 ```
 
 ### Change speed
@@ -96,18 +96,18 @@ ffmpeg -y -i video.mov output.mp4
 ```bash
 # Logo in top-right corner
 ffmpeg -y -i video.mp4 -i logo.png \
-  -filter_complex "overlay=W-w-10:10" -c:a copy watermarked.mp4
+ -filter_complex "overlay=W-w-10:10" -c:a copy watermarked.mp4
 ```
 
 ## Platform Presets
 
-| Platform   | Resolution  | Scale + pad filter                                                                                    |
+| Platform | Resolution | Scale + pad filter |
 |------------|-------------|-------------------------------------------------------------------------------------------------------|
-| TikTok     | 1080 x 1920 | `scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black`       |
-| YouTube    | 1920 x 1080 | `scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black`       |
-| Instagram  | 1080 x 1350 | `scale=1080:1350:force_original_aspect_ratio=decrease,pad=1080:1350:(ow-iw)/2:(oh-ih)/2:black`       |
-| Square     | 1080 x 1080 | `scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black`       |
-| Twitter/X  | 1920 x 1080 | `scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black`       |
+| TikTok | 1080 x 1920 | `scale=1080:1920:force_original_aspect_ratio=decrease,pad=1080:1920:(ow-iw)/2:(oh-ih)/2:black` |
+| YouTube | 1920 x 1080 | `scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black` |
+| Instagram | 1080 x 1350 | `scale=1080:1350:force_original_aspect_ratio=decrease,pad=1080:1350:(ow-iw)/2:(oh-ih)/2:black` |
+| Square | 1080 x 1080 | `scale=1080:1080:force_original_aspect_ratio=decrease,pad=1080:1080:(ow-iw)/2:(oh-ih)/2:black` |
+| Twitter/X | 1920 x 1080 | `scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2:black` |
 
 Use the filter with: `ffmpeg -y -i input.mp4 -vf "<filter>" -c:a copy output.mp4`
 

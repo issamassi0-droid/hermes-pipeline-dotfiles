@@ -1,13 +1,13 @@
 ---
 name: performing-container-image-hardening
 description: 'Harden container images by minimizing attack surface, stripping unnecessary
-  packages, implementing multi-stage builds, configuring non-root users, and applying
-  CIS Docker Benchmark recommendations to produce secure, production-ready images.
-  Use when building production container images, when compliance requires CIS Docker
-  Benchmark adherence, or when shrinking image size to reduce vulnerability exposure
-  from unused packages.
+ packages, implementing multi-stage builds, configuring non-root users, and applying
+ CIS Docker Benchmark recommendations to produce secure, production-ready images.
+ Use when building production container images, when compliance requires CIS Docker
+ Benchmark adherence, or when shrinking image size to reduce vulnerability exposure
+ from unused packages.
 
-  '
+ '
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -68,9 +68,9 @@ RUN python -m compileall src/
 # Production stage with minimal base
 FROM python:3.12-slim-bookworm AS production
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends libpq5 && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
+ apt-get install -y --no-install-recommends libpq5 && \
+ rm -rf /var/lib/apt/lists/* && \
+ apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 COPY --from=builder /install /usr/local
 COPY --from=builder /build/src /app/src
@@ -82,7 +82,7 @@ USER appuser
 WORKDIR /app
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" || exit 1
+ CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/health')" || exit 1
 
 EXPOSE 8080
 ENTRYPOINT ["python", "-m", "src.main"]
@@ -112,19 +112,19 @@ ENTRYPOINT ["/server"]
 FROM ubuntu:24.04 AS base
 
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-      ca-certificates \
-      libssl3 && \
-    # Remove package manager to prevent runtime package installation
-    apt-get purge -y --auto-remove apt dpkg && \
-    rm -rf /var/lib/apt/lists/* \
-           /var/cache/apt/* \
-           /tmp/* \
-           /var/tmp/* \
-           /usr/share/doc/* \
-           /usr/share/man/* \
-           /usr/share/info/* \
-           /root/.cache
+ apt-get install -y --no-install-recommends \
+ ca-certificates \
+ libssl3 && \
+ # Remove package manager to prevent runtime package installation
+ apt-get purge -y --auto-remove apt dpkg && \
+ rm -rf /var/lib/apt/lists/* \
+ /var/cache/apt/* \
+ /tmp/* \
+ /var/tmp/* \
+ /usr/share/doc/* \
+ /usr/share/man/* \
+ /usr/share/info/* \
+ /root/.cache
 
 # Remove shells if not needed
 RUN rm -f /bin/sh /bin/bash /usr/bin/sh 2>/dev/null || true
@@ -140,36 +140,36 @@ RUN find / -perm /6000 -type f -exec chmod a-s {} + 2>/dev/null || true
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: hardened-app
+ name: hardened-app
 spec:
-  template:
-    spec:
-      securityContext:
-        runAsNonRoot: true
-        runAsUser: 65534
-        fsGroup: 65534
-        seccompProfile:
-          type: RuntimeDefault
-      containers:
-        - name: app
-          image: app:hardened
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: true
-            capabilities:
-              drop: ["ALL"]
-          volumeMounts:
-            - name: tmp
-              mountPath: /tmp
-            - name: cache
-              mountPath: /app/cache
-      volumes:
-        - name: tmp
-          emptyDir:
-            sizeLimit: 100Mi
-        - name: cache
-          emptyDir:
-            sizeLimit: 50Mi
+ template:
+ spec:
+ securityContext:
+ runAsNonRoot: true
+ runAsUser: 65534
+ fsGroup: 65534
+ seccompProfile:
+ type: RuntimeDefault
+ containers:
+ - name: app
+ image: app:hardened
+ securityContext:
+ allowPrivilegeEscalation: false
+ readOnlyRootFilesystem: true
+ capabilities:
+ drop: ["ALL"]
+ volumeMounts:
+ - name: tmp
+ mountPath: /tmp
+ - name: cache
+ mountPath: /app/cache
+ volumes:
+ - name: tmp
+ emptyDir:
+ sizeLimit: 100Mi
+ - name: cache
+ emptyDir:
+ sizeLimit: 50Mi
 ```
 
 ### Step 5: Pin Base Image by Digest
@@ -188,7 +188,7 @@ trivy image --severity HIGH,CRITICAL hardened-app:latest
 
 # Check CIS Docker Benchmark compliance
 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
-  aquasec/docker-bench-security
+ aquasec/docker-bench-security
 
 # Verify no root processes
 docker run --rm hardened-app:latest whoami
@@ -245,21 +245,21 @@ Base: python:3.12-slim-bookworm
 Date: 2026-02-23
 
 SIZE COMPARISON:
-  Before hardening: 1,247 MB (python:3.12)
-  After hardening:  143 MB  (python:3.12-slim + multi-stage)
-  Reduction: 88.5%
+ Before hardening: 1,247 MB (python:3.12)
+ After hardening: 143 MB (python:3.12-slim + multi-stage)
+ Reduction: 88.5%
 
 SECURITY CHECKS:
-  [PASS] Non-root user configured (appuser:1000)
-  [PASS] HEALTHCHECK instruction present
-  [PASS] No setuid/setgid binaries found
-  [PASS] Package manager removed
-  [PASS] Base image pinned by digest
-  [PASS] No shell access (/bin/sh removed)
-  [WARN] /tmp writable (emptyDir mounted)
+ [PASS] Non-root user configured (appuser:1000)
+ [PASS] HEALTHCHECK instruction present
+ [PASS] No setuid/setgid binaries found
+ [PASS] Package manager removed
+ [PASS] Base image pinned by digest
+ [PASS] No shell access (/bin/sh removed)
+ [WARN] /tmp writable (emptyDir mounted)
 
 VULNERABILITY COMPARISON:
-  Before: 234 CVEs (12 Critical, 45 High)
-  After:  18 CVEs (0 Critical, 3 High)
-  Reduction: 92.3%
+ Before: 234 CVEs (12 Critical, 45 High)
+ After: 18 CVEs (0 Critical, 3 High)
+ Reduction: 92.3%
 ```

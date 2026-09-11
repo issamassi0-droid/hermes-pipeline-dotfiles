@@ -185,10 +185,10 @@ Create an XML file with this structure:
 
 ```xml
 <evaluation>
-  <qa_pair>
-    <question>Find discussions about AI model launches with animal codenames. One model needed a specific safety designation that uses the format ASL-X. What number X was being determined for the model named after a spotted wild cat?</question>
-    <answer>3</answer>
-  </qa_pair>
+ <qa_pair>
+ <question>Find discussions about AI model launches with animal codenames. One model needed a specific safety designation that uses the format ASL-X. What number X was being determined for the model named after a spotted wild cat?</question>
+ <answer>3</answer>
+ </qa_pair>
 <!-- More qa_pairs... -->
 </evaluation>
 ```
@@ -204,11 +204,11 @@ Load these resources as needed during development:
 ### Core MCP Documentation (Load First)
 - **MCP Protocol**: Start with sitemap at `https://modelcontextprotocol.io/sitemap.xml`, then fetch specific pages with `.md` suffix
 - [📋 MCP Best Practices](./reference/mcp_best_practices.md) - Universal MCP guidelines including:
-  - Server and tool naming conventions
-  - Response format guidelines (JSON vs Markdown)
-  - Pagination best practices
-  - Transport selection (streamable HTTP vs stdio)
-  - Security and error handling standards
+ - Server and tool naming conventions
+ - Response format guidelines (JSON vs Markdown)
+ - Pagination best practices
+ - Transport selection (streamable HTTP vs stdio)
+ - Security and error handling standards
 
 ### SDK Documentation (Load During Phase 1/2)
 - **FastMCP 2.0 Docs**: https://gofastmcp.com
@@ -216,31 +216,31 @@ Load these resources as needed during development:
 
 ### Language-Specific Implementation Guides (Load During Phase 2)
 - [🐍 Python Implementation Guide](./reference/python_mcp_server.md) - Complete FastMCP 2.0 guide with:
-  - Annotated type parameters (simpler than Pydantic models)
-  - Context injection for logging, progress, sampling
-  - Tool registration with `@mcp.tool`
-  - Complete working examples
-  - Quality checklist
+ - Annotated type parameters (simpler than Pydantic models)
+ - Context injection for logging, progress, sampling
+ - Tool registration with `@mcp.tool`
+ - Complete working examples
+ - Quality checklist
 
 - [⚡ TypeScript Implementation Guide](./reference/node_mcp_server.md) - Complete TypeScript guide with:
-  - Project structure
-  - Zod schema patterns
-  - Tool registration with `server.registerTool`
-  - Complete working examples
-  - Quality checklist
+ - Project structure
+ - Zod schema patterns
+ - Tool registration with `server.registerTool`
+ - Complete working examples
+ - Quality checklist
 
 ### Deployment Guide (Load During Phase 3/4)
 - [☁️ FastMCP Cloud](./reference/fastmcp_cloud.md) - One-click deployment guide:
-  - Project structure requirements
-  - Environment variables configuration
-  - Authentication options
-  - Continuous deployment from GitHub
-  - Connecting from Claude Desktop/Code
+ - Project structure requirements
+ - Environment variables configuration
+ - Authentication options
+ - Continuous deployment from GitHub
+ - Connecting from Claude Desktop/Code
 
 ### Evaluation Guide (Load During Phase 4)
 - [✅ Evaluation Guide](./reference/evaluation.md) - Complete evaluation creation guide with:
-  - Question creation guidelines
-  - Answer verification strategies
-  - XML format specifications
-  - Example questions and answers
-  - Running an evaluation with the provided scripts
+ - Question creation guidelines
+ - Answer verification strategies
+ - XML format specifications
+ - Example questions and answers
+ - Running an evaluation with the provided scripts

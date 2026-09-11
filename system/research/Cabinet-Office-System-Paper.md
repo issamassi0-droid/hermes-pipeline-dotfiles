@@ -4,7 +4,7 @@
 
 ## الملخص
 
-يُقدَّم في هذه الورقة نظام وزاري متعدد الوكلاء (Cabinet-Office Multi-Agent System) مبني على إطار عمل Hermes Agent. يتكون النظام من 11 وكيلاً ذكياً، لكل منهم دور محدد ووزارة مخصصة، يعملون معاً ضمن بنية من ثلاث طبقات (دستورية، نظامية، وكيلية) لإنتاج معلومات عالية الجودة مع ضمان التطور الذاتي المستمر. يتميز النظام ببروتوكول تواصل موحد، وديناميكية تحميل العقود حسب حجم نافذة السياق، وحلقة تطور ذاتي آمنة، وبوابة بشرية واحدة للقرارات الحاسمة.
+يُقدَّم في هذه الورقة نظام وزاري متعدد الوكلاء (Cabinet-Office Multi-Agent System) مبني على إطار عمل Hermes Agent. يتكون النظام من 11 وكيلاً ذكياً، لكل منهم دور محدد و مخصصة، يعملون معاً ضمن بنية من ثلاث طبقات (دستورية، نظامية، وكيلية) لإنتاج معلومات عالية الجودة مع ضمان التطور الذاتي المستمر. يتميز النظام ببروتوكول تواصل موحد، وديناميكية تحميل العقود حسب حجم نافذة السياق، وحلقة تطور ذاتي آمنة، وبوابة بشرية واحدة للقرارات الحاسمة.
 
 **الكلمات المفتاحية:** نظام متعدد الوكلاء، ذكاء اصطناعي، إدارة المعرفة، التطور الذاتي، بوابة بشرية
 
@@ -53,67 +53,67 @@
 ## 3. الوكلاء الأحد عشر
 
 ### 3.1 المنظّم (Architect)
-- **الوزارة:** مكتب مجلس الوزراء
+- **:** 
 - **الدور:** المُنسِّق الوحيد الذي يدير التواصل بين الوكلاء
 - **الأدوات:** بحث ويب، استخراج، قراءة/كتابة ملفات، طرفية، رسائل، مهام فرعية، بحث جلسات، جدولة
 - **الصلاحيات:** فتح دفتر المهام الجديد، التوجيه بين المستويات، التصعيد للبشر
 
 ### 3.2 الباحث الشامل (Omni-Researcher)
-- **الوزارة:** وزارة الاستخبارات
+- **:** 
 - **الدور:** البحث في المصادر الرسمية والأخبار وتويتر وريديت
 - **الأدوات:** بحث ويب، استخراج، قراءة ملفات، طرفية، رسائل
 - **ينتج:** ملف بحثي (research_dossier)
 
 ### 3.3 الغوّاص (Deep-Dive)
-- **الوزارة:** وزارة الاستخبارات
+- **:** 
 - **الدور:** البحث في يوتيوب وتحليل التجارب الشخصية
 - **الأدوات:** بحث ويب، استخراج، قراءة ملفات، طرفية، رسائل
 - **ينتج:** تلخيص تجارب الفيديو
 
 ### 3.4 الاستراتيجي (Strategist)
-- **الوزارة:** وزارة الاستراتيجية
+- **:** 
 - **الدور:** تحويل البحث إلى خطة وهيكل
 - **الأدوات:** بحث ويب، استخراج، قراءة/كتابة ملفات، رسائل
 - **ينتج:** موجز استراتيجي + هيكل بنيوي
 
 ### 3.5 الكاتب (Draft-Writer)
-- **الوزارة:** وزارة التأليف
+- **:** 
 - **الدور:** كتابة المسودة الأولى
 - **الأدوات:** قراءة/كتابة ملفات، طرفية، رسائل
 - **ينتج:** مسودة (draft)
 
 ### 3.6 المدقق (Editor-QA)
-- **الوزارة:** المفتش العام
+- **:** 
 - **الدور:** التحقق من الادعاءات والمراجعات
 - **الأدوات:** بحث ويب، استخراج، قراءة/كتابة ملفات، طرفية، رسائل
 - **ينتج:** تقرير تحقق + طلب مراجعة
 
 ### 3.7 الناشر (Publisher)
-- **الوزارة:** وزارة التوزيع
+- **:** 
 - **الدور:** النشر في المنصات الخارجية
 - **الأدوات:** قراءة/كتابة ملفات، طرفية، رسائل
 - **ينتج:** قطعة منشورة + سجل نشر
 
 ### 3.8 المحلّل (Analytics)
-- **الوزارة:** وزارة الإحصاء
+- **:** 
 - **الدور:** قياس الأداء وتقديم التغذية الراجعة
 - **الأدوات:** قراءة/كتابة ملفات، طرفية، رسائل، بحث جلسات
 - **ينتج:** تقرير أداء + تحديثات فرضيات
 
 ### 3.9 صانع البوتات (Bot-Maker)
-- **الوزارة:** وزارة التكوين
+- **:** 
 - **الدور:** إنشاء وكلاء جدد وتعديل ملفات SOUL
 - **الأدوات:** قراءة/كتابة ملفات، طرفية، رسائل، إدارة المهارات
 - **ينتج:** SOUL جديد + سجل وكيل جديد
 
 ### 3.10 أومارشي (Omarchy)
-- **الوزارة:** وزارة البنية التحتية
+- **:** 
 - **الدور:** إدارة النظام وتخصيص سطح المكتب
 - **الأدوات:** طرفية، قراءة/كتابة ملفات، رسائل، متصفح
 - **ينتج:** إصلاح نظام + تحديث شادر
 
 ### 3.11 الراصد (Scout)
-- **الوزارة:** وزارة الاستخبارات
+- **:** 
 - **الدور:** مراقبة المصادر الخارجية باستمرار
 - **الأدوات:** بحث ويب فقط
 - **ينبه:** عند ظهور معلومات جديدة مطابقة للاهتمامات
@@ -279,7 +279,7 @@
 
 ## Abstract
 
-This paper presents a Cabinet-Office Multi-Agent System built on the Hermes Agent framework. The system consists of 11 intelligent agents, each with a specific role and dedicated ministry, working together across three architectural layers (constitutional, systemic, agentic) to produce high-quality information with guaranteed continuous self-evolution. The system features a unified communication protocol, dynamic context-window-based contract loading, a safe self-evolution loop, and a single human gate for critical decisions.
+This paper presents a Cabinet-Office Multi-Agent System built on the Hermes Agent framework. The system consists of 11 intelligent agents, each with a specific role and dedicated , working together across three architectural layers (constitutional, systemic, agentic) to produce high-quality information with guaranteed continuous self-evolution. The system features a unified communication protocol, dynamic context-window-based contract loading, a safe self-evolution loop, and a single human gate for critical decisions.
 
 **Keywords:** Multi-Agent System, Artificial Intelligence, Knowledge Management, Self-Evolution, Human-in-the-Loop
 
@@ -328,67 +328,67 @@ Five immutable principles:
 ## 3. The Eleven Agents
 
 ### 3.1 Architect (Orchestrator)
-- **Ministry:** Cabinet Office
+- **:** 
 - **Role:** Sole coordinator managing inter-agent communication
 - **Tools:** Web search, extraction, file read/write, terminal, messaging, sub-tasks, session search, cron
 - **Permissions:** Opens new ledgers, routes between tiers, escalates to human
 
 ### 3.2 Omni-Researcher
-- **Ministry:** Ministry of Intelligence
+- **:** 
 - **Role:** Searches official sources, news, Twitter, Reddit
 - **Tools:** Web search, extraction, file read, terminal, messaging
 - **Produces:** Research dossier
 
 ### 3.3 Deep-Dive
-- **Ministry:** Ministry of Intelligence
+- **:** 
 - **Role:** YouTube research and personal experience analysis
 - **Tools:** Web search, extraction, file read, terminal, messaging
 - **Produces:** Video experience synthesis
 
 ### 3.4 Strategist
-- **Ministry:** Ministry of Strategy
+- **:** 
 - **Role:** Converts research into plan and structure
 - **Tools:** Web search, extraction, file read/write, messaging
 - **Produces:** Strategy brief + structural blueprint
 
 ### 3.5 Draft-Writer
-- **Ministry:** Ministry of Composition
+- **:** 
 - **Role:** Writes first draft
 - **Tools:** File read/write, terminal, messaging
 - **Produces:** Draft
 
 ### 3.6 Editor-QA
-- **Ministry:** Inspector General
+- **:** 
 - **Role:** Verifies claims and reviews
 - **Tools:** Web search, extraction, file read/write, terminal, messaging
 - **Produces:** Verification report + revision request
 
 ### 3.7 Publisher
-- **Ministry:** Ministry of Distribution
+- **:** 
 - **Role:** Publishes to external platforms
 - **Tools:** File read/write, terminal, messaging
 - **Produces:** Published artifact + deployment log
 
 ### 3.8 Analytics
-- **Ministry:** Ministry of Statistics
+- **:** 
 - **Role:** Measures performance and provides feedback
 - **Tools:** File read/write, terminal, messaging, session search
 - **Produces:** Performance report + hypothesis updates
 
 ### 3.9 Bot-Maker
-- **Ministry:** Ministry of Genesis
+- **:** 
 - **Role:** Creates new agents and modifies SOULs
 - **Tools:** File read/write, terminal, messaging, skill management
 - **Produces:** New SOUL + new registry entry
 
 ### 3.10 Omarchy
-- **Ministry:** Ministry of Infrastructure
+- **:** 
 - **Role:** System management and desktop customization
 - **Tools:** Terminal, file read/write, messaging, browser
 - **Produces:** System fix + shader update
 
 ### 3.11 Scout
-- **Ministry:** Ministry of Intelligence
+- **:** 
 - **Role:** Continuous external source monitoring
 - **Tools:** Web search only
 - **Alerts:** When new information matches configured interests

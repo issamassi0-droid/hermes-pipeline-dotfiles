@@ -1,10 +1,10 @@
 ---
 name: performing-privileged-account-access-review
 description: Conducts systematic reviews of privileged accounts to validate access
-  rights, identify excessive or stale permissions, and enforce least privilege across
-  PAM infrastructure. Use when auditing privileged access for compliance, periodic
-  access recertification, or investigating whether privileged entitlements are still
-  justified.
+ rights, identify excessive or stale permissions, and enforce least privilege across
+ PAM infrastructure. Use when auditing privileged access for compliance, periodic
+ access recertification, or investigating whether privileged entitlements are still
+ justified.
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -68,19 +68,19 @@ Privileged Account Access Review is a critical identity governance process that 
 ### Four-Pillar Review Framework
 
 ```
-DISCOVER                    VALIDATE                    REMEDIATE                 MONITOR
-    │                           │                           │                       │
-    ├─ Enumerate all            ├─ Verify business          ├─ Remove excess        ├─ Continuous
-    │  privileged accounts      │  justification            │  privileges           │  monitoring
-    │                           │                           │                       │
-    ├─ Identify orphaned        ├─ Confirm account          ├─ Disable orphaned     ├─ Anomaly
-    │  accounts                 │  ownership                │  accounts             │  detection
-    │                           │                           │                       │
-    ├─ Map permissions to       ├─ Check compliance         ├─ Enforce password     ├─ Session
-    │  business roles           │  with policies            │  rotation             │  recording
-    │                           │                           │                       │
-    └─ Classify by risk         └─ Review last usage        └─ Implement JIT        └─ Audit
-       level                       and activity                access                  logging
+DISCOVER VALIDATE REMEDIATE MONITOR
+ │ │ │ │
+ ├─ Enumerate all ├─ Verify business ├─ Remove excess ├─ Continuous
+ │ privileged accounts │ justification │ privileges │ monitoring
+ │ │ │ │
+ ├─ Identify orphaned ├─ Confirm account ├─ Disable orphaned ├─ Anomaly
+ │ accounts │ ownership │ accounts │ detection
+ │ │ │ │
+ ├─ Map permissions to ├─ Check compliance ├─ Enforce password ├─ Session
+ │ business roles │ with policies │ rotation │ recording
+ │ │ │ │
+ └─ Classify by risk └─ Review last usage └─ Implement JIT └─ Audit
+ level and activity access logging
 ```
 
 ## Workflow

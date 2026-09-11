@@ -4,7 +4,7 @@
 
 **Missing raw string** (the #1 error):
 ```python
-# WRONG: MathTex("\\frac{1}{2}")  -- \\f is form-feed
+# WRONG: MathTex("\\frac{1}{2}") -- \\f is form-feed
 # RIGHT: MathTex(r"\frac{1}{2}")
 ```
 
@@ -43,7 +43,7 @@ equations = VGroup(MathTex(r"a"), MathTex(r"b"))
 
 **FadeOut everything:** Always use `Group(*self.mobjects)`, not `VGroup(*self.mobjects)`:
 ```python
-self.play(FadeOut(Group(*self.mobjects)))  # safe for mixed types
+self.play(FadeOut(Group(*self.mobjects))) # safe for mixed types
 ```
 
 ## Group save_state() / restore() Not Supported
@@ -55,7 +55,7 @@ self.play(FadeOut(Group(*self.mobjects)))  # safe for mixed types
 ```python
 # WRONG: Group doesn't support save_state
 group = Group(circle, Text("label"))
-group.save_state()  # NotImplementedError!
+group.save_state() # NotImplementedError!
 
 # RIGHT: use FadeIn with shift/scale instead of save_state/restore
 self.play(FadeIn(group, shift=UP * 0.3, scale=0.8))

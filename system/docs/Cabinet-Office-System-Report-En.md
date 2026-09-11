@@ -31,7 +31,7 @@ status: published
 
 ## 1. How the System Works
 
-The system is not "chatting with AI" — it's a **complete ministry system**:
+The system is not "chatting with AI" — it's a **complete system**:
 
 | In Government | In the System |
 |---|---|
@@ -88,19 +88,19 @@ The system is not "chatting with AI" — it's a **complete ministry system**:
 
 11 SOUL files, each with its role and tools:
 
-| Agent | Ministry | Role | Tools |
+| Agent | | Role | Tools |
 |---|---|---|---|
-| @architect | Cabinet Office | Sole coordinator | 10 |
-| @omni-researcher | Intelligence Ministry | Comprehensive research | 5 |
-| @deep-dive | Intelligence Ministry | YouTube research | 5 |
-| @strategist | Strategy Ministry | Convert to plan | 5 |
-| @draft-writer | Writing Ministry | Write draft | 4 |
-| @editor-qa | Inspector General | Independent verification | 6 |
-| @publisher | Distribution Ministry | Publishing | 4 |
-| @analytics | Statistics Ministry | Performance measurement | 5 |
-| @bot-maker | Formation Ministry | Agent creation | 5 |
-| @omarchy | Infrastructure Ministry | System management | 5 |
-| @scout | Intelligence Ministry | Source monitoring | 1 |
+| @architect | | Sole coordinator | 10 |
+| @omni-researcher | Intelligence | Comprehensive research | 5 |
+| @deep-dive | Intelligence | YouTube research | 5 |
+| @strategist | Strategy | Convert to plan | 5 |
+| @draft-writer | Writing | Write draft | 4 |
+| @editor-qa | | Independent verification | 6 |
+| @publisher | Distribution | Publishing | 4 |
+| @analytics | Statistics | Performance measurement | 5 |
+| @bot-maker | Formation | Agent creation | 5 |
+| @omarchy | Infrastructure | System management | 5 |
+| @scout | Intelligence | Source monitoring | 1 |
 
 > **New naming system v1.8.0:** Every agent has three names:
 > - **Technical** (files, APIs): `orchestrator-agent`, `qa-agent`
@@ -183,7 +183,7 @@ Calculates remaining tokens for actual work after loading contracts.
 
 **Actual result:**
 ```
-Tier 0 (8K):  78.1% used → 1,754 tokens remaining
+Tier 0 (8K): 78.1% used → 1,754 tokens remaining
 Tier 1 (32K): 41.2% used → 18,830 tokens remaining
 Tier 2 (128K): 29.6% used → 90,100 tokens remaining
 Tier 3 (128K): 37.3% used → 80,253 tokens remaining
@@ -195,7 +195,7 @@ Detects architect halt and activates degraded mode.
 
 **Actual result:**
 ```
-✅ beat:  {"status": "active"}
+✅ beat: {"status": "active"}
 ✅ check: {"status": "healthy", "delta_minutes": 0.6}
 ✅ degraded: {"mode": "DEGRADED", "actions": [...]}
 ```
@@ -368,14 +368,14 @@ python3 ~/.hermes/system/cabinet-office.py override --mission m001 --reason "rej
 ### 6.1 What happens when you run `run`?
 
 ```
-[1] context-budget.py     ← Is context sufficient?
-[2] architect-heartbeat   ← Is architect working?
-[3] model-gateway.sh      ← Select optimal model
-[4] heartbeat beat        ← Log mission start
-[5] protocol-engine.py    → Execute agents in order
-[6] output-validator.py   ← Verify outputs
-[6.5] escalation-health   ← Comprehensive health check
-[7] Log mission           ← ledger/mission-XXX.json
+[1] context-budget.py ← Is context sufficient?
+[2] architect-heartbeat ← Is architect working?
+[3] model-gateway.sh ← Select optimal model
+[4] heartbeat beat ← Log mission start
+[5] protocol-engine.py → Execute agents in order
+[6] output-validator.py ← Verify outputs
+[6.5] escalation-health ← Comprehensive health check
+[7] Log mission ← ledger/mission-XXX.json
 ```
 
 ---

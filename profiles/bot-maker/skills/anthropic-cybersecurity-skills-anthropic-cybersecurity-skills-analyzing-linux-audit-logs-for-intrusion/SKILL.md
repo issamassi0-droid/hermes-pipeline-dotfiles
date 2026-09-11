@@ -1,13 +1,13 @@
 ---
 name: analyzing-linux-audit-logs-for-intrusion
 description: 'Uses the Linux Audit framework (auditd) with ausearch and aureport utilities
-  to detect intrusion attempts, unauthorized access, privilege escalation, and suspicious
-  system activity. Covers audit rule configuration, log querying, timeline reconstruction,
-  and integration with SIEM platforms. Activates for requests involving auditd analysis,
-  Linux audit log investigation, ausearch queries, aureport summaries, or host-based
-  intrusion detection on Linux.
+ to detect intrusion attempts, unauthorized access, privilege escalation, and suspicious
+ system activity. Covers audit rule configuration, log querying, timeline reconstruction,
+ and integration with SIEM platforms. Activates for requests involving auditd analysis,
+ Linux audit log investigation, ausearch queries, aureport summaries, or host-based
+ intrusion detection on Linux.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -133,7 +133,7 @@ Reload rules after editing:
 
 ```bash
 augenrules --load
-auditctl -l | wc -l   # Confirm rule count
+auditctl -l | wc -l # Confirm rule count
 ```
 
 ### Step 3: Search for Intrusion Indicators with ausearch
@@ -216,7 +216,7 @@ ausearch -m USER_LOGIN -ua 0 --success yes -ts this-week -i | head -50
 # Step 5b: Trace what the attacker did after gaining access
 # Get all events from the compromised account within the incident window
 ausearch -ua <UID> -ts "03/15/2026 14:00:00" -te "03/15/2026 18:00:00" -i \
-  | aureport -f -i
+ | aureport -f -i
 
 # Step 5c: Extract all commands executed during the incident window
 ausearch -m EXECVE -ts "03/15/2026 14:00:00" -te "03/15/2026 18:00:00" -i

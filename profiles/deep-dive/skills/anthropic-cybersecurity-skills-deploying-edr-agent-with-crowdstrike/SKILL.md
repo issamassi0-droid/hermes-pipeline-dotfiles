@@ -1,13 +1,13 @@
 ---
 name: deploying-edr-agent-with-crowdstrike
 description: 'Deploys and configures CrowdStrike Falcon EDR agents across enterprise
-  endpoints to enable real-time threat detection, behavioral analysis, and automated
-  response. Use when onboarding endpoints to EDR coverage, configuring detection policies,
-  or integrating Falcon telemetry with SIEM platforms. Activates for requests involving
-  CrowdStrike deployment, Falcon sensor installation, EDR policy configuration, or
-  endpoint detection and response.
+ endpoints to enable real-time threat detection, behavioral analysis, and automated
+ response. Use when onboarding endpoints to EDR coverage, configuring detection policies,
+ or integrating Falcon telemetry with SIEM platforms. Activates for requests involving
+ CrowdStrike deployment, Falcon sensor installation, EDR policy configuration, or
+ endpoint detection and response.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -70,11 +70,11 @@ Use this skill when:
 1. Log into Falcon Console: https://falcon.crowdstrike.com
 2. Navigate: Host setup and management → Sensor downloads
 3. Download the appropriate installer:
-   - Windows: WindowsSensor_<version>.exe
-   - macOS: FalconSensorMacOS_<version>.pkg
-   - Linux: falcon-sensor_<version>_amd64.deb / .rpm
+ - Windows: WindowsSensor_<version>.exe
+ - macOS: FalconSensorMacOS_<version>.pkg
+ - Linux: falcon-sensor_<version>_amd64.deb / .rpm
 4. Copy the Customer ID (CID) from the Sensor downloads page
-   - CID format: <32-char-hex>-<2-char-checksum>
+ - CID format: <32-char-hex>-<2-char-checksum>
 ```
 
 ### Step 2: Deploy Falcon Sensor - Windows
@@ -90,7 +90,7 @@ WindowsSensor_7.18.17106.exe /install /quiet /norestart CID=<YOUR_CID>
 2. Deployment type: Script Installer
 3. Install command: WindowsSensor_7.18.17106.exe /install /quiet /norestart CID=<CID>
 4. Detection method: Registry key exists
-   - HKLM\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default
+ - HKLM\SYSTEM\CrowdStrike\{9b03c1d9-3138-44ed-9fae-d9f4c034b88d}\{16e0423f-7058-48c9-a204-725362b67639}\Default
 5. Deploy to target collection
 6. Deployment purpose: Required (for mandatory installation)
 ```
@@ -110,8 +110,8 @@ WindowsSensor_7.18.17106.exe /install /quiet /norestart CID=<YOUR_CID>
 # Create startup script that checks for existing installation
 $sensorPath = "C:\Windows\System32\drivers\CrowdStrike\csagent.sys"
 if (-not (Test-Path $sensorPath)) {
-    Start-Process -FilePath "\\fileserver\CrowdStrike\WindowsSensor.exe" `
-      -ArgumentList "/install /quiet /norestart CID=<CID>" -Wait
+ Start-Process -FilePath "\\fileserver\CrowdStrike\WindowsSensor.exe" `
+ -ArgumentList "/install /quiet /norestart CID=<CID>" -Wait
 }
 ```
 
@@ -159,24 +159,24 @@ In Falcon Console, navigate to Configuration → Prevention Policies:
 **Recommended prevention policy settings**:
 ```
 Machine Learning:
-  - Cloud ML: Aggressive (extra protection, may increase false positives)
-  - Sensor ML: Moderate
-  - Adware & PUP: Moderate
+ - Cloud ML: Aggressive (extra protection, may increase false positives)
+ - Sensor ML: Moderate
+ - Adware & PUP: Moderate
 
 Behavioral Protection:
-  - On Write: Enabled (detect malware on file creation)
-  - On Sensor ML: Enabled
-  - Interpreter-Only: Enabled (detect script-based attacks)
+ - On Write: Enabled (detect malware on file creation)
+ - On Sensor ML: Enabled
+ - Interpreter-Only: Enabled (detect script-based attacks)
 
 Exploit Mitigation:
-  - Exploit behavior protection: Enabled
-  - Memory scanning: Enabled (detects in-memory attacks)
-  - Code injection: Enabled
+ - Exploit behavior protection: Enabled
+ - Memory scanning: Enabled (detects in-memory attacks)
+ - Code injection: Enabled
 
 Ransomware:
-  - Ransomware protection: Enabled
-  - Shadow copy protection: Enabled
-  - MBR protection: Enabled
+ - Ransomware protection: Enabled
+ - Shadow copy protection: Enabled
+ - MBR protection: Enabled
 ```
 
 **Create separate policies for**:
@@ -188,19 +188,19 @@ Ransomware:
 
 ```
 Real-Time Response:
-  - Enable RTR for all sensor groups
-  - Configure RTR admin vs. RTR responder roles
-  - Enable script execution (for IR teams)
-  - Enable file extraction (for forensics)
+ - Enable RTR for all sensor groups
+ - Configure RTR admin vs. RTR responder roles
+ - Enable script execution (for IR teams)
+ - Enable file extraction (for forensics)
 
 Network Containment:
-  - Pre-authorize containment for specific host groups
-  - Configure containment exclusions (allow management traffic)
+ - Pre-authorize containment for specific host groups
+ - Configure containment exclusions (allow management traffic)
 
 Automated Response:
-  - Enable automated remediation for high-confidence detections
-  - Configure kill process action for ransomware detections
-  - Enable quarantine for malware file detections
+ - Enable automated remediation for high-confidence detections
+ - Configure kill process action for ransomware detections
+ - Enable quarantine for malware file detections
 ```
 
 ### Step 7: Validate Deployment

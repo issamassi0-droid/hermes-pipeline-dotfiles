@@ -1,21 +1,21 @@
 ---
 name: obsidian-auto-context
 description: >
-  Automatically captures Hermes agent session context — research findings,
-  decisions, tool outputs, and task summaries — into an Obsidian vault as
-  linked, tagged Markdown notes. Supports daily notes, backlinks, and
-  redaction of secrets. Turns disposable chat sessions into a permanent,
-  searchable second brain.
+ Automatically captures Hermes agent session context — research findings,
+ decisions, tool outputs, and task summaries — into an Obsidian vault as
+ linked, tagged Markdown notes. Supports daily notes, backlinks, and
+ redaction of secrets. Turns disposable chat sessions into a permanent,
+ searchable second brain.
 version: 1.0.0
 author: SkillForge Labs
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [obsidian, memory, second-brain, research, productivity, context]
-    category: productivity
-    requires_toolsets: [obsidian, file, memory]
-    fallback_for_toolsets: [memory]
+ hermes:
+ tags: [obsidian, memory, second-brain, research, productivity, context]
+ category: productivity
+ requires_toolsets: [obsidian, file, memory]
+ fallback_for_toolsets: [memory]
 ---
 
 # Obsidian Auto-Context
@@ -64,22 +64,22 @@ that day's daily note in `Journal/` under a `## Sessions` heading.
 ## How it works
 
 1. At session end (or on trigger), the skill collects the session transcript
-   and any tool results already in context.
+ and any tool results already in context.
 2. It runs `references/redact.py` over the text to strip secrets
-   (API keys, tokens, `.env`-style values, emails if configured).
+ (API keys, tokens, `.env`-style values, emails if configured).
 3. It asks the model to produce the structured note above.
 4. It writes the note via the `file` toolset into `Logs/YYYY-MM-DD/`
-   and links it into the daily note in `Journal/` under `## Sessions`.
+ and links it into the daily note in `Journal/` under `## Sessions`.
 
 ## Configuration
 
 Set these in your Hermes config or `.hermes.md`:
 
 ```
-OBSIDIAN_VAULT_PATH   /home/massi/ObsidianVault   (your existing vault)
-SESSIONS_FOLDER       Logs                         (your existing Logs/ directory)
-REDACT_EMAILS         true/false, default false
-DAILY_NOTE_FOLDER     Journal                      (default: Journal, matches your vault)
+OBSIDIAN_VAULT_PATH /home/massi/ObsidianVault (your existing vault)
+SESSIONS_FOLDER Logs (your existing Logs/ directory)
+REDACT_EMAILS true/false, default false
+DAILY_NOTE_FOLDER Journal (default: Journal, matches your vault)
 ```
 
 The skill writes session notes into `Logs/YYYY-MM-DD/` and appends them to the daily note in `Journal/` under a `## Sessions` heading.
@@ -92,9 +92,9 @@ uuid: "20260906-000000"
 date: 2026-09-06
 time: 00:00:00
 tags:
-  - session-log
-  - hermes-agent
-  - second-brain
+ - session-log
+ - hermes-agent
+ - second-brain
 topics: []
 source: hermes
 session: obsidian-auto-context

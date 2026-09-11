@@ -2,12 +2,12 @@
 name: multi-agent-system-design
 description: Use when designing or improving multi-agent AI systems.
 metadata:
-  hermes:
-    requires_tools: [web_search, web_extract, execute_code, terminal, read_file, write_file, patch, skill_view, skill_manage]
-    requires_toolsets: []
-    requires_plugins: []
-    editorial_name: Multi-Agent System Design
-    editorial_description: Build and evaluate multi-agent AI systems with production-grade reliability, quality, and evolution patterns.
+ hermes:
+ requires_tools: [web_search, web_extract, execute_code, terminal, read_file, write_file, patch, skill_view, skill_manage]
+ requires_toolsets: []
+ requires_plugins: []
+ editorial_name: Multi-Agent System Design
+ editorial_description: Build and evaluate multi-agent AI systems with production-grade reliability, quality, and evolution patterns.
 ---
 
 # Multi-Agent System Design
@@ -25,7 +25,7 @@ These rules apply every time you work on a multi-agent system task:
 3. **Cite every insight.** Every claim traces back to a specific source with timestamp. Untranscribable claims are flagged as `[X]` with an explicit reason.
 4. **No circular validation.** Metrics must be measured against real data, not synthetic. Distinguish "code works" from "quality is proven." Flag when a metric is a target, not a measured result.
 5. **Prioritize engineering economy.** Maximize effectiveness and quality with minimal effort. Save resources. Know the destination and reach it before everyone else. Don't build complex systems — modify what exists to give faster, better results.
-6. **Distinguish structural from production readiness.** A system can be architecturally sound (skeleton) without being production-proven. Be honest about which state you're in.
+6. **Distinguish structural from production readiness.** A system can be architecturally sound (skeleton) without being production-proven. Be honest about which state you're in. Rate honestly on a 1-10 scale — a 9 or 10 requires real mission history proving metrics hold under load, not paper validation. A system with 17 scripts, 13 contracts, and zero real missions is a 7 at best, regardless of how elegant the architecture is.
 
 ## Procedure
 
@@ -58,6 +58,25 @@ When implementing new capabilities, follow this order (cheapest first):
 4. **Cascade routing** — start cheap, escalate only on failure
 5. **Quality gates** — trajectory-level evaluation, not just final output
 6. **Self-learning loops** — extract learnings, identify patterns, generate skills
+7. **Three-layer naming convention** — technical name (files/APIs), functional name (reports/diagrams), display name (user chat). Create a `naming-convention.md` contract in the system layer. See `references/naming-convention.md`.
+
+> **Modify, don't build.** The user prefers modifying existing code over building new systems from scratch. Before writing a new script, check if an existing one can be extended. Before creating a new contract, check if an existing one can be amended. This saves resources and produces faster results.
+
+### 3.1 Apply Names to UI Layer (Sidebar)
+
+After defining the naming convention, apply it to the Hermes sidebar by updating each agent's `profile.yaml`:
+
+```yaml
+ui:
+ title: "Orchestrator" # Functional name — appears in sidebar
+```
+
+Also update `description` fields to remove metaphorical prefixes (e.g., "Ministry of...") and replace with functional descriptions. The sidebar is the user's first touchpoint — names there should be professional but accessible, not overly technical and not metaphorical.
+
+Update all three locations:
+1. `profiles/<agent>/profile.yaml` — `ui.title` and `description`
+2. `profiles/<agent>/SOUL.md` — `## Names` section with all three names
+3. `system/registry.json` — `technical_name`, `functional_name`, `display_name` fields
 
 ### 4. Verify Honestly
 
@@ -66,6 +85,10 @@ Report metrics as measured values, not targets. Flag:
 - Infrastructure tests vs. quality tests
 - "Contract exists" vs. "metric proven"
 - Circular validation (metrics measured against themselves)
+
+### 5. Publish Deliverables
+
+Publish finished artifacts to the user's Obsidian vault at `ObsidianVault/Articles/`. Use YAML frontmatter with title, type, language, date, author, version, tags, and status. Structure with `> [!ABSTRACT]` callouts, tables for comparisons, and `> [!WARNING]` / `> [!INFO]` callouts for honest caveats. After publishing to Obsidian, push to GitHub.
 
 ### 5. Recommend Videos
 
@@ -80,6 +103,13 @@ When presenting findings, recommend 3-5 best videos with:
 - `references/quality-gates.md` — Trajectory evaluation, 5-type hallucination taxonomy, silent gray errors
 - `references/dynamic-routing.md` — Cascade routing, circuit breaker, retry patterns, dynamic model selection
 - `references/self-learning.md` — Learning extraction, pattern identification, skill generation, evolution loops
+- `references/architecture-patterns.md` — Three-layer architecture, dynamic tiering, model gateway, semantic checkpointing
+- `references/research-standards.md` — MAS-FIRE, MTTR-A, ReliabilityBench, MAESTRO, COCO, CP-WBFT, Aegis
+- `references/naming-convention.md` — Three-layer naming (technical/functional/display), naming rules, migration guide
+
+## Scripts
+
+- `scripts/verify_system.py` — Quick verification of contracts, scripts, agents, ledger, protocol
 
 ## Pitfalls
 
@@ -91,6 +121,10 @@ When presenting findings, recommend 3-5 best videos with:
 - **Ignoring semantic failures.** 75% of multi-agent failures are "silent gray errors" — no exception thrown, output looks valid, but content is factually wrong. Schema validation alone won't catch these.
 - **Naive retry.** Retrying without preserving execution history wastes work. Semantic checkpointing enables informed re-computation from the last valid state.
 - **Static model weights.** Routing weights configured once decay as models update. Continuously measure routing success rates and adjust weights based on accumulated data.
+- **Git hygiene for multi-agent repos.** Runtime files (state.db, gateway.lock, *.pyc, node_modules) must be in .gitignore before the first commit. Committing them bloats the repo and causes push/pull conflicts. Always create .gitignore before initial commit.
+- **Single-name compromise.** Using one name for every audience forces a compromise: too technical for users, too vague for engineers. Three names (technical/functional/display) serve each audience perfectly. The technical name goes in files and APIs, the functional name in reports and diagrams, the display name in user chat and guides.
+- **Over-engineering.** The user explicitly prefers modifying existing systems over building new ones. Don't write 17 scripts when 3 extensions to existing code would work. Don't create a new contract when an existing one can be amended. Engineering economy is a first-class constraint — maximize quality with minimal effort, know the destination, reach it before everyone else.
+- **Forgetting Obsidian.** The user's default publication target is `ObsidianVault/Articles/`, not just GitHub. Always publish deliverables to Obsidian first, then push to GitHub. Use proper YAML frontmatter and Obsidian callout syntax.
 
 ## Output Format
 
@@ -104,9 +138,9 @@ Present findings as:
 
 ### Recommended Resources
 1. **[Title](link)**
-   - Why: <reason>
-   - Key insight: <one sentence>
-   - Best for: <audience>
+ - Why: <reason>
+ - Key insight: <one sentence>
+ - Best for: <audience>
 
 ### Where Sources Disagree
 <if applicable — conflicting viewpoints>

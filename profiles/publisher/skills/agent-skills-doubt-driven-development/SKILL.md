@@ -65,9 +65,9 @@ Name the decision in two or three lines:
 
 ```
 CLAIM: "The new caching layer is thread-safe under the
-        read-heavy workload described in the spec."
+ read-heavy workload described in the spec."
 WHY THIS MATTERS: a race here corrupts user data and is
-                  hard to detect in QA.
+ hard to detect in QA.
 ```
 
 If you can't write the claim that compactly, you have a vibe, not a decision. Surface it before scrutinizing it.

@@ -1,11 +1,11 @@
 ---
 name: analyzing-network-traffic-for-incidents
 description: 'Analyzes network traffic captures and flow data to identify adversary activity during security incidents, including
-  command-and-control communications, lateral movement, data exfiltration, and exploitation attempts. Uses Wireshark, Zeek,
-  and NetFlow analysis techniques. Activates for requests involving network traffic analysis, packet capture investigation,
-  PCAP analysis, network forensics, C2 traffic detection, or exfiltration detection.
+ command-and-control communications, lateral movement, data exfiltration, and exploitation attempts. Uses Wireshark, Zeek,
+ and NetFlow analysis techniques. Activates for requests involving network traffic analysis, packet capture investigation,
+ PCAP analysis, network forensics, C2 traffic detection, or exfiltration detection.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -81,7 +81,7 @@ Detect command-and-control traffic patterns:
 ```bash
 # Extract connections to external IPs with regular intervals
 cat conn.log | zeek-cut ts id.orig_h id.resp_h id.resp_p duration orig_bytes resp_bytes \
-  | awk '$4 ~ /^185\.220/' | sort -t. -k1,1n -k2,2n
+ | awk '$4 ~ /^185\.220/' | sort -t. -k1,1n -k2,2n
 ```
 
 **Wireshark Beacon Analysis:**
@@ -112,11 +112,11 @@ Trace adversary movement between internal systems:
 ```
 Key protocols for lateral movement detection:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-SMB (TCP 445):     PsExec, file share access, ransomware propagation
-RDP (TCP 3389):    Remote desktop sessions
-WinRM (TCP 5985):  PowerShell remoting
-WMI (TCP 135):     Remote command execution
-SSH (TCP 22):      Linux lateral movement
+SMB (TCP 445): PsExec, file share access, ransomware propagation
+RDP (TCP 3389): Remote desktop sessions
+WinRM (TCP 5985): PowerShell remoting
+WMI (TCP 135): Remote command execution
+SSH (TCP 22): Linux lateral movement
 DCE/RPC (TCP 135): DCOM-based lateral movement
 ```
 
@@ -142,11 +142,11 @@ Identify unauthorized data transfers leaving the network:
 ```
 # Identify large outbound transfers in Zeek conn.log
 cat conn.log | zeek-cut ts id.orig_h id.resp_h id.resp_p orig_bytes \
-  | awk '$5 > 100000000' | sort -t$'\t' -k5 -rn
+ | awk '$5 > 100000000' | sort -t$'\t' -k5 -rn
 
 # DNS tunneling detection (high volume of TXT queries)
 cat dns.log | zeek-cut query qtype | grep TXT | cut -f1 \
-  | rev | cut -d. -f1,2 | rev | sort | uniq -c | sort -rn | head
+ | rev | cut -d. -f1,2 | rev | sort | uniq -c | sort -rn | head
 
 # Unusual protocol usage (ICMP tunneling, DNS over HTTPS)
 cat conn.log | zeek-cut proto id.resp_p orig_bytes | awk '$1 == "icmp" && $3 > 1000'
@@ -229,38 +229,38 @@ Compile analysis into a structured report with evidence references:
 ```
 NETWORK TRAFFIC ANALYSIS REPORT
 =================================
-Incident:         INC-2025-1547
-Analyst:          [Name]
-Capture Source:   Arkime full packet capture
-Analysis Period:  2025-11-15 14:00 UTC - 2025-11-15 18:00 UTC
-Total PCAP Size:  4.7 GB
+Incident: INC-2025-1547
+Analyst: [Name]
+Capture Source: Arkime full packet capture
+Analysis Period: 2025-11-15 14:00 UTC - 2025-11-15 18:00 UTC
+Total PCAP Size: 4.7 GB
 
 C2 COMMUNICATIONS
-Source:           10.1.5.42 (WKSTN-042)
-Destination:      185.220.101.42:443 (HTTPS)
-Beacon Interval:  60 seconds ± 12% jitter
-Sessions:         237 connections over 4 hours
-JA3 Hash:         a0e9f5d64349fb13191bc781f81f42e1
-TLS Certificate:  CN=update.evil[.]com (self-signed)
-Total Data Sent:  147 MB (outbound)
-Total Data Recv:  2.3 MB (inbound - commands)
+Source: 10.1.5.42 (WKSTN-042)
+Destination: 185.220.101.42:443 (HTTPS)
+Beacon Interval: 60 seconds ± 12% jitter
+Sessions: 237 connections over 4 hours
+JA3 Hash: a0e9f5d64349fb13191bc781f81f42e1
+TLS Certificate: CN=update.evil[.]com (self-signed)
+Total Data Sent: 147 MB (outbound)
+Total Data Recv: 2.3 MB (inbound - commands)
 
 LATERAL MOVEMENT
 10.1.5.42 → 10.1.10.15 (SMB, TCP 445) - 14:35 UTC
 10.1.5.42 → 10.1.10.20 (RDP, TCP 3389) - 14:42 UTC
-10.1.5.42 → 10.1.1.5  (LDAP, TCP 389) - 15:10 UTC
+10.1.5.42 → 10.1.1.5 (LDAP, TCP 389) - 15:10 UTC
 
 EXFILTRATION SUMMARY
-Protocol:         HTTPS to C2 server
-Volume:           147 MB outbound
-Duration:         14:23 UTC - 18:00 UTC
-Files Extracted:  [list if recoverable from unencrypted channels]
+Protocol: HTTPS to C2 server
+Volume: 147 MB outbound
+Duration: 14:23 UTC - 18:00 UTC
+Files Extracted: [list if recoverable from unencrypted channels]
 
 DNS ANALYSIS
 Suspicious Queries: 0 DNS tunneling indicators
-DGA Detection:      0 algorithmically generated domains
+DGA Detection: 0 algorithmically generated domains
 
 EVIDENCE REFERENCES
-PCAP File:        INC-2025-1547_capture.pcap (SHA-256: ...)
-Zeek Logs:        /logs/zeek/2025-11-15/ (conn.log, ssl.log, dns.log)
+PCAP File: INC-2025-1547_capture.pcap (SHA-256: ...)
+Zeek Logs: /logs/zeek/2025-11-15/ (conn.log, ssl.log, dns.log)
 ```

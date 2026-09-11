@@ -1,10 +1,10 @@
 ---
 name: frontend-design
 description: |
-  Create distinctive, production-grade frontend interfaces avoiding "AI slop" aesthetics.
-  Use when: building landing pages, dashboards, components, or styling any web UI.
-  Triggers: "design", "landing page", "beautiful ui", "styling", "aesthetics",
-  "make it look good", "professional design", "ui design".
+ Create distinctive, production-grade frontend interfaces avoiding "AI slop" aesthetics.
+ Use when: building landing pages, dashboards, components, or styling any web UI.
+ Triggers: "design", "landing page", "beautiful ui", "styling", "aesthetics",
+ "make it look good", "professional design", "ui design".
 ---
 
 This skill guides creation of distinctive, production-grade frontend interfaces that avoid generic "AI slop" aesthetics. Implement real working code with exceptional attention to aesthetic details and creative choices.

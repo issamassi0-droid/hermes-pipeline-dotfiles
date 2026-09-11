@@ -41,22 +41,22 @@ A frequent finding in Hayabusa timelines is malicious PowerShell — MITRE ATT&C
 ## Prerequisites
 
 - Hayabusa binary. Download a pre-compiled release (Windows/Linux/macOS) from GitHub:
-  ```bash
-  # Linux example
-  curl -LO https://github.com/Yamato-Security/hayabusa/releases/latest/download/hayabusa-3.0.0-lin-x64-gnu.zip
-  unzip hayabusa-*.zip && cd hayabusa-*
-  ./hayabusa-3.0.0-lin-x64-gnu --version
-  ```
-  Or build from source (rules are a submodule):
-  ```bash
-  git clone https://github.com/Yamato-Security/hayabusa.git --recursive
-  cd hayabusa && cargo build --release
-  ```
+ ```bash
+ # Linux example
+ curl -LO https://github.com/Yamato-Security/hayabusa/releases/latest/download/hayabusa-3.0.0-lin-x64-gnu.zip
+ unzip hayabusa-*.zip && cd hayabusa-*
+ ./hayabusa-3.0.0-lin-x64-gnu --version
+ ```
+ Or build from source (rules are a submodule):
+ ```bash
+ git clone https://github.com/Yamato-Security/hayabusa.git --recursive
+ cd hayabusa && cargo build --release
+ ```
 - Collected Windows `.evtx` files (or run with `--live-analysis` on the host, as Administrator).
 - Updated detection rules:
-  ```bash
-  ./hayabusa update-rules
-  ```
+ ```bash
+ ./hayabusa update-rules
+ ```
 - Optional: Timeline Explorer (Windows) or Timesketch for visualizing output; `jq` for JSONL.
 
 ## Objectives

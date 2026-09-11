@@ -6,12 +6,12 @@ author: xdevplatform + openclaw + Hermes Agent
 license: MIT
 platforms: [linux, macos]
 prerequisites:
-  commands: [xurl]
+ commands: [xurl]
 metadata:
-  hermes:
-    tags: [twitter, x, social-media, xurl, official-api]
-    homepage: https://github.com/xdevplatform/xurl
-    upstream_skill: https://github.com/openclaw/openclaw/blob/main/skills/xurl/SKILL.md
+ hermes:
+ tags: [twitter, x, social-media, xurl, official-api]
+ homepage: https://github.com/xdevplatform/xurl
+ upstream_skill: https://github.com/openclaw/openclaw/blob/main/skills/xurl/SKILL.md
 ---
 
 # xurl — X (Twitter) API via the Official CLI
@@ -87,29 +87,29 @@ These steps must be performed by the user directly, NOT by the agent, because th
 2. Set the redirect URI to `http://localhost:8080/callback`
 3. Copy the app's Client ID and Client Secret
 4. Register the app locally (user runs this):
-   ```bash
-   xurl auth apps add my-app --client-id YOUR_CLIENT_ID --client-secret YOUR_CLIENT_SECRET
-   ```
+ ```bash
+ xurl auth apps add my-app --client-id YOUR_CLIENT_ID --client-secret YOUR_CLIENT_SECRET
+ ```
 5. Authenticate (specify `--app` to bind the token to your app):
-   ```bash
-   xurl auth oauth2 --app my-app
-   ```
-   (This opens a browser for the OAuth 2.0 PKCE flow.)
+ ```bash
+ xurl auth oauth2 --app my-app
+ ```
+ (This opens a browser for the OAuth 2.0 PKCE flow.)
 
-   If X returns a `UsernameNotFound` error or 403 on the post-OAuth `/2/users/me` lookup, pass your handle explicitly (xurl v1.1.0+):
-   ```bash
-   xurl auth oauth2 --app my-app YOUR_USERNAME
-   ```
-   This binds the token to your handle and skips the broken `/2/users/me` call.
+ If X returns a `UsernameNotFound` error or 403 on the post-OAuth `/2/users/me` lookup, pass your handle explicitly (xurl v1.1.0+):
+ ```bash
+ xurl auth oauth2 --app my-app YOUR_USERNAME
+ ```
+ This binds the token to your handle and skips the broken `/2/users/me` call.
 6. Set the app as default so all commands use it:
-   ```bash
-   xurl auth default my-app
-   ```
+ ```bash
+ xurl auth default my-app
+ ```
 7. Verify:
-   ```bash
-   xurl auth status
-   xurl whoami
-   ```
+ ```bash
+ xurl auth status
+ xurl whoami
+ ```
 
 After this, the agent can use any command below without further setup. OAuth 2.0 tokens auto-refresh.
 
@@ -271,7 +271,7 @@ xurl media status MEDIA_ID
 xurl media status --wait MEDIA_ID
 
 # Full workflow
-xurl media upload meme.png                  # returns media id
+xurl media upload meme.png # returns media id
 xurl post "lol" --media-id MEDIA_ID
 ```
 
@@ -373,8 +373,8 @@ xurl timeline -n 20
 
 ### Multiple apps (credentials pre-configured manually)
 ```bash
-xurl auth default prod alice               # prod app, alice user
-xurl --app staging /2/users/me             # one-off against staging
+xurl auth default prod alice # prod app, alice user
+xurl --app staging /2/users/me # one-off against staging
 ```
 
 ---

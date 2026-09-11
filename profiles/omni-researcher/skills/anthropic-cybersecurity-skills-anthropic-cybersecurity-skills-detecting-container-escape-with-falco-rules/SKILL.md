@@ -1,14 +1,14 @@
 ---
 name: detecting-container-escape-with-falco-rules
 description: >-
-  Writes and tunes Falco rule syntax for container escape detection - conditions, macros,
-  lists, priorities, and output fields - covering host filesystem mounts, sensitive host path
-  access, kernel module loading, and privileged capability abuse, including how to drive down
-  false positives. Use when authoring or tuning a specific Falco rule for breakout behaviour,
-  or triaging a noisy escape-related Falco alert. Keywords: Falco rule, macro, list,
-  condition, priority, falco_rules.local.yaml, tuning, false positive. Do not use for
-  deploying and operating Falco itself - use detecting-container-runtime-threats-with-falco;
-  for tool-agnostic escape signals use detecting-container-escape-attempts.
+ Writes and tunes Falco rule syntax for container escape detection - conditions, macros,
+ lists, priorities, and output fields - covering host filesystem mounts, sensitive host path
+ access, kernel module loading, and privileged capability abuse, including how to drive down
+ false positives. Use when authoring or tuning a specific Falco rule for breakout behaviour,
+ or triaging a noisy escape-related Falco alert. Keywords: Falco rule, macro, list,
+ condition, priority, falco_rules.local.yaml, tuning, false positive. Do not use for
+ deploying and operating Falco itself - use detecting-container-runtime-threats-with-falco;
+ for tool-agnostic escape signals use detecting-container-escape-attempts.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -72,12 +72,12 @@ helm repo update
 
 # Install Falco with eBPF driver
 helm install falco falcosecurity/falco \
-  --namespace falco --create-namespace \
-  --set falcosidekick.enabled=true \
-  --set falcosidekick.webui.enabled=true \
-  --set driver.kind=ebpf \
-  --set collectors.containerd.enabled=true \
-  --set collectors.containerd.socket=/run/containerd/containerd.sock
+ --namespace falco --create-namespace \
+ --set falcosidekick.enabled=true \
+ --set falcosidekick.webui.enabled=true \
+ --set driver.kind=ebpf \
+ --set collectors.containerd.enabled=true \
+ --set collectors.containerd.socket=/run/containerd/containerd.sock
 
 # Verify
 kubectl get pods -n falco
@@ -89,10 +89,10 @@ kubectl logs -n falco -l app.kubernetes.io/name=falco --tail=20
 ```bash
 # Add Falco GPG key and repo
 curl -fsSL https://falco.org/repo/falcosecurity-packages.asc | \
-  sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
+ sudo gpg --dearmor -o /usr/share/keyrings/falco-archive-keyring.gpg
 
 echo "deb [signed-by=/usr/share/keyrings/falco-archive-keyring.gpg] https://download.falco.org/packages/deb stable main" | \
-  sudo tee /etc/apt/sources.list.d/falcosecurity.list
+ sudo tee /etc/apt/sources.list.d/falcosecurity.list
 
 sudo apt-get update
 sudo apt-get install -y falco
@@ -108,127 +108,127 @@ sudo systemctl start falco
 
 ```yaml
 - rule: Container Mounting Host Filesystem
-  desc: Detect a container attempting to mount the host filesystem
-  condition: >
-    spawned_process and container and
-    proc.name = mount and
-    (proc.args contains "/host" or proc.args contains "nsenter")
-  output: >
-    Container mounting host filesystem
-    (user=%user.name container_id=%container.id container_name=%container.name
-     image=%container.image.repository command=%proc.cmdline %evt.args)
-  priority: CRITICAL
-  tags: [container, escape, T1611]
+ desc: Detect a container attempting to mount the host filesystem
+ condition: >
+ spawned_process and container and
+ proc.name = mount and
+ (proc.args contains "/host" or proc.args contains "nsenter")
+ output: >
+ Container mounting host filesystem
+ (user=%user.name container_id=%container.id container_name=%container.name
+ image=%container.image.repository command=%proc.cmdline %evt.args)
+ priority: CRITICAL
+ tags: [container, escape, T1611]
 ```
 
 ### Rule 2: Detect nsenter Usage (Namespace Escape)
 
 ```yaml
 - rule: Nsenter Execution in Container
-  desc: Detect nsenter being used to escape container namespaces
-  condition: >
-    spawned_process and container and proc.name = nsenter
-  output: >
-    nsenter executed in container - potential escape attempt
-    (user=%user.name container_id=%container.id image=%container.image.repository
-     command=%proc.cmdline parent=%proc.pname)
-  priority: CRITICAL
-  tags: [container, escape, namespace, T1611]
+ desc: Detect nsenter being used to escape container namespaces
+ condition: >
+ spawned_process and container and proc.name = nsenter
+ output: >
+ nsenter executed in container - potential escape attempt
+ (user=%user.name container_id=%container.id image=%container.image.repository
+ command=%proc.cmdline parent=%proc.pname)
+ priority: CRITICAL
+ tags: [container, escape, namespace, T1611]
 ```
 
 ### Rule 3: Detect Privileged Container Launch
 
 ```yaml
 - rule: Launch Privileged Container
-  desc: Detect a privileged container being launched
-  condition: >
-    container_started and container and container.privileged=true
-  output: >
-    Privileged container started
-    (user=%user.name container_id=%container.id container_name=%container.name
-     image=%container.image.repository)
-  priority: WARNING
-  tags: [container, privileged, T1610]
+ desc: Detect a privileged container being launched
+ condition: >
+ container_started and container and container.privileged=true
+ output: >
+ Privileged container started
+ (user=%user.name container_id=%container.id container_name=%container.name
+ image=%container.image.repository)
+ priority: WARNING
+ tags: [container, privileged, T1610]
 ```
 
 ### Rule 4: Detect /proc/sysrq-trigger Write
 
 ```yaml
 - rule: Write to Sysrq Trigger
-  desc: Detect writes to /proc/sysrq-trigger which can crash or control the host
-  condition: >
-    open_write and container and fd.name = /proc/sysrq-trigger
-  output: >
-    Write to /proc/sysrq-trigger from container
-    (user=%user.name container_id=%container.id image=%container.image.repository
-     command=%proc.cmdline)
-  priority: CRITICAL
-  tags: [container, escape, host-manipulation]
+ desc: Detect writes to /proc/sysrq-trigger which can crash or control the host
+ condition: >
+ open_write and container and fd.name = /proc/sysrq-trigger
+ output: >
+ Write to /proc/sysrq-trigger from container
+ (user=%user.name container_id=%container.id image=%container.image.repository
+ command=%proc.cmdline)
+ priority: CRITICAL
+ tags: [container, escape, host-manipulation]
 ```
 
 ### Rule 5: Detect Kernel Module Loading from Container
 
 ```yaml
 - rule: Container Loading Kernel Module
-  desc: Detect a container attempting to load a kernel module
-  condition: >
-    spawned_process and container and
-    (proc.name in (insmod, modprobe) or
-     (proc.name = init_module))
-  output: >
-    Kernel module loading from container
-    (user=%user.name container_id=%container.id image=%container.image.repository
-     command=%proc.cmdline)
-  priority: CRITICAL
-  tags: [container, escape, kernel, T1611]
+ desc: Detect a container attempting to load a kernel module
+ condition: >
+ spawned_process and container and
+ (proc.name in (insmod, modprobe) or
+ (proc.name = init_module))
+ output: >
+ Kernel module loading from container
+ (user=%user.name container_id=%container.id image=%container.image.repository
+ command=%proc.cmdline)
+ priority: CRITICAL
+ tags: [container, escape, kernel, T1611]
 ```
 
 ### Rule 6: Detect Container Breakout via cgroups
 
 ```yaml
 - rule: Write to Cgroup Release Agent
-  desc: Detect writes to cgroup release_agent which is a known container escape vector
-  condition: >
-    open_write and container and
-    fd.name endswith release_agent
-  output: >
-    Container writing to cgroup release_agent - escape attempt
-    (user=%user.name container_id=%container.id image=%container.image.repository
-     file=%fd.name command=%proc.cmdline)
-  priority: CRITICAL
-  tags: [container, escape, cgroup, CVE-2022-0492]
+ desc: Detect writes to cgroup release_agent which is a known container escape vector
+ condition: >
+ open_write and container and
+ fd.name endswith release_agent
+ output: >
+ Container writing to cgroup release_agent - escape attempt
+ (user=%user.name container_id=%container.id image=%container.image.repository
+ file=%fd.name command=%proc.cmdline)
+ priority: CRITICAL
+ tags: [container, escape, cgroup, CVE-2022-0492]
 ```
 
 ### Rule 7: Detect Access to Host /etc/shadow
 
 ```yaml
 - rule: Container Reading Host Shadow File
-  desc: Detect a container reading /etc/shadow on the host via mounted volume
-  condition: >
-    open_read and container and
-    (fd.name = /etc/shadow or fd.name startswith /host/etc/shadow)
-  output: >
-    Container reading host shadow file
-    (user=%user.name container_id=%container.id image=%container.image.repository
-     file=%fd.name command=%proc.cmdline)
-  priority: CRITICAL
-  tags: [container, credential-access, T1003]
+ desc: Detect a container reading /etc/shadow on the host via mounted volume
+ condition: >
+ open_read and container and
+ (fd.name = /etc/shadow or fd.name startswith /host/etc/shadow)
+ output: >
+ Container reading host shadow file
+ (user=%user.name container_id=%container.id image=%container.image.repository
+ file=%fd.name command=%proc.cmdline)
+ priority: CRITICAL
+ tags: [container, credential-access, T1003]
 ```
 
 ### Rule 8: Detect Docker Socket Access
 
 ```yaml
 - rule: Container Accessing Docker Socket
-  desc: Detect a container accessing the Docker socket which allows host control
-  condition: >
-    (open_read or open_write) and container and
-    fd.name = /var/run/docker.sock
-  output: >
-    Container accessing Docker socket
-    (user=%user.name container_id=%container.id image=%container.image.repository
-     command=%proc.cmdline)
-  priority: CRITICAL
-  tags: [container, escape, docker-socket, T1610]
+ desc: Detect a container accessing the Docker socket which allows host control
+ condition: >
+ (open_read or open_write) and container and
+ fd.name = /var/run/docker.sock
+ output: >
+ Container accessing Docker socket
+ (user=%user.name container_id=%container.id image=%container.image.repository
+ command=%proc.cmdline)
+ priority: CRITICAL
+ tags: [container, escape, docker-socket, T1610]
 ```
 
 ## Complete Custom Rules File
@@ -236,37 +236,37 @@ sudo systemctl start falco
 ```yaml
 # /etc/falco/rules.d/container-escape.yaml
 - list: escape_binaries
-  items: [nsenter, chroot, unshare, mount, umount, pivot_root]
+ items: [nsenter, chroot, unshare, mount, umount, pivot_root]
 
 - macro: container_escape_attempt
-  condition: >
-    spawned_process and container and
-    proc.name in (escape_binaries)
+ condition: >
+ spawned_process and container and
+ proc.name in (escape_binaries)
 
 - rule: Container Escape Binary Execution
-  desc: Detect execution of binaries commonly used for container escape
-  condition: container_escape_attempt
-  output: >
-    Escape-related binary executed in container
-    (user=%user.name container=%container.name image=%container.image.repository
-     command=%proc.cmdline parent=%proc.pname pid=%proc.pid)
-  priority: CRITICAL
-  tags: [container, escape, mitre_T1611]
+ desc: Detect execution of binaries commonly used for container escape
+ condition: container_escape_attempt
+ output: >
+ Escape-related binary executed in container
+ (user=%user.name container=%container.name image=%container.image.repository
+ command=%proc.cmdline parent=%proc.pname pid=%proc.pid)
+ priority: CRITICAL
+ tags: [container, escape, mitre_T1611]
 
 - rule: Sensitive File Access from Container
-  desc: Detect container access to sensitive host files
-  condition: >
-    (open_read or open_write) and container and
-    (fd.name startswith /proc/1/ or
-     fd.name = /etc/shadow or
-     fd.name = /etc/kubernetes/admin.conf or
-     fd.name startswith /var/lib/kubelet/)
-  output: >
-    Sensitive file accessed from container
-    (container=%container.name image=%container.image.repository
-     file=%fd.name command=%proc.cmdline user=%user.name)
-  priority: CRITICAL
-  tags: [container, sensitive-file, mitre_T1005]
+ desc: Detect container access to sensitive host files
+ condition: >
+ (open_read or open_write) and container and
+ (fd.name startswith /proc/1/ or
+ fd.name = /etc/shadow or
+ fd.name = /etc/kubernetes/admin.conf or
+ fd.name startswith /var/lib/kubelet/)
+ output: >
+ Sensitive file accessed from container
+ (container=%container.name image=%container.image.repository
+ file=%fd.name command=%proc.cmdline user=%user.name)
+ priority: CRITICAL
+ tags: [container, sensitive-file, mitre_T1005]
 ```
 
 ## Falco Configuration
@@ -274,8 +274,8 @@ sudo systemctl start falco
 ```yaml
 # /etc/falco/falco.yaml (key settings)
 rules_files:
-  - /etc/falco/falco_rules.yaml
-  - /etc/falco/rules.d/container-escape.yaml
+ - /etc/falco/falco_rules.yaml
+ - /etc/falco/rules.d/container-escape.yaml
 
 json_output: true
 json_include_output_property: true
@@ -288,23 +288,23 @@ log_level: info
 priority: WARNING
 
 stdout_output:
-  enabled: true
+ enabled: true
 
 syslog_output:
-  enabled: true
+ enabled: true
 
 http_output:
-  enabled: true
-  url: http://falcosidekick:2801
-  insecure: true
+ enabled: true
+ url: http://falcosidekick:2801
+ insecure: true
 
 grpc:
-  enabled: true
-  bind_address: "unix:///run/falco/falco.sock"
-  threadiness: 8
+ enabled: true
+ bind_address: "unix:///run/falco/falco.sock"
+ threadiness: 8
 
 grpc_output:
-  enabled: true
+ enabled: true
 ```
 
 ## Alert Integration
@@ -314,14 +314,14 @@ grpc_output:
 ```yaml
 # Falcosidekick values.yaml
 config:
-  slack:
-    webhookurl: "https://hooks.slack.com/services/XXXXX"
-    minimumpriority: "warning"
-    messageformat: |
-      *{{.Priority}}* - {{.Rule}}
-      Container: {{.OutputFields.container_name}}
-      Image: {{.OutputFields.container_image_repository}}
-      Command: {{.OutputFields.proc_cmdline}}
+ slack:
+ webhookurl: "https://hooks.slack.com/services/XXXXX"
+ minimumpriority: "warning"
+ messageformat: |
+ *{{.Priority}}* - {{.Rule}}
+ Container: {{.OutputFields.container_name}}
+ Image: {{.OutputFields.container_image_repository}}
+ Command: {{.OutputFields.proc_cmdline}}
 ```
 
 ## Testing Rules

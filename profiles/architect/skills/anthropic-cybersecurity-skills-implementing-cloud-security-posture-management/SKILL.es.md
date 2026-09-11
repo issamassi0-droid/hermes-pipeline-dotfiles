@@ -1,9 +1,9 @@
 ---
 name: implementing-cloud-security-posture-management
 description: >
-  Implementing Cloud Security Posture Management (CSPM) to continuously monitor multi-cloud
-  environments for misconfigurations, compliance violations, and security risks using Prowler,
-  ScoutSuite, AWS Security Hub, Azure Defender, and GCP Security Command Center.
+ Implementing Cloud Security Posture Management (CSPM) to continuously monitor multi-cloud
+ environments for misconfigurations, compliance violations, and security risks using Prowler,
+ ScoutSuite, AWS Security Hub, Azure Defender, and GCP Security Command Center.
 domain: cybersecurity
 subdomain: cloud-security
 tags: [cloud-security, cspm, multi-cloud, compliance, prowler, scoutsuite]
@@ -44,7 +44,7 @@ Habilitar las capacidades CSPM integradas en cada proveedor de nube para la eval
 # AWS: Habilitar Security Hub con estándares FSBP y CIS
 aws securityhub enable-security-hub --enable-default-standards
 aws securityhub batch-enable-standards --standards-subscription-requests \
-  '[{"StandardsArn":"arn:aws:securityhub:::standards/cis-aws-foundations-benchmark/v/1.4.0"}]'
+ '[{"StandardsArn":"arn:aws:securityhub:::standards/cis-aws-foundations-benchmark/v/1.4.0"}]'
 
 # Azure: Habilitar Microsoft Defender for Cloud (nivel CSPM)
 az security pricing create --name CloudPosture --tier standard
@@ -53,7 +53,7 @@ az security auto-provisioning-setting update --name default --auto-provision on
 # GCP: Habilitar Security Command Center Premium
 gcloud services enable securitycenter.googleapis.com
 gcloud scc settings update --organization=ORG_ID \
-  --enable-asset-discovery
+ --enable-asset-discovery
 ```
 
 ### Paso 2: Ejecutar Prowler para Evaluación Multi-Nube
@@ -63,24 +63,24 @@ Ejecutar Prowler para realizar verificaciones de seguridad exhaustivas en los tr
 ```bash
 # Evaluación de AWS con todas las verificaciones CIS
 prowler aws \
-  --profile production \
-  -M json-ocsf csv html \
-  -o ./prowler-results/aws/ \
-  --compliance cis_1.4_aws cis_1.5_aws
+ --profile production \
+ -M json-ocsf csv html \
+ -o ./prowler-results/aws/ \
+ --compliance cis_1.4_aws cis_1.5_aws
 
 # Evaluación de Azure
 prowler azure \
-  --subscription-ids SUB_ID_1 SUB_ID_2 \
-  -M json-ocsf csv html \
-  -o ./prowler-results/azure/ \
-  --compliance cis_2.0_azure
+ --subscription-ids SUB_ID_1 SUB_ID_2 \
+ -M json-ocsf csv html \
+ -o ./prowler-results/azure/ \
+ --compliance cis_2.0_azure
 
 # Evaluación de GCP
 prowler gcp \
-  --project-ids project-1 project-2 \
-  -M json-ocsf csv html \
-  -o ./prowler-results/gcp/ \
-  --compliance cis_2.0_gcp
+ --project-ids project-1 project-2 \
+ -M json-ocsf csv html \
+ -o ./prowler-results/gcp/ \
+ --compliance cis_2.0_gcp
 
 # Ver resumen en todos los proveedores
 prowler aws --list-compliance
@@ -93,17 +93,17 @@ Usar ScoutSuite para una evaluación de seguridad multi-nube unificada con infor
 ```bash
 # Escanear AWS
 python3 -m ScoutSuite aws --profile production \
-  --report-dir ./scoutsuite/aws/
+ --report-dir ./scoutsuite/aws/
 
 # Escanear Azure
 python3 -m ScoutSuite azure --cli \
-  --all-subscriptions \
-  --report-dir ./scoutsuite/azure/
+ --all-subscriptions \
+ --report-dir ./scoutsuite/azure/
 
 # Escanear GCP
 python3 -m ScoutSuite gcp --user-account \
-  --all-projects \
-  --report-dir ./scoutsuite/gcp/
+ --all-projects \
+ --report-dir ./scoutsuite/gcp/
 
 # Cada uno produce un informe HTML con hallazgos puntuados por riesgo
 ```
@@ -117,29 +117,29 @@ Crear un pipeline programado que ejecute verificaciones CSPM diariamente y enrut
 cat > buildspec.yml << 'EOF'
 version: 0.2
 phases:
-  install:
-    commands:
-      - pip install prowler
-  build:
-    commands:
-      - prowler aws -M json-ocsf -o s3://security-findings-bucket/prowler/$(date +%Y%m%d)/
-      - prowler aws --compliance cis_1.5_aws -M csv -o s3://security-findings-bucket/prowler/compliance/
-  post_build:
-    commands:
-      - |
-        CRITICAL=$(cat output/*.json | grep -c '"CRITICAL"')
-        if [ "$CRITICAL" -gt 0 ]; then
-          aws sns publish --topic-arn arn:aws:sns:us-east-1:ACCOUNT:security-alerts \
-            --subject "Prowler: $CRITICAL hallazgos críticos" \
-            --message "Revisar en s3://security-findings-bucket/prowler/$(date +%Y%m%d)/"
-        fi
+ install:
+ commands:
+ - pip install prowler
+ build:
+ commands:
+ - prowler aws -M json-ocsf -o s3://security-findings-bucket/prowler/$(date +%Y%m%d)/
+ - prowler aws --compliance cis_1.5_aws -M csv -o s3://security-findings-bucket/prowler/compliance/
+ post_build:
+ commands:
+ - |
+ CRITICAL=$(cat output/*.json | grep -c '"CRITICAL"')
+ if [ "$CRITICAL" -gt 0 ]; then
+ aws sns publish --topic-arn arn:aws:sns:us-east-1:ACCOUNT:security-alerts \
+ --subject "Prowler: $CRITICAL hallazgos críticos" \
+ --message "Revisar en s3://security-findings-bucket/prowler/$(date +%Y%m%d)/"
+ fi
 EOF
 
 # Programar con EventBridge
 aws events put-rule \
-  --name daily-prowler-scan \
-  --schedule-expression "cron(0 6 * * ? *)" \
-  --state ENABLED
+ --name daily-prowler-scan \
+ --schedule-expression "cron(0 6 * * ? *)" \
+ --state ENABLED
 ```
 
 ### Paso 5: Configurar Agregación y Deduplicación de Hallazgos
@@ -153,35 +153,35 @@ import hashlib
 from datetime import datetime
 
 def normalize_finding(finding, source):
-    """Normalizar hallazgos de diferentes herramientas CSPM a un formato común."""
-    normalized = {
-        'id': hashlib.sha256(f"{finding.get('ResourceId','')}{finding.get('CheckId','')}".encode()).hexdigest()[:16],
-        'source': source,
-        'cloud': finding.get('Provider', 'unknown'),
-        'account': finding.get('AccountId', finding.get('SubscriptionId', '')),
-        'region': finding.get('Region', ''),
-        'resource_type': finding.get('ResourceType', ''),
-        'resource_id': finding.get('ResourceId', ''),
-        'severity': finding.get('Severity', 'INFO').upper(),
-        'status': finding.get('Status', 'FAIL'),
-        'title': finding.get('CheckTitle', finding.get('Title', '')),
-        'description': finding.get('StatusExtended', ''),
-        'compliance': finding.get('Compliance', {}),
-        'remediation': finding.get('Remediation', {}).get('Recommendation', {}).get('Text', ''),
-        'timestamp': datetime.utcnow().isoformat()
-    }
-    return normalized
+ """Normalizar hallazgos de diferentes herramientas CSPM a un formato común."""
+ normalized = {
+ 'id': hashlib.sha256(f"{finding.get('ResourceId','')}{finding.get('CheckId','')}".encode()).hexdigest()[:16],
+ 'source': source,
+ 'cloud': finding.get('Provider', 'unknown'),
+ 'account': finding.get('AccountId', finding.get('SubscriptionId', '')),
+ 'region': finding.get('Region', ''),
+ 'resource_type': finding.get('ResourceType', ''),
+ 'resource_id': finding.get('ResourceId', ''),
+ 'severity': finding.get('Severity', 'INFO').upper(),
+ 'status': finding.get('Status', 'FAIL'),
+ 'title': finding.get('CheckTitle', finding.get('Title', '')),
+ 'description': finding.get('StatusExtended', ''),
+ 'compliance': finding.get('Compliance', {}),
+ 'remediation': finding.get('Remediation', {}).get('Recommendation', {}).get('Text', ''),
+ 'timestamp': datetime.utcnow().isoformat()
+ }
+ return normalized
 
 def aggregate_findings(prowler_file, scoutsuite_file):
-    findings = {}
-    for file_path, source in [(prowler_file, 'prowler'), (scoutsuite_file, 'scoutsuite')]:
-        with open(file_path) as f:
-            for line in f:
-                raw = json.loads(line)
-                normalized = normalize_finding(raw, source)
-                if normalized['status'] == 'FAIL':
-                    findings[normalized['id']] = normalized
-    return sorted(findings.values(), key=lambda x: {'CRITICAL':0,'HIGH':1,'MEDIUM':2,'LOW':3}.get(x['severity'],4))
+ findings = {}
+ for file_path, source in [(prowler_file, 'prowler'), (scoutsuite_file, 'scoutsuite')]:
+ with open(file_path) as f:
+ for line in f:
+ raw = json.loads(line)
+ normalized = normalize_finding(raw, source)
+ if normalized['status'] == 'FAIL':
+ findings[normalized['id']] = normalized
+ return sorted(findings.values(), key=lambda x: {'CRITICAL':0,'HIGH':1,'MEDIUM':2,'LOW':3}.get(x['severity'],4))
 ```
 
 ### Paso 6: Implementar Detección de Desviaciones y Auto-Remediación
@@ -191,23 +191,23 @@ Configurar respuestas automatizadas ante desviaciones de configuración que viol
 ```bash
 # Auto-remediación de AWS Config para buckets S3 no conformes
 aws configservice put-remediation-configurations --remediation-configurations '[{
-  "ConfigRuleName": "s3-bucket-public-read-prohibited",
-  "TargetType": "SSM_DOCUMENT",
-  "TargetId": "AWS-DisableS3BucketPublicReadWrite",
-  "Parameters": {
-    "S3BucketName": {"ResourceValue": {"Value": "RESOURCE_ID"}}
-  },
-  "Automatic": true,
-  "MaximumAutomaticAttempts": 3,
-  "RetryAttemptSeconds": 60
+ "ConfigRuleName": "s3-bucket-public-read-prohibited",
+ "TargetType": "SSM_DOCUMENT",
+ "TargetId": "AWS-DisableS3BucketPublicReadWrite",
+ "Parameters": {
+ "S3BucketName": {"ResourceValue": {"Value": "RESOURCE_ID"}}
+ },
+ "Automatic": true,
+ "MaximumAutomaticAttempts": 3,
+ "RetryAttemptSeconds": 60
 }]'
 
 # Azure Policy para auto-remediación
 az policy assignment create \
-  --name "enforce-storage-encryption" \
-  --policy "/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9" \
-  --scope "/subscriptions/SUB_ID" \
-  --enforcement-mode Default
+ --name "enforce-storage-encryption" \
+ --policy "/providers/Microsoft.Authorization/policyDefinitions/404c3081-a854-4457-ae30-26a93ef643f9" \
+ --scope "/subscriptions/SUB_ID" \
+ --enforcement-mode Default
 
 # Restricción de GCP Organization Policy
 gcloud resource-manager org-policies set-policy policy.yaml --organization=ORG_ID
@@ -260,26 +260,26 @@ Fecha de Evaluación: 2026-02-23
 Entornos: AWS (12 cuentas), Azure (8 suscripciones), GCP (5 proyectos)
 
 PUNTUACIONES DE POSTURA:
-  AWS:   82/100  (+3 desde la semana pasada)
-  Azure: 76/100  (-1 desde la semana pasada)
-  GCP:   79/100  (+5 desde la semana pasada)
-  General: 79/100
+ AWS: 82/100 (+3 desde la semana pasada)
+ Azure: 76/100 (-1 desde la semana pasada)
+ GCP: 79/100 (+5 desde la semana pasada)
+ General: 79/100
 
 HALLAZGOS POR SEVERIDAD:
-  Crítico:  18 (AWS: 7, Azure: 8, GCP: 3)
-  Alto:     67 (AWS: 28, Azure: 24, GCP: 15)
-  Medio:   234 (AWS: 98, Azure: 87, GCP: 49)
-  Bajo:    412 (AWS: 178, Azure: 134, GCP: 100)
+ Crítico: 18 (AWS: 7, Azure: 8, GCP: 3)
+ Alto: 67 (AWS: 28, Azure: 24, GCP: 15)
+ Medio: 234 (AWS: 98, Azure: 87, GCP: 49)
+ Bajo: 412 (AWS: 178, Azure: 134, GCP: 100)
 
 PRINCIPALES CATEGORÍAS CON FALLOS:
-  1. Políticas IAM excesivamente permisivas     (43 hallazgos)
-  2. Cifrado en reposo no habilitado             (38 hallazgos)
-  3. Exposición de red pública                   (29 hallazgos)
-  4. Brechas en registro y monitoreo             (24 hallazgos)
-  5. Credenciales y claves sin uso               (19 hallazgos)
+ 1. Políticas IAM excesivamente permisivas (43 hallazgos)
+ 2. Cifrado en reposo no habilitado (38 hallazgos)
+ 3. Exposición de red pública (29 hallazgos)
+ 4. Brechas en registro y monitoreo (24 hallazgos)
+ 5. Credenciales y claves sin uso (19 hallazgos)
 
 AUTO-REMEDIACIÓN (Últimos 7 Días):
-  Hallazgos auto-remediados:      34
-  Remediación manual pendiente:   51
-  Excepciones aprobadas:           8
+ Hallazgos auto-remediados: 34
+ Remediación manual pendiente: 51
+ Excepciones aprobadas: 8
 ```

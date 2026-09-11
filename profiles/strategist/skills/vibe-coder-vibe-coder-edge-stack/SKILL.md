@@ -1,10 +1,10 @@
 ---
 name: edge-stack
 description: |
-  Modern edge-native web stack: Hono + htmx + UnoCSS + Cloudflare D1. Use when: building
-  server-rendered apps with interactivity, rapid prototyping, CRUD apps, landing pages,
-  marketplaces. Zero cold start, global edge deployment, $0/month on CF free tier.
-  TypeScript alternative to Rust/Axum + htmx stack.
+ Modern edge-native web stack: Hono + htmx + UnoCSS + Cloudflare D1. Use when: building
+ server-rendered apps with interactivity, rapid prototyping, CRUD apps, landing pages,
+ marketplaces. Zero cold start, global edge deployment, $0/month on CF free tier.
+ TypeScript alternative to Rust/Axum + htmx stack.
 ---
 
 # Edge Stack
@@ -60,45 +60,45 @@ const Layout = ({ children }: { children: any }) => html`
 <!DOCTYPE html>
 <html>
 <head>
-  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
+ <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+ <script src="https://cdn.jsdelivr.net/npm/@unocss/runtime"></script>
 </head>
 <body class="bg-gray-100 p-4">
-  ${children}
+ ${children}
 </body>
 </html>
 `
 
 // Page with htmx interactivity
 app.get('/', (c) => {
-  return c.html(
-    <Layout>
-      <h1 class="text-2xl font-bold mb-4">My App</h1>
-      <button
-        hx-get="/api/items"
-        hx-target="#items"
-        class="px-4 py-2 bg-blue-500 text-white rounded"
-      >
-        Load Items
-      </button>
-      <div id="items"></div>
-    </Layout>
-  )
+ return c.html(
+ <Layout>
+ <h1 class="text-2xl font-bold mb-4">My App</h1>
+ <button
+ hx-get="/api/items"
+ hx-target="#items"
+ class="px-4 py-2 bg-blue-500 text-white rounded"
+ >
+ Load Items
+ </button>
+ <div id="items"></div>
+ </Layout>
+ )
 })
 
 // API returns HTML fragment
 app.get('/api/items', async (c) => {
-  const { results } = await c.env.DB
-    .prepare('SELECT * FROM items')
-    .all()
+ const { results } = await c.env.DB
+ .prepare('SELECT * FROM items')
+ .all()
 
-  return c.html(
-    <ul class="mt-4 space-y-2">
-      {results.map((item: any) => (
-        <li class="p-2 bg-white rounded">{item.name}</li>
-      ))}
-    </ul>
-  )
+ return c.html(
+ <ul class="mt-4 space-y-2">
+ {results.map((item: any) => (
+ <li class="p-2 bg-white rounded">{item.name}</li>
+ ))}
+ </ul>
+ )
 })
 
 export default app

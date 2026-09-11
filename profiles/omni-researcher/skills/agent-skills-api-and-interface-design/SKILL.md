@@ -41,20 +41,20 @@ Define the interface before implementing it. The contract is the spec — implem
 ```typescript
 // Define the contract first
 interface TaskAPI {
-  // Creates a task and returns the created task with server-generated fields
-  createTask(input: CreateTaskInput): Promise<Task>;
+ // Creates a task and returns the created task with server-generated fields
+ createTask(input: CreateTaskInput): Promise<Task>;
 
-  // Returns paginated tasks matching filters
-  listTasks(params: ListTasksParams): Promise<PaginatedResult<Task>>;
+ // Returns paginated tasks matching filters
+ listTasks(params: ListTasksParams): Promise<PaginatedResult<Task>>;
 
-  // Returns a single task or throws NotFoundError
-  getTask(id: string): Promise<Task>;
+ // Returns a single task or throws NotFoundError
+ getTask(id: string): Promise<Task>;
 
-  // Partial update — only provided fields change
-  updateTask(id: string, input: UpdateTaskInput): Promise<Task>;
+ // Partial update — only provided fields change
+ updateTask(id: string, input: UpdateTaskInput): Promise<Task>;
 
-  // Idempotent delete — succeeds even if already deleted
-  deleteTask(id: string): Promise<void>;
+ // Idempotent delete — succeeds even if already deleted
+ deleteTask(id: string): Promise<void>;
 }
 ```
 
@@ -66,11 +66,11 @@ Pick one error strategy and use it everywhere:
 // REST: HTTP status codes + structured error body
 // Every error response follows the same shape
 interface APIError {
-  error: {
-    code: string;        // Machine-readable: "VALIDATION_ERROR"
-    message: string;     // Human-readable: "Email is required"
-    details?: unknown;   // Additional context when helpful
-  };
+ error: {
+ code: string; // Machine-readable: "VALIDATION_ERROR"
+ message: string; // Human-readable: "Email is required"
+ details?: unknown; // Additional context when helpful
+ };
 }
 
 // Status code mapping
@@ -92,20 +92,20 @@ Trust internal code. Validate at system edges where external input enters:
 ```typescript
 // Validate at the API boundary
 app.post('/api/tasks', async (req, res) => {
-  const result = CreateTaskSchema.safeParse(req.body);
-  if (!result.success) {
-    return res.status(422).json({
-      error: {
-        code: 'VALIDATION_ERROR',
-        message: 'Invalid task data',
-        details: result.error.flatten(),
-      },
-    });
-  }
+ const result = CreateTaskSchema.safeParse(req.body);
+ if (!result.success) {
+ return res.status(422).json({
+ error: {
+ code: 'VALIDATION_ERROR',
+ message: 'Invalid task data',
+ details: result.error.flatten(),
+ },
+ });
+ }
 
-  // After validation, internal code trusts the types
-  const task = await taskService.create(result.data);
-  return res.status(201).json(task);
+ // After validation, internal code trusts the types
+ const task = await taskService.create(result.data);
+ return res.status(201).json(task);
 });
 ```
 
@@ -129,17 +129,17 @@ Extend interfaces without breaking existing consumers:
 ```typescript
 // Good: Add optional fields
 interface CreateTaskInput {
-  title: string;
-  description?: string;
-  priority?: 'low' | 'medium' | 'high';  // Added later, optional
-  labels?: string[];                       // Added later, optional
+ title: string;
+ description?: string;
+ priority?: 'low' | 'medium' | 'high'; // Added later, optional
+ labels?: string[]; // Added later, optional
 }
 
 // Bad: Change existing field types or remove fields
 interface CreateTaskInput {
-  title: string;
-  // description: string;  // Removed — breaks existing consumers
-  priority: number;         // Changed from string — breaks existing consumers
+ title: string;
+ // description: string; // Removed — breaks existing consumers
+ priority: number; // Changed from string — breaks existing consumers
 }
 ```
 
@@ -160,12 +160,12 @@ Accepting an `Idempotency-Key` is the contract. Honouring it is the implementati
 **Derive the key from the intent, not the attempt.** The key must be stable across retries of one intent and different across distinct intents:
 
 ```typescript
-crypto.randomUUID()                    // ✗ new key per attempt — every retry is a new charge
-`${userId}:${amount}`                  // ✗ two legitimate $50 charges collapse into one
-`${orderId}:${Date.now()}`             // ✗ a timestamp is randomUUID() wearing a hat
+crypto.randomUUID() // ✗ new key per attempt — every retry is a new charge
+`${userId}:${amount}` // ✗ two legitimate $50 charges collapse into one
+`${orderId}:${Date.now()}` // ✗ a timestamp is randomUUID() wearing a hat
 
-req.headers['idempotency-key']         // ✓ client generates once, reuses on retry
-`charge:v1:${orderId}`                 // ✓ derived from an immutable identifier
+req.headers['idempotency-key'] // ✓ client generates once, reuses on retry
+`charge:v1:${orderId}` // ✓ derived from an immutable identifier
 ```
 
 The key comes from the client or the initiating event — never from the layer doing the retrying.
@@ -175,16 +175,16 @@ The key comes from the client or the initiating event — never from the layer d
 ```typescript
 // ✗ TOCTOU: two concurrent retries both read "not seen", both charge
 if (!(await db.exists(key))) {
-  await chargeCard(amount);
-  await db.insert(key);
+ await chargeCard(amount);
+ await db.insert(key);
 }
 
 // ✓ let the unique constraint pick the winner
 try {
-  await db.insert({ key, state: 'in_progress', requestHash });
+ await db.insert({ key, state: 'in_progress', requestHash });
 } catch (e) {
-  if (isUniqueViolation(e)) return replayOrReject(key);
-  throw;
+ if (isUniqueViolation(e)) return replayOrReject(key);
+ throw;
 }
 const result = await chargeCard(amount);
 await db.update({ key, state: 'succeeded', response: result });
@@ -196,7 +196,7 @@ The unique constraint *is* the mechanism. A store that cannot enforce uniqueness
 
 ```typescript
 if (existing.requestHash !== hash(req.body)) {
-  return res.status(422).json({ error: 'idempotency key reused with a different payload' });
+ return res.status(422).json({ error: 'idempotency key reused with a different payload' });
 }
 ```
 
@@ -219,14 +219,14 @@ Never let the second caller through because the first "seems stuck". A stalled a
 ### Resource Design
 
 ```
-GET    /api/tasks              → List tasks (with query params for filtering)
-POST   /api/tasks              → Create a task
-GET    /api/tasks/:id          → Get a single task
-PATCH  /api/tasks/:id          → Update a task (partial)
-DELETE /api/tasks/:id          → Delete a task
+GET /api/tasks → List tasks (with query params for filtering)
+POST /api/tasks → Create a task
+GET /api/tasks/:id → Get a single task
+PATCH /api/tasks/:id → Update a task (partial)
+DELETE /api/tasks/:id → Delete a task
 
-GET    /api/tasks/:id/comments → List comments for a task (sub-resource)
-POST   /api/tasks/:id/comments → Add a comment to a task
+GET /api/tasks/:id/comments → List comments for a task (sub-resource)
+POST /api/tasks/:id/comments → Add a comment to a task
 ```
 
 ### Pagination
@@ -239,13 +239,13 @@ GET /api/tasks?page=1&pageSize=20&sortBy=createdAt&sortOrder=desc
 
 // Response
 {
-  "data": [...],
-  "pagination": {
-    "page": 1,
-    "pageSize": 20,
-    "totalItems": 142,
-    "totalPages": 8
-  }
+ "data": [...],
+ "pagination": {
+ "page": 1,
+ "pageSize": 20,
+ "totalItems": 142,
+ "totalPages": 8
+ }
 }
 ```
 
@@ -274,19 +274,19 @@ PATCH /api/tasks/123
 ```typescript
 // Good: Each variant is explicit
 type TaskStatus =
-  | { type: 'pending' }
-  | { type: 'in_progress'; assignee: string; startedAt: Date }
-  | { type: 'completed'; completedAt: Date; completedBy: string }
-  | { type: 'cancelled'; reason: string; cancelledAt: Date };
+ | { type: 'pending' }
+ | { type: 'in_progress'; assignee: string; startedAt: Date }
+ | { type: 'completed'; completedAt: Date; completedBy: string }
+ | { type: 'cancelled'; reason: string; cancelledAt: Date };
 
 // Consumer gets type narrowing
 function getStatusLabel(status: TaskStatus): string {
-  switch (status.type) {
-    case 'pending': return 'Pending';
-    case 'in_progress': return `In progress (${status.assignee})`;
-    case 'completed': return `Done on ${status.completedAt}`;
-    case 'cancelled': return `Cancelled: ${status.reason}`;
-  }
+ switch (status.type) {
+ case 'pending': return 'Pending';
+ case 'in_progress': return `In progress (${status.assignee})`;
+ case 'completed': return `Done on ${status.completedAt}`;
+ case 'cancelled': return `Cancelled: ${status.reason}`;
+ }
 }
 ```
 
@@ -295,18 +295,18 @@ function getStatusLabel(status: TaskStatus): string {
 ```typescript
 // Input: what the caller provides
 interface CreateTaskInput {
-  title: string;
-  description?: string;
+ title: string;
+ description?: string;
 }
 
 // Output: what the system returns (includes server-generated fields)
 interface Task {
-  id: string;
-  title: string;
-  description: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  createdBy: string;
+ id: string;
+ title: string;
+ description: string | null;
+ createdAt: Date;
+ updatedAt: Date;
+ createdBy: string;
 }
 ```
 

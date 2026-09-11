@@ -45,11 +45,11 @@ Prefer **gsap.quickTo()** for properties that are updated often (e.g. mouse-foll
 
 ```javascript
 let xTo = gsap.quickTo("#id", "x", { duration: 0.4, ease: "power3" }),
-    yTo = gsap.quickTo("#id", "y", { duration: 0.4, ease: "power3" });
+ yTo = gsap.quickTo("#id", "y", { duration: 0.4, ease: "power3" });
 
 document.querySelector("#container").addEventListener("mousemove", (e) => {
-  xTo(e.pageX);
-  yTo(e.pageY);
+ xTo(e.pageX);
+ yTo(e.pageY);
 });
 ```
 

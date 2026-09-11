@@ -137,24 +137,24 @@ Most list endpoints support:
 ```bash
 # GET
 curl -s -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO
 
 # POST with JSON body
 curl -s -X POST \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO/issues \
-  -d '{"title": "...", "body": "..."}'
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO/issues \
+ -d '{"title": "...", "body": "..."}'
 
 # PATCH (update)
 curl -s -X PATCH \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO/issues/42 \
-  -d '{"state": "closed"}'
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO/issues/42 \
+ -d '{"state": "closed"}'
 
 # DELETE
 curl -s -X DELETE \
-  -H "Authorization: token $GITHUB_TOKEN" \
-  https://api.github.com/repos/$GH_OWNER/$GH_REPO/issues/42/labels/bug
+ -H "Authorization: token $GITHUB_TOKEN" \
+ https://api.github.com/repos/$GH_OWNER/$GH_REPO/issues/42/labels/bug
 
 # Parse JSON response with python3
 curl -s ... | python3 -c "import sys,json; data=json.load(sys.stdin); print(data['field'])"

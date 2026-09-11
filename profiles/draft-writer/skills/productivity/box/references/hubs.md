@@ -24,8 +24,8 @@ Use one Hub item and `single_item_qa`. Request citations so Hermes can report th
 
 ```bash
 box request /ai/ask -X POST \
-  --body '{"mode":"single_item_qa","items":[{"id":"<HUB_ID>","type":"hubs"}],"prompt":"Summarize the approved renewal terms and cite each source.","include_citations":true}' \
-  --json
+ --body '{"mode":"single_item_qa","items":[{"id":"<HUB_ID>","type":"hubs"}],"prompt":"Summarize the approved renewal terms and cite each source.","include_citations":true}' \
+ --json
 ```
 
 State the Hub ID and navigation link with the answer. List cited file IDs, names, and file links when Box returns citations. Treat an answer as bounded by indexed, accessible Hub content; do not claim it searched files that have not indexed or that the actor cannot access.
@@ -45,9 +45,9 @@ Adding an item curates a reference; it does not move the underlying file or fold
 
 ```bash
 box hubs:items:manage <HUB_ID> \
-  --add id=<FILE_ID>,type=file --json
+ --add id=<FILE_ID>,type=file --json
 box hubs:items:manage <HUB_ID> \
-  --add id=<FOLDER_ID>,type=folder --json
+ --add id=<FOLDER_ID>,type=folder --json
 box hubs:items <HUB_ID> --max-items 100 --json
 ```
 

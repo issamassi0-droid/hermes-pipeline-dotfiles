@@ -58,10 +58,10 @@ mitre_attack:
 2. Query CloudTrail for S3 Data Events using AWS CLI or boto3.
 3. Build access baselines: hourly request volume, per-user object counts, source IP history.
 4. Detect anomalies:
-   - After-hours access (outside 8am-6pm local time)
-   - Bulk downloads: >100 GetObject calls from single principal in 1 hour
-   - New source IPs not seen in the prior 30 days
-   - ListBucket enumeration spikes (reconnaissance indicator)
+ - After-hours access (outside 8am-6pm local time)
+ - Bulk downloads: >100 GetObject calls from single principal in 1 hour
+ - New source IPs not seen in the prior 30 days
+ - ListBucket enumeration spikes (reconnaissance indicator)
 5. Generate prioritized findings report.
 
 ```bash

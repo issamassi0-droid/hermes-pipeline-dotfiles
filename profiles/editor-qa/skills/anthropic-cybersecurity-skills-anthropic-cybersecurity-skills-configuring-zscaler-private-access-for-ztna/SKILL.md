@@ -1,12 +1,12 @@
 ---
 name: configuring-zscaler-private-access-for-ztna
 description: 'Configures Zscaler Private Access (ZPA) to replace traditional VPN
-  with zero trust network access by deploying App Connectors, defining application
-  segments, configuring identity- and device-posture-based access policies, and
-  integrating with IdPs. Use when replacing VPN concentrators with ZTNA or providing
-  remote users secure access to internal applications without network-level connectivity.
+ with zero trust network access by deploying App Connectors, defining application
+ segments, configuring identity- and device-posture-based access policies, and
+ integrating with IdPs. Use when replacing VPN concentrators with ZTNA or providing
+ remote users secure access to internal applications without network-level connectivity.
 
-  '
+ '
 domain: cybersecurity
 subdomain: zero-trust-architecture
 tags:
@@ -74,7 +74,7 @@ sudo apt update && sudo apt install -y zpa-connector
 
 # Configure the connector with provisioning key
 sudo /opt/zscaler/bin/zpa-connector configure \
-  --provision-key "PROVISIONING_KEY_FROM_PORTAL"
+ --provision-key "PROVISIONING_KEY_FROM_PORTAL"
 
 # Start the connector service
 sudo systemctl enable zpa-connector
@@ -96,28 +96,28 @@ Map internal applications to server groups and create application segments.
 ZPA Admin Portal Configuration:
 
 1. Server Groups:
-   Navigate to: Administration > App Connectors > Server Groups
-   - Name: "DC-East-Servers"
-   - App Connector Group: "DC-East-Connectors"
-   - Servers:
-     - hr-portal.internal.corp (10.1.1.50, TCP 443)
-     - finance-app.internal.corp (10.1.1.51, TCP 443)
-     - git.internal.corp (10.1.2.10, TCP 22, 443)
+ Navigate to: Administration > App Connectors > Server Groups
+ - Name: "DC-East-Servers"
+ - App Connector Group: "DC-East-Connectors"
+ - Servers:
+ - hr-portal.internal.corp (10.1.1.50, TCP 443)
+ - finance-app.internal.corp (10.1.1.51, TCP 443)
+ - git.internal.corp (10.1.2.10, TCP 22, 443)
 
 2. Application Segments:
-   Navigate to: Resources > Application Segments > Add Application Segment
-   - Name: "HR Applications"
-   - Domain/URL: hr-portal.internal.corp
-   - TCP Ports: 443
-   - Server Group: DC-East-Servers
-   - Health Reporting: Continuous
-   - Bypass Type: Never (force all traffic through ZPA)
+ Navigate to: Resources > Application Segments > Add Application Segment
+ - Name: "HR Applications"
+ - Domain/URL: hr-portal.internal.corp
+ - TCP Ports: 443
+ - Server Group: DC-East-Servers
+ - Health Reporting: Continuous
+ - Bypass Type: Never (force all traffic through ZPA)
 
-   - Name: "Engineering Tools"
-   - Domain/URL: git.internal.corp, ci.internal.corp, wiki.internal.corp
-   - TCP Ports: 22, 80, 443
-   - Server Group: DC-East-Servers
-   - Segment Group: "Engineering Segment Group"
+ - Name: "Engineering Tools"
+ - Domain/URL: git.internal.corp, ci.internal.corp, wiki.internal.corp
+ - TCP Ports: 22, 80, 443
+ - Server Group: DC-East-Servers
+ - Segment Group: "Engineering Segment Group"
 ```
 
 ### Step 3: Configure Access Policies
@@ -128,42 +128,42 @@ Define who can access which application segments based on identity and device po
 ZPA Admin Portal > Policies > Access Policy:
 
 Rule 1: HR Team Access
-  - Name: "HR Portal Access"
-  - Action: ALLOW
-  - Criteria:
-    - User Groups: "HR-Department" (from IdP)
-    - Application Segment: "HR Applications"
-    - Device Posture Profile: "Corporate Managed Device"
-    - Client Type: Zscaler Client Connector
-  - Conditions:
-    - SAML Attribute: department = "Human Resources"
-    - Device Trust Level: "HIGH" (CrowdStrike ZTA score > 70)
+ - Name: "HR Portal Access"
+ - Action: ALLOW
+ - Criteria:
+ - User Groups: "HR-Department" (from IdP)
+ - Application Segment: "HR Applications"
+ - Device Posture Profile: "Corporate Managed Device"
+ - Client Type: Zscaler Client Connector
+ - Conditions:
+ - SAML Attribute: department = "Human Resources"
+ - Device Trust Level: "HIGH" (CrowdStrike ZTA score > 70)
 
 Rule 2: Engineering Access
-  - Name: "Engineering Tools Access"
-  - Action: ALLOW
-  - Criteria:
-    - User Groups: "Engineering-Team", "DevOps-Team"
-    - Application Segment: "Engineering Tools"
-    - Device Posture Profile: "Developer Workstation"
-  - Conditions:
-    - Machine Group: "Engineering Laptops"
+ - Name: "Engineering Tools Access"
+ - Action: ALLOW
+ - Criteria:
+ - User Groups: "Engineering-Team", "DevOps-Team"
+ - Application Segment: "Engineering Tools"
+ - Device Posture Profile: "Developer Workstation"
+ - Conditions:
+ - Machine Group: "Engineering Laptops"
 
 Rule 3: Contractor Limited Access
-  - Name: "Contractor Wiki Access"
-  - Action: ALLOW
-  - Criteria:
-    - User Groups: "External-Contractors"
-    - Application Segment: "Wiki Only"
-    - Client Type: Zscaler Client Connector OR Browser Access
-  - Conditions:
-    - Time Window: Mon-Fri 08:00-18:00 EST
+ - Name: "Contractor Wiki Access"
+ - Action: ALLOW
+ - Criteria:
+ - User Groups: "External-Contractors"
+ - Application Segment: "Wiki Only"
+ - Client Type: Zscaler Client Connector OR Browser Access
+ - Conditions:
+ - Time Window: Mon-Fri 08:00-18:00 EST
 
 Rule 4: Default Deny
-  - Name: "Block All Other Access"
-  - Action: DENY
-  - Criteria: All Users, All Applications
-  - Log: Enabled
+ - Name: "Block All Other Access"
+ - Action: DENY
+ - Criteria: All Users, All Applications
+ - Log: Enabled
 ```
 
 ### Step 4: Configure Device Posture Profiles
@@ -174,22 +174,22 @@ Integrate device posture signals from endpoint security tools.
 ZPA Admin Portal > Administration > Device Posture:
 
 Profile 1: Corporate Managed Device
-  - CrowdStrike Falcon: Running, ZTA Score >= 60
-  - OS: Windows 10 21H2+, macOS 13+, Ubuntu 22.04+
-  - Disk Encryption: Enabled (BitLocker/FileVault)
-  - Firewall: Enabled
-  - Screen Lock: Enabled
+ - CrowdStrike Falcon: Running, ZTA Score >= 60
+ - OS: Windows 10 21H2+, macOS 13+, Ubuntu 22.04+
+ - Disk Encryption: Enabled (BitLocker/FileVault)
+ - Firewall: Enabled
+ - Screen Lock: Enabled
 
 Profile 2: Developer Workstation
-  - Inherits: Corporate Managed Device
-  - CrowdStrike Falcon: ZTA Score >= 70
-  - Patch Level: Within 30 days of latest
-  - Certificate: Valid corporate certificate present
+ - Inherits: Corporate Managed Device
+ - CrowdStrike Falcon: ZTA Score >= 70
+ - Patch Level: Within 30 days of latest
+ - Certificate: Valid corporate certificate present
 
 Profile 3: BYOD Device
-  - OS: Latest minus 1 version
-  - Browser: Chrome 120+ or Edge 120+
-  - Antivirus: Any recognized AV running
+ - OS: Latest minus 1 version
+ - Browser: Chrome 120+ or Edge 120+
+ - Antivirus: Any recognized AV running
 ```
 
 ### Step 5: Enable Browser Access for Clientless ZTNA
@@ -200,20 +200,20 @@ Configure Browser Access for users without Zscaler Client Connector installed.
 ZPA Admin Portal > Resources > Application Segments:
 
 For "HR Applications" segment:
-  - Enable Browser Access: Yes
-  - Browser Access Type: HTTPS
-  - Custom Domain: hr.access.company.com
-  - Certificate: Upload TLS certificate for custom domain
-  - Authentication: SAML via corporate IdP
-  - Session Timeout: 4 hours
-  - Clipboard Control: Disabled for sensitive apps
-  - File Upload/Download: Restricted
+ - Enable Browser Access: Yes
+ - Browser Access Type: HTTPS
+ - Custom Domain: hr.access.company.com
+ - Certificate: Upload TLS certificate for custom domain
+ - Authentication: SAML via corporate IdP
+ - Session Timeout: 4 hours
+ - Clipboard Control: Disabled for sensitive apps
+ - File Upload/Download: Restricted
 
 For Browser Access Portal:
-  - Portal URL: access.company.com
-  - IdP: Microsoft Entra ID (SAML 2.0)
-  - MFA: Required
-  - Applications shown: Only authorized per user group
+ - Portal URL: access.company.com
+ - IdP: Microsoft Entra ID (SAML 2.0)
+ - MFA: Required
+ - Applications shown: Only authorized per user group
 ```
 
 ### Step 6: Configure Logging and Monitoring
@@ -224,15 +224,15 @@ Set up log streaming for SIEM integration and continuous monitoring.
 ZPA Admin Portal > Administration > Log Streaming Service:
 
 Log Receiver Configuration:
-  - Name: "Splunk-SIEM"
-  - Type: Splunk (HEC)
-  - Destination: https://splunk-hec.company.com:8088
-  - HEC Token: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-  - Log Types:
-    - User Activity: Enabled
-    - App Connector Status: Enabled
-    - Audit Logs: Enabled
-    - Browser Access: Enabled
+ - Name: "Splunk-SIEM"
+ - Type: Splunk (HEC)
+ - Destination: https://splunk-hec.company.com:8088
+ - HEC Token: "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+ - Log Types:
+ - User Activity: Enabled
+ - App Connector Status: Enabled
+ - Audit Logs: Enabled
+ - Browser Access: Enabled
 
 # Splunk search for ZPA access anomalies
 index=zscaler_zpa sourcetype=zpa:useractivity
@@ -289,30 +289,30 @@ Organization: FinanceCorp
 Deployment Date: 2026-02-23
 
 INFRASTRUCTURE:
-  App Connectors: 4 (2x DC-East, 2x DC-West)
-  Connector Status: All healthy
-  Connector Version: 24.1.2
+ App Connectors: 4 (2x DC-East, 2x DC-West)
+ Connector Status: All healthy
+ Connector Version: 24.1.2
 
 APPLICATION COVERAGE:
-  Application Segments: 20
-  Total Applications: 45
-  Server Groups: 4
-  Segment Groups: 6
+ Application Segments: 20
+ Total Applications: 45
+ Server Groups: 4
+ Segment Groups: 6
 
 ACCESS POLICIES:
-  Total Rules: 12
-  Allow Rules: 11
-  Deny Rules: 1 (default deny)
-  Device Posture Profiles: 3
+ Total Rules: 12
+ Allow Rules: 11
+ Deny Rules: 1 (default deny)
+ Device Posture Profiles: 3
 
 USER ACCESS (last 30 days):
-  Active Users: 487 / 500
-  Total Sessions: 124,567
-  Allowed Sessions: 123,890 (99.5%)
-  Denied Sessions: 677 (0.5%)
-  Browser Access Sessions: 2,341
+ Active Users: 487 / 500
+ Total Sessions: 124,567
+ Allowed Sessions: 123,890 (99.5%)
+ Denied Sessions: 677 (0.5%)
+ Browser Access Sessions: 2,341
 
 VPN MIGRATION:
-  Users migrated to ZPA: 487 / 500
-  VPN decommission date: 2026-03-15
+ Users migrated to ZPA: 487 / 500
+ VPN decommission date: 2026-03-15
 ```

@@ -6,10 +6,10 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [wiki, knowledge-base, research, notes, markdown, rag-alternative]
-    category: research
-    related_skills: [obsidian, arxiv]
+ hermes:
+ tags: [wiki, knowledge-base, research, notes, markdown, rag-alternative]
+ category: research
+ related_skills: [obsidian, arxiv]
 ---
 
 # Karpathy's LLM Wiki
@@ -50,18 +50,18 @@ any editor. No database, no special tooling required.
 
 ```
 wiki/
-├── SCHEMA.md           # Conventions, structure rules, domain config
-├── index.md            # Sectioned content catalog with one-line summaries
-├── log.md              # Chronological action log (append-only, rotated yearly)
-├── raw/                # Layer 1: Immutable source material
-│   ├── articles/       # Web articles, clippings
-│   ├── papers/         # PDFs, arxiv papers
-│   ├── transcripts/    # Meeting notes, interviews
-│   └── assets/         # Images, diagrams referenced by sources
-├── entities/           # Layer 2: Entity pages (people, orgs, products, models)
-├── concepts/           # Layer 2: Concept/topic pages
-├── comparisons/        # Layer 2: Side-by-side analyses
-└── queries/            # Layer 2: Filed query results worth keeping
+├── SCHEMA.md # Conventions, structure rules, domain config
+├── index.md # Sectioned content catalog with one-line summaries
+├── log.md # Chronological action log (append-only, rotated yearly)
+├── raw/ # Layer 1: Immutable source material
+│ ├── articles/ # Web articles, clippings
+│ ├── papers/ # PDFs, arxiv papers
+│ ├── transcripts/ # Meeting notes, interviews
+│ └── assets/ # Images, diagrams referenced by sources
+├── entities/ # Layer 2: Entity pages (people, orgs, products, models)
+├── concepts/ # Layer 2: Concept/topic pages
+├── comparisons/ # Layer 2: Side-by-side analyses
+└── queries/ # Layer 2: Filed query results worth keeping
 ```
 
 **Layer 1 — Raw Sources:** Immutable. The agent reads but never modifies these.
@@ -124,25 +124,25 @@ Adapt to the user's domain. The schema constrains agent behavior and ensures con
 - Every new page must be added to `index.md` under the correct section
 - Every action must be appended to `log.md`
 - **Provenance markers:** On pages that synthesize 3+ sources, append `^[raw/articles/source-file.md]`
-  at the end of paragraphs whose claims come from a specific source. This lets a reader trace each
-  claim back without re-reading the whole raw file. Optional on single-source pages where the
-  `sources:` frontmatter is enough.
+ at the end of paragraphs whose claims come from a specific source. This lets a reader trace each
+ claim back without re-reading the whole raw file. Optional on single-source pages where the
+ `sources:` frontmatter is enough.
 
 ## Frontmatter
-  ```yaml
-  ---
-  title: Page Title
-  created: YYYY-MM-DD
-  updated: YYYY-MM-DD
-  type: entity | concept | comparison | query | summary
-  tags: [from taxonomy below]
-  sources: [raw/articles/source-name.md]
-  # Optional quality signals:
-  confidence: high | medium | low        # how well-supported the claims are
-  contested: true                        # set when the page has unresolved contradictions
-  contradictions: [other-page-slug]      # pages this one conflicts with
-  ---
-  ```
+ ```yaml
+ ---
+ title: Page Title
+ created: YYYY-MM-DD
+ updated: YYYY-MM-DD
+ type: entity | concept | comparison | query | summary
+ tags: [from taxonomy below]
+ sources: [raw/articles/source-name.md]
+ # Optional quality signals:
+ confidence: high | medium | low # how well-supported the claims are
+ contested: true # set when the page has unresolved contradictions
+ contradictions: [other-page-slug] # pages this one conflicts with
+ ---
+ ```
 
 `confidence` and `contested` are optional but recommended for opinion-heavy or fast-moving
 topics. Lint surfaces `contested: true` and `confidence: low` pages for review so weak claims
@@ -154,7 +154,7 @@ Raw sources ALSO get a small frontmatter block so re-ingests can detect drift:
 
 ```yaml
 ---
-source_url: https://example.com/article   # original URL, if applicable
+source_url: https://example.com/article # original URL, if applicable
 ingested: YYYY-MM-DD
 sha256: <hex digest of the raw content below the frontmatter>
 ---
@@ -259,41 +259,41 @@ a `_meta/topic-map.md` that groups pages by theme for faster navigation.
 When the user provides a source (URL, file, paste), integrate it into the wiki:
 
 ① **Capture the raw source:**
-   - URL → use `web_extract` to get markdown, save to `raw/articles/`
-   - PDF → use `web_extract` (handles PDFs), save to `raw/papers/`
-   - Pasted text → save to appropriate `raw/` subdirectory
-   - Name the file descriptively: `raw/articles/karpathy-llm-wiki-2026.md`
-   - **Add raw frontmatter** (`source_url`, `ingested`, `sha256` of the body).
-     On re-ingest of the same URL: recompute the sha256, compare to the stored value —
-     skip if identical, flag drift and update if different. This is cheap enough to
-     do on every re-ingest and catches silent source changes.
+ - URL → use `web_extract` to get markdown, save to `raw/articles/`
+ - PDF → use `web_extract` (handles PDFs), save to `raw/papers/`
+ - Pasted text → save to appropriate `raw/` subdirectory
+ - Name the file descriptively: `raw/articles/karpathy-llm-wiki-2026.md`
+ - **Add raw frontmatter** (`source_url`, `ingested`, `sha256` of the body).
+ On re-ingest of the same URL: recompute the sha256, compare to the stored value —
+ skip if identical, flag drift and update if different. This is cheap enough to
+ do on every re-ingest and catches silent source changes.
 
 ② **Discuss takeaways** with the user — what's interesting, what matters for
-   the domain. (Skip this in automated/cron contexts — proceed directly.)
+ the domain. (Skip this in automated/cron contexts — proceed directly.)
 
 ③ **Check what already exists** — search index.md and use `search_files` to find
-   existing pages for mentioned entities/concepts. This is the difference between
-   a growing wiki and a pile of duplicates.
+ existing pages for mentioned entities/concepts. This is the difference between
+ a growing wiki and a pile of duplicates.
 
 ④ **Write or update wiki pages:**
-   - **New entities/concepts:** Create pages only if they meet the Page Thresholds
-     in SCHEMA.md (2+ source mentions, or central to one source)
-   - **Existing pages:** Add new information, update facts, bump `updated` date.
-     When new info contradicts existing content, follow the Update Policy.
-   - **Cross-reference:** Every new or updated page must link to at least 2 other
-     pages via `[[wikilinks]]`. Check that existing pages link back.
-   - **Tags:** Only use tags from the taxonomy in SCHEMA.md
-   - **Provenance:** On pages synthesizing 3+ sources, append `^[raw/articles/source.md]`
-     markers to paragraphs whose claims trace to a specific source.
-   - **Confidence:** For opinion-heavy, fast-moving, or single-source claims, set
-     `confidence: medium` or `low` in frontmatter. Don't mark `high` unless the
-     claim is well-supported across multiple sources.
+ - **New entities/concepts:** Create pages only if they meet the Page Thresholds
+ in SCHEMA.md (2+ source mentions, or central to one source)
+ - **Existing pages:** Add new information, update facts, bump `updated` date.
+ When new info contradicts existing content, follow the Update Policy.
+ - **Cross-reference:** Every new or updated page must link to at least 2 other
+ pages via `[[wikilinks]]`. Check that existing pages link back.
+ - **Tags:** Only use tags from the taxonomy in SCHEMA.md
+ - **Provenance:** On pages synthesizing 3+ sources, append `^[raw/articles/source.md]`
+ markers to paragraphs whose claims trace to a specific source.
+ - **Confidence:** For opinion-heavy, fast-moving, or single-source claims, set
+ `confidence: medium` or `low` in frontmatter. Don't mark `high` unless the
+ claim is well-supported across multiple sources.
 
 ⑤ **Update navigation:**
-   - Add new pages to `index.md` under the correct section, alphabetically
-   - Update the "Total pages" count and "Last updated" date in index header
-   - Append to `log.md`: `## [YYYY-MM-DD] ingest | Source Title`
-   - List every file created or updated in the log entry
+ - Add new pages to `index.md` under the correct section, alphabetically
+ - Update the "Total pages" count and "Last updated" date in index header
+ - Append to `log.md`: `## [YYYY-MM-DD] ingest | Source Title`
+ - List every file created or updated in the log entry
 
 ⑥ **Report what changed** — list every file created or updated to the user.
 
@@ -306,13 +306,13 @@ When the user asks a question about the wiki's domain:
 
 ① **Read `index.md`** to identify relevant pages.
 ② **For wikis with 100+ pages**, also `search_files` across all `.md` files
-   for key terms — the index alone may miss relevant content.
+ for key terms — the index alone may miss relevant content.
 ③ **Read the relevant pages** using `read_file`.
 ④ **Synthesize an answer** from the compiled knowledge. Cite the wiki pages
-   you drew from: "Based on [[page-a]] and [[page-b]]..."
+ you drew from: "Based on [[page-a]] and [[page-b]]..."
 ⑤ **File valuable answers back** — if the answer is a substantial comparison,
-   deep dive, or novel synthesis, create a page in `queries/` or `comparisons/`.
-   Don't file trivial lookups — only answers that would be painful to re-derive.
+ deep dive, or novel synthesis, create a page in `queries/` or `comparisons/`.
+ Don't file trivial lookups — only answers that would be painful to re-derive.
 ⑥ **Update log.md** with the query and whether it was filed.
 
 ### 3. Lint
@@ -333,26 +333,26 @@ wiki = "<WIKI_PATH>"
 ② **Broken wikilinks:** Find `[[links]]` that point to pages that don't exist.
 
 ③ **Index completeness:** Every wiki page should appear in `index.md`. Compare
-   the filesystem against index entries.
+ the filesystem against index entries.
 
 ④ **Frontmatter validation:** Every wiki page must have all required fields
-   (title, created, updated, type, tags, sources). Tags must be in the taxonomy.
+ (title, created, updated, type, tags, sources). Tags must be in the taxonomy.
 
 ⑤ **Stale content:** Pages whose `updated` date is >90 days older than the most
-   recent source that mentions the same entities.
+ recent source that mentions the same entities.
 
 ⑥ **Contradictions:** Pages on the same topic with conflicting claims. Look for
-   pages that share tags/entities but state different facts. Surface all pages
-   with `contested: true` or `contradictions:` frontmatter for user review.
+ pages that share tags/entities but state different facts. Surface all pages
+ with `contested: true` or `contradictions:` frontmatter for user review.
 
 ⑦ **Quality signals:** List pages with `confidence: low` and any page that cites
-   only a single source but has no confidence field set — these are candidates
-   for either finding corroboration or demoting to `confidence: medium`.
+ only a single source but has no confidence field set — these are candidates
+ for either finding corroboration or demoting to `confidence: medium`.
 
 ⑧ **Source drift:** For each file in `raw/` with a `sha256:` frontmatter, recompute
-   the hash and flag mismatches. Mismatches indicate the raw file was edited
-   (shouldn't happen — raw/ is immutable) or ingested from a URL that has since
-   changed. Not a hard error, but worth reporting.
+ the hash and flag mismatches. Mismatches indicate the raw file was edited
+ (shouldn't happen — raw/ is immutable) or ingested from a URL that has since
+ changed. Not a hard error, but worth reporting.
 
 ⑨ **Page size:** Flag pages over 200 lines — candidates for splitting.
 
@@ -361,7 +361,7 @@ wiki = "<WIKI_PATH>"
 ⑪ **Log rotation:** If log.md exceeds 500 entries, rotate it.
 
 ⑫ **Report findings** with specific file paths and suggested actions, grouped by
-   severity (broken links > orphans > source drift > contested pages > stale content > style issues).
+ severity (broken links > orphans > source drift > contested pages > stale content > style issues).
 
 ⑬ **Append to log.md:** `## [YYYY-MM-DD] lint | N issues found`
 
@@ -478,24 +478,24 @@ vault in Obsidian on your laptop/phone — changes appear within seconds.
 
 - **Never modify files in `raw/`** — sources are immutable. Corrections go in wiki pages.
 - **Always orient first** — read SCHEMA + index + recent log before any operation in a new session.
-  Skipping this causes duplicates and missed cross-references.
+ Skipping this causes duplicates and missed cross-references.
 - **Always update index.md and log.md** — skipping this makes the wiki degrade. These are the
-  navigational backbone.
+ navigational backbone.
 - **Don't create pages for passing mentions** — follow the Page Thresholds in SCHEMA.md. A name
-  appearing once in a footnote doesn't warrant an entity page.
+ appearing once in a footnote doesn't warrant an entity page.
 - **Don't create pages without cross-references** — isolated pages are invisible. Every page must
-  link to at least 2 other pages.
+ link to at least 2 other pages.
 - **Frontmatter is required** — it enables search, filtering, and staleness detection.
 - **Tags must come from the taxonomy** — freeform tags decay into noise. Add new tags to SCHEMA.md
-  first, then use them.
+ first, then use them.
 - **Keep pages scannable** — a wiki page should be readable in 30 seconds. Split pages over
-  200 lines. Move detailed analysis to dedicated deep-dive pages.
+ 200 lines. Move detailed analysis to dedicated deep-dive pages.
 - **Ask before mass-updating** — if an ingest would touch 10+ existing pages, confirm
-  the scope with the user first.
+ the scope with the user first.
 - **Rotate the log** — when log.md exceeds 500 entries, rename it `log-YYYY.md` and start fresh.
-  The agent should check log size during lint.
+ The agent should check log size during lint.
 - **Handle contradictions explicitly** — don't silently overwrite. Note both claims with dates,
-  mark in frontmatter, flag for user review.
+ mark in frontmatter, flag for user review.
 
 ## Related Tools
 

@@ -1,10 +1,10 @@
 ---
 name: building-ransomware-playbook-with-cisa-framework
 description: Builds a structured ransomware incident response playbook aligned with
-  the CISA StopRansomware Guide and NIST Cybersecurity Framework, covering preparation,
-  detection, containment, eradication, recovery, and post-incident phases with actionable
-  checklists. Use when creating or updating a ransomware playbook, running a CISA-aligned
-  readiness assessment, or validating response steps during a tabletop exercise.
+ the CISA StopRansomware Guide and NIST Cybersecurity Framework, covering preparation,
+ detection, containment, eradication, recovery, and post-incident phases with actionable
+ checklists. Use when creating or updating a ransomware playbook, running a CISA-aligned
+ readiness assessment, or validating response steps during a tabletop exercise.
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -29,27 +29,27 @@ mitre_attack:
 - T1078
 - T1021.002
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - monetization
-  techniques:
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1047
-    name: Transfer of funds
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - monetization
+ techniques:
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1047
+ name: Transfer of funds
+ tactic: monetization
+ source: f3
 ---
 
 # Building Ransomware Playbook with CISA Framework
@@ -113,11 +113,11 @@ Detection Indicators:
 - Sysmon Event ID 11 (file creation) spikes
 
 Initial Analysis Steps (CISA):
-  1. Take system images and memory captures of affected devices
-  2. Identify patient zero and initial access vector
-  3. Determine the ransomware family (ID Ransomware, ransom note analysis)
-  4. Assess encryption scope: which systems, shares, and data are affected
-  5. Check if data exfiltration occurred (double extortion indicator)
+ 1. Take system images and memory captures of affected devices
+ 2. Identify patient zero and initial access vector
+ 3. Determine the ransomware family (ID Ransomware, ransom note analysis)
+ 4. Assess encryption scope: which systems, shares, and data are affected
+ 5. Check if data exfiltration occurred (double extortion indicator)
 ```
 
 ### Step 3: Containment Phase
@@ -136,9 +136,9 @@ Immediate Containment (First 1-4 hours):
 7. Engage legal counsel and prepare breach notification if data exfiltrated
 
 Extended Containment:
-  - Identify and patch the initial access vector (phishing, RDP, VPN vuln)
-  - Audit all Active Directory accounts for persistence (scheduled tasks, services)
-  - Check for backdoors or additional malware beyond the ransomware payload
+ - Identify and patch the initial access vector (phishing, RDP, VPN vuln)
+ - Audit all Active Directory accounts for persistence (scheduled tasks, services)
+ - Check for backdoors or additional malware beyond the ransomware payload
 ```
 
 ### Step 4: Eradication and Recovery Phase
@@ -156,10 +156,10 @@ CISA Recovery Steps:
 6. Monitor restored systems intensively for 72 hours for reinfection
 
 Recovery Priority Matrix:
-  P1 (0-4h):  Domain controllers, DNS, authentication infrastructure
-  P2 (4-24h): Email, critical business applications, databases
-  P3 (1-3d):  File servers, departmental applications
-  P4 (3-7d):  Non-critical systems, development environments
+ P1 (0-4h): Domain controllers, DNS, authentication infrastructure
+ P2 (4-24h): Email, critical business applications, databases
+ P3 (1-3d): File servers, departmental applications
+ P4 (3-7d): Non-critical systems, development environments
 ```
 
 ### Step 5: Post-Incident Activity

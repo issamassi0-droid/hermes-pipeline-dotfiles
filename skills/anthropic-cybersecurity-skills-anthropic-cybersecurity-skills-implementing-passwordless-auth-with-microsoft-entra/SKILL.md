@@ -1,12 +1,12 @@
 ---
 name: implementing-passwordless-auth-with-microsoft-entra
 description: 'Implements passwordless authentication using Microsoft Entra ID with
-  FIDO2 security keys, Windows Hello for Business, Microsoft Authenticator passkeys,
-  and certificate-based authentication to eliminate password-based attacks. Use when
-  deploying passwordless sign-in, configuring FIDO2 passkeys, enforcing phishing-resistant
-  MFA, or setting Microsoft Entra authentication method policies.
+ FIDO2 security keys, Windows Hello for Business, Microsoft Authenticator passkeys,
+ and certificate-based authentication to eliminate password-based attacks. Use when
+ deploying passwordless sign-in, configuring FIDO2 passkeys, enforcing phishing-resistant
+ MFA, or setting Microsoft Entra authentication method policies.
 
-  '
+ '
 domain: cybersecurity
 subdomain: identity-access-management
 tags:
@@ -31,34 +31,34 @@ mitre_attack:
 - T1098
 - T1566
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  techniques:
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1557
-    name: Adversary-in-the-Middle
-    tactic: initial-access
-    source: attack
-  - id: T1110.004
-    name: 'Brute Force:  Credential Stuffing'
-    tactic: initial-access
-    source: attack
-  - id: T1111
-    name: Multi-Factor Authentication Interception
-    tactic: initial-access
-    source: attack
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
-  - id: F1004
-    name: Access with Stolen Session Cookie
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ techniques:
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1557
+ name: Adversary-in-the-Middle
+ tactic: initial-access
+ source: attack
+ - id: T1110.004
+ name: 'Brute Force: Credential Stuffing'
+ tactic: initial-access
+ source: attack
+ - id: T1111
+ name: Multi-Factor Authentication Interception
+ tactic: initial-access
+ source: attack
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
+ - id: F1004
+ name: Access with Stolen Session Cookie
+ tactic: initial-access
+ source: f3
 ---
 
 # Implementing Passwordless Auth with Microsoft Entra
@@ -95,87 +95,87 @@ Connect-MgGraph -Scopes "Policy.ReadWrite.AuthenticationMethod", "User.ReadWrite
 
 # Enable FIDO2 Security Key authentication method
 $fido2Policy = @{
-    "@odata.type" = "#microsoft.graph.fido2AuthenticationMethodConfiguration"
-    state = "enabled"
-    isAttestationEnforced = $true
-    isSelfServiceRegistrationAllowed = $true
-    keyRestrictions = @{
-        isEnforced = $true
-        enforcementType = "allow"
-        aaGuids = @(
-            "cb69481e-8ff7-4039-93ec-0a2729a154a8",  # YubiKey 5 Series
-            "ee882879-721c-4913-9775-3dfcce97072a",  # YubiKey 5 NFC
-            "fa2b99dc-9e39-4257-8f92-4a30d23c4118",  # YubiKey 5C NFC
-            "2fc0579f-8113-47ea-b116-bb5a8db9202a",  # YubiKey Bio
-            "73bb0cd4-e502-49b8-9c6f-b59445bf720b"   # Google Titan
-        )
-    }
-    includeTargets = @(
-        @{
-            targetType = "group"
-            id = "all_users"  # Or specific security group ID
-        }
-    )
+ "@odata.type" = "#microsoft.graph.fido2AuthenticationMethodConfiguration"
+ state = "enabled"
+ isAttestationEnforced = $true
+ isSelfServiceRegistrationAllowed = $true
+ keyRestrictions = @{
+ isEnforced = $true
+ enforcementType = "allow"
+ aaGuids = @(
+ "cb69481e-8ff7-4039-93ec-0a2729a154a8", # YubiKey 5 Series
+ "ee882879-721c-4913-9775-3dfcce97072a", # YubiKey 5 NFC
+ "fa2b99dc-9e39-4257-8f92-4a30d23c4118", # YubiKey 5C NFC
+ "2fc0579f-8113-47ea-b116-bb5a8db9202a", # YubiKey Bio
+ "73bb0cd4-e502-49b8-9c6f-b59445bf720b" # Google Titan
+ )
+ }
+ includeTargets = @(
+ @{
+ targetType = "group"
+ id = "all_users" # Or specific security group ID
+ }
+ )
 }
 Update-MgPolicyAuthenticationMethodPolicyAuthenticationMethodConfiguration `
-    -AuthenticationMethodConfigurationId "fido2" `
-    -BodyParameter $fido2Policy
+ -AuthenticationMethodConfigurationId "fido2" `
+ -BodyParameter $fido2Policy
 
 # Enable Microsoft Authenticator with passkey support
 $authenticatorPolicy = @{
-    "@odata.type" = "#microsoft.graph.microsoftAuthenticatorAuthenticationMethodConfiguration"
-    state = "enabled"
-    featureSettings = @{
-        displayAppInformationRequiredState = @{
-            state = "enabled"
-            includeTarget = @{
-                targetType = "group"
-                id = "all_users"
-            }
-        }
-        displayLocationInformationRequiredState = @{
-            state = "enabled"
-            includeTarget = @{
-                targetType = "group"
-                id = "all_users"
-            }
-        }
-        companionAppAllowedState = @{
-            state = "enabled"
-        }
-    }
-    includeTargets = @(
-        @{
-            targetType = "group"
-            id = "all_users"
-            authenticationMode = "any"
-        }
-    )
+ "@odata.type" = "#microsoft.graph.microsoftAuthenticatorAuthenticationMethodConfiguration"
+ state = "enabled"
+ featureSettings = @{
+ displayAppInformationRequiredState = @{
+ state = "enabled"
+ includeTarget = @{
+ targetType = "group"
+ id = "all_users"
+ }
+ }
+ displayLocationInformationRequiredState = @{
+ state = "enabled"
+ includeTarget = @{
+ targetType = "group"
+ id = "all_users"
+ }
+ }
+ companionAppAllowedState = @{
+ state = "enabled"
+ }
+ }
+ includeTargets = @(
+ @{
+ targetType = "group"
+ id = "all_users"
+ authenticationMode = "any"
+ }
+ )
 }
 Update-MgPolicyAuthenticationMethodPolicyAuthenticationMethodConfiguration `
-    -AuthenticationMethodConfigurationId "microsoftAuthenticator" `
-    -BodyParameter $authenticatorPolicy
+ -AuthenticationMethodConfigurationId "microsoftAuthenticator" `
+ -BodyParameter $authenticatorPolicy
 
 # Enable Windows Hello for Business
 $whfbPolicy = @{
-    "@odata.type" = "#microsoft.graph.windowsHelloForBusinessAuthenticationMethodConfiguration"
-    state = "enabled"
-    pinMinimumLength = 6
-    pinMaximumLength = 127
-    pinLowercaseCharactersUsage = "allowed"
-    pinUppercaseCharactersUsage = "allowed"
-    pinSpecialCharactersUsage = "allowed"
-    securityKeyForSignIn = "enabled"
-    includeTargets = @(
-        @{
-            targetType = "group"
-            id = "all_users"
-        }
-    )
+ "@odata.type" = "#microsoft.graph.windowsHelloForBusinessAuthenticationMethodConfiguration"
+ state = "enabled"
+ pinMinimumLength = 6
+ pinMaximumLength = 127
+ pinLowercaseCharactersUsage = "allowed"
+ pinUppercaseCharactersUsage = "allowed"
+ pinSpecialCharactersUsage = "allowed"
+ securityKeyForSignIn = "enabled"
+ includeTargets = @(
+ @{
+ targetType = "group"
+ id = "all_users"
+ }
+ )
 }
 Update-MgPolicyAuthenticationMethodPolicyAuthenticationMethodConfiguration `
-    -AuthenticationMethodConfigurationId "windowsHelloForBusiness" `
-    -BodyParameter $whfbPolicy
+ -AuthenticationMethodConfigurationId "windowsHelloForBusiness" `
+ -BodyParameter $whfbPolicy
 
 Write-Host "Passwordless authentication methods enabled successfully"
 ```
@@ -187,74 +187,74 @@ Create Conditional Access policies requiring phishing-resistant authentication:
 ```powershell
 # Create custom authentication strength for phishing-resistant MFA
 $authStrength = @{
-    displayName = "Phishing-Resistant Passwordless"
-    description = "Requires FIDO2, WHfB, or certificate-based authentication"
-    allowedCombinations = @(
-        "fido2",
-        "windowsHelloForBusiness",
-        "x509CertificateMultiFactor"
-    )
-    requirementsSatisfied = "mfa"
+ displayName = "Phishing-Resistant Passwordless"
+ description = "Requires FIDO2, WHfB, or certificate-based authentication"
+ allowedCombinations = @(
+ "fido2",
+ "windowsHelloForBusiness",
+ "x509CertificateMultiFactor"
+ )
+ requirementsSatisfied = "mfa"
 }
 $strengthPolicy = New-MgPolicyAuthenticationStrengthPolicy -BodyParameter $authStrength
 
 # Create Conditional Access policy requiring phishing-resistant auth
 $caPolicy = @{
-    displayName = "Require Phishing-Resistant Auth for All Apps"
-    state = "enabledForReportingButNotEnforced"  # Start in report-only
-    conditions = @{
-        users = @{
-            includeUsers = @("All")
-            excludeGroups = @("Passwordless-Exclusion-Group")
-        }
-        applications = @{
-            includeApplications = @("All")
-        }
-        clientAppTypes = @("browser", "mobileAppsAndDesktopClients")
-    }
-    grantControls = @{
-        operator = "OR"
-        authenticationStrength = @{
-            id = $strengthPolicy.Id
-        }
-    }
+ displayName = "Require Phishing-Resistant Auth for All Apps"
+ state = "enabledForReportingButNotEnforced" # Start in report-only
+ conditions = @{
+ users = @{
+ includeUsers = @("All")
+ excludeGroups = @("Passwordless-Exclusion-Group")
+ }
+ applications = @{
+ includeApplications = @("All")
+ }
+ clientAppTypes = @("browser", "mobileAppsAndDesktopClients")
+ }
+ grantControls = @{
+ operator = "OR"
+ authenticationStrength = @{
+ id = $strengthPolicy.Id
+ }
+ }
 }
 New-MgIdentityConditionalAccessPolicy -BodyParameter $caPolicy
 
 # Create stricter policy for admin portals
 $adminPolicy = @{
-    displayName = "Require Security Key for Admin Access"
-    state = "enabled"
-    conditions = @{
-        users = @{
-            includeRoles = @(
-                "62e90394-69f5-4237-9190-012177145e10",  # Global Admin
-                "194ae4cb-b126-40b2-bd5b-6091b380977d",  # Security Admin
-                "f28a1f50-f6e7-4571-818b-6a12f2af6b6c",  # SharePoint Admin
-                "29232cdf-9323-42fd-ade2-1d097af3e4de"   # Exchange Admin
-            )
-        }
-        applications = @{
-            includeApplications = @(
-                "797f4846-ba00-4fd7-ba43-dac1f8f63013",  # Azure Portal
-                "00000006-0000-0ff1-ce00-000000000000",  # Microsoft 365 Admin
-                "0000000a-0000-0000-c000-000000000000"   # Entra Admin Center
-            )
-        }
-    }
-    grantControls = @{
-        operator = "OR"
-        authenticationStrength = @{
-            id = $strengthPolicy.Id
-        }
-    }
-    sessionControls = @{
-        signInFrequency = @{
-            value = 4
-            type = "hours"
-            isEnabled = $true
-        }
-    }
+ displayName = "Require Security Key for Admin Access"
+ state = "enabled"
+ conditions = @{
+ users = @{
+ includeRoles = @(
+ "62e90394-69f5-4237-9190-012177145e10", # Global Admin
+ "194ae4cb-b126-40b2-bd5b-6091b380977d", # Security Admin
+ "f28a1f50-f6e7-4571-818b-6a12f2af6b6c", # SharePoint Admin
+ "29232cdf-9323-42fd-ade2-1d097af3e4de" # Exchange Admin
+ )
+ }
+ applications = @{
+ includeApplications = @(
+ "797f4846-ba00-4fd7-ba43-dac1f8f63013", # Azure Portal
+ "00000006-0000-0ff1-ce00-000000000000", # Microsoft 365 Admin
+ "0000000a-0000-0000-c000-000000000000" # Entra Admin Center
+ )
+ }
+ }
+ grantControls = @{
+ operator = "OR"
+ authenticationStrength = @{
+ id = $strengthPolicy.Id
+ }
+ }
+ sessionControls = @{
+ signInFrequency = @{
+ value = 4
+ type = "hours"
+ isEnabled = $true
+ }
+ }
 }
 New-MgIdentityConditionalAccessPolicy -BodyParameter $adminPolicy
 ```
@@ -266,23 +266,23 @@ Configure WHfB deployment through Microsoft Intune MDM:
 ```powershell
 # Create Windows Hello for Business configuration profile in Intune
 $whfbProfile = @{
-    "@odata.type" = "#microsoft.graph.windowsIdentityProtectionConfiguration"
-    displayName = "WHfB - Enterprise Deployment"
-    description = "Windows Hello for Business configuration for all managed devices"
-    useSecurityKeyForSignin = $true
-    windowsHelloForBusinessBlocked = $false
-    pinMinimumLength = 6
-    pinMaximumLength = 127
-    pinUppercaseCharactersUsage = "allowed"
-    pinLowercaseCharactersUsage = "allowed"
-    pinSpecialCharactersUsage = "allowed"
-    enhancedAntiSpoofingForFacialFeaturesEnabled = $true
-    pinRecoveryEnabled = $true
-    securityDeviceRequired = $true  # Require TPM
-    unlockWithBiometricsEnabled = $true
-    useCertificatesForOnPremisesAuthEnabled = $true  # For hybrid scenarios
-    # Cloud Kerberos Trust for hybrid join (recommended over key trust)
-    windowsHelloForBusinessAuthenticationMethod = "cloudKerberosTrust"
+ "@odata.type" = "#microsoft.graph.windowsIdentityProtectionConfiguration"
+ displayName = "WHfB - Enterprise Deployment"
+ description = "Windows Hello for Business configuration for all managed devices"
+ useSecurityKeyForSignin = $true
+ windowsHelloForBusinessBlocked = $false
+ pinMinimumLength = 6
+ pinMaximumLength = 127
+ pinUppercaseCharactersUsage = "allowed"
+ pinLowercaseCharactersUsage = "allowed"
+ pinSpecialCharactersUsage = "allowed"
+ enhancedAntiSpoofingForFacialFeaturesEnabled = $true
+ pinRecoveryEnabled = $true
+ securityDeviceRequired = $true # Require TPM
+ unlockWithBiometricsEnabled = $true
+ useCertificatesForOnPremisesAuthEnabled = $true # For hybrid scenarios
+ # Cloud Kerberos Trust for hybrid join (recommended over key trust)
+ windowsHelloForBusinessAuthenticationMethod = "cloudKerberosTrust"
 }
 
 # Create the configuration profile
@@ -290,13 +290,13 @@ $profile = New-MgDeviceManagementDeviceConfiguration -BodyParameter $whfbProfile
 
 # Assign to all Windows devices
 $assignment = @{
-    target = @{
-        "@odata.type" = "#microsoft.graph.allDevicesAssignmentTarget"
-    }
+ target = @{
+ "@odata.type" = "#microsoft.graph.allDevicesAssignmentTarget"
+ }
 }
 New-MgDeviceManagementDeviceConfigurationAssignment `
-    -DeviceConfigurationId $profile.Id `
-    -BodyParameter $assignment
+ -DeviceConfigurationId $profile.Id `
+ -BodyParameter $assignment
 
 # Configure Cloud Kerberos Trust (for hybrid Azure AD joined devices)
 # This eliminates the need for PKI infrastructure
@@ -310,13 +310,13 @@ $cloudCredential = Get-Credential -Message "Enter Azure AD Global Admin credenti
 $domainCredential = Get-Credential -Message "Enter on-premises Domain Admin credentials"
 
 Set-AzureADKerberosServer `
-    -Domain $domain `
-    -CloudCredential $cloudCredential `
-    -DomainCredential $domainCredential
+ -Domain $domain `
+ -CloudCredential $cloudCredential `
+ -DomainCredential $domainCredential
 
 # Verify Kerberos Server object
 Get-AzureADKerberosServer -Domain $domain -CloudCredential $cloudCredential `
-    -DomainCredential $domainCredential
+ -DomainCredential $domainCredential
 
 Write-Host "Cloud Kerberos Trust configured for hybrid WHfB deployment"
 ```
@@ -330,40 +330,40 @@ Implement security key registration workflow:
 # Step 1: Issue Temporary Access Pass for key registration
 
 function Issue-TemporaryAccessPass {
-    param(
-        [string]$UserId,
-        [int]$LifetimeMinutes = 60,
-        [bool]$IsUsableOnce = $true
-    )
+ param(
+ [string]$UserId,
+ [int]$LifetimeMinutes = 60,
+ [bool]$IsUsableOnce = $true
+ )
 
-    $tap = @{
-        "@odata.type" = "#microsoft.graph.temporaryAccessPassAuthenticationMethod"
-        lifetimeInMinutes = $LifetimeMinutes
-        isUsableOnce = $IsUsableOnce
-    }
+ $tap = @{
+ "@odata.type" = "#microsoft.graph.temporaryAccessPassAuthenticationMethod"
+ lifetimeInMinutes = $LifetimeMinutes
+ isUsableOnce = $IsUsableOnce
+ }
 
-    $result = New-MgUserAuthenticationTemporaryAccessPassMethod `
-        -UserId $UserId `
-        -BodyParameter $tap
+ $result = New-MgUserAuthenticationTemporaryAccessPassMethod `
+ -UserId $UserId `
+ -BodyParameter $tap
 
-    return @{
-        UserId = $UserId
-        TemporaryAccessPass = $result.TemporaryAccessPass
-        ExpiresAt = $result.CreatedDateTime.AddMinutes($LifetimeMinutes)
-    }
+ return @{
+ UserId = $UserId
+ TemporaryAccessPass = $result.TemporaryAccessPass
+ ExpiresAt = $result.CreatedDateTime.AddMinutes($LifetimeMinutes)
+ }
 }
 
 # Bulk issue TAPs for security key registration event
 $registrationUsers = Import-Csv "security_key_registration_list.csv"
 
 $tapResults = foreach ($user in $registrationUsers) {
-    $tap = Issue-TemporaryAccessPass -UserId $user.UserPrincipalName
-    [PSCustomObject]@{
-        User = $user.UserPrincipalName
-        TAP = $tap.TemporaryAccessPass
-        Expires = $tap.ExpiresAt
-        KeySerial = $user.AssignedKeySerial
-    }
+ $tap = Issue-TemporaryAccessPass -UserId $user.UserPrincipalName
+ [PSCustomObject]@{
+ User = $user.UserPrincipalName
+ TAP = $tap.TemporaryAccessPass
+ Expires = $tap.ExpiresAt
+ KeySerial = $user.AssignedKeySerial
+ }
 }
 
 # Export TAPs for secure distribution to registration team
@@ -371,22 +371,22 @@ $tapResults | Export-Csv "tap_assignments.csv" -NoTypeInformation
 
 # Monitor FIDO2 registration progress
 function Get-Fido2RegistrationStatus {
-    $allUsers = Get-MgUser -All -Property "id,userPrincipalName,department"
+ $allUsers = Get-MgUser -All -Property "id,userPrincipalName,department"
 
-    $registrationStatus = foreach ($user in $allUsers) {
-        $methods = Get-MgUserAuthenticationFido2Method -UserId $user.Id
+ $registrationStatus = foreach ($user in $allUsers) {
+ $methods = Get-MgUserAuthenticationFido2Method -UserId $user.Id
 
-        [PSCustomObject]@{
-            UserPrincipalName = $user.UserPrincipalName
-            Department = $user.Department
-            Fido2KeyCount = $methods.Count
-            KeyModels = ($methods.Model -join ", ")
-            RegistrationDates = ($methods.CreatedDateTime -join ", ")
-            HasBackupKey = $methods.Count -ge 2
-        }
-    }
+ [PSCustomObject]@{
+ UserPrincipalName = $user.UserPrincipalName
+ Department = $user.Department
+ Fido2KeyCount = $methods.Count
+ KeyModels = ($methods.Model -join ", ")
+ RegistrationDates = ($methods.CreatedDateTime -join ", ")
+ HasBackupKey = $methods.Count -ge 2
+ }
+ }
 
-    return $registrationStatus
+ return $registrationStatus
 }
 
 $status = Get-Fido2RegistrationStatus
@@ -395,9 +395,9 @@ $registered = ($status | Where-Object { $_.Fido2KeyCount -gt 0 }).Count
 $withBackup = ($status | Where-Object { $_.HasBackupKey }).Count
 
 Write-Host "FIDO2 Registration Progress"
-Write-Host "  Total Users: $total"
-Write-Host "  Registered:  $registered ($([math]::Round($registered/$total*100,1))%)"
-Write-Host "  With Backup: $withBackup ($([math]::Round($withBackup/$total*100,1))%)"
+Write-Host " Total Users: $total"
+Write-Host " Registered: $registered ($([math]::Round($registered/$total*100,1))%)"
+Write-Host " With Backup: $withBackup ($([math]::Round($withBackup/$total*100,1))%)"
 ```
 
 ### Step 5: Disable Legacy Authentication Methods
@@ -407,44 +407,44 @@ Phase out phishable authentication factors:
 ```powershell
 # Disable SMS and voice call authentication
 $smsPolicy = @{
-    "@odata.type" = "#microsoft.graph.smsAuthenticationMethodConfiguration"
-    state = "disabled"
+ "@odata.type" = "#microsoft.graph.smsAuthenticationMethodConfiguration"
+ state = "disabled"
 }
 Update-MgPolicyAuthenticationMethodPolicyAuthenticationMethodConfiguration `
-    -AuthenticationMethodConfigurationId "sms" `
-    -BodyParameter $smsPolicy
+ -AuthenticationMethodConfigurationId "sms" `
+ -BodyParameter $smsPolicy
 
 $voicePolicy = @{
-    "@odata.type" = "#microsoft.graph.voiceAuthenticationMethodConfiguration"
-    state = "disabled"
+ "@odata.type" = "#microsoft.graph.voiceAuthenticationMethodConfiguration"
+ state = "disabled"
 }
 Update-MgPolicyAuthenticationMethodPolicyAuthenticationMethodConfiguration `
-    -AuthenticationMethodConfigurationId "voice" `
-    -BodyParameter $voicePolicy
+ -AuthenticationMethodConfigurationId "voice" `
+ -BodyParameter $voicePolicy
 
 # Block legacy authentication protocols via Conditional Access
 $blockLegacyPolicy = @{
-    displayName = "Block Legacy Authentication"
-    state = "enabled"
-    conditions = @{
-        users = @{ includeUsers = @("All") }
-        applications = @{ includeApplications = @("All") }
-        clientAppTypes = @(
-            "exchangeActiveSync",
-            "other"
-        )
-    }
-    grantControls = @{
-        operator = "OR"
-        builtInControls = @("block")
-    }
+ displayName = "Block Legacy Authentication"
+ state = "enabled"
+ conditions = @{
+ users = @{ includeUsers = @("All") }
+ applications = @{ includeApplications = @("All") }
+ clientAppTypes = @(
+ "exchangeActiveSync",
+ "other"
+ )
+ }
+ grantControls = @{
+ operator = "OR"
+ builtInControls = @("block")
+ }
 }
 New-MgIdentityConditionalAccessPolicy -BodyParameter $blockLegacyPolicy
 
 # Audit users still using legacy authentication
 $legacyAuthReport = Get-MgAuditLogSignIn -Filter "clientAppUsed ne 'Browser' and clientAppUsed ne 'Mobile Apps and Desktop clients'" `
-    -Top 1000 | Group-Object userPrincipalName | Select-Object Count, Name |
-    Sort-Object Count -Descending
+ -Top 1000 | Group-Object userPrincipalName | Select-Object Count, Name |
+ Sort-Object Count -Descending
 
 Write-Host "Users with Legacy Auth (last 30 days):"
 $legacyAuthReport | Format-Table -AutoSize
@@ -457,34 +457,34 @@ Track deployment progress and authentication method usage:
 ```powershell
 # Generate passwordless adoption dashboard data
 function Get-PasswordlessAdoptionMetrics {
-    # Authentication method registration statistics
-    $registrationReport = Get-MgReportAuthenticationMethodUserRegistrationDetail -All
+ # Authentication method registration statistics
+ $registrationReport = Get-MgReportAuthenticationMethodUserRegistrationDetail -All
 
-    $metrics = @{
-        TotalUsers = $registrationReport.Count
-        PasswordlessCapable = ($registrationReport | Where-Object { $_.IsPasswordlessCapable }).Count
-        MfaRegistered = ($registrationReport | Where-Object { $_.IsMfaRegistered }).Count
-        Fido2Registered = ($registrationReport | Where-Object { "fido2" -in $_.MethodsRegistered }).Count
-        WhfbRegistered = ($registrationReport | Where-Object { "windowsHelloForBusiness" -in $_.MethodsRegistered }).Count
-        AuthenticatorRegistered = ($registrationReport | Where-Object { "microsoftAuthenticator" -in $_.MethodsRegistered }).Count
-        SmsOnly = ($registrationReport | Where-Object {
-            "sms" -in $_.MethodsRegistered -and
-            "fido2" -notin $_.MethodsRegistered -and
-            "windowsHelloForBusiness" -notin $_.MethodsRegistered
-        }).Count
-    }
+ $metrics = @{
+ TotalUsers = $registrationReport.Count
+ PasswordlessCapable = ($registrationReport | Where-Object { $_.IsPasswordlessCapable }).Count
+ MfaRegistered = ($registrationReport | Where-Object { $_.IsMfaRegistered }).Count
+ Fido2Registered = ($registrationReport | Where-Object { "fido2" -in $_.MethodsRegistered }).Count
+ WhfbRegistered = ($registrationReport | Where-Object { "windowsHelloForBusiness" -in $_.MethodsRegistered }).Count
+ AuthenticatorRegistered = ($registrationReport | Where-Object { "microsoftAuthenticator" -in $_.MethodsRegistered }).Count
+ SmsOnly = ($registrationReport | Where-Object {
+ "sms" -in $_.MethodsRegistered -and
+ "fido2" -notin $_.MethodsRegistered -and
+ "windowsHelloForBusiness" -notin $_.MethodsRegistered
+ }).Count
+ }
 
-    # Authentication method usage from sign-in logs
-    $signInLogs = Get-MgAuditLogSignIn -Top 10000 -Filter "createdDateTime ge $((Get-Date).AddDays(-30).ToString('yyyy-MM-ddTHH:mm:ssZ'))"
+ # Authentication method usage from sign-in logs
+ $signInLogs = Get-MgAuditLogSignIn -Top 10000 -Filter "createdDateTime ge $((Get-Date).AddDays(-30).ToString('yyyy-MM-ddTHH:mm:ssZ'))"
 
-    $authMethodUsage = $signInLogs |
-        Group-Object { $_.AuthenticationMethodsUsed -join "," } |
-        Select-Object Count, Name | Sort-Object Count -Descending
+ $authMethodUsage = $signInLogs |
+ Group-Object { $_.AuthenticationMethodsUsed -join "," } |
+ Select-Object Count, Name | Sort-Object Count -Descending
 
-    return @{
-        Registration = $metrics
-        Usage = $authMethodUsage
-    }
+ return @{
+ Registration = $metrics
+ Usage = $authMethodUsage
+ }
 }
 
 $adoption = Get-PasswordlessAdoptionMetrics
@@ -492,12 +492,12 @@ $reg = $adoption.Registration
 
 Write-Host "PASSWORDLESS ADOPTION REPORT"
 Write-Host "============================"
-Write-Host "Total Users:              $($reg.TotalUsers)"
-Write-Host "Passwordless Capable:     $($reg.PasswordlessCapable) ($([math]::Round($reg.PasswordlessCapable/$reg.TotalUsers*100,1))%)"
-Write-Host "  FIDO2 Keys:             $($reg.Fido2Registered)"
-Write-Host "  Windows Hello:          $($reg.WhfbRegistered)"
-Write-Host "  Authenticator:          $($reg.AuthenticatorRegistered)"
-Write-Host "MFA Registered:           $($reg.MfaRegistered) ($([math]::Round($reg.MfaRegistered/$reg.TotalUsers*100,1))%)"
+Write-Host "Total Users: $($reg.TotalUsers)"
+Write-Host "Passwordless Capable: $($reg.PasswordlessCapable) ($([math]::Round($reg.PasswordlessCapable/$reg.TotalUsers*100,1))%)"
+Write-Host " FIDO2 Keys: $($reg.Fido2Registered)"
+Write-Host " Windows Hello: $($reg.WhfbRegistered)"
+Write-Host " Authenticator: $($reg.AuthenticatorRegistered)"
+Write-Host "MFA Registered: $($reg.MfaRegistered) ($([math]::Round($reg.MfaRegistered/$reg.TotalUsers*100,1))%)"
 Write-Host "SMS Only (needs upgrade): $($reg.SmsOnly)"
 ```
 
@@ -545,36 +545,36 @@ Write-Host "SMS Only (needs upgrade): $($reg.SmsOnly)"
 ```
 PASSWORDLESS AUTHENTICATION DEPLOYMENT REPORT
 ================================================
-Tenant:            corp.onmicrosoft.com
-Users:             5,247
-Deployment Phase:  Phase 4 (Authenticator Passkeys)
+Tenant: corp.onmicrosoft.com
+Users: 5,247
+Deployment Phase: Phase 4 (Authenticator Passkeys)
 
 AUTHENTICATION METHOD REGISTRATION
-Passwordless Capable:    4,103 / 5,247 (78.2%)
-  FIDO2 Security Keys:   892 (17.0%)
-  Windows Hello:          2,847 (54.3%)
-  Authenticator Passkey:  1,234 (23.5%)
-  Certificate-Based:      312 (5.9%)
+Passwordless Capable: 4,103 / 5,247 (78.2%)
+ FIDO2 Security Keys: 892 (17.0%)
+ Windows Hello: 2,847 (54.3%)
+ Authenticator Passkey: 1,234 (23.5%)
+ Certificate-Based: 312 (5.9%)
 
 LEGACY METHOD STATUS
-SMS-Only Users:          387 (7.4%) -- migration in progress
-Voice-Only Users:        0 (disabled)
-No MFA Users:            42 (0.8%) -- TAPs issued
+SMS-Only Users: 387 (7.4%) -- migration in progress
+Voice-Only Users: 0 (disabled)
+No MFA Users: 42 (0.8%) -- TAPs issued
 
 CONDITIONAL ACCESS
-Phishing-Resistant Policy:  ENFORCED (all users except exclusion group)
-Legacy Auth Block:          ENABLED
-Admin Portal Policy:        SECURITY KEY REQUIRED
+Phishing-Resistant Policy: ENFORCED (all users except exclusion group)
+Legacy Auth Block: ENABLED
+Admin Portal Policy: SECURITY KEY REQUIRED
 
 SIGN-IN ANALYTICS (Last 30 Days)
-Total Sign-Ins:          847,293
-  Passwordless:          623,891 (73.6%)
-  Password + MFA:        198,402 (23.4%)
-  Password Only:         0 (blocked)
-  Legacy Protocol:       0 (blocked)
+Total Sign-Ins: 847,293
+ Passwordless: 623,891 (73.6%)
+ Password + MFA: 198,402 (23.4%)
+ Password Only: 0 (blocked)
+ Legacy Protocol: 0 (blocked)
 
 SECURITY IMPACT
-Phishing Incidents:      0 (down from 47 pre-deployment)
-Password Reset Tickets:  -82% reduction
-Avg Sign-In Time:        8.2s (passwordless) vs 24.1s (password)
+Phishing Incidents: 0 (down from 47 pre-deployment)
+Password Reset Tickets: -82% reduction
+Avg Sign-In Time: 8.2s (passwordless) vs 24.1s (password)
 ```

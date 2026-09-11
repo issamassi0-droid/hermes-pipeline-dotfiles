@@ -1,10 +1,10 @@
 ---
 name: implementing-rapid7-insightvm-for-scanning
 description: Deploy and configure Rapid7 InsightVM Security Console and Scan Engines,
-  including scan templates, credentialed scanning, and Insight Agent integration, for
-  authenticated and unauthenticated vulnerability scanning across enterprise environments.
-  Use when standing up InsightVM infrastructure, configuring credentialed vulnerability
-  scans, or integrating continuous asset assessment via the Insight Agent.
+ including scan templates, credentialed scanning, and Insight Agent integration, for
+ authenticated and unauthenticated vulnerability scanning across enterprise environments.
+ Use when standing up InsightVM infrastructure, configuring credentialed vulnerability
+ scans, or integrating continuous asset assessment via the Insight Agent.
 domain: cybersecurity
 subdomain: vulnerability-management
 tags:
@@ -124,13 +124,13 @@ Initial configuration:
 # Docker-based Scan Engine deployment
 docker pull rapid7/insightvm-scan-engine
 docker run -d \
-  --name scan-engine \
-  -p 40814:40814 \
-  -e CONSOLE_HOST=<console-ip> \
-  -e CONSOLE_PORT=3780 \
-  -e ENGINE_NAME=DMZ-Scanner \
-  -e SHARED_SECRET=<pairing-secret> \
-  rapid7/insightvm-scan-engine
+ --name scan-engine \
+ -p 40814:40814 \
+ -e CONSOLE_HOST=<console-ip> \
+ -e CONSOLE_PORT=3780 \
+ -e ENGINE_NAME=DMZ-Scanner \
+ -e SHARED_SECRET=<pairing-secret> \
+ rapid7/insightvm-scan-engine
 ```
 
 Pair engines in Security Console:
@@ -143,89 +143,89 @@ Pair engines in Security Console:
 
 ```
 Site Configuration:
-  Name:           Production-Network
-  Scan Engine:    Primary-Engine-01
-  Scan Template:  Full Audit without Web Spider
+ Name: Production-Network
+ Scan Engine: Primary-Engine-01
+ Scan Template: Full Audit without Web Spider
 
-  Included Assets:
-    - 10.0.0.0/8     (Internal network)
-    - 172.16.0.0/12   (DMZ network)
+ Included Assets:
+ - 10.0.0.0/8 (Internal network)
+ - 172.16.0.0/12 (DMZ network)
 
-  Excluded Assets:
-    - 10.0.0.1        (Core router - fragile)
-    - 10.0.100.0/24   (ICS/SCADA segment)
+ Excluded Assets:
+ - 10.0.0.1 (Core router - fragile)
+ - 10.0.100.0/24 (ICS/SCADA segment)
 
-  Schedule:
-    Frequency:    Weekly
-    Day:          Sunday
-    Time:         02:00 AM
-    Max Duration: 8 hours
+ Schedule:
+ Frequency: Weekly
+ Day: Sunday
+ Time: 02:00 AM
+ Max Duration: 8 hours
 ```
 
 ### Step 4: Configure Authenticated Scanning
 
 #### Windows Credentials (WMI)
 ```
-Credential Type:    Microsoft Windows/Samba (SMB/CIFS)
-Domain:             CORP.EXAMPLE.COM
-Username:           svc_insightvm_scan
-Password:           <service-account-password>
-Authentication:     NTLM
+Credential Type: Microsoft Windows/Samba (SMB/CIFS)
+Domain: CORP.EXAMPLE.COM
+Username: svc_insightvm_scan
+Password: <service-account-password>
+Authentication: NTLM
 
 Privilege Elevation:
-  Type:   None (use domain admin or local admin)
+ Type: None (use domain admin or local admin)
 ```
 
 #### Linux/Unix Credentials (SSH)
 ```
-Credential Type:    Secure Shell (SSH)
-Username:           insightvm_scan
-Authentication:     SSH Key (preferred) or Password
-SSH Private Key:    /opt/rapid7/.ssh/scan_key
-Port:               22
+Credential Type: Secure Shell (SSH)
+Username: insightvm_scan
+Authentication: SSH Key (preferred) or Password
+SSH Private Key: /opt/rapid7/.ssh/scan_key
+Port: 22
 
 Privilege Elevation:
-  Type:             sudo
-  sudo User:        root
-  sudo Password:    <sudo-password>
+ Type: sudo
+ sudo User: root
+ sudo Password: <sudo-password>
 ```
 
 #### Database Credentials
 ```
-Credential Type:    Microsoft SQL Server
-Instance:           MSSQLSERVER
-Domain:             CORP
-Username:           insightvm_db_scan
-Authentication:     Windows Authentication
+Credential Type: Microsoft SQL Server
+Instance: MSSQLSERVER
+Domain: CORP
+Username: insightvm_db_scan
+Authentication: Windows Authentication
 
-Credential Type:    Oracle
-Port:               1521
-SID:                ORCL
-Username:           insightvm_scan
+Credential Type: Oracle
+Port: 1521
+SID: ORCL
+Username: insightvm_scan
 ```
 
 ### Step 5: Configure Scan Templates
 
 Custom scan template for balanced scanning:
 ```
-Template Name:      Enterprise-Standard-Scan
+Template Name: Enterprise-Standard-Scan
 
 Service Discovery:
-  TCP Ports:        Well-known (1-1024) + common services
-  UDP Ports:        DNS(53), SNMP(161), NTP(123), TFTP(69)
-  Method:           SYN scan (stealth)
+ TCP Ports: Well-known (1-1024) + common services
+ UDP Ports: DNS(53), SNMP(161), NTP(123), TFTP(69)
+ Method: SYN scan (stealth)
 
 Vulnerability Checks:
-  Safe checks only: Enabled
-  Skip potential:   Disabled
-  Web spidering:    Disabled (separate template)
-  Policy checks:    Enabled (CIS benchmarks)
+ Safe checks only: Enabled
+ Skip potential: Disabled
+ Web spidering: Disabled (separate template)
+ Policy checks: Enabled (CIS benchmarks)
 
 Performance:
-  Max parallel assets:     10
-  Max requests per second: 100
-  Timeout per asset:       30 minutes
-  Retries:                 2
+ Max parallel assets: 10
+ Max requests per second: 100
+ Timeout per asset: 30 minutes
+ Retries: 2
 ```
 
 ### Step 6: Set Up Insight Agent Deployment
@@ -233,13 +233,13 @@ Performance:
 ```powershell
 # Windows Agent Installation (via GPO or SCCM)
 msiexec /i agentInstaller-x86_64.msi /quiet /norestart `
-  CUSTOMTOKEN=<platform-token> `
-  CUSTOMCONFIG=<agent-config>
+ CUSTOMTOKEN=<platform-token> `
+ CUSTOMCONFIG=<agent-config>
 
 # Linux Agent Installation
 chmod +x agent_installer.sh
 ./agent_installer.sh install_start \
-  --token <platform-token>
+ --token <platform-token>
 
 # Verify agent connectivity
 # Check InsightVM console: Assets > Agent Management
@@ -249,21 +249,21 @@ chmod +x agent_installer.sh
 
 ```
 Remediation Project:
-  Name:             Q1-2025-Critical-Remediation
+ Name: Q1-2025-Critical-Remediation
 
-  Scope:
-    Severity:       Critical + High
-    CVSS Score:     >= 7.0
-    Assets:         Production-Network site
+ Scope:
+ Severity: Critical + High
+ CVSS Score: >= 7.0
+ Assets: Production-Network site
 
-  Assignment:
-    Team:           Infrastructure-Ops
-    Due Date:       2025-03-31
+ Assignment:
+ Team: Infrastructure-Ops
+ Due Date: 2025-03-31
 
-  Tracking:
-    Auto-verify:    Enabled (re-scan on next scheduled scan)
-    Notification:   Email on overdue items
-    Escalation:     Manager notification at 75% SLA
+ Tracking:
+ Auto-verify: Enabled (re-scan on next scheduled scan)
+ Notification: Email on overdue items
+ Escalation: Manager notification at 75% SLA
 ```
 
 ### Step 8: API Integration for Automation
@@ -273,73 +273,73 @@ import requests
 import json
 
 class InsightVMClient:
-    """Rapid7 InsightVM API v3 client for automation."""
+ """Rapid7 InsightVM API v3 client for automation."""
 
-    def __init__(self, console_url, api_key):
-        self.base_url = f"{console_url}/api/3"
-        self.session = requests.Session()
-        self.session.headers.update({
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {api_key}"
-        })
-        self.session.verify = not os.environ.get("SKIP_TLS_VERIFY", "").lower() == "true"  # Set SKIP_TLS_VERIFY=true for self-signed certs in lab environments
+ def __init__(self, console_url, api_key):
+ self.base_url = f"{console_url}/api/3"
+ self.session = requests.Session()
+ self.session.headers.update({
+ "Content-Type": "application/json",
+ "Authorization": f"Bearer {api_key}"
+ })
+ self.session.verify = not os.environ.get("SKIP_TLS_VERIFY", "").lower() == "true" # Set SKIP_TLS_VERIFY=true for self-signed certs in lab environments
 
-    def get_sites(self):
-        """List all configured scan sites."""
-        response = self.session.get(f"{self.base_url}/sites")
-        response.raise_for_status()
-        return response.json().get("resources", [])
+ def get_sites(self):
+ """List all configured scan sites."""
+ response = self.session.get(f"{self.base_url}/sites")
+ response.raise_for_status()
+ return response.json().get("resources", [])
 
-    def start_scan(self, site_id, engine_id=None, template_id=None):
-        """Trigger an ad-hoc scan for a site."""
-        payload = {}
-        if engine_id:
-            payload["engineId"] = engine_id
-        if template_id:
-            payload["templateId"] = template_id
+ def start_scan(self, site_id, engine_id=None, template_id=None):
+ """Trigger an ad-hoc scan for a site."""
+ payload = {}
+ if engine_id:
+ payload["engineId"] = engine_id
+ if template_id:
+ payload["templateId"] = template_id
 
-        response = self.session.post(
-            f"{self.base_url}/sites/{site_id}/scans",
-            json=payload
-        )
-        response.raise_for_status()
-        return response.json()
+ response = self.session.post(
+ f"{self.base_url}/sites/{site_id}/scans",
+ json=payload
+ )
+ response.raise_for_status()
+ return response.json()
 
-    def get_asset_vulnerabilities(self, asset_id):
-        """Retrieve vulnerabilities for a specific asset."""
-        response = self.session.get(
-            f"{self.base_url}/assets/{asset_id}/vulnerabilities"
-        )
-        response.raise_for_status()
-        return response.json().get("resources", [])
+ def get_asset_vulnerabilities(self, asset_id):
+ """Retrieve vulnerabilities for a specific asset."""
+ response = self.session.get(
+ f"{self.base_url}/assets/{asset_id}/vulnerabilities"
+ )
+ response.raise_for_status()
+ return response.json().get("resources", [])
 
-    def get_scan_status(self, scan_id):
-        """Check the status of a running scan."""
-        response = self.session.get(f"{self.base_url}/scans/{scan_id}")
-        response.raise_for_status()
-        return response.json()
+ def get_scan_status(self, scan_id):
+ """Check the status of a running scan."""
+ response = self.session.get(f"{self.base_url}/scans/{scan_id}")
+ response.raise_for_status()
+ return response.json()
 
-    def create_remediation_project(self, name, description, assets, vulns):
-        """Create a remediation tracking project."""
-        payload = {
-            "name": name,
-            "description": description,
-            "assets": {"includedTargets": {"addresses": assets}},
-            "vulnerabilities": {"includedVulnerabilities": vulns}
-        }
-        response = self.session.post(
-            f"{self.base_url}/remediations",
-            json=payload
-        )
-        response.raise_for_status()
-        return response.json()
+ def create_remediation_project(self, name, description, assets, vulns):
+ """Create a remediation tracking project."""
+ payload = {
+ "name": name,
+ "description": description,
+ "assets": {"includedTargets": {"addresses": assets}},
+ "vulnerabilities": {"includedVulnerabilities": vulns}
+ }
+ response = self.session.post(
+ f"{self.base_url}/remediations",
+ json=payload
+ )
+ response.raise_for_status()
+ return response.json()
 
 
 # Usage
 client = InsightVMClient("https://insightvm-console:3780", "api-key-here")
 sites = client.get_sites()
 for site in sites:
-    print(f"Site: {site['name']} - Assets: {site.get('assets', 0)}")
+ print(f"Site: {site['name']} - Assets: {site.get('assets', 0)}")
 ```
 
 ## Best Practices

@@ -16,27 +16,27 @@ Pick 3 desaturated accent colors before touching any file. The Japon theme uses:
 ## Theme directory structure
 ```
 ~/.config/omarchy/themes/<name>/
-  colors.toml          # single source of truth
-  palette.txt          # human-readable palette
-  gtk.css              # GTK3/GTK4 Adwaita override
-  hyprland.conf        # border/decoration
-  shell.toml           # bar, controls, popups, menu, lock, workspace
-  shell.controls.toml  # control chrome (normal/hover/focus/selected)
-  quickshell/Theme.qml # QtObject color palette for QML
-  workspace.qml        # workspace indicator widget
-  workspace.manifest.json   # ⚠️ id MUST match the installed plugin dir name
-  plugins/<plugin>/     # theme-shipped plugin QML (installed by hook)
-  backgrounds/<name>-wallpaper.png
-  hooks/<name>-theme-set.sh
-  install.sh
-  alacritty/alacritty.toml
-  kitty/kitty.conf
-  foot/foot.ini
-  ghostty/ghostty.conf
-  tmux/tmux.conf
-  wofi.css
-  vscode/<name>-color-theme.json
-  README.md
+ colors.toml # single source of truth
+ palette.txt # human-readable palette
+ gtk.css # GTK3/GTK4 Adwaita override
+ hyprland.conf # border/decoration
+ shell.toml # bar, controls, popups, menu, lock, workspace
+ shell.controls.toml # control chrome (normal/hover/focus/selected)
+ quickshell/Theme.qml # QtObject color palette for QML
+ workspace.qml # workspace indicator widget
+ workspace.manifest.json # ⚠️ id MUST match the installed plugin dir name
+ plugins/<plugin>/ # theme-shipped plugin QML (installed by hook)
+ backgrounds/<name>-wallpaper.png
+ hooks/<name>-theme-set.sh
+ install.sh
+ alacritty/alacritty.toml
+ kitty/kitty.conf
+ foot/foot.ini
+ ghostty/ghostty.conf
+ tmux/tmux.conf
+ wofi.css
+ vscode/<name>-color-theme.json
+ README.md
 ```
 
 ## File creation order

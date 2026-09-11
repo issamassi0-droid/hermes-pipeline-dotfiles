@@ -1,20 +1,20 @@
 {
-  "routing_ticket": {
-    "domain": "content/publishing",
-    "stakes": "moderate",
-    "complexity": "bounded",
-    "output_type": "artifact",
-    "latency": "can_wait",
-    "budget_hint": "medium",
-    "temporal_bounds": "Tech: ≤6m",
-    "confidence_threshold": 0.85,
-    "tier": "standard",
-    "pipeline": [
-      "researcher",
-      "strategist",
-      "draft_writer",
-      "editor_qa",
-      "publisher"
-    ]
-  }
+ "routing_ticket": {
+ "domain": "content/publishing",
+ "stakes": "moderate",
+ "complexity": "bounded",
+ "output_type": "artifact",
+ "latency": "can_wait",
+ "budget_hint": "medium",
+ "temporal_bounds": "Tech: ≤6m",
+ "confidence_threshold": 0.85,
+ "tier": "standard",
+ "pipeline": [
+ "researcher",
+ "strategist",
+ "draft_writer",
+ "editor_qa",
+ "publisher"
+ ]
+ }
 }

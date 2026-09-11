@@ -1,12 +1,12 @@
 ---
 name: hunting-credential-stuffing-attacks
 description: 'Detects credential stuffing attacks by analyzing authentication logs
-  for login velocity anomalies, ASN diversity, password spray patterns, and geographic
-  distribution of failed logins. Uses statistical analysis on Splunk or raw log data.
-  Use when investigating account takeover campaigns or building detection rules for
-  auth abuse.
+ for login velocity anomalies, ASN diversity, password spray patterns, and geographic
+ distribution of failed logins. Uses statistical analysis on Splunk or raw log data.
+ Use when investigating account takeover campaigns or building detection rules for
+ auth abuse.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -31,27 +31,27 @@ mitre_attack:
 - T1003
 - T1110
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - positioning
-  techniques:
-  - id: T1110.004
-    name: 'Brute Force:  Credential Stuffing'
-    tactic: initial-access
-    source: attack
-  - id: T1110.003
-    name: 'Brute Force: Password Spraying'
-    tactic: initial-access
-    source: attack
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - positioning
+ techniques:
+ - id: T1110.004
+ name: 'Brute Force: Credential Stuffing'
+ tactic: initial-access
+ source: attack
+ - id: T1110.003
+ name: 'Brute Force: Password Spraying'
+ tactic: initial-access
+ source: attack
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
 ---
 
 # Hunting Credential Stuffing Attacks
@@ -100,6 +100,6 @@ Key detection indicators:
 ```python
 # Password spray: one password tried across many accounts
 spray = df[df["status"] == "failed"].groupby(["source_ip", "password_hash"]).agg(
-    accounts=("username", "nunique")).reset_index()
+ accounts=("username", "nunique")).reset_index()
 sprays = spray[spray["accounts"] > 10]
 ```

@@ -6,9 +6,9 @@ author: Ben Barclay (benbarclay), Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [Competitors, News, Market-Research, Monitoring]
-    related_skills: [blogwatcher, rss-feeds, reddit-reading]
+ hermes:
+ tags: [Competitors, News, Market-Research, Monitoring]
+ related_skills: [blogwatcher, rss-feeds, reddit-reading]
 ---
 
 # Competitor News Monitor
@@ -46,9 +46,9 @@ Use `rss-feeds` (optional) or `blogwatcher` (optional, stateful) for feeds, `red
 
 ```
 cronjob(action="create",
-        schedule="every monday 9am",
-        prompt="Load the competitor-news-monitor skill and run the tick for the watch contract at ~/.hermes/competitor-watches/<watch-slug>.json.",
-        deliver=<user's destination>)
+ schedule="every monday 9am",
+ prompt="Load the competitor-news-monitor skill and run the tick for the watch contract at ~/.hermes/competitor-watches/<watch-slug>.json.",
+ deliver=<user's destination>)
 ```
 
 Done when each requested event category has at least one intended primary source or a documented gap, and the job exists.

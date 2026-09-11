@@ -1,13 +1,13 @@
 ---
 name: detecting-ransomware-encryption-behavior
 description: 'Detects ransomware encryption activity in real time using entropy
-  analysis, file system I/O monitoring (Sysmon, watchdog, psutil), and behavioral
-  scoring to identify mass file modification, abnormal entropy spikes in written
-  data, and suspicious process behavior characteristic of encryption routines.
-  Use when building real-time ransomware detection, tuning entropy thresholds,
-  or investigating suspected active encryption on an endpoint.
+ analysis, file system I/O monitoring (Sysmon, watchdog, psutil), and behavioral
+ scoring to identify mass file modification, abnormal entropy spikes in written
+ data, and suspicious process behavior characteristic of encryption routines.
+ Use when building real-time ransomware detection, tuning entropy thresholds,
+ or investigating suspected active encryption on an endpoint.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -32,28 +32,28 @@ mitre_attack:
 - T1486
 - T1490
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - monetization
-  - positioning
-  - stealth
-  techniques:
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1017.001
-    name: 'Conversion to Physical Monetary Instruments: Cash'
-    tactic: monetization
-    source: f3
-  - id: T1219
-    name: Remote Access Tools
-    tactic: positioning
-    source: attack
-  - id: T1070
-    name: Indicator Removal
-    tactic: stealth
-    source: attack
+ version: '1.1'
+ tactics:
+ - monetization
+ - positioning
+ - stealth
+ techniques:
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1017.001
+ name: 'Conversion to Physical Monetary Instruments: Cash'
+ tactic: monetization
+ source: f3
+ - id: T1219
+ name: Remote Access Tools
+ tactic: positioning
+ source: attack
+ - id: T1070
+ name: Indicator Removal
+ tactic: stealth
+ source: attack
 ---
 
 # Detecting Ransomware Encryption Behavior
@@ -86,15 +86,15 @@ Calculate normal entropy ranges for files in the environment:
 ```
 Entropy Baselines by File Type:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-File Type       Normal Entropy    Encrypted Entropy
-.docx           3.5 - 6.5        7.8 - 8.0
-.xlsx           4.0 - 6.8        7.8 - 8.0
-.pdf            5.0 - 7.2        7.8 - 8.0
-.txt            2.0 - 5.0        7.8 - 8.0
-.csv            2.0 - 5.5        7.8 - 8.0
-.sql            2.5 - 5.0        7.8 - 8.0
-.jpg/.png       7.0 - 7.9        7.9 - 8.0 (hard to distinguish)
-.zip/.7z        7.5 - 8.0        7.9 - 8.0 (hard to distinguish)
+File Type Normal Entropy Encrypted Entropy
+.docx 3.5 - 6.5 7.8 - 8.0
+.xlsx 4.0 - 6.8 7.8 - 8.0
+.pdf 5.0 - 7.2 7.8 - 8.0
+.txt 2.0 - 5.0 7.8 - 8.0
+.csv 2.0 - 5.5 7.8 - 8.0
+.sql 2.5 - 5.0 7.8 - 8.0
+.jpg/.png 7.0 - 7.9 7.9 - 8.0 (hard to distinguish)
+.zip/.7z 7.5 - 8.0 7.9 - 8.0 (hard to distinguish)
 
 Key insight: Text-based files show the largest entropy jump when encrypted,
 making them the best candidates for entropy-based detection.
@@ -109,17 +109,17 @@ import math
 from collections import Counter
 
 def shannon_entropy(data):
-    """Calculate Shannon entropy of byte data (0.0 to 8.0 scale)."""
-    if not data:
-        return 0.0
-    freq = Counter(data)
-    length = len(data)
-    return -sum((c / length) * math.log2(c / length) for c in freq.values())
+ """Calculate Shannon entropy of byte data (0.0 to 8.0 scale)."""
+ if not data:
+ return 0.0
+ freq = Counter(data)
+ length = len(data)
+ return -sum((c / length) * math.log2(c / length) for c in freq.values())
 
 def is_encryption_entropy(data, threshold=7.5):
-    """Check if data entropy indicates encryption."""
-    entropy = shannon_entropy(data)
-    return entropy >= threshold, entropy
+ """Check if data entropy indicates encryption."""
+ entropy = shannon_entropy(data)
+ return entropy >= threshold, entropy
 ```
 
 ### Step 3: Monitor File System I/O Patterns
@@ -130,27 +130,27 @@ Track process-level file operations for ransomware patterns:
 Ransomware I/O Behavior Signatures:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 1. Rapid sequential file modification:
-   - >20 files modified per minute by single process
-   - Read original → Write encrypted → Rename with new extension
-   - Pattern: CreateFile → ReadFile → WriteFile → CloseHandle → MoveFile
+ - >20 files modified per minute by single process
+ - Read original → Write encrypted → Rename with new extension
+ - Pattern: CreateFile → ReadFile → WriteFile → CloseHandle → MoveFile
 
 2. File extension changes:
-   - Original: report.docx → Encrypted: report.docx.locked
-   - Many extensions changed within short time window
+ - Original: report.docx → Encrypted: report.docx.locked
+ - Many extensions changed within short time window
 
 3. Ransom note creation:
-   - Same text file (README.txt, DECRYPT.html) created in multiple directories
-   - Created immediately after file encryption in each directory
+ - Same text file (README.txt, DECRYPT.html) created in multiple directories
+ - Created immediately after file encryption in each directory
 
 4. Shadow copy deletion:
-   - vssadmin.exe delete shadows /all /quiet
-   - wmic.exe shadowcopy delete
-   - PowerShell: Get-WmiObject Win32_Shadowcopy | Remove-WmiObject
+ - vssadmin.exe delete shadows /all /quiet
+ - wmic.exe shadowcopy delete
+ - PowerShell: Get-WmiObject Win32_Shadowcopy | Remove-WmiObject
 
 5. Entropy spike pattern:
-   - File read: entropy 3.5 (normal document)
-   - File write: entropy 7.9 (encrypted content)
-   - Delta > 3.0 is strong ransomware indicator
+ - File read: entropy 3.5 (normal document)
+ - File write: entropy 7.9 (encrypted content)
+ - Delta > 3.0 is strong ransomware indicator
 ```
 
 ### Step 4: Implement Behavioral Scoring
@@ -159,35 +159,35 @@ Combine multiple signals into a composite ransomware score:
 
 ```python
 def calculate_ransomware_score(process_metrics):
-    """Score process behavior for ransomware likelihood (0-100)."""
-    score = 0
+ """Score process behavior for ransomware likelihood (0-100)."""
+ score = 0
 
-    # High file modification rate
-    files_per_min = process_metrics.get("files_modified_per_minute", 0)
-    if files_per_min > 50:
-        score += 30
-    elif files_per_min > 20:
-        score += 15
+ # High file modification rate
+ files_per_min = process_metrics.get("files_modified_per_minute", 0)
+ if files_per_min > 50:
+ score += 30
+ elif files_per_min > 20:
+ score += 15
 
-    # Entropy increase in written files
-    avg_entropy_delta = process_metrics.get("avg_entropy_delta", 0)
-    if avg_entropy_delta > 3.0:
-        score += 30
-    elif avg_entropy_delta > 2.0:
-        score += 15
+ # Entropy increase in written files
+ avg_entropy_delta = process_metrics.get("avg_entropy_delta", 0)
+ if avg_entropy_delta > 3.0:
+ score += 30
+ elif avg_entropy_delta > 2.0:
+ score += 15
 
-    # File extension changes
-    extension_changes = process_metrics.get("extension_changes", 0)
-    if extension_changes > 10:
-        score += 20
-    elif extension_changes > 3:
-        score += 10
+ # File extension changes
+ extension_changes = process_metrics.get("extension_changes", 0)
+ if extension_changes > 10:
+ score += 20
+ elif extension_changes > 3:
+ score += 10
 
-    # Ransom note creation
-    if process_metrics.get("ransom_note_created", False):
-        score += 20
+ # Ransom note creation
+ if process_metrics.get("ransom_note_created", False):
+ score += 20
 
-    return min(score, 100)
+ return min(score, 100)
 ```
 
 ### Step 5: Configure Automated Response Thresholds
@@ -197,17 +197,17 @@ Set detection thresholds and automated containment actions:
 ```
 Detection Thresholds:
 ━━━━━━━━━━━━━━━━━━━━
-Score 0-25:   INFORMATIONAL - Log only, no action
-Score 25-50:  LOW - Alert SOC for investigation
-Score 50-75:  HIGH - Alert SOC, suspend process, snapshot VM
+Score 0-25: INFORMATIONAL - Log only, no action
+Score 25-50: LOW - Alert SOC for investigation
+Score 50-75: HIGH - Alert SOC, suspend process, snapshot VM
 Score 75-100: CRITICAL - Kill process, isolate endpoint, alert IR team
 
 Automated Response Actions:
-  - Suspend/kill the encrypting process
-  - Disable network adapter to prevent lateral movement
-  - Create volume shadow copy snapshot before further damage
-  - Capture process memory dump for forensic analysis
-  - Send SIEM alert with process details, affected files, and timeline
+ - Suspend/kill the encrypting process
+ - Disable network adapter to prevent lateral movement
+ - Create volume shadow copy snapshot before further damage
+ - Capture process memory dump for forensic analysis
+ - Send SIEM alert with process details, affected files, and timeline
 ```
 
 ## Verification

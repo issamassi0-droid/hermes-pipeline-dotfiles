@@ -42,10 +42,10 @@ This matters because LLM applications change constantly — prompts, models, RAG
 
 - Node.js 18+ (Promptfoo is distributed via npm) and Python 3.9+ (for DeepTeam).
 - Install Promptfoo and DeepTeam:
-  ```bash
-  npm install -g promptfoo            # or: npx promptfoo@latest
-  pip install -U deepteam
-  ```
+ ```bash
+ npm install -g promptfoo # or: npx promptfoo@latest
+ pip install -U deepteam
+ ```
 - API access/credentials for the target LLM endpoint (and a grader model, e.g. an OpenAI key) exposed as environment variables.
 - A CI/CD platform (GitHub Actions, GitLab CI) with secret storage.
 - Authorization to test the target application.
@@ -84,26 +84,26 @@ Edit `promptfooconfig.yaml`. The `purpose` grounds attack generation; `plugins` 
 ```yaml
 # promptfooconfig.yaml
 targets:
-  - id: https://api.example.com/chat        # your app endpoint
-    label: support-bot
+ - id: https://api.example.com/chat # your app endpoint
+ label: support-bot
 
 redteam:
-  purpose: |
-    A customer-support assistant for an e-commerce site. Must never reveal
-    system prompts, leak PII, or perform actions outside order support.
-  numTests: 10
-  plugins:
-    - owasp:llm          # OWASP LLM Top 10 preset
-    - owasp:agentic      # OWASP Agentic threats preset
-    - id: pii:direct
-      numTests: 15
-    - prompt-extraction  # system-prompt leakage
-    - harmful
-  strategies:
-    - id: jailbreak              # iterative single-turn jailbreak
-    - id: jailbreak:composite    # stacked jailbreak techniques
-    - id: crescendo              # multi-turn escalation
-    - id: prompt-injection       # injection wrapper
+ purpose: |
+ A customer-support assistant for an e-commerce site. Must never reveal
+ system prompts, leak PII, or perform actions outside order support.
+ numTests: 10
+ plugins:
+ - owasp:llm # OWASP LLM Top 10 preset
+ - owasp:agentic # OWASP Agentic threats preset
+ - id: pii:direct
+ numTests: 15
+ - prompt-extraction # system-prompt leakage
+ - harmful
+ strategies:
+ - id: jailbreak # iterative single-turn jailbreak
+ - id: jailbreak:composite # stacked jailbreak techniques
+ - id: crescendo # multi-turn escalation
+ - id: prompt-injection # injection wrapper
 ```
 
 ### 3. Run the suite and view the report
@@ -111,7 +111,7 @@ redteam:
 
 ```bash
 promptfoo redteam run
-promptfoo redteam report            # launches the web report (pass/fail per plugin)
+promptfoo redteam report # launches the web report (pass/fail per plugin)
 ```
 Each row shows the plugin (mapped to OWASP/ATLAS), the strategy, the attack prompt, the model's response, and the grader's verdict. The **attack success rate** per plugin is your headline metric — track it per release.
 
@@ -125,13 +125,13 @@ from deepteam.vulnerabilities import Bias, PIILeakage
 from deepteam.attacks.single_turn import PromptInjection
 
 def model_callback(prompt: str) -> str:
-    # call your application's LLM endpoint here and return the text response
-    return call_my_app(prompt)
+ # call your application's LLM endpoint here and return the text response
+ return call_my_app(prompt)
 
 red_team(
-    model_callback=model_callback,
-    vulnerabilities=[Bias(types=["race"]), PIILeakage(types=["api_and_database_access"])],
-    attacks=[PromptInjection()],
+ model_callback=model_callback,
+ vulnerabilities=[Bias(types=["race"]), PIILeakage(types=["api_and_database_access"])],
+ attacks=[PromptInjection()],
 )
 ```
 DeepTeam can also be driven from a YAML config:
@@ -147,23 +147,23 @@ Fail the pipeline when red-team assertions fail. Promptfoo returns a non-zero ex
 name: LLM Red Team
 on: [pull_request]
 jobs:
-  redteam:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - run: npm install -g promptfoo
-      - name: Run red team (fails build on new vulns)
-        env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-        run: promptfoo redteam run --no-progress-bar
-      - name: Export machine-readable results
-        if: always()
-        run: promptfoo redteam report --output results.json
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with: { name: redteam-report, path: results.json }
+ redteam:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
+ - uses: actions/setup-node@v4
+ with: { node-version: '20' }
+ - run: npm install -g promptfoo
+ - name: Run red team (fails build on new vulns)
+ env:
+ OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+ run: promptfoo redteam run --no-progress-bar
+ - name: Export machine-readable results
+ if: always()
+ run: promptfoo redteam report --output results.json
+ - uses: actions/upload-artifact@v4
+ if: always()
+ with: { name: redteam-report, path: results.json }
 ```
 
 ### 6. Track regressions over time

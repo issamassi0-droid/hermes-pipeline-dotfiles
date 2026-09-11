@@ -30,11 +30,11 @@ Measure before optimizing. Performance work without measurement is guessing — 
 ## The Optimization Workflow
 
 ```
-1. MEASURE  → Establish baseline with real data
+1. MEASURE → Establish baseline with real data
 2. IDENTIFY → Find the actual bottleneck (not assumed)
-3. FIX      → Address the specific bottleneck
-4. VERIFY   → Measure again; keep or revert
-5. GUARD    → Add monitoring or tests to prevent regression
+3. FIX → Address the specific bottleneck
+4. VERIFY → Measure again; keep or revert
+5. GUARD → Add monitoring or tests to prevent regression
 ```
 
 ### Step 1: Measure
@@ -77,23 +77,23 @@ Use the symptom to decide what to measure first:
 ```
 What is slow?
 ├── First page load
-│   ├── Large bundle? --> Measure bundle size, check code splitting
-│   ├── Slow server response? --> Measure TTFB in DevTools Network waterfall
-│   │   ├── DNS long? --> Add dns-prefetch / preconnect for known origins
-│   │   ├── TCP/TLS long? --> Enable HTTP/2, check edge deployment, keep-alive
-│   │   └── Waiting (server) long? --> Profile backend, check queries and caching
-│   └── Render-blocking resources? --> Check network waterfall for CSS/JS blocking
+│ ├── Large bundle? --> Measure bundle size, check code splitting
+│ ├── Slow server response? --> Measure TTFB in DevTools Network waterfall
+│ │ ├── DNS long? --> Add dns-prefetch / preconnect for known origins
+│ │ ├── TCP/TLS long? --> Enable HTTP/2, check edge deployment, keep-alive
+│ │ └── Waiting (server) long? --> Profile backend, check queries and caching
+│ └── Render-blocking resources? --> Check network waterfall for CSS/JS blocking
 ├── Interaction feels sluggish
-│   ├── UI freezes on click? --> Profile main thread, look for long tasks (>50ms)
-│   ├── Form input lag? --> Check re-renders, controlled component overhead
-│   └── Animation jank? --> Check layout thrashing, forced reflows
+│ ├── UI freezes on click? --> Profile main thread, look for long tasks (>50ms)
+│ ├── Form input lag? --> Check re-renders, controlled component overhead
+│ └── Animation jank? --> Check layout thrashing, forced reflows
 ├── Page after navigation
-│   ├── Data loading? --> Measure API response times, check for waterfalls
-│   └── Client rendering? --> Profile component render time, check for N+1 fetches
+│ ├── Data loading? --> Measure API response times, check for waterfalls
+│ └── Client rendering? --> Profile component render time, check for N+1 fetches
 └── Backend / API
-    ├── Single endpoint slow? --> Profile database queries, check indexes
-    ├── All endpoints slow? --> Check connection pool, memory, CPU
-    └── Intermittent slowness? --> Check for lock contention, GC pauses, external deps
+ ├── Single endpoint slow? --> Profile database queries, check indexes
+ ├── All endpoints slow? --> Check connection pool, memory, CPU
+ └── Intermittent slowness? --> Check for lock contention, GC pauses, external deps
 ```
 
 ### Step 2: Identify the Bottleneck
@@ -126,12 +126,12 @@ Common bottlenecks by category:
 // BAD: N+1 — one query per task for the owner
 const tasks = await db.tasks.findMany();
 for (const task of tasks) {
-  task.owner = await db.users.findUnique({ where: { id: task.ownerId } });
+ task.owner = await db.users.findUnique({ where: { id: task.ownerId } });
 }
 
 // GOOD: Single query with join/include
 const tasks = await db.tasks.findMany({
-  include: { owner: true },
+ include: { owner: true },
 });
 ```
 
@@ -143,9 +143,9 @@ const allTasks = await db.tasks.findMany();
 
 // GOOD: Paginated with limits
 const tasks = await db.tasks.findMany({
-  take: 20,
-  skip: (page - 1) * 20,
-  orderBy: { createdAt: 'desc' },
+ take: 20,
+ skip: (page - 1) * 20,
+ orderBy: { createdAt: 'desc' },
 });
 ```
 
@@ -193,9 +193,9 @@ The signature is distinctive: **every** endpoint slows at once, the slow time is
 // by instance count and exhausts the database's connection limit
 // GOOD: one pool per process, sized against the database's ceiling
 const pool = new Pool({
-  max: 10,                        // instances × max must stay under max_connections
-  idleTimeoutMillis: 30_000,
-  connectionTimeoutMillis: 5_000, // fail fast instead of queueing forever
+ max: 10, // instances × max must stay under max_connections
+ idleTimeoutMillis: 30_000,
+ connectionTimeoutMillis: 5_000, // fail fast instead of queueing forever
 });
 ```
 
@@ -209,60 +209,60 @@ const pool = new Pool({
 
 <!-- GOOD: Hero / LCP image — art direction + resolution switching, high priority -->
 <!--
-  Two techniques combined:
-  - Art direction (media): different crop/composition per breakpoint
-  - Resolution switching (srcset + sizes): right file size per screen density
+ Two techniques combined:
+ - Art direction (media): different crop/composition per breakpoint
+ - Resolution switching (srcset + sizes): right file size per screen density
 -->
 <picture>
-  <!-- Mobile: portrait crop (8:10) -->
-  <source
-    media="(max-width: 767px)"
-    srcset="/hero-mobile-400.avif 400w, /hero-mobile-800.avif 800w"
-    sizes="100vw"
-    width="800"
-    height="1000"
-    type="image/avif"
-  />
-  <source
-    media="(max-width: 767px)"
-    srcset="/hero-mobile-400.webp 400w, /hero-mobile-800.webp 800w"
-    sizes="100vw"
-    width="800"
-    height="1000"
-    type="image/webp"
-  />
-  <!-- Desktop: landscape crop (2:1) -->
-  <source
-    srcset="/hero-800.avif 800w, /hero-1200.avif 1200w, /hero-1600.avif 1600w"
-    sizes="(max-width: 1200px) 100vw, 1200px"
-    width="1200"
-    height="600"
-    type="image/avif"
-  />
-  <source
-    srcset="/hero-800.webp 800w, /hero-1200.webp 1200w, /hero-1600.webp 1600w"
-    sizes="(max-width: 1200px) 100vw, 1200px"
-    width="1200"
-    height="600"
-    type="image/webp"
-  />
-  <img
-    src="/hero-desktop.jpg"
-    width="1200"
-    height="600"
-    fetchpriority="high"
-    alt="Hero image description"
-  />
+ <!-- Mobile: portrait crop (8:10) -->
+ <source
+ media="(max-width: 767px)"
+ srcset="/hero-mobile-400.avif 400w, /hero-mobile-800.avif 800w"
+ sizes="100vw"
+ width="800"
+ height="1000"
+ type="image/avif"
+ />
+ <source
+ media="(max-width: 767px)"
+ srcset="/hero-mobile-400.webp 400w, /hero-mobile-800.webp 800w"
+ sizes="100vw"
+ width="800"
+ height="1000"
+ type="image/webp"
+ />
+ <!-- Desktop: landscape crop (2:1) -->
+ <source
+ srcset="/hero-800.avif 800w, /hero-1200.avif 1200w, /hero-1600.avif 1600w"
+ sizes="(max-width: 1200px) 100vw, 1200px"
+ width="1200"
+ height="600"
+ type="image/avif"
+ />
+ <source
+ srcset="/hero-800.webp 800w, /hero-1200.webp 1200w, /hero-1600.webp 1600w"
+ sizes="(max-width: 1200px) 100vw, 1200px"
+ width="1200"
+ height="600"
+ type="image/webp"
+ />
+ <img
+ src="/hero-desktop.jpg"
+ width="1200"
+ height="600"
+ fetchpriority="high"
+ alt="Hero image description"
+ />
 </picture>
 
 <!-- GOOD: Below-the-fold image — lazy loaded + async decoding -->
 <img
-  src="/content.webp"
-  width="800"
-  height="400"
-  loading="lazy"
-  decoding="async"
-  alt="Content image description"
+ src="/content.webp"
+ width="800"
+ height="400"
+ loading="lazy"
+ decoding="async"
+ alt="Content image description"
 />
 ```
 
@@ -271,24 +271,24 @@ const pool = new Pool({
 ```tsx
 // BAD: Creates new object on every render, causing children to re-render
 function TaskList() {
-  return <TaskFilters options={{ sortBy: 'date', order: 'desc' }} />;
+ return <TaskFilters options={{ sortBy: 'date', order: 'desc' }} />;
 }
 
 // GOOD: Stable reference
 const DEFAULT_OPTIONS = { sortBy: 'date', order: 'desc' } as const;
 function TaskList() {
-  return <TaskFilters options={DEFAULT_OPTIONS} />;
+ return <TaskFilters options={DEFAULT_OPTIONS} />;
 }
 
 // Use React.memo for expensive components
 const TaskItem = React.memo(function TaskItem({ task }: Props) {
-  return <div>{/* expensive render */}</div>;
+ return <div>{/* expensive render */}</div>;
 });
 
 // Use useMemo for expensive computations
 function TaskStats({ tasks }: Props) {
-  const stats = useMemo(() => calculateStats(tasks), [tasks]);
-  return <div>{stats.completed} / {stats.total}</div>;
+ const stats = useMemo(() => calculateStats(tasks), [tasks]);
+ return <div>{stats.completed} / {stats.total}</div>;
 }
 ```
 
@@ -306,11 +306,11 @@ const ChartLibrary = lazy(() => import('./ChartLibrary'));
 const SettingsPage = lazy(() => import('./pages/Settings'));
 
 function App() {
-  return (
-    <Suspense fallback={<Spinner />}>
-      <SettingsPage />
-    </Suspense>
-  );
+ return (
+ <Suspense fallback={<Spinner />}>
+ <SettingsPage />
+ </Suspense>
+ );
 }
 ```
 
@@ -333,18 +333,18 @@ let cachedConfig: AppConfig | null = null;
 let cacheExpiry = 0;
 
 async function getAppConfig(): Promise<AppConfig> {
-  if (cachedConfig && Date.now() < cacheExpiry) {
-    return cachedConfig;
-  }
-  cachedConfig = await db.config.findFirst();
-  cacheExpiry = Date.now() + CACHE_TTL;
-  return cachedConfig;
+ if (cachedConfig && Date.now() < cacheExpiry) {
+ return cachedConfig;
+ }
+ cachedConfig = await db.config.findFirst();
+ cacheExpiry = Date.now() + CACHE_TTL;
+ return cachedConfig;
 }
 
 // HTTP caching headers for static assets
 app.use('/static', express.static('public', {
-  maxAge: '1y',           // Cache for 1 year
-  immutable: true,        // Never revalidate (use content hashing in filenames)
+ maxAge: '1y', // Cache for 1 year
+ immutable: true, // Never revalidate (use content hashing in filenames)
 }));
 
 // Cache-Control for API responses
@@ -408,11 +408,11 @@ same LCP, INP, p95 latency, or other primary metric that justified the fix.
 Use two complementary layers when the surface is user-facing:
 
 - **Synthetic CI gate:** Catch reproducible regressions before merge with a
-  performance budget. Repeat noisy measurements or compare a median/trend so
-  normal run-to-run variance does not turn the gate into a flaky check.
+ performance budget. Repeat noisy measurements or compare a median/trend so
+ normal run-to-run variance does not turn the gate into a flaky check.
 - **Field monitoring:** Alert on a meaningful p75 movement in RUM data. Use
-  attributed `web-vitals` data to locate the cause; treat CrUX's rolling window
-  as confirmation rather than an immediate alert.
+ attributed `web-vitals` data to locate the cause; treat CrUX's rolling window
+ as confirmation rather than an immediate alert.
 
 When either guard fires, return to Step 1 and establish a fresh baseline before
 proposing another fix.

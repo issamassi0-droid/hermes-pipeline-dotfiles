@@ -110,7 +110,7 @@ proxmark3> lf hid clone --fc 123 --cn 45678
 proxmark3> hf mf rdbl --blk 0 -k FFFFFFFFFFFF
 
 # Long-range capture with custom antenna (up to 3 feet)
-proxmark3> lf hid read  # with extended antenna
+proxmark3> lf hid read # with extended antenna
 
 # Flipper Zero - Read and emulate
 # RFID > Read > Hold card to Flipper > Save > Emulate

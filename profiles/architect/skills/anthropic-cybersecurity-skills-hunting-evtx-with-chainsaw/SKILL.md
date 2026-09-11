@@ -41,18 +41,18 @@ A common hunt outcome is detecting suspicious PowerShell — MITRE ATT&CK **T105
 ## Prerequisites
 
 - Chainsaw binary. Download a release from GitHub or build from source:
-  ```bash
-  # Build from source (Rust toolchain required)
-  git clone https://github.com/WithSecureLabs/chainsaw.git
-  cd chainsaw && cargo build --release
-  ./target/release/chainsaw --version
-  # or: nix profile install github:WithSecureLabs/chainsaw
-  ```
+ ```bash
+ # Build from source (Rust toolchain required)
+ git clone https://github.com/WithSecureLabs/chainsaw.git
+ cd chainsaw && cargo build --release
+ ./target/release/chainsaw --version
+ # or: nix profile install github:WithSecureLabs/chainsaw
+ ```
 - The Chainsaw repo ships `mappings/` (Sigma field mappings) and `rules/` (Chainsaw rules).
 - A copy of the SigmaHQ rules for full Sigma coverage:
-  ```bash
-  git clone https://github.com/SigmaHQ/sigma.git
-  ```
+ ```bash
+ git clone https://github.com/SigmaHQ/sigma.git
+ ```
 - Collected Windows `.evtx` files (and registry hives like `SYSTEM`/`Amcache.hve` for shimcache analysis).
 
 ## Objectives
@@ -80,25 +80,25 @@ A common hunt outcome is detecting suspicious PowerShell — MITRE ATT&CK **T105
 Run the SigmaHQ corpus against collected logs using the bundled mapping file. The mapping translates Sigma fields to EVTX fields.
 ```bash
 chainsaw hunt ./collected_evtx \
-  -s ./sigma/rules \
-  --mapping ./mappings/sigma-event-logs-all.yml
+ -s ./sigma/rules \
+ --mapping ./mappings/sigma-event-logs-all.yml
 ```
 
 ### 2. Hunt with Chainsaw built-in rules plus Sigma
 Combine Chainsaw's own rules (`-r`) with Sigma (`-s`) for broader coverage.
 ```bash
 chainsaw hunt ./collected_evtx \
-  -r ./rules \
-  -s ./sigma/rules \
-  --mapping ./mappings/sigma-event-logs-all.yml
+ -r ./rules \
+ -s ./sigma/rules \
+ --mapping ./mappings/sigma-event-logs-all.yml
 ```
 
 ### 3. Filter to reduce noise
 Limit results by Sigma rule level, status, and detection kind.
 ```bash
 chainsaw hunt ./collected_evtx -s ./sigma/rules \
-  --mapping ./mappings/sigma-event-logs-all.yml \
-  --level high --status stable --kind evtx
+ --mapping ./mappings/sigma-event-logs-all.yml \
+ --level high --status stable --kind evtx
 ```
 
 ### 4. Output to CSV and JSON
@@ -106,11 +106,11 @@ Write structured output for reporting and pipelines.
 ```bash
 # JSON to stdout/file
 chainsaw hunt ./collected_evtx -s ./sigma/rules \
-  --mapping ./mappings/sigma-event-logs-all.yml --json > detections.json
+ --mapping ./mappings/sigma-event-logs-all.yml --json > detections.json
 
 # CSV into a directory (one file per detection group)
 chainsaw hunt ./collected_evtx -s ./sigma/rules \
-  --mapping ./mappings/sigma-event-logs-all.yml --csv --output ./csv_out
+ --mapping ./mappings/sigma-event-logs-all.yml --csv --output ./csv_out
 ```
 
 ### 5. Targeted keyword and regex search
@@ -124,16 +124,16 @@ chainsaw search -e "-[Ee]nc(odedCommand)?\s+[A-Za-z0-9+/=]{20,}" ./collected_evt
 
 # Time-bounded search using a Tau expression
 chainsaw search ./collected_evtx -t 'Event.System.EventID: =4624' \
-  --from "2026-06-01T00:00:00" --to "2026-06-20T00:00:00"
+ --from "2026-06-01T00:00:00" --to "2026-06-20T00:00:00"
 ```
 
 ### 6. Analyse shimcache for execution evidence
 Parse the AppCompatCache from the SYSTEM hive, pair it with Amcache timestamps, and pattern-match suspicious entries.
 ```bash
 chainsaw analyse shimcache ./SYSTEM \
-  --regexfile ./shimcache_patterns.txt \
-  --amcache ./Amcache.hve --tspair \
-  --output ./shimcache_analysis.csv
+ --regexfile ./shimcache_patterns.txt \
+ --amcache ./Amcache.hve --tspair \
+ --output ./shimcache_analysis.csv
 ```
 
 ### 7. Analyse SRUM and event-log gaps

@@ -1,14 +1,14 @@
 ---
 name: correlating-threat-campaigns
 description: 'Correlates disparate security incidents, IOCs, and adversary behaviors
-  across time and organizations to identify unified threat campaigns, attribute them
-  to common threat actors, and extract shared indicators for improved detection. Use
-  when multiple incidents exhibit overlapping indicators, when sector-wide attack
-  campaigns require cross-organizational analysis, or when building campaign-level
-  intelligence products. Activates for requests involving campaign analysis, incident
-  clustering, cross-organizational IOC correlation, or MISP correlation engine.
+ across time and organizations to identify unified threat campaigns, attribute them
+ to common threat actors, and extract shared indicators for improved detection. Use
+ when multiple incidents exhibit overlapping indicators, when sector-wide attack
+ campaigns require cross-organizational analysis, or when building campaign-level
+ intelligence products. Activates for requests involving campaign analysis, incident
+ clustering, cross-organizational IOC correlation, or MISP correlation engine.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -96,28 +96,28 @@ Apply systematic pivot analysis across four dimensions:
 Apply weighted scoring for campaign attribution:
 ```python
 def calculate_campaign_confidence(events: list) -> float:
-    scores = []
+ scores = []
 
-    # Infrastructure overlap (highest weight — most discriminating)
-    infra_overlap = count_shared_infra(events) / len(events)
-    scores.append(infra_overlap * 40)
+ # Infrastructure overlap (highest weight — most discriminating)
+ infra_overlap = count_shared_infra(events) / len(events)
+ scores.append(infra_overlap * 40)
 
-    # Capability overlap (high weight — TTPs are durable)
-    capability_overlap = count_shared_ttps(events) / len(events)
-    scores.append(capability_overlap * 35)
+ # Capability overlap (high weight — TTPs are durable)
+ capability_overlap = count_shared_ttps(events) / len(events)
+ scores.append(capability_overlap * 35)
 
-    # Temporal proximity (moderate weight)
-    temporal_score = assess_temporal_clustering(events)
-    scores.append(temporal_score * 15)
+ # Temporal proximity (moderate weight)
+ temporal_score = assess_temporal_clustering(events)
+ scores.append(temporal_score * 15)
 
-    # Victimology alignment (lower weight — many actors target same sector)
-    victim_score = assess_victim_pattern(events)
-    scores.append(victim_score * 10)
+ # Victimology alignment (lower weight — many actors target same sector)
+ victim_score = assess_victim_pattern(events)
+ scores.append(victim_score * 10)
 
-    total = sum(scores)
-    if total >= 70: return "HIGH"
-    elif total >= 45: return "MEDIUM"
-    else: return "LOW"
+ total = sum(scores)
+ if total >= 70: return "HIGH"
+ elif total >= 45: return "MEDIUM"
+ else: return "LOW"
 ```
 
 ### Step 4: Build Campaign Graph

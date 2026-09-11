@@ -1,9 +1,9 @@
 ---
 name: project-types
 description: |
-  Project type definitions with type-specific questions, patterns, and stacks.
-  Use when: determining project architecture, asking type-specific questions.
-  Referenced by: idea-validation, brainstorming, /ship command.
+ Project type definitions with type-specific questions, patterns, and stacks.
+ Use when: determining project architecture, asking type-specific questions.
+ Referenced by: idea-validation, brainstorming, /ship command.
 ---
 
 # Project Types Reference
@@ -45,15 +45,15 @@ Quick lookup for type-specific questions, patterns, and recommended stacks.
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 anyhow = "1"
-serde_json = "1"  # if JSON output
+serde_json = "1" # if JSON output
 ```
 
 ### Example Structure
 ```
 src/
-  main.rs      # Entry point, arg parsing
-  lib.rs       # Core logic
-  commands/    # Subcommand handlers (if needed)
+ main.rs # Entry point, arg parsing
+ lib.rs # Core logic
+ commands/ # Subcommand handlers (if needed)
 ```
 
 ---
@@ -86,11 +86,11 @@ tracing-subscriber = "0.3"
 ### Example Structure
 ```
 src/
-  main.rs          # Server setup
-  lib.rs           # Router, handlers
-  routes/          # Route modules
-  models/          # Data structures
-  middleware/      # Auth, logging
+ main.rs # Server setup
+ lib.rs # Router, handlers
+ routes/ # Route modules
+ models/ # Data structures
+ middleware/ # Auth, logging
 ```
 
 ---
@@ -122,16 +122,16 @@ tower-http = { version = "0.6", features = ["fs"] }
 ### Example Structure
 ```
 src/
-  main.rs
-  lib.rs
-  routes/
-  templates/
-    base.html
-    pages/
-    components/
+ main.rs
+ lib.rs
+ routes/
+ templates/
+ base.html
+ pages/
+ components/
 static/
-  css/
-  js/ (minimal)
+ css/
+ js/ (minimal)
 ```
 
 ---
@@ -155,20 +155,20 @@ static/
 [dependencies]
 teloxide = { version = "0.13", features = ["macros"] }
 tokio = { version = "1", features = ["full"] }
-sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }  # if DB
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] } # if DB
 serde = { version = "1", features = ["derive"] }
 ```
 
 ### Example Structure
 ```
 src/
-  main.rs          # Bot setup
-  lib.rs           # Command handlers
-  handlers/
-    commands.rs    # /start, /help, etc
-    callbacks.rs   # Button callbacks
-  state.rs         # FSM states (if dialog)
-  db.rs            # Database (if needed)
+ main.rs # Bot setup
+ lib.rs # Command handlers
+ handlers/
+ commands.rs # /start, /help, etc
+ callbacks.rs # Button callbacks
+ state.rs # FSM states (if dialog)
+ db.rs # Database (if needed)
 ```
 
 ### Key Considerations
@@ -197,7 +197,7 @@ src/
 [dependencies]
 serenity = { version = "0.12", features = ["framework", "standard_framework"] }
 tokio = { version = "1", features = ["full"] }
-sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] }  # if DB
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite"] } # if DB
 ```
 
 ---
@@ -277,10 +277,10 @@ chrono = "0.4"
 ### Example Structure
 ```
 src/
-  background.ts    # Service worker
-  content.ts       # Content script
-  popup/           # Popup UI
-  options/         # Options page
+ background.ts # Service worker
+ content.ts # Content script
+ popup/ # Popup UI
+ options/ # Options page
 manifest.json
 ```
 
@@ -290,25 +290,25 @@ manifest.json
 
 ```
 Need CLI tool?
-  → Rust + clap
+ → Rust + clap
 
 Need API?
-  → REST: Rust + axum
-  → GraphQL: Rust + async-graphql
+ → REST: Rust + axum
+ → GraphQL: Rust + async-graphql
 
 Need Web UI?
-  → Simple: Rust + HTMX
-  → Complex SPA: Consider separate frontend
+ → Simple: Rust + HTMX
+ → Complex SPA: Consider separate frontend
 
 Need Bot?
-  → Telegram: Rust + teloxide
-  → Discord: Rust + serenity
+ → Telegram: Rust + teloxide
+ → Discord: Rust + serenity
 
 Need Mobile?
-  → Cross-platform: Flutter
-  → Web skills: React Native
+ → Cross-platform: Flutter
+ → Web skills: React Native
 
 Need Data Processing?
-  → Batch: Rust or Python
-  → Stream: Rust + Tokio
+ → Batch: Rust or Python
+ → Stream: Rust + Tokio
 ```

@@ -1,12 +1,12 @@
 ---
 name: performing-disk-forensics-investigation
 description: 'Conduct disk forensics investigations using forensic imaging, file system
-  analysis, and timeline reconstruction, with tools such as FTK Imager, Autopsy, and
-  The Sleuth Kit, for evidence acquisition, deleted file recovery, and artifact examination.
-  Use when a security incident requires forensic analysis of persistent storage or
-  when evidence must be preserved for legal or HR proceedings.
+ analysis, and timeline reconstruction, with tools such as FTK Imager, Autopsy, and
+ The Sleuth Kit, for evidence acquisition, deleted file recovery, and artifact examination.
+ Use when a security incident requires forensic analysis of persistent storage or
+ when evidence must be preserved for legal or HR proceedings.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -66,14 +66,14 @@ Before touching any storage media, establish chain of custody:
 ```
 Chain of Custody Record:
 ━━━━━━━━━━━━━━━━━━━━━━━
-Case ID:          INC-2025-1547
-Evidence ID:      EVD-001
-Description:      Samsung 870 EVO 500GB SSD
-Serial Number:    S5XXNJ0R912345
-Source Host:      WKSTN-042
-Acquired By:      [Analyst Name]
-Date/Time:        2025-11-15T16:30:00Z
-Write Blocker:    Tableau T35u (S/N: T35U-12345)
+Case ID: INC-2025-1547
+Evidence ID: EVD-001
+Description: Samsung 870 EVO 500GB SSD
+Serial Number: S5XXNJ0R912345
+Source Host: WKSTN-042
+Acquired By: [Analyst Name]
+Date/Time: 2025-11-15T16:30:00Z
+Write Blocker: Tableau T35u (S/N: T35U-12345)
 ```
 
 ### Step 2: Create a Forensic Image
@@ -92,8 +92,8 @@ Produce a bit-for-bit copy of the evidence drive:
 ```bash
 # Create raw image with hash verification
 dcfldd if=/dev/sdb of=/evidence/WKSTN-042.dd \
-  hash=sha256 hashlog=/evidence/WKSTN-042.sha256 \
-  bs=4096 conv=noerror,sync
+ hash=sha256 hashlog=/evidence/WKSTN-042.sha256 \
+ bs=4096 conv=noerror,sync
 
 # Verify image integrity
 sha256sum /evidence/WKSTN-042.dd
@@ -101,14 +101,14 @@ sha256sum /evidence/WKSTN-042.dd
 
 ```
 Imaging Summary:
-Source Drive:    /dev/sdb (Samsung 870 EVO 500GB)
-Image File:     WKSTN-042.E01
-Image Format:   E01 (Expert Witness)
-Source Hash:     SHA-256: a1b2c3d4e5f6...
-Image Hash:      SHA-256: a1b2c3d4e5f6...  (MATCH)
-Sectors Read:    976,773,168
-Errors:          0
-Duration:        47 minutes
+Source Drive: /dev/sdb (Samsung 870 EVO 500GB)
+Image File: WKSTN-042.E01
+Image Format: E01 (Expert Witness)
+Source Hash: SHA-256: a1b2c3d4e5f6...
+Image Hash: SHA-256: a1b2c3d4e5f6... (MATCH)
+Sectors Read: 976,773,168
+Errors: 0
+Duration: 47 minutes
 ```
 
 ### Step 3: Analyze File System Structure
@@ -234,20 +234,20 @@ Compile a forensic analysis report suitable for legal proceedings:
 ```
 DISK FORENSICS INVESTIGATION REPORT
 =====================================
-Case ID:          INC-2025-1547
-Evidence:         EVD-001 (Samsung 870 EVO 500GB SSD)
-Examiner:         [Name]
+Case ID: INC-2025-1547
+Evidence: EVD-001 (Samsung 870 EVO 500GB SSD)
+Examiner: [Name]
 Date of Analysis: 2025-11-16
 
 EVIDENCE INTEGRITY
-Source Hash:      SHA-256: a1b2c3d4e5f6...
-Image Hash:       SHA-256: a1b2c3d4e5f6... (VERIFIED MATCH)
-Write Blocker:    Tableau T35u
+Source Hash: SHA-256: a1b2c3d4e5f6...
+Image Hash: SHA-256: a1b2c3d4e5f6... (VERIFIED MATCH)
+Write Blocker: Tableau T35u
 
 PARTITION LAYOUT
-Partition 1:  NTFS  100 MB   (System Reserved)
-Partition 2:  NTFS  465 GB   (C: - OS and Data)
-Partition 3:  NTFS  500 MB   (Recovery)
+Partition 1: NTFS 100 MB (System Reserved)
+Partition 2: NTFS 465 GB (C: - OS and Data)
+Partition 3: NTFS 500 MB (Recovery)
 
 KEY FINDINGS
 1. [Timestamp] - Malware dropper created in %TEMP% (update.exe)

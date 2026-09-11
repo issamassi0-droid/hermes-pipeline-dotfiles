@@ -22,12 +22,12 @@ from elevenlabs import ElevenLabs
 client = ElevenLabs()
 
 audio = client.text_to_sound_effects.convert(
-    text="Thunder rumbling in the distance with light rain",
+ text="Thunder rumbling in the distance with light rain",
 )
 
 with open("thunder.mp3", "wb") as f:
-    for chunk in audio:
-        f.write(chunk)
+ for chunk in audio:
+ f.write(chunk)
 ```
 
 ### JavaScript
@@ -38,7 +38,7 @@ import { createWriteStream } from "fs";
 
 const client = new ElevenLabsClient();
 const audio = await client.textToSoundEffects.convert({
-  text: "Thunder rumbling in the distance with light rain",
+ text: "Thunder rumbling in the distance with light rain",
 });
 audio.pipe(createWriteStream("thunder.mp3"));
 ```
@@ -47,9 +47,9 @@ audio.pipe(createWriteStream("thunder.mp3"));
 
 ```bash
 curl -X POST "https://api.elevenlabs.io/v1/sound-generation" \
-  -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
-  -d '{"text": "Thunder rumbling in the distance with light rain"}' \
-  --output thunder.mp3
+ -H "xi-api-key: $ELEVENLABS_API_KEY" -H "Content-Type: application/json" \
+ -d '{"text": "Thunder rumbling in the distance with light rain"}' \
+ --output thunder.mp3
 ```
 
 ## Parameters
@@ -67,17 +67,17 @@ curl -X POST "https://api.elevenlabs.io/v1/sound-generation" \
 ```python
 # Looping ambient sound, 10 seconds
 audio = client.text_to_sound_effects.convert(
-    text="Gentle forest ambiance with birds chirping",
-    duration_seconds=10.0,
-    prompt_influence=0.5,
-    loop=True,
+ text="Gentle forest ambiance with birds chirping",
+ duration_seconds=10.0,
+ prompt_influence=0.5,
+ loop=True,
 )
 
 # Short UI sound, high prompt adherence
 audio = client.text_to_sound_effects.convert(
-    text="Soft notification chime",
-    duration_seconds=1.0,
-    prompt_influence=0.8,
+ text="Soft notification chime",
+ duration_seconds=1.0,
+ prompt_influence=0.8,
 )
 ```
 
@@ -105,9 +105,9 @@ Full list: `mp3_22050_32`, `mp3_24000_48`, `mp3_44100_32`, `mp3_44100_64`, `mp3_
 
 ```python
 try:
-    audio = client.text_to_sound_effects.convert(text="Explosion")
+ audio = client.text_to_sound_effects.convert(text="Explosion")
 except Exception as e:
-    print(f"API error: {e}")
+ print(f"API error: {e}")
 ```
 
 Common errors:

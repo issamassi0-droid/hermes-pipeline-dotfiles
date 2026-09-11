@@ -1,14 +1,14 @@
 ---
 name: performing-kubernetes-cis-benchmark-with-kube-bench
 description: >-
-  Turns kube-bench output into a finished CIS Kubernetes Benchmark audit: interpreting
-  PASS/FAIL/WARN per control, judging which failures are genuine on a managed cluster, writing
-  remediation, and packaging evidence for SOC 2 or PCI DSS. Use when conducting a scheduled
-  compliance audit, triaging kube-bench results, deciding which controls are not applicable on
-  EKS, GKE, or AKS, or producing hardening evidence for an auditor. Keywords: CIS Kubernetes
-  Benchmark, control plane, remediation, compliance evidence, SOC 2, PCI DSS, managed cluster
-  exception. Do not use for installing and running the tool - use
-  benchmarking-kubernetes-with-kube-bench.
+ Turns kube-bench output into a finished CIS Kubernetes Benchmark audit: interpreting
+ PASS/FAIL/WARN per control, judging which failures are genuine on a managed cluster, writing
+ remediation, and packaging evidence for SOC 2 or PCI DSS. Use when conducting a scheduled
+ compliance audit, triaging kube-bench results, deciding which controls are not applicable on
+ EKS, GKE, or AKS, or producing hardening evidence for an auditor. Keywords: CIS Kubernetes
+ Benchmark, control plane, remediation, compliance evidence, SOC 2, PCI DSS, managed cluster
+ exception. Do not use for installing and running the tool - use
+ benchmarking-kubernetes-with-kube-bench.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -173,35 +173,35 @@ kube-bench run --group 1.2
 ```yaml
 name: CIS Benchmark
 on:
-  schedule:
-    - cron: '0 6 * * 1'
+ schedule:
+ - cron: '0 6 * * 1'
 
 jobs:
-  kube-bench:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Configure kubectl
-        uses: azure/setup-kubectl@v3
+ kube-bench:
+ runs-on: ubuntu-latest
+ steps:
+ - name: Configure kubectl
+ uses: azure/setup-kubectl@v3
 
-      - name: Run kube-bench
-        run: |
-          kubectl apply -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml
-          kubectl wait --for=condition=complete job/kube-bench --timeout=120s
-          kubectl logs job/kube-bench > kube-bench-report.txt
+ - name: Run kube-bench
+ run: |
+ kubectl apply -f https://raw.githubusercontent.com/aquasecurity/kube-bench/main/job.yaml
+ kubectl wait --for=condition=complete job/kube-bench --timeout=120s
+ kubectl logs job/kube-bench > kube-bench-report.txt
 
-      - name: Check for failures
-        run: |
-          FAILS=$(grep -c "\[FAIL\]" kube-bench-report.txt || true)
-          echo "Failed checks: $FAILS"
-          if [ "$FAILS" -gt 0 ]; then
-            echo "::warning::$FAILS CIS benchmark checks failed"
-          fi
+ - name: Check for failures
+ run: |
+ FAILS=$(grep -c "\[FAIL\]" kube-bench-report.txt || true)
+ echo "Failed checks: $FAILS"
+ if [ "$FAILS" -gt 0 ]; then
+ echo "::warning::$FAILS CIS benchmark checks failed"
+ fi
 
-      - name: Upload report
-        uses: actions/upload-artifact@v4
-        with:
-          name: kube-bench-report
-          path: kube-bench-report.txt
+ - name: Upload report
+ uses: actions/upload-artifact@v4
+ with:
+ name: kube-bench-report
+ path: kube-bench-report.txt
 ```
 
 ## Remediation Examples
@@ -210,20 +210,20 @@ jobs:
 ```yaml
 # /etc/kubernetes/manifests/kube-apiserver.yaml
 spec:
-  containers:
-  - command:
-    - kube-apiserver
-    - --anonymous-auth=false
+ containers:
+ - command:
+ - kube-apiserver
+ - --anonymous-auth=false
 ```
 
 ### 4.2.1 - Ensure --anonymous-auth is set to false on kubelet
 ```yaml
 # /var/lib/kubelet/config.yaml
 authentication:
-  anonymous:
-    enabled: false
-  webhook:
-    enabled: true
+ anonymous:
+ enabled: false
+ webhook:
+ enabled: true
 ```
 
 ### 5.2.1 - Minimize wildcard RBAC

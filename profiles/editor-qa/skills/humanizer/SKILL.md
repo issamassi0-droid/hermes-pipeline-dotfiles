@@ -1,13 +1,13 @@
 ---
 name: humanizer
 description: |
-  Rewrite AI-sounding text so it reads naturally without changing what it says.
-  Use when editing or reviewing prose for inflated claims,
-  sales language, vague sources, repetitive structure, stock AI words, passive
-  voice, filler, or chatbot artifacts. Based on Wikipedia's "Signs of AI writing."
+ Rewrite AI-sounding text so it reads naturally without changing what it says.
+ Use when editing or reviewing prose for inflated claims,
+ sales language, vague sources, repetitive structure, stock AI words, passive
+ voice, filler, or chatbot artifacts. Based on Wikipedia's "Signs of AI writing."
 license: MIT
 metadata:
-  version: "2.11.2"
+ version: "2.11.2"
 ---
 
 # Humanizer: remove AI writing patterns
@@ -442,9 +442,9 @@ These details often carry the writer's voice. Keep them unless they hurt the mea
 1. Read the source and mark each AI pattern.
 2. Write a draft. Read it aloud. Check the rhythm, details, simple verbs such as *is* and *has*, and the right level of formality.
 3. Ask two questions:
-   - **"What still sounds AI-generated?"**
-   - **"Did the rewrite add or remove any fact, name, number, date, quote, citation, ranking, or other claim?"**
-   Treat any unsupported addition or lost claim as an error.
+ - **"What still sounds AI-generated?"**
+ - **"Did the rewrite add or remove any fact, name, number, date, quote, citation, ranking, or other claim?"**
+ Treat any unsupported addition or lost claim as an error.
 4. Write the final version. State each point naturally instead of patching one flagged phrase at a time. If a sentence stays awkward, rewrite the paragraph around its main point. Apply the dash rule in §14.
 
 Return the result required by [How to return the result](#how-to-return-the-result).

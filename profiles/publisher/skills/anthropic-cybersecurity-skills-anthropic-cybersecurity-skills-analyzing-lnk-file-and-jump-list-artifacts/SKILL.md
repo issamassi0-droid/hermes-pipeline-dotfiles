@@ -1,11 +1,11 @@
 ---
 name: analyzing-lnk-file-and-jump-list-artifacts
 description: Analyze Windows LNK shortcut files and Jump List artifacts with LECmd,
-  JLECmd, and manual Shell Link Binary Format parsing to establish evidence of file
-  access, program execution, and user activity that persists even after the target
-  file is deleted. Use when investigating Windows user activity, reconstructing file-access
-  or program-execution timelines, or examining recent/frequently-used file evidence
-  in a forensic exam.
+ JLECmd, and manual Shell Link Binary Format parsing to establish evidence of file
+ access, program execution, and user activity that persists even after the target
+ file is deleted. Use when investigating Windows user activity, reconstructing file-access
+ or program-execution timelines, or examining recent/frequently-used file evidence
+ in a forensic exam.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -152,41 +152,41 @@ from datetime import datetime, timedelta
 FILETIME_EPOCH = datetime(1601, 1, 1)
 
 def filetime_to_datetime(filetime_bytes: bytes) -> datetime:
-    """Convert Windows FILETIME (100-ns intervals since 1601) to datetime."""
-    ft = struct.unpack("<Q", filetime_bytes)[0]
-    if ft == 0:
-        return None
-    return FILETIME_EPOCH + timedelta(microseconds=ft // 10)
+ """Convert Windows FILETIME (100-ns intervals since 1601) to datetime."""
+ ft = struct.unpack("<Q", filetime_bytes)[0]
+ if ft == 0:
+ return None
+ return FILETIME_EPOCH + timedelta(microseconds=ft // 10)
 
 def parse_lnk_header(lnk_path: str) -> dict:
-    """Parse the Shell Link header from an LNK file."""
-    with open(lnk_path, "rb") as f:
-        header = f.read(76)
+ """Parse the Shell Link header from an LNK file."""
+ with open(lnk_path, "rb") as f:
+ header = f.read(76)
 
-    header_size = struct.unpack("<I", header[0:4])[0]
-    if header_size != 0x4C:
-        return {"error": "Invalid LNK header"}
+ header_size = struct.unpack("<I", header[0:4])[0]
+ if header_size != 0x4C:
+ return {"error": "Invalid LNK header"}
 
-    link_flags = struct.unpack("<I", header[0x14:0x18])[0]
-    file_attrs = struct.unpack("<I", header[0x18:0x1C])[0]
+ link_flags = struct.unpack("<I", header[0x14:0x18])[0]
+ file_attrs = struct.unpack("<I", header[0x18:0x1C])[0]
 
-    result = {
-        "header_size": header_size,
-        "link_flags": hex(link_flags),
-        "file_attributes": hex(file_attrs),
-        "creation_time": filetime_to_datetime(header[0x1C:0x24]),
-        "access_time": filetime_to_datetime(header[0x24:0x2C]),
-        "write_time": filetime_to_datetime(header[0x2C:0x34]),
-        "file_size": struct.unpack("<I", header[0x34:0x38])[0],
-        "has_target_id_list": bool(link_flags & 0x01),
-        "has_link_info": bool(link_flags & 0x02),
-        "has_name": bool(link_flags & 0x04),
-        "has_relative_path": bool(link_flags & 0x08),
-        "has_working_dir": bool(link_flags & 0x10),
-        "has_arguments": bool(link_flags & 0x20),
-        "has_icon_location": bool(link_flags & 0x40),
-    }
-    return result
+ result = {
+ "header_size": header_size,
+ "link_flags": hex(link_flags),
+ "file_attributes": hex(file_attrs),
+ "creation_time": filetime_to_datetime(header[0x1C:0x24]),
+ "access_time": filetime_to_datetime(header[0x24:0x2C]),
+ "write_time": filetime_to_datetime(header[0x2C:0x34]),
+ "file_size": struct.unpack("<I", header[0x34:0x38])[0],
+ "has_target_id_list": bool(link_flags & 0x01),
+ "has_link_info": bool(link_flags & 0x02),
+ "has_name": bool(link_flags & 0x04),
+ "has_relative_path": bool(link_flags & 0x08),
+ "has_working_dir": bool(link_flags & 0x10),
+ "has_arguments": bool(link_flags & 0x20),
+ "has_icon_location": bool(link_flags & 0x40),
+ }
+ return result
 ```
 
 ## Investigation Use Cases
@@ -232,30 +232,30 @@ LECmd v1.11.0 - LNK File Parser
 Processing 47 LNK files...
 
 --- LNK File: Q4_Report.xlsx.lnk ---
-  Source:           C:\Evidence\Users\jsmith\Recent\Q4_Report.xlsx.lnk
-  Target Path:      C:\Users\jsmith\Downloads\Q4_Report.xlsm
-  Target Created:   2024-01-15 14:33:45 UTC
-  Target Modified:  2024-01-15 14:33:45 UTC
-  Target Accessed:  2024-01-15 14:35:12 UTC
-  File Size:        251,904 bytes
-  Drive Type:       Fixed (C:)
-  Volume Serial:    A4E7-3F21
-  Machine ID:       DESKTOP-J5M1TH
-  MAC Address:      48:2A:E3:5C:9B:01
+ Source: C:\Evidence\Users\jsmith\Recent\Q4_Report.xlsx.lnk
+ Target Path: C:\Users\jsmith\Downloads\Q4_Report.xlsm
+ Target Created: 2024-01-15 14:33:45 UTC
+ Target Modified: 2024-01-15 14:33:45 UTC
+ Target Accessed: 2024-01-15 14:35:12 UTC
+ File Size: 251,904 bytes
+ Drive Type: Fixed (C:)
+ Volume Serial: A4E7-3F21
+ Machine ID: DESKTOP-J5M1TH
+ MAC Address: 48:2A:E3:5C:9B:01
 
 --- LNK File: update_client.exe.lnk ---
-  Source:           C:\Evidence\Users\jsmith\Recent\update_client.exe.lnk
-  Target Path:      C:\ProgramData\Updates\update_client.exe
-  Target Created:   2024-01-15 14:34:02 UTC
-  Target Modified:  2024-01-15 14:34:02 UTC
-  Target Accessed:  2024-01-15 14:36:30 UTC
-  File Size:        1,258,496 bytes
-  Drive Type:       Fixed (C:)
-  Volume Serial:    A4E7-3F21
-  Machine ID:       DESKTOP-J5M1TH
-  Working Dir:      C:\ProgramData\Updates
-  Arguments:        --silent --no-update-check
-  Run Window:       Hidden
+ Source: C:\Evidence\Users\jsmith\Recent\update_client.exe.lnk
+ Target Path: C:\ProgramData\Updates\update_client.exe
+ Target Created: 2024-01-15 14:34:02 UTC
+ Target Modified: 2024-01-15 14:34:02 UTC
+ Target Accessed: 2024-01-15 14:36:30 UTC
+ File Size: 1,258,496 bytes
+ Drive Type: Fixed (C:)
+ Volume Serial: A4E7-3F21
+ Machine ID: DESKTOP-J5M1TH
+ Working Dir: C:\ProgramData\Updates
+ Arguments: --silent --no-update-check
+ Run Window: Hidden
 
 ======================================================================
 
@@ -267,27 +267,27 @@ JLECmd v1.5.0 - Jump List Parser
 Processing 23 AutomaticDestinations files...
 
 --- Application: Microsoft Excel (AppID: 12dc1ea8e34b5a6) ---
-  Entries: 15
-  Most Recent:
-    Entry 0:  C:\Users\jsmith\Downloads\Q4_Report.xlsm         (2024-01-15 14:35:12 UTC)
-    Entry 1:  \\FILESERV01\Finance\Budget_2024.xlsx             (2024-01-14 09:22:30 UTC)
-    Entry 2:  C:\Users\jsmith\Documents\Expenses\Dec2023.xlsx   (2024-01-10 16:45:00 UTC)
+ Entries: 15
+ Most Recent:
+ Entry 0: C:\Users\jsmith\Downloads\Q4_Report.xlsm (2024-01-15 14:35:12 UTC)
+ Entry 1: \\FILESERV01\Finance\Budget_2024.xlsx (2024-01-14 09:22:30 UTC)
+ Entry 2: C:\Users\jsmith\Documents\Expenses\Dec2023.xlsx (2024-01-10 16:45:00 UTC)
 
 --- Application: Windows Explorer (AppID: f01b4d95cf55d32a) ---
-  Entries: 28
-  Most Recent:
-    Entry 0:  C:\ProgramData\Updates\                           (2024-01-15 14:36:25 UTC)
-    Entry 1:  E:\Backup\                                        (2024-01-15 15:30:00 UTC)
-    Entry 2:  \\FILESERV01\HR\Employees\                        (2024-01-15 16:12:45 UTC)
+ Entries: 28
+ Most Recent:
+ Entry 0: C:\ProgramData\Updates\ (2024-01-15 14:36:25 UTC)
+ Entry 1: E:\Backup\ (2024-01-15 15:30:00 UTC)
+ Entry 2: \\FILESERV01\HR\Employees\ (2024-01-15 16:12:45 UTC)
 
 --- Application: cmd.exe (AppID: 9b9cdc69c1c24e2b) ---
-  Entries: 5
-  Most Recent:
-    Entry 0:  C:\Windows\System32\cmd.exe                       (2024-01-15 14:36:00 UTC)
+ Entries: 5
+ Most Recent:
+ Entry 0: C:\Windows\System32\cmd.exe (2024-01-15 14:36:00 UTC)
 
 Summary:
-  Total LNK files processed:    47
-  Total Jump List entries:       156
-  Suspicious artifacts:          3 (hidden window execution, USB drive access, network shares)
-  CSV exported to:               /analysis/lnk_output/ and /analysis/jumplist_output/
+ Total LNK files processed: 47
+ Total Jump List entries: 156
+ Suspicious artifacts: 3 (hidden window execution, USB drive access, network shares)
+ CSV exported to: /analysis/lnk_output/ and /analysis/jumplist_output/
 ```

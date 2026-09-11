@@ -1,132 +1,132 @@
 {
-  "mission_id": "research-ai-coding-assistants-senior-devs-2026",
-  "strategist_version": "2026-09-11",
-  "output_type": "strategy_brief",
-  "handoff_to": "draft_writer",
+ "mission_id": "research-ai-coding-assistants-senior-devs-2026",
+ "strategist_version": "2026-09-11",
+ "output_type": "strategy_brief",
+ "handoff_to": "draft_writer",
 
-  "angle_selection": {
-    "chosen_angle": "The senior developer's role has shifted from writer to orchestrator — AI coding agents are no longer autocomplete tools but autonomous multi-agent workflows, and the real bottleneck is governance, not generation",
-    "rationale": "Highest-scoring angle on search intent (informational + commercial for senior devs evaluating tooling), novelty (2026 multi-agent shift), and taxonomy alignment (senior-dev focus differentiates from generic AI coding content). Contradictions (productivity vs. editing overhead) and blindspots (governance gap, BYOAI) make this angle defensible and non-echo-chamber.",
-    "score": 9.2,
-    "criteria": {
-      "search_intent": 9,
-      "novelty": 9,
-      "taxonomy_alignment": 9,
-      "contrarian_risk": "low — angle acknowledges downsides, not hype"
-    }
-  },
+ "angle_selection": {
+ "chosen_angle": "The senior developer's role has shifted from writer to orchestrator — AI coding agents are no longer autocomplete tools but autonomous multi-agent workflows, and the real bottleneck is governance, not generation",
+ "rationale": "Highest-scoring angle on search intent (informational + commercial for senior devs evaluating tooling), novelty (2026 multi-agent shift), and taxonomy alignment (senior-dev focus differentiates from generic AI coding content). Contradictions (productivity vs. editing overhead) and blindspots (governance gap, BYOAI) make this angle defensible and non-echo-chamber.",
+ "score": 9.2,
+ "criteria": {
+ "search_intent": 9,
+ "novelty": 9,
+ "taxonomy_alignment": 9,
+ "contrarian_risk": "low — angle acknowledges downsides, not hype"
+ }
+ },
 
-  "labeled_truths": [
-    {"id": "C1", "claim": "90% of devs use AI coding agents weekly; 68% daily", "tier": 1, "source": "JetBrains Developer Ecosystem Survey 2026"},
-    {"id": "C2", "claim": "Claude Code leads at 39% adoption, 2x Copilot", "tier": 1, "source": "JetBrains 2026 survey + April 2026 AI Pulse"},
-    {"id": "C3", "claim": "Cursor: $2B ARR, $9.9B valuation, 1% to 22% adoption since Jan 2025", "tier": 1, "source": "BCG Dec 2025 + TechCrunch"},
-    {"id": "C4", "claim": "Top decile >30% productivity gains; ~50% of users >20%", "tier": 1, "source": "BCG + Bain 2025"},
-    {"id": "C5", "claim": "AI PRs wait 4.6x longer in review; coding speed gains neutralized", "tier": 1, "source": "Opsera 2026 Benchmark (250k devs)"},
-    {"id": "C6", "claim": "15-18% more security vulns; secret-leak rate doubles (3.2% vs 1.5%)", "tier": 1, "source": "CSA + Opsera + GitGuardian"},
-    {"id": "C7", "claim": "Seniors 2x more likely to use AI than juniors", "tier": 2, "source": "Signals/Aktagon (Fastly survey)"},
-    {"id": "C8", "claim": "30% of seniors say editing AI output offsets most time savings", "tier": 1, "source": "SonarSource + Signals/Aktagon"},
-    {"id": "C9", "claim": "Claude Code Agent Teams: multi-agent parallel, experimental Feb 2026", "tier": 1, "source": "Anthropic official docs"},
-    {"id": "C10", "claim": "Cursor 2.0: 8 parallel agents, Background Agent, Composer 2 (73.7% SWE-bench)", "tier": 1, "source": "TIMEWELL + Paperclipped"},
-    {"id": "C11", "claim": "Role shift from writer to editor/orchestrator", "tier": 2, "source": "Rivista.ai + CIO + ICSE-SEIP 2026"},
-    {"id": "C12", "claim": "Testing/QA <5% deployment; #1 identified opportunity", "tier": 1, "source": "BCG State of GenAI 2025"},
-    {"id": "C13", "claim": "66% frustration: AI 'almost right, not quite'; 45% debugging takes longer", "tier": 1, "source": "Stack Overflow 2025 Developer Survey"},
-    {"id": "C14", "claim": "83% orgs plan agentic AI; only 29% prepared to secure it; 35% BYOAI", "tier": 1, "source": "Cisco/CSA + SonarSource"},
-    {"id": "C15", "claim": "Devin: $500 to $20/mo; Windsurf self-hosted; Copilot Agent Mode GA", "tier": 1, "source": "TIMEWELL + Dualite"}
-  ],
+ "labeled_truths": [
+ {"id": "C1", "claim": "90% of devs use AI coding agents weekly; 68% daily", "tier": 1, "source": "JetBrains Developer Ecosystem Survey 2026"},
+ {"id": "C2", "claim": "Claude Code leads at 39% adoption, 2x Copilot", "tier": 1, "source": "JetBrains 2026 survey + April 2026 AI Pulse"},
+ {"id": "C3", "claim": "Cursor: $2B ARR, $9.9B valuation, 1% to 22% adoption since Jan 2025", "tier": 1, "source": "BCG Dec 2025 + TechCrunch"},
+ {"id": "C4", "claim": "Top decile >30% productivity gains; ~50% of users >20%", "tier": 1, "source": "BCG + Bain 2025"},
+ {"id": "C5", "claim": "AI PRs wait 4.6x longer in review; coding speed gains neutralized", "tier": 1, "source": "Opsera 2026 Benchmark (250k devs)"},
+ {"id": "C6", "claim": "15-18% more security vulns; secret-leak rate doubles (3.2% vs 1.5%)", "tier": 1, "source": "CSA + Opsera + GitGuardian"},
+ {"id": "C7", "claim": "Seniors 2x more likely to use AI than juniors", "tier": 2, "source": "Signals/Aktagon (Fastly survey)"},
+ {"id": "C8", "claim": "30% of seniors say editing AI output offsets most time savings", "tier": 1, "source": "SonarSource + Signals/Aktagon"},
+ {"id": "C9", "claim": "Claude Code Agent Teams: multi-agent parallel, experimental Feb 2026", "tier": 1, "source": "Anthropic official docs"},
+ {"id": "C10", "claim": "Cursor 2.0: 8 parallel agents, Background Agent, Composer 2 (73.7% SWE-bench)", "tier": 1, "source": "TIMEWELL + Paperclipped"},
+ {"id": "C11", "claim": "Role shift from writer to editor/orchestrator", "tier": 2, "source": "Rivista.ai + CIO + ICSE-SEIP 2026"},
+ {"id": "C12", "claim": "Testing/QA <5% deployment; #1 identified opportunity", "tier": 1, "source": "BCG State of GenAI 2025"},
+ {"id": "C13", "claim": "66% frustration: AI 'almost right, not quite'; 45% debugging takes longer", "tier": 1, "source": "Stack Overflow 2025 Developer Survey"},
+ {"id": "C14", "claim": "83% orgs plan agentic AI; only 29% prepared to secure it; 35% BYOAI", "tier": 1, "source": "Cisco/CSA + SonarSource"},
+ {"id": "C15", "claim": "Devin: $500 to $20/mo; Windsurf self-hosted; Copilot Agent Mode GA", "tier": 1, "source": "TIMEWELL + Dualite"}
+ ],
 
-  "contradictions": [
-    {"issue": "Productivity gains vs editing overhead", "resolution": "Gains are real but governance-dependent; seniors critical of output quality"},
-    {"issue": "Junior vs senior productivity gap", "resolution": "Juniors overestimate gains; seniors more selective; adoption != outcome"},
-    {"issue": "Adoption saturation vs outcome variance", "resolution": "Adoption flatlined; governance is the differentiator"}
-  ],
+ "contradictions": [
+ {"issue": "Productivity gains vs editing overhead", "resolution": "Gains are real but governance-dependent; seniors critical of output quality"},
+ {"issue": "Junior vs senior productivity gap", "resolution": "Juniors overestimate gains; seniors more selective; adoption != outcome"},
+ {"issue": "Adoption saturation vs outcome variance", "resolution": "Adoption flatlined; governance is the differentiator"}
+ ],
 
-  "blindspot_scan": {
-    "echo_chamber_risk": "medium — angle could default to hype without governance focus",
-    "injected_contrarian": "Testing/QA remains <5% despite being #1 opportunity — the market is ignoring the bottleneck",
-    "context_window_bottleneck": false,
-    "narrative_first_risks": "Claims C4 and C8 present opposing productivity narratives; the brief must present both without collapsing into contradiction"
-  },
+ "blindspot_scan": {
+ "echo_chamber_risk": "medium — angle could default to hype without governance focus",
+ "injected_contrarian": "Testing/QA remains <5% despite being #1 opportunity — the market is ignoring the bottleneck",
+ "context_window_bottleneck": false,
+ "narrative_first_risks": "Claims C4 and C8 present opposing productivity narratives; the brief must present both without collapsing into contradiction"
+ },
 
-  "blueprint": {
-    "h1": "The 2026 AI Coding Assistant Landscape: Why Senior Developers Are Orchestrators, Not Writers",
-    "h2_hierarchy": [
-      "1. The 2026 Landscape: From Autocomplete to Autonomous Agents",
-      "  1.1 Market leaders compared: Cursor, Claude Code, Copilot, Windsurf, Devin, Aider, Cline",
-      "  1.2 Terminal-first vs IDE-first bifurcation",
-      "2. What the Data Says: Adoption, Productivity, and Quality",
-      "  2.1 The 90% adoption stat — what it means for seniors",
-      "  2.2 Productivity gains vs editing overhead (C4 vs C8)",
-      "  2.3 The review bottleneck: AI PRs wait 4.6x longer (C5)",
-      "3. The Senior Developer's New Role: Orchestrator, Not Writer",
-      "  3.1 Multi-agent workflows: Claude Code Agent Teams, Cursor 2.0",
-      "  3.2 When multi-agent pays off vs when it doesn't",
-      "4. The Governance Gap: Security, Review, and Compliance",
-      "  4.1 15-18% more vulnerabilities; secret-leak rate doubles (C6)",
-      "  4.2 83% plan deployment, 29% prepared (C14)",
-      "  4.3 BYOAI: 35% use personal accounts",
-      "5. Pricing, ROI, and Commoditization",
-      "  5.1 Devin's $500 to $20 collapse (C15)",
-      "  5.2 No standardized ROI framework (gap)",
-      "6. Practical Recommendations for Senior Devs in 2026",
-      "  6.1 Prioritize governance over generation",
-      "  6.2 Testing/QA: the untapped opportunity",
-      "  6.3 Selecting tools by workflow, not features"
-    ],
-    "tone": "authoritative, evidence-dense, contrarian where data supports",
-    "keyword_density": {
-      "ai coding assistants": 8,
-      "senior developers": 10,
-      "orchestrator": 6,
-      "governance": 6,
-      "multi-agent": 5
-    },
-    "data_insertion_points": [
-      {"section": "2.1", "data": "C1, C2", "type": "statistic"},
-      {"section": "2.2", "data": "C4, C8", "type": "contradiction"},
-      {"section": "2.3", "data": "C5", "type": "statistic"},
-      {"section": "3.1", "data": "C9, C10", "type": "feature_comparison"},
-      {"section": "4.1", "data": "C6", "type": "security_stat"},
-      {"section": "4.2", "data": "C14", "type": "statistic"},
-      {"section": "5.1", "data": "C15", "type": "pricing_example"}
-    ]
-  },
+ "blueprint": {
+ "h1": "The 2026 AI Coding Assistant Landscape: Why Senior Developers Are Orchestrators, Not Writers",
+ "h2_hierarchy": [
+ "1. The 2026 Landscape: From Autocomplete to Autonomous Agents",
+ " 1.1 Market leaders compared: Cursor, Claude Code, Copilot, Windsurf, Devin, Aider, Cline",
+ " 1.2 Terminal-first vs IDE-first bifurcation",
+ "2. What the Data Says: Adoption, Productivity, and Quality",
+ " 2.1 The 90% adoption stat — what it means for seniors",
+ " 2.2 Productivity gains vs editing overhead (C4 vs C8)",
+ " 2.3 The review bottleneck: AI PRs wait 4.6x longer (C5)",
+ "3. The Senior Developer's New Role: Orchestrator, Not Writer",
+ " 3.1 Multi-agent workflows: Claude Code Agent Teams, Cursor 2.0",
+ " 3.2 When multi-agent pays off vs when it doesn't",
+ "4. The Governance Gap: Security, Review, and Compliance",
+ " 4.1 15-18% more vulnerabilities; secret-leak rate doubles (C6)",
+ " 4.2 83% plan deployment, 29% prepared (C14)",
+ " 4.3 BYOAI: 35% use personal accounts",
+ "5. Pricing, ROI, and Commoditization",
+ " 5.1 Devin's $500 to $20 collapse (C15)",
+ " 5.2 No standardized ROI framework (gap)",
+ "6. Practical Recommendations for Senior Devs in 2026",
+ " 6.1 Prioritize governance over generation",
+ " 6.2 Testing/QA: the untapped opportunity",
+ " 6.3 Selecting tools by workflow, not features"
+ ],
+ "tone": "authoritative, evidence-dense, contrarian where data supports",
+ "keyword_density": {
+ "ai coding assistants": 8,
+ "senior developers": 10,
+ "orchestrator": 6,
+ "governance": 6,
+ "multi-agent": 5
+ },
+ "data_insertion_points": [
+ {"section": "2.1", "data": "C1, C2", "type": "statistic"},
+ {"section": "2.2", "data": "C4, C8", "type": "contradiction"},
+ {"section": "2.3", "data": "C5", "type": "statistic"},
+ {"section": "3.1", "data": "C9, C10", "type": "feature_comparison"},
+ {"section": "4.1", "data": "C6", "type": "security_stat"},
+ {"section": "4.2", "data": "C14", "type": "statistic"},
+ {"section": "5.1", "data": "C15", "type": "pricing_example"}
+ ]
+ },
 
-  "credibility_summary": {
-    "overall_score": "87% Tier 1-2",
-    "tier_1_count": 14,
-    "tier_2_count": 12,
-    "tier_3_count": 0,
-    "tier_4_count": 0,
-    "confidence": "high",
-    "gaps": [
-      "No standardized ROI framework",
-      "Limited longitudinal data beyond 12 months",
-      "Junior skill development impact unknown",
-      "Non-Western dev populations underrepresented"
-    ]
-  },
+ "credibility_summary": {
+ "overall_score": "87% Tier 1-2",
+ "tier_1_count": 14,
+ "tier_2_count": 12,
+ "tier_3_count": 0,
+ "tier_4_count": 0,
+ "confidence": "high",
+ "gaps": [
+ "No standardized ROI framework",
+ "Limited longitudinal data beyond 12 months",
+ "Junior skill development impact unknown",
+ "Non-Western dev populations underrepresented"
+ ]
+ },
 
-  "editor_qa_flags": [
-    {"type": "narrative_first_risk", "detail": "C4 (top performers >30%) vs C8 (30% say editing offsets gains) must be presented as complementary, not contradictory", "severity": "high"},
-    {"type": "thin_evidence", "detail": "C7 is tier 2 — flag if draft over-weights senior-vs-junior adoption claims", "severity": "medium"},
-    {"type": "blindspot", "detail": "Testing/QA <5% is a story the market is missing — ensure section 6.2 doesn't bury this", "severity": "high"}
-  ],
+ "editor_qa_flags": [
+ {"type": "narrative_first_risk", "detail": "C4 (top performers >30%) vs C8 (30% say editing offsets gains) must be presented as complementary, not contradictory", "severity": "high"},
+ {"type": "thin_evidence", "detail": "C7 is tier 2 — flag if draft over-weights senior-vs-junior adoption claims", "severity": "medium"},
+ {"type": "blindspot", "detail": "Testing/QA <5% is a story the market is missing — ensure section 6.2 doesn't bury this", "severity": "high"}
+ ],
 
-  "handoff": {
-    "format": "markdown",
-    "contract": "strategist_to_writer",
-    "title": "The 2026 AI Coding Assistant Landscape: Why Senior Developers Are Orchestrators, Not Writers",
-    "sections": [
-      {"h2": "1. The 2026 Landscape: From Autocomplete to Autonomous Agents", "subsections": ["1.1 Market leaders compared", "1.2 Terminal-first vs IDE-first"], "data_slots": ["C1", "C2", "C3", "C15"]},
-      {"h2": "2. What the Data Says: Adoption, Productivity, and Quality", "subsections": ["2.1 Adoption stat", "2.2 Productivity vs editing", "2.3 Review bottleneck"], "data_slots": ["C1", "C4", "C5", "C8"], "contradictions": ["C4 vs C8"]},
-      {"h2": "3. The Senior Developer's New Role: Orchestrator, Not Writer", "subsections": ["3.1 Multi-agent workflows", "3.2 When multi-agent pays off"], "data_slots": ["C9", "C10", "C11"]},
-      {"h2": "4. The Governance Gap: Security, Review, and Compliance", "subsections": ["4.1 Security vulnerabilities", "4.2 Org preparedness", "4.3 BYOAI"], "data_slots": ["C6", "C14"]},
-      {"h2": "5. Pricing, ROI, and Commoditization", "subsections": ["5.1 Devin pricing collapse", "5.2 ROI framework gap"], "data_slots": ["C15"], "gaps": ["ROI standardization"]},
-      {"h2": "6. Practical Recommendations for Senior Devs in 2026", "subsections": ["6.1 Governance over generation", "6.2 Testing/QA opportunity", "6.3 Tool selection by workflow"], "data_slots": ["C12", "C13"]}
-    ],
-    "tone": "authoritative, evidence-dense, contrarian where data supports",
-    "keywords": {"ai coding assistants": 8, "senior developers": 10, "orchestrator": 6, "governance": 6, "multi-agent": 5},
-    "credibility_score": "87% Tier 1-2",
-    "flags": ["narrative_first_risk: C4 vs C8", "blindspot: testing/QA <5%", "thin_evidence: C7 tier 2"]
-  }
+ "handoff": {
+ "format": "markdown",
+ "contract": "strategist_to_writer",
+ "title": "The 2026 AI Coding Assistant Landscape: Why Senior Developers Are Orchestrators, Not Writers",
+ "sections": [
+ {"h2": "1. The 2026 Landscape: From Autocomplete to Autonomous Agents", "subsections": ["1.1 Market leaders compared", "1.2 Terminal-first vs IDE-first"], "data_slots": ["C1", "C2", "C3", "C15"]},
+ {"h2": "2. What the Data Says: Adoption, Productivity, and Quality", "subsections": ["2.1 Adoption stat", "2.2 Productivity vs editing", "2.3 Review bottleneck"], "data_slots": ["C1", "C4", "C5", "C8"], "contradictions": ["C4 vs C8"]},
+ {"h2": "3. The Senior Developer's New Role: Orchestrator, Not Writer", "subsections": ["3.1 Multi-agent workflows", "3.2 When multi-agent pays off"], "data_slots": ["C9", "C10", "C11"]},
+ {"h2": "4. The Governance Gap: Security, Review, and Compliance", "subsections": ["4.1 Security vulnerabilities", "4.2 Org preparedness", "4.3 BYOAI"], "data_slots": ["C6", "C14"]},
+ {"h2": "5. Pricing, ROI, and Commoditization", "subsections": ["5.1 Devin pricing collapse", "5.2 ROI framework gap"], "data_slots": ["C15"], "gaps": ["ROI standardization"]},
+ {"h2": "6. Practical Recommendations for Senior Devs in 2026", "subsections": ["6.1 Governance over generation", "6.2 Testing/QA opportunity", "6.3 Tool selection by workflow"], "data_slots": ["C12", "C13"]}
+ ],
+ "tone": "authoritative, evidence-dense, contrarian where data supports",
+ "keywords": {"ai coding assistants": 8, "senior developers": 10, "orchestrator": 6, "governance": 6, "multi-agent": 5},
+ "credibility_score": "87% Tier 1-2",
+ "flags": ["narrative_first_risk: C4 vs C8", "blindspot: testing/QA <5%", "thin_evidence: C7 tier 2"]
+ }
 }

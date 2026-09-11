@@ -1,10 +1,10 @@
 ---
 name: hunting-for-dns-tunneling-with-zeek
 description: Detects DNS tunneling and covert-channel data exfiltration by analyzing
-  Zeek dns.log for high-entropy subdomain queries, excessive query volume, abnormally
-  long query lengths, and unusual DNS record types (TXT/NULL/CNAME). Use when hunting
-  for DNS-based data exfiltration or C2 covert channels in network traffic, or when
-  triaging suspicious DNS query volume/patterns surfaced by Zeek logs.
+ Zeek dns.log for high-entropy subdomain queries, excessive query volume, abnormally
+ long query lengths, and unusual DNS record types (TXT/NULL/CNAME). Use when hunting
+ for DNS-based data exfiltration or C2 covert channels in network traffic, or when
+ triaging suspicious DNS query volume/patterns surfaced by Zeek logs.
 domain: cybersecurity
 subdomain: threat-hunting
 tags:
@@ -88,17 +88,17 @@ mitre_attack:
 module DNSTunnel;
 
 export {
-    redef enum Notice::Type += { DNSTunnel::Long_DNS_Query };
-    const query_length_threshold = 50 &redef;
-    const query_count_threshold = 100 &redef;
+ redef enum Notice::Type += { DNSTunnel::Long_DNS_Query };
+ const query_length_threshold = 50 &redef;
+ const query_count_threshold = 100 &redef;
 }
 
 event dns_request(c: connection, msg: dns_msg, query: string, qtype: count, qclass: count) {
-    if ( |query| > query_length_threshold ) {
-        NOTICE([$note=DNSTunnel::Long_DNS_Query,
-                $msg=fmt("Long DNS query detected: %s (%d chars)", query, |query|),
-                $conn=c]);
-    }
+ if ( |query| > query_length_threshold ) {
+ NOTICE([$note=DNSTunnel::Long_DNS_Query,
+ $msg=fmt("Long DNS query detected: %s (%d chars)", query, |query|),
+ $conn=c]);
+ }
 }
 ```
 

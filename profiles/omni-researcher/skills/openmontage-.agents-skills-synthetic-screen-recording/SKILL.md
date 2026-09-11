@@ -44,20 +44,20 @@ Wired in dispatch: `remotion-composer/src/Explainer.tsx` (`if (cut.type === "ter
 **Props:**
 ```ts
 interface TerminalSceneProps {
-  title?: string;           // shown in the window title bar
-  steps: TerminalStep[];    // the timeline
-  prompt?: string;          // "$", ">", etc.
-  accentColor?: string;     // pill + prompt glow
-  backgroundColor?: string;
+ title?: string; // shown in the window title bar
+ steps: TerminalStep[]; // the timeline
+ prompt?: string; // "$", ">", etc.
+ accentColor?: string; // pill + prompt glow
+ backgroundColor?: string;
 }
 ```
 
 **Step kinds:**
 ```ts
-{ kind: "cmd",   text: string, typeSpeed?: number, holdSeconds?: number }
-{ kind: "out",   text: string, holdSeconds?: number }
+{ kind: "cmd", text: string, typeSpeed?: number, holdSeconds?: number }
+{ kind: "out", text: string, holdSeconds?: number }
 { kind: "pause", seconds: number }
-{ kind: "pill",  text: string, color?: string, durationSeconds?: number }
+{ kind: "pill", text: string, color?: string, durationSeconds?: number }
 ```
 
 - `cmd` — prints the prompt, types the text character-by-character (`typeSpeed` is seconds per character, default 0.035), then holds for `holdSeconds` (default 0.3)
@@ -71,25 +71,25 @@ Author a new scene by adding a cut to `build_composition.py` (or your equivalent
 
 ```python
 install_steps = [
-    {"kind": "pause", "seconds": 7.0},                 # wait for intro narration
-    {"kind": "cmd", "text": "git clone https://github.com/calesthio/OpenMontage.git",
-     "typeSpeed": 0.045, "holdSeconds": 0.3},
-    {"kind": "out", "text": "Cloning into 'OpenMontage'..."},
-    {"kind": "out", "text": "remote: Enumerating objects: 2847, done."},
-    {"kind": "pill", "text": "repo cloned", "color": "#34D399", "durationSeconds": 2.6},
-    {"kind": "pause", "seconds": 3.8},                 # bridge to next narration cue
-    # ...
+ {"kind": "pause", "seconds": 7.0}, # wait for intro narration
+ {"kind": "cmd", "text": "git clone https://github.com/calesthio/OpenMontage.git",
+ "typeSpeed": 0.045, "holdSeconds": 0.3},
+ {"kind": "out", "text": "Cloning into 'OpenMontage'..."},
+ {"kind": "out", "text": "remote: Enumerating objects: 2847, done."},
+ {"kind": "pill", "text": "repo cloned", "color": "#34D399", "durationSeconds": 2.6},
+ {"kind": "pause", "seconds": 3.8}, # bridge to next narration cue
+ # ...
 ]
 
 cuts.append({
-    "id": "install-terminal",
-    "type": "terminal_scene",
-    "terminalTitle": "bash — OpenMontage setup",
-    "prompt": "$",
-    "accentColor": "#22D3EE",
-    "steps": install_steps,
-    "in_seconds": 50.0,
-    "out_seconds": 110.0,
+ "id": "install-terminal",
+ "type": "terminal_scene",
+ "terminalTitle": "bash — OpenMontage setup",
+ "prompt": "$",
+ "accentColor": "#22D3EE",
+ "steps": install_steps,
+ "in_seconds": 50.0,
+ "out_seconds": 110.0,
 })
 ```
 
@@ -110,18 +110,18 @@ cuts.append({
 ```python
 import math
 def trace(steps, scene_start, fps=30):
-    t = 0.0
-    for s in steps:
-        k = s["kind"]
-        if k == "cmd":
-            tf = math.ceil(len(s["text"]) * s.get("typeSpeed", 0.035) * fps)
-            t += tf / fps + s.get("holdSeconds", 0.3)
-        elif k == "out":
-            t += max(2, math.ceil(0.08 * fps)) / fps + s.get("holdSeconds", 0.15)
-        elif k == "pause":
-            t += s["seconds"]
-        # "pill" is non-blocking — does NOT advance cursor
-        print(f"  {t + scene_start:6.2f}s  {k}: {s.get('text', '')[:40]}")
+ t = 0.0
+ for s in steps:
+ k = s["kind"]
+ if k == "cmd":
+ tf = math.ceil(len(s["text"]) * s.get("typeSpeed", 0.035) * fps)
+ t += tf / fps + s.get("holdSeconds", 0.3)
+ elif k == "out":
+ t += max(2, math.ceil(0.08 * fps)) / fps + s.get("holdSeconds", 0.15)
+ elif k == "pause":
+ t += s["seconds"]
+ # "pill" is non-blocking — does NOT advance cursor
+ print(f" {t + scene_start:6.2f}s {k}: {s.get('text', '')[:40]}")
 trace(install_steps, 50)
 ```
 
@@ -144,14 +144,14 @@ The `.agents/skills/synthetic-screen-recording` pattern also owns `ProviderChip`
 
 ```python
 overlays.append({
-    "type": "provider_chip",
-    "providers": ["Veo 3.1", "Seedance 2.0", "Kling 2.5", ...],
-    "cycleSeconds": 2.5,
-    "position": "bottom-right",
-    "accentColor": "#22D3EE",
-    "label": "generated with",
-    "in_seconds": 195.0,
-    "out_seconds": 222.5,
+ "type": "provider_chip",
+ "providers": ["Veo 3.1", "Seedance 2.0", "Kling 2.5", ...],
+ "cycleSeconds": 2.5,
+ "position": "bottom-right",
+ "accentColor": "#22D3EE",
+ "label": "generated with",
+ "in_seconds": 195.0,
+ "out_seconds": 222.5,
 })
 ```
 

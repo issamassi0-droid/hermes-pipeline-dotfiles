@@ -62,9 +62,9 @@ A tool focused entirely on a restaurant's existing repeat customers. Auto-reorde
 - **Feasibility:** Medium. The ordering/payment tech is commodity. The hard parts: (a) how do you identify and onboard "regulars" without the restaurant doing manual work? (b) How do you handle the cold start — the first reorder needs an order history that lives on the delivery platform, not with you.
 - **Differentiation:** High for the niche. Platforms optimize for marketplace dynamics (new customer discovery, driver logistics). Nobody is optimizing specifically for "keep your regulars ordering direct." It's too small for DoorDash to care about, which is exactly why it's a good wedge.
 - **Hidden assumptions:**
-  - Regulars will install/use yet another ordering method (assumption most likely to be wrong)
-  - Restaurant owners will share customer contact info or let you access it
-  - Direct ordering won't cannibalize dine-in revenue
+ - Regulars will install/use yet another ordering method (assumption most likely to be wrong)
+ - Restaurant owners will share customer contact info or let you access it
+ - Direct ordering won't cannibalize dine-in revenue
 - **What could kill it:** If customers simply won't switch channels. Habit is powerful — even if DoorDash costs more, it's already on their phone.
 
 **Direction B: Direct Channel + Retention Hybrid (Variation 1 + 5)**

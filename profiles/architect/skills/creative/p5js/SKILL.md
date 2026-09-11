@@ -6,9 +6,9 @@ author: SHL0MS, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [creative-coding, generative-art, p5js, canvas, interactive, visualization, webgl, shaders, animation]
-    related_skills: [ascii-video, manim-video, excalidraw]
+ hermes:
+ tags: [creative-coding, generative-art, p5js, canvas, interactive, visualization, webgl, shaders, animation]
+ related_skills: [ascii-video, manim-video, excalidraw]
 ---
 
 # p5.js Production Pipeline
@@ -179,32 +179,32 @@ Single HTML file. Structure:
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Name</title>
-  <script>p5.disableFriendlyErrors = true;</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.min.js"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/addons/p5.sound.min.js"></script> -->
-  <!-- <script src="https://unpkg.com/p5.js-svg@1.6.0"></script> -->  <!-- SVG export -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/ccapture.js-npmfixed/build/CCapture.all.min.js"></script> -->  <!-- video capture -->
-  <style>
-    html, body { margin: 0; padding: 0; overflow: hidden; }
-    canvas { display: block; }
-  </style>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Project Name</title>
+ <script>p5.disableFriendlyErrors = true;</script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/p5.min.js"></script>
+ <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/addons/p5.sound.min.js"></script> -->
+ <!-- <script src="https://unpkg.com/p5.js-svg@1.6.0"></script> --> <!-- SVG export -->
+ <!-- <script src="https://cdn.jsdelivr.net/npm/ccapture.js-npmfixed/build/CCapture.all.min.js"></script> --> <!-- video capture -->
+ <style>
+ html, body { margin: 0; padding: 0; overflow: hidden; }
+ canvas { display: block; }
+ </style>
 </head>
 <body>
 <script>
 // === Configuration ===
 const CONFIG = {
-  seed: 42,
-  // ... project-specific params
+ seed: 42,
+ // ... project-specific params
 };
 
 // === Color Palette ===
 const PALETTE = {
-  bg: '#0a0a0f',
-  primary: '#e8d5b7',
-  // ...
+ bg: '#0a0a0f',
+ primary: '#e8d5b7',
+ // ...
 };
 
 // === Global State ===
@@ -212,21 +212,21 @@ let particles = [];
 
 // === Preload (fonts, images, data) ===
 function preload() {
-  // font = loadFont('...');
+ // font = loadFont('...');
 }
 
 // === Setup ===
 function setup() {
-  createCanvas(1920, 1080);
-  randomSeed(CONFIG.seed);
-  noiseSeed(CONFIG.seed);
-  colorMode(HSB, 360, 100, 100, 100);
-  // Initialize state...
+ createCanvas(1920, 1080);
+ randomSeed(CONFIG.seed);
+ noiseSeed(CONFIG.seed);
+ colorMode(HSB, 360, 100, 100, 100);
+ // Initialize state...
 }
 
 // === Draw Loop ===
 function draw() {
-  // Render frame...
+ // Render frame...
 }
 
 // === Helper Functions ===
@@ -234,7 +234,7 @@ function draw() {
 
 // === Classes ===
 class Particle {
-  // ...
+ // ...
 }
 
 // === Event Handlers ===
@@ -287,11 +287,11 @@ Key implementation patterns:
 The Friendly Error System (FES) adds up to 10x overhead. Disable it in every production sketch:
 
 ```javascript
-p5.disableFriendlyErrors = true;  // BEFORE setup()
+p5.disableFriendlyErrors = true; // BEFORE setup()
 
 function setup() {
-  pixelDensity(1);  // prevent 2x-4x overdraw on retina
-  createCanvas(1920, 1080);
+ pixelDensity(1); // prevent 2x-4x overdraw on retina
+ createCanvas(1920, 1080);
 }
 ```
 
@@ -299,10 +299,10 @@ In hot loops (particles, pixel ops), use `Math.*` instead of p5 wrappers — mea
 
 ```javascript
 // In draw() or update() hot paths:
-let a = Math.sin(t);          // not sin(t)
+let a = Math.sin(t); // not sin(t)
 let r = Math.sqrt(dx*dx+dy*dy); // not dist() — or better: skip sqrt, compare magSq
-let v = Math.random();        // not random() — when seed not needed
-let m = Math.min(a, b);       // not min(a, b)
+let v = Math.random(); // not random() — when seed not needed
+let m = Math.min(a, b); // not min(a, b)
 ```
 
 Never `console.log()` inside `draw()`. Never manipulate DOM in `draw()`. See `references/troubleshooting.md` § Performance.
@@ -313,9 +313,9 @@ Every generative sketch must be reproducible. Same seed, same output.
 
 ```javascript
 function setup() {
-  randomSeed(CONFIG.seed);
-  noiseSeed(CONFIG.seed);
-  // All random() and noise() calls now deterministic
+ randomSeed(CONFIG.seed);
+ noiseSeed(CONFIG.seed);
+ // All random() and noise() calls now deterministic
 }
 ```
 
@@ -327,16 +327,16 @@ For generative art platforms, replace p5's PRNG with the platform's deterministi
 
 ```javascript
 // fxhash convention
-const SEED = $fx.hash;              // unique per mint
-const rng = $fx.rand;               // deterministic PRNG
+const SEED = $fx.hash; // unique per mint
+const rng = $fx.rand; // deterministic PRNG
 $fx.features({ palette: 'warm', complexity: 'high' });
 
 // In setup():
-randomSeed(SEED);   // for p5's noise()
+randomSeed(SEED); // for p5's noise()
 noiseSeed(SEED);
 
 // Replace random() with rng() for platform determinism
-let x = rng() * width;  // instead of random(width)
+let x = rng() * width; // instead of random(width)
 ```
 
 See `references/export-pipeline.md` § Platform Export.
@@ -361,14 +361,14 @@ Raw `noise(x, y)` looks like smooth blobs. Layer octaves for natural texture:
 
 ```javascript
 function fbm(x, y, octaves = 4) {
-  let val = 0, amp = 1, freq = 1, sum = 0;
-  for (let i = 0; i < octaves; i++) {
-    val += noise(x * freq, y * freq) * amp;
-    sum += amp;
-    amp *= 0.5;
-    freq *= 2;
-  }
-  return val / sum;
+ let val = 0, amp = 1, freq = 1, sum = 0;
+ for (let i = 0; i < octaves; i++) {
+ val += noise(x * freq, y * freq) * amp;
+ sum += amp;
+ amp *= 0.5;
+ freq *= 2;
+ }
+ return val / sum;
 }
 ```
 
@@ -381,18 +381,18 @@ Flat single-pass rendering looks flat. Use offscreen buffers for composition:
 ```javascript
 let bgLayer, fgLayer, trailLayer;
 function setup() {
-  createCanvas(1920, 1080);
-  bgLayer = createGraphics(width, height);
-  fgLayer = createGraphics(width, height);
-  trailLayer = createGraphics(width, height);
+ createCanvas(1920, 1080);
+ bgLayer = createGraphics(width, height);
+ fgLayer = createGraphics(width, height);
+ trailLayer = createGraphics(width, height);
 }
 function draw() {
-  renderBackground(bgLayer);
-  renderTrails(trailLayer);   // persistent, fading
-  renderForeground(fgLayer);  // cleared each frame
-  image(bgLayer, 0, 0);
-  image(trailLayer, 0, 0);
-  image(fgLayer, 0, 0);
+ renderBackground(bgLayer);
+ renderTrails(trailLayer); // persistent, fading
+ renderForeground(fgLayer); // cleared each frame
+ image(bgLayer, 0, 0);
+ image(trailLayer, 0, 0);
+ image(fgLayer, 0, 0);
 }
 ```
 
@@ -403,21 +403,21 @@ p5.js draw calls are expensive. For thousands of particles:
 ```javascript
 // SLOW: individual shapes
 for (let p of particles) {
-  ellipse(p.x, p.y, p.size);
+ ellipse(p.x, p.y, p.size);
 }
 
 // FAST: single shape with beginShape()
 beginShape(POINTS);
 for (let p of particles) {
-  vertex(p.x, p.y);
+ vertex(p.x, p.y);
 }
 endShape();
 
 // FASTEST: pixel buffer for massive counts
 loadPixels();
 for (let p of particles) {
-  let idx = 4 * (floor(p.y) * width + floor(p.x));
-  pixels[idx] = r; pixels[idx+1] = g; pixels[idx+2] = b; pixels[idx+3] = 255;
+ let idx = 4 * (floor(p.y) * width + floor(p.x));
+ pixels[idx] = r; pixels[idx+1] = g; pixels[idx+2] = b; pixels[idx+3] = 255;
 }
 updatePixels();
 ```
@@ -430,13 +430,13 @@ Global mode pollutes `window`. For production, use instance mode:
 
 ```javascript
 const sketch = (p) => {
-  p.setup = function() {
-    p.createCanvas(800, 800);
-  };
-  p.draw = function() {
-    p.background(0);
-    p.ellipse(p.mouseX, p.mouseY, 50);
-  };
+ p.setup = function() {
+ p.createCanvas(800, 800);
+ };
+ p.draw = function() {
+ p.background(0);
+ p.ellipse(p.mouseX, p.mouseY, 50);
+ };
 };
 new p5(sketch, 'canvas-container');
 ```
@@ -458,10 +458,10 @@ Every sketch should include these in `keyPressed()`:
 
 ```javascript
 function keyPressed() {
-  if (key === 's' || key === 'S') saveCanvas('output', 'png');
-  if (key === 'g' || key === 'G') saveGif('output', 5);
-  if (key === 'r' || key === 'R') { randomSeed(millis()); noiseSeed(millis()); }
-  if (key === ' ') CONFIG.paused = !CONFIG.paused;
+ if (key === 's' || key === 'S') saveCanvas('output', 'png');
+ if (key === 'g' || key === 'G') saveGif('output', 5);
+ if (key === 'r' || key === 'R') { randomSeed(millis()); noiseSeed(millis()); }
+ if (key === ' ') CONFIG.paused = !CONFIG.paused;
 }
 ```
 
@@ -471,10 +471,10 @@ For headless rendering via Puppeteer, the sketch **must** use `noLoop()` in setu
 
 ```javascript
 function setup() {
-  createCanvas(1920, 1080);
-  pixelDensity(1);
-  noLoop();                    // capture script controls frame advance
-  window._p5Ready = true;      // signal readiness to capture script
+ createCanvas(1920, 1080);
+ pixelDensity(1);
+ noLoop(); // capture script controls frame advance
+ window._p5Ready = true; // signal readiness to capture script
 }
 ```
 
@@ -552,7 +552,7 @@ Take a known generative pattern (flow field, particle system, L-system, cellular
 ### Distance Association
 1. Anchor on the user's concept (e.g., "loneliness")
 2. Generate associations at three distances:
-   - Close (obvious): empty room, single figure, silence
-   - Medium (interesting): one fish in a school swimming the wrong way, a phone with no notifications, the gap between subway cars
-   - Far (abstract): prime numbers, asymptotic curves, the color of 3am
+ - Close (obvious): empty room, single figure, silence
+ - Medium (interesting): one fish in a school swimming the wrong way, a phone with no notifications, the gap between subway cars
+ - Far (abstract): prime numbers, asymptotic curves, the color of 3am
 3. Develop the medium-distance associations — they're specific enough to visualize but unexpected enough to be interesting

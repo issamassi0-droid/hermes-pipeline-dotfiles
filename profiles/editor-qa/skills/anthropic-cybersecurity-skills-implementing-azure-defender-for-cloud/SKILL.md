@@ -1,13 +1,13 @@
 ---
 name: implementing-azure-defender-for-cloud
 description: 'Enable Microsoft Defender for Cloud (CSPM + CWPP) across VMs, containers,
-  SQL, storage, and Key Vault, using Azure Policy for evaluation, Log Analytics for
-  telemetry, Azure Arc for hybrid coverage, and Logic Apps for automated response.
-  Use for Azure security monitoring, adaptive remediation, or regulatory compliance
-  assessment; not for non-Azure-only protection or identity defense (Defender for
-  Identity).
+ SQL, storage, and Key Vault, using Azure Policy for evaluation, Log Analytics for
+ telemetry, Azure Arc for hybrid coverage, and Logic Apps for automated response.
+ Use for Azure security monitoring, adaptive remediation, or regulatory compliance
+ assessment; not for non-Azure-only protection or identity defense (Defender for
+ Identity).
 
-  '
+ '
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -73,14 +73,14 @@ az security pricing create --name CloudPosture --tier standard
 
 # Enable Defender for Servers
 az security pricing create --name VirtualMachines --tier standard \
-  --subplan P2
+ --subplan P2
 
 # Enable Defender for Containers
 az security pricing create --name Containers --tier standard
 
 # Enable Defender for Storage
 az security pricing create --name StorageAccounts --tier standard \
-  --subplan PerStorageAccount
+ --subplan PerStorageAccount
 
 # Enable Defender for SQL
 az security pricing create --name SqlServers --tier standard
@@ -93,7 +93,7 @@ az security pricing create --name AppServices --tier standard
 
 # Verify all enabled plans
 az security pricing list \
-  --query "[].{Plan:name, Tier:pricingTier, SubPlan:subPlan}" -o table
+ --query "[].{Plan:name, Tier:pricingTier, SubPlan:subPlan}" -o table
 ```
 
 ### Step 2: Configure Auto-Provisioning of Security Agents
@@ -103,17 +103,17 @@ Enable automatic deployment of monitoring agents to VMs and containers.
 ```bash
 # Enable auto-provisioning of Log Analytics agent
 az security auto-provisioning-setting update \
-  --name default --auto-provision on
+ --name default --auto-provision on
 
 # Configure Log Analytics workspace for data collection
 az security workspace-setting create \
-  --name default \
-  --target-workspace "/subscriptions/SUB_ID/resourceGroups/RG/providers/Microsoft.OperationalInsights/workspaces/SecurityWorkspace"
+ --name default \
+ --target-workspace "/subscriptions/SUB_ID/resourceGroups/RG/providers/Microsoft.OperationalInsights/workspaces/SecurityWorkspace"
 
 # Enable Defender for Containers auto-provisioning components
 az security setting update \
-  --name Sentinel \
-  --setting-kind DataExportSettings
+ --name Sentinel \
+ --setting-kind DataExportSettings
 
 # Verify auto-provisioning status
 az security auto-provisioning-setting list -o table
@@ -126,27 +126,27 @@ Retrieve security recommendations and prioritize remediation based on secure sco
 ```bash
 # Get the current secure score
 az security secure-score list \
-  --query "[].{Name:displayName, Current:current, Max:max, Percentage:percentage}" -o table
+ --query "[].{Name:displayName, Current:current, Max:max, Percentage:percentage}" -o table
 
 # List all active security recommendations
 az security assessment list \
-  --query "[?status.code=='Unhealthy'].{Name:displayName, Severity:metadata.severity, Category:metadata.category, ResourceCount:status.cause}" \
-  -o table
+ --query "[?status.code=='Unhealthy'].{Name:displayName, Severity:metadata.severity, Category:metadata.category, ResourceCount:status.cause}" \
+ -o table
 
 # Get recommendations sorted by severity
 az security assessment list \
-  --query "[?status.code=='Unhealthy'] | sort_by(@, &metadata.severity)" \
-  -o table
+ --query "[?status.code=='Unhealthy'] | sort_by(@, &metadata.severity)" \
+ -o table
 
 # Get detailed recommendation with remediation steps
 az security assessment show \
-  --name ASSESSMENT_ID \
-  --query "{Name:displayName, Description:metadata.description, Severity:metadata.severity, Remediation:metadata.remediationDescription}"
+ --name ASSESSMENT_ID \
+ --query "{Name:displayName, Description:metadata.description, Severity:metadata.severity, Remediation:metadata.remediationDescription}"
 
 # List recommendations by control
 az security secure-score-controls list \
-  --query "[].{Control:displayName, CurrentScore:current, MaxScore:max, NotHealthy:notHealthyResourceCount}" \
-  -o table
+ --query "[].{Control:displayName, CurrentScore:current, MaxScore:max, NotHealthy:notHealthyResourceCount}" \
+ -o table
 ```
 
 ### Step 4: Configure Regulatory Compliance Dashboard
@@ -156,29 +156,29 @@ Enable compliance standards and monitor adherence across subscriptions.
 ```bash
 # List available regulatory compliance standards
 az security regulatory-compliance-standards list \
-  --query "[].{Standard:name, State:state}" -o table
+ --query "[].{Standard:name, State:state}" -o table
 
 # Enable specific compliance standards
 az security regulatory-compliance-standards update \
-  --name "CIS-Azure-2.0" --state "Enabled"
+ --name "CIS-Azure-2.0" --state "Enabled"
 
 az security regulatory-compliance-standards update \
-  --name "PCI-DSS-4.0" --state "Enabled"
+ --name "PCI-DSS-4.0" --state "Enabled"
 
 az security regulatory-compliance-standards update \
-  --name "NIST-SP-800-53-R5" --state "Enabled"
+ --name "NIST-SP-800-53-R5" --state "Enabled"
 
 # Get compliance status for a specific standard
 az security regulatory-compliance-controls list \
-  --standard-name "CIS-Azure-2.0" \
-  --query "[].{Control:id, Description:displayName, State:state, PassedResources:passedResources, FailedResources:failedResources}" \
-  -o table
+ --standard-name "CIS-Azure-2.0" \
+ --query "[].{Control:id, Description:displayName, State:state, PassedResources:passedResources, FailedResources:failedResources}" \
+ -o table
 
 # Get failing assessments for a control
 az security regulatory-compliance-assessments list \
-  --standard-name "CIS-Azure-2.0" \
-  --control-name "2.1" \
-  --query "[?state=='Failed'].{Assessment:id, State:state}" -o table
+ --standard-name "CIS-Azure-2.0" \
+ --control-name "2.1" \
+ --query "[?state=='Failed'].{Assessment:id, State:state}" -o table
 ```
 
 ### Step 5: Set Up Security Alerts and Automation
@@ -188,37 +188,37 @@ Configure alert notifications and automated response workflows.
 ```bash
 # Create security contact for alert notifications
 az security contact create \
-  --name "SecurityTeam" \
-  --email "security-ops@company.com" \
-  --phone "+1-555-0199" \
-  --alert-notifications on \
-  --alerts-to-admins on
+ --name "SecurityTeam" \
+ --email "security-ops@company.com" \
+ --phone "+1-555-0199" \
+ --alert-notifications on \
+ --alerts-to-admins on
 
 # List active security alerts
 az security alert list \
-  --query "[?status=='Active'].{Name:alertDisplayName, Severity:severity, Time:timeGeneratedUtc, Status:status}" \
-  -o table
+ --query "[?status=='Active'].{Name:alertDisplayName, Severity:severity, Time:timeGeneratedUtc, Status:status}" \
+ -o table
 
 # Create workflow automation for high-severity alerts (Logic App trigger)
 az security automation create \
-  --name "high-severity-alert-response" \
-  --resource-group "security-rg" \
-  --scopes "[{\"description\":\"Full subscription\",\"scopePath\":\"/subscriptions/SUB_ID\"}]" \
-  --sources "[{
-    \"eventSource\":\"Alerts\",
-    \"ruleSets\":[{
-      \"rules\":[{
-        \"propertyJPath\":\"Severity\",
-        \"propertyType\":\"String\",
-        \"expectedValue\":\"High\",
-        \"operator\":\"Equals\"
-      }]
-    }]
-  }]" \
-  --actions "[{
-    \"logicAppResourceId\":\"/subscriptions/SUB_ID/resourceGroups/security-rg/providers/Microsoft.Logic/workflows/alert-response\",
-    \"actionType\":\"LogicApp\"
-  }]"
+ --name "high-severity-alert-response" \
+ --resource-group "security-rg" \
+ --scopes "[{\"description\":\"Full subscription\",\"scopePath\":\"/subscriptions/SUB_ID\"}]" \
+ --sources "[{
+ \"eventSource\":\"Alerts\",
+ \"ruleSets\":[{
+ \"rules\":[{
+ \"propertyJPath\":\"Severity\",
+ \"propertyType\":\"String\",
+ \"expectedValue\":\"High\",
+ \"operator\":\"Equals\"
+ }]
+ }]
+ }]" \
+ --actions "[{
+ \"logicAppResourceId\":\"/subscriptions/SUB_ID/resourceGroups/security-rg/providers/Microsoft.Logic/workflows/alert-response\",
+ \"actionType\":\"LogicApp\"
+ }]"
 ```
 
 ### Step 6: Implement Adaptive Application Controls and JIT VM Access
@@ -228,29 +228,29 @@ Configure advanced workload protection features for runtime security.
 ```bash
 # Enable Just-In-Time VM access
 az security jit-policy create \
-  --resource-group "production-rg" \
-  --name "jit-policy" \
-  --virtual-machines "[{
-    \"id\":\"/subscriptions/SUB_ID/resourceGroups/production-rg/providers/Microsoft.Compute/virtualMachines/web-server-01\",
-    \"ports\":[
-      {\"number\":22,\"protocol\":\"TCP\",\"allowedSourceAddressPrefix\":\"*\",\"maxRequestAccessDuration\":\"PT3H\"},
-      {\"number\":3389,\"protocol\":\"TCP\",\"allowedSourceAddressPrefix\":\"*\",\"maxRequestAccessDuration\":\"PT3H\"}
-    ]
-  }]"
+ --resource-group "production-rg" \
+ --name "jit-policy" \
+ --virtual-machines "[{
+ \"id\":\"/subscriptions/SUB_ID/resourceGroups/production-rg/providers/Microsoft.Compute/virtualMachines/web-server-01\",
+ \"ports\":[
+ {\"number\":22,\"protocol\":\"TCP\",\"allowedSourceAddressPrefix\":\"*\",\"maxRequestAccessDuration\":\"PT3H\"},
+ {\"number\":3389,\"protocol\":\"TCP\",\"allowedSourceAddressPrefix\":\"*\",\"maxRequestAccessDuration\":\"PT3H\"}
+ ]
+ }]"
 
 # Request JIT access when needed
 az security jit-policy initiate \
-  --resource-group "production-rg" \
-  --name "jit-policy" \
-  --virtual-machines "[{
-    \"id\":\"VM_ID\",
-    \"ports\":[{\"number\":22,\"endTimeUtc\":\"2026-02-23T15:00:00Z\",\"allowedSourceAddressPrefix\":\"10.0.1.50\"}]
-  }]"
+ --resource-group "production-rg" \
+ --name "jit-policy" \
+ --virtual-machines "[{
+ \"id\":\"VM_ID\",
+ \"ports\":[{\"number\":22,\"endTimeUtc\":\"2026-02-23T15:00:00Z\",\"allowedSourceAddressPrefix\":\"10.0.1.50\"}]
+ }]"
 
 # Review adaptive application control recommendations
 az security adaptive-application-controls list \
-  --query "[].{Group:displayName, Recommendation:recommendationAction, VMCount:vmRecommendations|length(@)}" \
-  -o table
+ --query "[].{Group:displayName, Recommendation:recommendationAction, VMCount:vmRecommendations|length(@)}" \
+ -o table
 ```
 
 ## Key Concepts
@@ -300,30 +300,30 @@ Subscriptions: 20 (12 production, 8 non-production)
 Deployment Date: 2026-02-23
 
 DEFENDER PLANS ENABLED:
-  CloudPosture (CSPM):     20 / 20 subscriptions
-  Servers P2:              12 / 20 (production only)
-  Containers:              12 / 20 (production only)
-  SQL:                     12 / 20 (production only)
-  Storage:                 20 / 20 all subscriptions
-  Key Vault:               20 / 20 all subscriptions
+ CloudPosture (CSPM): 20 / 20 subscriptions
+ Servers P2: 12 / 20 (production only)
+ Containers: 12 / 20 (production only)
+ SQL: 12 / 20 (production only)
+ Storage: 20 / 20 all subscriptions
+ Key Vault: 20 / 20 all subscriptions
 
 SECURE SCORE:
-  Current: 62% (baseline)
-  Target: 80% within 90 days
+ Current: 62% (baseline)
+ Target: 80% within 90 days
 
 COMPLIANCE STATUS (CIS Azure 2.0):
-  Compliant controls:        78 / 142 (55%)
-  Non-compliant controls:    52 / 142
-  Not applicable:            12 / 142
+ Compliant controls: 78 / 142 (55%)
+ Non-compliant controls: 52 / 142
+ Not applicable: 12 / 142
 
 RECOMMENDATIONS:
-  Critical:    8 recommendations affecting 34 resources
-  High:       24 recommendations affecting 89 resources
-  Medium:     56 recommendations affecting 234 resources
-  Low:        34 recommendations affecting 112 resources
+ Critical: 8 recommendations affecting 34 resources
+ High: 24 recommendations affecting 89 resources
+ Medium: 56 recommendations affecting 234 resources
+ Low: 34 recommendations affecting 112 resources
 
 SECURITY ALERTS (Last 7 Days):
-  High severity:    3
-  Medium severity:  12
-  Low severity:     28
+ High severity: 3
+ Medium severity: 12
+ Low severity: 28
 ```

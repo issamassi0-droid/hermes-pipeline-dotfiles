@@ -1,12 +1,12 @@
 ---
 name: performing-sca-dependency-scanning-with-snyk
 description: 'This skill covers implementing Software Composition Analysis (SCA) using
-  Snyk to detect vulnerable open-source dependencies in CI/CD pipelines. It addresses
-  scanning package manifests and lockfiles, automated fix pull request generation,
-  license compliance checking, continuous monitoring of deployed applications, and
-  integration with GitHub, GitLab, and Jenkins pipelines.
+ Snyk to detect vulnerable open-source dependencies in CI/CD pipelines. It addresses
+ scanning package manifests and lockfiles, automated fix pull request generation,
+ license compliance checking, continuous monitoring of deployed applications, and
+ integration with GitHub, GitLab, and Jenkins pipelines.
 
-  '
+ '
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -71,50 +71,50 @@ snyk test --json | jq '.summary'
 name: Dependency Security Scan
 
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-  schedule:
-    - cron: '0 8 * * 1'  # Weekly Monday 8am
+ push:
+ branches: [main]
+ pull_request:
+ branches: [main]
+ schedule:
+ - cron: '0 8 * * 1' # Weekly Monday 8am
 
 jobs:
-  snyk-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ snyk-scan:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
+ - name: Setup Node.js
+ uses: actions/setup-node@v4
+ with:
+ node-version: '20'
 
-      - name: Install dependencies
-        run: npm ci
+ - name: Install dependencies
+ run: npm ci
 
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: >
-            --severity-threshold=high
-            --fail-on=upgradable
-            --json-file-output=snyk-results.json
+ - name: Run Snyk to check for vulnerabilities
+ uses: snyk/actions/node@master
+ env:
+ SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+ with:
+ args: >
+ --severity-threshold=high
+ --fail-on=upgradable
+ --json-file-output=snyk-results.json
 
-      - name: Upload results to Snyk
-        if: always()
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          command: monitor
-          args: --project-name=${{ github.repository }}
+ - name: Upload results to Snyk
+ if: always()
+ uses: snyk/actions/node@master
+ env:
+ SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+ with:
+ command: monitor
+ args: --project-name=${{ github.repository }}
 
-      - name: Upload SARIF
-        if: always()
-        run: |
-          npx snyk-to-html -i snyk-results.json -o snyk-report.html
+ - name: Upload SARIF
+ if: always()
+ run: |
+ npx snyk-to-html -i snyk-results.json -o snyk-report.html
 ```
 
 ### Step 3: Configure Snyk for Multiple Languages
@@ -145,16 +145,16 @@ snyk iac test terraform/ --severity-threshold=medium --json > snyk-iac.json
 # .snyk policy file
 version: v1.25.0
 ignore:
-  SNYK-JS-LODASH-1018905:
-    - '*':
-        reason: "Prototype pollution in lodash. Not exploitable in our usage - no user input reaches affected function."
-        expires: 2026-06-01T00:00:00.000Z
-        created: 2026-02-23T00:00:00.000Z
+ SNYK-JS-LODASH-1018905:
+ - '*':
+ reason: "Prototype pollution in lodash. Not exploitable in our usage - no user input reaches affected function."
+ expires: 2026-06-01T00:00:00.000Z
+ created: 2026-02-23T00:00:00.000Z
 
-  SNYK-PYTHON-REQUESTS-6241864:
-    - '*':
-        reason: "SSRF in requests redirect handling. Mitigated by allowlist at proxy layer."
-        expires: 2026-04-01T00:00:00.000Z
+ SNYK-PYTHON-REQUESTS-6241864:
+ - '*':
+ reason: "SSRF in requests redirect handling. Mitigated by allowlist at proxy layer."
+ expires: 2026-04-01T00:00:00.000Z
 
 patch: {}
 
@@ -166,7 +166,7 @@ failOnSeverity: high
 
 ```bash
 # Snyk fix: generate fix PRs for vulnerable dependencies
-snyk fix --dry-run  # Preview changes
+snyk fix --dry-run # Preview changes
 
 # Apply fixes locally
 snyk fix
@@ -238,29 +238,29 @@ Dependencies: 342 (47 direct, 295 transitive)
 Scan Date: 2026-02-23
 
 VULNERABILITY SUMMARY:
-  Critical: 1  (1 fixable)
-  High: 4      (3 fixable)
-  Medium: 12   (8 fixable)
-  Low: 23      (15 fixable)
+ Critical: 1 (1 fixable)
+ High: 4 (3 fixable)
+ Medium: 12 (8 fixable)
+ Low: 23 (15 fixable)
 
 CRITICAL:
-  SNYK-JS-EXPRESS-1234567
-    Package: express@4.17.1 (direct)
-    Severity: Critical (CVSS 9.8)
-    Exploit: Mature
-    Fix: Upgrade to express@4.21.0
-    Path: express@4.17.1
+ SNYK-JS-EXPRESS-1234567
+ Package: express@4.17.1 (direct)
+ Severity: Critical (CVSS 9.8)
+ Exploit: Mature
+ Fix: Upgrade to express@4.21.0
+ Path: express@4.17.1
 
 HIGH:
-  SNYK-JS-JSONWEBTOKEN-5678901
-    Package: jsonwebtoken@8.5.1 (transitive)
-    Severity: High (CVSS 7.6)
-    Exploit: Proof of Concept
-    Fix: Upgrade passport@0.7.0 (which upgrades jsonwebtoken)
-    Path: passport@0.6.0 > jsonwebtoken@8.5.1
+ SNYK-JS-JSONWEBTOKEN-5678901
+ Package: jsonwebtoken@8.5.1 (transitive)
+ Severity: High (CVSS 7.6)
+ Exploit: Proof of Concept
+ Fix: Upgrade passport@0.7.0 (which upgrades jsonwebtoken)
+ Path: passport@0.6.0 > jsonwebtoken@8.5.1
 
 LICENSE ISSUES:
-  [RESTRICTED] GPL-3.0: some-package@1.2.3 (transitive via other-pkg)
+ [RESTRICTED] GPL-3.0: some-package@1.2.3 (transitive via other-pkg)
 
 QUALITY GATE: FAILED (1 Critical with fix available)
 ```

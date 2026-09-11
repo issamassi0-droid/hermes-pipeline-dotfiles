@@ -1,13 +1,13 @@
 ---
 name: performing-docker-bench-security-assessment
 description: >-
-  Runs Docker Bench for Security, the open-source CIS Docker Benchmark audit script, across
-  host configuration, daemon settings, images, and runtime configuration, then interprets
-  pass/fail/warn output and remediates the common failures. Use when auditing Docker hosts for
-  CIS compliance, scheduling recurring container assessments, or validating runtime hardening
-  controls after a change. Keywords: docker-bench-security, CIS Docker Benchmark, audit
-  script, pass fail warn, host configuration, remediation. Do not use for applying the daemon
-  hardening itself - use hardening-docker-daemon-configuration.
+ Runs Docker Bench for Security, the open-source CIS Docker Benchmark audit script, across
+ host configuration, daemon settings, images, and runtime configuration, then interprets
+ pass/fail/warn output and remediates the common failures. Use when auditing Docker hosts for
+ CIS compliance, scheduling recurring container assessments, or validating runtime hardening
+ controls after a change. Keywords: docker-bench-security, CIS Docker Benchmark, audit
+ script, pass fail warn, host configuration, remediation. Do not use for applying the daemon
+ hardening itself - use hardening-docker-daemon-configuration.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -57,27 +57,27 @@ Docker Bench for Security is an open-source script that checks dozens of common 
 ```bash
 # Run as a container (recommended)
 docker run --rm --net host --pid host --userns host --cap-add audit_control \
-  -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
-  -v /etc:/etc:ro \
-  -v /usr/bin/containerd:/usr/bin/containerd:ro \
-  -v /usr/bin/runc:/usr/bin/runc:ro \
-  -v /usr/lib/systemd:/usr/lib/systemd:ro \
-  -v /var/lib:/var/lib:ro \
-  -v /var/run/docker.sock:/var/run/docker.sock:ro \
-  --label docker_bench_security \
-  docker/docker-bench-security
+ -e DOCKER_CONTENT_TRUST=$DOCKER_CONTENT_TRUST \
+ -v /etc:/etc:ro \
+ -v /usr/bin/containerd:/usr/bin/containerd:ro \
+ -v /usr/bin/runc:/usr/bin/runc:ro \
+ -v /usr/lib/systemd:/usr/lib/systemd:ro \
+ -v /var/lib:/var/lib:ro \
+ -v /var/run/docker.sock:/var/run/docker.sock:ro \
+ --label docker_bench_security \
+ docker/docker-bench-security
 
 # Run with JSON output
 docker run --rm --net host --pid host --userns host --cap-add audit_control \
-  -v /etc:/etc:ro \
-  -v /var/lib:/var/lib:ro \
-  -v /var/run/docker.sock:/var/run/docker.sock:ro \
-  docker/docker-bench-security -l /dev/stdout 2>/dev/null | tee docker-bench-results.json
+ -v /etc:/etc:ro \
+ -v /var/lib:/var/lib:ro \
+ -v /var/run/docker.sock:/var/run/docker.sock:ro \
+ docker/docker-bench-security -l /dev/stdout 2>/dev/null | tee docker-bench-results.json
 
 # Run specific sections only
 docker run --rm --net host --pid host --userns host \
-  -v /var/run/docker.sock:/var/run/docker.sock:ro \
-  docker/docker-bench-security -c container_images,container_runtime
+ -v /var/run/docker.sock:/var/run/docker.sock:ro \
+ docker/docker-bench-security -c container_images,container_runtime
 ```
 
 ### Step 2: Interpret Results
@@ -118,22 +118,22 @@ sudo systemctl restart docker
 # docker-compose for scheduled assessment
 version: '3.8'
 services:
-  bench-security:
-    image: docker/docker-bench-security
-    network_mode: host
-    pid: host
-    userns_mode: host
-    cap_add:
-      - audit_control
-    volumes:
-      - /etc:/etc:ro
-      - /var/lib:/var/lib:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./results:/results
-    command: -l /results/bench-$(date +%Y%m%d).log
-    deploy:
-      restart_policy:
-        condition: none
+ bench-security:
+ image: docker/docker-bench-security
+ network_mode: host
+ pid: host
+ userns_mode: host
+ cap_add:
+ - audit_control
+ volumes:
+ - /etc:/etc:ro
+ - /var/lib:/var/lib:ro
+ - /var/run/docker.sock:/var/run/docker.sock:ro
+ - ./results:/results
+ command: -l /results/bench-$(date +%Y%m%d).log
+ deploy:
+ restart_policy:
+ condition: none
 ```
 
 ## Validation Commands

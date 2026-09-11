@@ -1,11 +1,11 @@
 ---
 name: detecting-azure-service-principal-abuse
 description: Detect Azure service principal abuse in Microsoft Entra ID using KQL detection
-  queries (Sentinel/Splunk) against Azure AD Audit and Sign-in Logs, covering added
-  credentials, privileged role assignment, admin consent bypass, and service principal
-  enumeration. Use when investigating suspected privilege escalation or persistence
-  via service principals, or building threat-hunting queries for Entra ID identity
-  abuse.
+ queries (Sentinel/Splunk) against Azure AD Audit and Sign-in Logs, covering added
+ credentials, privileged role assignment, admin consent bypass, and service principal
+ enumeration. Use when investigating suspected privilege escalation or persistence
+ via service principals, or building threat-hunting queries for Entra ID identity
+ abuse.
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -71,7 +71,7 @@ Attackers add new client secrets or certificates to gain persistent access:
 ```kql
 AuditLogs
 | where OperationName has "Add service principal credentials"
-    or OperationName has "Update application - Certificates and secrets management"
+ or OperationName has "Update application - Certificates and secrets management"
 | extend InitiatedBy = tostring(InitiatedBy.user.userPrincipalName)
 | extend TargetSP = tostring(TargetResources[0].displayName)
 | extend TargetSPId = tostring(TargetResources[0].id)
@@ -83,7 +83,7 @@ AuditLogs
 ```spl
 index=azure sourcetype="azure:aad:audit"
 operationName="Add service principal credentials"
-    OR operationName="Update application*Certificates and secrets*"
+ OR operationName="Update application*Certificates and secrets*"
 | stats count by initiatedBy.user.userPrincipalName, targetResources{}.displayName, _time
 | sort -_time
 ```
@@ -95,7 +95,7 @@ AuditLogs
 | where OperationName == "Add member to role"
 | extend RoleName = tostring(TargetResources[0].modifiedProperties[1].newValue)
 | where RoleName has_any ("Global Administrator", "Application Administrator",
-    "Privileged Role Administrator", "Cloud Application Administrator")
+ "Privileged Role Administrator", "Cloud Application Administrator")
 | extend TargetSP = tostring(TargetResources[0].displayName)
 | extend InitiatedBy = tostring(InitiatedBy.user.userPrincipalName)
 | project TimeGenerated, InitiatedBy, TargetSP, RoleName, OperationName
@@ -131,8 +131,8 @@ AuditLogs
 | where OperationName == "Add app role assignment to service principal"
 | extend AppRoleValue = tostring(TargetResources[0].modifiedProperties[1].newValue)
 | where AppRoleValue has_any ("RoleManagement.ReadWrite.Directory",
-    "Application.ReadWrite.All", "AppRoleAssignment.ReadWrite.All",
-    "Directory.ReadWrite.All", "Mail.ReadWrite")
+ "Application.ReadWrite.All", "AppRoleAssignment.ReadWrite.All",
+ "Directory.ReadWrite.All", "Mail.ReadWrite")
 | extend TargetApp = tostring(TargetResources[0].displayName)
 | project TimeGenerated, TargetApp, AppRoleValue, CorrelationId
 ```
@@ -146,18 +146,18 @@ AuditLogs
 Connect-MgGraph -Scopes "Application.Read.All"
 
 $suspiciousSPs = Get-MgServicePrincipal -All | ForEach-Object {
-    $sp = $_
-    $creds = Get-MgServicePrincipalPasswordCredential -ServicePrincipalId $sp.Id
-    $recentCreds = $creds | Where-Object { $_.StartDateTime -gt (Get-Date).AddDays(-7) }
-    if ($recentCreds) {
-        [PSCustomObject]@{
-            DisplayName = $sp.DisplayName
-            AppId = $sp.AppId
-            ObjectId = $sp.Id
-            NewCredsCount = $recentCreds.Count
-            LatestCredAdded = ($recentCreds | Sort-Object StartDateTime -Descending | Select-Object -First 1).StartDateTime
-        }
-    }
+ $sp = $_
+ $creds = Get-MgServicePrincipalPasswordCredential -ServicePrincipalId $sp.Id
+ $recentCreds = $creds | Where-Object { $_.StartDateTime -gt (Get-Date).AddDays(-7) }
+ if ($recentCreds) {
+ [PSCustomObject]@{
+ DisplayName = $sp.DisplayName
+ AppId = $sp.AppId
+ ObjectId = $sp.Id
+ NewCredsCount = $recentCreds.Count
+ LatestCredAdded = ($recentCreds | Sort-Object StartDateTime -Descending | Select-Object -First 1).StartDateTime
+ }
+ }
 }
 $suspiciousSPs | Sort-Object LatestCredAdded -Descending
 ```
@@ -168,12 +168,12 @@ $suspiciousSPs | Sort-Object LatestCredAdded -Descending
 # Check role assignments for a specific service principal
 $spId = "<service-principal-object-id>"
 Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $spId | ForEach-Object {
-    $resource = Get-MgServicePrincipal -ServicePrincipalId $_.ResourceId
-    [PSCustomObject]@{
-        AppRoleId = $_.AppRoleId
-        ResourceDisplayName = $resource.DisplayName
-        CreatedDateTime = $_.CreatedDateTime
-    }
+ $resource = Get-MgServicePrincipal -ServicePrincipalId $_.ResourceId
+ [PSCustomObject]@{
+ AppRoleId = $_.AppRoleId
+ ResourceDisplayName = $resource.DisplayName
+ CreatedDateTime = $_.CreatedDateTime
+ }
 }
 ```
 
@@ -182,16 +182,16 @@ Get-MgServicePrincipalAppRoleAssignment -ServicePrincipalId $spId | ForEach-Obje
 ```powershell
 # List owners of all applications (ownership = credential control)
 Get-MgApplication -All | ForEach-Object {
-    $app = $_
-    $owners = Get-MgApplicationOwner -ApplicationId $app.Id
-    foreach ($owner in $owners) {
-        [PSCustomObject]@{
-            AppName = $app.DisplayName
-            AppId = $app.AppId
-            OwnerUPN = $owner.AdditionalProperties.userPrincipalName
-            OwnerType = $owner.AdditionalProperties.'@odata.type'
-        }
-    }
+ $app = $_
+ $owners = Get-MgApplicationOwner -ApplicationId $app.Id
+ foreach ($owner in $owners) {
+ [PSCustomObject]@{
+ AppName = $app.DisplayName
+ AppId = $app.AppId
+ OwnerUPN = $owner.AdditionalProperties.userPrincipalName
+ OwnerType = $owner.AdditionalProperties.'@odata.type'
+ }
+ }
 } | Where-Object { $_.OwnerUPN -ne $null }
 ```
 
@@ -201,7 +201,7 @@ Get-MgApplication -All | ForEach-Object {
 AADServicePrincipalSignInLogs
 | where ServicePrincipalId == "<target-sp-id>"
 | project TimeGenerated, ServicePrincipalName, IPAddress, Location,
-    ResourceDisplayName, Status.errorCode
+ ResourceDisplayName, Status.errorCode
 | sort by TimeGenerated desc
 ```
 
@@ -212,7 +212,7 @@ AADServicePrincipalSignInLogs
 ```powershell
 # Disable user ability to register applications
 Update-MgPolicyAuthorizationPolicy -DefaultUserRolePermissions @{
-    AllowedToCreateApps = $false
+ AllowedToCreateApps = $false
 }
 ```
 
@@ -221,8 +221,8 @@ Update-MgPolicyAuthorizationPolicy -DefaultUserRolePermissions @{
 ```powershell
 # Require admin approval for all app consent requests
 New-MgPolicyPermissionGrantPolicy -Id "admin-only-consent" `
-    -DisplayName "Admin Only Consent" `
-    -Description "Only admins can consent to applications"
+ -DisplayName "Admin Only Consent" `
+ -Description "Only admins can consent to applications"
 ```
 
 ### Monitor with Microsoft Sentinel Analytics Rules

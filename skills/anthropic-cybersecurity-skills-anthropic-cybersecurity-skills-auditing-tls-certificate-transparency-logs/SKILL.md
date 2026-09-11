@@ -1,14 +1,14 @@
 ---
 name: auditing-tls-certificate-transparency-logs
 description: 'Monitors Certificate Transparency (CT) logs to detect unauthorized certificate
-  issuance, discover subdomains via CT data, and alert on suspicious certificate activity
-  for owned domains. Uses the crt.sh API and direct CT log querying based on RFC 6962
-  to build continuous monitoring pipelines that catch rogue certificates, track CA
-  behavior, and map the external attack surface. Activates for requests involving
-  certificate transparency monitoring, CT log auditing, subdomain discovery via certificates,
-  or certificate issuance alerting.
+ issuance, discover subdomains via CT data, and alert on suspicious certificate activity
+ for owned domains. Uses the crt.sh API and direct CT log querying based on RFC 6962
+ to build continuous monitoring pipelines that catch rogue certificates, track CA
+ behavior, and map the external attack surface. Activates for requests involving
+ certificate transparency monitoring, CT log auditing, subdomain discovery via certificates,
+ or certificate issuance alerting.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -191,9 +191,9 @@ Verify log integrity and produce compliance evidence:
 ### Subdomain Discovery Summary
 - **Total Unique Subdomains**: 89
 - **New Subdomains This Period**: 3
-  - api-v3.example.com (DigiCert, valid)
-  - staging-new.example.com (Let's Encrypt, valid)
-  - old-portal.example.com (expired 2025-12-01, CNAME to Azure -- takeover risk)
+ - api-v3.example.com (DigiCert, valid)
+ - staging-new.example.com (Let's Encrypt, valid)
+ - old-portal.example.com (expired 2025-12-01, CNAME to Azure -- takeover risk)
 
 ### Typosquatting Alerts
 | Domain | Certificate Count | Issuer | Action Required |

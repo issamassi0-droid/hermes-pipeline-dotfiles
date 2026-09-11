@@ -1,10 +1,10 @@
 ---
 name: scanning-iac-and-images-with-trivy
 description: Scans container images, Infrastructure-as-Code (Terraform, CloudFormation,
-  Kubernetes manifests, Dockerfile, Helm), filesystems, git repos, and SBOMs with Trivy's
-  vuln, misconfig, secret, and license scanners. Use when building a CI/CD security
-  gate that scans images before push, IaC before apply, or SBOMs for supply-chain
-  weaknesses, and fails the build on policy violations.
+ Kubernetes manifests, Dockerfile, Helm), filesystems, git repos, and SBOMs with Trivy's
+ vuln, misconfig, secret, and license scanners. Use when building a CI/CD security
+ gate that scans images before push, IaC before apply, or SBOMs for supply-chain
+ weaknesses, and fails the build on policy violations.
 domain: cybersecurity
 subdomain: devsecops
 tags:
@@ -98,11 +98,11 @@ Run a vulnerability-only scan of a registry image, restricting to high/critical 
 
 ```bash
 trivy image \
-  --scanners vuln \
-  --severity HIGH,CRITICAL \
-  --ignore-unfixed \
-  --format table \
-  python:3.10-alpine
+ --scanners vuln \
+ --severity HIGH,CRITICAL \
+ --ignore-unfixed \
+ --format table \
+ python:3.10-alpine
 ```
 
 Scan an image saved as a tarball (useful when the image is built but not yet pushed):
@@ -118,9 +118,9 @@ Run vulnerability, misconfiguration, secret, and license scanners together:
 
 ```bash
 trivy image \
-  --scanners vuln,misconfig,secret,license \
-  --severity MEDIUM,HIGH,CRITICAL \
-  myorg/app:1.4.0
+ --scanners vuln,misconfig,secret,license \
+ --severity MEDIUM,HIGH,CRITICAL \
+ myorg/app:1.4.0
 ```
 
 Scan the image's embedded config (Dockerfile-equivalent build history and history secrets):
@@ -136,15 +136,15 @@ Scan a directory of Terraform / Kubernetes / Dockerfile / Helm / CloudFormation 
 ```bash
 # Scan a Terraform / IaC directory
 trivy config \
-  --severity HIGH,CRITICAL \
-  --format table \
-  ./infra
+ --severity HIGH,CRITICAL \
+ --format table \
+ ./infra
 
 # Scan with custom Rego policies and a specific policy namespace
 trivy config \
-  --config-policy ./policies \
-  --policy-namespaces user \
-  ./infra
+ --config-policy ./policies \
+ --policy-namespaces user \
+ ./infra
 ```
 
 Alternatively use the `fs` (filesystem) target with the misconfig scanner explicitly:
@@ -186,10 +186,10 @@ Produce SARIF for GitHub Advanced Security / code scanning ingestion:
 
 ```bash
 trivy image \
-  --format sarif \
-  --output trivy-results.sarif \
-  --severity HIGH,CRITICAL \
-  myorg/app:1.4.0
+ --format sarif \
+ --output trivy-results.sarif \
+ --severity HIGH,CRITICAL \
+ myorg/app:1.4.0
 ```
 
 ### 7. Gate the CI/CD pipeline with exit codes
@@ -202,25 +202,25 @@ trivy image --severity LOW,MEDIUM,HIGH,CRITICAL --exit-code 0 --format table myo
 
 # 2) Enforcement gate (fails build on HIGH/CRITICAL with a fix available)
 trivy image \
-  --severity HIGH,CRITICAL \
-  --ignore-unfixed \
-  --exit-code 1 \
-  --format json --output gate.json \
-  myorg/app:1.4.0
+ --severity HIGH,CRITICAL \
+ --ignore-unfixed \
+ --exit-code 1 \
+ --format json --output gate.json \
+ myorg/app:1.4.0
 ```
 
 Example GitHub Actions step using the official action:
 
 ```yaml
 - name: Run Trivy image scan (gate)
-  uses: aquasecurity/trivy-action@master
-  with:
-    image-ref: 'myorg/app:1.4.0'
-    format: 'sarif'
-    output: 'trivy-results.sarif'
-    severity: 'HIGH,CRITICAL'
-    ignore-unfixed: true
-    exit-code: '1'
+ uses: aquasecurity/trivy-action@master
+ with:
+ image-ref: 'myorg/app:1.4.0'
+ format: 'sarif'
+ output: 'trivy-results.sarif'
+ severity: 'HIGH,CRITICAL'
+ ignore-unfixed: true
+ exit-code: '1'
 ```
 
 ### 8. Manage false positives and the DB
@@ -230,7 +230,7 @@ Suppress accepted-risk findings with a `.trivyignore` file and keep the DB curre
 ```bash
 # .trivyignore — one CVE/AVD/secret rule ID per line
 echo "CVE-2023-12345" >> .trivyignore
-echo "AVD-AWS-0089"   >> .trivyignore
+echo "AVD-AWS-0089" >> .trivyignore
 
 # Refresh DBs explicitly (useful for caching layers in CI)
 trivy image --download-db-only

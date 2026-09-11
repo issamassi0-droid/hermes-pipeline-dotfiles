@@ -1,14 +1,14 @@
 ---
 name: implementing-mobile-application-management
 description: 'Implements Mobile Application Management (MAM) policies to protect enterprise
-  data on managed and unmanaged mobile devices through app-level controls including
-  data loss prevention, selective wipe, app configuration, and containerization. Use
-  when securing corporate apps on BYOD devices, implementing Intune App Protection
-  Policies, or enforcing data separation between personal and work apps. Activates
-  for requests involving MAM deployment, app protection policies, mobile containerization,
-  or BYOD security.
+ data on managed and unmanaged mobile devices through app-level controls including
+ data loss prevention, selective wipe, app configuration, and containerization. Use
+ when securing corporate apps on BYOD devices, implementing Intune App Protection
+ Policies, or enforcing data separation between personal and work apps. Activates
+ for requests involving MAM deployment, app protection policies, mobile containerization,
+ or BYOD security.
 
-  '
+ '
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -70,31 +70,31 @@ Classify data sensitivity and define protection tiers:
 **Android App Protection Policy:**
 ```json
 {
-    "displayName": "Corporate App Protection - Tier 2",
-    "platform": "android",
-    "dataProtectionSettings": {
-        "allowedDataStorageLocations": ["oneDriveForBusiness", "sharePoint"],
-        "blockDataTransferToOtherApps": "managedApps",
-        "blockDataTransferFromOtherApps": "managedApps",
-        "saveAsBlocked": true,
-        "clipboardSharingLevel": "managedAppsWithPasteIn",
-        "screenCaptureBlocked": true,
-        "encryptAppData": true,
-        "backupBlocked": true
-    },
-    "accessSettings": {
-        "pinRequired": true,
-        "minimumPinLength": 6,
-        "biometricEnabled": true,
-        "offlineGracePeriod": 720,
-        "offlineWipeInterval": 90
-    },
-    "conditionalLaunchSettings": {
-        "maxOsVersion": "15.0",
-        "minOsVersion": "12.0",
-        "jailbreakBlocked": true,
-        "maxPinRetries": 5
-    }
+ "displayName": "Corporate App Protection - Tier 2",
+ "platform": "android",
+ "dataProtectionSettings": {
+ "allowedDataStorageLocations": ["oneDriveForBusiness", "sharePoint"],
+ "blockDataTransferToOtherApps": "managedApps",
+ "blockDataTransferFromOtherApps": "managedApps",
+ "saveAsBlocked": true,
+ "clipboardSharingLevel": "managedAppsWithPasteIn",
+ "screenCaptureBlocked": true,
+ "encryptAppData": true,
+ "backupBlocked": true
+ },
+ "accessSettings": {
+ "pinRequired": true,
+ "minimumPinLength": 6,
+ "biometricEnabled": true,
+ "offlineGracePeriod": 720,
+ "offlineWipeInterval": 90
+ },
+ "conditionalLaunchSettings": {
+ "maxOsVersion": "15.0",
+ "minOsVersion": "12.0",
+ "jailbreakBlocked": true,
+ "maxPinRetries": 5
+ }
 }
 ```
 
@@ -104,13 +104,13 @@ Deploy managed app configuration for automatic endpoint setup:
 
 ```json
 {
-    "displayName": "Email App Configuration",
-    "targetedManagedApps": ["com.microsoft.outlooklite"],
-    "settings": [
-        {"key": "com.microsoft.outlook.EmailProfile.AccountType", "value": "ModernAuth"},
-        {"key": "com.microsoft.outlook.EmailProfile.ServerName", "value": "outlook.office365.com"},
-        {"key": "com.microsoft.outlook.EmailProfile.AllowedDomains", "value": "corporate.com"}
-    ]
+ "displayName": "Email App Configuration",
+ "targetedManagedApps": ["com.microsoft.outlooklite"],
+ "settings": [
+ {"key": "com.microsoft.outlook.EmailProfile.AccountType", "value": "ModernAuth"},
+ {"key": "com.microsoft.outlook.EmailProfile.ServerName", "value": "outlook.office365.com"},
+ {"key": "com.microsoft.outlook.EmailProfile.AllowedDomains", "value": "corporate.com"}
+ ]
 }
 ```
 

@@ -1,17 +1,17 @@
 ---
 name: implementing-pod-security-admission-controller
 description: >-
-  Configures and operates the Kubernetes Pod Security Admission (PSA) controller
-  that enforces Pod Security Standards: namespace enforce/audit/warn labels,
-  cluster-wide defaults via AdmissionConfiguration, exemptions for usernames,
-  runtime classes and namespaces, version pinning, and troubleshooting pods the
-  controller rejected. Use when wiring PSA up on a cluster, setting cluster-wide
-  default enforcement, exempting system namespaces, debugging why a pod was
-  rejected or why enforcement is not firing, or reading PSA audit and warning
-  output. Keywords: Pod Security Admission, PSA, admission controller,
-  AdmissionConfiguration, pod-security.kubernetes.io labels, enforce audit warn,
-  exemptions, kube-apiserver. Do not use for choosing which security profile a
-  workload needs - use implementing-kubernetes-pod-security-standards.
+ Configures and operates the Kubernetes Pod Security Admission (PSA) controller
+ that enforces Pod Security Standards: namespace enforce/audit/warn labels,
+ cluster-wide defaults via AdmissionConfiguration, exemptions for usernames,
+ runtime classes and namespaces, version pinning, and troubleshooting pods the
+ controller rejected. Use when wiring PSA up on a cluster, setting cluster-wide
+ default enforcement, exempting system namespaces, debugging why a pod was
+ rejected or why enforcement is not firing, or reading PSA audit and warning
+ output. Keywords: Pod Security Admission, PSA, admission controller,
+ AdmissionConfiguration, pod-security.kubernetes.io labels, enforce audit warn,
+ exemptions, kube-apiserver. Do not use for choosing which security profile a
+ workload needs - use implementing-kubernetes-pod-security-standards.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -93,14 +93,14 @@ Pod Security Admission (PSA) is a built-in Kubernetes admission controller (stab
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: production
-  labels:
-    pod-security.kubernetes.io/enforce: restricted
-    pod-security.kubernetes.io/enforce-version: v1.28
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/audit-version: v1.28
-    pod-security.kubernetes.io/warn: restricted
-    pod-security.kubernetes.io/warn-version: v1.28
+ name: production
+ labels:
+ pod-security.kubernetes.io/enforce: restricted
+ pod-security.kubernetes.io/enforce-version: v1.28
+ pod-security.kubernetes.io/audit: restricted
+ pod-security.kubernetes.io/audit-version: v1.28
+ pod-security.kubernetes.io/warn: restricted
+ pod-security.kubernetes.io/warn-version: v1.28
 ```
 
 ```yaml
@@ -108,14 +108,14 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: staging
-  labels:
-    pod-security.kubernetes.io/enforce: baseline
-    pod-security.kubernetes.io/enforce-version: v1.28
-    pod-security.kubernetes.io/audit: restricted
-    pod-security.kubernetes.io/audit-version: v1.28
-    pod-security.kubernetes.io/warn: restricted
-    pod-security.kubernetes.io/warn-version: v1.28
+ name: staging
+ labels:
+ pod-security.kubernetes.io/enforce: baseline
+ pod-security.kubernetes.io/enforce-version: v1.28
+ pod-security.kubernetes.io/audit: restricted
+ pod-security.kubernetes.io/audit-version: v1.28
+ pod-security.kubernetes.io/warn: restricted
+ pod-security.kubernetes.io/warn-version: v1.28
 ```
 
 ```yaml
@@ -123,9 +123,9 @@ metadata:
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: kube-system
-  labels:
-    pod-security.kubernetes.io/enforce: privileged
+ name: kube-system
+ labels:
+ pod-security.kubernetes.io/enforce: privileged
 ```
 
 ### Apply Labels with kubectl
@@ -133,16 +133,16 @@ metadata:
 ```bash
 # Set restricted enforcement
 kubectl label namespace production \
-  pod-security.kubernetes.io/enforce=restricted \
-  pod-security.kubernetes.io/enforce-version=v1.28 \
-  pod-security.kubernetes.io/audit=restricted \
-  pod-security.kubernetes.io/warn=restricted
+ pod-security.kubernetes.io/enforce=restricted \
+ pod-security.kubernetes.io/enforce-version=v1.28 \
+ pod-security.kubernetes.io/audit=restricted \
+ pod-security.kubernetes.io/warn=restricted
 
 # Set baseline enforcement
 kubectl label namespace staging \
-  pod-security.kubernetes.io/enforce=baseline \
-  pod-security.kubernetes.io/audit=restricted \
-  pod-security.kubernetes.io/warn=restricted
+ pod-security.kubernetes.io/enforce=baseline \
+ pod-security.kubernetes.io/audit=restricted \
+ pod-security.kubernetes.io/warn=restricted
 
 # Check current labels
 kubectl get namespace production -o jsonpath='{.metadata.labels}' | jq .
@@ -153,7 +153,7 @@ kubectl get namespace production -o jsonpath='{.metadata.labels}' | jq .
 ```bash
 # Test what would happen with restricted policy on a namespace
 kubectl label --dry-run=server --overwrite namespace staging \
-  pod-security.kubernetes.io/enforce=restricted
+ pod-security.kubernetes.io/enforce=restricted
 
 # Output shows existing pods that would violate the policy
 # Warning: existing pods in namespace "staging" violate the new PodSecurity enforce level "restricted:latest"
@@ -166,28 +166,28 @@ kubectl label --dry-run=server --overwrite namespace staging \
 apiVersion: apiserver.config.k8s.io/v1
 kind: AdmissionConfiguration
 plugins:
-  - name: PodSecurity
-    configuration:
-      apiVersion: pod-security.admission.config.k8s.io/v1
-      kind: PodSecurityConfiguration
-      defaults:
-        enforce: baseline
-        enforce-version: latest
-        audit: restricted
-        audit-version: latest
-        warn: restricted
-        warn-version: latest
-      exemptions:
-        usernames: []
-        runtimeClasses: []
-        namespaces:
-          - kube-system
-          - kube-public
-          - kube-node-lease
-          - calico-system
-          - gatekeeper-system
-          - monitoring
-          - falco
+ - name: PodSecurity
+ configuration:
+ apiVersion: pod-security.admission.config.k8s.io/v1
+ kind: PodSecurityConfiguration
+ defaults:
+ enforce: baseline
+ enforce-version: latest
+ audit: restricted
+ audit-version: latest
+ warn: restricted
+ warn-version: latest
+ exemptions:
+ usernames: []
+ runtimeClasses: []
+ namespaces:
+ - kube-system
+ - kube-public
+ - kube-node-lease
+ - calico-system
+ - gatekeeper-system
+ - monitoring
+ - falco
 ```
 
 ### Apply to API Server
@@ -196,19 +196,19 @@ plugins:
 # Add to kube-apiserver manifests
 # /etc/kubernetes/manifests/kube-apiserver.yaml
 spec:
-  containers:
-  - command:
-    - kube-apiserver
-    - --admission-control-config-file=/etc/kubernetes/psa-config.yaml
-    volumeMounts:
-    - name: psa-config
-      mountPath: /etc/kubernetes/psa-config.yaml
-      readOnly: true
-  volumes:
-  - name: psa-config
-    hostPath:
-      path: /etc/kubernetes/psa-config.yaml
-      type: File
+ containers:
+ - command:
+ - kube-apiserver
+ - --admission-control-config-file=/etc/kubernetes/psa-config.yaml
+ volumeMounts:
+ - name: psa-config
+ mountPath: /etc/kubernetes/psa-config.yaml
+ readOnly: true
+ volumes:
+ - name: psa-config
+ hostPath:
+ path: /etc/kubernetes/psa-config.yaml
+ type: File
 ```
 
 ## Compliant Pod Examples
@@ -219,39 +219,39 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: restricted-pod
-  namespace: production
+ name: restricted-pod
+ namespace: production
 spec:
-  securityContext:
-    runAsNonRoot: true
-    runAsUser: 1000
-    runAsGroup: 3000
-    fsGroup: 2000
-    seccompProfile:
-      type: RuntimeDefault
-  automountServiceAccountToken: false
-  containers:
-    - name: app
-      image: myregistry/myapp:v1.0.0
-      securityContext:
-        allowPrivilegeEscalation: false
-        readOnlyRootFilesystem: true
-        capabilities:
-          drop:
-            - ALL
-      resources:
-        limits:
-          cpu: 500m
-          memory: 256Mi
-        requests:
-          cpu: 100m
-          memory: 128Mi
-      volumeMounts:
-        - name: tmp
-          mountPath: /tmp
-  volumes:
-    - name: tmp
-      emptyDir: {}
+ securityContext:
+ runAsNonRoot: true
+ runAsUser: 1000
+ runAsGroup: 3000
+ fsGroup: 2000
+ seccompProfile:
+ type: RuntimeDefault
+ automountServiceAccountToken: false
+ containers:
+ - name: app
+ image: myregistry/myapp:v1.0.0
+ securityContext:
+ allowPrivilegeEscalation: false
+ readOnlyRootFilesystem: true
+ capabilities:
+ drop:
+ - ALL
+ resources:
+ limits:
+ cpu: 500m
+ memory: 256Mi
+ requests:
+ cpu: 100m
+ memory: 128Mi
+ volumeMounts:
+ - name: tmp
+ mountPath: /tmp
+ volumes:
+ - name: tmp
+ emptyDir: {}
 ```
 
 ### Baseline-Compliant Pod
@@ -260,18 +260,18 @@ spec:
 apiVersion: v1
 kind: Pod
 metadata:
-  name: baseline-pod
-  namespace: staging
+ name: baseline-pod
+ namespace: staging
 spec:
-  containers:
-    - name: app
-      image: myregistry/myapp:v1.0.0
-      securityContext:
-        allowPrivilegeEscalation: false
-      resources:
-        limits:
-          cpu: 500m
-          memory: 256Mi
+ containers:
+ - name: app
+ image: myregistry/myapp:v1.0.0
+ securityContext:
+ allowPrivilegeEscalation: false
+ resources:
+ limits:
+ cpu: 500m
+ memory: 256Mi
 ```
 
 ## Migration from PodSecurityPolicy
@@ -283,16 +283,16 @@ kubectl get psp
 
 # Check which service accounts use which PSP
 kubectl get clusterrolebinding -o json | \
-  jq '.items[] | select(.roleRef.name | startswith("psp-")) | {name: .metadata.name, subjects: .subjects}'
+ jq '.items[] | select(.roleRef.name | startswith("psp-")) | {name: .metadata.name, subjects: .subjects}'
 ```
 
 ### Step 2: Map PSP to PSA Profiles
 ```bash
 # For each namespace, determine required PSA level
 for ns in $(kubectl get ns -o jsonpath='{.items[*].metadata.name}'); do
-  echo "Namespace: $ns"
-  kubectl label --dry-run=server namespace $ns \
-    pod-security.kubernetes.io/enforce=restricted 2>&1 | head -5
+ echo "Namespace: $ns"
+ kubectl label --dry-run=server namespace $ns \
+ pod-security.kubernetes.io/enforce=restricted 2>&1 | head -5
 done
 ```
 
@@ -300,8 +300,8 @@ done
 ```bash
 # Start with audit mode
 kubectl label namespace production \
-  pod-security.kubernetes.io/audit=restricted \
-  pod-security.kubernetes.io/warn=restricted
+ pod-security.kubernetes.io/audit=restricted \
+ pod-security.kubernetes.io/warn=restricted
 ```
 
 ### Step 4: Review and Fix Violations
@@ -313,7 +313,7 @@ kubectl get events --field-selector reason=FailedCreate -A
 ### Step 5: Enable Enforcement
 ```bash
 kubectl label namespace production \
-  pod-security.kubernetes.io/enforce=restricted
+ pod-security.kubernetes.io/enforce=restricted
 ```
 
 ## Monitoring

@@ -6,9 +6,9 @@ author: BadTechBandit
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [design, html, prototype, ux, ui, creative, artifact, deck, motion, design-system]
-    related_skills: [design-md, popular-web-designs, excalidraw, architecture-diagram]
+ hermes:
+ tags: [design, html, prototype, ux, ui, creative, artifact, deck, motion, design-system]
+ related_skills: [design-md, popular-web-designs, excalidraw, architecture-diagram]
 ---
 
 # Claude Design for CLI/API Agents
@@ -193,53 +193,53 @@ This one constraint eliminates more generic-looking UI than any aesthetic rule b
 ## Workflow
 
 1. **Understand the brief**
-   - What is being designed?
-   - Who is it for?
-   - What artifact should exist at the end?
-   - What constraints are locked?
+ - What is being designed?
+ - Who is it for?
+ - What artifact should exist at the end?
+ - What constraints are locked?
 
 2. **Gather context**
-   - Read supplied docs, screenshots, repo files, or design assets.
-   - Identify the visual vocabulary before writing code.
+ - Read supplied docs, screenshots, repo files, or design assets.
+ - Identify the visual vocabulary before writing code.
 
 3. **Commit to a surface** (see "Surface-First")
-   - Name the one surface archetype before any visual tokens.
-   - This conditions the composition; everything below inherits from it.
+ - Name the one surface archetype before any visual tokens.
+ - This conditions the composition; everything below inherits from it.
 
 4. **Define the design system for this artifact**
-   - colors
-   - type
-   - spacing
-   - radii
-   - shadows or elevation
-   - motion posture
-   - component treatment
-   - interaction rules
+ - colors
+ - type
+ - spacing
+ - radii
+ - shadows or elevation
+ - motion posture
+ - component treatment
+ - interaction rules
 
 5. **Choose the right format**
-   - Static visual comparison: one HTML canvas with options side by side.
-   - Interaction/flow: clickable prototype.
-   - Presentation: fixed-size HTML deck with slide navigation.
-   - Component exploration: component lab with variants.
-   - Motion: timeline or state-based animation.
+ - Static visual comparison: one HTML canvas with options side by side.
+ - Interaction/flow: clickable prototype.
+ - Presentation: fixed-size HTML deck with slide navigation.
+ - Component exploration: component lab with variants.
+ - Motion: timeline or state-based animation.
 
 6. **Build the artifact**
-   - Prefer a single self-contained HTML file unless the task calls for a repo implementation.
-   - Preserve prior versions for major revisions.
-   - Avoid unnecessary dependencies.
+ - Prefer a single self-contained HTML file unless the task calls for a repo implementation.
+ - Preserve prior versions for major revisions.
+ - Avoid unnecessary dependencies.
 
 7. **Verify**
-   - Confirm files exist.
-   - Run any available syntax/static checks.
-   - If browser tools are available, open the file and check console errors.
-   - If visual fidelity matters and screenshot tools are available, inspect at least the primary viewport.
-   - Run the slop self-audit (see "Slop Diagnostic") and repair only what it flags.
+ - Confirm files exist.
+ - Run any available syntax/static checks.
+ - If browser tools are available, open the file and check console errors.
+ - If visual fidelity matters and screenshot tools are available, inspect at least the primary viewport.
+ - Run the slop self-audit (see "Slop Diagnostic") and repair only what it flags.
 
 8. **Report briefly**
-   - exact file path
-   - what was created
-   - caveats
-   - next decision or next iteration
+ - exact file path
+ - what was created
+ - caveats
+ - next decision or next iteration
 
 ## Artifact Format Rules
 
@@ -455,9 +455,9 @@ How to run it:
 - Score the artifact out of 10 (10 = maximum slop). State the score and list which tells fired, in one short report.
 - Treat the report as **context, not a to-do list** — it tells you *where* to spend repair effort, it does not dictate edits.
 - Then repair, matched to the diagnosis:
-  - tells 3, 8, 10 → **re-layout / re-compose** (revisit the surface choice — do not recolor).
-  - tells 1, 2, 9 → **recolor / re-typeset** (palette and type are genuinely the problem here).
-  - tells 4, 5, 6, 7 → **remove the decoration**; replace it with real hierarchy (scale, weight, spacing).
+ - tells 3, 8, 10 → **re-layout / re-compose** (revisit the surface choice — do not recolor).
+ - tells 1, 2, 9 → **recolor / re-typeset** (palette and type are genuinely the problem here).
+ - tells 4, 5, 6, 7 → **remove the decoration**; replace it with real hierarchy (scale, weight, spacing).
 - Re-score after repairing. Do not declare done while compositional tells (3, 8, 10) are still firing — those are causes, the rest are usually symptoms.
 
 The point of separating diagnosis from treatment: let the audit complain first, then fix only what it complained about, in the register the complaint calls for.

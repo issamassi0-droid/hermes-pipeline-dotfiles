@@ -1,10 +1,10 @@
 ---
 name: performing-bluetooth-security-assessment
 description: Assess Bluetooth Low Energy (BLE) device security using Python's bleak asyncio
-  library to discover nearby devices, enumerate GATT services and characteristics, and flag
-  unencrypted or unauthenticated read/write access to sensitive data. Use when auditing IoT,
-  healthcare, fitness, or smart-home BLE devices for weak pairing configurations or known
-  vulnerable device fingerprints.
+ library to discover nearby devices, enumerate GATT services and characteristics, and flag
+ unencrypted or unauthenticated read/write access to sensitive data. Use when auditing IoT,
+ healthcare, fitness, or smart-home BLE devices for weak pairing configurations or known
+ vulnerable device fingerprints.
 domain: cybersecurity
 subdomain: wireless-security
 tags:
@@ -70,23 +70,23 @@ The agent uses bleak's asyncio API to discover nearby BLE devices, connect to ta
 
 ```json
 {
-  "assessment_type": "ble_security_audit",
-  "target_device": {
-    "name": "SmartBand-XR",
-    "address": "AA:BB:CC:DD:EE:FF",
-    "rssi": -42
-  },
-  "services_found": 5,
-  "characteristics_found": 18,
-  "findings": [
-    {
-      "severity": "high",
-      "finding": "Heart Rate Measurement readable without encryption",
-      "uuid": "00002a37-0000-1000-8000-00805f9b34fb",
-      "properties": ["read", "notify"],
-      "remediation": "Enable encryption requirement on characteristic"
-    }
-  ],
-  "risk_score": 7.5
+ "assessment_type": "ble_security_audit",
+ "target_device": {
+ "name": "SmartBand-XR",
+ "address": "AA:BB:CC:DD:EE:FF",
+ "rssi": -42
+ },
+ "services_found": 5,
+ "characteristics_found": 18,
+ "findings": [
+ {
+ "severity": "high",
+ "finding": "Heart Rate Measurement readable without encryption",
+ "uuid": "00002a37-0000-1000-8000-00805f9b34fb",
+ "properties": ["read", "notify"],
+ "remediation": "Enable encryption requirement on characteristic"
+ }
+ ],
+ "risk_score": 7.5
 }
 ```

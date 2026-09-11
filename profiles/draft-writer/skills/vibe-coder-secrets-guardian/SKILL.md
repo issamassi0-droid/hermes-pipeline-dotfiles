@@ -1,10 +1,10 @@
 ---
 name: secrets-guardian
 description: |
-  Protect repositories from accidental secret commits. Essential when working with AI agents.
-  Use when: setting up new project, adding pre-commit hooks, scanning for secrets, fixing leaked credentials.
-  Triggers: "настрой защиту секретов", "setup secrets", "check secrets", "scan secrets", "проверь секреты", "pre-commit", "gitleaks".
-  PROACTIVELY suggest when creating new projects or when .pre-commit-config.yaml is missing.
+ Protect repositories from accidental secret commits. Essential when working with AI agents.
+ Use when: setting up new project, adding pre-commit hooks, scanning for secrets, fixing leaked credentials.
+ Triggers: "настрой защиту секретов", "setup secrets", "check secrets", "scan secrets", "проверь секреты", "pre-commit", "gitleaks".
+ PROACTIVELY suggest when creating new projects or when .pre-commit-config.yaml is missing.
 ---
 
 # Secrets Guardian
@@ -45,14 +45,14 @@ ls -la .pre-commit-config.yaml .secrets.baseline .gitignore 2>/dev/null
 ```
 
 2. **If .pre-commit-config.yaml missing:**
-   - Copy from `assets/pre-commit-config.yaml`
-   - Or add secret scanning hooks to existing config
+ - Copy from `assets/pre-commit-config.yaml`
+ - Or add secret scanning hooks to existing config
 
 3. **Check .gitignore for secret patterns:**
 ```bash
 grep -E "\.env|\.key|API_KEY|secret" .gitignore
 ```
-   - If missing, append patterns from `assets/gitignore-secrets`
+ - If missing, append patterns from `assets/gitignore-secrets`
 
 4. **Create .secrets.baseline:**
 ```bash
@@ -66,8 +66,8 @@ pre-commit install --hook-type pre-push
 ```
 
 6. **Ask about CI/CD:**
-   - "Добавить GitHub Actions workflow для проверки секретов в CI?"
-   - If yes, copy `assets/security-workflow.yaml` to `.github/workflows/`
+ - "Добавить GitHub Actions workflow для проверки секретов в CI?"
+ - If yes, copy `assets/security-workflow.yaml` to `.github/workflows/`
 
 ### Scan for Secrets
 
@@ -90,14 +90,14 @@ When secret is detected:
 1. **Identify the secret type** (API key, password, private key, etc.)
 
 2. **Suggest remediation:**
-   - Move to `.env` file (ensure it's in .gitignore)
-   - Use environment variable: `os.environ.get("API_KEY")`
-   - For false positives: update `.secrets.baseline`
+ - Move to `.env` file (ensure it's in .gitignore)
+ - Use environment variable: `os.environ.get("API_KEY")`
+ - For false positives: update `.secrets.baseline`
 
 3. **If already committed:**
-   - Rotate the credential immediately
-   - Consider git history cleanup (if not pushed)
-   - Warn about exposed secrets in git history
+ - Rotate the credential immediately
+ - Consider git history cleanup (if not pushed)
+ - Warn about exposed secrets in git history
 
 ### Update Baseline
 
@@ -114,7 +114,7 @@ detect-secrets scan --baseline .secrets.baseline
 ```bash
 # Quick check
 if [ ! -f .pre-commit-config.yaml ]; then
-  echo "WARNING: No pre-commit config found"
+ echo "WARNING: No pre-commit config found"
 fi
 ```
 

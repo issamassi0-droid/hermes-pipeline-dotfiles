@@ -6,12 +6,12 @@ author: community
 license: MIT
 platforms: [linux, macos, windows]
 prerequisites:
-  env_vars: [AIRTABLE_API_KEY]
-  commands: [curl]
+ env_vars: [AIRTABLE_API_KEY]
+ commands: [curl]
 metadata:
-  hermes:
-    tags: [Airtable, Productivity, Database, API]
-    homepage: https://airtable.com/developers/web/api/introduction
+ hermes:
+ tags: [Airtable, Productivity, Database, API]
+ homepage: https://airtable.com/developers/web/api/introduction
 ---
 
 # Airtable — Bases, Tables & Records
@@ -22,14 +22,14 @@ Work with Airtable's REST API directly via `curl` using the `terminal` tool. No 
 
 1. Create a **Personal Access Token (PAT)** at https://airtable.com/create/tokens (tokens start with `pat...`).
 2. Grant these scopes (minimum):
-   - `data.records:read` — read rows
-   - `data.records:write` — create / update / delete rows
-   - `schema.bases:read` — list bases and tables
+ - `data.records:read` — read rows
+ - `data.records:write` — create / update / delete rows
+ - `schema.bases:read` — list bases and tables
 3. **Important:** in the same token UI, add each base you want to access to the token's **Access** list. PATs are scoped per-base — a valid token on the wrong base returns `403`.
 4. Store the token in `${HERMES_HOME:-~/.hermes}/.env` (or via `hermes setup`):
-   ```
-   AIRTABLE_API_KEY=pat_your_token_here
-   ```
+ ```
+ AIRTABLE_API_KEY=pat_your_token_here
+ ```
 
 > Note: legacy `key...` API keys were deprecated Feb 2024. Only PATs and OAuth tokens work now.
 
@@ -44,7 +44,7 @@ Work with Airtable's REST API directly via `curl` using the `terminal` tool. No 
 Base curl pattern:
 ```bash
 curl -s "https://api.airtable.com/v0/$BASE_ID/$TABLE?maxRecords=5" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 
 `-s` suppresses curl's progress bar — keep it set for every call so the tool output stays clean for Hermes. Pipe through `python -m json.tool` (always present) or `jq` (if installed) for readable JSON.
@@ -73,26 +73,26 @@ Pass `"typecast": true` at the top level of a create/update body to let Airtable
 ### List bases the token can see
 ```bash
 curl -s "https://api.airtable.com/v0/meta/bases" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 
 ### List tables + schema for a base
 ```bash
 curl -s "https://api.airtable.com/v0/meta/bases/$BASE_ID/tables" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 Use this BEFORE mutating — confirms exact field names and IDs, surfaces `options.choices` for select fields, and shows primary-field names.
 
 ### List records (first 10)
 ```bash
 curl -s "https://api.airtable.com/v0/$BASE_ID/$TABLE?maxRecords=10" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 
 ### Get a single record
 ```bash
 curl -s "https://api.airtable.com/v0/$BASE_ID/$TABLE/$RECORD_ID" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 
 ### Filter records (filterByFormula)
@@ -101,7 +101,7 @@ Airtable formulas must be URL-encoded. Let Python stdlib do it — never hand-en
 FORMULA="{Status}='Todo'"
 ENC=$(python -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$FORMULA")
 curl -s "https://api.airtable.com/v0/$BASE_ID/$TABLE?filterByFormula=$ENC&maxRecords=20" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 
 Useful formula patterns:
@@ -115,14 +115,14 @@ Useful formula patterns:
 ### Sort + select specific fields
 ```bash
 curl -s "https://api.airtable.com/v0/$BASE_ID/$TABLE?sort%5B0%5D%5Bfield%5D=Priority&sort%5B0%5D%5Bdirection%5D=asc&fields%5B%5D=Name&fields%5B%5D=Status" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 Square brackets in query params MUST be URL-encoded (`%5B` / `%5D`).
 
 ### Use a named view
 ```bash
 curl -s "https://api.airtable.com/v0/$BASE_ID/$TABLE?view=Grid%20view&maxRecords=50" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 Views apply their saved filter + sort server-side.
 
@@ -131,58 +131,58 @@ Views apply their saved filter + sort server-side.
 ### Create a record
 ```bash
 curl -s -X POST "https://api.airtable.com/v0/$BASE_ID/$TABLE" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"fields":{"Name":"New task","Status":"Todo","Priority":"High"}}' | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{"fields":{"Name":"New task","Status":"Todo","Priority":"High"}}' | python -m json.tool
 ```
 
 ### Create up to 10 records in one call
 ```bash
 curl -s -X POST "https://api.airtable.com/v0/$BASE_ID/$TABLE" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "typecast": true,
-    "records": [
-      {"fields": {"Name": "Task A", "Status": "Todo"}},
-      {"fields": {"Name": "Task B", "Status": "In progress"}}
-    ]
-  }' | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "typecast": true,
+ "records": [
+ {"fields": {"Name": "Task A", "Status": "Todo"}},
+ {"fields": {"Name": "Task B", "Status": "In progress"}}
+ ]
+ }' | python -m json.tool
 ```
 Batch endpoints are capped at **10 records per request**. For larger inserts, loop in batches of 10 with a short sleep to respect 5 req/sec/base.
 
 ### Update a record (PATCH — merges, preserves unchanged fields)
 ```bash
 curl -s -X PATCH "https://api.airtable.com/v0/$BASE_ID/$TABLE/$RECORD_ID" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"fields":{"Status":"Done"}}' | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{"fields":{"Status":"Done"}}' | python -m json.tool
 ```
 
 ### Upsert by a merge field (no ID needed)
 ```bash
 curl -s -X PATCH "https://api.airtable.com/v0/$BASE_ID/$TABLE" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "performUpsert": {"fieldsToMergeOn": ["Email"]},
-    "records": [
-      {"fields": {"Email": "user@example.com", "Status": "Active"}}
-    ]
-  }' | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" \
+ -H "Content-Type: application/json" \
+ -d '{
+ "performUpsert": {"fieldsToMergeOn": ["Email"]},
+ "records": [
+ {"fields": {"Email": "user@example.com", "Status": "Active"}}
+ ]
+ }' | python -m json.tool
 ```
 `performUpsert` creates records whose merge-field values are new, patches records whose merge-field values already exist. Great for idempotent syncs.
 
 ### Delete a record
 ```bash
 curl -s -X DELETE "https://api.airtable.com/v0/$BASE_ID/$TABLE/$RECORD_ID" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 
 ### Delete up to 10 records in one call
 ```bash
 curl -s -X DELETE "https://api.airtable.com/v0/$BASE_ID/$TABLE?records%5B%5D=rec1&records%5B%5D=rec2" \
-  -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
+ -H "Authorization: Bearer $AIRTABLE_API_KEY" | python -m json.tool
 ```
 
 ## Pagination
@@ -192,12 +192,12 @@ List endpoints return at most **100 records per page**. If the response includes
 ```bash
 OFFSET=""
 while :; do
-  URL="https://api.airtable.com/v0/$BASE_ID/$TABLE?pageSize=100"
-  [ -n "$OFFSET" ] && URL="$URL&offset=$OFFSET"
-  RESP=$(curl -s "$URL" -H "Authorization: Bearer $AIRTABLE_API_KEY")
-  echo "$RESP" | python -c 'import json,sys; d=json.load(sys.stdin); [print(r["id"], r["fields"].get("Name","")) for r in d["records"]]'
-  OFFSET=$(echo "$RESP" | python -c 'import json,sys; d=json.load(sys.stdin); print(d.get("offset",""))')
-  [ -z "$OFFSET" ] && break
+ URL="https://api.airtable.com/v0/$BASE_ID/$TABLE?pageSize=100"
+ [ -n "$OFFSET" ] && URL="$URL&offset=$OFFSET"
+ RESP=$(curl -s "$URL" -H "Authorization: Bearer $AIRTABLE_API_KEY")
+ echo "$RESP" | python -c 'import json,sys; d=json.load(sys.stdin); [print(r["id"], r["fields"].get("Name","")) for r in d["records"]]'
+ OFFSET=$(echo "$RESP" | python -c 'import json,sys; d=json.load(sys.stdin); print(d.get("offset",""))')
+ [ -z "$OFFSET" ] && break
 done
 ```
 

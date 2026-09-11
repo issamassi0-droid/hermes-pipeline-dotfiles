@@ -1,13 +1,13 @@
 ---
 name: hardening-windows-endpoint-with-cis-benchmark
 description: 'Hardens Windows endpoints using CIS (Center for Internet Security) Benchmark
-  recommendations to reduce attack surface, enforce security baselines, and meet compliance
-  requirements. Use when deploying new Windows workstations or servers, remediating
-  audit findings, or establishing organization-wide security baselines. Activates
-  for requests involving Windows hardening, CIS benchmarks, GPO security baselines,
-  or endpoint configuration compliance.
+ recommendations to reduce attack surface, enforce security baselines, and meet compliance
+ requirements. Use when deploying new Windows workstations or servers, remediating
+ audit findings, or establishing organization-wide security baselines. Activates
+ for requests involving Windows hardening, CIS benchmarks, GPO security baselines,
+ or endpoint configuration compliance.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -79,14 +79,14 @@ CIS provides pre-built GPO templates (Build Kits) for each benchmark version:
 
 # Import the CIS GPO into Active Directory
 Import-GPO -BackupGpoName "CIS Microsoft Windows 11 Enterprise v3.0.0 L1" `
-  -TargetName "CIS-Win11-L1-Baseline" `
-  -Path "C:\CIS-GPO-Backups\Win11-Enterprise" `
-  -CreateIfNeeded
+ -TargetName "CIS-Win11-L1-Baseline" `
+ -Path "C:\CIS-GPO-Backups\Win11-Enterprise" `
+ -CreateIfNeeded
 
 # Link GPO to target OU
 New-GPLink -Name "CIS-Win11-L1-Baseline" `
-  -Target "OU=Workstations,DC=corp,DC=example,DC=com" `
-  -LinkEnabled Yes
+ -Target "OU=Workstations,DC=corp,DC=example,DC=com" `
+ -LinkEnabled Yes
 ```
 
 ### Step 3: Apply Key CIS Benchmark Categories
@@ -94,43 +94,43 @@ New-GPLink -Name "CIS-Win11-L1-Baseline" `
 **Account Policies (Section 1)**:
 ```
 Password Policy:
-  - Minimum password length: 14 characters (1.1.4)
-  - Maximum password age: 365 days (1.1.3)
-  - Password complexity: Enabled (1.1.5)
-  - Store passwords using reversible encryption: Disabled (1.1.6)
+ - Minimum password length: 14 characters (1.1.4)
+ - Maximum password age: 365 days (1.1.3)
+ - Password complexity: Enabled (1.1.5)
+ - Store passwords using reversible encryption: Disabled (1.1.6)
 
 Account Lockout Policy:
-  - Account lockout threshold: 5 invalid logon attempts (1.2.1)
-  - Account lockout duration: 15 minutes (1.2.2)
-  - Reset account lockout counter after: 15 minutes (1.2.3)
+ - Account lockout threshold: 5 invalid logon attempts (1.2.1)
+ - Account lockout duration: 15 minutes (1.2.2)
+ - Reset account lockout counter after: 15 minutes (1.2.3)
 ```
 
 **Local Policies - Audit Policy (Section 17)**:
 ```
 Audit Policy Configuration:
-  - Audit Credential Validation: Success and Failure (17.1.1)
-  - Audit Security Group Management: Success (17.2.5)
-  - Audit Logon: Success and Failure (17.5.1)
-  - Audit Process Creation: Success (17.6.1)
-  - Audit Removable Storage: Success and Failure (17.6.4)
+ - Audit Credential Validation: Success and Failure (17.1.1)
+ - Audit Security Group Management: Success (17.2.5)
+ - Audit Logon: Success and Failure (17.5.1)
+ - Audit Process Creation: Success (17.6.1)
+ - Audit Removable Storage: Success and Failure (17.6.4)
 ```
 
 **Security Options (Section 2.3)**:
 ```
-  - Interactive logon: Do not display last user name: Enabled (2.3.7.1)
-  - Interactive logon: Machine inactivity limit: 900 seconds (2.3.7.3)
-  - Network access: Do not allow anonymous enumeration of SAM accounts: Enabled (2.3.10.2)
-  - Network security: LAN Manager authentication level: Send NTLMv2 response only (2.3.11.7)
-  - UAC: Run all administrators in Admin Approval Mode: Enabled (2.3.17.6)
+ - Interactive logon: Do not display last user name: Enabled (2.3.7.1)
+ - Interactive logon: Machine inactivity limit: 900 seconds (2.3.7.3)
+ - Network access: Do not allow anonymous enumeration of SAM accounts: Enabled (2.3.10.2)
+ - Network security: LAN Manager authentication level: Send NTLMv2 response only (2.3.11.7)
+ - UAC: Run all administrators in Admin Approval Mode: Enabled (2.3.17.6)
 ```
 
 **Windows Firewall (Section 9)**:
 ```
-  - Domain Profile: Firewall state: On (9.1.1)
-  - Domain Profile: Inbound connections: Block (9.1.2)
-  - Private Profile: Firewall state: On (9.2.1)
-  - Public Profile: Firewall state: On (9.3.1)
-  - Public Profile: Inbound connections: Block (9.3.2)
+ - Domain Profile: Firewall state: On (9.1.1)
+ - Domain Profile: Inbound connections: Block (9.1.2)
+ - Private Profile: Firewall state: On (9.2.1)
+ - Public Profile: Firewall state: On (9.3.1)
+ - Public Profile: Inbound connections: Block (9.3.2)
 ```
 
 ### Step 4: Validate with CIS-CAT Assessment
@@ -140,10 +140,10 @@ Audit Policy Configuration:
 # CIS-CAT produces an HTML/XML report with pass/fail per recommendation
 
 .\Assessor-CLI.bat `
-  -b "benchmarks\CIS_Microsoft_Windows_11_Enterprise_Benchmark_v3.0.0-xccdf.xml" `
-  -p "Level 1 (L1) - Corporate/Enterprise Environment" `
-  -rd "C:\CIS-Reports" `
-  -nts
+ -b "benchmarks\CIS_Microsoft_Windows_11_Enterprise_Benchmark_v3.0.0-xccdf.xml" `
+ -p "Level 1 (L1) - Corporate/Enterprise Environment" `
+ -rd "C:\CIS-Reports" `
+ -nts
 
 # Review report for failed controls
 # Score target: 95%+ for L1, 90%+ for L2 (due to operational exceptions)
@@ -173,11 +173,11 @@ Configure recurring CIS-CAT scans via scheduled tasks or SCCM:
 ```powershell
 # Create scheduled task for weekly CIS-CAT assessment
 $action = New-ScheduledTaskAction -Execute "C:\CIS-CAT\Assessor-CLI.bat" `
-  -Argument "-b benchmarks\CIS_Win11_v3.0.0-xccdf.xml -p Level1 -rd C:\CIS-Reports -nts"
+ -Argument "-b benchmarks\CIS_Win11_v3.0.0-xccdf.xml -p Level1 -rd C:\CIS-Reports -nts"
 $trigger = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At 2am
 $principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -RunLevel Highest
 Register-ScheduledTask -TaskName "CIS-Benchmark-Scan" -Action $action `
-  -Trigger $trigger -Principal $principal
+ -Trigger $trigger -Principal $principal
 ```
 
 Feed results into SIEM for drift detection and dashboard reporting.

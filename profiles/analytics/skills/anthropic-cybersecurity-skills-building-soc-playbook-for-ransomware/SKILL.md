@@ -1,12 +1,12 @@
 ---
 name: building-soc-playbook-for-ransomware
 description: 'Builds a structured SOC incident response playbook for ransomware attacks
-  covering detection, containment, eradication, and recovery phases with specific
-  SIEM queries, isolation procedures, and decision trees. Use when SOC teams need
-  formalized response procedures for ransomware incidents aligned to NIST SP 800-61
-  and MITRE ATT&CK ransomware techniques.
+ covering detection, containment, eradication, and recovery phases with specific
+ SIEM queries, isolation procedures, and decision trees. Use when SOC teams need
+ formalized response procedures for ransomware incidents aligned to NIST SP 800-61
+ and MITRE ATT&CK ransomware techniques.
 
-  '
+ '
 domain: cybersecurity
 subdomain: soc-operations
 tags:
@@ -24,27 +24,27 @@ mitre_attack:
 - T1566
 - T1059.001
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - initial-access
-  - monetization
-  techniques:
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
-  - id: T1110
-    name: Brute Force
-    tactic: initial-access
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1047
-    name: Transfer of funds
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - initial-access
+ - monetization
+ techniques:
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
+ - id: T1110
+ name: Brute Force
+ tactic: initial-access
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1047
+ name: Transfer of funds
+ tactic: monetization
+ source: f3
 version: '1.0'
 author: mahipal
 license: Apache-2.0
@@ -116,10 +116,10 @@ TargetFilename IN ("*README*.txt", "*DECRYPT*.txt", "*RANSOM*.txt", "*RECOVER*.h
 **Elastic Security EQL variant:**
 ```eql
 sequence by host.name with maxspan=2m
-  [process where event.type == "start" and
-    process.args : ("*vssadmin*", "*delete*", "*shadows*")]
-  [file where event.type == "creation" and
-    file.name : ("*README*DECRYPT*", "*RANSOM*", "*HOW_TO_RECOVER*")]
+ [process where event.type == "start" and
+ process.args : ("*vssadmin*", "*delete*", "*shadows*")]
+ [file where event.type == "creation" and
+ file.name : ("*README*DECRYPT*", "*RANSOM*", "*HOW_TO_RECOVER*")]
 ```
 
 ### Step 2: Build Triage Decision Tree
@@ -128,21 +128,21 @@ sequence by host.name with maxspan=2m
 RANSOMWARE ALERT TRIAGE
 │
 ├── Is encryption actively occurring?
-│   ├── YES → IMMEDIATE: Isolate host from network (Step 3)
-│   │         Do NOT power off (preserve memory for forensics)
-│   └── NO → Is this a pre-encryption indicator?
-│       ├── Shadow copy deletion → HIGH PRIORITY: Isolate and investigate
-│       ├── Known ransomware hash → HIGH PRIORITY: Block hash, scan enterprise
-│       └── Suspicious process behavior → MEDIUM: Investigate, prepare isolation
+│ ├── YES → IMMEDIATE: Isolate host from network (Step 3)
+│ │ Do NOT power off (preserve memory for forensics)
+│ └── NO → Is this a pre-encryption indicator?
+│ ├── Shadow copy deletion → HIGH PRIORITY: Isolate and investigate
+│ ├── Known ransomware hash → HIGH PRIORITY: Block hash, scan enterprise
+│ └── Suspicious process behavior → MEDIUM: Investigate, prepare isolation
 │
 ├── How many hosts affected?
-│   ├── Single host → Contained incident, follow host isolation procedure
-│   ├── Multiple hosts (2-10) → Escalate to Tier 2, begin enterprise-wide scan
-│   └── Enterprise-wide (>10) → Activate full IR team, engage external retainer
+│ ├── Single host → Contained incident, follow host isolation procedure
+│ ├── Multiple hosts (2-10) → Escalate to Tier 2, begin enterprise-wide scan
+│ └── Enterprise-wide (>10) → Activate full IR team, engage external retainer
 │
 └── Is data exfiltration confirmed?
-    ├── YES → Double extortion scenario, engage legal for breach notification
-    └── NO/UNKNOWN → Check for Cobalt Strike/C2 beacons, review outbound transfers
+ ├── YES → Double extortion scenario, engage legal for breach notification
+ └── NO/UNKNOWN → Check for Cobalt Strike/C2 beacons, review outbound transfers
 ```
 
 ### Step 3: Containment Procedures
@@ -151,9 +151,9 @@ RANSOMWARE ALERT TRIAGE
 ```bash
 # Isolate host using CrowdStrike Falcon API
 curl -X POST "https://api.crowdstrike.com/devices/entities/devices-actions/v2?action_name=contain" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{"ids": ["device_id_here"]}'
+ -H "Authorization: Bearer $TOKEN" \
+ -H "Content-Type: application/json" \
+ -d '{"ids": ["device_id_here"]}'
 ```
 
 **Network Isolation via Microsoft Defender for Endpoint:**
@@ -162,7 +162,7 @@ curl -X POST "https://api.crowdstrike.com/devices/entities/devices-actions/v2?ac
 $headers = @{Authorization = "Bearer $token"}
 $body = @{Comment = "Ransomware containment - IR-2024-0500"; IsolationType = "Full"} | ConvertTo-Json
 Invoke-RestMethod -Uri "https://api.securitycenter.microsoft.com/api/machines/$machineId/isolate" `
-    -Method Post -Headers $headers -Body $body -ContentType "application/json"
+ -Method Post -Headers $headers -Body $body -ContentType "application/json"
 ```
 
 **Firewall Emergency Rules:**
@@ -282,28 +282,28 @@ POST-INCIDENT REVIEW TEMPLATE
 RANSOMWARE PLAYBOOK EXECUTION — IR-2024-0500
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Phase 1 - Detection:
-  Alert:      Mass file encryption detected on FILESERVER-03
-  Variant:    LockBit 3.0 (confirmed via ID Ransomware)
-  MTTD:       12 minutes from first encryption to SOC alert
+ Alert: Mass file encryption detected on FILESERVER-03
+ Variant: LockBit 3.0 (confirmed via ID Ransomware)
+ MTTD: 12 minutes from first encryption to SOC alert
 
 Phase 2 - Containment:
-  [DONE] FILESERVER-03 isolated via CrowdStrike at 14:35 UTC
-  [DONE] SMB blocked enterprise-wide via firewall emergency rule
-  [DONE] Compromised service account disabled in AD
-  MTTC:       23 minutes
+ [DONE] FILESERVER-03 isolated via CrowdStrike at 14:35 UTC
+ [DONE] SMB blocked enterprise-wide via firewall emergency rule
+ [DONE] Compromised service account disabled in AD
+ MTTC: 23 minutes
 
 Phase 3 - Eradication:
-  [DONE] 3 additional hosts with C2 beacon identified and isolated
-  [DONE] Cobalt Strike C2 domain (c2[.]evil[.]com) sinkholed
-  [DONE] Enterprise-wide IOC scan completed — no additional infections
+ [DONE] 3 additional hosts with C2 beacon identified and isolated
+ [DONE] Cobalt Strike C2 domain (c2[.]evil[.]com) sinkholed
+ [DONE] Enterprise-wide IOC scan completed — no additional infections
 
 Phase 4 - Recovery:
-  [DONE] FILESERVER-03 rebuilt from gold image
-  [DONE] Data restored from immutable Veeam backup (RPO: 4 hours)
-  [DONE] Systems monitored 72 hours — no reinfection
-  MTTR:       18 hours
+ [DONE] FILESERVER-03 rebuilt from gold image
+ [DONE] Data restored from immutable Veeam backup (RPO: 4 hours)
+ [DONE] Systems monitored 72 hours — no reinfection
+ MTTR: 18 hours
 
 Total Affected: 1 server, 3 workstations
-Data Loss:      4 hours of file modifications (backup RPO)
-Exfiltration:   No evidence of data exfiltration confirmed
+Data Loss: 4 hours of file modifications (backup RPO)
+Exfiltration: No evidence of data exfiltration confirmed
 ```

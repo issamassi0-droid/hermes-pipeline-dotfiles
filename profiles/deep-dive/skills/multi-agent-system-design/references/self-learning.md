@@ -58,8 +58,8 @@ Before auto-applying Class 1 amendments:
 
 ```
 Mission Complete → Extract Learnings → Identify Patterns
-      ↑                                        ↓
-   Re-deploy ← Apply Amendments ← Generate Proposals
+ ↑ ↓
+ Re-deploy ← Apply Amendments ← Generate Proposals
 ```
 
 ## Key Insight from GEPA (ICLR 2026)

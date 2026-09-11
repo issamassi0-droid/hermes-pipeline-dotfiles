@@ -1,9 +1,9 @@
 ---
 name: auto-testing
 description: |
-  Automatically generate and run tests after each code change.
-  Use when: any code is generated or modified in the pipeline.
-  Triggers: internal use only.
+ Automatically generate and run tests after each code change.
+ Use when: any code is generated or modified in the pipeline.
+ Triggers: internal use only.
 ---
 
 # Auto Testing
@@ -35,25 +35,25 @@ For each code change, generate:
 ### Components
 ```typescript
 test('renders correctly', () => {
-  render(<Component />);
-  expect(screen.getByRole('button')).toBeInTheDocument();
+ render(<Component />);
+ expect(screen.getByRole('button')).toBeInTheDocument();
 });
 
 test('handles click', async () => {
-  const onClick = jest.fn();
-  render(<Component onClick={onClick} />);
-  await userEvent.click(screen.getByRole('button'));
-  expect(onClick).toHaveBeenCalled();
+ const onClick = jest.fn();
+ render(<Component onClick={onClick} />);
+ await userEvent.click(screen.getByRole('button'));
+ expect(onClick).toHaveBeenCalled();
 });
 ```
 
 ### API
 ```typescript
 test('returns data', async () => {
-  const response = await fetch('/api/items');
-  expect(response.status).toBe(200);
-  const data = await response.json();
-  expect(data.items).toBeDefined();
+ const response = await fetch('/api/items');
+ expect(response.status).toBe(200);
+ const data = await response.json();
+ expect(data.items).toBeDefined();
 });
 ```
 

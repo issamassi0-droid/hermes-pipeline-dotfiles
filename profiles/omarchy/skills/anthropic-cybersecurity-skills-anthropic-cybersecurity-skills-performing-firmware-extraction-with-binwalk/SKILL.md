@@ -1,14 +1,14 @@
 ---
 name: performing-firmware-extraction-with-binwalk
 description: 'Performs firmware image extraction and analysis using binwalk to identify
-  embedded filesystems, compressed archives, bootloaders, kernel images, and cryptographic
-  material. Covers entropy analysis for detecting encrypted or compressed regions,
-  recursive extraction of nested archives, SquashFS/CramFS/JFFS2 filesystem mounting,
-  and string analysis for credential and configuration discovery. Activates for requests
-  involving firmware reverse engineering, IoT device analysis, embedded system security
-  assessment, or router/camera firmware extraction.
+ embedded filesystems, compressed archives, bootloaders, kernel images, and cryptographic
+ material. Covers entropy analysis for detecting encrypted or compressed regions,
+ recursive extraction of nested archives, SquashFS/CramFS/JFFS2 filesystem mounting,
+ and string analysis for credential and configuration discovery. Activates for requests
+ involving firmware reverse engineering, IoT device analysis, embedded system security
+ assessment, or router/camera firmware extraction.
 
-  '
+ '
 domain: cybersecurity
 subdomain: firmware-analysis
 tags:
@@ -32,31 +32,31 @@ mitre_attack:
 - T1003
 - T1110
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - initial-access
-  techniques:
-  - id: T1555
-    name: Credentials from Password Stores
-    tactic: reconnaissance
-    source: attack
-  - id: F1029
-    name: Gather Customer Information
-    tactic: reconnaissance
-    source: f3
-  - id: T1110.001
-    name: 'Brute Force: Password Guessing'
-    tactic: initial-access
-    source: attack
-  - id: F1006.001
-    name: 'Account Takeover: Exposed API Key'
-    tactic: initial-access
-    source: f3
-  - id: F1006.002
-    name: 'Account Takeover: Exposed Login Credential'
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - initial-access
+ techniques:
+ - id: T1555
+ name: Credentials from Password Stores
+ tactic: reconnaissance
+ source: attack
+ - id: F1029
+ name: Gather Customer Information
+ tactic: reconnaissance
+ source: f3
+ - id: T1110.001
+ name: 'Brute Force: Password Guessing'
+ tactic: initial-access
+ source: attack
+ - id: F1006.001
+ name: 'Account Takeover: Exposed API Key'
+ tactic: initial-access
+ source: f3
+ - id: F1006.002
+ name: 'Account Takeover: Exposed Login Credential'
+ tactic: initial-access
+ source: f3
 ---
 
 # Performing Firmware Extraction with Binwalk
@@ -259,18 +259,18 @@ Report should include:
 ```
 FIRMWARE EXTRACTION REPORT
 ====================================
-Firmware:         TP-Link TL-WR841N v14
-File:             wr841nv14_en_3_16_9_up.bin
-Size:             3,932,160 bytes (3.75 MB)
-SHA-256:          a1b2c3d4e5f6...
+Firmware: TP-Link TL-WR841N v14
+File: wr841nv14_en_3_16_9_up.bin
+Size: 3,932,160 bytes (3.75 MB)
+SHA-256: a1b2c3d4e5f6...
 
 SIGNATURE SCAN RESULTS
-Offset       Type                          Size
-------       ----                          ----
-0x00000000   U-Boot bootloader header      64 bytes
-0x00020000   LZMA compressed data          1,048,576 bytes
-0x00120000   SquashFS filesystem v4.0      2,752,512 bytes
-0x003B0000   Configuration partition       131,072 bytes
+Offset Type Size
+------ ---- ----
+0x00000000 U-Boot bootloader header 64 bytes
+0x00020000 LZMA compressed data 1,048,576 bytes
+0x00120000 SquashFS filesystem v4.0 2,752,512 bytes
+0x003B0000 Configuration partition 131,072 bytes
 
 ENTROPY ANALYSIS
 Region 0x000000-0x020000: 4.21 (bootloader - plaintext code)
@@ -286,9 +286,9 @@ BusyBox version: 1.19.4
 
 SECURITY FINDINGS
 [CRITICAL] Hardcoded root password in /etc/shadow (hash: $1$...)
-[HIGH]     Telnet daemon enabled by default in /etc/init.d/rcS
-[HIGH]     Private RSA key at /etc/ssl/private/server.key
-[MEDIUM]   BusyBox 1.19.4 (CVE-2021-42373, CVE-2021-42374)
-[MEDIUM]   Dropbear SSH 2014.63 (CVE-2016-3116)
-[LOW]      UPnP service enabled by default
+[HIGH] Telnet daemon enabled by default in /etc/init.d/rcS
+[HIGH] Private RSA key at /etc/ssl/private/server.key
+[MEDIUM] BusyBox 1.19.4 (CVE-2021-42373, CVE-2021-42374)
+[MEDIUM] Dropbear SSH 2014.63 (CVE-2016-3116)
+[LOW] UPnP service enabled by default
 ```

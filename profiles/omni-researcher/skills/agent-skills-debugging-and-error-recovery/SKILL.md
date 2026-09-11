@@ -45,9 +45,9 @@ Make the failure happen reliably. If you can't reproduce it, you can't fix it wi
 Can you reproduce the failure?
 ├── YES → Proceed to Step 2
 └── NO
-    ├── Gather more context (logs, environment details)
-    ├── Try reproducing in a minimal environment
-    └── If truly non-reproducible, document conditions and monitor
+ ├── Gather more context (logs, environment details)
+ ├── Try reproducing in a minimal environment
+ └── If truly non-reproducible, document conditions and monitor
 ```
 
 **When a bug is non-reproducible:**
@@ -55,21 +55,21 @@ Can you reproduce the failure?
 ```
 Cannot reproduce on demand:
 ├── Timing-dependent?
-│   ├── Add timestamps to logs around the suspected area
-│   ├── Try with artificial delays (setTimeout, sleep) to widen race windows
-│   └── Run under load or concurrency to increase collision probability
+│ ├── Add timestamps to logs around the suspected area
+│ ├── Try with artificial delays (setTimeout, sleep) to widen race windows
+│ └── Run under load or concurrency to increase collision probability
 ├── Environment-dependent?
-│   ├── Compare Node/browser versions, OS, environment variables
-│   ├── Check for differences in data (empty vs populated database)
-│   └── Try reproducing in CI where the environment is clean
+│ ├── Compare Node/browser versions, OS, environment variables
+│ ├── Check for differences in data (empty vs populated database)
+│ └── Try reproducing in CI where the environment is clean
 ├── State-dependent?
-│   ├── Check for leaked state between tests or requests
-│   ├── Look for global variables, singletons, or shared caches
-│   └── Run the failing scenario in isolation vs after other operations
+│ ├── Check for leaked state between tests or requests
+│ ├── Look for global variables, singletons, or shared caches
+│ └── Run the failing scenario in isolation vs after other operations
 └── Truly random?
-    ├── Add defensive logging at the suspected location
-    ├── Set up an alert for the specific error signature
-    └── Document the conditions observed and revisit when it recurs
+ ├── Add defensive logging at the suspected location
+ ├── Set up an alert for the specific error signature
+ └── Document the conditions observed and revisit when it recurs
 ```
 
 For test failures (npm shown — substitute the repository's own test command, per the test-driven-development skill's Discover the Stack First section):
@@ -90,22 +90,22 @@ Narrow down WHERE the failure happens:
 
 ```
 Which layer is failing?
-├── UI/Frontend     → Check console, DOM, network tab
-├── API/Backend     → Check server logs, request/response
-├── Database        → Check queries, schema, data integrity
-├── Build tooling   → Check config, dependencies, environment
+├── UI/Frontend → Check console, DOM, network tab
+├── API/Backend → Check server logs, request/response
+├── Database → Check queries, schema, data integrity
+├── Build tooling → Check config, dependencies, environment
 ├── External service → Check connectivity, API changes, rate limits
-└── Test itself     → Check if the test is correct (false negative)
+└── Test itself → Check if the test is correct (false negative)
 ```
 
 **Use bisection for regression bugs:**
 ```bash
 # Find which commit introduced the bug
 git bisect start
-git bisect bad                    # Current commit is broken
+git bisect bad # Current commit is broken
 git bisect good <known-good-sha> # This commit worked
 # Git will checkout midpoint commits; run your test at each
-git bisect run npm test -- --grep "failing test"  # substitute the repository's focused-test command
+git bisect run npm test -- --grep "failing test" # substitute the repository's focused-test command
 ```
 
 ### Step 3: Reduce
@@ -126,11 +126,11 @@ Fix the underlying issue, not the symptom:
 Symptom: "The user list shows duplicate entries"
 
 Symptom fix (bad):
-  → Deduplicate in the UI component: [...new Set(users)]
+ → Deduplicate in the UI component: [...new Set(users)]
 
 Root cause fix (good):
-  → The API endpoint has a JOIN that produces duplicates
-  → Fix the query, add a DISTINCT, or fix the data model
+ → The API endpoint has a JOIN that produces duplicates
+ → Fix the query, add a DISTINCT, or fix the data model
 ```
 
 Ask: "Why does this happen?" until you reach the actual cause, not just where it manifests.
@@ -142,10 +142,10 @@ Write a test that catches this specific failure:
 ```typescript
 // The bug: task titles with special characters broke the search
 it('finds tasks with special characters in title', async () => {
-  await createTask({ title: 'Fix "quotes" & <brackets>' });
-  const results = await searchTasks('quotes');
-  expect(results).toHaveLength(1);
-  expect(results[0].title).toBe('Fix "quotes" & <brackets>');
+ await createTask({ title: 'Fix "quotes" & <brackets>' });
+ const results = await searchTasks('quotes');
+ expect(results).toHaveLength(1);
+ expect(results[0].title).toBe('Fix "quotes" & <brackets>');
 });
 ```
 
@@ -166,7 +166,7 @@ npm test
 npm run build
 
 # Manual spot check if applicable
-npm run dev  # Verify in browser
+npm run dev # Verify in browser
 ```
 
 ## Error-Specific Patterns
@@ -176,13 +176,13 @@ npm run dev  # Verify in browser
 ```
 Test fails after code change:
 ├── Did you change code the test covers?
-│   └── YES → Check if the test or the code is wrong
-│       ├── Test is outdated → Update the test
-│       └── Code has a bug → Fix the code
+│ └── YES → Check if the test or the code is wrong
+│ ├── Test is outdated → Update the test
+│ └── Code has a bug → Fix the code
 ├── Did you change unrelated code?
-│   └── YES → Likely a side effect → Check shared state, imports, globals
+│ └── YES → Likely a side effect → Check shared state, imports, globals
 └── Test was already flaky?
-    └── Check for timing issues, order dependence, external dependencies
+ └── Check for timing issues, order dependence, external dependencies
 ```
 
 ### Build Failure Triage
@@ -201,14 +201,14 @@ Build fails:
 ```
 Runtime error:
 ├── TypeError: Cannot read property 'x' of undefined
-│   └── Something is null/undefined that shouldn't be
-│       → Check data flow: where does this value come from?
+│ └── Something is null/undefined that shouldn't be
+│ → Check data flow: where does this value come from?
 ├── Network error / CORS
-│   └── Check URLs, headers, server CORS config
+│ └── Check URLs, headers, server CORS config
 ├── Render error / White screen
-│   └── Check error boundary, console, component tree
+│ └── Check error boundary, console, component tree
 └── Unexpected behavior (no error)
-    └── Add logging at key points, verify data at each step
+ └── Add logging at key points, verify data at each step
 ```
 
 ## Safe Fallback Patterns
@@ -218,25 +218,25 @@ When under time pressure, use safe fallbacks:
 ```typescript
 // Safe default + warning (instead of crashing)
 function getConfig(key: string): string {
-  const value = process.env[key];
-  if (!value) {
-    console.warn(`Missing config: ${key}, using default`);
-    return DEFAULTS[key] ?? '';
-  }
-  return value;
+ const value = process.env[key];
+ if (!value) {
+ console.warn(`Missing config: ${key}, using default`);
+ return DEFAULTS[key] ?? '';
+ }
+ return value;
 }
 
 // Graceful degradation (instead of broken feature)
 function renderChart(data: ChartData[]) {
-  if (data.length === 0) {
-    return <EmptyState message="No data available for this period" />;
-  }
-  try {
-    return <Chart data={data} />;
-  } catch (error) {
-    console.error('Chart render failed:', error);
-    return <ErrorState message="Unable to display chart" />;
-  }
+ if (data.length === 0) {
+ return <EmptyState message="No data available for this period" />;
+ }
+ try {
+ return <Chart data={data} />;
+ } catch (error) {
+ console.error('Chart render failed:', error);
+ return <ErrorState message="Unable to display chart" />;
+ }
 }
 ```
 

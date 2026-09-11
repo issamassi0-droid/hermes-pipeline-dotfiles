@@ -39,8 +39,8 @@ copy the key and region from its **Keys and Endpoint** page.
 
 ```bash
 export AZURE_SPEECH_KEY=your_speech_resource_key
-export AZURE_SPEECH_REGION=eastus          # your resource's region
-# export AZURE_SPEECH_ENDPOINT=https://...  # optional: overrides region
+export AZURE_SPEECH_REGION=eastus # your resource's region
+# export AZURE_SPEECH_ENDPOINT=https://... # optional: overrides region
 ```
 
 `azure_stt` reports `AVAILABLE` once `AZURE_SPEECH_KEY` plus either
@@ -58,15 +58,15 @@ registry.discover()
 stt = registry._tools["azure_stt"]
 
 result = stt.execute({
-    "input_path": "projects/my-video/assets/audio/narration.mp3",
-    # "language": "en",          # ISO 639-1 or BCP-47 ("en-US"); omit for auto-ID
-    # "diarize": True,           # speaker labels, no HuggingFace token needed
-    # "max_speakers": 4,
-    "output_dir": "projects/my-video/artifacts",
+ "input_path": "projects/my-video/assets/audio/narration.mp3",
+ # "language": "en", # ISO 639-1 or BCP-47 ("en-US"); omit for auto-ID
+ # "diarize": True, # speaker labels, no HuggingFace token needed
+ # "max_speakers": 4,
+ "output_dir": "projects/my-video/artifacts",
 })
 if result.success:
-    segs = result.data["segments"]          # [{id,start,end,text,words:[...]}]
-    words = result.data["word_timestamps"]  # flat [{word,start,end,probability}]
+ segs = result.data["segments"] # [{id,start,end,text,words:[...]}]
+ words = result.data["word_timestamps"] # flat [{word,start,end,probability}]
 ```
 
 If `azure_stt` is unavailable (no key) or errors, fall back to `transcriber`
@@ -75,12 +75,12 @@ If `azure_stt` is unavailable (no key) or errors, fall back to `transcriber`
 ## Parameters that matter
 
 - **`language`** — pass an ISO code (`"en"`) or a full locale (`"en-US"`). Pin it
-  when you know the language; it is faster and more accurate than auto-ID.
+ when you know the language; it is faster and more accurate than auto-ID.
 - **`candidate_locales`** — when `language` is omitted, Azure runs language
-  identification across this shortlist. Narrow it to the languages you actually
-  expect; a huge list slows detection and invites misclassification.
+ identification across this shortlist. Narrow it to the languages you actually
+ expect; a huge list slows detection and invites misclassification.
 - **`diarize` / `max_speakers`** — enable for multi-speaker audio (interviews,
-  podcasts). Set `max_speakers` to the real upper bound.
+ podcasts). Set `max_speakers` to the real upper bound.
 - **`profanity_filter`** — `None` | `Masked` (default) | `Removed` | `Tags`.
 
 ## Response shape (mapped to the transcriber schema)
@@ -90,15 +90,15 @@ converted to seconds and the OpenMontage transcript schema:
 
 ```json
 {
-  "segments": [
-    {"id": 0, "start": 0.0, "end": 2.4, "text": "Hello world",
-     "speaker": 1,
-     "words": [{"word": "Hello", "start": 0.0, "end": 0.5, "probability": 0.98}]}
-  ],
-  "word_timestamps": [{"word": "Hello", "start": 0.0, "end": 0.5, "probability": 0.98}],
-  "language": "en-US",
-  "duration_seconds": 2.4,
-  "provider": "azure"
+ "segments": [
+ {"id": 0, "start": 0.0, "end": 2.4, "text": "Hello world",
+ "speaker": 1,
+ "words": [{"word": "Hello", "start": 0.0, "end": 0.5, "probability": 0.98}]}
+ ],
+ "word_timestamps": [{"word": "Hello", "start": 0.0, "end": 0.5, "probability": 0.98}],
+ "language": "en-US",
+ "duration_seconds": 2.4,
+ "provider": "azure"
 }
 ```
 
@@ -108,8 +108,8 @@ Note: Fast Transcription has no *per-word* confidence, so each word carries the
 ## Limits & tips
 
 - Single file up to ~2 hours / a few hundred MB per request. For longer or bulk
-  jobs, use Azure Batch Transcription instead.
+ jobs, use Azure Batch Transcription instead.
 - Send clean audio (16 kHz+ mono is plenty). Transcode video to audio first if
-  you only need speech — smaller upload, same result.
+ you only need speech — smaller upload, same result.
 - Verify timing: word timestamps drive subtitle cues in `subtitle_gen`. Spot-check
-  the first and last cues against the source audio.
+ the first and last cues against the source audio.

@@ -1,10 +1,10 @@
 ---
 name: implementing-api-security-testing-with-42crunch
 description: Implements API security testing on the 42Crunch platform, combining
-  API Audit for static analysis of OpenAPI definitions, API Conformance Scan for
-  dynamic vulnerability testing, and API Protect for runtime threat prevention, integrated
-  into CI/CD pipelines and IDEs. Use when shift-left testing APIs for OWASP API Security
-  Top 10 vulnerabilities or setting up 42Crunch audit and conformance scanning.
+ API Audit for static analysis of OpenAPI definitions, API Conformance Scan for
+ dynamic vulnerability testing, and API Protect for runtime threat prevention, integrated
+ into CI/CD pipelines and IDEs. Use when shift-left testing APIs for OWASP API Security
+ Top 10 vulnerabilities or setting up 42Crunch audit and conformance scanning.
 domain: cybersecurity
 subdomain: api-security
 tags:
@@ -79,83 +79,83 @@ API Audit performs static security analysis of OpenAPI definitions without requi
 ```yaml
 openapi: 3.0.3
 info:
-  title: Secure User API
-  version: 1.0.0
+ title: Secure User API
+ version: 1.0.0
 servers:
-  - url: https://api.example.com/v1
-    description: Production server (HTTPS only)
+ - url: https://api.example.com/v1
+ description: Production server (HTTPS only)
 security:
-  - BearerAuth: []
+ - BearerAuth: []
 paths:
-  /users/{userId}:
-    get:
-      operationId: getUserById
-      summary: Retrieve user by ID
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: string
-            format: uuid
-            pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
-            maxLength: 36
-      responses:
-        '200':
-          description: User details
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-        '404':
-          description: User not found
+ /users/{userId}:
+ get:
+ operationId: getUserById
+ summary: Retrieve user by ID
+ parameters:
+ - name: userId
+ in: path
+ required: true
+ schema:
+ type: string
+ format: uuid
+ pattern: '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+ maxLength: 36
+ responses:
+ '200':
+ description: User details
+ content:
+ application/json:
+ schema:
+ $ref: '#/components/schemas/User'
+ '400':
+ description: Invalid request
+ content:
+ application/json:
+ schema:
+ $ref: '#/components/schemas/Error'
+ '401':
+ description: Unauthorized
+ '404':
+ description: User not found
 components:
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-  schemas:
-    User:
-      type: object
-      required:
-        - id
-        - email
-      properties:
-        id:
-          type: string
-          format: uuid
-          readOnly: true
-        email:
-          type: string
-          format: email
-          maxLength: 254
-        name:
-          type: string
-          maxLength: 100
-          pattern: '^[a-zA-Z\s\-]+$'
-      additionalProperties: false
-    Error:
-      type: object
-      required:
-        - code
-        - message
-      properties:
-        code:
-          type: integer
-          format: int32
-        message:
-          type: string
-          maxLength: 256
-      additionalProperties: false
+ securitySchemes:
+ BearerAuth:
+ type: http
+ scheme: bearer
+ bearerFormat: JWT
+ schemas:
+ User:
+ type: object
+ required:
+ - id
+ - email
+ properties:
+ id:
+ type: string
+ format: uuid
+ readOnly: true
+ email:
+ type: string
+ format: email
+ maxLength: 254
+ name:
+ type: string
+ maxLength: 100
+ pattern: '^[a-zA-Z\s\-]+$'
+ additionalProperties: false
+ Error:
+ type: object
+ required:
+ - code
+ - message
+ properties:
+ code:
+ type: integer
+ format: int32
+ message:
+ type: string
+ maxLength: 256
+ additionalProperties: false
 ```
 
 ### API Conformance Scan (Dynamic Testing)
@@ -168,25 +168,25 @@ The conformance scan dynamically tests a running API against its OpenAPI contrac
 # 42c-conf.yaml
 version: "2.0"
 scan:
-  target:
-    url: https://api.example.com/v1
-  authentication:
-    - type: bearer
-      token: "${API_TOKEN}"
-      in: header
-      name: Authorization
-  settings:
-    maxScanTime: 3600
-    requestsPerSecond: 10
-    followRedirects: false
-  tests:
-    owasp:
-      - bola
-      - bfla
-      - injection
-      - ssrf
-      - massAssignment
-      - excessiveDataExposure
+ target:
+ url: https://api.example.com/v1
+ authentication:
+ - type: bearer
+ token: "${API_TOKEN}"
+ in: header
+ name: Authorization
+ settings:
+ maxScanTime: 3600
+ requestsPerSecond: 10
+ followRedirects: false
+ tests:
+ owasp:
+ - bola
+ - bfla
+ - injection
+ - ssrf
+ - massAssignment
+ - excessiveDataExposure
 ```
 
 **Running Conformance Scan via CLI:**
@@ -197,12 +197,12 @@ npm install -g @42crunch/cicd-cli
 
 # Run conformance scan
 42crunch-cli scan \
-  --api-definition ./openapi.yaml \
-  --target-url https://api.example.com/v1 \
-  --token $CRUNCH_TOKEN \
-  --min-score 70 \
-  --report-format sarif \
-  --output scan-report.sarif
+ --api-definition ./openapi.yaml \
+ --target-url https://api.example.com/v1 \
+ --token $CRUNCH_TOKEN \
+ --min-score 70 \
+ --report-format sarif \
+ --output scan-report.sarif
 ```
 
 ### CI/CD Pipeline Integration
@@ -212,82 +212,82 @@ npm install -g @42crunch/cicd-cli
 ```yaml
 name: API Security Testing
 on:
-  push:
-    paths:
-      - 'api/**'
-      - 'openapi/**'
+ push:
+ paths:
+ - 'api/**'
+ - 'openapi/**'
 jobs:
-  api-security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ api-security:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: 42Crunch API Audit
-        uses: 42Crunch/api-security-audit-action@v3
-        with:
-          api-token: ${{ secrets.CRUNCH_API_TOKEN }}
-          collection-name: "my-api-collection"
-          min-score: 75
-          upload-to-code-scanning: true
+ - name: 42Crunch API Audit
+ uses: 42Crunch/api-security-audit-action@v3
+ with:
+ api-token: ${{ secrets.CRUNCH_API_TOKEN }}
+ collection-name: "my-api-collection"
+ min-score: 75
+ upload-to-code-scanning: true
 
-      - name: 42Crunch Conformance Scan
-        if: github.ref == 'refs/heads/main'
-        uses: 42Crunch/api-conformance-scan@v1
-        with:
-          api-token: ${{ secrets.CRUNCH_API_TOKEN }}
-          target-url: ${{ secrets.STAGING_API_URL }}
-          scan-config: ./42c-conf.yaml
+ - name: 42Crunch Conformance Scan
+ if: github.ref == 'refs/heads/main'
+ uses: 42Crunch/api-conformance-scan@v1
+ with:
+ api-token: ${{ secrets.CRUNCH_API_TOKEN }}
+ target-url: ${{ secrets.STAGING_API_URL }}
+ scan-config: ./42c-conf.yaml
 ```
 
 **Jenkins Pipeline Integration:**
 
 ```groovy
 pipeline {
-    agent any
-    stages {
-        stage('API Security Audit') {
-            steps {
-                script {
-                    def auditResult = sh(
-                        script: '''
-                            42crunch-cli audit \
-                              --api-definition openapi.yaml \
-                              --token ${CRUNCH_TOKEN} \
-                              --min-score 75 \
-                              --report-format json \
-                              --output audit-report.json
-                        ''',
-                        returnStatus: true
-                    )
-                    if (auditResult != 0) {
-                        error("API Security Audit failed - score below threshold")
-                    }
-                }
-            }
-        }
-        stage('Conformance Scan') {
-            when { branch 'main' }
-            steps {
-                sh '''
-                    42crunch-cli scan \
-                      --api-definition openapi.yaml \
-                      --target-url ${STAGING_URL} \
-                      --token ${CRUNCH_TOKEN} \
-                      --scan-config 42c-conf.yaml
-                '''
-            }
-        }
-    }
-    post {
-        always {
-            archiveArtifacts artifacts: '*-report.*'
-            publishHTML([
-                reportDir: '.',
-                reportFiles: 'audit-report.html',
-                reportName: 'API Security Report'
-            ])
-        }
-    }
+ agent any
+ stages {
+ stage('API Security Audit') {
+ steps {
+ script {
+ def auditResult = sh(
+ script: '''
+ 42crunch-cli audit \
+ --api-definition openapi.yaml \
+ --token ${CRUNCH_TOKEN} \
+ --min-score 75 \
+ --report-format json \
+ --output audit-report.json
+ ''',
+ returnStatus: true
+ )
+ if (auditResult != 0) {
+ error("API Security Audit failed - score below threshold")
+ }
+ }
+ }
+ }
+ stage('Conformance Scan') {
+ when { branch 'main' }
+ steps {
+ sh '''
+ 42crunch-cli scan \
+ --api-definition openapi.yaml \
+ --target-url ${STAGING_URL} \
+ --token ${CRUNCH_TOKEN} \
+ --scan-config 42c-conf.yaml
+ '''
+ }
+ }
+ }
+ post {
+ always {
+ archiveArtifacts artifacts: '*-report.*'
+ publishHTML([
+ reportDir: '.',
+ reportFiles: 'audit-report.html',
+ reportName: 'API Security Report'
+ ])
+ }
+ }
 }
 ```
 
@@ -300,27 +300,27 @@ API Protect deploys as a micro-gateway in front of API endpoints to enforce the 
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: api-protect-config
+ name: api-protect-config
 data:
-  protection-config.json: |
-    {
-      "apiDefinition": "/config/openapi.yaml",
-      "enforcement": {
-        "validateRequests": true,
-        "validateResponses": true,
-        "blockOnFailure": true,
-        "logLevel": "warn"
-      },
-      "rateLimit": {
-        "enabled": true,
-        "requestsPerMinute": 100,
-        "burstSize": 20
-      },
-      "allowlist": {
-        "contentTypes": ["application/json"],
-        "methods": ["GET", "POST", "PUT", "DELETE"]
-      }
-    }
+ protection-config.json: |
+ {
+ "apiDefinition": "/config/openapi.yaml",
+ "enforcement": {
+ "validateRequests": true,
+ "validateResponses": true,
+ "blockOnFailure": true,
+ "logLevel": "warn"
+ },
+ "rateLimit": {
+ "enabled": true,
+ "requestsPerMinute": 100,
+ "burstSize": 20
+ },
+ "allowlist": {
+ "contentTypes": ["application/json"],
+ "methods": ["GET", "POST", "PUT", "DELETE"]
+ }
+ }
 ```
 
 ## Remediation Workflow

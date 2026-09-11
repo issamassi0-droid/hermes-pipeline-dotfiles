@@ -1,12 +1,12 @@
 ---
 name: performing-ransomware-response
 description: 'Executes a structured ransomware incident response from detection through
-  containment, forensic analysis, decryption assessment, recovery, and post-incident
-  hardening, covering ransom negotiation, backup integrity verification, and regulatory
-  notification. Use when actively responding to a ransomware outbreak or crypto-ransomware
-  infection, or deciding on ransom payment and containment steps.
+ containment, forensic analysis, decryption assessment, recovery, and post-incident
+ hardening, covering ransom negotiation, backup integrity verification, and regulatory
+ notification. Use when actively responding to a ransomware outbreak or crypto-ransomware
+ infection, or deciding on ransom payment and containment steps.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -22,32 +22,32 @@ mitre_attack:
 - T1078
 - T1489
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - monetization
-  - stealth
-  - initial-access
-  techniques:
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1017
-    name: Conversion to Physical Monetary Instruments
-    tactic: monetization
-    source: f3
-  - id: F1025.003
-    name: 'Electronic Funds Transfer: Wire Transfer'
-    tactic: monetization
-    source: f3
-  - id: T1070
-    name: Indicator Removal
-    tactic: stealth
-    source: attack
-  - id: F1006
-    name: Account Takeover
-    tactic: initial-access
-    source: f3
+ version: '1.1'
+ tactics:
+ - monetization
+ - stealth
+ - initial-access
+ techniques:
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1017
+ name: Conversion to Physical Monetary Instruments
+ tactic: monetization
+ source: f3
+ - id: F1025.003
+ name: 'Electronic Funds Transfer: Wire Transfer'
+ tactic: monetization
+ source: f3
+ - id: T1070
+ name: Indicator Removal
+ tactic: stealth
+ source: attack
+ - id: F1006
+ name: Account Takeover
+ tactic: initial-access
+ source: f3
 version: 1.0.0
 author: mahipal
 license: Apache-2.0
@@ -94,13 +94,13 @@ Validate that the incident is ransomware and determine the variant:
 ```
 Ransomware Identification:
 ━━━━━━━━━━━━━━━━━━━━━━━━━
-Variant:          LockBit 3.0 (Black)
-Extension:        .lockbit3
-Ransom Note:      README-LOCKBIT.txt
-Tor Site:         lockbit[redacted].onion
-Deployment:       Group Policy Object pushing ransomware.exe to all domain-joined systems
-Initial Access:   VPN credential compromise (no MFA)
-Dwell Time:       12 days
+Variant: LockBit 3.0 (Black)
+Extension: .lockbit3
+Ransom Note: README-LOCKBIT.txt
+Tor Site: lockbit[redacted].onion
+Deployment: Group Policy Object pushing ransomware.exe to all domain-joined systems
+Initial Access: VPN credential compromise (no MFA)
+Dwell Time: 12 days
 Data Exfiltration: Yes - 47GB uploaded to MEGA via rclone prior to encryption
 ```
 
@@ -128,13 +128,13 @@ Quantify the impact to inform recovery and business decisions:
 
 ```
 Impact Assessment:
-Encrypted Systems:      187 of 340 endpoints (55%)
-Encrypted Servers:      12 of 28 (43%) - includes 2 file servers, 1 database server
-Domain Controllers:     2 of 3 encrypted
-Backup Status:          Veeam repository intact (offline copy verified clean)
-Data Exfiltration:      Confirmed - 47GB to MEGA (file listing under analysis)
-Ransom Demand:          $2.5M in Bitcoin (72-hour deadline)
-OFAC Screening:         LockBit - not currently sanctioned entity (verify with counsel)
+Encrypted Systems: 187 of 340 endpoints (55%)
+Encrypted Servers: 12 of 28 (43%) - includes 2 file servers, 1 database server
+Domain Controllers: 2 of 3 encrypted
+Backup Status: Veeam repository intact (offline copy verified clean)
+Data Exfiltration: Confirmed - 47GB to MEGA (file listing under analysis)
+Ransom Demand: $2.5M in Bitcoin (72-hour deadline)
+OFAC Screening: LockBit - not currently sanctioned entity (verify with counsel)
 ```
 
 ### Step 4: Recovery Decision Matrix
@@ -223,25 +223,25 @@ Implement controls to prevent recurrence:
 ```
 RANSOMWARE INCIDENT REPORT
 ===========================
-Incident:           INC-2025-1892
-Ransomware Family:  LockBit 3.0 (Black)
-Date Detected:      2025-11-17T06:45:00Z
-Initial Access:     VPN credential compromise (no MFA)
-Dwell Time:         12 days
+Incident: INC-2025-1892
+Ransomware Family: LockBit 3.0 (Black)
+Date Detected: 2025-11-17T06:45:00Z
+Initial Access: VPN credential compromise (no MFA)
+Dwell Time: 12 days
 
 IMPACT SUMMARY
-Encrypted Systems:  187 endpoints, 12 servers
-Business Impact:    Full operations disruption
-Data Exfiltrated:   47GB (finance, HR, legal documents)
-Ransom Demand:      $2.5M BTC (72-hour deadline)
-Backup Status:      Veeam immutable repository - CLEAN
+Encrypted Systems: 187 endpoints, 12 servers
+Business Impact: Full operations disruption
+Data Exfiltrated: 47GB (finance, HR, legal documents)
+Ransom Demand: $2.5M BTC (72-hour deadline)
+Backup Status: Veeam immutable repository - CLEAN
 
 RECOVERY APPROACH
-Decision:           Restore from backup (no ransom payment)
-Recovery Start:     2025-11-17T10:00:00Z
-DC Rebuild:         Complete - 2025-11-17T18:00:00Z
-Critical Systems:   Restored - 2025-11-18T12:00:00Z
-Full Recovery:      Estimated 2025-11-21
+Decision: Restore from backup (no ransom payment)
+Recovery Start: 2025-11-17T10:00:00Z
+DC Rebuild: Complete - 2025-11-17T18:00:00Z
+Critical Systems: Restored - 2025-11-18T12:00:00Z
+Full Recovery: Estimated 2025-11-21
 
 CONTAINMENT TIMELINE
 06:45 UTC - Ransomware detected by SOC analyst

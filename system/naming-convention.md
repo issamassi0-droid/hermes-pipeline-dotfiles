@@ -107,10 +107,10 @@ Every agent has **three names** serving different audiences:
 
 ```json
 {
-  "name": "orchestrator-agent",
-  "functional_name": "Orchestrator",
-  "display_name": "المُنسّق",
-  "handle": "@architect"
+ "name": "orchestrator-agent",
+ "functional_name": "Orchestrator",
+ "display_name": "المُنسّق",
+ "handle": "@architect"
 }
 ```
 

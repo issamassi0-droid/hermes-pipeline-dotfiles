@@ -1,14 +1,14 @@
 ---
 name: testing-mobile-api-authentication
 description: 'Tests authentication and authorization mechanisms in mobile application
-  APIs to identify broken authentication, insecure token management, session fixation,
-  privilege escalation, and IDOR vulnerabilities. Use when performing API security
-  assessments against mobile app backends, testing JWT implementations, evaluating
-  OAuth flows, or assessing session management. Activates for requests involving mobile
-  API auth testing, token security assessment, OAuth mobile flow testing, or API authorization
-  bypass.
+ APIs to identify broken authentication, insecure token management, session fixation,
+ privilege escalation, and IDOR vulnerabilities. Use when performing API security
+ assessments against mobile app backends, testing JWT implementations, evaluating
+ OAuth flows, or assessing session management. Activates for requests involving mobile
+ API auth testing, token security assessment, OAuth mobile flow testing, or API authorization
+ bypass.
 
-  '
+ '
 domain: cybersecurity
 subdomain: mobile-security
 author: mahipal
@@ -60,13 +60,13 @@ Use this skill when:
 Intercept mobile app traffic to identify authentication-related endpoints:
 
 ```
-POST /api/v1/auth/login          - Initial authentication
-POST /api/v1/auth/register       - Account registration
-POST /api/v1/auth/refresh        - Token refresh
-POST /api/v1/auth/logout         - Session termination
+POST /api/v1/auth/login - Initial authentication
+POST /api/v1/auth/register - Account registration
+POST /api/v1/auth/refresh - Token refresh
+POST /api/v1/auth/logout - Session termination
 POST /api/v1/auth/forgot-password - Password reset
-POST /api/v1/auth/verify-otp     - OTP verification
-GET  /api/v1/auth/me             - Authenticated user profile
+POST /api/v1/auth/verify-otp - OTP verification
+GET /api/v1/auth/me - Authenticated user profile
 ```
 
 ### Step 2: Analyze Token Format and Security
@@ -108,18 +108,18 @@ curl -X GET https://api.target.com/api/v1/users/profile
 
 # Test with empty/null token
 curl -X GET https://api.target.com/api/v1/users/profile \
-  -H "Authorization: Bearer "
+ -H "Authorization: Bearer "
 
 curl -X GET https://api.target.com/api/v1/users/profile \
-  -H "Authorization: Bearer null"
+ -H "Authorization: Bearer null"
 
 # Test with expired token (should fail)
 curl -X GET https://api.target.com/api/v1/users/profile \
-  -H "Authorization: Bearer <expired_token>"
+ -H "Authorization: Bearer <expired_token>"
 
 # Test token from different user
 curl -X GET https://api.target.com/api/v1/users/123/profile \
-  -H "Authorization: Bearer <user_456_token>"
+ -H "Authorization: Bearer <user_456_token>"
 ```
 
 ### Step 4: Test IDOR / Broken Object-Level Authorization
@@ -127,17 +127,17 @@ curl -X GET https://api.target.com/api/v1/users/123/profile \
 ```bash
 # Change user ID in request path
 curl -X GET https://api.target.com/api/v1/users/123/orders \
-  -H "Authorization: Bearer <user_456_token>"
+ -H "Authorization: Bearer <user_456_token>"
 
 # Change object ID in request body
 curl -X PUT https://api.target.com/api/v1/orders/789 \
-  -H "Authorization: Bearer <user_456_token>" \
-  -d '{"status": "cancelled"}'
+ -H "Authorization: Bearer <user_456_token>" \
+ -d '{"status": "cancelled"}'
 
 # Test horizontal privilege escalation
 # Access admin endpoints with regular user token
 curl -X GET https://api.target.com/api/v1/admin/users \
-  -H "Authorization: Bearer <regular_user_token>"
+ -H "Authorization: Bearer <regular_user_token>"
 ```
 
 ### Step 5: Test Session Management
@@ -148,15 +148,15 @@ curl -X GET https://api.target.com/api/v1/admin/users \
 
 # Test session invalidation after logout
 TOKEN=$(curl -s -X POST https://api.target.com/api/v1/auth/login \
-  -d '{"email":"test@test.com","password":"pass"}' | jq -r '.token')
+ -d '{"email":"test@test.com","password":"pass"}' | jq -r '.token')
 
 # Logout
 curl -X POST https://api.target.com/api/v1/auth/logout \
-  -H "Authorization: Bearer $TOKEN"
+ -H "Authorization: Bearer $TOKEN"
 
 # Try using the same token (should fail)
 curl -X GET https://api.target.com/api/v1/users/me \
-  -H "Authorization: Bearer $TOKEN"
+ -H "Authorization: Bearer $TOKEN"
 
 # Test session invalidation after password change
 # Token obtained before password change should be invalidated

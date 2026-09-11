@@ -24,8 +24,8 @@ check).
 
 Teeth check before you commit (see
 `references/async-safety-anchor-rules.md`):
-  1. reintroduce the block  -> the project's gate command must FAIL
-  2. restore the fix        -> it must PASS
+ 1. reintroduce the block -> the project's gate command must FAIL
+ 2. restore the fix -> it must PASS
 """
 
 from __future__ import annotations
@@ -40,13 +40,13 @@ pytestmark = pytest.mark.asyncio
 
 
 async def test_<entry_point>_offloads_blocking_io_on_<branch>(tmp_path: Path) -> None:
-    # Arrange: real inputs at the boundary the code blocks on (filesystem ->
-    # tmp_path; HTTP/subprocess -> stub the external service). Mock ONLY the
-    # external boundary, never the offload under test.
+ # Arrange: real inputs at the boundary the code blocks on (filesystem ->
+ # tmp_path; HTTP/subprocess -> stub the external service). Mock ONLY the
+ # external boundary, never the offload under test.
 
-    # Act + Assert: call the REAL production async entry point and drive the
-    # specific branch you are guarding (e.g. force a failure to hit the
-    # cleanup path). If the entry point performs blocking IO on the event
-    # loop, the project's gate should fail this test.
-    #   await <real_async_entry_point>(...)
-    raise NotImplementedError("Replace with the real async entry point call.")
+ # Act + Assert: call the REAL production async entry point and drive the
+ # specific branch you are guarding (e.g. force a failure to hit the
+ # cleanup path). If the entry point performs blocking IO on the event
+ # loop, the project's gate should fail this test.
+ # await <real_async_entry_point>(...)
+ raise NotImplementedError("Replace with the real async entry point call.")

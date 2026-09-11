@@ -77,8 +77,8 @@ Always inspect the generated file:
 
 ```bash
 ffprobe -v error -show_entries \
-  format=duration,format_name,bit_rate:stream=codec_name,sample_rate,channels \
-  -of json output.mp3
+ format=duration,format_name,bit_rate:stream=codec_name,sample_rate,channels \
+ -of json output.mp3
 ```
 
 If exact duration is required:

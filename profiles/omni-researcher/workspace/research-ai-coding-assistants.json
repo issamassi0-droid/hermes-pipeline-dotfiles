@@ -1,258 +1,258 @@
 {
-  "mission_id": "ai-coding-assistants-senior-devs-2026",
-  "topic": "Latest trends in AI coding assistants for senior developers",
-  "generated_at": "2026-09-11T00:00:00Z",
-  "claims": [
-    {
-      "id": "claim-001",
-      "text": "81-90% of professional developers now use AI coding tools, with adoption nearly doubling since 2023",
-      "sources": [
-        {
-          "name": "CodeSignal Report 2025",
-          "url": "https://codesignal.com/report-developers-and-ai-coding-assistant-trends",
-          "tier": 2,
-          "note": "Survey of 1,000+ developers; 81% use AI coding assistants"
-        },
-        {
-          "name": "JetBrains Developer Ecosystem Survey 2026",
-          "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026",
-          "tier": 2,
-          "note": "90% of professional developers use AI coding agents at least weekly as of May-July 2026"
-        },
-        {
-          "name": "Stack Overflow Developer Survey 2025",
-          "url": "https://survey.stackoverflow.co/2025/ai",
-          "tier": 2,
-          "note": "84% of respondents using or planning to use AI tools"
-        }
-      ],
-      "credibility": "high",
-      "confidence": 0.95
-    },
-    {
-      "id": "claim-002",
-      "text": "Claude Code has become the most widely adopted AI coding tool at work (39% globally, 47% in US), surpassing GitHub Copilot",
-      "sources": [
-        {
-          "name": "JetBrains AI Coding Agent Adoption Trends (Aug 2026)",
-          "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026",
-          "tier": 2,
-          "note": "39% of professional developers worldwide use Claude Code at work; up from 18% in January 2026"
-        },
-        {
-          "name": "JetBrains AI Pulse Survey (Jan 2026)",
-          "url": "https://blog.jetbrains.com/research/2026/04/which-ai-coding-tools-do-developers-actually-use-at-work",
-          "tier": 2,
-          "note": "GitHub Copilot still most known (76%) but Claude Code growing fastest"
-        }
-      ],
-      "credibility": "high",
-      "confidence": 0.90
-    },
-    {
-      "id": "claim-003",
-      "text": "Senior developers ship ~2.5x more AI-generated code than juniors (32% vs 13%) and are more confident using AI in production",
-      "sources": [
-        {
-          "name": "Fastly Survey 2025",
-          "url": "https://www.fastly.com/blog/senior-developers-ship-more-ai-code",
-          "tier": 2,
-          "note": "Survey of 791 professional developers; seniors (10+ yrs) report 32% of shipped code is AI-generated vs 13% for juniors"
-        },
-        {
-          "name": "Augment Code: Senior vs Junior AI Adoption",
-          "url": "https://www.augmentcode.com/guides/ai-adoption-strategy-senior-vs-junior-developer-implementation",
-          "tier": 3,
-          "note": "Seniors need architectural context; juniors need learning acceleration"
-        }
-      ],
-      "credibility": "medium",
-      "confidence": 0.80
-    },
-    {
-      "id": "claim-004",
-      "text": "A rigorous randomized controlled trial found experienced open-source developers were 19% slower when using AI tools, despite believing they were 20% faster",
-      "sources": [
-        {
-          "name": "METR RCT Study (July 2025)",
-          "url": "https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/",
-          "tier": 1,
-          "note": "16 experienced developers, 246 tasks; developers expected 24% speedup but took 19% longer"
-        },
-        {
-          "name": "METR Paper on arXiv",
-          "url": "https://arxiv.org/abs/2507.09089",
-          "tier": 1,
-          "note": "Peer-reviewed preprint confirming slowdown effect robust across analyses"
-        },
-        {
-          "name": "Business Insider coverage",
-          "url": "https://www.businessinsider.com/ai-coding-tools-may-decrease-productivity-experienced-software-engineers-study-2025-7",
-          "tier": 2,
-          "note": "Secondary reporting on METR study"
-        }
-      ],
-      "credibility": "high",
-      "confidence": 0.95
-    },
-    {
-      "id": "claim-005",
-      "text": "45% of AI-generated code introduces OWASP Top 10 security vulnerabilities; Java worst at 72% failure rate",
-      "sources": [
-        {
-          "name": "Veracode 2025 GenAI Code Security Report",
-          "url": "https://via.tt.se/pressmeddelande/3999899/ai-generated-code-poses-major-security-risks-in-nearly-half-of-all-development-tasks-veracode-research-reveals?lang=en&publisherId=259167",
-          "tier": 2,
-          "note": "80 curated coding tasks across 100+ LLMs; 45% introduced vulnerabilities"
-        },
-        {
-          "name": "CSA Research Note 2026",
-          "url": "https://labs.cloudsecurityalliance.org/research/csa-research-note-ai-generated-code-vulnerability-surge-2026/",
-          "tier": 2,
-          "note": "Security failure rate unchanged from 2025 through early 2026 despite model improvements"
-        }
-      ],
-      "credibility": "high",
-      "confidence": 0.90
-    },
-    {
-      "id": "claim-006",
-      "text": "Cursor surpassed $2B in annualized revenue and reached $9.9B valuation; AI coding market is consolidating rapidly",
-      "sources": [
-        {
-          "name": "TechCrunch (Mar 2026)",
-          "url": "https://techcrunch.com/tag/ai-coding-assistant/",
-          "tier": 2,
-          "note": "Cursor reportedly surpassed $2B in annualized revenue"
-        },
-        {
-          "name": "TechCrunch (Jun 2025)",
-          "url": "https://techcrunch.com/2025/07/18/cursor-snaps-up-enterprise-startup-koala-in-challenge-to-github-copilot",
-          "tier": 2,
-          "note": "Anysphere reached $500M ARR in June 2025, works with >half of Fortune 500"
-        }
-      ],
-      "credibility": "medium",
-      "confidence": 0.85
-    },
-    {
-      "id": "claim-007",
-      "text": "The market is shifting from autocomplete to agentic IDEs that can orchestrate multi-step development tasks autonomously",
-      "sources": [
-        {
-          "name": "The New Stack (Mar 2025)",
-          "url": "https://thenewstack.io/ai-powered-coding-developer-tool-trends-to-monitor-in-2025",
-          "tier": 2,
-          "note": "Trend from IDE plugins to agentic IDEs (Cursor, Windsurf, Bolt)"
-        },
-        {
-          "name": "Rivista 2026 Agentic Coding Trends Report",
-          "url": "https://www.rivista.ai/wp-content/uploads/2026/03/2026-Agentic-Coding-Trends-Report-1.pdf",
-          "tier": 2,
-          "note": "Predicts shift from writing code to orchestrating agents that write code"
-        }
-      ],
-      "credibility": "medium",
-      "confidence": 0.80
-    },
-    {
-      "id": "claim-008",
-      "text": "Best practices for senior developers: treat AI as a pair programmer (navigator role), use spec-first planning, and always review generated code as a junior dev's PR",
-      "sources": [
-        {
-          "name": "Build Fast With AI (Mar 2026)",
-          "url": "https://buildfastwithai/ai-pair-programming-guide",
-          "tier": 3,
-          "note": "Describe-Generate-Refine workflow; 2-5x gains on boilerplate, 1.1-1.3x on novel architecture"
-        },
-        {
-          "name": "DEV Community practical comparison",
-          "url": "https://dev.to/elsie-rainee/i-tried-pair-programming-with-three-different-ai-tools-for-a-month-2nnc",
-          "tier": 3,
-          "note": "Cursor for interactive editing, Copilot for autocomplete, Claude Code for repo-level investigation"
-        },
-        {
-          "name": "Logiciel best practices (2025)",
-          "url": "https://logiciel.io/blog/pair-programming-with-ai-best-practices-case-studies-2025",
-          "tier": 3,
-          "note": "Stay in driver's seat, validate security/logic, use AI as teacher"
-        }
-      ],
-      "credibility": "medium",
-      "confidence": 0.75
-    }
-  ],
-  "contradictions": [
-    {
-      "description": "Productivity perception vs reality",
-      "detail": "Developers believe AI makes them 20-24% faster (METR study), but RCT shows 19% slowdown. However, other studies (GitHub Copilot controlled studies) show 55% faster task completion. The discrepancy may be due to task familiarity — AI helps less on codebases developers already know well.",
-      "sources": ["METR RCT 2025", "Fastly Survey 2025", "Bonanza Studios 2025"]
-    },
-    {
-      "description": "Senior confidence vs actual outcomes",
-      "detail": "Senior developers report more speed gains (59% say faster) and ship more AI code, but also spend more time fixing AI output (~30% of seniors offset most time savings). It's unclear if net productivity is positive for seniors specifically.",
-      "sources": ["Fastly Survey 2025", "Augment Code"]
-    }
-  ],
-  "gaps": [
-    {
-      "gap": "Long-term code quality and maintainability impact",
-      "detail": "No longitudinal studies tracking whether AI-generated code increases technical debt over months/years"
-    },
-    {
-      "gap": "ROI data for enterprise AI coding tool investments",
-      "detail": "Limited public data on actual cost savings vs licensing costs for enterprise deployments"
-    },
-    {
-      "gap": "AI impact on system architecture decisions",
-      "detail": "No research on whether AI tools lead to better or worse architectural choices by senior developers"
-    },
-    {
-      "gap": "Non-JavaScript/Python language coverage",
-      "detail": "Most benchmarks and security studies focus on Java/Python/C#/JS; limited data on Rust, Go, C++, Kotlin"
-    },
-    {
-      "gap": "Team dynamics and knowledge sharing effects",
-      "detail": "Little research on how AI pair programming affects mentorship, onboarding, and team cohesion long-term"
-    },
-    {
-      "gap": "AI tool effectiveness for legacy system modernization",
-      "detail": "Claims about modernization (e.g., Windsurf's Cascade) are vendor-cited; independent validation lacking"
-    }
-  ],
-  "source_breakdown": {
-    "tier_1_official_primary": [
-      "METR RCT Study (peer-reviewed preprint, controlled experiment)",
-      "METR arXiv paper"
-    ],
-    "tier_2_credible_journalism": [
-      "CodeSignal Report 2025",
-      "JetBrains Developer Ecosystem Survey 2026",
-      "JetBrains AI Pulse Survey 2026",
-      "Stack Overflow Developer Survey 2025",
-      "Fastly Survey 2025",
-      "The New Stack",
-      "TechCrunch",
-      "Business Insider",
-      "Veracode 2025 GenAI Code Security Report",
-      "CSA Research Note 2026",
-      "Rivista 2026 Agentic Coding Trends Report",
-      "CIO"
-    ],
-    "tier_3_social_community": [
-      "DEV Community practical comparison",
-      "Medium (Sorin Alupoaie, Pravir Raghu)",
-      "LinkedIn posts (Joerg Richter, Ganesh Patel)",
-      "Build Fast With AI",
-      "Augment Code",
-      "Logiciel",
-      "Bonanza Studios",
-      "Dualite"
-    ],
-    "tier_4_unverified": []
-  },
-  "credibility_score": "78% Tier 1-2 sources",
-  "total_sources": 25,
-  "search_queries_used": 8,
-  "notes": "Research heavily weighted toward adoption metrics and productivity studies. Security research (Veracode) is robust with 100+ models tested. The METR RCT is the highest-quality productivity study but limited to 16 developers on familiar codebases. Market data (Cursor revenue, valuations) sourced from TechCrunch and may not be independently verified. Best-practice recommendations are practitioner-driven (Tier 3) with limited controlled validation."
+ "mission_id": "ai-coding-assistants-senior-devs-2026",
+ "topic": "Latest trends in AI coding assistants for senior developers",
+ "generated_at": "2026-09-11T00:00:00Z",
+ "claims": [
+ {
+ "id": "claim-001",
+ "text": "81-90% of professional developers now use AI coding tools, with adoption nearly doubling since 2023",
+ "sources": [
+ {
+ "name": "CodeSignal Report 2025",
+ "url": "https://codesignal.com/report-developers-and-ai-coding-assistant-trends",
+ "tier": 2,
+ "note": "Survey of 1,000+ developers; 81% use AI coding assistants"
+ },
+ {
+ "name": "JetBrains Developer Ecosystem Survey 2026",
+ "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026",
+ "tier": 2,
+ "note": "90% of professional developers use AI coding agents at least weekly as of May-July 2026"
+ },
+ {
+ "name": "Stack Overflow Developer Survey 2025",
+ "url": "https://survey.stackoverflow.co/2025/ai",
+ "tier": 2,
+ "note": "84% of respondents using or planning to use AI tools"
+ }
+ ],
+ "credibility": "high",
+ "confidence": 0.95
+ },
+ {
+ "id": "claim-002",
+ "text": "Claude Code has become the most widely adopted AI coding tool at work (39% globally, 47% in US), surpassing GitHub Copilot",
+ "sources": [
+ {
+ "name": "JetBrains AI Coding Agent Adoption Trends (Aug 2026)",
+ "url": "https://blog.jetbrains.com/research/2026/08/ai-coding-agent-adoption-2026",
+ "tier": 2,
+ "note": "39% of professional developers worldwide use Claude Code at work; up from 18% in January 2026"
+ },
+ {
+ "name": "JetBrains AI Pulse Survey (Jan 2026)",
+ "url": "https://blog.jetbrains.com/research/2026/04/which-ai-coding-tools-do-developers-actually-use-at-work",
+ "tier": 2,
+ "note": "GitHub Copilot still most known (76%) but Claude Code growing fastest"
+ }
+ ],
+ "credibility": "high",
+ "confidence": 0.90
+ },
+ {
+ "id": "claim-003",
+ "text": "Senior developers ship ~2.5x more AI-generated code than juniors (32% vs 13%) and are more confident using AI in production",
+ "sources": [
+ {
+ "name": "Fastly Survey 2025",
+ "url": "https://www.fastly.com/blog/senior-developers-ship-more-ai-code",
+ "tier": 2,
+ "note": "Survey of 791 professional developers; seniors (10+ yrs) report 32% of shipped code is AI-generated vs 13% for juniors"
+ },
+ {
+ "name": "Augment Code: Senior vs Junior AI Adoption",
+ "url": "https://www.augmentcode.com/guides/ai-adoption-strategy-senior-vs-junior-developer-implementation",
+ "tier": 3,
+ "note": "Seniors need architectural context; juniors need learning acceleration"
+ }
+ ],
+ "credibility": "medium",
+ "confidence": 0.80
+ },
+ {
+ "id": "claim-004",
+ "text": "A rigorous randomized controlled trial found experienced open-source developers were 19% slower when using AI tools, despite believing they were 20% faster",
+ "sources": [
+ {
+ "name": "METR RCT Study (July 2025)",
+ "url": "https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/",
+ "tier": 1,
+ "note": "16 experienced developers, 246 tasks; developers expected 24% speedup but took 19% longer"
+ },
+ {
+ "name": "METR Paper on arXiv",
+ "url": "https://arxiv.org/abs/2507.09089",
+ "tier": 1,
+ "note": "Peer-reviewed preprint confirming slowdown effect robust across analyses"
+ },
+ {
+ "name": "Business Insider coverage",
+ "url": "https://www.businessinsider.com/ai-coding-tools-may-decrease-productivity-experienced-software-engineers-study-2025-7",
+ "tier": 2,
+ "note": "Secondary reporting on METR study"
+ }
+ ],
+ "credibility": "high",
+ "confidence": 0.95
+ },
+ {
+ "id": "claim-005",
+ "text": "45% of AI-generated code introduces OWASP Top 10 security vulnerabilities; Java worst at 72% failure rate",
+ "sources": [
+ {
+ "name": "Veracode 2025 GenAI Code Security Report",
+ "url": "https://via.tt.se/pressmeddelande/3999899/ai-generated-code-poses-major-security-risks-in-nearly-half-of-all-development-tasks-veracode-research-reveals?lang=en&publisherId=259167",
+ "tier": 2,
+ "note": "80 curated coding tasks across 100+ LLMs; 45% introduced vulnerabilities"
+ },
+ {
+ "name": "CSA Research Note 2026",
+ "url": "https://labs.cloudsecurityalliance.org/research/csa-research-note-ai-generated-code-vulnerability-surge-2026/",
+ "tier": 2,
+ "note": "Security failure rate unchanged from 2025 through early 2026 despite model improvements"
+ }
+ ],
+ "credibility": "high",
+ "confidence": 0.90
+ },
+ {
+ "id": "claim-006",
+ "text": "Cursor surpassed $2B in annualized revenue and reached $9.9B valuation; AI coding market is consolidating rapidly",
+ "sources": [
+ {
+ "name": "TechCrunch (Mar 2026)",
+ "url": "https://techcrunch.com/tag/ai-coding-assistant/",
+ "tier": 2,
+ "note": "Cursor reportedly surpassed $2B in annualized revenue"
+ },
+ {
+ "name": "TechCrunch (Jun 2025)",
+ "url": "https://techcrunch.com/2025/07/18/cursor-snaps-up-enterprise-startup-koala-in-challenge-to-github-copilot",
+ "tier": 2,
+ "note": "Anysphere reached $500M ARR in June 2025, works with >half of Fortune 500"
+ }
+ ],
+ "credibility": "medium",
+ "confidence": 0.85
+ },
+ {
+ "id": "claim-007",
+ "text": "The market is shifting from autocomplete to agentic IDEs that can orchestrate multi-step development tasks autonomously",
+ "sources": [
+ {
+ "name": "The New Stack (Mar 2025)",
+ "url": "https://thenewstack.io/ai-powered-coding-developer-tool-trends-to-monitor-in-2025",
+ "tier": 2,
+ "note": "Trend from IDE plugins to agentic IDEs (Cursor, Windsurf, Bolt)"
+ },
+ {
+ "name": "Rivista 2026 Agentic Coding Trends Report",
+ "url": "https://www.rivista.ai/wp-content/uploads/2026/03/2026-Agentic-Coding-Trends-Report-1.pdf",
+ "tier": 2,
+ "note": "Predicts shift from writing code to orchestrating agents that write code"
+ }
+ ],
+ "credibility": "medium",
+ "confidence": 0.80
+ },
+ {
+ "id": "claim-008",
+ "text": "Best practices for senior developers: treat AI as a pair programmer (navigator role), use spec-first planning, and always review generated code as a junior dev's PR",
+ "sources": [
+ {
+ "name": "Build Fast With AI (Mar 2026)",
+ "url": "https://buildfastwithai/ai-pair-programming-guide",
+ "tier": 3,
+ "note": "Describe-Generate-Refine workflow; 2-5x gains on boilerplate, 1.1-1.3x on novel architecture"
+ },
+ {
+ "name": "DEV Community practical comparison",
+ "url": "https://dev.to/elsie-rainee/i-tried-pair-programming-with-three-different-ai-tools-for-a-month-2nnc",
+ "tier": 3,
+ "note": "Cursor for interactive editing, Copilot for autocomplete, Claude Code for repo-level investigation"
+ },
+ {
+ "name": "Logiciel best practices (2025)",
+ "url": "https://logiciel.io/blog/pair-programming-with-ai-best-practices-case-studies-2025",
+ "tier": 3,
+ "note": "Stay in driver's seat, validate security/logic, use AI as teacher"
+ }
+ ],
+ "credibility": "medium",
+ "confidence": 0.75
+ }
+ ],
+ "contradictions": [
+ {
+ "description": "Productivity perception vs reality",
+ "detail": "Developers believe AI makes them 20-24% faster (METR study), but RCT shows 19% slowdown. However, other studies (GitHub Copilot controlled studies) show 55% faster task completion. The discrepancy may be due to task familiarity — AI helps less on codebases developers already know well.",
+ "sources": ["METR RCT 2025", "Fastly Survey 2025", "Bonanza Studios 2025"]
+ },
+ {
+ "description": "Senior confidence vs actual outcomes",
+ "detail": "Senior developers report more speed gains (59% say faster) and ship more AI code, but also spend more time fixing AI output (~30% of seniors offset most time savings). It's unclear if net productivity is positive for seniors specifically.",
+ "sources": ["Fastly Survey 2025", "Augment Code"]
+ }
+ ],
+ "gaps": [
+ {
+ "gap": "Long-term code quality and maintainability impact",
+ "detail": "No longitudinal studies tracking whether AI-generated code increases technical debt over months/years"
+ },
+ {
+ "gap": "ROI data for enterprise AI coding tool investments",
+ "detail": "Limited public data on actual cost savings vs licensing costs for enterprise deployments"
+ },
+ {
+ "gap": "AI impact on system architecture decisions",
+ "detail": "No research on whether AI tools lead to better or worse architectural choices by senior developers"
+ },
+ {
+ "gap": "Non-JavaScript/Python language coverage",
+ "detail": "Most benchmarks and security studies focus on Java/Python/C#/JS; limited data on Rust, Go, C++, Kotlin"
+ },
+ {
+ "gap": "Team dynamics and knowledge sharing effects",
+ "detail": "Little research on how AI pair programming affects mentorship, onboarding, and team cohesion long-term"
+ },
+ {
+ "gap": "AI tool effectiveness for legacy system modernization",
+ "detail": "Claims about modernization (e.g., Windsurf's Cascade) are vendor-cited; independent validation lacking"
+ }
+ ],
+ "source_breakdown": {
+ "tier_1_official_primary": [
+ "METR RCT Study (peer-reviewed preprint, controlled experiment)",
+ "METR arXiv paper"
+ ],
+ "tier_2_credible_journalism": [
+ "CodeSignal Report 2025",
+ "JetBrains Developer Ecosystem Survey 2026",
+ "JetBrains AI Pulse Survey 2026",
+ "Stack Overflow Developer Survey 2025",
+ "Fastly Survey 2025",
+ "The New Stack",
+ "TechCrunch",
+ "Business Insider",
+ "Veracode 2025 GenAI Code Security Report",
+ "CSA Research Note 2026",
+ "Rivista 2026 Agentic Coding Trends Report",
+ "CIO"
+ ],
+ "tier_3_social_community": [
+ "DEV Community practical comparison",
+ "Medium (Sorin Alupoaie, Pravir Raghu)",
+ "LinkedIn posts (Joerg Richter, Ganesh Patel)",
+ "Build Fast With AI",
+ "Augment Code",
+ "Logiciel",
+ "Bonanza Studios",
+ "Dualite"
+ ],
+ "tier_4_unverified": []
+ },
+ "credibility_score": "78% Tier 1-2 sources",
+ "total_sources": 25,
+ "search_queries_used": 8,
+ "notes": "Research heavily weighted toward adoption metrics and productivity studies. Security research (Veracode) is robust with 100+ models tested. The METR RCT is the highest-quality productivity study but limited to 16 developers on familiar codebases. Market data (Cursor revenue, valuations) sourced from TechCrunch and may not be independently verified. Best-practice recommendations are practitioner-driven (Tier 3) with limited controlled validation."
 }

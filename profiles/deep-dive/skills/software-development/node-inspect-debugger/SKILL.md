@@ -6,9 +6,9 @@ author: Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
 metadata:
-  hermes:
-    tags: [debugging, nodejs, node-inspect, cdp, breakpoints, ui-tui]
-    related_skills: [systematic-debugging, python-debugpy]
+ hermes:
+ tags: [debugging, nodejs, node-inspect, cdp, breakpoints, ui-tui]
+ related_skills: [systematic-debugging, python-debugpy]
 ---
 
 # Node.js Inspect Debugger
@@ -88,9 +88,9 @@ node inspect ws://127.0.0.1:9229/<uuid>
 To start a process with the inspector from the beginning:
 
 ```bash
-node --inspect script.js           # listen on 127.0.0.1:9229, keep running
-node --inspect-brk script.js       # listen AND pause on first line
-node --inspect=0.0.0.0:9230 script.js   # custom host:port
+node --inspect script.js # listen on 127.0.0.1:9229, keep running
+node --inspect-brk script.js # listen AND pause on first line
+node --inspect=0.0.0.0:9230 script.js # custom host:port
 ```
 
 For TypeScript via tsx:
@@ -106,7 +106,7 @@ node --inspect-brk -r tsx/cjs script.ts
 When you want to automate — set many breakpoints, capture scope state, script a repro — use `chrome-remote-interface`:
 
 ```bash
-npm i -g chrome-remote-interface        # or project-local
+npm i -g chrome-remote-interface # or project-local
 # Start your target:
 node --inspect-brk=9229 target.js &
 ```
@@ -117,47 +117,47 @@ Driver script (save as `/tmp/cdp-debug.js`):
 const CDP = require('chrome-remote-interface');
 
 (async () => {
-  const client = await CDP({ port: 9229 });
-  const { Debugger, Runtime } = client;
+ const client = await CDP({ port: 9229 });
+ const { Debugger, Runtime } = client;
 
-  Debugger.paused(async ({ callFrames, reason }) => {
-    const top = callFrames[0];
-    console.log(`PAUSED: ${reason} @ ${top.url}:${top.location.lineNumber + 1}`);
+ Debugger.paused(async ({ callFrames, reason }) => {
+ const top = callFrames[0];
+ console.log(`PAUSED: ${reason} @ ${top.url}:${top.location.lineNumber + 1}`);
 
-    // Walk scopes for locals
-    for (const scope of top.scopeChain) {
-      if (scope.type === 'local' || scope.type === 'closure') {
-        const { result } = await Runtime.getProperties({
-          objectId: scope.object.objectId,
-          ownProperties: true,
-        });
-        for (const p of result) {
-          console.log(`  ${scope.type}.${p.name} =`, p.value?.value ?? p.value?.description);
-        }
-      }
-    }
+ // Walk scopes for locals
+ for (const scope of top.scopeChain) {
+ if (scope.type === 'local' || scope.type === 'closure') {
+ const { result } = await Runtime.getProperties({
+ objectId: scope.object.objectId,
+ ownProperties: true,
+ });
+ for (const p of result) {
+ console.log(` ${scope.type}.${p.name} =`, p.value?.value ?? p.value?.description);
+ }
+ }
+ }
 
-    // Evaluate an expression in the paused frame
-    const { result } = await Debugger.evaluateOnCallFrame({
-      callFrameId: top.callFrameId,
-      expression: 'typeof state !== "undefined" ? JSON.stringify(state) : "n/a"',
-    });
-    console.log('state =', result.value ?? result.description);
+ // Evaluate an expression in the paused frame
+ const { result } = await Debugger.evaluateOnCallFrame({
+ callFrameId: top.callFrameId,
+ expression: 'typeof state !== "undefined" ? JSON.stringify(state) : "n/a"',
+ });
+ console.log('state =', result.value ?? result.description);
 
-    await Debugger.resume();
-  });
+ await Debugger.resume();
+ });
 
-  await Runtime.enable();
-  await Debugger.enable();
+ await Runtime.enable();
+ await Debugger.enable();
 
-  // Set a breakpoint by URL regex + line
-  await Debugger.setBreakpointByUrl({
-    urlRegex: '.*app\\.tsx$',
-    lineNumber: 119,       // 0-indexed
-    columnNumber: 0,
-  });
+ // Set a breakpoint by URL regex + line
+ await Debugger.setBreakpointByUrl({
+ urlRegex: '.*app\\.tsx$',
+ lineNumber: 119, // 0-indexed
+ columnNumber: 0,
+ });
 
-  await Runtime.runIfWaitingForDebugger();
+ await Runtime.runIfWaitingForDebugger();
 })();
 ```
 
@@ -184,7 +184,7 @@ The TUI is built Ink + tsx. Two common scenarios:
 
 ```bash
 cd <hermes-agent-repo>/ui-tui
-npm run build    # produce dist/ once so transpile isn't needed on first load
+npm run build # produce dist/ once so transpile isn't needed on first load
 node --inspect-brk dist/entry.js
 # In another terminal:
 node inspect -p <node pid>
@@ -193,7 +193,7 @@ node inspect -p <node pid>
 Then inside `debug>`:
 
 ```
-sb('dist/app.js', 220)     # or wherever the suspect render is
+sb('dist/app.js', 220) # or wherever the suspect render is
 cont
 ```
 
@@ -266,9 +266,9 @@ require('fs').writeFileSync('/tmp/heap.heapsnapshot', chunks.join(''));
 2. **`--inspect` vs `--inspect-brk`.** `--inspect` starts the inspector but doesn't pause; your script races past your first breakpoint if you attach too late. Use `--inspect-brk` when you need to set breakpoints before any code runs.
 
 3. **Port collisions.** Default is `9229`. If multiple Node processes are inspecting, pass `--inspect=0` (random port) and read the actual URL from `/json/list`:
-   ```bash
-   curl -s http://127.0.0.1:9229/json/list   # lists all inspectable targets on the host
-   ```
+ ```bash
+ curl -s http://127.0.0.1:9229/json/list # lists all inspectable targets on the host
+ ```
 
 4. **Child processes.** `--inspect` on a parent does NOT inspect its children. Use `NODE_OPTIONS='--inspect-brk' node parent.js` to propagate to every child; be aware they all need unique ports (Node auto-increments when `NODE_OPTIONS='--inspect'` is inherited).
 

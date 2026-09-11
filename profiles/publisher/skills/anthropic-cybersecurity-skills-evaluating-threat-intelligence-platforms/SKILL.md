@@ -1,14 +1,14 @@
 ---
 name: evaluating-threat-intelligence-platforms
 description: 'Evaluates and selects Threat Intelligence Platform (TIP) products based
-  on organizational requirements including feed integration capability, STIX/TAXII
-  support, workflow automation, analyst interface, and total cost of ownership. Use
-  when conducting a TIP procurement, migrating between TIP solutions, or assessing
-  whether the current TIP meets program maturity requirements. Activates for requests
-  involving ThreatConnect, MISP, OpenCTI, Anomali, EclecticIQ, or TIP procurement
-  decisions.
+ on organizational requirements including feed integration capability, STIX/TAXII
+ support, workflow automation, analyst interface, and total cost of ownership. Use
+ when conducting a TIP procurement, migrating between TIP solutions, or assessing
+ whether the current TIP meets program maturity requirements. Activates for requests
+ involving ThreatConnect, MISP, OpenCTI, Anomali, EclecticIQ, or TIP procurement
+ decisions.
 
-  '
+ '
 domain: cybersecurity
 subdomain: threat-intelligence
 tags:
@@ -124,14 +124,14 @@ Request 30-day PoC from finalists. Test:
 
 Use weighted scoring matrix (weight each criterion by organizational priority):
 ```
-Criterion                 Weight   Vendor A   Vendor B
-STIX 2.1 compliance       20%      95         85
-SIEM integration          25%      90         70
-ATT&CK mapping            15%      85         95
-Cost (inverse)            20%      60         90
-UI/analyst experience     10%      80         75
-Vendor support quality    10%      85         80
-TOTAL                     100%     82.0       81.5
+Criterion Weight Vendor A Vendor B
+STIX 2.1 compliance 20% 95 85
+SIEM integration 25% 90 70
+ATT&CK mapping 15% 85 95
+Cost (inverse) 20% 60 90
+UI/analyst experience 10% 80 75
+Vendor support quality 10% 85 80
+TOTAL 100% 82.0 81.5
 ```
 
 ### Step 5: Implementation and Onboarding Planning

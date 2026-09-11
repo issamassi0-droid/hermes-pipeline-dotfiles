@@ -1,9 +1,9 @@
 ---
 name: project-validation
 description: |
-  Validates project after initialization. Checks static files, endpoints, CSS, health.
-  Use when: after rust-project-init, before TDD loop.
-  Triggers: "validate project", "check project", "verify init".
+ Validates project after initialization. Checks static files, endpoints, CSS, health.
+ Use when: after rust-project-init, before TDD loop.
+ Triggers: "validate project", "check project", "verify init".
 ---
 
 # Project Validation Skill
@@ -50,7 +50,7 @@ curl -s http://127.0.0.1:3000/ | grep -q "<html"
 ```bash
 # Parse templates for expected endpoints
 grep -rh "hx-get\|hx-post\|hx-delete" templates/ 2>/dev/null | \
-  grep -oE '"[^"]*"' | tr -d '"' | sort -u
+ grep -oE '"[^"]*"' | tr -d '"' | sort -u
 
 # Each should return non-404
 ```

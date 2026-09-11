@@ -1,11 +1,11 @@
 ---
 name: analyzing-tls-certificate-transparency-logs
 description: 'Queries Certificate Transparency logs via crt.sh and pycrtsh to detect
-  phishing domains, unauthorized certificate issuance, and shadow IT. Monitors newly
-  issued certificates for typosquatting and brand impersonation using Levenshtein
-  distance. Use for proactive phishing domain detection and certificate monitoring.
+ phishing domains, unauthorized certificate issuance, and shadow IT. Monitors newly
+ issued certificates for typosquatting and brand impersonation using Levenshtein
+ distance. Use for proactive phishing domain detection and certificate monitoring.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -32,32 +32,32 @@ mitre_attack:
 - T1598.003
 - T1583.006
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - resource-development
-  - initial-access
-  techniques:
-  - id: T1598
-    name: Phishing for Information
-    tactic: reconnaissance
-    source: attack
-  - id: T1593
-    name: Search Open Websites/Domains
-    tactic: reconnaissance
-    source: attack
-  - id: T1583.001
-    name: 'Acquire Infrastructure: Domains'
-    tactic: resource-development
-    source: attack
-  - id: F1020.002
-    name: 'Create Fake Materials: Fake Website'
-    tactic: resource-development
-    source: f3
-  - id: T1660
-    name: Phishing
-    tactic: initial-access
-    source: attack
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - resource-development
+ - initial-access
+ techniques:
+ - id: T1598
+ name: Phishing for Information
+ tactic: reconnaissance
+ source: attack
+ - id: T1593
+ name: Search Open Websites/Domains
+ tactic: reconnaissance
+ source: attack
+ - id: T1583.001
+ name: 'Acquire Infrastructure: Domains'
+ tactic: resource-development
+ source: attack
+ - id: F1020.002
+ name: 'Create Fake Materials: Fake Website'
+ tactic: resource-development
+ source: f3
+ - id: T1660
+ name: Phishing
+ tactic: initial-access
+ source: attack
 ---
 
 # Analyzing TLS Certificate Transparency Logs
@@ -89,7 +89,7 @@ c = Crtsh()
 # Search for certificates matching a domain
 certs = c.search("example.com")
 for cert in certs:
-    print(cert["id"], cert["name_value"])
+ print(cert["id"], cert["name_value"])
 
 # Get full certificate details
 details = c.get(certs[0]["id"], type="id")
@@ -109,5 +109,5 @@ from pycrtsh import Crtsh
 c = Crtsh()
 certs = c.search("%.example.com")
 for cert in certs:
-    print(f"Issuer: {cert.get('issuer_name')}, Domain: {cert.get('name_value')}")
+ print(f"Issuer: {cert.get('issuer_name')}, Domain: {cert.get('name_value')}")
 ```

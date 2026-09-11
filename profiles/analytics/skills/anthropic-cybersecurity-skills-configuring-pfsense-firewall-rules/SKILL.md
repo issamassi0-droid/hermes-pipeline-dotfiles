@@ -1,12 +1,12 @@
 ---
 name: configuring-pfsense-firewall-rules
 description: 'Configures pfSense firewall rules, NAT policies, IPsec/OpenVPN tunnels,
-  and traffic shaping to enforce network segmentation and control traffic between
-  zones such as DMZ, internal, guest, and IoT. Use when deploying a pfSense perimeter
-  or internal firewall, setting up port-forwarding NAT, configuring site-to-site
-  or remote-access VPNs, or applying QoS/bandwidth policies.
+ and traffic shaping to enforce network segmentation and control traffic between
+ zones such as DMZ, internal, guest, and IoT. Use when deploying a pfSense perimeter
+ or internal firewall, setting up port-forwarding NAT, configuring site-to-site
+ or remote-access VPNs, or applying QoS/bandwidth policies.
 
-  '
+ '
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -60,24 +60,24 @@ Access the pfSense WebConfigurator and define interfaces:
 Navigate: Interfaces > Assignments
 
 WAN Interface (igb0):
-  - Type: DHCP or Static IP from ISP
-  - Block private networks: Enabled
-  - Block bogon networks: Enabled
+ - Type: DHCP or Static IP from ISP
+ - Block private networks: Enabled
+ - Block bogon networks: Enabled
 
 LAN Interface (igb1):
-  - IPv4: 10.10.1.1/24
-  - Description: CORPORATE_LAN
+ - IPv4: 10.10.1.1/24
+ - Description: CORPORATE_LAN
 
 Create VLANs:
-  Navigate: Interfaces > VLANs > Add
-  - VLAN 10 on igb1: DMZ (10.10.10.1/24)
-  - VLAN 20 on igb1: SERVERS (10.10.20.1/24)
-  - VLAN 30 on igb1: GUEST (10.10.30.1/24)
-  - VLAN 40 on igb1: IOT (10.10.40.1/24)
+ Navigate: Interfaces > VLANs > Add
+ - VLAN 10 on igb1: DMZ (10.10.10.1/24)
+ - VLAN 20 on igb1: SERVERS (10.10.20.1/24)
+ - VLAN 30 on igb1: GUEST (10.10.30.1/24)
+ - VLAN 40 on igb1: IOT (10.10.40.1/24)
 
 Assign VLANs:
-  Navigate: Interfaces > Assignments > Add each VLAN
-  Enable each interface and assign the gateway IP
+ Navigate: Interfaces > Assignments > Add each VLAN
+ Enable each interface and assign the gateway IP
 ```
 
 ### Step 2: Configure DHCP and DNS for Each Zone
@@ -86,24 +86,24 @@ Assign VLANs:
 Navigate: Services > DHCP Server
 
 CORPORATE_LAN (10.10.1.0/24):
-  Range: 10.10.1.100 - 10.10.1.200
-  DNS: 10.10.20.10 (internal DNS server)
-  Gateway: 10.10.1.1
+ Range: 10.10.1.100 - 10.10.1.200
+ DNS: 10.10.20.10 (internal DNS server)
+ Gateway: 10.10.1.1
 
 DMZ (10.10.10.0/24):
-  Range: 10.10.10.100 - 10.10.10.200
-  DNS: 10.10.20.10
-  Gateway: 10.10.10.1
+ Range: 10.10.10.100 - 10.10.10.200
+ DNS: 10.10.20.10
+ Gateway: 10.10.10.1
 
 GUEST (10.10.30.0/24):
-  Range: 10.10.30.100 - 10.10.30.200
-  DNS: 1.1.1.1, 8.8.8.8 (public DNS only)
-  Gateway: 10.10.30.1
+ Range: 10.10.30.100 - 10.10.30.200
+ DNS: 1.1.1.1, 8.8.8.8 (public DNS only)
+ Gateway: 10.10.30.1
 
 Navigate: Services > DNS Resolver
-  Enable DNS Resolver on all interfaces except GUEST
-  Enable DNSSEC
-  Configure forwarding to upstream DNS servers
+ Enable DNS Resolver on all interfaces except GUEST
+ Enable DNSSEC
+ Configure forwarding to upstream DNS servers
 ```
 
 ### Step 3: Create Firewall Rule Aliases
@@ -112,25 +112,25 @@ Navigate: Services > DNS Resolver
 Navigate: Firewall > Aliases
 
 RFC1918_Networks:
-  Type: Network
-  Values: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
+ Type: Network
+ Values: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
 
 WebPorts:
-  Type: Port
-  Values: 80, 443
+ Type: Port
+ Values: 80, 443
 
 ManagementPorts:
-  Type: Port
-  Values: 22, 3389, 5900
+ Type: Port
+ Values: 22, 3389, 5900
 
 CriticalServers:
-  Type: Host
-  Values: 10.10.20.10, 10.10.20.11, 10.10.20.12
+ Type: Host
+ Values: 10.10.20.10, 10.10.20.11, 10.10.20.12
 
 BlockedCountries:
-  Type: URL Table
-  URL: https://www.ipdeny.com/ipblocks/data/aggregated/cn-aggregated.zone
-  Update: 24 hours
+ Type: URL Table
+ URL: https://www.ipdeny.com/ipblocks/data/aggregated/cn-aggregated.zone
+ Update: 24 hours
 ```
 
 ### Step 4: Implement Firewall Rules by Zone
@@ -237,24 +237,24 @@ Description: DMZ outbound NAT via dedicated IP
 
 ```
 Navigate: Status > System Logs > Settings
-  Remote Logging: Enable
-  Remote log servers: 10.10.20.15:514 (Syslog/SIEM)
-  Log firewall default blocks: Enabled
+ Remote Logging: Enable
+ Remote log servers: 10.10.20.15:514 (Syslog/SIEM)
+ Log firewall default blocks: Enabled
 
 Navigate: Firewall > Rules
-  Enable logging on critical rules:
-  - All BLOCK rules
-  - WAN inbound PASS rules
-  - Inter-VLAN PASS rules
+ Enable logging on critical rules:
+ - All BLOCK rules
+ - WAN inbound PASS rules
+ - Inter-VLAN PASS rules
 
 Navigate: Diagnostics > pfTop
-  Monitor real-time connection states and bandwidth usage
+ Monitor real-time connection states and bandwidth usage
 
 Install pfBlockerNG package:
-  Navigate: System > Package Manager > Available Packages
-  Install pfBlockerNG-devel
-  Configure IP blocklists (Spamhaus DROP, Emerging Threats)
-  Configure DNSBL for malware domain blocking
+ Navigate: System > Package Manager > Available Packages
+ Install pfBlockerNG-devel
+ Configure IP blocklists (Spamhaus DROP, Emerging Threats)
+ Configure DNSBL for malware domain blocking
 ```
 
 ### Step 7: Backup and Test Configuration
@@ -266,16 +266,16 @@ Download XML configuration file
 
 # Test rules from each zone
 # From LAN:
-curl -I https://10.10.20.10  # Should succeed (LAN to SERVERS)
-curl -I https://10.10.40.5   # Should fail (LAN to IOT blocked)
+curl -I https://10.10.20.10 # Should succeed (LAN to SERVERS)
+curl -I https://10.10.40.5 # Should fail (LAN to IOT blocked)
 
 # From GUEST:
-curl -I https://www.google.com  # Should succeed (internet)
-curl -I https://10.10.20.10     # Should fail (guest to internal blocked)
+curl -I https://www.google.com # Should succeed (internet)
+curl -I https://10.10.20.10 # Should fail (guest to internal blocked)
 
 # From DMZ:
-nslookup google.com 10.10.20.10  # Should succeed (DNS allowed)
-ssh 10.10.1.50                    # Should fail (DMZ to LAN blocked)
+nslookup google.com 10.10.20.10 # Should succeed (DNS allowed)
+ssh 10.10.1.50 # Should fail (DMZ to LAN blocked)
 
 # Verify logging
 Navigate: Status > System Logs > Firewall

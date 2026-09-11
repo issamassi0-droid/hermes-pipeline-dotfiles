@@ -1,11 +1,11 @@
 ---
 name: implementing-bgp-security-with-rpki
 description: Implement RPKI-based BGP route origin validation by creating Route Origin
-  Authorizations (ROAs) at RIRs (ARIN, RIPE, APNIC, AFRINIC, LACNIC), deploying validator
-  software (Routinator, FORT, OctoRPKI), and configuring RPKI-to-Router protocol and
-  ROV accept/reject policies on Cisco IOS-XE and Juniper Junos routers. Use when hardening
-  BGP against route hijacking or leaks, or when configuring ROV filtering policy on
-  production routers.
+ Authorizations (ROAs) at RIRs (ARIN, RIPE, APNIC, AFRINIC, LACNIC), deploying validator
+ software (Routinator, FORT, OctoRPKI), and configuring RPKI-to-Router protocol and
+ ROV accept/reject policies on Cisco IOS-XE and Juniper Junos routers. Use when hardening
+ BGP against route hijacking or leaks, or when configuring ROV filtering policy on
+ production routers.
 domain: cybersecurity
 subdomain: network-security
 tags:
@@ -61,35 +61,35 @@ Resource Public Key Infrastructure (RPKI) provides cryptographic validation of B
 
 ```
 ┌──────────────────────────────────────────────┐
-│           Regional Internet Registries        │
-│    (ARIN, RIPE, APNIC, AFRINIC, LACNIC)      │
-│                                               │
-│  ┌─────────────────────────────────────────┐  │
-│  │  Trust Anchor (Root CA Certificate)      │  │
-│  │  ├── CA Certificate (ISP/Organization)   │  │
-│  │  │   ├── ROA: AS64512 → 198.51.100.0/24 │  │
-│  │  │   └── ROA: AS64512 → 2001:db8::/32   │  │
-│  │  └── CA Certificate (Another Org)        │  │
-│  │      └── ROA: AS64513 → 203.0.113.0/24  │  │
-│  └─────────────────────────────────────────┘  │
+│ Regional Internet Registries │
+│ (ARIN, RIPE, APNIC, AFRINIC, LACNIC) │
+│ │
+│ ┌─────────────────────────────────────────┐ │
+│ │ Trust Anchor (Root CA Certificate) │ │
+│ │ ├── CA Certificate (ISP/Organization) │ │
+│ │ │ ├── ROA: AS64512 → 198.51.100.0/24 │ │
+│ │ │ └── ROA: AS64512 → 2001:db8::/32 │ │
+│ │ └── CA Certificate (Another Org) │ │
+│ │ └── ROA: AS64513 → 203.0.113.0/24 │ │
+│ └─────────────────────────────────────────┘ │
 └──────────────────────────────────────────────┘
-                     │ rsync/RRDP
-                     ▼
-         ┌──────────────────────┐
-         │  RPKI Validator/Cache │  (Routinator, FORT, OctoRPKI)
-         │  Validates ROAs       │
-         │  Serves VRPs to RTR   │
-         └──────────────────────┘
-                     │ RTR Protocol (TCP 8323)
-                     ▼
-         ┌──────────────────────┐
-         │  BGP Router           │
-         │  Performs ROV          │
-         │  Applies policy:      │
-         │   Valid → Accept      │
-         │   Invalid → Reject    │
-         │   NotFound → Accept   │
-         └──────────────────────┘
+ │ rsync/RRDP
+ ▼
+ ┌──────────────────────┐
+ │ RPKI Validator/Cache │ (Routinator, FORT, OctoRPKI)
+ │ Validates ROAs │
+ │ Serves VRPs to RTR │
+ └──────────────────────┘
+ │ RTR Protocol (TCP 8323)
+ ▼
+ ┌──────────────────────┐
+ │ BGP Router │
+ │ Performs ROV │
+ │ Applies policy: │
+ │ Valid → Accept │
+ │ Invalid → Reject │
+ │ NotFound → Accept │
+ └──────────────────────┘
 ```
 
 ### RPKI Validation States
@@ -115,9 +115,9 @@ A ROA is a signed object that states:
 1. Log into ARIN Online portal
 2. Navigate to Routing Security > Route Origin Authorizations
 3. Create ROA:
-   - Prefix: 198.51.100.0/24
-   - Origin AS: AS64512
-   - Max Length: /24 (set equal to prefix length to prevent sub-prefix hijacking)
+ - Prefix: 198.51.100.0/24
+ - Origin AS: AS64512
+ - Max Length: /24 (set equal to prefix length to prevent sub-prefix hijacking)
 4. Sign and submit
 
 **RIPE NCC (Europe):**
@@ -140,11 +140,11 @@ routinator init --accept-arin-rpa
 
 # Start Routinator in RTR server mode
 routinator server \
-  --rtr 0.0.0.0:8323 \
-  --http 0.0.0.0:8080 \
-  --refresh 600 \
-  --retry 60 \
-  --expire 7200
+ --rtr 0.0.0.0:8323 \
+ --http 0.0.0.0:8080 \
+ --refresh 600 \
+ --retry 60 \
+ --expire 7200
 
 # Run as systemd service
 cat > /etc/systemd/system/routinator.service << 'SYSTEMD'
@@ -200,11 +200,11 @@ route-map RPKI-FILTER deny 30
 ! Apply to BGP neighbors
 router bgp 64512
  address-family ipv4 unicast
-  neighbor 198.51.100.1 route-map RPKI-FILTER in
-  neighbor 203.0.113.1 route-map RPKI-FILTER in
+ neighbor 198.51.100.1 route-map RPKI-FILTER in
+ neighbor 203.0.113.1 route-map RPKI-FILTER in
 
  address-family ipv6 unicast
-  neighbor 2001:db8::1 route-map RPKI-FILTER in
+ neighbor 2001:db8::1 route-map RPKI-FILTER in
 
 ! Verify ROV operation
 show bgp ipv4 unicast rpki validation
@@ -260,63 +260,63 @@ import urllib.request
 
 
 class RPKIMonitor:
-    def __init__(self, routinator_url: str = "http://localhost:8080"):
-        self.routinator_url = routinator_url
+ def __init__(self, routinator_url: str = "http://localhost:8080"):
+ self.routinator_url = routinator_url
 
-    def get_status(self) -> dict:
-        """Get Routinator server status."""
-        url = f"{self.routinator_url}/api/v1/status"
-        try:
-            with urllib.request.urlopen(url) as resp:
-                return json.loads(resp.read())
-        except Exception as e:
-            print(f"Error connecting to Routinator: {e}")
-            return {}
+ def get_status(self) -> dict:
+ """Get Routinator server status."""
+ url = f"{self.routinator_url}/api/v1/status"
+ try:
+ with urllib.request.urlopen(url) as resp:
+ return json.loads(resp.read())
+ except Exception as e:
+ print(f"Error connecting to Routinator: {e}")
+ return {}
 
-    def check_validity(self, asn: int, prefix: str) -> dict:
-        """Check RPKI validity of a prefix/origin pair."""
-        url = f"{self.routinator_url}/api/v1/validity/AS{asn}/{prefix}"
-        try:
-            with urllib.request.urlopen(url) as resp:
-                return json.loads(resp.read())
-        except Exception as e:
-            return {"error": str(e)}
+ def check_validity(self, asn: int, prefix: str) -> dict:
+ """Check RPKI validity of a prefix/origin pair."""
+ url = f"{self.routinator_url}/api/v1/validity/AS{asn}/{prefix}"
+ try:
+ with urllib.request.urlopen(url) as resp:
+ return json.loads(resp.read())
+ except Exception as e:
+ return {"error": str(e)}
 
-    def get_vrp_count(self) -> int:
-        """Get total number of Validated ROA Payloads."""
-        status = self.get_status()
-        return status.get("vrpsCount", 0)
+ def get_vrp_count(self) -> int:
+ """Get total number of Validated ROA Payloads."""
+ status = self.get_status()
+ return status.get("vrpsCount", 0)
 
-    def report(self, prefixes_to_check: list):
-        """Generate RPKI monitoring report."""
-        status = self.get_status()
+ def report(self, prefixes_to_check: list):
+ """Generate RPKI monitoring report."""
+ status = self.get_status()
 
-        print(f"\n{'='*60}")
-        print("RPKI MONITORING REPORT")
-        print(f"{'='*60}")
-        print(f"\nRoutinator Status:")
-        print(f"  Version: {status.get('version', 'Unknown')}")
-        print(f"  VRPs Total: {status.get('vrpsCount', 'N/A')}")
-        print(f"  Last Update: {status.get('lastUpdateDone', 'N/A')}")
+ print(f"\n{'='*60}")
+ print("RPKI MONITORING REPORT")
+ print(f"{'='*60}")
+ print(f"\nRoutinator Status:")
+ print(f" Version: {status.get('version', 'Unknown')}")
+ print(f" VRPs Total: {status.get('vrpsCount', 'N/A')}")
+ print(f" Last Update: {status.get('lastUpdateDone', 'N/A')}")
 
-        if prefixes_to_check:
-            print(f"\nPrefix Validity Checks:")
-            for asn, prefix in prefixes_to_check:
-                result = self.check_validity(asn, prefix)
-                validity = result.get("validated_route", {}).get(
-                    "validity", {}).get("state", "error")
-                print(f"  AS{asn} -> {prefix}: {validity.upper()}")
+ if prefixes_to_check:
+ print(f"\nPrefix Validity Checks:")
+ for asn, prefix in prefixes_to_check:
+ result = self.check_validity(asn, prefix)
+ validity = result.get("validated_route", {}).get(
+ "validity", {}).get("state", "error")
+ print(f" AS{asn} -> {prefix}: {validity.upper()}")
 
 
 if __name__ == "__main__":
-    monitor = RPKIMonitor()
+ monitor = RPKIMonitor()
 
-    # Check own prefixes
-    own_prefixes = [
-        (64512, "198.51.100.0/24"),
-    ]
+ # Check own prefixes
+ own_prefixes = [
+ (64512, "198.51.100.0/24"),
+ ]
 
-    monitor.report(own_prefixes)
+ monitor.report(own_prefixes)
 ```
 
 ## Best Practices

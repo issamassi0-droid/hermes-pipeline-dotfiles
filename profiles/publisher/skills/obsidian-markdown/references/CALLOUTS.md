@@ -52,7 +52,7 @@
 
 ```css
 .callout[data-callout="custom-type"] {
-  --callout-color: 255, 0, 0;
-  --callout-icon: lucide-alert-circle;
+ --callout-color: 255, 0, 0;
+ --callout-icon: lucide-alert-circle;
 }
 ```

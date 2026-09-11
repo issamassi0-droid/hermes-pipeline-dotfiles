@@ -1,13 +1,13 @@
 ---
 name: implementing-security-monitoring-with-datadog
 description: 'Implements security monitoring using Datadog Cloud SIEM, Cloud Security
-  Management (CSM), and Workload Protection to detect threats, enforce compliance,
-  and respond to security events across cloud and hybrid infrastructure. Covers Agent
-  deployment, log source ingestion, detection rule creation, security dashboards,
-  and automated notification workflows. Activates for requests involving Datadog security
-  setup, Cloud SIEM configuration, CSM threat detection, or security monitoring dashboards.
+ Management (CSM), and Workload Protection to detect threats, enforce compliance,
+ and respond to security events across cloud and hybrid infrastructure. Covers Agent
+ deployment, log source ingestion, detection rule creation, security dashboards,
+ and automated notification workflows. Activates for requests involving Datadog security
+ setup, Cloud SIEM configuration, CSM threat detection, or security monitoring dashboards.
 
-  '
+ '
 domain: cybersecurity
 subdomain: security-operations
 tags:
@@ -78,21 +78,21 @@ Install the Datadog Agent and enable security-related features in `datadog.yaml`
 # /etc/datadog-agent/datadog.yaml
 
 api_key: <YOUR_DATADOG_API_KEY>
-site: datadoghq.com   # or datadoghq.eu, us3.datadoghq.com, etc.
+site: datadoghq.com # or datadoghq.eu, us3.datadoghq.com, etc.
 
 # Enable log collection for Cloud SIEM
 logs_enabled: true
 
 # Enable security features
 runtime_security_config:
-  enabled: true          # Workload Protection (CSM Threats)
-  activity_dump:
-    enabled: true        # Record process activity for investigation
+ enabled: true # Workload Protection (CSM Threats)
+ activity_dump:
+ enabled: true # Record process activity for investigation
 
 compliance_config:
-  enabled: true          # CIS benchmark checks (CSM Misconfigurations)
-  host_benchmarks:
-    enabled: true
+ enabled: true # CIS benchmark checks (CSM Misconfigurations)
+ host_benchmarks:
+ enabled: true
 ```
 
 Configure log sources for security-relevant files on Linux:
@@ -100,18 +100,18 @@ Configure log sources for security-relevant files on Linux:
 ```yaml
 # /etc/datadog-agent/conf.d/auth.d/conf.yaml
 logs:
-  - type: file
-    path: /var/log/auth.log
-    source: auth
-    service: linux-auth
-    tags:
-      - env:production
-      - security:authentication
+ - type: file
+ path: /var/log/auth.log
+ source: auth
+ service: linux-auth
+ tags:
+ - env:production
+ - security:authentication
 
-  - type: file
-    path: /var/log/syslog
-    source: syslog
-    service: linux-syslog
+ - type: file
+ path: /var/log/syslog
+ source: syslog
+ service: linux-syslog
 ```
 
 For Windows Security Event Logs:
@@ -119,12 +119,12 @@ For Windows Security Event Logs:
 ```yaml
 # /etc/datadog-agent/conf.d/win32_event_log.d/conf.yaml
 logs:
-  - type: windows_event
-    channel_path: Security
-    source: windows.events
-    service: windows-security
-    filters:
-      - id: [4624, 4625, 4648, 4672, 4688, 4720, 4726, 4740, 4767]
+ - type: windows_event
+ channel_path: Security
+ source: windows.events
+ service: windows-security
+ filters:
+ - id: [4624, 4625, 4648, 4672, 4688, 4720, 4726, 4740, 4767]
 ```
 
 Enable the system-probe for Workload Protection (CSM Threats):
@@ -132,9 +132,9 @@ Enable the system-probe for Workload Protection (CSM Threats):
 ```yaml
 # /etc/datadog-agent/system-probe.yaml
 runtime_security_config:
-  enabled: true
-  fim_enabled: true        # File Integrity Monitoring
-  network_enabled: true    # Network activity monitoring
+ enabled: true
+ fim_enabled: true # File Integrity Monitoring
+ network_enabled: true # Network activity monitoring
 ```
 
 Restart the Agent after configuration changes:
@@ -152,33 +152,33 @@ Set up AWS CloudTrail, VPC Flow Logs, and GuardDuty ingestion for Cloud SIEM:
 Datadog App > Security > Cloud SIEM > Configuration > Content Packs
 
 AWS Content Pack:
-  1. Enable the AWS integration in Datadog (Integrations > Amazon Web Services)
-  2. Configure CloudTrail log forwarding via the Datadog Forwarder Lambda
-  3. Enable VPC Flow Logs forwarding to Datadog
-  4. Enable GuardDuty findings forwarding
+ 1. Enable the AWS integration in Datadog (Integrations > Amazon Web Services)
+ 2. Configure CloudTrail log forwarding via the Datadog Forwarder Lambda
+ 3. Enable VPC Flow Logs forwarding to Datadog
+ 4. Enable GuardDuty findings forwarding
 
 Required IAM permissions for the Datadog role:
-  - cloudtrail:LookupEvents
-  - logs:FilterLogEvents
-  - guardduty:ListDetectors, guardduty:GetFindings
-  - s3:GetObject (for CloudTrail S3 bucket)
+ - cloudtrail:LookupEvents
+ - logs:FilterLogEvents
+ - guardduty:ListDetectors, guardduty:GetFindings
+ - s3:GetObject (for CloudTrail S3 bucket)
 
 Azure Content Pack:
-  1. Configure Azure Activity Logs via Event Hub to Datadog
-  2. Forward Azure AD Sign-in Logs and Audit Logs
-  3. Enable Microsoft Defender for Cloud alerts forwarding
+ 1. Configure Azure Activity Logs via Event Hub to Datadog
+ 2. Forward Azure AD Sign-in Logs and Audit Logs
+ 3. Enable Microsoft Defender for Cloud alerts forwarding
 
 GCP Content Pack:
-  1. Configure GCP Audit Logs export via Pub/Sub to Datadog
-  2. Forward Cloud Audit Logs (Admin Activity, Data Access)
+ 1. Configure GCP Audit Logs export via Pub/Sub to Datadog
+ 2. Forward Cloud Audit Logs (Admin Activity, Data Access)
 ```
 
 Verify log ingestion is working:
 
 ```
 Datadog App > Logs > Search
-  Filter: source:(cloudtrail OR aws.guardduty OR azure.activitylogs)
-  Verify: Logs appearing with correct source tags and parsed attributes
+ Filter: source:(cloudtrail OR aws.guardduty OR azure.activitylogs)
+ Verify: Logs appearing with correct source tags and parsed attributes
 ```
 
 ### Step 3: Enable and Customize Detection Rules
@@ -189,12 +189,12 @@ Datadog provides out-of-the-box detection rules that are automatically imported.
 Datadog App > Security > Detection Rules
 
 Out-of-the-box rule categories:
-  - AWS: IAM policy changes, root account usage, S3 public access
-  - Azure: Suspicious sign-ins, resource group deletions
-  - GCP: IAM policy modifications, firewall rule changes
-  - Authentication: Brute force, impossible travel, credential stuffing
-  - Network: Port scanning, DNS tunneling, C2 beaconing
-  - Application: SQL injection attempts, XSS, SSRF patterns
+ - AWS: IAM policy changes, root account usage, S3 public access
+ - Azure: Suspicious sign-ins, resource group deletions
+ - GCP: IAM policy modifications, firewall rule changes
+ - Authentication: Brute force, impossible travel, credential stuffing
+ - Network: Port scanning, DNS tunneling, C2 beaconing
+ - Application: SQL injection attempts, XSS, SSRF patterns
 ```
 
 Create a custom detection rule for brute force login detection:
@@ -206,24 +206,24 @@ Rule Name: "Brute Force Login Detection - Custom"
 Rule Type: Log Detection (Real-time)
 
 Define Search Query:
-  source:auth status:error @evt.name:authentication @evt.outcome:failure
-  Group By: @usr.id
+ source:auth status:error @evt.name:authentication @evt.outcome:failure
+ Group By: @usr.id
 
 Set Rule Cases:
-  Case 1: When count > 10 in 5 minutes
-    Name: "High volume failed logins"
-    Severity: HIGH
-    Notification: @slack-security-alerts @pagerduty-soc
+ Case 1: When count > 10 in 5 minutes
+ Name: "High volume failed logins"
+ Severity: HIGH
+ Notification: @slack-security-alerts @pagerduty-soc
 
-  Case 2: When count > 50 in 5 minutes
-    Name: "Extreme brute force attempt"
-    Severity: CRITICAL
-    Notification: @slack-security-alerts @pagerduty-soc-critical
+ Case 2: When count > 50 in 5 minutes
+ Name: "Extreme brute force attempt"
+ Severity: CRITICAL
+ Notification: @slack-security-alerts @pagerduty-soc-critical
 
 Signal Settings:
-  Keep signal alive for: 10 minutes
-  Maximum signal duration: 24 hours
-  Evaluation window: 5 minutes
+ Keep signal alive for: 10 minutes
+ Maximum signal duration: 24 hours
+ Evaluation window: 5 minutes
 ```
 
 Create a detection rule for AWS root account usage:
@@ -233,14 +233,14 @@ Rule Name: "AWS Root Account Console Login"
 Rule Type: Log Detection
 
 Query:
-  source:cloudtrail @evt.name:ConsoleLogin @userIdentity.type:Root
+ source:cloudtrail @evt.name:ConsoleLogin @userIdentity.type:Root
 
 Severity: CRITICAL
 Notification Message:
-  "AWS Root account console login detected from IP {{@network.client.ip}}.
-   Account: {{@usr.account_id}}
-   Region: {{@cloud.region}}
-   MFA Used: {{@additionalEventData.MFAUsed}}"
+ "AWS Root account console login detected from IP {{@network.client.ip}}.
+ Account: {{@usr.account_id}}
+ Region: {{@cloud.region}}
+ MFA Used: {{@additionalEventData.MFAUsed}}"
 
 Tags: attack:initial-access, mitre:T1078
 ```
@@ -253,16 +253,16 @@ Set up runtime threat detection for hosts and containers:
 Datadog App > Security > Cloud Security Management > Setup
 
 Enable Workload Protection:
-  1. Verify Agent has runtime_security_config.enabled: true
-  2. Review default Agent rules (file integrity, process execution)
-  3. Customize rules for your environment
+ 1. Verify Agent has runtime_security_config.enabled: true
+ 2. Review default Agent rules (file integrity, process execution)
+ 3. Customize rules for your environment
 
 Default detection categories:
-  - Process Execution: Detect reverse shells, crypto miners, exploitation tools
-  - File Integrity: Monitor changes to /etc/passwd, /etc/shadow, SSH keys
-  - Network Activity: Detect unexpected outbound connections, DNS tunneling
-  - Container Escape: Detect privileged container breakout attempts
-  - Kernel Module: Detect rootkit or unauthorized kernel module loading
+ - Process Execution: Detect reverse shells, crypto miners, exploitation tools
+ - File Integrity: Monitor changes to /etc/passwd, /etc/shadow, SSH keys
+ - Network Activity: Detect unexpected outbound connections, DNS tunneling
+ - Container Escape: Detect privileged container breakout attempts
+ - Kernel Module: Detect rootkit or unauthorized kernel module loading
 ```
 
 Create a custom CSM Threats Agent rule to detect unauthorized SSH key modifications:
@@ -271,9 +271,9 @@ Create a custom CSM Threats Agent rule to detect unauthorized SSH key modificati
 Datadog App > Security > CSM > Agent Rules > New Agent Rule
 
 Rule Expression:
-  open.file.path == "/root/.ssh/authorized_keys" &&
-  open.flags & (O_WRONLY | O_RDWR | O_CREAT) > 0 &&
-  process.file.name != "sshd"
+ open.file.path == "/root/.ssh/authorized_keys" &&
+ open.flags & (O_WRONLY | O_RDWR | O_CREAT) > 0 &&
+ process.file.name != "sshd"
 
 Rule Name: ssh_key_modification
 Description: Detect non-sshd processes modifying root authorized_keys
@@ -288,32 +288,32 @@ Create a Cloud SIEM overview dashboard:
 Datadog App > Dashboards > New Dashboard > "Security Operations Overview"
 
 Widgets:
-  1. Signal Count Over Time (timeseries)
-     Query: count:security_signal by {signal.rule.name}
-     Display: Line chart, last 24 hours
+ 1. Signal Count Over Time (timeseries)
+ Query: count:security_signal by {signal.rule.name}
+ Display: Line chart, last 24 hours
 
-  2. Top Triggered Rules (top list)
-     Query: count:security_signal by {signal.rule.name}.as_count()
-     Display: Top 10
+ 2. Top Triggered Rules (top list)
+ Query: count:security_signal by {signal.rule.name}.as_count()
+ Display: Top 10
 
-  3. Critical Signals (query value)
-     Query: count:security_signal{severity:critical}
-     Conditional format: Red if > 0
+ 3. Critical Signals (query value)
+ Query: count:security_signal{severity:critical}
+ Conditional format: Red if > 0
 
-  4. Signals by Source (pie chart)
-     Query: count:security_signal by {source}
+ 4. Signals by Source (pie chart)
+ Query: count:security_signal by {source}
 
-  5. Geographic Threat Map (geomap)
-     Query: count:security_signal by {network.client.geoip.country.name}
+ 5. Geographic Threat Map (geomap)
+ Query: count:security_signal by {network.client.geoip.country.name}
 
-  6. Top Targeted Users (top list)
-     Query: count:security_signal by {usr.id}
+ 6. Top Targeted Users (top list)
+ Query: count:security_signal by {usr.id}
 
-  7. Mean Time to Triage (query value)
-     Query: avg:security_signal.triage_time
+ 7. Mean Time to Triage (query value)
+ Query: avg:security_signal.triage_time
 
-  8. Open Signals by Severity (table)
-     Query: count:security_signal{status:open} by {severity}
+ 8. Open Signals by Severity (table)
+ Query: count:security_signal{status:open} by {severity}
 ```
 
 ### Step 6: Configure Notification Workflows
@@ -324,29 +324,29 @@ Set up automated notification and response workflows:
 Datadog App > Security > Notification Rules
 
 Rule 1: Critical Signal Escalation
-  Condition: severity:critical
-  Recipients: @pagerduty-soc-critical @slack-security-incidents
-  Message: "CRITICAL security signal: {{signal.rule.name}}
-            Source: {{signal.attributes.network.client.ip}}
-            Target: {{signal.attributes.usr.id}}
-            Details: {{signal.message}}"
+ Condition: severity:critical
+ Recipients: @pagerduty-soc-critical @slack-security-incidents
+ Message: "CRITICAL security signal: {{signal.rule.name}}
+ Source: {{signal.attributes.network.client.ip}}
+ Target: {{signal.attributes.usr.id}}
+ Details: {{signal.message}}"
 
 Rule 2: High Signal SOC Alert
-  Condition: severity:high
-  Recipients: @slack-security-alerts
-  Suppress: After first notification, suppress for 15 minutes
+ Condition: severity:high
+ Recipients: @slack-security-alerts
+ Suppress: After first notification, suppress for 15 minutes
 
 Rule 3: Compliance Violation
-  Condition: rule_type:compliance
-  Recipients: @slack-compliance-team @jira-compliance-board
+ Condition: rule_type:compliance
+ Recipients: @slack-compliance-team @jira-compliance-board
 
 Workflow Automation (Datadog Workflows):
-  Trigger: Security signal with severity:critical
-  Steps:
-    1. Enrich signal with threat intelligence lookup
-    2. Create Jira incident ticket
-    3. Send Slack notification with investigation context
-    4. If source is AWS: Trigger Lambda to isolate resource
+ Trigger: Security signal with severity:critical
+ Steps:
+ 1. Enrich signal with threat intelligence lookup
+ 2. Create Jira incident ticket
+ 3. Send Slack notification with investigation context
+ 4. If source is AWS: Trigger Lambda to isolate resource
 ```
 
 ### Step 7: Validate and Tune Detection Coverage
@@ -378,23 +378,23 @@ configuration = Configuration()
 # Reads DD_API_KEY and DD_APP_KEY from environment
 
 with ApiClient(configuration) as api_client:
-    api = SecurityMonitoringApi(api_client)
-    signals = api.search_security_monitoring_signals(
-        body={
-            "filter": {
-                "query": "status:open severity:critical",
-                "from": "now-24h",
-                "to": "now",
-            },
-            "sort": {"field": "timestamp", "order": "desc"},
-            "page": {"limit": 25},
-        }
-    )
-    for signal in signals.data:
-        attrs = signal.attributes
-        print(f"[{attrs.severity}] {attrs.title}")
-        print(f"  Rule: {attrs.custom.get('rule', {}).get('name', 'N/A')}")
-        print(f"  Time: {attrs.timestamp}")
+ api = SecurityMonitoringApi(api_client)
+ signals = api.search_security_monitoring_signals(
+ body={
+ "filter": {
+ "query": "status:open severity:critical",
+ "from": "now-24h",
+ "to": "now",
+ },
+ "sort": {"field": "timestamp", "order": "desc"},
+ "page": {"limit": 25},
+ }
+ )
+ for signal in signals.data:
+ attrs = signal.attributes
+ print(f"[{attrs.severity}] {attrs.title}")
+ print(f" Rule: {attrs.custom.get('rule', {}).get('name', 'N/A')}")
+ print(f" Time: {attrs.timestamp}")
 ```
 
 ## Key Concepts

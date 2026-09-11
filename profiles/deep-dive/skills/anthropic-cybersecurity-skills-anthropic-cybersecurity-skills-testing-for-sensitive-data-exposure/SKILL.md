@@ -1,8 +1,8 @@
 ---
 name: testing-for-sensitive-data-exposure
 description: Identifying sensitive data exposure vulnerabilities including API key
-  leakage, PII in responses, insecure storage, and unprotected data transmission during
-  security assessments.
+ leakage, PII in responses, insecure storage, and unprotected data transmission during
+ security assessments.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -65,22 +65,22 @@ Search JavaScript files, HTML source, and other client-side resources for expose
 ```bash
 # Download and search JavaScript files for secrets
 curl -s "https://target.example.com/" | \
-  grep -oP 'src="[^"]*\.js[^"]*"' | \
-  grep -oP '"[^"]*"' | tr -d '"' | while read js; do
-    echo "=== Scanning: $js ==="
-    # Handle relative URLs
-    if [[ "$js" == /* ]]; then
-      curl -s "https://target.example.com$js"
-    else
-      curl -s "$js"
-    fi | grep -inE \
-      "(api[_-]?key|apikey|api[_-]?secret|aws[_-]?access|aws[_-]?secret|private[_-]?key|password|secret|token|auth|credential|AKIA[0-9A-Z]{16})" \
-      | head -20
+ grep -oP 'src="[^"]*\.js[^"]*"' | \
+ grep -oP '"[^"]*"' | tr -d '"' | while read js; do
+ echo "=== Scanning: $js ==="
+ # Handle relative URLs
+ if [[ "$js" == /* ]]; then
+ curl -s "https://target.example.com$js"
+ else
+ curl -s "$js"
+ fi | grep -inE \
+ "(api[_-]?key|apikey|api[_-]?secret|aws[_-]?access|aws[_-]?secret|private[_-]?key|password|secret|token|auth|credential|AKIA[0-9A-Z]{16})" \
+ | head -20
 done
 
 # Search for common secret patterns
 curl -s "https://target.example.com/static/app.js" | grep -nP \
-  "(AIza[0-9A-Za-z-_]{35}|AKIA[0-9A-Z]{16}|sk-[a-zA-Z0-9]{48}|ghp_[a-zA-Z0-9]{36}|xox[bpsa]-[0-9a-zA-Z-]{10,})"
+ "(AIza[0-9A-Za-z-_]{35}|AKIA[0-9A-Z]{16}|sk-[a-zA-Z0-9]{48}|ghp_[a-zA-Z0-9]{36}|xox[bpsa]-[0-9a-zA-Z-]{10,})"
 
 # Check source maps for exposed source code
 curl -s "https://target.example.com/static/app.js.map" | head -c 500
@@ -88,16 +88,16 @@ curl -s "https://target.example.com/static/app.js.map" | head -c 500
 
 # Search HTML source for exposed data
 curl -s "https://target.example.com/" | grep -inE \
-  "(api_key|secret|password|token|private_key|database_url|smtp_password)" | head -20
+ "(api_key|secret|password|token|private_key|database_url|smtp_password)" | head -20
 
 # Check for exposed .env or configuration files
 for file in .env .env.local .env.production config.json settings.json \
-  .aws/credentials .docker/config.json; do
-  status=$(curl -s -o /dev/null -w "%{http_code}" \
-    "https://target.example.com/$file")
-  if [ "$status" == "200" ]; then
-    echo "FOUND: $file ($status)"
-  fi
+ .aws/credentials .docker/config.json; do
+ status=$(curl -s -o /dev/null -w "%{http_code}" \
+ "https://target.example.com/$file")
+ if [ "$status" == "200" ]; then
+ echo "FOUND: $file ($status)"
+ fi
 done
 ```
 
@@ -108,7 +108,7 @@ Check if API endpoints return more data than necessary.
 ```bash
 # Fetch user profile and examine response fields
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/users/me" | jq .
+ "https://target.example.com/api/users/me" | jq .
 
 # Look for sensitive fields that should not be exposed:
 # - password, password_hash, password_salt
@@ -121,25 +121,25 @@ curl -s -H "Authorization: Bearer $TOKEN" \
 
 # Check list endpoints for excessive data
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/users" | jq '.[0] | keys'
+ "https://target.example.com/api/users" | jq '.[0] | keys'
 
 # Compare public vs authenticated responses
 echo "=== Public ==="
 curl -s "https://target.example.com/api/users/1" | jq 'keys'
 echo "=== Authenticated ==="
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/users/1" | jq 'keys'
+ "https://target.example.com/api/users/1" | jq 'keys'
 
 # Check error responses for information leakage
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"invalid": "data"}' \
-  "https://target.example.com/api/users" | jq .
+ -H "Content-Type: application/json" \
+ -d '{"invalid": "data"}' \
+ "https://target.example.com/api/users" | jq .
 # Look for: stack traces, database queries, internal paths, version info
 
 # Test for PII in search/autocomplete responses
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/search?q=john" | jq .
+ "https://target.example.com/api/search?q=john" | jq .
 # May return full user records instead of just names
 ```
 
@@ -193,23 +193,23 @@ curl -s -I "https://target.example.com/login" | grep -i "set-cookie"
 # 5. Cookies: Check for sensitive data in cookie values
 
 # Common insecure storage patterns:
-# localStorage.setItem('access_token', 'eyJ...');  // XSS can steal
+# localStorage.setItem('access_token', 'eyJ...'); // XSS can steal
 # localStorage.setItem('user', JSON.stringify({email: '...', ssn: '...'}));
 # sessionStorage.setItem('credit_card', '4111...');
 
 # Check for autocomplete on sensitive forms
 curl -s "https://target.example.com/login" | \
-  grep -oP '<input[^>]*(password|credit|ssn|card)[^>]*>' | \
-  grep -v 'autocomplete="off"'
+ grep -oP '<input[^>]*(password|credit|ssn|card)[^>]*>' | \
+ grep -v 'autocomplete="off"'
 # Password and credit card fields should have autocomplete="off"
 
 # Check Cache-Control headers on sensitive pages
 for page in /account/profile /api/users/me /transactions /billing; do
-  echo -n "$page: "
-  curl -s -I "https://target.example.com$page" \
-    -H "Authorization: Bearer $TOKEN" | \
-    grep -i "cache-control" | tr -d '\r'
-  echo
+ echo -n "$page: "
+ curl -s -I "https://target.example.com$page" \
+ -H "Authorization: Bearer $TOKEN" | \
+ grep -i "cache-control" | tr -d '\r'
+ echo
 done
 # Sensitive pages should have: Cache-Control: no-store
 ```
@@ -258,35 +258,35 @@ Verify that sensitive data is properly masked in the application.
 ```bash
 # Check if credit card numbers are fully displayed
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/payment-methods" | jq .
+ "https://target.example.com/api/payment-methods" | jq .
 # Should show: **** **** **** 4242, not full number
 
 # Check if SSN/national ID is masked
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/users/me" | jq '.ssn'
+ "https://target.example.com/api/users/me" | jq '.ssn'
 # Should show: ***-**-6789, not full SSN
 
 # Check API responses for password hashes
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/users" | jq '.[].password // empty'
+ "https://target.example.com/api/users" | jq '.[].password // empty'
 # Should return nothing; password hashes should never be in API responses
 
 # Check export/download features for unmasked data
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/users/export?format=csv" | head -5
+ "https://target.example.com/api/users/export?format=csv" | head -5
 # CSV exports often contain unmasked PII
 
 # Check logging endpoints for sensitive data
 curl -s -H "Authorization: Bearer $TOKEN" \
-  "https://target.example.com/api/admin/logs" | \
-  grep -iE "(password|token|secret|credit_card|ssn)" | head -10
+ "https://target.example.com/api/admin/logs" | \
+ grep -iE "(password|token|secret|credit_card|ssn)" | head -10
 # Logs should not contain sensitive data in plaintext
 
 # Test for sensitive data in error messages
 curl -s -X POST \
-  -H "Content-Type: application/json" \
-  -d '{"email":"duplicate@test.com"}' \
-  "https://target.example.com/api/register"
+ -H "Content-Type: application/json" \
+ -d '{"email":"duplicate@test.com"}' \
+ "https://target.example.com/api/register"
 # Should not reveal: "User with email duplicate@test.com already exists"
 # Should show: "Registration failed" (generic)
 ```

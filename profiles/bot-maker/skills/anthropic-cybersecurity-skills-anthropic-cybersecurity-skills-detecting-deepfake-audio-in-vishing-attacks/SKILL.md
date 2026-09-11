@@ -41,33 +41,33 @@ mitre_attack:
 - T1566
 - T1598
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - reconnaissance
-  - initial-access
-  - stealth
-  - monetization
-  techniques:
-  - id: F1032
-    name: Impersonate Official
-    tactic: initial-access
-    source: f3
-  - id: F1031
-    name: Impersonate Account Holder
-    tactic: initial-access
-    source: f3
-  - id: F1040
-    name: Phone Number Spoofing
-    tactic: stealth
-    source: f3
-  - id: F1034
-    name: Interactive Voice Response Mapping
-    tactic: reconnaissance
-    source: f3
-  - id: F1025.003
-    name: 'Electronic Funds Transfer: Wire Transfer'
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - reconnaissance
+ - initial-access
+ - stealth
+ - monetization
+ techniques:
+ - id: F1032
+ name: Impersonate Official
+ tactic: initial-access
+ source: f3
+ - id: F1031
+ name: Impersonate Account Holder
+ tactic: initial-access
+ source: f3
+ - id: F1040
+ name: Phone Number Spoofing
+ tactic: stealth
+ source: f3
+ - id: F1034
+ name: Interactive Voice Response Mapping
+ tactic: reconnaissance
+ source: f3
+ - id: F1025.003
+ name: 'Electronic Funds Transfer: Wire Transfer'
+ tactic: monetization
+ source: f3
 ---
 
 # Detecting Deepfake Audio in Vishing Attacks
@@ -150,20 +150,20 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.model_selection import cross_val_score
 
 def build_feature_vector(y, sr):
-    features = []
-    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=20)
-    for coeff in mfccs:
-        features.extend([np.mean(coeff), np.std(coeff), np.min(coeff), np.max(coeff)])
-    for feat_fn in [librosa.feature.spectral_centroid,
-                    librosa.feature.spectral_bandwidth,
-                    librosa.feature.spectral_rolloff,
-                    librosa.feature.zero_crossing_rate]:
-        feat = feat_fn(y=y, sr=sr) if feat_fn != librosa.feature.zero_crossing_rate else feat_fn(y)
-        features.extend([np.mean(feat), np.std(feat), np.min(feat), np.max(feat)])
-    contrast = librosa.feature.spectral_contrast(y=y, sr=sr)
-    for band in contrast:
-        features.extend([np.mean(band), np.std(band)])
-    return np.array(features)
+ features = []
+ mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=20)
+ for coeff in mfccs:
+ features.extend([np.mean(coeff), np.std(coeff), np.min(coeff), np.max(coeff)])
+ for feat_fn in [librosa.feature.spectral_centroid,
+ librosa.feature.spectral_bandwidth,
+ librosa.feature.spectral_rolloff,
+ librosa.feature.zero_crossing_rate]:
+ feat = feat_fn(y=y, sr=sr) if feat_fn != librosa.feature.zero_crossing_rate else feat_fn(y)
+ features.extend([np.mean(feat), np.std(feat), np.min(feat), np.max(feat)])
+ contrast = librosa.feature.spectral_contrast(y=y, sr=sr)
+ for band in contrast:
+ features.extend([np.mean(band), np.std(band)])
+ return np.array(features)
 ```
 
 Classification uses an ensemble approach: Random Forest for robustness and Gradient Boosting for accuracy, with a voting mechanism to reduce false positives.
@@ -192,7 +192,7 @@ import matplotlib.pyplot as plt
 
 fig, axes = plt.subplots(2, 2, figsize=(14, 10))
 librosa.display.specshow(librosa.power_to_db(librosa.feature.melspectrogram(y=y_norm, sr=sr)),
-                         sr=sr, ax=axes[0, 0], x_axis='time', y_axis='mel')
+ sr=sr, ax=axes[0, 0], x_axis='time', y_axis='mel')
 axes[0, 0].set_title('Mel Spectrogram')
 librosa.display.specshow(mfccs, sr=sr, ax=axes[0, 1], x_axis='time')
 axes[0, 1].set_title('MFCCs')
@@ -207,14 +207,14 @@ Compile findings into an actionable report:
 ```
 DEEPFAKE AUDIO ANALYSIS REPORT
 ================================
-File:              suspect_executive_call.wav
-Duration:          47.3 seconds
-Sample Rate:       16000 Hz
-Analysis Date:     2026-03-19
+File: suspect_executive_call.wav
+Duration: 47.3 seconds
+Sample Rate: 16000 Hz
+Analysis Date: 2026-03-19
 
 CLASSIFICATION RESULT
-Verdict:           LIKELY DEEPFAKE (confidence: 94.2%)
-Ensemble Score:    RF=0.91, GBT=0.97, Avg=0.94
+Verdict: LIKELY DEEPFAKE (confidence: 94.2%)
+Ensemble Score: RF=0.91, GBT=0.97, Avg=0.94
 
 FEATURE ANOMALIES DETECTED
 - MFCC variance in coefficients 13-20: 62% below genuine baseline

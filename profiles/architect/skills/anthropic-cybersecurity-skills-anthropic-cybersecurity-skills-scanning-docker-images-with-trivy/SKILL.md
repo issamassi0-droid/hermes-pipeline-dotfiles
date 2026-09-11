@@ -1,14 +1,14 @@
 ---
 name: scanning-docker-images-with-trivy
 description: >-
-  Scans a Docker image with Trivy for vulnerabilities in OS packages and language
-  dependencies, misconfiguration, exposed secrets, and licence violations, emitting SARIF,
-  CycloneDX, or SPDX output. Use when scanning or gating a specific image, wiring an image
-  scan into CI/CD, or checking an image during an incident investigation. Keywords: Trivy,
-  image scan, --severity, --exit-code, SARIF, ignore file, .trivyignore. Do not use for
-  cluster-wide scanning or non-image targets - use
-  performing-container-security-scanning-with-trivy; when the toolchain is Grype use
-  scanning-container-images-with-grype.
+ Scans a Docker image with Trivy for vulnerabilities in OS packages and language
+ dependencies, misconfiguration, exposed secrets, and licence violations, emitting SARIF,
+ CycloneDX, or SPDX output. Use when scanning or gating a specific image, wiring an image
+ scan into CI/CD, or checking an image during an incident investigation. Keywords: Trivy,
+ image scan, --severity, --exit-code, SARIF, ignore file, .trivyignore. Do not use for
+ cluster-wide scanning or non-image targets - use
+ performing-container-security-scanning-with-trivy; when the toolchain is Grype use
+ scanning-container-images-with-grype.
 domain: cybersecurity
 subdomain: container-security
 tags:
@@ -171,51 +171,51 @@ name: Trivy Container Scan
 on: push
 
 jobs:
-  scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+ scan:
+ runs-on: ubuntu-latest
+ steps:
+ - uses: actions/checkout@v4
 
-      - name: Build image
-        run: docker build -t myapp:${{ github.sha }} .
+ - name: Build image
+ run: docker build -t myapp:${{ github.sha }} .
 
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: myapp:${{ github.sha }}
-          format: sarif
-          output: trivy-results.sarif
-          severity: CRITICAL,HIGH
-          exit-code: 1
+ - name: Run Trivy vulnerability scanner
+ uses: aquasecurity/trivy-action@master
+ with:
+ image-ref: myapp:${{ github.sha }}
+ format: sarif
+ output: trivy-results.sarif
+ severity: CRITICAL,HIGH
+ exit-code: 1
 
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: trivy-results.sarif
+ - name: Upload Trivy scan results
+ uses: github/codeql-action/upload-sarif@v3
+ if: always()
+ with:
+ sarif_file: trivy-results.sarif
 
-      - name: Generate SBOM
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: myapp:${{ github.sha }}
-          format: cyclonedx
-          output: sbom.cdx.json
+ - name: Generate SBOM
+ uses: aquasecurity/trivy-action@master
+ with:
+ image-ref: myapp:${{ github.sha }}
+ format: cyclonedx
+ output: sbom.cdx.json
 ```
 
 ```yaml
 # GitLab CI
 trivy-scan:
-  stage: security
-  image:
-    name: aquasecurity/trivy:latest
-    entrypoint: [""]
-  script:
-    - trivy image --exit-code 1 --severity CRITICAL,HIGH
-        --format json --output gl-container-scanning-report.json
-        $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
-  artifacts:
-    reports:
-      container_scanning: gl-container-scanning-report.json
+ stage: security
+ image:
+ name: aquasecurity/trivy:latest
+ entrypoint: [""]
+ script:
+ - trivy image --exit-code 1 --severity CRITICAL,HIGH
+ --format json --output gl-container-scanning-report.json
+ $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+ artifacts:
+ reports:
+ container_scanning: gl-container-scanning-report.json
 ```
 
 ### Step 6: Policy Enforcement with .trivyignore
@@ -263,7 +263,7 @@ trivy image --severity CRITICAL python:3.12
 
 # Verify no CRITICAL vulnerabilities
 trivy image --exit-code 1 --severity CRITICAL myapp:latest
-echo "Exit code: $?"  # 0 = no vulns, 1 = vulns found
+echo "Exit code: $?" # 0 = no vulns, 1 = vulns found
 ```
 
 ## References

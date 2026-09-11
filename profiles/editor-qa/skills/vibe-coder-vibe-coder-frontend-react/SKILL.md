@@ -1,10 +1,10 @@
 ---
 name: frontend-react
 description: |
-  Modern React stack: React 19, TypeScript, Tailwind CSS, Vite, TanStack Query.
-  Use when: building React apps, components, state management, or UI.
-  Triggers: "react", "frontend", "tailwind", "vite", "typescript react",
-  "component", "useState", "tanstack", "react query".
+ Modern React stack: React 19, TypeScript, Tailwind CSS, Vite, TanStack Query.
+ Use when: building React apps, components, state management, or UI.
+ Triggers: "react", "frontend", "tailwind", "vite", "typescript react",
+ "component", "useState", "tanstack", "react query".
 ---
 
 # React Frontend Stack
@@ -52,10 +52,10 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
-  resolve: {
-    alias: { '@': '/src' },
-  },
+ plugins: [react(), tailwindcss()],
+ resolve: {
+ alias: { '@': '/src' },
+ },
 });
 ```
 
@@ -70,18 +70,18 @@ export default defineConfig({
 
 ```
 src/
-├── main.tsx             # Entry point
-├── App.tsx              # Root component
-├── index.css            # Tailwind imports
+├── main.tsx # Entry point
+├── App.tsx # Root component
+├── index.css # Tailwind imports
 ├── components/
-│   ├── ui/              # Reusable UI (Button, Input, Card)
-│   └── features/        # Feature components
-├── pages/               # Route components
-├── hooks/               # Custom hooks
-├── stores/              # Zustand stores
-├── api/                 # API client, queries
-├── types/               # TypeScript types
-└── lib/                 # Utilities
+│ ├── ui/ # Reusable UI (Button, Input, Card)
+│ └── features/ # Feature components
+├── pages/ # Route components
+├── hooks/ # Custom hooks
+├── stores/ # Zustand stores
+├── api/ # API client, queries
+├── types/ # TypeScript types
+└── lib/ # Utilities
 ```
 
 ## Component Patterns
@@ -90,25 +90,25 @@ src/
 
 ```tsx
 interface UserCardProps {
-  user: User;
-  onEdit?: (id: string) => void;
+ user: User;
+ onEdit?: (id: string) => void;
 }
 
 export function UserCard({ user, onEdit }: UserCardProps) {
-  return (
-    <div className="rounded-lg border p-4">
-      <h3 className="font-semibold">{user.name}</h3>
-      <p className="text-sm text-gray-600">{user.email}</p>
-      {onEdit && (
-        <button
-          onClick={() => onEdit(user.id)}
-          className="mt-2 text-blue-600 hover:underline"
-        >
-          Edit
-        </button>
-      )}
-    </div>
-  );
+ return (
+ <div className="rounded-lg border p-4">
+ <h3 className="font-semibold">{user.name}</h3>
+ <p className="text-sm text-gray-600">{user.email}</p>
+ {onEdit && (
+ <button
+ onClick={() => onEdit(user.id)}
+ className="mt-2 text-blue-600 hover:underline"
+ >
+ Edit
+ </button>
+ )}
+ </div>
+ );
 }
 ```
 
@@ -116,18 +116,18 @@ export function UserCard({ user, onEdit }: UserCardProps) {
 
 ```tsx
 interface CardProps {
-  title: string;
-  children: React.ReactNode;
-  className?: string;
+ title: string;
+ children: React.ReactNode;
+ className?: string;
 }
 
 export function Card({ title, children, className }: CardProps) {
-  return (
-    <div className={cn("rounded-lg border bg-white p-6", className)}>
-      <h2 className="mb-4 text-lg font-semibold">{title}</h2>
-      {children}
-    </div>
-  );
+ return (
+ <div className={cn("rounded-lg border bg-white p-6", className)}>
+ <h2 className="mb-4 text-lg font-semibold">{title}</h2>
+ {children}
+ </div>
+ );
 }
 ```
 
@@ -135,32 +135,32 @@ export function Card({ title, children, className }: CardProps) {
 
 ```tsx
 type ButtonProps<T extends React.ElementType = 'button'> = {
-  as?: T;
-  variant?: 'primary' | 'secondary';
-  children: React.ReactNode;
+ as?: T;
+ variant?: 'primary' | 'secondary';
+ children: React.ReactNode;
 } & React.ComponentPropsWithoutRef<T>;
 
 export function Button<T extends React.ElementType = 'button'>({
-  as,
-  variant = 'primary',
-  children,
-  className,
-  ...props
+ as,
+ variant = 'primary',
+ children,
+ className,
+ ...props
 }: ButtonProps<T>) {
-  const Component = as || 'button';
-  return (
-    <Component
-      className={cn(
-        'px-4 py-2 rounded-md font-medium',
-        variant === 'primary' && 'bg-blue-600 text-white',
-        variant === 'secondary' && 'bg-gray-200 text-gray-800',
-        className
-      )}
-      {...props}
-    >
-      {children}
-    </Component>
-  );
+ const Component = as || 'button';
+ return (
+ <Component
+ className={cn(
+ 'px-4 py-2 rounded-md font-medium',
+ variant === 'primary' && 'bg-blue-600 text-white',
+ variant === 'secondary' && 'bg-gray-200 text-gray-800',
+ className
+ )}
+ {...props}
+ >
+ {children}
+ </Component>
+ );
 }
 
 // Usage
@@ -174,16 +174,16 @@ export function Button<T extends React.ElementType = 'button'>({
 
 ```tsx
 function useLocalStorage<T>(key: string, initialValue: T) {
-  const [value, setValue] = useState<T>(() => {
-    const stored = localStorage.getItem(key);
-    return stored ? JSON.parse(stored) : initialValue;
-  });
+ const [value, setValue] = useState<T>(() => {
+ const stored = localStorage.getItem(key);
+ return stored ? JSON.parse(stored) : initialValue;
+ });
 
-  useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(value));
-  }, [key, value]);
+ useEffect(() => {
+ localStorage.setItem(key, JSON.stringify(value));
+ }, [key, value]);
 
-  return [value, setValue] as const;
+ return [value, setValue] as const;
 }
 ```
 
@@ -191,14 +191,14 @@ function useLocalStorage<T>(key: string, initialValue: T) {
 
 ```tsx
 function useDebounce<T>(value: T, delay: number): T {
-  const [debounced, setDebounced] = useState(value);
+ const [debounced, setDebounced] = useState(value);
 
-  useEffect(() => {
-    const timer = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
+ useEffect(() => {
+ const timer = setTimeout(() => setDebounced(value), delay);
+ return () => clearTimeout(timer);
+ }, [value, delay]);
 
-  return debounced;
+ return debounced;
 }
 ```
 
@@ -211,16 +211,16 @@ function useDebounce<T>(value: T, delay: number): T {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 60 * 1000,
-      retry: 1,
-    },
-  },
+ defaultOptions: {
+ queries: {
+ staleTime: 60 * 1000,
+ retry: 1,
+ },
+ },
 });
 
 <QueryClientProvider client={queryClient}>
-  <App />
+ <App />
 </QueryClientProvider>
 ```
 
@@ -231,34 +231,34 @@ const queryClient = new QueryClient({
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 export function useUsers() {
-  return useQuery({
-    queryKey: ['users'],
-    queryFn: () => fetch('/api/users').then(r => r.json()),
-  });
+ return useQuery({
+ queryKey: ['users'],
+ queryFn: () => fetch('/api/users').then(r => r.json()),
+ });
 }
 
 export function useUser(id: string) {
-  return useQuery({
-    queryKey: ['users', id],
-    queryFn: () => fetch(`/api/users/${id}`).then(r => r.json()),
-    enabled: !!id,
-  });
+ return useQuery({
+ queryKey: ['users', id],
+ queryFn: () => fetch(`/api/users/${id}`).then(r => r.json()),
+ enabled: !!id,
+ });
 }
 
 export function useCreateUser() {
-  const queryClient = useQueryClient();
+ const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (data: CreateUser) =>
-      fetch('/api/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
-      }).then(r => r.json()),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['users'] });
-    },
-  });
+ return useMutation({
+ mutationFn: (data: CreateUser) =>
+ fetch('/api/users', {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify(data),
+ }).then(r => r.json()),
+ onSuccess: () => {
+ queryClient.invalidateQueries({ queryKey: ['users'] });
+ },
+ });
 }
 ```
 
@@ -266,20 +266,20 @@ export function useCreateUser() {
 
 ```tsx
 function UserList() {
-  const { data: users, isLoading, error } = useUsers();
-  const createUser = useCreateUser();
+ const { data: users, isLoading, error } = useUsers();
+ const createUser = useCreateUser();
 
-  if (isLoading) return <Spinner />;
-  if (error) return <Error message={error.message} />;
+ if (isLoading) return <Spinner />;
+ if (error) return <Error message={error.message} />;
 
-  return (
-    <div>
-      {users.map(user => <UserCard key={user.id} user={user} />)}
-      <button onClick={() => createUser.mutate({ name: 'New' })}>
-        Add User
-      </button>
-    </div>
-  );
+ return (
+ <div>
+ {users.map(user => <UserCard key={user.id} user={user} />)}
+ <button onClick={() => createUser.mutate({ name: 'New' })}>
+ Add User
+ </button>
+ </div>
+ );
 }
 ```
 
@@ -291,22 +291,22 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 interface AuthState {
-  user: User | null;
-  token: string | null;
-  login: (user: User, token: string) => void;
-  logout: () => void;
+ user: User | null;
+ token: string | null;
+ login: (user: User, token: string) => void;
+ logout: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      user: null,
-      token: null,
-      login: (user, token) => set({ user, token }),
-      logout: () => set({ user: null, token: null }),
-    }),
-    { name: 'auth-storage' }
-  )
+ persist(
+ (set) => ({
+ user: null,
+ token: null,
+ login: (user, token) => set({ user, token }),
+ logout: () => set({ user: null, token: null }),
+ }),
+ { name: 'auth-storage' }
+ )
 );
 
 // Usage
@@ -319,39 +319,39 @@ const { user, login, logout } = useAuthStore();
 import { useState, FormEvent } from 'react';
 
 function LoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errors, setErrors] = useState<Record<string, string>>({});
+ const [email, setEmail] = useState('');
+ const [password, setPassword] = useState('');
+ const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    setErrors({});
+ const handleSubmit = async (e: FormEvent) => {
+ e.preventDefault();
+ setErrors({});
 
-    if (!email) {
-      setErrors(prev => ({ ...prev, email: 'Required' }));
-      return;
-    }
+ if (!email) {
+ setErrors(prev => ({ ...prev, email: 'Required' }));
+ return;
+ }
 
-    // Submit...
-  };
+ // Submit...
+ };
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <input
-          type="email"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="w-full rounded border px-3 py-2"
-          placeholder="Email"
-        />
-        {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
-      </div>
-      <button type="submit" className="w-full rounded bg-blue-600 py-2 text-white">
-        Login
-      </button>
-    </form>
-  );
+ return (
+ <form onSubmit={handleSubmit} className="space-y-4">
+ <div>
+ <input
+ type="email"
+ value={email}
+ onChange={e => setEmail(e.target.value)}
+ className="w-full rounded border px-3 py-2"
+ placeholder="Email"
+ />
+ {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
+ </div>
+ <button type="submit" className="w-full rounded bg-blue-600 py-2 text-white">
+ Login
+ </button>
+ </form>
+ );
 }
 ```
 

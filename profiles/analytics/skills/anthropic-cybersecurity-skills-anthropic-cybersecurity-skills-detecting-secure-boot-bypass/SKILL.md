@@ -1,11 +1,11 @@
 ---
 name: detecting-secure-boot-bypass
 description: Detect UEFI Secure Boot bypasses and bootkits such as BlackLotus and
-  Bootkitty by verifying Secure Boot state, checking dbx revocation currency, and
-  hashing EFI boot binaries against known-bad sets using mokutil, efi-readvar/dbxtool,
-  CHIPSEC, sbverify/pesign, and Windows Confirm-SecureBootUEFI. Use when auditing
-  fleet dbx rollout after a bootkit advisory or hunting for pre-OS persistence on
-  a suspected-compromised endpoint.
+ Bootkitty by verifying Secure Boot state, checking dbx revocation currency, and
+ hashing EFI boot binaries against known-bad sets using mokutil, efi-readvar/dbxtool,
+ CHIPSEC, sbverify/pesign, and Windows Confirm-SecureBootUEFI. Use when auditing
+ fleet dbx rollout after a bootkit advisory or hunting for pre-OS persistence on
+ a suspected-compromised endpoint.
 domain: cybersecurity
 subdomain: hardware-firmware-security
 tags:
@@ -47,14 +47,14 @@ The core defensive insight is that patching the OS is **not sufficient** — the
 
 - Root/administrator on the target (firmware reads require privilege).
 - Linux tooling:
-  ```bash
-  sudo apt install mokutil efitools sbsigntool dbxtool      # Debian/Ubuntu
-  sudo dnf install mokutil efitools sbsigntools dbxtool     # Fedora/RHEL
-  ```
+ ```bash
+ sudo apt install mokutil efitools sbsigntool dbxtool # Debian/Ubuntu
+ sudo dnf install mokutil efitools sbsigntools dbxtool # Fedora/RHEL
+ ```
 - CHIPSEC (run from a live USB or controlled host; loads a kernel driver):
-  ```bash
-  pip install chipsec        # or build from https://github.com/chipsec/chipsec
-  ```
+ ```bash
+ pip install chipsec # or build from https://github.com/chipsec/chipsec
+ ```
 - Windows tooling: PowerShell (built-in `Confirm-SecureBootUEFI`, `Get-SecureBootUEFI`), and optionally the UEFI dbx update package from Microsoft.
 - The current `dbxupdate` files from https://uefi.org/revocationlistfile to compare against.
 
@@ -82,15 +82,15 @@ The core defensive insight is that patching the OS is **not sufficient** — the
 ### 1. Confirm Secure Boot state (Linux)
 A disabled or setup-mode platform offers no protection.
 ```bash
-mokutil --sb-state                       # "SecureBoot enabled" expected
-bootctl status | grep -i "secure boot"   # systemd-boot view
+mokutil --sb-state # "SecureBoot enabled" expected
+bootctl status | grep -i "secure boot" # systemd-boot view
 # 6 = enabled+user mode on the EFI SecureBoot/SetupMode vars:
 od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-00e098032b8c
 ```
 
 ### 2. Confirm Secure Boot state (Windows)
 ```powershell
-Confirm-SecureBootUEFI        # $true if enabled
+Confirm-SecureBootUEFI # $true if enabled
 # Inspect the raw dbx variable from Windows:
 [System.BitConverter]::ToString((Get-SecureBootUEFI dbx).bytes) | Out-File dbx.hex
 ```
@@ -98,18 +98,18 @@ Confirm-SecureBootUEFI        # $true if enabled
 ### 3. Enumerate the Secure Boot databases
 List db (allowed), dbx (revoked), KEK, and PK.
 ```bash
-efi-readvar                      # dumps PK, KEK, db, dbx
-efi-readvar -v dbx -o dbx.esl    # export dbx to a file for offline analysis
-mokutil --list-enrolled          # MOK (shim) enrolled keys
-mokutil --db                     # platform db entries via shim
+efi-readvar # dumps PK, KEK, db, dbx
+efi-readvar -v dbx -o dbx.esl # export dbx to a file for offline analysis
+mokutil --list-enrolled # MOK (shim) enrolled keys
+mokutil --db # platform db entries via shim
 ```
 
 ### 4. Assess dbx freshness and applied revocations
 Compare on-system dbx to the current official UEFI revocation list.
 ```bash
-dbxtool --list                                   # current dbx entries + count
+dbxtool --list # current dbx entries + count
 # Download latest dbxupdate from uefi.org/revocationlistfile, then:
-dbxtool --dbx ./DBXUpdate.bin --apply --dry-run  # show what WOULD be added (no write)
+dbxtool --dbx ./DBXUpdate.bin --apply --dry-run # show what WOULD be added (no write)
 ```
 A low dbx entry count or absence of recent revocations indicates the platform is behind and likely still vulnerable to known bypasses.
 
@@ -158,7 +158,7 @@ find /boot/efi -newermt "-30 days" -iname '*.efi'
 ### 9. Validate measured-boot evidence (optional pivot)
 If a TPM is present, current PCR[7] reflects Secure Boot policy; deviations corroborate tampering.
 ```bash
-tpm2_pcrread sha256:7        # Secure Boot policy PCR
+tpm2_pcrread sha256:7 # Secure Boot policy PCR
 ```
 
 ### 10. Run the bundled assessment helper

@@ -1,10 +1,10 @@
 ---
 name: emulating-cloud-attacks-with-stratus-red-team
 description: Install and run Stratus Red Team to detonate granular, MITRE ATT&CK-mapped
-  AWS, Azure, GCP, and Kubernetes attack techniques through their warmup-detonate-revert-cleanup
-  lifecycle, then verify the telemetry they generate. Use to validate that cloud detections
-  (CloudTrail, GuardDuty, Microsoft Sentinel, GCP SCC, Falco) actually fire, or to run a
-  repeatable purple-team exercise generating realistic attacker telemetry.
+ AWS, Azure, GCP, and Kubernetes attack techniques through their warmup-detonate-revert-cleanup
+ lifecycle, then verify the telemetry they generate. Use to validate that cloud detections
+ (CloudTrail, GuardDuty, Microsoft Sentinel, GCP SCC, Falco) actually fire, or to run a
+ repeatable purple-team exercise generating realistic attacker telemetry.
 domain: cybersecurity
 subdomain: cloud-security
 tags:
@@ -47,34 +47,34 @@ This skill covers installing Stratus, listing and filtering the technique catalo
 ## Prerequisites
 
 - Stratus Red Team binary (Go 1.23+ to build from source, or Homebrew/Docker):
-  ```bash
-  # Go install
-  go install -v github.com/datadog/stratus-red-team/v2/cmd/stratus@latest
+ ```bash
+ # Go install
+ go install -v github.com/datadog/stratus-red-team/v2/cmd/stratus@latest
 
-  # Homebrew
-  brew tap datadog/stratus-red-team https://github.com/DataDog/stratus-red-team
-  brew install datadog/stratus-red-team/stratus-red-team
+ # Homebrew
+ brew tap datadog/stratus-red-team https://github.com/DataDog/stratus-red-team
+ brew install datadog/stratus-red-team/stratus-red-team
 
-  # Docker
-  docker run --rm -v $HOME/.stratus-red-team/:/root/.stratus-red-team/ \
-    -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN \
-    ghcr.io/datadog/stratus-red-team list
-  ```
+ # Docker
+ docker run --rm -v $HOME/.stratus-red-team/:/root/.stratus-red-team/ \
+ -e AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY -e AWS_SESSION_TOKEN \
+ ghcr.io/datadog/stratus-red-team list
+ ```
 - Authenticated cloud credentials for the target provider:
-  ```bash
-  # AWS — verify identity before detonating
-  export AWS_PROFILE=stratus-lab
-  aws sts get-caller-identity
+ ```bash
+ # AWS — verify identity before detonating
+ export AWS_PROFILE=stratus-lab
+ aws sts get-caller-identity
 
-  # Azure
-  az login
+ # Azure
+ az login
 
-  # GCP
-  gcloud auth application-default login
+ # GCP
+ gcloud auth application-default login
 
-  # Kubernetes
-  kubectl config current-context
-  ```
+ # Kubernetes
+ kubectl config current-context
+ ```
 - A dedicated, non-production lab account or subscription (techniques create real resources)
 - Terraform is embedded; no separate install is required, but outbound HTTPS to download provider plugins on first warmup is needed
 
@@ -137,22 +137,22 @@ Check lifecycle state, then pull the corresponding control-plane logs to confirm
 stratus status
 # Pull recent CloudTrail events to verify the detonation
 aws cloudtrail lookup-events \
-  --lookup-attributes AttributeKey=EventName,AttributeValue=CreateAccessKey \
-  --max-results 10
+ --lookup-attributes AttributeKey=EventName,AttributeValue=CreateAccessKey \
+ --max-results 10
 ```
 
 ### 6. Validate the detection
 Confirm your SIEM/detection fired. Example: query Athena/CloudTrail or check GuardDuty findings.
 ```bash
 aws guardduty list-findings --detector-id "$DETECTOR_ID" \
-  --finding-criteria '{"Criterion":{"updatedAt":{"GreaterThanOrEqual":'"$(date -d '-1 hour' +%s)"'000}}}'
+ --finding-criteria '{"Criterion":{"updatedAt":{"GreaterThanOrEqual":'"$(date -d '-1 hour' +%s)"'000}}}'
 ```
 
 ### 7. Revert side effects to re-detonate
 Undo the detonation while keeping prerequisites so you can iterate on a detection.
 ```bash
 stratus revert aws.credential-access.ec2-steal-instance-credentials
-stratus detonate aws.credential-access.ec2-steal-instance-credentials   # run again
+stratus detonate aws.credential-access.ec2-steal-instance-credentials # run again
 ```
 
 ### 8. Clean up all infrastructure
@@ -161,7 +161,7 @@ Tear down everything a technique created. Always finish here.
 stratus cleanup aws.credential-access.ec2-steal-instance-credentials
 # Nuke everything Stratus ever provisioned in this account
 stratus cleanup --all
-stratus status   # confirm COLD state for all techniques
+stratus status # confirm COLD state for all techniques
 ```
 
 ### 9. Drive it programmatically for coverage runs
@@ -197,10 +197,10 @@ did not, you have found a coverage gap; document it before cleaning up.
 ## Cost and Safety Notes
 
 - Some techniques provision billable resources (EC2 instances, EBS snapshots). Always
-  run `stratus cleanup --all` and verify `stratus status` returns COLD.
+ run `stratus cleanup --all` and verify `stratus status` returns COLD.
 - Never run Stratus with production credentials; use a dedicated lab account/subscription.
 - The state directory `~/.stratus-red-team/` holds Terraform state — preserve it until
-  cleanup completes, or you may strand resources.
+ cleanup completes, or you may strand resources.
 
 ## Lifecycle State Reference
 

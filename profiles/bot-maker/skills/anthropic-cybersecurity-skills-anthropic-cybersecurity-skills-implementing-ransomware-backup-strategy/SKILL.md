@@ -1,12 +1,12 @@
 ---
 name: implementing-ransomware-backup-strategy
 description: 'Designs a ransomware-resilient backup strategy using the 3-2-1-1-0
-  methodology (3 copies, 2 media types, 1 offsite, 1 immutable/air-gapped, 0 restore
-  errors), configuring RPO/RTO-aligned schedules, isolating backup credentials, and
-  automating restore testing. Use when planning ransomware backup resilience or air-gapped/immutable
-  backup architecture.
+ methodology (3 copies, 2 media types, 1 offsite, 1 immutable/air-gapped, 0 restore
+ errors), configuring RPO/RTO-aligned schedules, isolating backup credentials, and
+ automating restore testing. Use when planning ransomware backup resilience or air-gapped/immutable
+ backup architecture.
 
-  '
+ '
 domain: cybersecurity
 subdomain: ransomware-defense
 tags:
@@ -41,27 +41,27 @@ mitre_attack:
 - T1003
 - T1110
 mitre_f3:
-  version: '1.1'
-  tactics:
-  - positioning
-  - monetization
-  techniques:
-  - id: T1531
-    name: Account Access Removal
-    tactic: positioning
-    source: attack
-  - id: F1018
-    name: Convert to Cryptocurrency
-    tactic: monetization
-    source: f3
-  - id: F1047
-    name: Transfer of funds
-    tactic: monetization
-    source: f3
-  - id: F1017.001
-    name: 'Conversion to Physical Monetary Instruments: Cash'
-    tactic: monetization
-    source: f3
+ version: '1.1'
+ tactics:
+ - positioning
+ - monetization
+ techniques:
+ - id: T1531
+ name: Account Access Removal
+ tactic: positioning
+ source: attack
+ - id: F1018
+ name: Convert to Cryptocurrency
+ tactic: monetization
+ source: f3
+ - id: F1047
+ name: Transfer of funds
+ tactic: monetization
+ source: f3
+ - id: F1017.001
+ name: 'Conversion to Physical Monetary Instruments: Cash'
+ tactic: monetization
+ source: f3
 ---
 # Implementing Ransomware Backup Strategy
 
@@ -186,36 +186,36 @@ sudo chown veeamuser:veeamuser /mnt/veeam-repo/backups
 ```bash
 # Create bucket with Object Lock enabled
 aws s3api create-bucket \
-  --bucket company-immutable-backups \
-  --object-lock-enabled-for-bucket \
-  --region us-east-1
+ --bucket company-immutable-backups \
+ --object-lock-enabled-for-bucket \
+ --region us-east-1
 
 # Set default retention - 30 days compliance mode
 aws s3api put-object-lock-configuration \
-  --bucket company-immutable-backups \
-  --object-lock-configuration '{
-    "ObjectLockEnabled": "Enabled",
-    "Rule": {
-      "DefaultRetention": {
-        "Mode": "COMPLIANCE",
-        "Days": 30
-      }
-    }
-  }'
+ --bucket company-immutable-backups \
+ --object-lock-configuration '{
+ "ObjectLockEnabled": "Enabled",
+ "Rule": {
+ "DefaultRetention": {
+ "Mode": "COMPLIANCE",
+ "Days": 30
+ }
+ }
+ }'
 ```
 
 **Azure Immutable Blob Storage:**
 ```bash
 # Create storage account with immutable storage
 az storage container immutability-policy create \
-  --account-name backupaccount \
-  --container-name immutable-backups \
-  --period 30
+ --account-name backupaccount \
+ --container-name immutable-backups \
+ --period 30
 
 # Lock the policy (irreversible)
 az storage container immutability-policy lock \
-  --account-name backupaccount \
-  --container-name immutable-backups
+ --account-name backupaccount \
+ --container-name immutable-backups
 ```
 
 ### Step 5: Automate Restore Testing
@@ -233,10 +233,10 @@ $sureBackupJob = Get-VSBJob -Name "Tier1-RestoreTest"
 # Verify last restore test completed successfully
 $lastSession = Get-VSBSession -Job $sureBackupJob -Last
 if ($lastSession.Result -ne "Success") {
-    Send-MailMessage -To "backup-team@company.com" `
-        -Subject "ALERT: SureBackup verification failed" `
-        -Body "Tier 1 restore test failed. Last result: $($lastSession.Result)" `
-        -SmtpServer "smtp.company.com"
+ Send-MailMessage -To "backup-team@company.com" `
+ -Subject "ALERT: SureBackup verification failed" `
+ -Body "Tier 1 restore test failed. Last result: $($lastSession.Result)" `
+ -SmtpServer "smtp.company.com"
 }
 ```
 

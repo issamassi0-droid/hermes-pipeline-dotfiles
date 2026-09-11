@@ -1,11 +1,11 @@
 ---
 name: manimgl-best-practices
 description: |
-  Trigger when: (1) User mentions "manimgl" or "ManimGL" or "3b1b manim", (2) Code contains `from manimlib import *`, (3) User runs `manimgl` CLI commands, (4) Working with InteractiveScene, self.frame, self.embed(), ShowCreation(), or ManimGL-specific patterns.
+ Trigger when: (1) User mentions "manimgl" or "ManimGL" or "3b1b manim", (2) Code contains `from manimlib import *`, (3) User runs `manimgl` CLI commands, (4) Working with InteractiveScene, self.frame, self.embed(), ShowCreation(), or ManimGL-specific patterns.
 
-  Best practices for ManimGL (Grant Sanderson's 3Blue1Brown version) - OpenGL-based animation engine with interactive development. Covers InteractiveScene, Tex with t2c, camera frame control, interactive mode (-se flag), 3D rendering, and checkpoint_paste() workflow.
+ Best practices for ManimGL (Grant Sanderson's 3Blue1Brown version) - OpenGL-based animation engine with interactive development. Covers InteractiveScene, Tex with t2c, camera frame control, interactive mode (-se flag), 3D rendering, and checkpoint_paste() workflow.
 
-  NOT for Manim Community Edition (which uses `manim` imports and `manim` CLI).
+ NOT for Manim Community Edition (which uses `manim` imports and `manim` CLI).
 ---
 
 ## How to use
@@ -70,18 +70,18 @@ Copy and modify these templates to start new projects:
 from manimlib import *
 
 class MyScene(InteractiveScene):
-    def construct(self):
-        # Create mobjects
-        circle = Circle()
+ def construct(self):
+ # Create mobjects
+ circle = Circle()
 
-        # Add to scene (static)
-        self.add(circle)
+ # Add to scene (static)
+ self.add(circle)
 
-        # Or animate
-        self.play(ShowCreation(circle))  # Note: ShowCreation, not Create
+ # Or animate
+ self.play(ShowCreation(circle)) # Note: ShowCreation, not Create
 
-        # Wait
-        self.wait(1)
+ # Wait
+ self.wait(1)
 ```
 
 ### Render Command
@@ -124,8 +124,8 @@ manimgl scene.py MyScene -se 20
 In interactive mode:
 ```python
 # Copy code to clipboard, then run:
-checkpoint_paste()           # Run with animations
-checkpoint_paste(skip=True)  # Run instantly (no animations)
+checkpoint_paste() # Run with animations
+checkpoint_paste(skip=True) # Run instantly (no animations)
 checkpoint_paste(record=True) # Record while running
 ```
 
@@ -153,8 +153,8 @@ formula = Tex(R"\int_0^1 x^2 \, dx = \frac{1}{3}")
 
 # Color mapping with t2c
 equation = Tex(
-    R"E = mc^2",
-    t2c={"E": BLUE, "m": GREEN, "c": YELLOW}
+ R"E = mc^2",
+ t2c={"E": BLUE, "m": GREEN, "c": YELLOW}
 )
 
 # Isolate substrings for animation
@@ -167,20 +167,20 @@ formula.set_color_by_tex("n", BLUE)
 #### Embedding for debugging
 ```python
 def construct(self):
-    circle = Circle()
-    self.play(ShowCreation(circle))
-    self.embed()  # Drops into IPython shell here
+ circle = Circle()
+ self.play(ShowCreation(circle))
+ self.embed() # Drops into IPython shell here
 ```
 
 #### Set floor plane for 3D
 ```python
-self.set_floor_plane("xz")  # Makes xy the viewing plane
+self.set_floor_plane("xz") # Makes xy the viewing plane
 ```
 
 #### Backstroke for text readability
 ```python
 text = Text("Label")
-text.set_backstroke(BLACK, 5)  # Black outline behind text
+text.set_backstroke(BLACK, 5) # Black outline behind text
 ```
 
 ### Installation

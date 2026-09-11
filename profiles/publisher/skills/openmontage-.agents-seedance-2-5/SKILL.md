@@ -1,7 +1,7 @@
 ---
 name: seedance-2-5
 description: |
-  Generate 4-30 second cinematic video with ByteDance Seedance 2.5 through fal.ai, Volcengine Ark, Runway, or ComfyUI Partner Nodes. Use for long single generations, synchronized audio, and large multimodal reference sets (up to 30 images, 10 videos, and 10 audio clips). Also covers the 2.5 prompt contract: section order, multi-shot "Hard cut" breakdown, named locks for continuity across cuts, the asset and character-sheet method, voice conditioning, and iteration discipline.
+ Generate 4-30 second cinematic video with ByteDance Seedance 2.5 through fal.ai, Volcengine Ark, Runway, or ComfyUI Partner Nodes. Use for long single generations, synchronized audio, and large multimodal reference sets (up to 30 images, 10 videos, and 10 audio clips). Also covers the 2.5 prompt contract: section order, multi-shot "Hard cut" breakdown, named locks for continuity across cuts, the asset and character-sheet method, voice conditioning, and iteration discipline.
 ---
 
 # Seedance 2.5
@@ -33,7 +33,7 @@ public API schema does not list Seedance 2.5.
 - Up to 10 reference videos.
 - Up to 10 reference audio clips.
 - Keep combined reference video/audio duration within the provider's documented
-  ceiling; Runway caps it at 30 seconds.
+ ceiling; Runway caps it at 30 seconds.
 - For Runway video-to-video, the source video consumes one video slot.
 
 Reference inputs are provider-specific. fal.ai uses `image_urls`, `video_urls`,
@@ -63,42 +63,42 @@ degrade the output generally — it breaks it in a specific, predictable way.
 
 ```
 GLOBAL STYLE
-  Genre, color grade, film stock or digital look, aspect ratio, shutter behavior,
-  and anything that must not appear. Everything below must match this.
+ Genre, color grade, film stock or digital look, aspect ratio, shutter behavior,
+ and anything that must not appear. Everything below must match this.
 
 SCENE
-  A one-line logline: what happens, where, in what mood.
+ A one-line logline: what happens, where, in what mood.
 
 CHARACTERS
-  Face, hair, build, wardrobe. If a reference covers this, just name which
-  reference is which character.
+ Face, hair, build, wardrobe. If a reference covers this, just name which
+ reference is which character.
 
 LOCATION
-  The space and its props, separate from the people in it. A vague location is
-  the single most common reason a multi-shot sequence drifts between cuts.
+ The space and its props, separate from the people in it. A vague location is
+ the single most common reason a multi-shot sequence drifts between cuts.
 
 FIRST FRAME AND BLOCKING
-  Exact starting positions: who is where, facing which direction, as the clip
-  opens. Something fixed before any motion starts.
+ Exact starting positions: who is where, facing which direction, as the clip
+ opens. Something fixed before any motion starts.
 
 Shot 1: [shot type] [action in one or two sentences]. Hard cut.
 Shot 2: [...]. Hard cut.
 Shot 3: [...].
-  Pacing is built here. State camera distance and framing per shot: vague
-  transitions are the most common cause of a sequence collapsing.
+ Pacing is built here. State camera distance and framing per shot: vague
+ transitions are the most common cause of a sequence collapsing.
 
 OPTICS / CAMERA
-  Focal length, camera height, handheld or dolly or crane, per shot.
+ Focal length, camera height, handheld or dolly or crane, per shot.
 
 PHYSICS
-  Fabric, smoke, hair, liquid. Anything that would look wrong moving like a solid.
+ Fabric, smoke, hair, liquid. Anything that would look wrong moving like a solid.
 
 LIGHTING
-  Where the light is motivated from, its direction, how it falls on faces.
+ Where the light is motivated from, its direction, how it falls on faces.
 
 AUDIO
-  Ambience, specific effects, and what must not be heard. Default:
-  "No music, no discernible dialogue", unless the scene needs otherwise.
+ Ambience, specific effects, and what must not be heard. Default:
+ "No music, no discernible dialogue", unless the scene needs otherwise.
 ```
 
 The shape working prompts share: **one visual rule at the top, one sound rule at the
@@ -229,13 +229,13 @@ not an offline fallback.
 Iteration discipline that keeps that cost bounded:
 
 - **Lock the assets before generating anything.** The model has no memory: re-describe
-  everything, every time.
+ everything, every time.
 - **Change one thing per iteration**, or you will not know which change fixed it.
 - **At 10 to 15 failed iterations, simplify or split the scene, not the wording.**
 - Explore at the lowest resolution the route offers and only re-run what works.
 - Keep a log of version, what changed, and verdict.
 - **Judge the whole clip, never a single frame.** A good still can come from a generation
-  that falls apart at second 9.
+ that falls apart at second 9.
 - Land cuts on movement, never on a still pose.
 
 ---

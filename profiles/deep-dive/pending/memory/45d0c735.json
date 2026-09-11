@@ -1,14 +1,14 @@
 {
-  "id": "45d0c735",
-  "subsystem": "memory",
-  "action": "replace",
-  "summary": "background review consolidation (replace on user): - replace: User: GitHub issamassi0-droid. Old laptop, no paid services budget. Installs LLM proxies in ~/.local/share/llm-proxy (home). Values profes",
-  "origin": "background_review",
-  "created_at": 1789084006.0548103,
-  "payload": {
-    "action": "replace",
-    "target": "user",
-    "content": "Massi. Arabic-speaking system architect building multi-agent AI frameworks on Hermes. Old laptop, no budget for paid services. GitHub: issamassi0-droid. Uses FreeLLMAPI proxy at localhost:3001. ObsidianVault at /home/massi/ObsidianVault/ is the shared vault for ALL outputs. Direct, execution-focused — prefers action over discussion.",
-    "old_text": "User: GitHub issamassi0-droid. Old laptop, no paid services budget. Installs LLM proxies in ~/.local/share/llm-proxy (home). Values professional shader differentiation for Omarchy ink mode plugin. Prefers muted warm color palette, low-blue for eye comfort. Customizes Omarchy ink mode shaders and pushes to personal GitHub. Technically sophisticated, notices mode similarity, drives all theme/shader choices."
-  }
+ "id": "45d0c735",
+ "subsystem": "memory",
+ "action": "replace",
+ "summary": "background review consolidation (replace on user): - replace: User: GitHub issamassi0-droid. Old laptop, no paid services budget. Installs LLM proxies in ~/.local/share/llm-proxy (home). Values profes",
+ "origin": "background_review",
+ "created_at": 1789084006.0548103,
+ "payload": {
+ "action": "replace",
+ "target": "user",
+ "content": "Massi. Arabic-speaking system architect building multi-agent AI frameworks on Hermes. Old laptop, no budget for paid services. GitHub: issamassi0-droid. Uses FreeLLMAPI proxy at localhost:3001. ObsidianVault at /home/massi/ObsidianVault/ is the shared vault for ALL outputs. Direct, execution-focused — prefers action over discussion.",
+ "old_text": "User: GitHub issamassi0-droid. Old laptop, no paid services budget. Installs LLM proxies in ~/.local/share/llm-proxy (home). Values professional shader differentiation for Omarchy ink mode plugin. Prefers muted warm color palette, low-blue for eye comfort. Customizes Omarchy ink mode shaders and pushes to personal GitHub. Technically sophisticated, notices mode similarity, drives all theme/shader choices."
+ }
 }

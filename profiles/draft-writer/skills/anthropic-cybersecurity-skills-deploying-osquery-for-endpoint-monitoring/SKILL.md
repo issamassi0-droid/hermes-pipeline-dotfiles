@@ -1,13 +1,13 @@
 ---
 name: deploying-osquery-for-endpoint-monitoring
 description: 'Deploys and configures osquery for real-time endpoint monitoring using
-  SQL-based queries to inspect running processes, open ports, installed software,
-  and system configuration. Use when building visibility into endpoint state, threat
-  hunting across fleet, or implementing compliance monitoring. Activates for requests
-  involving osquery deployment, endpoint visibility, fleet management, or SQL-based
-  endpoint querying.
+ SQL-based queries to inspect running processes, open ports, installed software,
+ and system configuration. Use when building visibility into endpoint state, threat
+ hunting across fleet, or implementing compliance monitoring. Activates for requests
+ involving osquery deployment, endpoint visibility, fleet management, or SQL-based
+ endpoint querying.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -74,63 +74,63 @@ brew install osquery
 ```json
 // /etc/osquery/osquery.conf (Linux/macOS) or C:\ProgramData\osquery\osquery.conf
 {
-  "options": {
-    "config_plugin": "filesystem",
-    "logger_plugin": "filesystem",
-    "logger_path": "/var/log/osquery",
-    "disable_logging": "false",
-    "schedule_splay_percent": "10",
-    "events_expiry": "3600",
-    "verbose": "false",
-    "worker_threads": "2",
-    "enable_monitor": "true",
-    "disable_events": "false",
-    "disable_audit": "false",
-    "audit_allow_config": "true",
-    "host_identifier": "hostname",
-    "enable_syslog": "true"
-  },
-  "schedule": {
-    "process_monitor": {
-      "query": "SELECT pid, name, path, cmdline, uid, parent FROM processes WHERE on_disk = 0;",
-      "interval": 300,
-      "description": "Detect processes running without on-disk binary (fileless)"
-    },
-    "listening_ports": {
-      "query": "SELECT DISTINCT p.name, p.path, lp.port, lp.protocol, lp.address FROM listening_ports lp JOIN processes p ON lp.pid = p.pid WHERE lp.port != 0;",
-      "interval": 600,
-      "description": "Monitor listening network ports"
-    },
-    "persistence_check": {
-      "query": "SELECT name, path, source FROM startup_items;",
-      "interval": 3600,
-      "description": "Monitor persistence mechanisms"
-    },
-    "installed_packages": {
-      "query": "SELECT name, version, source FROM deb_packages;",
-      "interval": 86400,
-      "description": "Daily software inventory"
-    },
-    "users_and_groups": {
-      "query": "SELECT u.username, u.uid, u.gid, u.shell, u.directory FROM users u WHERE u.uid >= 1000;",
-      "interval": 3600
-    },
-    "crontab_monitor": {
-      "query": "SELECT * FROM crontab;",
-      "interval": 3600,
-      "description": "Monitor scheduled tasks"
-    },
-    "suid_binaries": {
-      "query": "SELECT path, username, permissions FROM suid_bin;",
-      "interval": 86400,
-      "description": "Detect SUID binaries"
-    }
-  },
-  "packs": {
-    "incident-response": "/usr/share/osquery/packs/incident-response.conf",
-    "ossec-rootkit": "/usr/share/osquery/packs/ossec-rootkit.conf",
-    "vuln-management": "/usr/share/osquery/packs/vuln-management.conf"
-  }
+ "options": {
+ "config_plugin": "filesystem",
+ "logger_plugin": "filesystem",
+ "logger_path": "/var/log/osquery",
+ "disable_logging": "false",
+ "schedule_splay_percent": "10",
+ "events_expiry": "3600",
+ "verbose": "false",
+ "worker_threads": "2",
+ "enable_monitor": "true",
+ "disable_events": "false",
+ "disable_audit": "false",
+ "audit_allow_config": "true",
+ "host_identifier": "hostname",
+ "enable_syslog": "true"
+ },
+ "schedule": {
+ "process_monitor": {
+ "query": "SELECT pid, name, path, cmdline, uid, parent FROM processes WHERE on_disk = 0;",
+ "interval": 300,
+ "description": "Detect processes running without on-disk binary (fileless)"
+ },
+ "listening_ports": {
+ "query": "SELECT DISTINCT p.name, p.path, lp.port, lp.protocol, lp.address FROM listening_ports lp JOIN processes p ON lp.pid = p.pid WHERE lp.port != 0;",
+ "interval": 600,
+ "description": "Monitor listening network ports"
+ },
+ "persistence_check": {
+ "query": "SELECT name, path, source FROM startup_items;",
+ "interval": 3600,
+ "description": "Monitor persistence mechanisms"
+ },
+ "installed_packages": {
+ "query": "SELECT name, version, source FROM deb_packages;",
+ "interval": 86400,
+ "description": "Daily software inventory"
+ },
+ "users_and_groups": {
+ "query": "SELECT u.username, u.uid, u.gid, u.shell, u.directory FROM users u WHERE u.uid >= 1000;",
+ "interval": 3600
+ },
+ "crontab_monitor": {
+ "query": "SELECT * FROM crontab;",
+ "interval": 3600,
+ "description": "Monitor scheduled tasks"
+ },
+ "suid_binaries": {
+ "query": "SELECT path, username, permissions FROM suid_bin;",
+ "interval": 86400,
+ "description": "Detect SUID binaries"
+ }
+ },
+ "packs": {
+ "incident-response": "/usr/share/osquery/packs/incident-response.conf",
+ "ossec-rootkit": "/usr/share/osquery/packs/ossec-rootkit.conf",
+ "vuln-management": "/usr/share/osquery/packs/vuln-management.conf"
+ }
 }
 ```
 
@@ -156,10 +156,10 @@ WHERE path LIKE '/usr/bin/%' AND mtime > (strftime('%s', 'now') - 86400);
 SELECT DISTINCT p.name, p.path, pn.remote_address, pn.remote_port
 FROM process_open_sockets pn JOIN processes p ON pn.pid = p.pid
 WHERE pn.remote_address NOT LIKE '10.%'
-  AND pn.remote_address NOT LIKE '172.16.%'
-  AND pn.remote_address NOT LIKE '192.168.%'
-  AND pn.remote_address != '127.0.0.1'
-  AND pn.remote_address != '0.0.0.0';
+ AND pn.remote_address NOT LIKE '172.16.%'
+ AND pn.remote_address NOT LIKE '192.168.%'
+ AND pn.remote_address != '127.0.0.1'
+ AND pn.remote_address != '0.0.0.0';
 
 -- Windows: Detect unsigned running executables
 SELECT p.name, p.path, a.result AS signature_status

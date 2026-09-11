@@ -1,13 +1,13 @@
 ---
 name: implementing-endpoint-dlp-controls
 description: 'Implements endpoint Data Loss Prevention (DLP) controls to detect and
-  prevent sensitive data exfiltration through email, USB, cloud storage, and printing.
-  Use when deploying DLP agents, creating content inspection policies, or preventing
-  unauthorized data movement from endpoints. Activates for requests involving DLP,
-  data exfiltration prevention, content inspection, or sensitive data protection on
-  endpoints.
+ prevent sensitive data exfiltration through email, USB, cloud storage, and printing.
+ Use when deploying DLP agents, creating content inspection policies, or preventing
+ unauthorized data movement from endpoints. Activates for requests involving DLP,
+ data exfiltration prevention, content inspection, or sensitive data protection on
+ endpoints.
 
-  '
+ '
 domain: cybersecurity
 subdomain: endpoint-security
 tags:
@@ -74,9 +74,9 @@ Built-in SITs for common data:
 - Bank account number
 
 Custom SIT example (Employee ID):
-  Pattern: EMP-[0-9]{6}
-  Confidence: High
-  Keywords: "employee id", "emp id", "staff number"
+ Pattern: EMP-[0-9]{6}
+ Confidence: High
+ Keywords: "employee id", "emp id", "staff number"
 ```
 
 ### Step 2: Create DLP Policy
@@ -88,15 +88,15 @@ Policy Configuration:
 1. Template: Financial / Medical / PII (or custom)
 2. Locations: Devices (endpoint DLP)
 3. Conditions:
-   - Content contains: Credit card numbers (min 5 instances)
-   - OR Content contains: SSN (min 1 instance)
+ - Content contains: Credit card numbers (min 5 instances)
+ - OR Content contains: SSN (min 1 instance)
 4. Actions:
-   - Block: Prevent copy to USB, cloud, email
-   - Audit: Log but allow (for initial deployment)
-   - Notify: Show user notification with policy tip
+ - Block: Prevent copy to USB, cloud, email
+ - Audit: Log but allow (for initial deployment)
+ - Notify: Show user notification with policy tip
 5. User notifications:
-   - "This file contains sensitive data and cannot be copied to this location"
-   - Allow override with business justification (optional)
+ - "This file contains sensitive data and cannot be copied to this location"
+ - Allow override with business justification (optional)
 ```
 
 ### Step 3: Configure Endpoint DLP Activities

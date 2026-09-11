@@ -1,14 +1,14 @@
 ---
 name: performing-post-quantum-cryptography-migration
 description: 'Assesses organizational readiness for post-quantum cryptography migration
-  per NIST FIPS 203/204/205 standards. Performs cryptographic inventory scanning to
-  identify quantum-vulnerable algorithms (RSA, ECDH, ECDSA), evaluates hybrid TLS
-  configurations with X25519MLKEM768, and validates CRYSTALS-Kyber (ML-KEM) and CRYSTALS-Dilithium
-  (ML-DSA) readiness. Implements crypto-agility assessment using oqs-provider for
-  OpenSSL. Use when planning or executing the transition from classical to post-quantum
-  cryptographic algorithms across enterprise infrastructure.
+ per NIST FIPS 203/204/205 standards. Performs cryptographic inventory scanning to
+ identify quantum-vulnerable algorithms (RSA, ECDH, ECDSA), evaluates hybrid TLS
+ configurations with X25519MLKEM768, and validates CRYSTALS-Kyber (ML-KEM) and CRYSTALS-Dilithium
+ (ML-DSA) readiness. Implements crypto-agility assessment using oqs-provider for
+ OpenSSL. Use when planning or executing the transition from classical to post-quantum
+ cryptographic algorithms across enterprise infrastructure.
 
-  '
+ '
 domain: cybersecurity
 subdomain: cryptography
 tags:
@@ -99,7 +99,7 @@ These classical algorithms are vulnerable to quantum attack via Shor's algorithm
 - **2030**: Deprecation of quantum-vulnerable algorithms for most federal systems
 - **2035**: Complete removal of quantum-vulnerable algorithms from NIST standards
 - **Now**: "Harvest now, decrypt later" attacks make early migration essential for
-  long-lived secrets and data requiring long-term confidentiality
+ long-lived secrets and data requiring long-term confidentiality
 
 ### Hybrid TLS Key Exchange
 
@@ -108,15 +108,15 @@ a post-quantum algorithm. If either algorithm is secure, the connection remains 
 
 ```
 Hybrid Key Exchange: X25519MLKEM768
-  = X25519 (classical ECDH) + ML-KEM-768 (post-quantum)
+ = X25519 (classical ECDH) + ML-KEM-768 (post-quantum)
 
 Client Hello:
-  supported_groups: X25519MLKEM768, X25519, secp256r1
-  key_share: X25519MLKEM768
+ supported_groups: X25519MLKEM768, X25519, secp256r1
+ key_share: X25519MLKEM768
 
 Server Hello:
-  selected_group: X25519MLKEM768
-  key_share: X25519MLKEM768
+ selected_group: X25519MLKEM768
+ key_share: X25519MLKEM768
 
 Shared Secret = KDF(X25519_shared || MLKEM768_shared)
 ```
@@ -132,8 +132,8 @@ key stores, and protocol configurations.
 ```python
 # Scan TLS endpoints for quantum-vulnerable algorithms
 python scripts/agent.py --action scan_tls \
-    --targets targets.txt \
-    --output tls_inventory.json
+ --targets targets.txt \
+ --output tls_inventory.json
 ```
 
 The scanner identifies:
@@ -151,8 +151,8 @@ major infrastructure changes:
 ```python
 # Assess crypto-agility readiness
 python scripts/agent.py --action assess_agility \
-    --scan-results tls_inventory.json \
-    --output agility_report.json
+ --scan-results tls_inventory.json \
+ --output agility_report.json
 ```
 
 Key assessment areas:
@@ -169,15 +169,15 @@ Test whether infrastructure supports hybrid key exchange with X25519MLKEM768:
 ```python
 # Test hybrid TLS support on target servers
 python scripts/agent.py --action test_hybrid_tls \
-    --target server.example.com:443 \
-    --output hybrid_tls_report.json
+ --target server.example.com:443 \
+ --output hybrid_tls_report.json
 ```
 
 **OpenSSL 3.5+ (native ML-KEM support):**
 ```bash
 # Test with native PQC support
 openssl s_client -connect server.example.com:443 \
-    -groups X25519MLKEM768
+ -groups X25519MLKEM768
 ```
 
 **OpenSSL 3.0-3.4 with oqs-provider:**
@@ -201,7 +201,7 @@ module = /usr/lib/oqs-provider/oqsprovider.so
 # Test hybrid TLS
 OPENSSL_CONF=/etc/ssl/openssl-oqs.cnf \
 openssl s_client -connect server.example.com:443 \
-    -groups x25519_mlkem768
+ -groups x25519_mlkem768
 ```
 
 **Web Server Configuration for Hybrid TLS:**
@@ -230,7 +230,7 @@ environment:
 ```python
 # Test ML-KEM key encapsulation at all security levels
 python scripts/agent.py --action test_mlkem \
-    --output mlkem_validation.json
+ --output mlkem_validation.json
 ```
 
 ML-KEM parameter comparison:
@@ -250,7 +250,7 @@ Validate ML-DSA (CRYSTALS-Dilithium) signature operations:
 ```python
 # Test ML-DSA digital signatures
 python scripts/agent.py --action test_mldsa \
-    --output mldsa_validation.json
+ --output mldsa_validation.json
 ```
 
 ML-DSA parameter comparison:
@@ -269,9 +269,9 @@ Generate a prioritized migration roadmap based on inventory and assessment resul
 ```python
 # Generate complete migration roadmap
 python scripts/agent.py --action roadmap \
-    --scan-results tls_inventory.json \
-    --agility-results agility_report.json \
-    --output migration_roadmap.json
+ --scan-results tls_inventory.json \
+ --agility-results agility_report.json \
+ --output migration_roadmap.json
 ```
 
 The roadmap prioritizes systems by:

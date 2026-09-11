@@ -1,10 +1,10 @@
 ---
 name: vibe-coder
 description: |
-  Describe your idea, get a deployed product. All Craft Coder skills + brainstorm, validation, marketing.
-  Use when: user wants to build something from an idea, prototype, or MVP.
-  Triggers: "build app", "create website", "make MVP", "I have an idea",
-  "хочу приложение", "создать сайт", "сделать MVP".
+ Describe your idea, get a deployed product. All Craft Coder skills + brainstorm, validation, marketing.
+ Use when: user wants to build something from an idea, prototype, or MVP.
+ Triggers: "build app", "create website", "make MVP", "I have an idea",
+ "хочу приложение", "создать сайт", "сделать MVP".
 ---
 
 # Vibe Coder
@@ -15,11 +15,11 @@ Describe what you want. Get a deployed product.
 
 ```
 You: "I want an app for tracking expenses"
-     ↓
+ ↓
 Claude: Asks a few questions
-     ↓
+ ↓
 Claude: Builds everything (hidden complexity)
-     ↓
+ ↓
 You: ✅ Done! [Preview] [Deploy]
 ```
 

@@ -1,7 +1,7 @@
 ---
 name: extracting-windows-event-logs-artifacts
 description: Extract, parse, and analyze Windows Event Logs (EVTX) using Chainsaw,
-  Hayabusa, and EvtxECmd to detect lateral movement, persistence, and privilege escalation.
+ Hayabusa, and EvtxECmd to detect lateral movement, persistence, and privilege escalation.
 domain: cybersecurity
 subdomain: digital-forensics
 tags:
@@ -83,31 +83,31 @@ unzip chainsaw_all_platforms+rules.zip -d /opt/chainsaw
 
 # Run Chainsaw with bundled Sigma rules
 /opt/chainsaw/chainsaw hunt /cases/case-2024-001/evtx/ \
-   -s /opt/chainsaw/sigma/rules/ \
-   --mapping /opt/chainsaw/mappings/sigma-event-logs-all.yml \
-   --output /cases/case-2024-001/analysis/chainsaw_results.txt
+ -s /opt/chainsaw/sigma/rules/ \
+ --mapping /opt/chainsaw/mappings/sigma-event-logs-all.yml \
+ --output /cases/case-2024-001/analysis/chainsaw_results.txt
 
 # Run with CSV output for easier analysis
 /opt/chainsaw/chainsaw hunt /cases/case-2024-001/evtx/ \
-   -s /opt/chainsaw/sigma/rules/ \
-   --mapping /opt/chainsaw/mappings/sigma-event-logs-all.yml \
-   --csv \
-   --output /cases/case-2024-001/analysis/chainsaw_results/
+ -s /opt/chainsaw/sigma/rules/ \
+ --mapping /opt/chainsaw/mappings/sigma-event-logs-all.yml \
+ --csv \
+ --output /cases/case-2024-001/analysis/chainsaw_results/
 
 # Run with JSON output
 /opt/chainsaw/chainsaw hunt /cases/case-2024-001/evtx/ \
-   -s /opt/chainsaw/sigma/rules/ \
-   --mapping /opt/chainsaw/mappings/sigma-event-logs-all.yml \
-   --json \
-   --output /cases/case-2024-001/analysis/chainsaw_results.json
+ -s /opt/chainsaw/sigma/rules/ \
+ --mapping /opt/chainsaw/mappings/sigma-event-logs-all.yml \
+ --json \
+ --output /cases/case-2024-001/analysis/chainsaw_results.json
 
 # Search for specific keywords
 /opt/chainsaw/chainsaw search /cases/case-2024-001/evtx/ \
-   -s "mimikatz" --json
+ -s "mimikatz" --json
 
 # Search for specific event IDs
 /opt/chainsaw/chainsaw search /cases/case-2024-001/evtx/ \
-   -e 4688 --json | head -100
+ -e 4688 --json | head -100
 ```
 
 ### Step 3: Run Hayabusa for Fast Timeline Generation
@@ -119,31 +119,31 @@ unzip hayabusa-linux-x64-musl.zip -d /opt/hayabusa
 
 # Generate CSV timeline with all detection rules
 /opt/hayabusa/hayabusa csv-timeline \
-   -d /cases/case-2024-001/evtx/ \
-   -o /cases/case-2024-001/analysis/hayabusa_timeline.csv \
-   -p verbose
+ -d /cases/case-2024-001/evtx/ \
+ -o /cases/case-2024-001/analysis/hayabusa_timeline.csv \
+ -p verbose
 
 # Generate JSON timeline
 /opt/hayabusa/hayabusa json-timeline \
-   -d /cases/case-2024-001/evtx/ \
-   -o /cases/case-2024-001/analysis/hayabusa_timeline.json
+ -d /cases/case-2024-001/evtx/ \
+ -o /cases/case-2024-001/analysis/hayabusa_timeline.json
 
 # Run with only critical and high severity detections
 /opt/hayabusa/hayabusa csv-timeline \
-   -d /cases/case-2024-001/evtx/ \
-   -o /cases/case-2024-001/analysis/hayabusa_critical.csv \
-   -p verbose \
-   --min-level critical
+ -d /cases/case-2024-001/evtx/ \
+ -o /cases/case-2024-001/analysis/hayabusa_critical.csv \
+ -p verbose \
+ --min-level critical
 
 # Generate detection summary (metrics)
 /opt/hayabusa/hayabusa metrics \
-   -d /cases/case-2024-001/evtx/ \
-   -o /cases/case-2024-001/analysis/hayabusa_metrics.csv
+ -d /cases/case-2024-001/evtx/ \
+ -o /cases/case-2024-001/analysis/hayabusa_metrics.csv
 
 # Logon summary
 /opt/hayabusa/hayabusa logon-summary \
-   -d /cases/case-2024-001/evtx/ \
-   -o /cases/case-2024-001/analysis/logon_summary.csv
+ -d /cases/case-2024-001/evtx/ \
+ -o /cases/case-2024-001/analysis/logon_summary.csv
 ```
 
 ### Step 4: Parse Specific Critical Event IDs
@@ -160,51 +160,51 @@ parser = PyEvtxParser("/cases/case-2024-001/evtx/Security.evtx")
 
 # Critical Event IDs mapping
 critical_events = {
-    '4624': 'Successful Logon',
-    '4625': 'Failed Logon',
-    '4634': 'Logoff',
-    '4648': 'Explicit Credential Logon',
-    '4672': 'Special Privileges Assigned',
-    '4688': 'Process Created',
-    '4689': 'Process Exited',
-    '4697': 'Service Installed',
-    '4698': 'Scheduled Task Created',
-    '4720': 'User Account Created',
-    '4724': 'Password Reset Attempted',
-    '4728': 'Member Added to Global Group',
-    '4732': 'Member Added to Local Group',
-    '4756': 'Member Added to Universal Group',
-    '1102': 'Audit Log Cleared',
-    '4688': 'New Process Created'
+ '4624': 'Successful Logon',
+ '4625': 'Failed Logon',
+ '4634': 'Logoff',
+ '4648': 'Explicit Credential Logon',
+ '4672': 'Special Privileges Assigned',
+ '4688': 'Process Created',
+ '4689': 'Process Exited',
+ '4697': 'Service Installed',
+ '4698': 'Scheduled Task Created',
+ '4720': 'User Account Created',
+ '4724': 'Password Reset Attempted',
+ '4728': 'Member Added to Global Group',
+ '4732': 'Member Added to Local Group',
+ '4756': 'Member Added to Universal Group',
+ '1102': 'Audit Log Cleared',
+ '4688': 'New Process Created'
 }
 
 results = {eid: [] for eid in critical_events}
 
 for record in parser.records_json():
-    data = json.loads(record['data'])
-    event_id = str(data['Event']['System']['EventID'])
+ data = json.loads(record['data'])
+ event_id = str(data['Event']['System']['EventID'])
 
-    if event_id in critical_events:
-        event_data = data['Event'].get('EventData', {})
-        results[event_id].append({
-            'timestamp': data['Event']['System']['TimeCreated']['#attributes']['SystemTime'],
-            'event_id': event_id,
-            'description': critical_events[event_id],
-            'data': event_data
-        })
+ if event_id in critical_events:
+ event_data = data['Event'].get('EventData', {})
+ results[event_id].append({
+ 'timestamp': data['Event']['System']['TimeCreated']['#attributes']['SystemTime'],
+ 'event_id': event_id,
+ 'description': critical_events[event_id],
+ 'data': event_data
+ })
 
 # Print summary
 for eid, events in results.items():
-    if events:
-        print(f"\n[{eid}] {critical_events[eid]}: {len(events)} events")
-        for e in events[:3]:
-            print(f"  {e['timestamp']}: {json.dumps(e['data'], default=str)[:200]}")
-        if len(events) > 3:
-            print(f"  ... and {len(events)-3} more")
+ if events:
+ print(f"\n[{eid}] {critical_events[eid]}: {len(events)} events")
+ for e in events[:3]:
+ print(f" {e['timestamp']}: {json.dumps(e['data'], default=str)[:200]}")
+ if len(events) > 3:
+ print(f" ... and {len(events)-3} more")
 
 # Save full results
 with open('/cases/case-2024-001/analysis/critical_events.json', 'w') as f:
-    json.dump(results, f, indent=2, default=str)
+ json.dump(results, f, indent=2, default=str)
 PYEOF
 ```
 
@@ -222,29 +222,29 @@ print("=== PASS-THE-HASH INDICATORS ===")
 print("Looking for: Event 4624, Logon Type 9, NTLM authentication\n")
 
 for record in parser.records_json():
-    data = json.loads(record['data'])
-    event_id = str(data['Event']['System']['EventID'])
+ data = json.loads(record['data'])
+ event_id = str(data['Event']['System']['EventID'])
 
-    if event_id == '4624':
-        event_data = data['Event'].get('EventData', {})
-        logon_type = str(event_data.get('LogonType', ''))
-        auth_package = str(event_data.get('AuthenticationPackageName', ''))
-        logon_process = str(event_data.get('LogonProcessName', ''))
+ if event_id == '4624':
+ event_data = data['Event'].get('EventData', {})
+ logon_type = str(event_data.get('LogonType', ''))
+ auth_package = str(event_data.get('AuthenticationPackageName', ''))
+ logon_process = str(event_data.get('LogonProcessName', ''))
 
-        # Pass-the-Hash indicators
-        if logon_type == '9' and 'NTLM' in auth_package:
-            timestamp = data['Event']['System']['TimeCreated']['#attributes']['SystemTime']
-            target = event_data.get('TargetUserName', 'Unknown')
-            source_ip = event_data.get('IpAddress', 'N/A')
-            print(f"  [{timestamp}] PtH: User={target}, IP={source_ip}, Auth={auth_package}")
+ # Pass-the-Hash indicators
+ if logon_type == '9' and 'NTLM' in auth_package:
+ timestamp = data['Event']['System']['TimeCreated']['#attributes']['SystemTime']
+ target = event_data.get('TargetUserName', 'Unknown')
+ source_ip = event_data.get('IpAddress', 'N/A')
+ print(f" [{timestamp}] PtH: User={target}, IP={source_ip}, Auth={auth_package}")
 
-        # Network logon with NTLM (lateral movement)
-        if logon_type == '3' and 'NTLM' in auth_package:
-            timestamp = data['Event']['System']['TimeCreated']['#attributes']['SystemTime']
-            target = event_data.get('TargetUserName', 'Unknown')
-            source_ip = event_data.get('IpAddress', 'N/A')
-            workstation = event_data.get('WorkstationName', 'N/A')
-            print(f"  [{timestamp}] Network NTLM: User={target}, IP={source_ip}, WS={workstation}")
+ # Network logon with NTLM (lateral movement)
+ if logon_type == '3' and 'NTLM' in auth_package:
+ timestamp = data['Event']['System']['TimeCreated']['#attributes']['SystemTime']
+ target = event_data.get('TargetUserName', 'Unknown')
+ source_ip = event_data.get('IpAddress', 'N/A')
+ workstation = event_data.get('WorkstationName', 'N/A')
+ print(f" [{timestamp}] Network NTLM: User={target}, IP={source_ip}, WS={workstation}")
 PYEOF
 
 # Detect log clearing / anti-forensics
@@ -253,17 +253,17 @@ import json
 from evtx import PyEvtxParser
 
 for log_file in ['Security.evtx', 'System.evtx']:
-    path = f"/cases/case-2024-001/evtx/{log_file}"
-    try:
-        parser = PyEvtxParser(path)
-        for record in parser.records_json():
-            data = json.loads(record['data'])
-            event_id = str(data['Event']['System']['EventID'])
-            if event_id in ('1102', '104'):  # Security log cleared, System log cleared
-                timestamp = data['Event']['System']['TimeCreated']['#attributes']['SystemTime']
-                print(f"LOG CLEARED: [{timestamp}] EventID {event_id} in {log_file}")
-    except Exception as e:
-        print(f"Error parsing {log_file}: {e}")
+ path = f"/cases/case-2024-001/evtx/{log_file}"
+ try:
+ parser = PyEvtxParser(path)
+ for record in parser.records_json():
+ data = json.loads(record['data'])
+ event_id = str(data['Event']['System']['EventID'])
+ if event_id in ('1102', '104'): # Security log cleared, System log cleared
+ timestamp = data['Event']['System']['TimeCreated']['#attributes']['SystemTime']
+ print(f"LOG CLEARED: [{timestamp}] EventID {event_id} in {log_file}")
+ except Exception as e:
+ print(f"Error parsing {log_file}: {e}")
 PYEOF
 ```
 
@@ -311,33 +311,33 @@ Build timeline starting from initial access (4624 from external IP), trace privi
 
 ```
 Windows Event Log Analysis Summary:
-  System: DC01.corp.local (Windows Server 2019)
-  Log Files Analyzed: 15 EVTX files
-  Total Events: 2,456,789
-  Analysis Period: 2024-01-10 to 2024-01-20
+ System: DC01.corp.local (Windows Server 2019)
+ Log Files Analyzed: 15 EVTX files
+ Total Events: 2,456,789
+ Analysis Period: 2024-01-10 to 2024-01-20
 
-  Chainsaw Detections:
-    Critical:  12 (Mimikatz usage, PsExec, log clearing)
-    High:      34 (Network NTLM logons, encoded PowerShell)
-    Medium:    89 (Unusual service installations, scheduled tasks)
-    Low:       234 (Informational)
+ Chainsaw Detections:
+ Critical: 12 (Mimikatz usage, PsExec, log clearing)
+ High: 34 (Network NTLM logons, encoded PowerShell)
+ Medium: 89 (Unusual service installations, scheduled tasks)
+ Low: 234 (Informational)
 
-  Hayabusa Timeline:
-    Total Alerts: 369
-    Unique Rules Triggered: 45
-    Top Rules:
-      - Suspicious NTLM Authentication (34 hits)
-      - PowerShell Download Cradle (12 hits)
-      - Service Installation Suspicious Path (8 hits)
+ Hayabusa Timeline:
+ Total Alerts: 369
+ Unique Rules Triggered: 45
+ Top Rules:
+ - Suspicious NTLM Authentication (34 hits)
+ - PowerShell Download Cradle (12 hits)
+ - Service Installation Suspicious Path (8 hits)
 
-  Critical Findings:
-    2024-01-15 14:32 - RDP brute force (234 failed, 1 success from 203.0.113.45)
-    2024-01-15 14:45 - Admin account created (svcbackup) - Event 4720
-    2024-01-16 02:30 - PsExec service installed on DC01 - Event 4697
-    2024-01-18 03:00 - Security log cleared - Event 1102
+ Critical Findings:
+ 2024-01-15 14:32 - RDP brute force (234 failed, 1 success from 203.0.113.45)
+ 2024-01-15 14:45 - Admin account created (svcbackup) - Event 4720
+ 2024-01-16 02:30 - PsExec service installed on DC01 - Event 4697
+ 2024-01-18 03:00 - Security log cleared - Event 1102
 
-  Reports:
-    Chainsaw: /analysis/chainsaw_results/
-    Hayabusa: /analysis/hayabusa_timeline.csv
-    Critical Events: /analysis/critical_events.json
+ Reports:
+ Chainsaw: /analysis/chainsaw_results/
+ Hayabusa: /analysis/hayabusa_timeline.csv
+ Critical Events: /analysis/critical_events.json
 ```

@@ -1,13 +1,13 @@
 ---
 name: analyzing-security-logs-with-splunk
 description: 'Leverages Splunk Enterprise Security and SPL (Search Processing Language)
-  to investigate security incidents through log correlation, timeline reconstruction,
-  and anomaly detection. Covers Windows event logs, firewall logs, proxy logs, and
-  authentication data analysis. Activates for requests involving Splunk investigation,
-  SPL queries, SIEM log analysis, security event correlation, or log-based incident
-  investigation.
+ to investigate security incidents through log correlation, timeline reconstruction,
+ and anomaly detection. Covers Windows event logs, firewall logs, proxy logs, and
+ authentication data analysis. Activates for requests involving Splunk investigation,
+ SPL queries, SIEM log analysis, security event correlation, or log-based incident
+ investigation.
 
-  '
+ '
 domain: cybersecurity
 subdomain: incident-response
 tags:
@@ -77,8 +77,8 @@ Define search parameters based on incident triage data:
 ```spl
 | Set initial investigation scope
 index=windows OR index=firewall OR index=proxy
-  earliest="2025-11-14T00:00:00" latest="2025-11-16T00:00:00"
-  (host="WKSTN-042" OR src_ip="10.1.5.42" OR user="jsmith")
+ earliest="2025-11-14T00:00:00" latest="2025-11-16T00:00:00"
+ (host="WKSTN-042" OR src_ip="10.1.5.42" OR user="jsmith")
 | stats count by index, sourcetype, host
 | sort -count
 ```
@@ -92,20 +92,20 @@ Investigate suspicious authentication patterns using Windows Security Event Logs
 ```spl
 | Detect brute force and credential stuffing
 index=windows sourcetype="WinEventLog:Security" EventCode=4625
-  earliest=-24h
+ earliest=-24h
 | stats count as failed_attempts, values(src_ip) as source_ips,
-  dc(src_ip) as unique_sources by TargetUserName
+ dc(src_ip) as unique_sources by TargetUserName
 | where failed_attempts > 10
 | sort -failed_attempts
 
 | Detect pass-the-hash (Logon Type 9 - NewCredentials)
 index=windows sourcetype="WinEventLog:Security" EventCode=4624
-  Logon_Type=9
+ Logon_Type=9
 | table _time, host, TargetUserName, src_ip, LogonProcessName
 
 | Detect lateral movement via RDP
 index=windows sourcetype="WinEventLog:Security" EventCode=4624
-  Logon_Type=10
+ Logon_Type=10
 | stats count, values(host) as targets by TargetUserName, src_ip
 | where count > 3
 | sort -count
@@ -118,20 +118,20 @@ Use Sysmon logs to reconstruct process execution chains:
 ```spl
 | Process creation with parent chain (Sysmon Event ID 1)
 index=sysmon EventCode=1 host="WKSTN-042"
-  earliest="2025-11-15T14:00:00" latest="2025-11-15T15:00:00"
+ earliest="2025-11-15T14:00:00" latest="2025-11-15T15:00:00"
 | table _time, ParentImage, ParentCommandLine, Image, CommandLine, User, Hashes
 | sort _time
 
 | Detect suspicious PowerShell execution
 index=sysmon EventCode=1 Image="*\\powershell.exe"
-  (CommandLine="*-enc*" OR CommandLine="*-encodedcommand*"
-   OR CommandLine="*downloadstring*" OR CommandLine="*iex*")
+ (CommandLine="*-enc*" OR CommandLine="*-encodedcommand*"
+ OR CommandLine="*downloadstring*" OR CommandLine="*iex*")
 | table _time, host, User, ParentImage, CommandLine
 | sort _time
 
 | Detect LSASS credential dumping
 index=sysmon EventCode=10 TargetImage="*\\lsass.exe"
-  GrantedAccess=0x1010
+ GrantedAccess=0x1010
 | table _time, host, SourceImage, SourceUser, GrantedAccess
 ```
 
@@ -167,15 +167,15 @@ Reconstruct a unified timeline across all log sources:
 ```spl
 | Unified incident timeline
 index=windows OR index=sysmon OR index=proxy OR index=firewall
-  (host="WKSTN-042" OR src_ip="10.1.5.42" OR user="jsmith")
-  earliest="2025-11-15T14:00:00" latest="2025-11-15T16:00:00"
+ (host="WKSTN-042" OR src_ip="10.1.5.42" OR user="jsmith")
+ earliest="2025-11-15T14:00:00" latest="2025-11-15T16:00:00"
 | eval event_summary=case(
-    sourcetype=="WinEventLog:Security" AND EventCode==4624, "Logon: ".TargetUserName." from ".src_ip,
-    sourcetype=="WinEventLog:Security" AND EventCode==4625, "Failed logon: ".TargetUserName,
-    sourcetype=="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" AND EventCode==1,
-      "Process: ".Image." by ".User,
-    sourcetype=="proxy", "Web: ".http_method." ".url,
-    1==1, sourcetype.": ".EventCode)
+ sourcetype=="WinEventLog:Security" AND EventCode==4624, "Logon: ".TargetUserName." from ".src_ip,
+ sourcetype=="WinEventLog:Security" AND EventCode==4625, "Failed logon: ".TargetUserName,
+ sourcetype=="XmlWinEventLog:Microsoft-Windows-Sysmon/Operational" AND EventCode==1,
+ "Process: ".Image." by ".User,
+ sourcetype=="proxy", "Web: ".http_method." ".url,
+ 1==1, sourcetype.": ".EventCode)
 | table _time, sourcetype, host, event_summary
 | sort _time
 ```
@@ -187,9 +187,9 @@ Convert investigation findings into persistent Splunk correlation searches:
 ```spl
 | Correlation search: PowerShell spawned by Office applications
 index=sysmon EventCode=1
-  Image="*\\powershell.exe"
-  (ParentImage="*\\winword.exe" OR ParentImage="*\\excel.exe"
-   OR ParentImage="*\\outlook.exe")
+ Image="*\\powershell.exe"
+ (ParentImage="*\\winword.exe" OR ParentImage="*\\excel.exe"
+ OR ParentImage="*\\outlook.exe")
 | eval severity="high"
 | eval mitre_technique="T1059.001"
 | collect index=notable_events
@@ -239,15 +239,15 @@ index=sysmon EventCode=1
 ```
 SPLUNK INVESTIGATION REPORT
 ============================
-Incident:        INC-2025-1547
-Analyst:         [Name]
+Incident: INC-2025-1547
+Analyst: [Name]
 Investigation Period: 2025-11-14 00:00 UTC - 2025-11-16 00:00 UTC
 
 SEARCH SCOPE
-Indexes:         windows, sysmon, proxy, firewall, dns
-Hosts:           WKSTN-042, SRV-FILE01
-Users:           jsmith, svc-backup
-Source IPs:      10.1.5.42, 10.1.10.15
+Indexes: windows, sysmon, proxy, firewall, dns
+Hosts: WKSTN-042, SRV-FILE01
+Users: jsmith, svc-backup
+Source IPs: 10.1.5.42, 10.1.10.15
 
 KEY FINDINGS
 1. [timestamp] - Initial compromise via phishing (Sysmon Event 1)

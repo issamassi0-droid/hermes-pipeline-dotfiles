@@ -25,8 +25,8 @@ Tests must verify real behavior, not mock behavior. Mocks are a means to isolate
 ```typescript
 // ❌ BAD: Testing that the mock exists
 test('renders sidebar', () => {
-  render(<Page />);
-  expect(screen.getByTestId('sidebar-mock')).toBeInTheDocument();
+ render(<Page />);
+ expect(screen.getByTestId('sidebar-mock')).toBeInTheDocument();
 });
 ```
 
@@ -36,8 +36,8 @@ test('renders sidebar', () => {
 ```typescript
 // ✅ GOOD: Test real component
 test('renders sidebar', () => {
-  render(<Page />);  // Don't mock sidebar
-  expect(screen.getByRole('navigation')).toBeInTheDocument();
+ render(<Page />); // Don't mock sidebar
+ expect(screen.getByRole('navigation')).toBeInTheDocument();
 });
 ```
 
@@ -45,8 +45,8 @@ test('renders sidebar', () => {
 
 ```
 BEFORE asserting on any mock element:
-  Ask: "Am I testing real behavior or just mock existence?"
-  IF mock existence: STOP - Delete assertion or unmock
+ Ask: "Am I testing real behavior or just mock existence?"
+ IF mock existence: STOP - Delete assertion or unmock
 ```
 
 ## Anti-Pattern 2: Test-Only Methods in Production
@@ -55,9 +55,9 @@ BEFORE asserting on any mock element:
 ```typescript
 // ❌ BAD: destroy() only used in tests
 class Session {
-  async destroy() {  // Looks like production API!
-    await this._workspaceManager?.destroyWorkspace(this.id);
-  }
+ async destroy() { // Looks like production API!
+ await this._workspaceManager?.destroyWorkspace(this.id);
+ }
 }
 ```
 
@@ -68,10 +68,10 @@ class Session {
 // ✅ GOOD: Test utilities handle cleanup
 // In test-utils/
 export async function cleanupSession(session: Session) {
-  const workspace = session.getWorkspaceInfo();
-  if (workspace) {
-    await workspaceManager.destroyWorkspace(workspace.id);
-  }
+ const workspace = session.getWorkspaceInfo();
+ if (workspace) {
+ await workspaceManager.destroyWorkspace(workspace.id);
+ }
 }
 ```
 
@@ -81,9 +81,9 @@ export async function cleanupSession(session: Session) {
 ```typescript
 // ❌ BAD: Mock breaks test logic
 test('detects duplicate', () => {
-  vi.mock('ConfigWriter');  // Prevents config write test depends on!
-  await addServer(config);
-  await addServer(config);  // Should throw - but won't!
+ vi.mock('ConfigWriter'); // Prevents config write test depends on!
+ await addServer(config);
+ await addServer(config); // Should throw - but won't!
 });
 ```
 
@@ -93,9 +93,9 @@ test('detects duplicate', () => {
 ```typescript
 // ✅ GOOD: Mock at correct level
 test('detects duplicate', () => {
-  vi.mock('SlowNetworkCall');  // Mock only the slow part
-  await addServer(config);  // Config written
-  await addServer(config);  // Duplicate detected ✓
+ vi.mock('SlowNetworkCall'); // Mock only the slow part
+ await addServer(config); // Config written
+ await addServer(config); // Duplicate detected ✓
 });
 ```
 
@@ -103,11 +103,11 @@ test('detects duplicate', () => {
 
 ```
 BEFORE mocking any method:
-  1. What side effects does the real method have?
-  2. Does this test depend on any of those side effects?
-  3. Do I fully understand what this test needs?
+ 1. What side effects does the real method have?
+ 2. Does this test depend on any of those side effects?
+ 3. Do I fully understand what this test needs?
 
-  IF unsure: Run test with real implementation FIRST
+ IF unsure: Run test with real implementation FIRST
 ```
 
 ## Anti-Pattern 4: Incomplete Mocks
@@ -116,9 +116,9 @@ BEFORE mocking any method:
 ```typescript
 // ❌ BAD: Partial mock
 const mockResponse = {
-  status: 'success',
-  data: { userId: '123' }
-  // Missing: metadata that downstream code uses
+ status: 'success',
+ data: { userId: '123' }
+ // Missing: metadata that downstream code uses
 };
 ```
 
@@ -126,9 +126,9 @@ const mockResponse = {
 ```typescript
 // ✅ GOOD: Mirror real API completely
 const mockResponse = {
-  status: 'success',
-  data: { userId: '123', name: 'Alice' },
-  metadata: { requestId: 'req-789', timestamp: 1234567890 }
+ status: 'success',
+ data: { userId: '123', name: 'Alice' },
+ metadata: { requestId: 'req-789', timestamp: 1234567890 }
 };
 ```
 

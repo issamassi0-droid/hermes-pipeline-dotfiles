@@ -9,30 +9,30 @@ letter is 612 x 792).
 
 ```json
 {
-  "title": "Example Intake Form",
-  "author": "example-author",
-  "page_size": "A4",
-  "page_count": 1,
-  "fields": [
-    {"name": "surname", "type": "text", "page": 1,
-     "label": "Surname", "label_box": [72, 700, 150, 714],
-     "entry_box": [160, 696, 400, 716],
-     "value": "", "tooltip": "Family name"},
+ "title": "Example Intake Form",
+ "author": "example-author",
+ "page_size": "A4",
+ "page_count": 1,
+ "fields": [
+ {"name": "surname", "type": "text", "page": 1,
+ "label": "Surname", "label_box": [72, 700, 150, 714],
+ "entry_box": [160, 696, 400, 716],
+ "value": "", "tooltip": "Family name"},
 
-    {"name": "agree", "type": "checkbox", "page": 1,
-     "label": "I agree", "label_box": [72, 660, 150, 674],
-     "entry_box": [160, 658, 176, 674], "checked": false},
+ {"name": "agree", "type": "checkbox", "page": 1,
+ "label": "I agree", "label_box": [72, 660, 150, 674],
+ "entry_box": [160, 658, 176, 674], "checked": false},
 
-    {"name": "color", "type": "radio", "page": 1,
-     "label": "Color", "label_box": [72, 620, 150, 634],
-     "entry_box": [160, 616, 400, 636],
-     "options": ["red", "blue"], "value": "blue"},
+ {"name": "color", "type": "radio", "page": 1,
+ "label": "Color", "label_box": [72, 620, 150, 634],
+ "entry_box": [160, 616, 400, 636],
+ "options": ["red", "blue"], "value": "blue"},
 
-    {"name": "size", "type": "dropdown", "page": 1,
-     "label": "Size", "label_box": [72, 580, 150, 594],
-     "entry_box": [160, 576, 300, 596],
-     "options": ["small", "large"], "value": "small"}
-  ]
+ {"name": "size", "type": "dropdown", "page": 1,
+ "label": "Size", "label_box": [72, 580, 150, 594],
+ "entry_box": [160, 576, 300, 596],
+ "options": ["small", "large"], "value": "small"}
+ ]
 }
 ```
 
@@ -40,10 +40,10 @@ letter is 612 x 792).
 - `page_count`: optional; extended automatically to the highest field page.
 - Boxes are `[x0, y0, x1, y1]` with `x0 < x1`, `y0 < y1`.
 - `label` is drawn as static text near `label_box`; omit it (and
-  `label_box`) for unlabeled fields.
+ `label_box`) for unlabeled fields.
 - `radio`: the buttons are laid out left-to-right inside `entry_box`,
-  one slot per option, each with a small static caption. `value`
-  pre-selects an option by its export name.
+ one slot per option, each with a small static caption. `value`
+ pre-selects an option by its export name.
 - `dropdown` maps to an AcroForm choice (combo) field.
 
 ## Field types → what pdf_read.py --fields reports
@@ -66,7 +66,7 @@ Per field, on its declared page:
 - boxes must be well-formed and inside the page bounds;
 - entry boxes must be at least 8x8 pt (12 pt tall for text/dropdown);
 - no two entry boxes on the same page may overlap (the second and later
-  fields of an overlapping cluster are flagged);
+ fields of an overlapping cluster are flagged);
 - a label must sit within 150 pt of its entry box and must not overlap it.
 
 Exit code 0 = clean, 1 = at least one problem; the JSON report lists
@@ -89,11 +89,11 @@ and ask specifically about collisions, alignment, and stray labels.
 ## Radio-group quirks (reportlab + pypdf)
 
 - reportlab requires at least two `radio()` calls per group; a
-  single-option radio group produces a broken field.
+ single-option radio group produces a broken field.
 - Pre-selecting is done at build time via `"value"`; changing selection
-  later via `pdf_fill_form.py` needs the slashed export name (`"/red"`).
+ later via `pdf_fill_form.py` needs the slashed export name (`"/red"`).
 - Some viewers render reportlab radio appearances inconsistently after a
-  pypdf fill; verify with `--fields` (data truth) plus a rendered page
-  image (visual truth) rather than either alone.
+ pypdf fill; verify with `--fields` (data truth) plus a rendered page
+ image (visual truth) rather than either alone.
 - Flattening radio groups is the least reliable flatten case — check the
-  output image before shipping.
+ output image before shipping.
