@@ -5,8 +5,8 @@ language: english
 created: 2026-09-11
 updated: 2026-09-11
 author: "@deep-dive"
-version: "5.0"
-tags: [cabinet-office, multi-agent, report, v1.7.0]
+version: "6.0"
+tags: [cabinet-office, multi-agent, report, v1.8.0]
 status: published
 ---
 
@@ -328,25 +328,23 @@ Extracts lessons from mission history, identifies patterns, generates reusable s
 ✅ 2 evolution proposals
 ```
 
-### 5.16 `reliability-standards.py` — Reliability Standards
+### 5.17 `naming-convention.md` — Three-Layer Naming
 
-Based on MAS-FIRE, MTTR-A, ReliabilityBench, MAESTRO, COCO, CP-WBFT:
+Every agent has three names serving different audiences:
 
-- **15 fault types** (7 intra-agent + 8 inter-agent)
-- **4-tier fault tolerance** (mechanism, rule, prompt, reasoning)
-- **MTTR-A / MTBF / NRR** — recovery time metrics
-- **3D reliability surface** R(k, ε, λ)
-- **Silent gray error detection** (75% of failures)
-- **Byzantine tolerance** (CP-WBFT)
-
-**Actual result:**
-```
-✅ MTTR-A: 7.20s (mean recovery time)
-✅ NRR: 0.000 (needs real operational data)
-✅ Byzantine Tolerance: 6/7 agents faulty → still correctly aggregated
-✅ Gray Error Detection: 3 gray errors detected
-✅ 4-Tier Fault Tolerance: all layers implemented
-```
+| Agent | Technical | Functional | Display |
+|---|---|---|---|
+| @architect | `orchestrator-agent` | Orchestrator | المُنسّق |
+| @omni-researcher | `research-agent-multi` | Multi-Source Researcher | الباحث |
+| @deep-dive | `research-agent-youtube` | YouTube Researcher | باحث يوتيوب |
+| @strategist | `strategy-agent` | Strategist | الاستراتيجي |
+| @draft-writer | `drafting-agent` | Drafter | الكاتب |
+| @editor-qa | `qa-agent` | QA Auditor | المدقق |
+| @publisher | `distribution-agent` | Distributor | الناشر |
+| @analytics | `analytics-agent` | Analyst | المحلّل |
+| @bot-maker | `agent-factory` | Agent Factory | صانع الوكلاء |
+| @omarchy | `system-operator` | System Operator | مشغّل النظام |
+| @scout | `source-monitor` | Source Monitor | الراصد |
 
 ---
 
@@ -425,7 +423,7 @@ Real mission sent to @omni-researcher via `message_agent`:
 
 ---
 
-## 9. New Components v1.7.0 (Update 5.0)
+## 9. New Components v1.8.0 (Update 6.0)
 
 ### 9.1 Fault Tolerance and Reliability
 
@@ -443,6 +441,15 @@ Real mission sent to @omni-researcher via `message_agent`:
 |---|---|---|
 | `quality-gate.py` | 5 hallucination types + trajectory evaluation + self-verification | Trajel, PIES |
 | `self-learning.py` | Lesson extraction + pattern identification + skill generation | GEPA (ICLR 2026), Hermes Agent |
+
+### 9.3 Three-Layer Naming
+
+| File | Function |
+|---|---|
+| `naming-convention.md` | Defines 3 names per agent (technical, functional, display) |
+| `registry.json` update | 3 new fields per agent |
+| `routing.yaml` update | Technical names in all tiers |
+| 11 SOUL.md files | New `## Names` section |
 
 ---
 
@@ -487,10 +494,10 @@ Real mission sent to @omni-researcher via `message_agent`:
 ---
 
 > [!INFO] Report Info
-> **Version:** 5.0 | **Date:** 2026-09-11
-> **Changes from 4.0:**
-> - Version update 1.6.0 → 1.7.0
-> - Added 8 new scripts (fault tolerance, monitoring, dynamic routing, self-learning, reliability standards)
-> - Added Section 9 (New Components)
-> - Added research references (MAS-FIRE, MTTR-A, ReliabilityBench, MAESTRO, COCO, CP-WBFT)
-> - Updated quality metrics (MTTR-A, Byzantine Tolerance)
+> **Version:** 6.0 | **Date:** 2026-09-11
+> **Changes from 5.0:**
+> - Version update 1.7.0 → 1.8.0
+> - Added three-layer naming convention (naming-convention.md)
+> - Updated registry.json with 3 new fields per agent
+> - Updated routing.yaml, protocol.md, and 11 SOUL.md files
+> - Added Section 9.3 (Three-Layer Naming)

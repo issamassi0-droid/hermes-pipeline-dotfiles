@@ -5,8 +5,8 @@ language: arabic
 created: 2026-09-11
 updated: 2026-09-11
 author: "@deep-dive"
-version: "5.0"
-tags: [cabinet-office, multi-agent, report, v1.7.0]
+version: "6.0"
+tags: [cabinet-office, multi-agent, report, v1.8.0]
 status: published
 ---
 
@@ -348,6 +348,24 @@ claim_support_rate: 100% (الهدف > 90% ✅)
 ✅ 4-Tier FaultTolerance: جميع الطبقات مُنفَّكة
 ```
 
+### 5.17 `naming-convention.md` — نظام التسمية الثلاثي
+
+كل وكيل له ثلاثة أسماء تخدم جمهوراً مختلفاً:
+
+| الوكيل | التقني | الوظيفي | للمستخدم |
+|---|---|---|---|
+| @architect | `orchestrator-agent` | Orchestrator | المُنسّق |
+| @omni-researcher | `research-agent-multi` | Multi-Source Researcher | الباحث |
+| @deep-dive | `research-agent-youtube` | YouTube Researcher | باحث يوتيوب |
+| @strategist | `strategy-agent` | Strategist | الاستراتيجي |
+| @draft-writer | `drafting-agent` | Drafter | الكاتب |
+| @editor-qa | `qa-agent` | QA Auditor | المدقق |
+| @publisher | `distribution-agent` | Distributor | الناشر |
+| @analytics | `analytics-agent` | Analyst | المحلّل |
+| @bot-maker | `agent-factory` | Agent Factory | صانع الوكلاء |
+| @omarchy | `system-operator` | System Operator | مشغّل النظام |
+| @scout | `source-monitor` | Source Monitor | الراصد |
+
 ---
 
 ## 6. واجهة التشغيل الموحدة
@@ -425,7 +443,7 @@ python3 ~/.hermes/system/cabinet-office.py override --mission m001 --reason "rej
 
 ---
 
-## 9. المكونات الجديدة v1.7.0 (تحديث 5.0)
+## 9. المكونات الجديدة v1.8.0 (تحديث 6.0)
 
 ### 9.1 تحمل الأعطال والموثوقية
 
@@ -443,6 +461,15 @@ python3 ~/.hermes/system/cabinet-office.py override --mission m001 --reason "rej
 |---|---|---|
 | `quality-gate.py` | 5 أنواع هلوسة + تقييم المسار + تحقق ذاتي | Trajel, PIES |
 | `self-learning.py` | استخلاص دروس + تحديد أنماط + توليد مهارات | GEPA (ICLR 2026), Hermes Agent |
+
+### 9.3 نظام التسمية الثلاثي
+
+| الملف | الوظيفة |
+|---|---|
+| `naming-convention.md` | يُعرّف 3 أسماء لكل وكيل (تقني، وظيفي، للمستخدم) |
+| تحديث `registry.json` | 3 حقول جديدة لكل وكيل |
+| تحديث `routing.yaml` | أسماء تقنية في كل المستويات |
+| تحديث 11 SOUL.md | قسم `## Names` جديد |
 
 ---
 
@@ -487,10 +514,10 @@ python3 ~/.hermes/system/cabinet-office.py override --mission m001 --reason "rej
 ---
 
 > [!INFO] معلومات التقرير
-> **الإصدار:** 5.0 | **التاريخ:** 2026-09-11
-> **التغيير عن 4.0:**
-> - تحديث الإصدار 1.6.0 → 1.7.0
-> - إضافة 8 سكريبتات جديدة (تحمل الأعطال، المراقبة، التوجيه الديناميكي، التعلم الذاتي، معايير الموثوقية)
-> - إضافة القسم 9 (المكونات الجديدة)
-> - إضافة مراجع الأبحاث (MAS-FIRE, MTTR-A, ReliabilityBench, MAESTRO, COCO, CP-WBFT)
-> - تحديث مقاييس الجودة (MTTR-A, Byzantine Tolerance)
+> **الإصدار:** 6.0 | **التاريخ:** 2026-09-11
+> **التغيير عن 5.0:**
+> - تحديث الإصدار 1.7.0 → 1.8.0
+> - إضافة نظام التسمية الثلاثي (naming-convention.md)
+> - تحديث registry.json بـ 3 حقول جديدة لكل وكيل
+> - تحديث routing.yaml و protocol.md و 11 SOUL.md
+> - إضافة القسم 9.3 (نظام التسمية الثلاثي)
