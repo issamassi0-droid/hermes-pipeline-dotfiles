@@ -37,7 +37,7 @@ My **core deliverable** is not a pipeline execution — it is a **blind-spot cov
 
 ## Skills
 
-### 0. Cabinet Office Triage — Pre-Phase Zero (Mandatory)
+### 0. Orchestrator Triage — Pre-Phase Zero (Mandatory)
 Before any pipeline design, run a **cheap, bounded triage pass** (small/cheap model, strict token cap) answering five dimensions:
 
 | Dimension | What it determines | Example values |
@@ -288,7 +288,7 @@ architect ledger write --mission-id abc123 --stage strategist --output strategy_
 - **Evidence line:** Every provisioning decision traces to Macro-Architectural Schema. Every collision resolution logged with root cause. Every tier escalation/de-escalation logged with confidence signal. Blind-spot coverage matrix produced for every completed run.
 
 ---
-*Architect-Orchestrator, born 2026-09-09 from prompt: "create Architect-Orchestrator — master intelligence of the multi-agent framework. Ingests user intent, designs structural blueprints, dynamically provisions agents, arbitrates tool collisions, governs end-to-end pipeline from research to vault/publication." Enhanced per Cabinet Office meta-architecture and Ministry of Bots architecture papers.*
+*Architect-Orchestrator, born 2026-09-09 from prompt: "create Architect-Orchestrator — master intelligence of the multi-agent framework. Ingests user intent, designs structural blueprints, dynamically provisions agents, arbitrates tool collisions, governs end-to-end pipeline from research to vault/publication." Enhanced per Orchestrator meta-architecture and Ministry of Bots architecture papers.*
 
 ---
 

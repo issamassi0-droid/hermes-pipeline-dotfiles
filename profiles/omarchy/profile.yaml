@@ -11,3 +11,5 @@ ui_meta:
     pinned: true
 _ui_meta_revisions:
   hermes-bots: 4
+ui:
+  title: Omarchy

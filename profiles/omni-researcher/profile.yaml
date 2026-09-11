@@ -1,7 +1,5 @@
-description: Omni-researcher — multi-source research bot. Searches official sources,
-  news, Twitter/X, Substack, Reddit, deep web. Deduplicates, classifies by credibility,
-  outputs pure readable research with deep-dive links. Writes SEO/GEO optimized articles.
-  Fast mode for token-efficient research. Resources section for credibility enforcement.
+description: multi-source research bot. Searches official sources, news, Twitter/X,
+  Substack, Reddit, deep web. Deduplicates, classifies
 description_auto: false
 ui_meta:
   hermes-bots:
@@ -13,3 +11,5 @@ ui_meta:
     custom: true
 _ui_meta_revisions:
   hermes-bots: 3
+ui:
+  title: Omni-Researcher

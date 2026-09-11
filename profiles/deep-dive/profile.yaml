@@ -1,5 +1,7 @@
-description: YouTube knowledge companion — searches YouTube, reads transcripts, synthesizes
-  experiences, recommends best videos for deep knowledge.
+description: YouTube knowledge companion. Researches any topic by searching YouTube,
+  reading video transcripts, and synthesizing what people experienced, learned, and
+  shared. Recommends the best videos so the user can get deeply knowledgeable on any
+  subject.
 description_auto: false
 ui_meta:
   hermes-bots:
@@ -11,3 +13,5 @@ ui_meta:
     custom: true
 _ui_meta_revisions:
   hermes-bots: 2
+ui:
+  title: YouTube Researcher

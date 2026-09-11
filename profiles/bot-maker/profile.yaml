@@ -1,4 +1,4 @@
-description: create new bots as user like
+description: Create new bots as user like
 description_auto: false
 ui_meta:
   hermes-bots:
@@ -9,3 +9,5 @@ ui_meta:
     pinned: true
 _ui_meta_revisions:
   hermes-bots: 4
+ui:
+  title: Bot Maker
