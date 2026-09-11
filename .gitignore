@@ -35,3 +35,16 @@ Thumbs.db
 *.local
 # Nested repo — don't commit
 hermes-agent/
+--- Update .gitignore ---
+cache/
+cron/
+backups/
+*.db
+*.log
+*.pid
+*.env
+.env
+hermes-agent/
+terminal-sessions/
+assets/
+bin/
