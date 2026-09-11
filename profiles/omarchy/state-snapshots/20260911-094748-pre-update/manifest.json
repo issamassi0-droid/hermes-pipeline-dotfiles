@@ -1,0 +1,18 @@
+{
+  "id": "20260911-094748-pre-update",
+  "timestamp": "20260911-094748",
+  "label": "pre-update",
+  "file_count": 7,
+  "total_size": 2782315,
+  "files": {
+    "state.db": 2641920,
+    "config.yaml": 6602,
+    ".env": 26523,
+    "auth.json": 4870,
+    "cron/executions.db": 24576,
+    "projects.db": 45056,
+    "verification_evidence.db": 32768
+  },
+  "failed_dbs": [],
+  "oversized_skipped": []
+}

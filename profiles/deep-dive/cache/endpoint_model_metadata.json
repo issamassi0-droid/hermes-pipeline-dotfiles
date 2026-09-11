@@ -1,25 +1,65 @@
 {
 "https://inference-api.nousresearch.com/v1":{
-"at":1789091595.9755447,
+"at":1789123150.3880203,
 "models":{
+"sakana/fugu-ultra-v2":{
+"name":"Sakana: Fugu Ultra v2",
+"context_length":1000000,
+"max_completion_tokens":128000,
+"pricing":{
+"prompt":"0.0000040000",
+"completion":"0.0000240000",
+"cache_read":"0.0000004000"
+}
+},
+"fugu-ultra-v2":{
+"name":"Sakana: Fugu Ultra v2",
+"context_length":1000000,
+"max_completion_tokens":128000,
+"pricing":{
+"prompt":"0.0000040000",
+"completion":"0.0000240000",
+"cache_read":"0.0000004000"
+}
+},
+"sakana/fugu-max":{
+"name":"Sakana: Fugu Max",
+"context_length":1000000,
+"max_completion_tokens":128000,
+"pricing":{
+"prompt":"0.0000016000",
+"completion":"0.0000048000",
+"cache_read":"0.0000002000"
+}
+},
+"fugu-max":{
+"name":"Sakana: Fugu Max",
+"context_length":1000000,
+"max_completion_tokens":128000,
+"pricing":{
+"prompt":"0.0000016000",
+"completion":"0.0000048000",
+"cache_read":"0.0000002000"
+}
+},
 "deepseek/deepseek-v4.1-flash":{
 "name":"DeepSeek: DeepSeek V4.1 Flash",
 "context_length":1048576,
-"max_completion_tokens":235929,
+"max_completion_tokens":131072,
 "pricing":{
-"prompt":"0.0000001200",
-"completion":"0.0000009600",
-"cache_read":"0.0000000024"
+"prompt":"0.0000001600",
+"completion":"0.0000004800",
+"cache_read":"0.0000000048"
 }
 },
 "deepseek-v4.1-flash":{
 "name":"DeepSeek: DeepSeek V4.1 Flash",
 "context_length":1048576,
-"max_completion_tokens":235929,
+"max_completion_tokens":131072,
 "pricing":{
-"prompt":"0.0000001200",
-"completion":"0.0000009600",
-"cache_read":"0.0000000024"
+"prompt":"0.0000001600",
+"completion":"0.0000004800",
+"cache_read":"0.0000000048"
 }
 },
 "inception/mercury-2.5":{
@@ -461,9 +501,9 @@
 "context_length":1310720,
 "max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000008000",
-"completion":"0.0000027280",
-"cache_read":"0.0000001600"
+"prompt":"0.0000007760",
+"completion":"0.0000026462",
+"cache_read":"0.0000001552"
 }
 },
 "glm-latest":{
@@ -471,9 +511,9 @@
 "context_length":1310720,
 "max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000008000",
-"completion":"0.0000027280",
-"cache_read":"0.0000001600"
+"prompt":"0.0000007760",
+"completion":"0.0000026462",
+"cache_read":"0.0000001552"
 }
 },
 "z-ai/glm-5.3":{
@@ -481,9 +521,9 @@
 "context_length":1310720,
 "max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000008000",
-"completion":"0.0000027280",
-"cache_read":"0.0000001600"
+"prompt":"0.0000007760",
+"completion":"0.0000026462",
+"cache_read":"0.0000001552"
 }
 },
 "glm-5.3":{
@@ -491,9 +531,9 @@
 "context_length":1310720,
 "max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000008000",
-"completion":"0.0000027280",
-"cache_read":"0.0000001600"
+"prompt":"0.0000007760",
+"completion":"0.0000026462",
+"cache_read":"0.0000001552"
 }
 },
 "z-ai/glm-5.3:batch":{
@@ -675,21 +715,21 @@
 "deepseek/deepseek-v4-pro-0813":{
 "name":"DeepSeek: DeepSeek V4 Pro 0813",
 "context_length":1048576,
-"max_completion_tokens":393216,
+"max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000007920",
-"completion":"0.0000023760",
-"cache_read":"0.0000000264"
+"prompt":"0.0000005280",
+"completion":"0.0000015840",
+"cache_read":"0.0000000528"
 }
 },
 "deepseek-v4-pro-0813":{
 "name":"DeepSeek: DeepSeek V4 Pro 0813",
 "context_length":1048576,
-"max_completion_tokens":393216,
+"max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000007920",
-"completion":"0.0000023760",
-"cache_read":"0.0000000264"
+"prompt":"0.0000005280",
+"completion":"0.0000015840",
+"cache_read":"0.0000000528"
 }
 },
 "deepseek/deepseek-v4-pro-0813:batch":{
@@ -715,7 +755,7 @@
 "nvidia/nemotron-3.5-lightning":{
 "name":"NVIDIA: Nemotron 3.5 Lightning",
 "context_length":262144,
-"max_completion_tokens":131072,
+"max_completion_tokens":235929,
 "pricing":{
 "prompt":"0.0000000640",
 "completion":"0.0000001600",
@@ -725,7 +765,7 @@
 "nemotron-3.5-lightning":{
 "name":"NVIDIA: Nemotron 3.5 Lightning",
 "context_length":262144,
-"max_completion_tokens":131072,
+"max_completion_tokens":235929,
 "pricing":{
 "prompt":"0.0000000640",
 "completion":"0.0000001600",
@@ -1239,9 +1279,9 @@
 "context_length":1048576,
 "max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000019200",
-"completion":"0.0000096000",
-"cache_read":"0.0000001920"
+"prompt":"0.0000018720",
+"completion":"0.0000093600",
+"cache_read":"0.0000002088"
 }
 },
 "kimi-k3":{
@@ -1249,9 +1289,9 @@
 "context_length":1048576,
 "max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000019200",
-"completion":"0.0000096000",
-"cache_read":"0.0000001920"
+"prompt":"0.0000018720",
+"completion":"0.0000093600",
+"cache_read":"0.0000002088"
 }
 },
 "moonshotai/kimi-k3:batch":{
@@ -2269,9 +2309,9 @@
 "context_length":1048576,
 "max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000019200",
-"completion":"0.0000096000",
-"cache_read":"0.0000001920"
+"prompt":"0.0000018720",
+"completion":"0.0000093600",
+"cache_read":"0.0000002088"
 }
 },
 "kimi-latest":{
@@ -2279,9 +2319,9 @@
 "context_length":1048576,
 "max_completion_tokens":943718,
 "pricing":{
-"prompt":"0.0000019200",
-"completion":"0.0000096000",
-"cache_read":"0.0000001920"
+"prompt":"0.0000018720",
+"completion":"0.0000093600",
+"cache_read":"0.0000002088"
 }
 },
 "~google/gemini-flash-latest":{
@@ -3099,19 +3139,19 @@
 "nvidia/nemotron-3-super-120b-a12b":{
 "name":"NVIDIA: Nemotron 3 Super",
 "context_length":262144,
-"max_completion_tokens":16384,
+"max_completion_tokens":235929,
 "pricing":{
-"prompt":"0.0000000680",
-"completion":"0.0000003200"
+"prompt":"0.0000000640",
+"completion":"0.0000003600"
 }
 },
 "nemotron-3-super-120b-a12b":{
 "name":"NVIDIA: Nemotron 3 Super",
 "context_length":262144,
-"max_completion_tokens":16384,
+"max_completion_tokens":235929,
 "pricing":{
-"prompt":"0.0000000680",
-"completion":"0.0000003200"
+"prompt":"0.0000000640",
+"completion":"0.0000003600"
 }
 },
 "bytedance-seed/seed-2.0-lite":{
@@ -6921,18 +6961,18 @@
 "mistralai/mistral-nemo":{
 "name":"Mistral: Mistral Nemo",
 "context_length":131072,
-"max_completion_tokens":16384,
+"max_completion_tokens":104857,
 "pricing":{
-"prompt":"0.0000000152",
+"prompt":"0.0000000144",
 "completion":"0.0000000240"
 }
 },
 "mistral-nemo":{
 "name":"Mistral: Mistral Nemo",
 "context_length":131072,
-"max_completion_tokens":16384,
+"max_completion_tokens":104857,
 "pricing":{
-"prompt":"0.0000000152",
+"prompt":"0.0000000144",
 "completion":"0.0000000240"
 }
 },

@@ -12,8 +12,8 @@
     "pipeline": [
       "researcher",
       "strategist",
-      "draft-writer",
-      "editor-qa",
+      "draft_writer",
+      "editor_qa",
       "publisher"
     ]
   }

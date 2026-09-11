@@ -8529,6 +8529,10 @@
       1789062673618998756,
       9655
     ],
+    "productivity/collective-wisdom-install/SKILL.md": [
+      1789120083846495969,
+      7210
+    ],
     "research/DESCRIPTION.md": [
       1789062673620458525,
       179
@@ -8577,10 +8581,6 @@
       1789062673622821981,
       2446
     ],
-    "software-development/hermes-agent-skill-authoring/SKILL.md": [
-      1789062673623879878,
-      14432
-    ],
     "software-development/hyprland-screen-shaders/SKILL.md": [
       1789062673623956286,
       2575
@@ -8616,6 +8616,10 @@
     "software-development/test-driven-development/SKILL.md": [
       1789062673624727971,
       10300
+    ],
+    "software-development/hermes-agent-skill-authoring/SKILL.md": [
+      1789120083846495969,
+      14657
     ],
     "udev-automount-ntfs/SKILL.md": [
       1789062673624930233,
@@ -38710,6 +38714,24 @@
       "category": "productivity",
       "frontmatter_name": "box",
       "description": "Box manages cloud files, sharing, search, and metadata.",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    {
+      "skill_name": "collective-wisdom-install",
+      "category": "productivity",
+      "frontmatter_name": "collective-wisdom-install",
+      "description": "Browse, install, or share team skills with consent.",
       "platforms": [
         "linux",
         "macos",

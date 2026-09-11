@@ -1,0 +1,20 @@
+{
+  "id": "20260911-094748-pre-update",
+  "timestamp": "20260911-094748",
+  "label": "pre-update",
+  "file_count": 9,
+  "total_size": 1878752,
+  "files": {
+    "state.db": 1646592,
+    "config.yaml": 2335,
+    ".env": 26623,
+    "auth.json": 10192,
+    "cron/executions.db": 24576,
+    "gateway_state.json": 431,
+    "channel_directory.json": 67,
+    "projects.db": 45056,
+    "kanban.db": 122880
+  },
+  "failed_dbs": [],
+  "oversized_skipped": []
+}

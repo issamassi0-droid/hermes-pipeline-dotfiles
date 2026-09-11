@@ -1,0 +1,14 @@
+{
+  "id": "3ac2b10a",
+  "subsystem": "memory",
+  "action": "replace",
+  "summary": "background review consolidation (replace on user): - replace: User prefers a muted color palette and custom Hermes skin named 'default' (muted cyan, orange, red, no blue). -> User prefers muted warm c",
+  "origin": "background_review",
+  "created_at": 1789120949.9956179,
+  "payload": {
+    "action": "replace",
+    "target": "user",
+    "content": "User prefers muted warm color palette (low-blue) for eye comfort — drives all theme/shader choices. Customizes Omarchy ink mode shaders and pushes to personal GitHub.",
+    "old_text": "User prefers a muted color palette and custom Hermes skin named 'default' (muted cyan, orange, red, no blue)."
+  }
+}

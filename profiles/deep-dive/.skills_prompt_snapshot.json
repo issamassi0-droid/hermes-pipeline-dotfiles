@@ -8533,6 +8533,10 @@
       1789062672039473693,
       9655
     ],
+    "productivity/collective-wisdom-install/SKILL.md": [
+      1789120083846495969,
+      7210
+    ],
     "research/DESCRIPTION.md": [
       1789062672040800902,
       179
@@ -8581,10 +8585,6 @@
       1789062672043083201,
       2446
     ],
-    "software-development/hermes-agent-skill-authoring/SKILL.md": [
-      1789062672044005396,
-      14432
-    ],
     "software-development/hyprland-screen-shaders/SKILL.md": [
       1789062672044081524,
       2575
@@ -8620,6 +8620,10 @@
     "software-development/test-driven-development/SKILL.md": [
       1789062672044836517,
       10300
+    ],
+    "software-development/hermes-agent-skill-authoring/SKILL.md": [
+      1789120083846495969,
+      14657
     ],
     "udev-automount-ntfs/SKILL.md": [
       1789062672045041433,
@@ -9056,6 +9060,10 @@
     "youtube-research-to-system/SKILL.md": [
       1789081319100950765,
       4020
+    ],
+    "multi-agent-system-design/SKILL.md": [
+      1789122060612744738,
+      6429
     ]
   },
   "skills": [
@@ -34654,6 +34662,30 @@
       }
     },
     {
+      "skill_name": "multi-agent-system-design",
+      "category": "multi-agent-system-design",
+      "frontmatter_name": "multi-agent-system-design",
+      "description": "Use when designing or improving multi-agent AI systems.",
+      "platforms": [],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [
+          "web_search",
+          "web_extract",
+          "execute_code",
+          "terminal",
+          "read_file",
+          "write_file",
+          "patch",
+          "skill_view",
+          "skill_manage"
+        ],
+        "session_platforms": []
+      }
+    },
+    {
       "skill_name": "obsidian-auto-context",
       "category": "obsidian-auto-context",
       "frontmatter_name": "obsidian-auto-context",
@@ -38732,6 +38764,24 @@
       "category": "productivity",
       "frontmatter_name": "box",
       "description": "Box manages cloud files, sharing, search, and metadata.",
+      "platforms": [
+        "linux",
+        "macos",
+        "windows"
+      ],
+      "conditions": {
+        "fallback_for_toolsets": [],
+        "requires_toolsets": [],
+        "fallback_for_tools": [],
+        "requires_tools": [],
+        "session_platforms": []
+      }
+    },
+    {
+      "skill_name": "collective-wisdom-install",
+      "category": "productivity",
+      "frontmatter_name": "collective-wisdom-install",
+      "description": "Browse, install, or share team skills with consent.",
       "platforms": [
         "linux",
         "macos",

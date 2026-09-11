@@ -1,0 +1,105 @@
+{
+  "schema": 1,
+  "started_at": "2026-09-11T09:47:47.572372+00:00",
+  "finished_at": "2026-09-11T09:49:50.643274+00:00",
+  "argv": [
+    "/home/massi/.hermes/hermes-agent/venv/bin/hermes",
+    "update",
+    "--yes",
+    "--gateway",
+    "--keep-stash",
+    "--branch",
+    "main"
+  ],
+  "pid": 89692,
+  "outcome": "success",
+  "pre_update": {
+    "sha": "564aef2946c436500a5e80ee117b66b789b3f99a",
+    "short_sha": "564aef29",
+    "version": "0.21.1",
+    "source": "git"
+  },
+  "post_update": {
+    "sha": "cbd03e6e4ca143c1d5c2db881320afb85783c30b",
+    "short_sha": "cbd03e6e",
+    "version": "0.21.1",
+    "source": "git"
+  },
+  "steps": [
+    {
+      "name": "sibling_profile_snapshots",
+      "ok": true,
+      "detail": "analytics=20260911-094748-pre-update, architect=20260911-094748-pre-update, bot-maker=20260911-094748-pre-update, deep-dive=20260911-094748-pre-update, draft-writer=20260911-094748-pre-update, editor-qa=20260911-094748-pre-update, omarchy=20260911-094748-pre-update, omni-researcher=20260911-094748-pre-update, publisher=20260911-094748-pre-update, strategist=20260911-094748-pre-update",
+      "at": "2026-09-11T09:47:48.966508+00:00"
+    },
+    {
+      "name": "pre_update_backup",
+      "ok": true,
+      "detail": "snapshot=20260911-094748-pre-update",
+      "at": "2026-09-11T09:47:48.966542+00:00"
+    }
+  ],
+  "skips": [],
+  "gateway_restart": {
+    "restarted_services": [
+      "hermes-gateway"
+    ],
+    "relaunched_profiles": [],
+    "externally_supervised_profiles": [],
+    "killed_pids": [],
+    "failed_units": [],
+    "incomplete": false,
+    "phase_error": ""
+  },
+  "fleet": [
+    {
+      "profile": "default",
+      "pid": 98629,
+      "code_sha": "cbd03e6e4ca143c1d5c2db881320afb85783c30b",
+      "code_version": "0.21.1",
+      "state": "current",
+      "source": "socket"
+    }
+  ],
+  "plan": {
+    "install_method": "git",
+    "updatable_in_place": true,
+    "update_mechanism": "hermes update",
+    "expected_sha": "564aef2946c436500a5e80ee117b66b789b3f99a",
+    "expected_version": "0.21.1",
+    "profiles": [
+      "default",
+      "analytics",
+      "architect",
+      "bot-maker",
+      "deep-dive",
+      "draft-writer",
+      "editor-qa",
+      "omarchy",
+      "omni-researcher",
+      "publisher",
+      "strategist"
+    ],
+    "runtimes": [
+      {
+        "kind": "gateway",
+        "profile": "default",
+        "pid": 1074,
+        "supervisor": "systemd",
+        "code_sha": "564aef2946c436500a5e80ee117b66b789b3f99a",
+        "code_version": "0.21.1",
+        "restart_via": "systemd",
+        "detail": {}
+      }
+    ]
+  },
+  "runtime_outcomes": [
+    {
+      "kind": "gateway",
+      "profile": "default",
+      "pid": 1074,
+      "mechanism": "systemd",
+      "outcome": "restarted"
+    }
+  ]
+}

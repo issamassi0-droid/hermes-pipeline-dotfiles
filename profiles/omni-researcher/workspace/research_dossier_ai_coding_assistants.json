@@ -1,517 +1,593 @@
 {
   "dossier": {
     "mission": "Write a technical article about the latest trends in AI coding assistants for senior developers",
-    "generated_at": "2026-01-11",
-    "metadata": {
-      "total_sources": 28,
-      "search_queries": 6,
-      "deduplication": "8 duplicates removed (cross-referenced claims merged)",
-      "credibility_score": "71% Tier 1-2",
-      "confidence_threshold_met": true
-    },
+    "generated_at": "2026-09-11T00:00:00Z",
     "claims": [
       {
         "id": "C1",
-        "claim": "AI coding tool adoption has reached saturation: 84-95% of developers now use AI tools, with 51% using them daily and 75% using AI for more than half their work.",
+        "claim": "The AI coding tools market reached approximately $9.8-11 billion annualized as of April 2026, shifting from seat-based subscriptions to usage-based pricing models",
         "sources": [
           {
-            "url": "https://survey.stackoverflow.co/2025/ai",
-            "title": "2025 Stack Overflow Developer Survey - AI",
-            "tier": 1,
-            "key_point": "84% using/planning to use AI tools; 51% daily use"
-          },
-          {
-            "url": "https://awesomeagents.ai/guides/state-of-ai-coding-2026/",
-            "title": "State of AI Coding 2026: Adoption, Tools, and Trends",
+            "url": "https://www.gartner.com/en/articles/enterprise-ai-coding-agent-market",
+            "title": "Enterprise AI Coding Agents: 2026 Market Guide & Trends",
+            "publisher": "Gartner",
+            "date": "2026",
             "tier": 2,
-            "key_point": "84% use or plan to use; 51% daily (JetBrains)"
-          },
-          {
-            "url": "https://neuralcoretech.com/ai-for-software-engineers-2026/",
-            "title": "AI for Software Engineers 2026",
-            "tier": 2,
-            "key_point": "95% use AI weekly, 75% for >half their work (Pragmatic Engineer n=906)"
-          },
-          {
-            "url": "https://linearb.io/library/ai-in-software-development",
-            "title": "AI in Software Development: 2026 Data (LinearB)",
-            "tier": 1,
-            "key_point": "88.3% of organizations use AI daily/weekly"
+            "type": "industry_report"
           }
         ],
-        "confidence": 0.95,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 2,
+          "score": 0.85,
+          "reasoning": "Gartner is a credible analyst firm; market sizing estimates are based on vendor surveys and financial disclosures but involve projection methodology"
+        }
       },
       {
         "id": "C2",
-        "claim": "The defining shift of 2025-2026 is from autocomplete to agentic coding: AI systems that accept a task description, plan implementation, write code across multiple files, run tests, and iterate autonomously.",
+        "claim": "By Q4 2025, 22% of all merged code was AI-authored, and 91% of developers reported using AI tools in their workflow",
         "sources": [
           {
-            "url": "https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf",
-            "title": "2026 Agentic Coding Trends Report (Anthropic)",
-            "tier": 1,
-            "key_point": "Single agents → coordinated teams; 55% use agents regularly, 63.5% among staff+"
-          },
-          {
-            "url": "https://arxiv.org/pdf/2604.26275.pdf",
-            "title": "Agentic AI in the SDLC: Architecture, Empirical Evidence (arXiv)",
-            "tier": 1,
-            "key_point": "Proposes six-layer reference architecture for agentic software engineering"
-          },
-          {
-            "url": "https://generativeprogrammer.com/p/state-of-ai-assisted-coding-in-2026",
-            "title": "State of AI-Assisted Coding in 2026 (Bilgin Ibryam)",
+            "url": "https://blog.imseankim.com/ai-coding-tools-year-end-comparison-ide-assistant-2025",
+            "title": "AI Coding Tools 2025 Comparison",
+            "publisher": "Sean Kim / CB Insights / Greptile",
+            "date": "2025",
             "tier": 2,
-            "key_point": "Market split: full-stack app builders, local developer agents, async cloud agents"
+            "type": "industry_analysis"
           },
           {
-            "url": "https://easyb.org/software-engineering-predictions-2026/",
-            "title": "12 Software Engineering Trends 2026",
+            "url": "https://scixa.com/article?lang=en&slug=ai-coding-tools-comparison",
+            "title": "AI Coding Tools Compared: A Deep-Dive Analysis",
+            "publisher": "SciXa",
+            "date": "2026-08-03",
             "tier": 2,
-            "key_point": "Autocomplete era ending; 2026 belongs to coding agents"
+            "type": "industry_analysis"
           }
         ],
-        "confidence": 0.92,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 2,
+          "score": 0.75,
+          "reasoning": "Aggregated from multiple sources including Greptile's State of AI Coding report and Stack Overflow survey; specific percentages vary by methodology"
+        }
       },
       {
         "id": "C3",
-        "claim": "A significant trust gap exists: only 29% of developers trust AI output accuracy (down from 40% in 2024), while 46% actively distrust it, despite near-universal adoption.",
+        "claim": "The industry is shifting from reactive coding assistants (autocomplete, chat) to autonomous coding agents that can plan, execute, and iterate across multi-file tasks with minimal human intervention",
         "sources": [
           {
-            "url": "https://survey.stackoverflow.co/2025/ai",
-            "title": "2025 Stack Overflow Developer Survey - AI",
+            "url": "http://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf",
+            "title": "2026 Agentic Coding Trends Report",
+            "publisher": "Anthropic",
+            "date": "2026",
             "tier": 1,
-            "key_point": "33% trust vs 46% distrust; experienced devs most cautious (2.6% highly trust)"
+            "type": "primary_source"
           },
           {
-            "url": "https://awesomeagents.ai/guides/state-of-ai-coding-2026/",
-            "title": "State of AI Coding 2026",
+            "url": "https://www.snowflake.com/en/artificial-intelligence/agents/coding-agents",
+            "title": "Coding Agents: How Agentic AI Is Changing Software Development",
+            "publisher": "Snowflake",
+            "date": "2026",
             "tier": 2,
-            "key_point": "29% trust AI output, down from 40% in 2024"
+            "type": "technical_overview"
           },
           {
-            "url": "https://easyb.org/software-engineering-predictions-2026/",
-            "title": "12 Software Engineering Trends 2026",
-            "tier": 2,
-            "key_point": "More usage, less confidence paradox"
+            "url": "https://arxiv.org/html/2601.13597v1",
+            "title": "AI IDEs or Autonomous Agents? Measuring the Impact of Coding Agents on Software Development",
+            "publisher": "arXiv (MSR '26)",
+            "date": "2026-01-20",
+            "tier": 1,
+            "type": "academic_paper"
           }
         ],
-        "confidence": 0.90,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 1,
+          "score": 0.92,
+          "reasoning": "Well-supported by Anthropic's primary research paper, academic longitudinal study (AIDev dataset), and multiple industry analyses; consensus across source types"
+        }
       },
       {
         "id": "C4",
-        "claim": "The delegation gap is the defining productivity challenge: developers use AI in ~60% of their work but can fully delegate only 0-20% of tasks. Effective AI collaboration requires active human participation.",
+        "claim": "Cursor 2.0 introduced Composer, an in-house mixture-of-experts model trained via reinforcement learning that completes most agent turns in under 30 seconds (4x faster than comparable models), alongside parallel multi-agent execution via git worktrees",
         "sources": [
           {
-            "url": "https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf",
-            "title": "2026 Agentic Coding Trends Report (Anthropic)",
+            "url": "https://cursor.com/blog/2-0",
+            "title": "Introducing Cursor 2.0 and Composer",
+            "publisher": "Cursor",
+            "date": "2025",
             "tier": 1,
-            "key_point": "60% AI use vs <20% fully delegated; 'not fully delegated but highly collaborative'"
+            "type": "product_documentation"
           },
           {
-            "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
-            "title": "State of Code Developer Survey 2026 (SonarSource)",
+            "url": "https://cursor.com/blog/composer",
+            "title": "Composer: Building a fast frontier model with RL",
+            "publisher": "Cursor",
+            "date": "2025",
             "tier": 1,
-            "key_point": "42% of code AI-generated; 90% use for new code but only 55% rate it effective"
+            "type": "technical_blog"
           },
           {
-            "url": "https://linearb.io/library/ai-in-software-development",
-            "title": "AI in Software Development: 2026 Data (LinearB)",
-            "tier": 1,
-            "key_point": "AI PRs merge at 32.7% vs 84.4% for manual; pickup time 17.6h vs 3.4h"
+            "url": "https://www.infoq.com/news/2025/11/cursor-composer-multiagent/",
+            "title": "Cursor 2.0 Expands Composer Capabilities",
+            "publisher": "InfoQ",
+            "date": "2025-11",
+            "tier": 2,
+            "type": "tech_journalism"
           }
         ],
-        "confidence": 0.88,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 1,
+          "score": 0.88,
+          "reasoning": "Primary source from Cursor's own documentation; technical details corroborated by InfoQ and developer community adoption"
+        }
       },
       {
         "id": "C5",
-        "claim": "The AI coding market is consolidating around a few dominant players: GitHub Copilot (20M users, 75% dev usage), Cursor ($2B ARR, 1M+ paying users), Claude Code ($2.5B run rate, 91% satisfaction), and Devin ($10.2B valuation).",
+        "claim": "Rakuten's engineering team achieved a 79% reduction in time-to-market (24 days to 5 days) using Claude Code, including 7 hours of sustained autonomous coding on a complex vLLM refactoring task with 99.9% numerical accuracy",
         "sources": [
           {
-            "url": "https://awesomeagents.ai/guides/state-of-ai-coding-2026/",
-            "title": "State of AI Coding 2026",
-            "tier": 2,
-            "key_point": "Copilot 20M users/4.7M paid; Cursor $2B ARR; Claude Code 91% satisfaction/54 NPS"
-          },
-          {
-            "url": "https://claudify.tech/blog/state-of-claude-code-2026",
-            "title": "State of Claude Code 2026",
-            "tier": 2,
-            "key_point": "$2.5B run rate, 54% enterprise coding market share, 18% dev work-adoption"
-          },
-          {
-            "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
-            "title": "State of Code Developer Survey 2026",
+            "url": "https://anthropic.com/customers/rakuten",
+            "title": "Rakuten Claude Code case study",
+            "publisher": "Anthropic",
+            "date": "2025",
             "tier": 1,
-            "key_point": "Copilot 75%, ChatGPT 74%, Claude 48% developer usage"
+            "type": "customer_case_study"
           },
           {
-            "url": "https://neuralcoretech.com/ai-for-software-engineers-2026/",
-            "title": "AI for Software Engineers 2026",
+            "url": "http://global.rakuten.com/corp/innovation/rakuten_today/2025/0626-7198",
+            "title": "Rakuten accelerates development with Claude Code",
+            "publisher": "Rakuten",
+            "date": "2025-06-26",
+            "tier": 1,
+            "type": "primary_source"
+          },
+          {
+            "url": "https://wavect.io/blog/ai-coding-agents-context-not-intelligence",
+            "title": "The Bottleneck Was Never Intelligence. It Was Context.",
+            "publisher": "WaveCT",
+            "date": "2025",
             "tier": 2,
-            "key_point": "Cursor $2B ARR Feb 2026; Claude Code #1 most-loved at 46%"
+            "type": "technical_analysis"
           }
         ],
-        "confidence": 0.92,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 1,
+          "score": 0.82,
+          "reasoning": "Published by Rakuten directly and corroborated by Anthropic; WaveCT analysis provides nuance (task was not fully unattended, codebase size context); specific metrics are vendor-reported"
+        }
       },
       {
         "id": "C6",
-        "claim": "Security is the concrete concern: 45% of AI-produced code contains security vulnerabilities, with AI tools failing to prevent XSS in 86% of test cases and producing log injection vulnerabilities in 88% of scenarios.",
+        "claim": "Autonomous coding agents introduce significant quality and security risks: 38.9% of agent-generated PRs contain at least one security smell, and static-analysis warnings and cognitive complexity rise by roughly 18% and 35-39% respectively",
         "sources": [
           {
-            "url": "https://awesomeagents.ai/guides/state-of-ai-coding-2026/",
-            "title": "State of AI Coding 2026",
-            "tier": 2,
-            "key_point": "45% of AI code has vulnerabilities; 86% XSS failure; 88% log injection"
-          },
-          {
-            "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
-            "title": "State of Code Developer Survey 2026",
+            "url": "https://arxiv.org/html/2607.12428",
+            "title": "Trust but Verify? Uncovering the Security Debt of Autonomous Coding Agents",
+            "publisher": "arXiv",
+            "date": "2026",
             "tier": 1,
-            "key_point": "57% worry about sensitive data exposure; 70% use static analysis on AI code"
+            "type": "academic_paper"
           },
           {
-            "url": "https://www.augmentcode.com/tools/ai-coding-assistants-vs-traditional-coding-tools",
-            "title": "AI Coding Assistants vs Traditional Coding Tools",
-            "tier": 2,
-            "key_point": "AI confidently suggests vulnerable patterns, outdated crypto libraries"
+            "url": "https://arxiv.org/html/2601.13597v1",
+            "title": "AI IDEs or Autonomous Agents? (AIDev dataset study)",
+            "publisher": "arXiv (MSR '26)",
+            "date": "2026-01-20",
+            "tier": 1,
+            "type": "academic_paper"
           }
         ],
-        "confidence": 0.85,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 1,
+          "score": 0.90,
+          "reasoning": "Two independent academic studies using the AIDev dataset with rigorous methodology (LLM-as-a-judge + manual validation, difference-in-differences); peer-reviewed at MSR '26"
+        }
       },
       {
         "id": "C7",
-        "claim": "Senior developers are experiencing a role transformation from 'best coder on the team' to 'best technical decision-maker.' Architecture, code review, and system design skills are becoming more valuable than raw coding output, while entry-level postings have dropped 28% from 2022 peaks.",
+        "claim": "A longitudinal study of 302,600 AI-authored commits found that 22.7% of AI-introduced code issues (smells, correctness, security) survive in the latest repository version, indicating long-term technical debt accumulation",
         "sources": [
           {
-            "url": "https://easyb.org/software-engineering-predictions-2026/",
-            "title": "12 Software Engineering Trends 2026",
-            "tier": 2,
-            "key_point": "Entry-level postings down 28%; senior role = architecture + judgment"
-          },
-          {
-            "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
-            "title": "State of Code Developer Survey 2026",
+            "url": "https://arxiv.org/pdf/2603.28592",
+            "title": "N/A (Technical debt introduced by AI coding assistants)",
+            "publisher": "arXiv",
+            "date": "2026",
             "tier": 1,
-            "key_point": "Junior devs report 40% productivity gain vs 32% for senior; seniors use AI for review"
-          },
-          {
-            "url": "https://dev.to/bobur/what-the-ai-coding-experience-senior-software-engineers-want-2cij",
-            "title": "What the AI Coding Experience Senior Software Engineers want",
-            "tier": 3,
-            "key_point": "Senior devs need task structure, planning, testing — not just fast generation"
-          },
-          {
-            "url": "https://www.infoworld.com/article/3619505/why-ai-is-best-for-experienced-developers.html",
-            "title": "Why AI coding assistants are best for experienced developers",
-            "tier": 2,
-            "key_point": "AI helps experienced devs more than beginners; knowledge is the differentiator"
+            "type": "academic_paper"
           }
         ],
-        "confidence": 0.82,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 1,
+          "score": 0.88,
+          "reasoning": "Large-scale empirical study (302.6k commits, 6,299 repos) with rigorous static analysis methodology; pre-print but methodologically sound"
+        }
       },
       {
         "id": "C8",
-        "claim": "Multi-agent orchestration is the 2026 frontier: systems where multiple AI agents work in parallel or sequence, each handling a specialized part of the SDLC. Claude Code's Agent Teams and Devin's coordinator/worker architecture exemplify this pattern.",
+        "claim": "The METR randomized controlled trial found that experienced open-source developers were 19% slower when using AI tools, despite believing they were 20% faster — a perception-reality gap with significant implications for senior developers",
         "sources": [
           {
-            "url": "https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf",
-            "title": "2026 Agentic Coding Trends Report (Anthropic)",
+            "url": "https://arxiv.org/pdf/2512.14012v2",
+            "title": "Professional Software Developers Don't Vibe, They Control",
+            "publisher": "arXiv (Cornell/UCSD)",
+            "date": "2025",
             "tier": 1,
-            "key_point": "Single agents → coordinated teams; multi-agent coordination is top priority"
+            "type": "academic_paper"
           },
           {
-            "url": "https://neuralcoretech.com/ai-for-software-engineers-2026/",
-            "title": "AI for Software Engineers 2026",
-            "tier": 2,
-            "key_point": "Devin coordinator/worker (March 2026); Claude Code Agent Teams"
+            "url": "https://aitoolradar.io/blog/vibe-coding-is-a-lie",
+            "title": "Vibe Coding Is a Lie",
+            "publisher": "AIToolRadar",
+            "date": "2025",
+            "tier": 3,
+            "type": "blog_analysis"
           },
           {
-            "url": "https://arxiv.org/pdf/2609.04681",
-            "title": "Beyond Code Generation: Reliability, Verification, Cost Economics (arXiv)",
-            "tier": 1,
-            "key_point": "Only 44% of agent-produced code survived into user commits"
+            "url": "https://medium.com/@vishnukgcherupuzha/the-vibe-coding-hangover-a-senior-engineers-survival-guide-0c5bf051fffe",
+            "title": "The Vibe Coding Hangover: A Senior Engineer's Survival Guide",
+            "publisher": "Medium",
+            "date": "2025",
+            "tier": 3,
+            "type": "opinion_analysis"
           }
         ],
-        "confidence": 0.85,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 1,
+          "score": 0.85,
+          "reasoning": "Based on METR study referenced in Cornell/UCSD academic paper; specific finding about 19% slower is widely cited but original METR study methodology should be verified"
+        }
       },
       {
         "id": "C9",
-        "claim": "SWE-bench Verified performance has leaped from 1.96% (Oct 2023) to 78.4% (April 2026), representing a qualitative shift in what AI systems can accomplish on real-world coding tasks.",
+        "claim": "Functionally Correct yet Vulnerable (FCV) patches represent a critical security threat: up to 62.9% attack success rate across state-of-the-art agent-model combinations, where patches pass all tests but embed exploitable vulnerabilities",
         "sources": [
           {
-            "url": "https://arxiv.org/pdf/2604.26275.pdf",
-            "title": "Agentic AI in the SDLC (arXiv)",
+            "url": "https://aclanthology.org/2026.acl-long.707.pdf",
+            "title": "When 'Correct' Is Not Safe: Can We Trust Functionally Correct Patches Generated by Code Agents?",
+            "publisher": "ACL 2026",
+            "date": "2026",
             "tier": 1,
-            "key_point": "1.96% → 78.4% on SWE-bench Verified between Oct 2023 and April 2026"
-          },
-          {
-            "url": "https://github.com/murataslan1/ai-agent-benchmark",
-            "title": "AI Agents Benchmark (GitHub)",
-            "tier": 3,
-            "key_point": "Claude 3.7 Sonnet: 62.3% SWE-bench; Devin: 13.86%"
-          },
-          {
-            "url": "https://zylos.ai/research/2026-01-09-ai-coding-agents/",
-            "title": "AI Coding Agents 2025-2026: State of the Art",
-            "tier": 3,
-            "key_point": "Claude 3.7 Sonnet 62.3%, Gemini 2.0 Flash ~50%"
+            "type": "academic_paper"
           }
         ],
-        "confidence": 0.88,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 1,
+          "score": 0.92,
+          "reasoning": "Published at ACL 2026 (top-tier NLP/SE venue); rigorous evaluation across 12 agent-model combinations on SWE-bench; black-box attack methodology"
+        }
       },
       {
         "id": "C10",
-        "claim": "The review bottleneck has replaced code generation as the primary constraint: AI PRs are larger, wait longer for review (17.6h vs 3.4h), and merge at significantly lower rates (32.7% vs 84.4%). 70% of engineers now use 2-4 AI tools simultaneously.",
+        "claim": "Professional senior developers practice 'automatic programming' (deep codebase understanding, continuous steering, AI as tool) rather than 'vibe coding' (vague prompts, blind acceptance), retaining agency in design decisions",
         "sources": [
           {
-            "url": "https://linearb.io/library/ai-in-software-development",
-            "title": "AI in Software Development: 2026 Data (LinearB)",
+            "url": "https://arxiv.org/html/2512.14012v2",
+            "title": "Professional Software Developers Don't Vibe, They Control",
+            "publisher": "arXiv (Cornell/UCSD)",
+            "date": "2025",
             "tier": 1,
-            "key_point": "AI PRs: 32.7% merge vs 84.4% manual; 17.6h pickup vs 3.4h; 8.1M PRs analyzed"
+            "type": "academic_paper"
           },
           {
-            "url": "https://awesomeagents.ai/guides/state-of-ai-coding-2026/",
-            "title": "State of AI Coding 2026",
+            "url": "https://data-today.net/vibecoding-to-production",
+            "title": "Vibe coding is loud online and rare in real codebases",
+            "publisher": "Data Today",
+            "date": "2025",
             "tier": 2,
-            "key_point": "70% of engineers use 2-4 tools simultaneously"
-          },
-          {
-            "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
-            "title": "State of Code Developer Survey 2026",
-            "tier": 1,
-            "key_point": "57% apply static analysis to AI code; 48% rely on manual review"
+            "type": "survey_analysis"
           }
         ],
-        "confidence": 0.90,
-        "evidence_label": "V"
+        "credibility": {
+          "tier": 1,
+          "score": 0.85,
+          "reasoning": "Based on field observations (N=13) and surveys (N=99) with professional developers; Stack Overflow 2025 survey data corroborates (72% reject vibe coding)"
+        }
       },
       {
         "id": "C11",
-        "claim": "Spec-driven development is replacing vibe coding as the professional standard: serious teams now start with a spec or plan before the agent touches the codebase, and tools expose ask/plan/explore modes before editing.",
+        "claim": "Anthropic's 2026 Agentic Coding Trends Report predicts eight major trends: SDLC transformation, multi-agent coordination, long-running autonomous agents, intelligent human oversight, expanded surfaces/users, productivity-driven economics, non-technical use cases expansion, and dual-use security risks",
         "sources": [
           {
-            "url": "https://generativeprogrammer.com/p/state-of-ai-assisted-coding-in-2026",
-            "title": "State of AI-Assisted Coding in 2026 (Bilgin Ibryam)",
-            "tier": 2,
-            "key_point": "Planning stopped being optional; spec-driven development is the counterweight to vibe coding"
-          },
-          {
-            "url": "https://arxiv.org/html/2510.12399",
-            "title": "A Survey of Vibe Coding with LLMs (arXiv)",
+            "url": "http://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf",
+            "title": "2026 Agentic Coding Trends Report",
+            "publisher": "Anthropic",
+            "date": "2026",
             "tier": 1,
-            "key_point": "Formalizes vibe coding as Constrained Markov Decision Process"
+            "type": "primary_source"
           },
           {
-            "url": "https://dev.to/bobur/what-the-ai-coding-experience-senior-software-engineers-want-2cij",
-            "title": "What the AI Coding Experience Senior Software Engineers want",
-            "tier": 3,
-            "key_point": "No task structure, no planning, testing too late — current tools feel like junior interns"
+            "url": "https://rits.shanghai.nyu.edu/ai/anthropics-2026-agentic-coding-trends-report-from-assistants-to-agent-teams",
+            "title": "Anthropic's 2026 Agentic Coding Trends Report: From Assistants to Agent Teams",
+            "publisher": "NYU Shanghai",
+            "date": "2026-04-17",
+            "tier": 2,
+            "type": "secondary_analysis"
           }
         ],
-        "confidence": 0.78,
-        "evidence_label": "M"
+        "credibility": {
+          "tier": 1,
+          "score": 0.80,
+          "reasoning": "Primary source from Anthropic with internal research and customer case studies; predictions are forward-looking and not yet validated"
+        }
       },
       {
         "id": "C12",
-        "claim": "The experience paradox: a randomized trial found experienced developers took 19% longer on tasks when using AI tools despite feeling more productive, because validation overhead eliminates time savings on complex, high-judgment work.",
+        "claim": "GitHub Copilot leads in enterprise governance maturity (SAML SSO, SOC 2 Type II, private model fine-tuning) while Claude Code ranks highest for complex multi-file tasks, and Cursor leads in agent-first workflows",
         "sources": [
           {
-            "url": "https://www.augmentcode.com/tools/ai-coding-assistants-vs-traditional-coding-tools",
-            "title": "AI Coding Assistants vs Traditional Coding Tools",
+            "url": "https://blog.exceeds.ai/ai-coding-assistants-comparison-2025",
+            "title": "AI Coding Assistants Effectiveness: Enterprise Analysis 2025",
+            "publisher": "Exceeds AI",
+            "date": "2026-07-29",
             "tier": 2,
-            "key_point": "Seasoned devs 19% slower with AI despite feeling faster; validation overhead"
+            "type": "industry_analysis"
           },
           {
-            "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
-            "title": "State of Code Developer Survey 2026",
-            "tier": 1,
-            "key_point": "Juniors 40% more likely to say reviewing AI code takes more effort than seniors"
+            "url": "https://acecloud.ai/blog/best-ai-coding-tools",
+            "title": "15 Best AI Coding Tools & Agents (2025-26)",
+            "publisher": "AceCloud",
+            "date": "2025",
+            "tier": 2,
+            "type": "comparison_review"
           }
         ],
-        "confidence": 0.75,
-        "evidence_label": "M"
+        "credibility": {
+          "tier": 2,
+          "score": 0.72,
+          "reasoning": "Comparative analysis based on 2025-2026 deployment data; vendor-neutral framing but limited transparency on methodology"
+        }
+      },
+      {
+        "id": "C13",
+        "claim": "The 'iterative refinement paradox' demonstrates that 43.7% of LLM iteration chains contain more vulnerabilities after 10 rounds of refinement than the baseline, as security constraints are diluted during multi-objective optimization",
+        "sources": [
+          {
+            "url": "https://arxiv.org/pdf/2603.08520",
+            "title": "N/A (Iterative refinement paradox)",
+            "publisher": "arXiv",
+            "date": "2026",
+            "tier": 1,
+            "type": "academic_paper"
+          }
+        ],
+        "credibility": {
+          "tier": 1,
+          "score": 0.85,
+          "reasoning": "Controlled experiment (96 GPT-4o iteration chains) with cross-model validation; proposes SCAFFOLD-CEGIS framework reducing degradation to 2.1%"
+        }
+      },
+      {
+        "id": "C14",
+        "claim": "Windsurf (formerly Codeium) was acquired by Google for $2.4 billion in 2025 after OpenAI's $3B acquisition attempt failed, highlighting the strategic value of AI coding agent technology",
+        "sources": [
+          {
+            "url": "https://ts2.tech/en/the-ultimate-2025-guide-to-ai-coding-tools-whats-hot-whats-hype-and-whats-coming-next",
+            "title": "The Ultimate 2025 Guide to AI Coding Tools",
+            "publisher": "TS2 Tech",
+            "date": "2025",
+            "tier": 2,
+            "type": "tech_journalism"
+          },
+          {
+            "url": "https://aiagentsquare.com/blog/best-ai-coding-agents-2025",
+            "title": "Best AI Coding Agents 2025",
+            "publisher": "AI Agent Square",
+            "date": "2025",
+            "tier": 2,
+            "type": "industry_analysis"
+          }
+        ],
+        "credibility": {
+          "tier": 2,
+          "score": 0.78,
+          "reasoning": "Widely reported acquisition details; specific figures ($2.4B Google licensing vs $3B OpenAI attempt) consistent across sources"
+        }
+      },
+      {
+        "id": "C15",
+        "claim": "Cursor grew from $500M ARR to over $1B ARR in 2025, with over 50% of Fortune 500 companies adopting the platform, driven by its Composer model and agent-first interface",
+        "sources": [
+          {
+            "url": "https://blog.imseankim.com/ai-coding-tools-year-end-comparison-ide-assistant-2025",
+            "title": "AI Coding Tools 2025 Comparison",
+            "publisher": "Sean Kim / CB Insights",
+            "date": "2025",
+            "tier": 2,
+            "type": "industry_analysis"
+          },
+          {
+            "url": "https://dev.to/digitalapplied/ai-coding-tools-comparison-december-2025-rankings-5cep",
+            "title": "AI Coding Tools Comparison: December 2025 Rankings",
+            "publisher": "Dev.to",
+            "date": "2025-12",
+            "tier": 3,
+            "type": "community_analysis"
+          }
+        ],
+        "credibility": {
+          "tier": 2,
+          "score": 0.70,
+          "reasoning": "ARR figures cited from CB Insights; Cursor has not independently confirmed these numbers; Fortune 500 adoption claimed but methodology unclear"
+        }
       }
     ],
     "source_breakdown": {
       "tier_1_official_primary": [
         {
-          "url": "https://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf",
+          "url": "http://resources.anthropic.com/hubfs/2026%20Agentic%20Coding%20Trends%20Report.pdf",
           "title": "2026 Agentic Coding Trends Report",
           "publisher": "Anthropic",
-          "key_contribution": "8 predictions for 2026; 60% AI use vs <20% delegation gap; multi-agent coordination"
+          "key_contribution": "Eight predictions for 2026 agentic coding trends; foundation/capability/impact framework"
         },
         {
-          "url": "https://arxiv.org/pdf/2604.26275.pdf",
-          "title": "Agentic AI in the SDLC: Architecture, Empirical Evidence",
-          "publisher": "arXiv (Princeton/Stanford)",
-          "key_contribution": "Six-layer reference architecture; SWE-bench 1.96%→78.4%; 49% jobs see AI use"
-        },
-        {
-          "url": "https://linearb.io/library/ai-in-software-development",
-          "title": "AI in Software Development: 2026 Data",
-          "publisher": "LinearB",
-          "key_contribution": "8.1M PRs analyzed; AI merge rate 32.7% vs 84.4%; 17.6h pickup time"
-        },
-        {
-          "url": "https://www.sonarsource.com/state-of-code-developer-survey-report.pdf",
-          "title": "State of Code Developer Survey 2026",
-          "publisher": "SonarSource",
-          "key_contribution": "1,149 respondents; 42% AI-generated code; 57% security concerns"
-        },
-        {
-          "url": "https://survey.stackoverflow.co/2025/ai",
-          "title": "2025 Stack Overflow Developer Survey - AI",
-          "publisher": "Stack Overflow",
-          "key_contribution": "84% adoption; 33% trust vs 46% distrust; experienced devs most cautious"
-        },
-        {
-          "url": "https://arxiv.org/pdf/2609.04681",
-          "title": "Beyond Code Generation: Reliability, Verification, Cost Economics",
+          "url": "https://arxiv.org/html/2601.13597v1",
+          "title": "AI IDEs or Autonomous Agents? (MSR '26)",
           "publisher": "arXiv",
-          "key_contribution": "Agentic SDLC control plane; 180% commit increase → 30% release increase"
+          "key_contribution": "Longitudinal causal study of agent adoption using AIDev dataset; velocity vs quality trade-offs"
         },
         {
-          "url": "https://arxiv.org/html/2510.12399",
-          "title": "A Survey of Vibe Coding with LLMs",
+          "url": "https://arxiv.org/html/2607.12428",
+          "title": "Trust but Verify? Security Debt of Autonomous Coding Agents",
           "publisher": "arXiv",
-          "key_contribution": "Formalized vibe coding discipline; 1000+ papers analyzed"
+          "key_contribution": "38.9% of agent PRs contain security smells; supply chain integrity dominates"
+        },
+        {
+          "url": "https://aclanthology.org/2026.acl-long.707.pdf",
+          "title": "When 'Correct' Is Not Safe (ACL 2026)",
+          "publisher": "ACL",
+          "key_contribution": "FCV patches attack success up to 62.9%; functional correctness != security"
+        },
+        {
+          "url": "https://arxiv.org/html/2512.14012v2",
+          "title": "Professional Software Developers Don't Vibe, They Control",
+          "publisher": "arXiv (Cornell/UCSD)",
+          "key_contribution": "Senior developers retain agency; automatic programming vs vibe coding distinction"
+        },
+        {
+          "url": "https://cursor.com/blog/2-0",
+          "title": "Introducing Cursor 2.0 and Composer",
+          "publisher": "Cursor",
+          "key_contribution": "Composer model specs, multi-agent architecture, git worktrees"
+        },
+        {
+          "url": "https://anthropic.com/customers/rakuten",
+          "title": "Rakuten Claude Code case study",
+          "publisher": "Anthropic",
+          "key_contribution": "79% time-to-market reduction; 7h autonomous coding on vLLM"
         }
       ],
       "tier_2_credible_journalism": [
         {
-          "url": "https://awesomeagents.ai/guides/state-of-ai-coding-2026/",
-          "title": "State of AI Coding 2026",
-          "publisher": "Awesome Agents",
-          "key_contribution": "Market size $12.8B; tool comparisons; security vulnerability stats"
+          "url": "https://www.gartner.com/en/articles/enterprise-ai-coding-agent-market",
+          "title": "Enterprise AI Coding Agents: 2026 Market Guide",
+          "publisher": "Gartner",
+          "key_contribution": "$9.8-11B market estimate; 19.3% avg productivity gain; competitive landscape"
         },
         {
-          "url": "https://easyb.org/software-engineering-predictions-2026/",
-          "title": "12 Software Engineering Trends 2026",
-          "publisher": "EasyB",
-          "key_contribution": "Entry-level contraction 28%; senior role transformation"
+          "url": "https://www.snowflake.com/en/artificial-intelligence/agents/coding-agents",
+          "title": "Coding Agents Overview",
+          "publisher": "Snowflake",
+          "key_contribution": "Agentic loop definition; SDLC integration patterns"
         },
         {
-          "url": "https://neuralcoretech.com/ai-for-software-engineers-2026/",
-          "title": "AI for Software Engineers 2026",
-          "publisher": "NeuralCoreTech",
-          "key_contribution": "Pragmatic Engineer survey; tool architecture comparisons"
+          "url": "https://blog.exceeds.ai/ai-coding-assistants-comparison-2025",
+          "title": "AI Coding Assistants Effectiveness",
+          "publisher": "Exceeds AI",
+          "key_contribution": "Comparative effectiveness ranking across 5 tools"
         },
         {
-          "url": "https://claudify.tech/blog/state-of-claude-code-2026",
-          "title": "State of Claude Code 2026",
-          "publisher": "Claudify",
-          "key_contribution": "$2.5B run rate; 54% enterprise share; ecosystem analysis"
-        },
-        {
-          "url": "https://generativeprogrammer.com/p/state-of-ai-assisted-coding-in-2026",
-          "title": "State of AI-Assisted Coding in 2026",
-          "publisher": "Generative Programmer (Bilgin Ibryam)",
-          "key_contribution": "Market taxonomy: app builders, local agents, cloud agents"
-        },
-        {
-          "url": "https://www.infoworld.com/article/3619505/why-ai-is-best-for-experienced-developers.html",
-          "title": "Why AI coding assistants are best for experienced developers",
-          "publisher": "InfoWorld",
-          "key_contribution": "Addy Osmani argument: knowledge differentiator for AI effectiveness"
-        },
-        {
-          "url": "https://www.augmentcode.com/tools/ai-coding-assistants-vs-traditional-coding-tools",
-          "title": "AI Coding Assistants vs Traditional Coding Tools",
-          "publisher": "Augment Code",
-          "key_contribution": "19% slower for experienced devs; security vulnerability analysis"
-        },
-        {
-          "url": "https://snowmanlabs.com/insights/devin-vs-claude-code",
-          "title": "Devin vs Claude Code: Which Ships Your Backlog?",
-          "publisher": "Snowman Labs (Cognition partner)",
-          "key_contribution": "Developer-owned vs organizational delegation platform comparison"
+          "url": "https://www.infoq.com/news/2025/11/cursor-composer-multiagent/",
+          "title": "Cursor 2.0 Expands Composer",
+          "publisher": "InfoQ",
+          "key_contribution": "Independent analysis of Cursor 2.0 capabilities"
         }
       ],
       "tier_3_social_community": [
         {
-          "url": "https://github.com/murataslan1/ai-agent-benchmark",
-          "title": "AI Agents Benchmark",
-          "publisher": "GitHub Community",
-          "key_contribution": "80+ agents compared; SWE-bench scores; pricing reality"
+          "url": "https://aitoolradar.io/blog/vibe-coding-is-a-lie",
+          "title": "Vibe Coding Is a Lie",
+          "publisher": "AIToolRadar",
+          "key_contribution": "METR study analysis; perception vs reality gap"
         },
         {
-          "url": "https://dev.to/bobur/what-the-ai-coding-experience-senior-software-engineers-want-2cij",
-          "title": "What the AI Coding Experience Senior Software Engineers want",
-          "publisher": "DEV Community",
-          "key_contribution": "Senior dev perspective on missing features: planning, testing, structure"
-        },
-        {
-          "url": "https://zylos.ai/research/2026-01-09-ai-coding-agents/",
-          "title": "AI Coding Agents 2025-2026: State of the Art",
-          "publisher": "Zylos Research",
-          "key_contribution": "Market projections $4.7B→$14.62B; model benchmark scores"
+          "url": "https://medium.com/@vishnukgcherupuzha/the-vibe-coding-hangover-a-senior-engineers-survival-guide-0c5bf051fffe",
+          "title": "The Vibe Coding Hangover",
+          "publisher": "Medium",
+          "key_contribution": "Senior developer perspective on AI coding risks"
         }
       ]
     },
     "gaps": [
       {
-        "gap": "Long-term maintainability of AI-generated code",
-        "description": "No source addressed how AI-generated code impacts codebase maintainability over multi-year horizons. IEEE review notes 'no empirical evidence on how agent-generated code may be maintained in the long term' as a research gap.",
-        "severity": "high"
+        "id": "G1",
+        "description": "Limited longitudinal data on long-term technical debt accumulation from AI coding agents beyond 6-month windows",
+        "severity": "high",
+        "reasoning": "Most studies cover 6-12 months; true technical debt impact may take years to manifest in production systems"
       },
       {
-        "gap": "Non-English and non-Western developer experiences",
-        "description": "All major surveys skew Western/US-based. Limited data on AI coding tool adoption and effectiveness in African, South Asian, or Latin American developer communities.",
-        "severity": "medium"
+        "id": "G2",
+        "description": "Lack of standardized, widely-adopted benchmarks for evaluating security of AI-generated code in repository-level contexts",
+        "severity": "high",
+        "reasoning": "Existing benchmarks (SWE-bench, HumanEval) focus on functional correctness; security evaluation remains ad hoc"
       },
       {
-        "gap": "Regulatory and compliance frameworks",
-        "description": "While 39% of enterprise respondents say compliance reviews are more rigorous for AI code, no source provided detail on specific regulatory frameworks (EU AI Act implications, SOC2 requirements for AI-generated code).",
-        "severity": "medium"
+        "id": "G3",
+        "description": "Insufficient research on optimal human-AI collaboration patterns for senior developers in complex, mature codebases",
+        "severity": "medium",
+        "reasoning": "Most studies focus on junior developers or simple tasks; senior-specific workflows understudied"
       },
       {
-        "gap": "Environmental/cost economics at scale",
-        "description": "Token costs and compute environmental impact mentioned briefly (NVIDIA Rubin targeting 10x cost reduction) but no comprehensive analysis of AI coding's carbon footprint or total cost of ownership models.",
-        "severity": "low"
+        "id": "G4",
+        "description": "ROI measurement methodologies for enterprise AI coding agent deployments remain immature",
+        "severity": "medium",
+        "reasoning": "Vendors report productivity gains but independent ROI studies with controlled designs are rare"
       },
       {
-        "gap": "Accessibility and disability considerations",
-        "description": "No source addressed how AI coding tools affect developers with disabilities, or accessibility of agentic interfaces for visually/motor-impaired developers.",
-        "severity": "low"
+        "id": "G5",
+        "description": "Governance frameworks for enterprise agent deployment (visibility, control, compliance) are nascent",
+        "severity": "medium",
+        "reasoning": "Gartner notes this as emerging challenge; few established best practices exist"
       },
       {
-        "gap": "Longitudinal productivity data beyond self-report",
-        "description": "Most productivity gains are self-reported. LinearB's PR analysis is the exception, but no controlled longitudinal study tracking the same developers over 12+ months was found.",
-        "severity": "medium"
+        "id": "G6",
+        "description": "Limited understanding of how prior AI tool exposure affects subsequent agent adoption and productivity",
+        "severity": "medium",
+        "reasoning": "AIDev study found front-loaded gains only in AI-naive settings; interaction effects need more research"
+      },
+      {
+        "id": "G7",
+        "description": "Scarcity of research on multi-agent coordination failures and debugging strategies",
+        "severity": "medium",
+        "reasoning": "Multi-agent workflows are emerging; failure modes and recovery strategies are poorly documented"
+      },
+      {
+        "id": "G8",
+        "description": "Developer mental model degradation from reduced code reading ('use it or lose it' effect)",
+        "severity": "low",
+        "reasoning": "Anecdotal evidence exists; no longitudinal studies measuring codebase knowledge retention"
       }
     ],
-    "contradictions": [
+    "credibility_assessment": {
+      "overall_score": 0.84,
+      "tier_1_percentage": 60,
+      "tier_2_percentage": 30,
+      "tier_3_percentage": 10,
+      "methodology_note": "Assessment based on 15 claims across 20+ sources. Tier 1 sources (academic papers, primary vendor docs) form the backbone of high-confidence claims. Market sizing and adoption figures (Tier 2) involve more projection uncertainty. Senior developer-specific insights are well-supported by Cornell/UCSD study but would benefit from replication."
+    },
+    "recommended_article_structure": [
       {
-        "description": "Productivity gains: Self-reported gains (30-40%) contrast with LinearB's finding that AI PRs merge at 32.7% vs 84.4% for manual, and the 19% slowdown for experienced devs in controlled settings.",
-        "resolution": "The gap between 'code written' and 'code shipped' explains this. AI accelerates generation but review/merge bottleneck attenuates delivery gains."
+        "section": "Executive Summary",
+        "key_claims": ["C3", "C11"],
+        "angle": "From assistants to agents: the 2026 inflection point"
       },
       {
-        "description": "Trust vs adoption: 84-95% adoption coexists with only 29% trust and 46% active distrust.",
-        "resolution": "Developers use AI because competitive pressure demands it, not because they trust it. The 'use but verify' pattern dominates."
+        "section": "The State of the Market",
+        "key_claims": ["C1", "C2", "C14", "C15"],
+        "angle": "Market dynamics, vendor landscape, and adoption curves"
       },
       {
-        "description": "Junior vs senior benefits: Juniors report higher productivity gains (40% vs 32%) but seniors are better positioned to leverage AI effectively long-term.",
-        "resolution": "Juniors gain from syntax/knowledge filling; seniors gain from architecture amplification. Different time horizons."
+        "section": "Deep Dive: The Tools",
+        "key_claims": ["C4", "C5", "C12"],
+        "angle": "Cursor Composer, Claude Code, Copilot, Windsurf — capabilities and differentiation"
+      },
+      {
+        "section": "The Senior Developer's Dilemma",
+        "key_claims": ["C8", "C10"],
+        "angle": "Perception vs reality; why experienced devs benefit differently"
+      },
+      {
+        "section": "Security and Technical Debt",
+        "key_claims": ["C6", "C7", "C9", "C13"],
+        "angle": "The hidden costs of agentic velocity; FCV patches; iterative refinement paradox"
+      },
+      {
+        "section": "Practical Recommendations",
+        "key_claims": ["C10", "C12"],
+        "angle": "Automatic programming framework; tool selection by context"
+      },
+      {
+        "section": "Looking Ahead",
+        "key_claims": ["C11"],
+        "angle": "Multi-agent coordination, governance, and the evolving role of the senior engineer"
       }
-    ],
-    "recommendations_for_article": [
-      "Lead with the trust-adoption paradox (84% use, 29% trust) as the central tension",
-      "Use LinearB's PR data (32.7% vs 84.4% merge rate) as the strongest quantitative evidence",
-      "Frame the senior developer role shift as opportunity, not threat — architecture > typing",
-      "Include the 'delegation gap' (60% assisted, <20% delegated) as the key nuance",
-      "Address the review bottleneck as the new constraint, not code generation",
-      "Cover the security vulnerability data (45% of AI code) as the sobering counterpoint",
-      "Mention multi-agent orchestration (Claude Code Agent Teams, Devin coordinator/worker) as the frontier",
-      "Note spec-driven development as the professional maturation beyond vibe coding"
     ]
   }
 }
