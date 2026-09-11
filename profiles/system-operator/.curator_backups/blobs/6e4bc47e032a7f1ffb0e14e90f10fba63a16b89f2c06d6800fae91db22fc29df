@@ -1,0 +1,346 @@
+---
+name: omarchy-customization
+description: >
+  Use when customizing Omarchy shell bar plugins and QML.
+triggers:
+  - omarchy bar widget customization
+  - system monitor chip layout
+  - modify Omarchy plugin QML
+  - remove network monitor from bar
+  - customizing Omarchy panel appearance
+  - desktop shell QML theming
+category: desktop
+---
+
+# Omarchy Desktop Customization
+
+## Plugin Config (shell.json)
+
+Layout and per-plugin settings live in:
+`~/.config/omarchy/shell.json`
+
+Under `bar.layout.center` / `bar.layout.right` / `bar.layout.left`, each entry
+can carry plugin-specific settings:
+
+```json
+{
+  "id": "bitr0t.system-monitor",
+  "monitors": ["cpu", "memory"]
+}
+```
+
+Common overrides per plugin are documented in the plugin's manifest.json or README.
+
+## System Monitor Plugin (bitr0t.system-monitor)
+
+Bar widget source:
+`~/.config/omarchy/plugins/bitr0t.system-monitor/BarWidget.qml`
+
+Divider components (`ChipDivider`) are `Rectangle { width: 1; height: ... }`
+rendered between monitor sections. Removing them removes the vertical lines.
+Spacers between monitors use plain `Item { width: ...; height: 1 }`.
+
+### Common customizations
+
+- **Remove NET**: set `"monitors": ["cpu", "memory"]` in shell.json
+- **Remove dividers between monitors**: delete `ChipDivider` lines in
+  BarWidget.qml's `InstrumentChip` component
+- **Add custom gap**: insert `Item { width: Math.round(monitorTheme.monitorGap * 0.5); height: 1 }`
+  between Row wrappers in the instrumentMetrics Row
+
+### Key QML component structure (InstrumentChip)
+
+```
+Row (instrumentMetrics, spacing: 0)
+  Row (visible: monitorEnabled("cpu"))
+    CpuInstrument {}
+  Row (visible: monitorEnabled("memory"))
+    MemoryInstrument {}
+  Row (visible: monitorEnabled("network"))
+    NetworkInstrument {}
+  ...
+```
+
+each monitor Row wraps a sub-component with its own spacing. The outer
+`spacing: 0` means no gap between monitors unless an explicit spacer Item
+is inserted.
+
+### Tighter CPU instrument internal spacing
+
+The `CpuInstrument` Row has its own spacing between label, sparkline, and
+percentage. Default is `monitorTheme.monitorGap / 2`. Reduce to
+`Math.round(monitorTheme.monitorGap * 0.3)` to pack the CPU elements closer
+together (label closer to the graph, graph closer to the percentage).
+
+Other instruments (MemoryInstrument, NetworkInstrument, etc.) keep
+`monitorGap / 2` by default — only patch CpuInstrument's spacing line.
+
+## Apply Changes
+
+Restart Omarchy after editing:
+```
+omarchy-ctl restart
+```
+
+## Bar Widget Button Actions
+
+The `WidgetButton` in BarWidget.qml has an `onPressed` handler that maps mouse buttons:
+
+| Button | Action |
+|--------|--------|
+| Qt.LeftButton | Toggle panel (default) |
+| Qt.MiddleButton | Often set to launch btop |
+| Qt.RightButton | Often set to open task manager or launch btop |
+
+**Remove tooltip:** delete the `tooltipText: root.tooltip` line from the WidgetButton block.
+
+**Reassign actions:** edit the `onPressed: function(button) { ... }` block — replace `Qt.MiddleButton` or `Qt.RightButton` branches with `root.bar.run("omarchy-launch-or-focus-tui btop")` for direct btop launch.
+
+### Color customization (SystemMonitorTheme.qml)
+
+Colors are defined in:
+`~/.config/omarchy/plugins/bitr0t.system-monitor/SystemMonitorTheme.qml`
+
+Key properties (hex values are fallbacks — the shell.json color key overrides):
+
+| Property | Key | Default |
+|---|---|---|
+| cpuColor | system-monitor.cpu | #61d5f8 (cyan) — custom: #f97316 (orange) |
+| memoryColor | system-monitor.memory | #c7a6ff (purple) — custom: #eab308 (yellow) |
+| chipBorder alpha | system-monitor.chip-border | cpuColor @ 0.48 |
+| downloadColor | system-monitor.download | #5eead4 |
+| uploadColor | system-monitor.upload | #a3e635 |
+| warningColor | system-monitor.warning | #fbbf24 |
+| criticalColor | system-monitor.critical | #fb7185 |
+
+The `chipBorder` alpha is set via `composedColorToken("chip-border", cpuColor, 0.48)`
+— change the third argument to adjust transparency.
+
+### Dimming text/labels in BarWidget.qml
+
+The `root.dim(color, alpha)` helper applies an alpha multiplier. Used for:
+- Label text ("CPU", "MEM"): `root.dim(monitorTheme.cpuColor, 0.82)` — reduce
+  the second arg to mute labels
+- Percentage values: `root.dim(root.cpuLevelColor(root.cpuUsage), 0.75)` —
+  wrap the level color function in dim()
+
+### Vertical alignment of the bar widget
+
+The `WidgetButton` in BarWidget.qml defaults to `anchors.verticalCenter: parent.verticalCenter`.
+Change to `anchors.bottom: parent.bottom; anchors.bottomMargin: 0` to align
+it to the bottom of the bar (e.g. to match workspace plugin rectangles).
+
+## yt-dlp Plugin (alexzeitler.ytdlp)
+
+Source: `~/.config/omarchy/plugins/alexzeitler.ytdlp/`
+
+### Architecture
+
+QML (`omarchy/Panel.qml`) + bash (`omarchy/ytdlp-queue`). The QML sends
+IPC commands; the bash script owns the queue on disk in
+`~/.local/state/omarchy-ytdlp/jobs/`. Both must be updated together
+when adding features (see Omarchy plugin architecture above).
+
+### Adding dubbed audio / subtitle language
+
+The `lang` field is a single dropdown label "Lang." inline with the
+mode/quality/format controls. The yt-dlp flag depends on mode:
+
+- **Video mode** → `--audio-language <lang>` (selects dubbed audio track)
+- **Audio-only mode** → `--audio-language <lang>` (sets dubbing language)
+
+Implementation order:
+1. Add `property string lang` to Panel.qml, default `"en"`
+2. Add to `loadSettings`/`persistSettings`/`addUrl` (`--lang` flag)
+3. Add `--lang` flag to `cmd_add` in ytdlp-queue
+4. Store `lang` in job JSON; read in `run_job`; pass to `format_args`
+5. `format_args` emits `--audio-language <lang>` for both modes
+6. Add "Lang." dropdown to Panel.qml using `subtitleLangOptions`
+
+Supported languages in the dropdown: en, es, fr, de, it, pt, ja, ko, zh, ru, ar, hi.
+
+### Verify after editing
+
+```bash
+bash -n ~/.config/omarchy/plugins/alexzeitler.ytdlp/omarchy/ytdlp-queue
+```
+Check QML brace balance with a quick count before restarting.
+
+## Google Translate Plugin (b7s.googletranslate)
+
+Source: `~/.config/omarchy/plugins/b7s.googletranslate/`
+
+### Fixing rate-limited translation (HTTP 429)
+
+Google's free translate endpoint uses client parameter `gtx` by default,
+which is aggressively rate-limited. Switch to `client=dict-chrome-ex`:
+
+1. Edit `src/translate.c` — replace both occurrences of
+   `client=gtx` with `client=dict-chrome-ex`
+2. Rebuild: `make clean && make`
+
+The binary is a C program using libcurl, compiled with `-lcurl`. See
+`references/google-translate-endpoint.md` for the response format and
+parser details.
+
+## Expose Plugin — Window Overview (expose.window-overview)
+
+Source: `~/.config/omarchy/plugins/expose.window-overview/WindowCard.qml`
+
+### Border customization
+
+The card has two border layers that can overlap:
+
+1. **Outer card border** — the top-level `Rectangle` (lines 62-63):
+   ```qml
+   border.color: card.outlineColor
+   border.width: card.outlineWidth
+   ```
+
+2. **Inner preview border** — a `Rectangle` around the screenshot (lines 161-169):
+   ```qml
+   Rectangle {
+       anchors.fill: previewFrame
+       visible: !card.integratedFooter
+       border.color: card.outlineColor
+       border.width: card.outlineWidth
+   }
+   ```
+
+### To remove only the inner border (keep outer card):
+Delete the inner Rectangle block entirely. Ensure the outer card border is active.
+
+### To keep one consistent border:
+- Simplify `outlineWidth` to `Math.max(1, Style.normalBorderWidth)` instead of the conditional (hover/focused/normal)
+- Remove the inner preview Rectangle
+- Keep outer card `border.color` + `border.width` set to `outlineColor` / `outlineWidth`
+
+## InkMode Plugin — Screen Shader Tuning
+
+The jinxnet.inkmode plugin applies GLSL fragment shaders as Hyprland screen filters.
+Modes: normal, p3, srgb, wide, neo16, color-ink, ink (v2.0.0).
+See `references/inkmode-shader-parameters.md` for the full parameter reference and tuning guide.
+
+## Publishing a plugin fork to GitHub
+
+Plugin dirs ship with `origin` pointing at the upstream author. To publish
+as the user's own repo (user: `issamassi0-droid`, `gh` is authed):
+
+```bash
+cd ~/.config/omarchy/plugins/<plugin>
+gh repo create <repo-name> --public --source=. --push   # repo IS created; the
+                                                        # "Unable to add remote origin"
+                                                        # error is expected noise
+git remote set-url origin https://github.com/issamassi0-droid/<repo-name>.git
+git push -u origin main --force
+```
+
+If a repo with that name already exists, `gh repo delete <name> --yes` first.
+The user has confirmed deleting and re-pushing under this flow.
+
+## Hyprland Lua Config (rendering & display smoothness)
+
+The user prefers Lua config over raw `.conf` files for Hyprland.
+Personal overrides go in `~/.config/hypr/` as `.lua`, loaded in `hyprland.lua`.
+
+### Rendering smoothness / tear-free display
+
+For Hyprland v0.56.2 (and similar), create `~/.config/hypr/rendering.lua`:
+```lua
+hl.config({
+    misc = {
+        vrr = 0,                       -- 1 if monitor supports FreeSync/VRR
+        disable_hyprland_logo = true,
+        disable_splash_rendering = true,
+        animate_manual_resizes = true,
+    },
+})
+
+-- NVIDIA: force full composition pipeline (tear-free)
+hl.exec_once(
+    "nvidia-settings --assign CurrentMetaMode='nvidia-auto-select +0+0 { ForceFullCompositionPipeline = On }' 2>/dev/null || true"
+)
+```
+
+Wire it in `hyprland.lua` before the toggles block:
+```lua
+require("hypr.rendering")
+```
+
+Then: `hyprctl reload` — no restart needed.
+
+Options NOT supported in v0.56.2 (avoid): `vsync`, `mouse_move_enhanced` as keywords — they arrive in later versions.
+
+Verify: `hyprctl monitors` and `hyprctl clients` after reload to confirm no crashes.
+
+### Packages for smoother display (free, Arch repos)
+- `libva-mesa-driver` — hardware-accelerated video decode
+- `gamemode` — auto GPU/CPU optimization on launch
+
+### InkMode shader differentiation
+When modes look too similar, tweak `contrast` and `gamma` in the `.frag` files — a small gamma difference between modes is more visible than hue shifts. See `references/inkmode-shader-parameters.md` for the mode matrix and tuning primitives.
+
+## Bash Prompt Rice (~/.bashrc)
+
+The user's bash prompt is a one-line chip design with colored backgrounds
+(Yazi-selection look). Current design, color values, and editing pitfalls
+live in `references/bash-prompt-rice.md`.
+
+Key pitfalls: the `patch` tool escape-drifts (doubles backslashes) on PS1
+lines — edit via a python3 file rewrite instead; `sed` replacements eat
+backslashes before `\$`. Always verify with
+`grep 'PS1=' ~/.bashrc | grep -v '^#'` and tell the user to `source ~/.bashrc`.
+
+## Pitfalls
+
+- **synth-shell greeter aborts with `bc not found`** — the greeter requires the `bc` package. Either `sudo pacman -S bc` to install it, or comment out the greeter source in `~/.bashrc` (lines ~162-164) to keep the prompt and aliases working.
+- Always back up QML files before editing — a syntax error can break the bar.
+- **Hybrid GPU (NVIDIA + AMD)**: default Vulkan ICD is AMD. Use `source ~/.local/bin/vk-switch nvidia` to switch to NVIDIA before launching Chromium. See `references/hybrid-gpu.md` for details.
+
+### Omarchy plugin architecture (QML + bash backend)
+- ChipDivider visibility is gated by `root.monitorPosition(id) > 0`, so the
+  divider only shows for monitors that are not the first one.
+- QML uses `Math.round()` for pixel values — avoid fractional sizes.
+- The `anchorItem` property on the panel is the bar button — panels anchor to
+  it, not to the bar's edge.
+
+### Omarchy plugin architecture (QML + bash backend)
+
+Bar plugins ship as a QML widget + a companion bash script. The QML sends IPC
+commands (`add`, `list`, `cancel`, `clear`, …) to the script; the script owns
+the queue state on disk (JSON job files in `~/.local/state/<plugin>/jobs/`).
+Adding a feature means editing BOTH files in lockstep:
+
+1. QML: add the property, update `loadSettings`/`persistSettings`/`addUrl`,
+   add the UI control.
+2. Bash: add the CLI flag to `cmd_add`, store the field in the job JSON,
+   emit the right yt-dlp flags in `format_args`, read the field in `run_job`.
+
+**Pitfall**: the QML sends what the bash script parses. If you add a QML
+property but forget the bash flag (or vice versa), the setting silently
+disappears on restart — the job file carries the default, not the user's
+choice. Verify both sides before declaring done.
+
+## Vertical alignment in bar chip instruments
+
+Each instrument (CpuInstrument, MemoryInstrument, etc.) is a `Row` whose
+height is `Math.max(graphHeight, labelHeight)`. The sparkline (`Sparkline`
+or `TrafficGraph`) uses `anchors.verticalCenter: parent.verticalCenter`.
+
+**If the graph height is smaller than the ChipText font size, the graph
+appears vertically offset relative to the text** — the Row is tall enough
+for the text, but the graph is shorter and its center doesn't match the
+text baseline.
+
+**Fix:** increase `graphHeight` in SystemMonitorTheme.qml to match or
+exceed the ChipText font pixel size. The text font size is approximately
+`Math.max(9, Math.round(barSize * 0.38))`, so ~14px on a typical bar.
+Default `graphHeight` is `Style.space(12)` px — bumping to `Style.space(16)`
+aligns them inline.
+
+Key property chain:
+- Theme: `graphHeight` (SystemMonitorTheme.qml, line 104)
+- Text: `font.pixelSize: Math.max(9, Math.round(root.barSize * 0.38))`
+  (ChipText component in BarWidget.qml)
+- Row height: `Math.max(monitorTheme.graphHeight, label.implicitHeight)`
+  (each instrument component)

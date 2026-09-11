@@ -1,0 +1,85 @@
+---
+name: omarchy-aura-plugin
+description: Customizes the aura-blur plugin for Omarchy desktop — disables Gaussian blur and replaces with simple shadow
+---
+# Omarchy Aura Plugin Customization
+
+## Overview
+
+Customizes the `io.github.sh3nron.aura-blur` plugin to control blur effects on Omarchy popups and OSDs. This skill covers disabling the heavy Gaussian blur and replacing it with a simple shadow, consistent with a muted color palette.
+
+## Procedure
+
+1. **Locate the plugin directory**: `~/.config/omarchy/plugins/io.github.sh3nron.aura-blur/`
+
+2. **Understand the blur system**: The plugin uses GradualBlurObserver via a Unix socket. The actual blur intensity is controlled by Hyprland's compositor config at `~/.config/hypr/gradual-blur/config.jsonc` and `~/.config/hypr/looknfeel.lua`.
+
+3. **Edit the quality profile**: Modify `~/.config/hypr/gradual-blur.lua` to disable blur and enable shadow:
+
+ ```lua
+ -- Quality profile — reduced to simple shadow (no blur).
+ hl.config({
+ decoration = {
+ blur = {
+ enabled = false,
+ size = 0,
+ passes = 0,
+ noise = 0.0,
+ brightness = 1.0,
+ contrast = 1.0,
+ vibrancy = 0.0,
+ new_optimizations = false,
+ },
+ shadow = {
+ enabled = true,
+ range = 10,
+ render_power = 5,
+ color = "rgba(20, 18, 15, 0.55)",
+ },
+ },
+ })
+ ```
+
+4. **Align looknfeel.lua**: Ensure `~/.config/hypr/looknfeel.lua` uses the same shadow parameters (`range=10`, `render_power=5`, `color="rgba(20,18,15,0.55)"`) for consistent styling across all decorations.
+
+5. **Restart Hyprland**: Apply changes with `omarchy restart hyprctl` (or `hyprctl reload && hyprctl configerrors`).
+
+6. **Verify**: Check that popups/OSDs now use a clean shadow instead of multi-pass blur.
+
+## Pitfalls
+
+- **Pitfall — Mismatched shadow configs**: If `gradual-blur.lua` and `looknfeel.lua` have different `range`/`render_power`/`color` values, the shadow will render inconsistently across windows. Always sync both files.
+
+- **Pitfall — Forgetting to restart**: Changes to `.lua` config files require a Hyprland reload. Running `omarchy restart hyprctl` ensures the new config is loaded.
+
+- **Pitfall — Overriding user preferences**: The user prefers muted, low-saturation colors (orange, sage green, gray, purple — warm but dimmed). Shadow color `rgba(20,18,15,0.55)` matches this palette. Do not use bright or high-contrast shadow colors.
+
+## Commands
+
+```bash
+# View current blur config
+cat ~/.config/hypr/gradual-blur.lua
+
+# View looknfeel shadow config
+grep -A4 "shadow = {" ~/.config/hypr/looknfeel.lua
+
+# Edit gradual-blur.lua (patch)
+# Edit looknfeel.lua (patch)
+
+# Restart Hyprland
+omarchy restart hyprctl
+```
+
+## References
+
+- `~/.config/hypr/gradual-blur/config.jsonc` — detector/namespace config for the observer
+- `~/.config/hypr/gradual-blur.lua` — quality profile (blur + shadow settings)
+- `~/.config/hypr/looknfeel.lua` — general decoration shadow/blur styling
+- Plugin: `io.github.sh3nron.aura-blur` — uses GradualBlurObserver socket for popup/OSD blur
+
+## Always-On Rules
+
+- Shadow color must match the muted japon palette: `rgba(20,18,15,0.55)` (warm dark gray, no bright hues)
+- Blur must remain disabled (`enabled = false`) — the user prefers simple shadows over Gaussian blur
+- Both `gradual-blur.lua` and `looknfeel.lua` must have identical shadow parameters for consistent rendering
+- Always restart Hyprland after `.lua` config changes via `omarchy restart hyprctl`

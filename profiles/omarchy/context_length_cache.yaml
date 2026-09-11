@@ -1,3 +1,0 @@
-context_lengths:
- stepfun/step-3.7-flash:free@https://inference-api.nousresearch.com/v1: 262144
- tencent/hy4-preview@https://inference-api.nousresearch.com/v1: 1048576
